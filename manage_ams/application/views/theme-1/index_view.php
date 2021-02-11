@@ -1,0 +1,211 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<div class="main-content">
+    <div class="container">
+        <div class="row">
+            <?php $this->load->view($theme_name . '/_parts/admin_flash_message'); ?>					
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="video-area">
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                            <h2 class="page-title">Latest Jobs</h2>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                        	<?php if (!empty($company_details['YouTubeVideo'])) { ?>
+                                <div class="header-video">
+                                    <?php echo $this->load->view('common/video_player_company_partial'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4 join-our-talent">
+                            <?php echo anchor("/join_our_talent_network", "Join Our Talent Network", array('class' => 'join-btn')); ?>                
+                        </div>    
+                    </div>
+                </div>
+                <?php if (empty($job_listings)) { ?>
+                    <div class="job-article-wrapper">
+                        <article class="job-article">
+                            <?php if (!empty($company_details['Logo'])) { ?>
+                            <div class="icon-job">
+                                <figure>
+                                        <img src="<?php echo AWS_S3_BUCKET_URL . $company_details['Logo']; ?>">
+                                </figure>
+                            </div>
+                            <?php } ?>
+                            <div class="job-title">
+                                <span class="title-no-jobs">
+                                    <?php echo 'No Active Jobs Available at the moment!'; ?> 
+                                </span>									
+                            </div>		
+                        </article>
+                    </div>
+                <?php } else { ?>
+                    <?php foreach ($job_listings as $key => $value) { ?>
+                        <?php 
+                                if (empty($value['pictures']) && !empty($company_details['Logo'])) { 
+                                    $image = AWS_S3_BUCKET_URL . $company_details['Logo'];
+                                } elseif(!empty($value['pictures'])){ 
+                                    $image = AWS_S3_BUCKET_URL . $value['pictures'];
+                                } else { 
+                                    $image = AWS_S3_BUCKET_URL . DEFAULT_JOB_IMAGE;
+                                }
+                                ?>
+                        <!---Social Media Sharing Meta Tags Start--->
+                        <!--{*facebook meta*}-->
+                        <meta property="og:title" content="<?= $value['Title'] ?>" />
+                        <meta property="og:site_name" content="<?= $value['JobCategory'] ?>"/>
+                        <meta property="og:type" content="website" />
+                        <meta property="og:url" content="<?= base_url() ?>job_details/<?= $value['sid'] ?>"/>
+                        <meta property="og:image" content="<?= $image ?>" />
+                        <!--{*google meta*}-->
+                        <meta itemprop="name" content="<?= $value['Title'] ?>">
+                        <meta itemprop="description" content="<?= $value['JobCategory'] ?>">
+                        <meta property="og:image" content="<?= $image ?>" />
+                        <!--{*twitter meta*}-->
+                        <meta name="twitter:card" content="summary" />
+                        <meta name="twitter:site" content="<?= base_url() ?>job_details/<?= $value['sid'] ?>" />
+                        <meta name="twitter:title" content="<?= $value['Title'] ?>" />
+                        <meta name="twitter:description" content="<?= $value['JobCategory'] ?>" />
+                        <meta property="og:image" content="<?= $image ?>" />
+                        <!---Social Media Sharing Meta Tags End--->
+                        <div class="job-article-wrapper">
+                            <article class="job-article">
+                                <div class="icon-job">
+                                    <figure>
+                                        <?php if (empty($value['pictures']) && !empty($company_details['Logo'])) { ?>
+                                                    <img src="<?php echo AWS_S3_BUCKET_URL . $company_details['Logo']; ?>">
+                                                <?php } elseif (!empty($value['pictures'])) { ?>
+                                                    <img src="<?php echo AWS_S3_BUCKET_URL . $value['pictures']; ?>">
+                                                <?php } else {?>
+                                                    <img src="<?php echo AWS_S3_BUCKET_URL . DEFAULT_JOB_IMAGE; ?>">
+                                                <?php }
+                                                ?>
+                                    </figure>
+                                </div>
+                                <div class="job-title">
+                                    <h2 class="post-title">
+                                        <?php echo anchor("/job_details/" . $value['sid'], $value['Title'], array('class' => 'color', 'id' => 'job_title' . $value['sid'])); ?> 
+                                    </h2>
+                                    <ul class="categories">
+                                        <li><?php echo $value['JobCategory']; ?></li>
+                                    </ul>
+                                    <div class="job-location">
+                                        <ul>
+                                            <?php if (!empty($value['Location_City']) || !empty($value['Location_State']) || !empty($value['Location_Country'])) { ?>
+                                                <li>
+                                                    <?php echo img('assets/theme-1/images/icon-location.png'); ?>
+                                                    <div class="text"><?php if(!empty($value['Location_City'])) {
+                                                                                echo $value['Location_City'].', ';
+                                                                            }
+                                                                            if (!empty($value['Location_State'])) {
+                                                                                echo $value['Location_State'].', ';
+                                                                            }   echo $value['Location_Country']; ?>
+                                                    </div>
+                                                </li>
+                                            <?php } ?>
+                                        </ul>
+                                    </div>									
+                                </div>							
+                                <div class="show-job">
+                                    <a class="siteBtn apply-now-btn custom-apply-now" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>)">apply now</a>
+                                    <a style="display:none;" id="show_hide<?= $value['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
+                                    <a class="siteBtn showDetail" href="javascript:void(0)">show details</a>
+                                </div>
+                                <div class="description-wrapper">
+                                    <div class="job-description">
+                                        <h2 class="post-title color">job description</h2>
+                                        <?php echo $value['JobDescription']; ?>
+                                    </div>
+                                    <?php if (!empty($value['JobRequirements'])) { ?>
+                                        <div class="job-description">
+                                            <h2 class="post-title color">job requirement</h2>
+                                            <?php echo $value['JobRequirements']; ?>
+                                        </div>
+                                    <?php } ?>
+                                    <!-- screening questionnaire data *** START *** -->
+                                    <p id="questionnaire_sid<?php echo $value['sid']; ?>" style="display:none;"><?php echo $value['questionnaire_sid']; ?></p> 
+                                    <div style="display:none" id="questions<?php echo $value['sid']; ?>"> 
+                                        <label>Attach Resume (.pdf .docx .doc .jpg .jpe .jpeg .png .gif) Attach Cover (.pdf .docx .doc .jpg .jpe .jpeg .png .gif)</label>
+                                        <?php if ($value['questionnaire_sid'] > 0) { ?>
+                                            <div class="wrap-container">
+                                                <div class="wrap-inner">
+                                                    <h2 class="post-title color">Questionnaire</h2>
+                                                    <input type='hidden' name="q_name" value="<?php echo $value['q_name']; ?>">
+                                                    <input type='hidden' name="q_passing" value="<?php echo $value['q_passing']; ?>">
+                                                    <input type='hidden' name="q_send_pass" value="<?php echo $value['q_send_pass']; ?>">
+                                                    <input type='hidden' name="q_pass_text" value="<?php echo $value['q_pass_text']; ?>">
+                                                    <input type='hidden' name="q_send_fail" value="<?php echo $value['q_send_fail']; ?>">
+                                                    <input type='hidden' name="q_fail_text" value="<?php echo $value['q_fail_text']; ?>">
+                                                    <input type='hidden' name="my_id" value="<?php echo $value['my_id']; ?>">
+                                                    <?php $my_id = $value['my_id'];
+                                                        foreach ($value[$my_id] as $questions_list) { ?>
+                                                        <input type="hidden" name="all_questions_ids[]" value="<?php echo $questions_list['questions_sid']; ?>">
+                                                        <input type="hidden" name="caption<?php echo $questions_list['questions_sid']; ?>" value="<?php echo $questions_list['caption']; ?>">
+                                                        <input type="hidden" name="type<?php echo $questions_list['questions_sid']; ?>" value="<?php echo $questions_list['question_type']; ?>">
+                                                        <p>
+                                                            <label><?php echo $questions_list['caption']; ?>: <?php if ($questions_list['is_required'] == 1) { ?><samp class="red"> * </samp><?php } ?></label>
+                                                            <?php if ($questions_list['question_type'] == 'string') { ?>
+                                                                <input type="text" class="form-fields" name="string<?php echo $questions_list['questions_sid']; ?>" placeholder="<?php echo $questions_list['caption']; ?>" value="" <?php if ($questions_list['is_required'] == 1) { ?> required <?php } ?>>
+                                                            <?php } ?>
+                                                            <?php if ($questions_list['question_type'] == 'boolean') { ?>
+                                                                <?php $answer_key = 'q_answer_' . $questions_list['questions_sid']; ?>
+                                                                <?php foreach ($value[$answer_key] as $answer_list) { ?>
+                                                                    <input type="radio" name="boolean<?php echo $questions_list['questions_sid']; ?>" value="<?php echo $answer_list['value']; ?> @#$ <?php echo $answer_list['score']; ?>" <?php if ($questions_list['is_required'] == 1) { ?> required <?php } ?>> <?php echo $answer_list['value']; ?>&nbsp; 
+                                                                <?php } ?>
+                                                            <?php } ?>
+                                                            <?php if ($questions_list['question_type'] == 'list') { ?>
+                                                                <?php $answer_key = 'q_answer_' . $questions_list['questions_sid']; ?>
+                                                                <select name="list<?php echo $questions_list['questions_sid']; ?>" class="form-fields" <?php if ($questions_list['is_required'] == 1) { ?> required <?php } ?>>
+                                                                    <option value="">-- Please Select --</option>
+                                                                    <?php foreach ($value[$answer_key] as $answer_list) { ?>
+                                                                        <option value="<?php echo $answer_list['value']; ?> @#$ <?php echo $answer_list['score']; ?>"> <?php echo $answer_list['value']; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
+                                                            <?php } ?>
+                                                            <?php if ($questions_list['question_type'] == 'multilist') { ?>
+                                                                <?php $answer_key = 'q_answer_' . $questions_list['questions_sid']; ?>
+                                                            <div class="checkbox-wrap">
+                                                                <?php $iterate = 0; ?>
+                                                                <?php foreach ($value[$answer_key] as $answer_list) { ?>
+                                                                    <div class="label-wrap">
+                                                                        <div class="squared">
+                                                                            <input type="checkbox" name="multilist<?php echo $questions_list['questions_sid']; ?>[]" id="squared<?php echo $iterate; ?>" value="<?php echo $answer_list['value']; ?> @#$ <?php echo $answer_list['score']; ?>">
+                                                                            <label for="squared<?php echo $iterate; ?>"></label>
+                                                                        </div>
+                                                                        <span><?php echo $answer_list['value']; ?></span>
+                                                                    </div>
+                                                                <?php } ?>
+                                                            </div>
+                                                        <?php } ?>
+                                                        </p>
+                                                    <?php } ?>
+                                                </div>
+                                            </div> 
+                                        <?php } ?> 
+                                    </div>
+                                    <!-- screening questionnaire data ***  END *** -->
+                                    <div class="btn-wrap">
+                                        <?php echo anchor("/job_details/" . $value['sid'], "more details", array('class' => 'siteBtn btn-deatil-more')); ?> 
+                                        <a class="siteBtn apply-now-btn custom-apply-now" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>)">apply now</a>
+                                        <a style="display:none;" id="show_hide<?= $value['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
+                                        <?php //echo anchor("javascript:void(0)","hide details",array('class'=>'siteBtn hideDetail btn-hide'));         ?> 
+                                        <a class="siteBtn hideDetail btn-hide" href="javascript:void(0)">hide details</a>
+                                    </div>									
+                                </div>
+                            </article>
+                            <div class="social-media">
+                                <?php if(isset($value['share_links'])){ ?>
+                                    <?php echo $value['share_links']; ?>
+                                <?php } ?>
+                            </div>
+                        </div>	
+                    <?php } ?>
+                <?php } ?>
+                <div class="Pagination">
+                    <?php //= $links  ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php $this->load->view('/common/apply_now_modal_for_index'); ?>

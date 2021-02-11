@@ -1,0 +1,6 @@
+<?php 
+phpinfo();
+//echo "<pre>";
+//print_r(scandir(session_save_path()));
+//echo "</pre>";
+?>

@@ -1,0 +1,475 @@
+@media (max-width:1200px){
+	.header-video{
+		position: static;
+		text-align: center;
+	}
+	.job-title{
+		width: 57%;
+		margin: 2px 0 0 0;
+	}
+	.show-job a{
+		margin: 0 0 0 -70px;
+	}
+}
+
+/* ipad portrait
+==========================================================================================*/
+@media (min-width:768px) and (max-width:1024px){
+	.container{
+		width: 100%;
+	}
+	.modal-dialog.custom-popup{
+		width: auto;
+	}
+	.job-title,
+	.social-share,
+	.job-type{
+		width: 100%;
+		margin: 0;
+		padding: 10px;
+	}
+	.job-title{
+		padding-top:25px; 
+	}
+	.icon-job figure {
+	    left: 0;
+	}
+	.job-article:before, 
+	.job-article:after{
+		left: 50%;
+		margin-left: -59px;
+	}
+	.show-job a{
+		top: -50px;
+		margin: 0 0 0 -77px;
+	}
+	.description-wrapper{
+		padding: 10px;
+	}
+	.show-job{
+		margin: 0 10px 0 0;
+	}
+	.social-media{
+		margin: 10px 0 0 0;
+		text-align: center;
+	}
+	.social-media ul{
+		width: 100%;
+	}
+	.header-video{
+		position: static;
+		text-align: center;
+		margin: 20px 0 0 0;
+	}
+    .title-no-jobs{
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        height: auto;
+    }
+    .join-our-network{
+    	margin: 0;
+    }
+    .social-media.job-detail ul {
+	    display: inline-block;
+	    width: auto;
+	}
+	.social-media.job-detail ul li{
+		float: left;
+	}
+	.video-area{
+		margin: 0 0 10px 0;
+	}
+	.icon-job{
+		width: 100%;
+		margin: 0;
+	}
+	.icon-job figure img{
+		width: auto;
+		height: 100px;
+	}
+	.question-row .text{
+    	width: 96.5%;
+    }
+    .employee_teammember_login,
+    .copy-right-text p{
+    	line-height: 16px;
+    	height: 67px;
+    }
+    .social-links ul li {
+	    height: 67px;
+	    line-height: 67px;
+	    padding: 0 2px;
+	}
+	.glassdoor > img {
+	    height: 14px;
+	    width: 11px;
+	}
+	.social-links ul li a{
+		font-size: 12px;
+		width: 26px;
+		height: 26px;
+		line-height: 26px;
+	}
+    .copy-right-text{
+    	height: 67px;
+    	width: 100%;
+    }
+    .apply-job-from ul li{
+    	width: 48%;
+    }
+    .google-btn{
+    	margin: 0;
+    }
+    .header{
+		height: auto;
+	}
+}
+/* iphone 5 Landscape
+==========================================================================================*/
+@media (max-width:767px){
+	.container{
+		width: 100%;
+	}
+	.job-title,
+	.social-share,
+	.job-type{
+		width: 100%;
+		margin: 0;
+		padding: 10px;
+	}
+	.job-title{
+		padding-top:25px; 
+	}
+	.show-job{
+		width: 25%;
+		margin: 15px;
+		text-align: right;
+	}
+	.description-wrapper{
+		padding: 15px;
+	}
+	.social-share{
+		text-align: left;
+	}
+	.show-job{
+		width: 32%;
+	}
+	nav.navigation{
+		width: 49%;
+		float: left;
+		border:2px solid #b39ddb;
+	}
+	.header{
+		height: auto;
+		padding: 10px 0;
+		position: static;
+	}
+	.heading-title{
+		text-align: center;
+	}
+	.logo{
+		text-align: center;
+		width: 100%;
+	}
+	.copy-right{
+		width: 100%;
+		text-align: center;
+	}
+	.copy-right ul li{
+		display: inline-block;
+		float: none;
+	}
+	.apply-job-from{
+		width: 100%;
+		margin: 0;
+	}
+	.apply-job-from ul li{
+		width: 100%;
+		min-height: auto;
+		margin: 0 0 5% 0;
+	}
+	.apply-job-from .file-name .red {
+	    margin: 26px 0 0 0;
+	}
+	.widget{
+		width: 50%;
+	}
+	.icon-job{
+		width: 100%;
+	}
+	.icon-job figure{
+		left: 0;
+	}
+	.job-article:before, 
+	.job-article:after{
+		left: 50%;
+		margin-left: -59px;
+	}
+	.modal-dialog.custom-popup{
+		width: auto;
+	}
+	.social-media{
+		margin: 10px 0 0 0;
+		text-align: center;
+		padding: 0;
+	}
+	.social-media ul{
+		width: 100%;
+	}
+	.show-job a{
+		top: -50px;
+	}
+	.btn-wrap a{
+		margin: 0 10px 0 0;
+	}
+	.copyright{
+		height: auto;
+	}
+	.copy-right-text{
+		text-align: center;
+		height: auto;
+		width: 100%;
+	}
+	.social-links{
+		text-align: center;
+		border-top: 1px solid #a087ce;
+		border-bottom: 1px solid #a087ce;
+		margin: 0 0 10px 0;
+	}
+	.social-links ul li{
+		float: none;
+		display: inline-block;
+	}
+	.header-video{
+		position: static;	
+		margin: 15px 0;	
+	}
+	.header-video iframe,
+	.job-video iframe{
+		width: 100%;
+	}
+	.btn-panel.top-btn a{
+		top: 0;
+	}
+	.job-dtails h1{
+		font-size: 16px;
+		line-height: 20px;
+	}
+	.job-info ul li{
+		width: 100%;
+		margin: 4px 0;
+	}
+	.job-video iframe{
+		height: 300px;
+	}
+	.text-column,
+	.form-column{
+		width: 100%;
+	}
+    .title-no-jobs{
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        height: auto;
+    }
+    .registered-user{
+    	width: 100%;
+    }
+    .site-btn-v2{
+    	font-size: 13px;
+    }
+    .site-btn-lg{
+    	font-size: 20px;
+    	line-height: 50px;
+    }
+    .join-our-network{
+    	margin: 0;
+    }
+    .social-media.job-detail ul {
+	    display: inline-block;
+	    width: auto;
+	}
+	.social-media.job-detail ul li{
+		float: left;
+	}
+	.icon-job figure img{
+    	height: 100px;
+    	width: auto;
+    }
+    .video-area{
+    	margin: 0 0 20px 0;
+    }
+    .video-area h2{
+    	text-align: center;
+    }
+    .join-our-talent{
+    	text-align: center;
+    }
+    .join-our-talent a{
+    	display: inline-block;
+    	float: none;
+    }
+    .main-content{
+    	margin: 20px 0;
+    }
+    .social-links ul{
+    	float: none;
+    	display: inline-block;
+    }
+    .contact-info{
+    	border-left: none;
+    }
+    .question-row .text{
+    	width: 93%;
+    }
+    .join-from ul li.form-col-left, 
+    .join-from ul li.form-col-right{
+    	width: 100%;
+    }
+    .form-column,
+    .text-column{
+    	padding: 0;
+    }
+    .right-panel{
+    	float: left;
+    	width: 100%;
+    	margin: 5px 0 0 0;
+    }
+    .join-from ul li.checkbox-wrap label.error{
+		left: 0;
+	}
+	.join-from ul li{
+		height: auto;
+	}
+	.employee_teammember_login{
+		line-height: normal;
+		width: 100%;
+		text-align: center;
+		margin: 15px 0 0 0;
+		height: auto;
+	}
+	.hr-lanugages {
+	    margin: 20px 0 0 0;
+	    text-align: center;
+	    width: 49%;
+	}
+	.hr-lanugages .goog-te-gadget-simple{
+		border: 2px solid #b39ddb;
+		border-radius: 0;
+		height: 47px;
+		line-height: 38px;
+	}
+	body .google-btn{
+    	margin: 0;
+    }
+    .resume-label-withradio{
+    	margin-left: 8px !important;
+    }
+    .logo-location-center nav.navigation,
+	.logo-location-center .hr-lanugages{
+		width: 100%;
+	}
+	.header{
+		height: auto;
+	}
+}
+
+/* iphone 4 landscape
+==========================================================================================*/
+@media (max-width:480px){
+	.container{
+		width: 100%;
+	}
+	.btn-wrap{
+		text-align: center;
+	}
+	.btn-wrap a,
+	.btn-wrap .siteBtn.apply-now-btn,
+	.btn-wrap a.btn-hide{
+		display: inline-block;
+		float: none;
+		margin: 5px 0;
+	}
+	.show-job{
+		width: 100%;
+		height: 46px;
+		text-align: center;
+		padding: 10px;
+		margin: 0;
+	}
+	.contact-form ul li{
+		width: 100%;
+	}
+	.apply-job-from ul li.questionare-section .form-fields{
+		width: 100%;
+	}
+	.job-location-type ul li{
+		width: 100%;
+		margin: 5px 0;
+	}
+	.job-detail .show-job{
+		width: 100%;
+		margin: 0 0 15px 0;
+	}
+	.show-job a{
+		top: 0;
+	}
+	.social-media ul li{
+		text-align: center;
+		margin: 5px;
+	}
+	.social-links ul li{
+		height: 50px;
+		line-height: 46px;
+		padding: 0 2px;
+	}
+	.glassdoor > img {
+	    height: 14px;
+	    width: 11px;
+	}
+	.social-links ul li a{
+		font-size: 12px;
+		width: 26px;
+		height: 26px;
+		line-height: 26px;
+	}
+	.copy-right-text p{
+		line-height: normal;
+		padding: 10px 0;
+	}
+	.widget{
+		width: 100%;
+	}
+	.site-btn-lg{
+		width: 100%;
+		margin: 5px 0;
+	}
+	.registered-user{
+		width: 100%;
+	}
+	.join-btn,
+	.heading-title h2{
+		display: inline-block;
+		float: none;
+	}
+	.fields-wrapper.button-field .site-btn-v2{
+		width: 280px;
+	}
+	.site-btn-v2{
+    	font-size: 10px;
+    }
+    .social-media.job-detail ul li{
+    	width: 100%;
+    	float: none;
+    	display: inline-block;
+    }
+    .question-row .text{
+    	width: 88.6%;
+    }
+    body .resume-label-withradio span{
+    	font-size: 9px;
+    	vertical-align: middle;
+    }
+}
+
