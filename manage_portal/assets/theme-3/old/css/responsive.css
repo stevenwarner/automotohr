@@ -1,0 +1,121 @@
+
+/* ipad portrait
+==========================================================================================*/
+@media (min-width:768px) and (max-width:1024px){
+	.container{
+		width: 100%;
+	}
+}
+/* iphone 5 Landscape
+==========================================================================================*/
+@media (max-width:767px){
+	.container{
+		width: 100%;
+	}
+	.job-title,
+	.social-share,
+	.job-type{
+		width: 100%;
+		margin: 0;
+		padding: 10px;
+	}
+	.show-job{
+		width: 25%;
+		margin: 15px;
+		text-align: right;
+	}
+	.description-wrapper{
+		padding: 15px;
+	}
+	.social-share{
+		text-align: left;
+	}
+	.show-job{
+		width: 32%;
+	}
+	.btn-wrap a.btn-hide{
+		margin-top: 20px;
+	}
+	nav.navigation{
+		width: 100%;
+	}
+	.header{
+		height: auto;
+		padding: 10px 0;
+	}
+	.heading-title{
+		text-align: center;
+	}
+	.logo{
+		text-align: center;
+		width: 100%;
+	}
+	.copy-right{
+		width: 100%;
+		text-align: center;
+	}
+	.copy-right ul li{
+		display: inline-block;
+		float: none;
+	}
+	.apply-job-from{
+		width: 100%;
+		margin: 0;
+	}
+	.apply-job-from ul li{
+		width: 100%;
+		margin: 0 0 2% 0;
+	}
+        /*=================================
+                Join Our Network
+        =================================*/
+        .join-our-network{
+            padding: 0 10px;
+        }
+        .text-column,
+        .form-column{
+            width:100%;
+            margin:20px 0;
+        }
+}
+
+/* iphone 4 landscape
+==========================================================================================*/
+@media (max-width:480px){
+	.container{
+		width: 100%;
+	}
+	.btn-wrap{
+		text-align: center;
+	}
+	.read-more,
+	.btn-wrap a{
+		display: inline-block;
+		float: none;
+		margin: 0;
+	}
+	.read-more{
+		margin: 0 0 10px 0;
+	}
+	.btn-wrap a.btn-hide{
+		float: none;
+		margin: 10px 0 0 0;
+	}
+	.show-job{
+		width: 100%;
+		text-align: center;
+		padding: 10px;
+		margin: 0;
+	}
+	.contact-form ul li{
+		width: 100%;
+	}
+	.apply-job-from ul li.questionare-section .form-fields{
+		width: 100%;
+	}
+	.job-location-type ul li{
+		width: 100%;
+		margin: 5px 0;
+	}
+}
+

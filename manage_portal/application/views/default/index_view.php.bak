@@ -1,0 +1,8 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+    <div class="container">
+        <div class="row">					
+            <div class="col-md-12">
+                <div class="info_text"><?php echo $heading_title;?></div>
+            </div>
+        </div>
+    </div>

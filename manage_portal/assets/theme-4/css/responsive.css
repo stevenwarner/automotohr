@@ -1,0 +1,684 @@
+@media (max-width:1200px){
+	.partner-box{
+		width: 31%;
+	}
+	.title-area{
+		width: 82%;
+	}
+	.btn-area{
+		width: 18%;
+		padding: 0;
+	}
+	.btn-area ul li{
+		float: right;
+	}
+	#banner,
+	#about-us,
+	#testimonial-wrp{
+		height: auto;
+		padding: 20px 0;
+	}
+	.about-us .section-title,
+	.partner-box-wrp .section-title, 
+	.testimonial-wrp .section-title{
+		text-align: center;
+		font-size: 30px;
+	}
+	.testimonials .flex-control-nav{
+		bottom: -40px;
+	}
+	.testimonial-wrp p.sub-title{
+		font-size: 16px
+	}
+	.banner-caption{
+		padding: 0;
+	}
+}
+/* ipad portrait
+==========================================================================================*/
+@media (min-width:768px) and (max-width:1024px){
+	.container{
+		width: 100%;
+	}
+	.partner-box{
+		width: 31%;
+	}
+	.comapny-video iframe{
+		height: 350px !important;
+	}
+	.btn-area{
+		padding: 0;
+	}
+	.title-area{
+		width: 76%;
+	}
+	.btn-area{
+		width: 22%;
+		padding: 0;
+	}
+	#banner,
+	#about-us,
+	#testimonial-wrp{
+		height: auto;
+		padding: 20px 0;
+	}
+	.about-us .section-title,
+	.partner-box-wrp .section-title, 
+	.testimonial-wrp .section-title{
+		text-align: center;
+		font-size: 30px;
+	}
+	.testimonials .flex-control-nav{
+		bottom: -40px;
+	}
+	.testimonial-wrp p.sub-title{
+		font-size: 16px
+	}
+	.banner-caption{
+		padding: 0;
+	}
+	.banner-caption .text h1{
+		font-size: 60px;
+	}
+	.page-title{
+		font-size: 46px;
+	}
+	.logo{
+		width: 100%;
+		text-align: center;
+	}
+	nav.navigation{
+		text-align: center;
+	}
+	nav.navigation ul{
+		width: 100%;
+	}
+	nav.navigation ul li{
+		float: none;
+		display: inline-block;
+	}
+	nav.navigation ul li a{
+		font-size: 14px;
+	}
+	textarea.input-field{
+		height: 280px;
+	}
+	.apply-job-from ul li{
+		width: 48%;
+	}
+	.apply-job-from ul li{
+		margin: 0 0 8% 2%;
+	}
+	.question-row .text{
+		width: 95.6%;
+	}
+	.disabilities-list ul{
+		width: 50%;
+	}
+	#main-menu,
+	.navbar-header{
+		text-align: center;
+	}
+	#main-menu{
+		float: right;
+	}
+	.navbar-header{
+		margin: 0 0 20px 0;
+	}
+	.navbar-brand{
+		margin: 0;
+		display: inline-block;
+		float: none;
+	}
+	.navbar-nav li a{
+		padding: 5px 6px;
+	}
+	.navbar-header{
+		margin: 0 0 3px 0;
+	}
+	.detail-banner-caption{
+		padding: 20px;
+	}
+	.resume-label-withradio span {
+	    font-size: 12px;
+	    vertical-align: middle;
+	}
+	.navbar-fixed-top.bg-change{
+		position: fixed;
+	}
+	.sponsors-logo img{
+    	width: 100%;
+    }
+    .flex-center{
+    	height: 115px;
+    }
+    .main-navigation{
+    	float: right;
+    	margin: 0;
+    	width: 100%;
+    }
+    .logo-location-center .hr-lanugages {
+	    position: absolute;
+	    z-index: 99;
+	}
+	.logo-aspect-vertical.bg-change .navbar-brand {
+	    height: 59px;
+	    width: 60px;
+	}
+	.bg-change {
+	    padding: 0 0 10px 0;
+	}
+	.logo-location-right .navbar-collapse.collapse.navigation, 
+	.logo-location-left .navbar-collapse.collapse.navigation {
+	    margin: 5px 0 0;
+	}
+	.logo-aspect-horizontal.logo-location-right .navbar-collapse.collapse.navigation, 
+	.logo-aspect-horizontal.logo-location-left .navbar-collapse.collapse.navigation {
+	    width: 85%;
+	}
+	.logo-aspect-square.logo-location-left .navbar-collapse.collapse.navigation,
+	.logo-aspect-square.logo-location-right .navbar-collapse.collapse.navigation{
+		width: 90%;
+		margin: 5px 0 0 0;
+	}
+	.logo-aspect-none.logo-location-right .navbar-collapse.collapse.navigation{
+		width: 86%;
+	}
+	.logo-aspect-none.logo-location-right .navbar-header{
+		position: relative;
+		z-index: 99;
+	}
+	.logo-aspect-none.logo-location-left .navbar-collapse.collapse.navigation{
+		width: 87%;
+	}
+	.copy-right {
+	    width: 100%;
+	    text-align: center;
+	    margin: 0 0 15px 0;
+	}
+	.footer-menu.pull-right {
+	    float: left !important;
+	}
+}
+/* iphone 5 Landscape
+==========================================================================================*/
+@media (max-width:767px){
+	.container{
+		width: 100%;
+	}
+	.logo{
+		width: 100%;
+		text-align: center;
+	}
+	.banner-caption{
+		padding: 20px 0;
+	}
+	.banner-caption .text h1{
+		font-size: 30px;
+	}
+	.banner-caption .text p{
+		font-size: 16px;
+	}
+	#banner,
+	#about-us,
+	#testimonial-wrp{
+		height: auto;
+	}
+	.about-us{
+		padding: 20px 0 0 0;
+		margin: 0 0 20px 0;
+	}
+	.about-us .section-title,
+	.partner-box-wrp .section-title, 
+	.testimonial-wrp .section-title{
+		text-align: center;
+		font-size: 30px;
+	}
+	.testimonials .flex-control-nav{
+		bottom: -40px;
+	}
+	.testimonial-wrp p.sub-title{
+		font-size: 16px
+	}
+	.partner-box{
+		width: 31%;
+		overflow: hidden;
+	}
+	.partner-box img{
+		height: 85px;
+	}
+	.comapny-video iframe{
+		height: auto !important;
+	}
+	.advance-search .input-field{
+		margin: 5px 0;
+	}
+	.hr-select-dropdown{
+		margin: 5px 0;
+	}
+	.advance-search .hr-select-dropdown .input-field{
+		margin: 0;
+	}
+	.article-list .text{
+		float: left;
+		width: 100%;
+		margin: 10px 0 0 0;
+	}
+	.article-list figure{
+		float: none;
+		display: inline-block;
+	}
+	.article-list,
+	.post-option{
+		text-align: center;
+	}
+	.title-area,
+	.btn-area,
+	.post-option{
+		width: 100%;
+	}
+	.btn-area{
+		text-align: center;
+		margin: 20px 0 0 0;
+	}
+	.btn-area ul{
+		width: 100%;
+	}
+	.btn-area ul li{
+		float: none;
+		display: inline-block;
+	}
+	.section-title{
+		font-size: 25px;
+	}
+	.post-option{
+		margin: 10px 0 0 0;
+	}
+	.post-option ul li{
+		float: none;
+		display: inline-block;
+	}
+	.job-description-text{
+		margin: 0 0 20px 0;
+	}
+	.job-description-text h1{
+		font-size: 20px;
+	}
+	.footer{
+		margin: 20px 0 0 0;
+	}
+	.page-title{
+		font-size: 25px;
+	}
+	textarea.input-field{
+		height: 200px;
+	}
+	.universal-form-style ul li{
+		height: auto;
+	}
+	.submit-btn{
+		margin: 5px;
+	}
+	.text-column,
+	.form-column{
+		width: 100%;
+	}
+	.modal-dialog.custom-popup {
+	    width: auto;
+	}
+	.apply-job-from ul li{
+		width: 48%;
+	}
+	.hr-text-editor img {
+	    height: auto !important;
+	    width: 100% !important;
+	}
+	.advance-search .hr-select-dropdown:after{
+	    top:0;
+	}
+	.join-our-telentnetwork{
+		text-align: center;
+	}
+	.join-our-telentnetwork .site-btn{
+		float: none;
+		display: inline-block;
+	}
+	.testimonial-slider .item{
+		text-align: center;
+	}
+	.testimonial-slider .item figure{
+		float: none;
+		display: inline-block;
+	}
+	.testimonial-slider .client-quote {
+	    float: left;
+	    margin: 10px 0 0;
+	    text-align: center;
+	    width: 100%;
+	}
+	.sponsors .section-title,
+	.testimonial .section-title{
+		font-size: 20px;
+	}
+	.section-details{
+		padding: 0;
+	}
+	.slide-description{
+		font-size: 14px;
+	}
+	.client-quote h2{
+		font-size: 22px;
+	}
+	#main-menu{
+		margin: 0;
+		width: 100%;
+	}
+	.navbar-nav li a{
+		padding: 8px;
+	}
+	.navbar-nav li a:hover{
+		background-color: #b3c211 !important;
+	}
+	.navbar-nav{
+		margin-top: 0;
+		background-color: #1b1b1b;
+	}
+	.navbar-default .navbar-toggle:hover, 
+	.navbar-default .navbar-toggle:focus{
+		background-color: #1b1b1b;
+	}	
+    .copy-right,
+    .footer-menu{
+        text-align: center;
+        width: 100%;
+    }
+    .footer-menu a {
+        display: inline-block;
+        padding-left: 0;
+    }
+    .detail-banner-caption{
+    	padding: 120px 20px 20px 20px;
+    }
+    .navbar-header{
+    	padding: 15px 10px;
+    }
+    body .navbar-toggle{
+    	margin: 0;
+    	padding: 6px 10px;
+    }
+    body .navbar-brand{
+    	padding: 0 !important;
+    	height: auto;
+    }
+    /*.bg-change .navbar-brand img{
+    	height: 37px;
+    }*/
+    body .google-btn{
+    	margin: 0;
+    }
+    .sponsors-logo img{
+    	width: 100%;
+    }
+    .flex-center{
+    	height: 115px;
+    	margin: 15px 0;
+    }
+    .section-title{
+    	padding-top: 22px;
+    }
+    .about-section{
+    	margin: 20px 0;
+    }
+    .default-banner {
+	    padding: 34px 20px !important;
+	}
+	.top-aplly-btn .site-btn{
+		font-size: 16px;
+	}
+	.navbar-collapse.collapse.navigation {
+	    width: 100%;
+	    height: auto !important;
+	}
+	.navbar-collapse.collapse.navigation .navbar-nav{
+	    display: inline-block;
+	    float: none;
+	    vertical-align: middle;
+	}
+	.navbar-collapse.collapse.navigation .navbar-nav > li{
+	    float: none;
+	    height: auto;
+	    display: inline-block;
+	    width: 100%;
+	    vertical-align: middle;
+	}
+	.hr-lanugages {
+	    margin: 14px 10px 0 0;
+	}
+	.logo-location-center .main-menu button.btn{
+		width: 100%;
+	}
+	.logo-location-center .navbar-header {
+	    position: static;
+	    transform: translate(0);
+	}
+	.logo-location-center .dropdown-menu{
+		width: 100%;
+	}
+	.logo-aspect-horizontal .navbar-brand {
+	    height: 40px;
+	    width: 90px;
+	    float: right;
+	    margin: 0 8px 0 0;
+	}
+	.logo-aspect-vertical .navbar-brand,
+	.logo-aspect-vertical.bg-change .navbar-brand {
+	    height: 40px;
+	    margin: 0 10px 0 0 !important;
+	    width: 30px;
+	}
+	.logo-aspect-square.bg-change .navbar-brand,
+	.logo-aspect-square .navbar-brand  {
+	    height: 45px;
+	    margin: 0 10px 0 0;
+	    width: 50px;
+	}
+	.logo-aspect-square.logo-location-center .navbar-header,
+	.logo-aspect-horizontal.logo-location-center .navbar-header{
+		padding: 15px 0;
+	}
+	.logo-aspect-square.bg-change .navbar-brand, 
+	.logo-aspect-square .navbar-brand{
+		float: right;
+		margin: 0;
+	}
+	.logo-aspect-horizontal.logo-location-left .navbar-brand{
+		float: left;
+	}
+	.logo-aspect-horizontal.logo-location-right .navbar-brand{
+		float: right;
+	}
+	.logo-aspect-square.logo-location-center .navbar-header{
+		text-align: center;
+	}
+	.logo-aspect-square.logo-location-center .navbar-header a{
+		float: none;
+		display: inline-block;
+	}
+	.logo-aspect-square.logo-location-left .navbar-header a{
+		float: left;
+	}
+	.tab-image{
+		margin: 0;
+	}
+	.down_btn{
+		display: none;
+	}
+	.logo-aspect-none .navbar-header{
+	    padding: 10px 0;
+	}
+	.logo-aspect-none.logo-location-left .navbar-header .navbar-brand{
+	    float: left;
+	}
+	.logo-aspect-none.logo-location-right .navbar-header .navbar-brand{
+	    float: right;
+	}
+	.logo-aspect-none.bg-change .navbar-brand img ,
+	.logo-aspect-none .navbar-brand img{
+	    width: 42px;
+	}
+	.navbar-fixed-top {
+	    background-color: #1b1b1b;
+	    position: static;
+	}
+	.navbar-fixed-top.bg-change{
+		position: fixed;
+	}
+	.logo-location-right .navbar-header{
+		width: 100%;
+	}
+	.logo-location-right .navbar-toggle{
+		float: left;
+	}
+
+	.logo-location-left .navbar-header{
+		width: 100%;
+	}
+	.logo-aspect-horizontal.logo-location-center .navbar-header{
+		text-align: center;
+	}
+	.logo-aspect-horizontal.logo-location-center .navbar-header a{
+		display: inline-block;
+		margin: 0;
+		float: none;
+	}
+	.logo-aspect-none.logo-location-center .navbar-header{
+		text-align: center;
+	}
+	.logo-aspect-none.logo-location-center .navbar-header a{
+		display: inline-block;
+		margin: 0;
+		float: none;
+	}
+
+	.logo-aspect-vertical.logo-location-right .navbar-header, 
+	.logo-aspect-vertical.logo-location-left .navbar-header{
+		width: 100%;
+	}
+	.logo-aspect-vertical.logo-location-left .navbar-brand{
+		float: left;
+	}
+	.logo-aspect-vertical.logo-location-right .navbar-brand{
+		float: right;
+	}
+	.lang-bar {
+	    width: 100%;
+	    text-align: center;
+	    margin: 10px 0;
+	}
+	.lang-bar div {
+	    display: inline-block;
+	}
+	.hr-lanugages {
+		margin: 0;
+		width: 100%;
+	}
+        .banner-btn-apply{
+            float: left;
+            width: 100%;
+            padding: 0 15px;
+            position: static;
+            margin: 20px 0 0 0;
+        }
+        .custom-theme4-job-title {
+            font-size: 28px;
+        }
+        .join-from ul li{
+            height: auto;
+        }
+}
+
+/* iphone 4 landscape
+==========================================================================================*/
+@media (max-width:480px){
+	.container{
+		width: 100%;
+	}
+	.partner-box-wrp{
+		width: 100%;
+		margin: 0;
+	}
+	.partner-box{
+		width: 100%;
+		margin: 0 0 2% 0;
+	}
+	.testimonial-inner{
+		text-align: center;
+	}
+	.testimonial-inner figure{
+		float: none;
+		display: inline-block;
+		margin: 0 0 15px 0;
+	}
+	.testimonial-inner .text{
+		float: left;
+		width: 100%;
+		margin: 0;
+	}
+	.join-from ul li.form-col-left,
+	.join-from ul li.form-col-right,
+	.apply-job-from ul li,
+	.accommodation-auestion strong,
+	.col-wrp,
+	.questionnaire-form ul li label,
+	.radio-btn,
+	.disabilities-list ul{
+		width: 100%;
+	}
+	.question-row .text{
+		width: 90.6%;
+	}
+	.question-block h2{
+		font-size: 15px;
+	}
+	.bottom-btn-row ul li{
+		margin: 5px 0;
+	}
+	.site-btn.apply-now-large{
+		line-height: 25px;
+		min-width: 100%;
+    	margin: 0;
+    	font-size: 14px;
+    	padding: 10px;
+	}
+	.bottom-btn-row.top-aplly-btn {
+	    top: -35px;
+	}
+	.job-info ul li{
+		width: 100%;
+		margin: 2px 0;
+	}
+	.job-info ul li:before{
+		display: none;
+	}
+	.section-title{
+		font-size: 18px;
+	}
+	.job-categories{
+		margin: 0;
+	}
+	.social-media ul li{
+		width: 100%;
+	}
+	.slider-title{
+		font-size: 16px;
+	}
+    /*.sponsors-logo img{
+        width: 100%;
+        height: 40px;
+    }*/
+    body .resume-label-withradio span{
+    	font-size: 9px;
+    	vertical-align: middle;
+    }
+}
+
