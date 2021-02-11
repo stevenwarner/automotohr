@@ -1244,3 +1244,22 @@ $route['manage_admin/timeoff/setting'] = 'manage_admin/Time_off/setting';
 $route['manage_admin/timeoff/icons'] = 'manage_admin/Time_off/icons';
 $route['manage_admin/timeoff/handler'] = 'manage_admin/Time_off/handler';
 $route['timeoff/public/(:any)'] = 'Time_off/public_action/$1';
+
+/**
+ * Performance Mnagement - Routes
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/02/2021
+ */
+$route['performance-management/dashboard'] = 'Performance_management/dashboard';
+$route['performance-management/reviews'] = 'Performance_management/reviews';
+$route['performance-management/review/(:num)'] = 'Performance_management/review/$1';
+$route['performance-management/feedback/(:num)/(:num)'] = 'Performance_management/feedback/$1/$2';
+$route['performance-management/reviewer_feedback/(:num)/(:num)'] = 'Performance_management/reviewer_feedback/$1/$2';
+$route['performance-management/review/create'] = 'Performance_management/create_review';
+// Goals
+$route['performance-management/goal/create'] = 'Performance_management/create_goal';
+$route['performance-management/goals'] = 'Performance_management/goals';
+// Handler
+$route['performance-management/handler/get/(.+)'] = 'Performance_management/get_handler';
+$route['performance-management/handler/post'] = 'Performance_management/post_handler';
