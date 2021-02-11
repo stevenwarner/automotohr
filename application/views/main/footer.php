@@ -349,6 +349,9 @@ if ($class != 'dashboard' &&
 <?php if($class == 'time_off'){ ?>
     <?php $this->load->view('timeoff/scripts'); ?>
 <?php } ?>
+<?php if($class == 'performance_management'){ ?>
+    <?php $this->load->view("{$pp}scripts"); ?>
+<?php } ?>
 <span id="get_footer_url" style="display:none;"><?php echo base_url(); ?></span>
 <div class="cart-bg outer-cart-overlay"></div>
 <div class="cart-bg inner-cart-overlay"></div>
