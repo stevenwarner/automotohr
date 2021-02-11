@@ -175,6 +175,7 @@ if ($class != 'dashboard' &&
     $class != 'manage_ems' &&
     $class != 'complynet' &&
     $class != 'paid_time_off' &&
+    $class != 'performance_management' &&
     $class != 'time_off' &&
     $class != 'govt_user' &&
     $class != 'assign_bulk_documents' &&
