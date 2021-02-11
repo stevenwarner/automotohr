@@ -1,0 +1,53 @@
+<script>
+    //
+    var employeeList = <?=json_encode($employeeList);?>;
+    var rolesList = <?=json_encode([
+        'hiring_manager' => 'Hiring Manager',
+        'admin' => 'Admin'
+    ]);?>;
+    //
+    function getVisibility(){
+        let html = '';
+        //
+        let roleOPT = '';
+        let employeesOPT = '';
+        //
+        $.each(rolesList, (ind, role) => {
+            roleOPT += `<option value="${ind}">${role}</option>`;
+        });
+        $.each(employeeList, (ind, emp) => {
+            if(emp.access_level_plus == 1 || emp.access_level == 'Manager' || emp.access_level == 'Employee') return;
+            employeesOPT += `<option value="${emp.sid}">${remakeEmployeeName(emp)}</option>`;
+        });
+
+        //
+        html += `<div class="row">
+                    <div class="col-xs-12" style="margin-bottom: 10px;">
+                        <label class="control control--checkbox">
+                            Visible To Payroll Plus
+                            <input type="checkbox" id="js-modify-visible-to-payroll" name="jmvtp" />
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
+                </div>`;
+        //
+        html += `<div class="row">
+                    <div class="col-xs-12">
+                        <label>Select Roles <i class="fa fa-question-circle" data-toggle="propover" title="Note" data-content="This document will be visible to the selected Roles."></i></label>
+                        <select multiple="true" id="js-modify-roles">${roleOPT}</select>
+                    </div>
+                </div>
+                `;
+        html += `<div class="row">
+                    <div class="col-xs-12">
+                        <label>Select Specific Employee(s) <i class="fa fa-question-circle" data-toggle="propover" title="Note" data-content="This document will be visible to the selected Employee(s)."></i></label>
+                        <select multiple="true" id="js-modify-selected-employees">${employeesOPT}</select>
+                    </div>
+                </div>
+                `;
+
+        return html;
+    }
+</script>
+
+<style>.select2-container--default .select2-selection--multiple .select2-selection__rendered{ height: auto !important;}</style>

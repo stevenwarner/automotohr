@@ -1,0 +1,1 @@
+<?php echo $preview_content; ?>

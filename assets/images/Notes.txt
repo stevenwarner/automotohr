@@ -1,0 +1,197 @@
+C:\xampp\htdocs\automoto\templates\_system\payment\products.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\browseCompany.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\searchFormByCompany.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\search_result_company.tpl
+
+C:\xampp\htdocs\automoto\templates\_system\field_types\search\locationCompany.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\search\string.like.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\search\location.like.tpl
+
+C:\xampp\htdocs\automoto\system\user-scripts\classifieds\browseCompany.php
+C:\xampp\htdocs\automoto\system\ext\reborn\css\style.css
+
+-------------------------------Company Detail----------------------
+C:\xampp\htdocs\automoto\templates\_system\classifieds\company_profile.tpl
+"C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\classifieds\search_results_jobs.tpl"
+C:\xampp\htdocs\automoto\templates\_system\classifieds\search_results_jobs_listings.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\display\youtube.tpl
+
+------------------Product Detail--------------------
+C:\xampp\htdocs\automoto\templates\_system\payment\view_product_detail.tpl
+
+---------------------Recover Password---------------
+C:\xampp\htdocs\automoto\templates\_system\users\password_recovery.tpl
+C:\xampp\htdocs\automoto\templates\_system\users\change_password.tpl
+
+----------------------REsume Detail-------------------
+C:\xampp\htdocs\automoto\templates\_system\classifieds\display_resume.tpl
+C:\xampp\htdocs\automoto\templates\_system\builder\bf_displaylisting_fieldset.tpl
+C:\xampp\htdocs\automoto\templates\_system\builder\bf_displaylisting_fieldsblocks.tpl
+C:\xampp\htdocs\automoto\templates\_system\builder\bf_displaylisting_fieldsholders.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\listing_comments.tpl
+
+26/8/15
+---------------------------Contact file--------------------------
+C:\xampp\htdocs\automoto\templates\_system\miscellaneous\contact_form.tpl
+
+----------------------------Shoping Cart File------------------------------
+C:\xampp\htdocs\automoto\templates\_system\payment\shopping_cart.tpl
+1/9/15
+----------------------------Job search------------------------------
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\classifieds\search_results_jobs.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\search_results_refine_block.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\search_results_jobs_listings.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\save_search_form.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\notes.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\save_listing.tpl
+C:\xampp\htdocs\automoto\templates\_system\guest_alerts\create.tpl
+
+----------------------------Resumesearch------------------------------
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\classifieds\search_results_resumes.tpl
+
+--------------------------------Alter Table Feed Query------------------
+ALTER TABLE `listing_feeds` ADD `featured_jobs_feed` BOOLEAN NOT NULL DEFAULT TRUE ;
+
+------------------------------------XML FEED pages-----------------
+C:\xampp\htdocs\automoto\system\admin-scripts\classifieds\listing_feeds.php
+C:\xampp\htdocs\automoto\templates\_system\admin\classifieds\add_listing_feed.tpl
+C:\xampp\htdocs\automoto\templates\_system\admin\classifieds\edit_listing_feed.tpl
+C:\xampp\htdocs\automoto\system\user-scripts\classifieds\listing_feeds.php
+C:\xampp\htdocs\automoto\system\user-scripts\classifieds\SearchResultsTP.php
+
+------------------------------------Registraion pages-----------------
+C:\xampp\htdocs\automoto\templates\_system\users\registration_form.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\location.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\captcha.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\date.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\email_ajaxchecking.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\geo.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\unique_string.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\youtube.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\list.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\string.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\logo.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\video_profile.tpl
+C:\xampp\htdocs\automoto\templates\_system\social\social_plugins.tpl
+
+------------------------LinkedIn file for Company-----------
+C:\xampp\htdocs\automoto\templates\_system\social\linkedin_profile_widget.tpl
+
+---------------------Registration New Page-----------------------
+C:\xampp\htdocs\automoto\templates\_system\users\registration_choose_user_group.tpl
+C:\xampp\htdocs\automoto\templates\_system\users\already_logged_in.tpl
+
+
+------------------------------------Post job Page-----------------
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\location.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\geo.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\picture.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\date.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\expiration_date.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\email_ajaxchecking.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\string.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\youtube.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\radio.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\monetary.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\monetary.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\file.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\resume_access.tpl
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\complex.tpl   
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\integer.tpl 
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\complex.tpl  
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\integer.tpl  
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\tree.tpl  
+
+
+------Else files-------
+C:\xampp\htdocs\automoto\templates\_system\classifieds\instructions.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\manage_pictures.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\edit_picture.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\listing_product_choice.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\add_listing_error.tpl
+
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\classifieds\input_form.tpl
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\classifieds\input_form_default.tpl
+
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\field_types\input\applicationSettings.tpl
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\main\index.tpl
+C:\xampp\htdocs\automoto\templates\_system\builder\bf_displaylisting_fieldsholders.tpl  
+
+---------------------------NEw files--------
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\menu\header_reborn.tpl
+
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\resume_access.tpl
+C:\xampp\htdocs\automoto\templates\_system\users\employers_list.tpl
+
+C:\xampp\htdocs\automoto\system\ext\reborn\css\style.css
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\main\index.tpl
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\menu\footer_reborn.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\add_listing_error.tpl
+C:\xampp\htdocs\automoto\templates\_system\main\sitemap.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\listing_product_choice.tpl
+
+--------------------------Date fixing------------------
+
+C:\xampp\htdocs\automoto\system\ext\reborn\js\jquery-fix.js
+C:\xampp\htdocs\automoto\templates\_system\field_types\input\date.tpl
+C:\xampp\htdocs\automoto\user\addcandidate.php
+C:\xampp\htdocs\automoto\user\templates\addcandidate.tpl
+
+------------------------------After posting page Job/Resumre---------------------
+C:\xampp\htdocs\automoto\templates\_system\classifieds\manage_listing.tpl
+
+----------------------------16/9/15 Chrome fix and Bug----Table styling-------
+C:\xampp\htdocs\automoto\templates\_system\private_messages\contacts.tpl
+C:\xampp\htdocs\automoto\templates\_system\applications\view.tpl
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\main\images\design.css
+
+------------------------16/9/15 Change on Post job and resume pages-------------
+C:\xampp\htdocs\automoto\templates\AutomotoSocial Jobs\menu\header_reborn.tpl
+C:\xampp\htdocs\automoto\templates\_system\classifieds\add_listing_error.tpl
+C:\xampp\htdocs\automoto\templates\_system\users\already_logged_in.tpl
+C:\xampp\htdocs\automoto\templates\_system\users\login.tpl
+
+
+---------------------///////////////////----UPLOADED ON SERVER-----//////////////////-----------------------------------
+
+
+------------------------------------AUTOMOTO-HR--------------------------
+edit profile page
+
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\complex.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\date.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\email.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\email_ajaxchecking.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\geo.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\integer.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\location.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\logo.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\password.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\picture.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\resume_access.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\string.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\unique_string.tpl
+C:\xampp\htdocs\automotohr\templates\_system\field_types\input\youtube.tpl
+
+C:\xampp\htdocs\automotohr\system\ext\reborn\css\style.css
+C:\xampp\htdocs\automotohr\templates\_system\field_types\display\string.tpl
+C:\xampp\htdocs\automotohr\templates\_system\users\edit_profile.tpl
+
+
+--------------------------------Questionaier Page----------------------------
+C:\xampp\htdocs\automotohr\templates\_system\applications\screening_questionnaires.tpl
+C:\xampp\htdocs\automotohr\templates\_system\applications\add_questionnaire.tpl
+C:\xampp\htdocs\automotohr\templates\_system\applications\add_questions.tpl
+C:\xampp\htdocs\automotohr\templates\_system\applications\edit_questions.tpl
+
+-------------------------CALL FOR DETAILS-------------------------------
+Commit
+C:\xampp\htdocs\automoto\system\admin-scripts\payment\add_product.php
+C:\xampp\htdocs\automoto\system\admin-scripts\payment\edit_product.php
+C:\xampp\htdocs\automoto\system\ext\reborn\css\style.css
+C:\xampp\htdocs\automoto\templates\_system\admin\payment\add_product.tpl
+C:\xampp\htdocs\automoto\templates\_system\admin\payment\edit_product.tpl
+C:\xampp\htdocs\automoto\templates\_system\applications\screening_questionnaires.tpl
+C:\xampp\htdocs\automoto\templates\_system\main\questionnaires_tutorial.tpl
+C:\xampp\htdocs\automoto\templates\_system\payment\products.tpl
+C:\xampp\htdocs\automoto\templates\_system\payment\view_product_detail.tpl

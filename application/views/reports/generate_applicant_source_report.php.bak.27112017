@@ -1,0 +1,354 @@
+<div class="main-content">
+    <div class="dashboard-wrp">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
+                    <?php $this->load->view('manage_employer/profile_left_menu_company'); ?>
+                </div>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                    <div class="row">
+                        <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="page-header-area">
+                                <span class="page-heading down-arrow">
+                                    <a href="<?php echo base_url('reports'); ?>" class="dashboard-link-btn"><i class="fa fa-chevron-left"></i>Back</a>
+                                    <?php echo $title; ?></span>
+                            </div>
+                            <div class="dashboard-conetnt-wrp">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="panel-group-wrp">
+                                            <div class="panel-group" id="accordion">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                                            <h4 class="panel-title">
+                                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                                                    <span class="glyphicon glyphicon-<?php if(isset($flag) && $flag == true){ echo 'minus'; } else{ echo 'plus'; } ?>"></span>
+                                                                    Advanced Search Filters
+                                                                </a>
+<!--                                                                Advanced Search Filters <span class="glyphicon glyphicon---><?php //if(isset($flag) && $flag == true){ echo 'minus'; } else { echo 'plus'; }?><!--"></span>-->
+                                                            </h4>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapseOne" class="panel-collapse collapse <?php if(isset($flag) && $flag == true){ echo 'in'; } ?>">
+                                                        <form method="get" enctype="multipart/form-data">
+                                                            <div class="panel-body">
+                                                                <div class="row">
+                                                                    <!-- jobs div -->
+                                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                        <div class="field-row">
+                                                                            <?php $job_sid = $this->uri->segment(5) != 'all' ? $this->uri->segment(5) : ''; ?>
+                                                                            <label>Job</label>
+                                                                            <div class="hr-select-dropdown ">
+                                                                                <select class="invoice-fields" name="job_sid" id="job_sid">
+                                                                                    <?php if (!empty($jobOptions)) { ?>
+                                                                                        <option value="all">All Jobs</option>
+                                                                                        <?php foreach ($jobOptions as $key => $value) { ?>
+                                                                                            <option <?php echo set_select('job_sid', $key, $job_sid == $key); ?> value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                                                                                        <?php } ?>
+                                                                                    <?php } else { ?>
+                                                                                        <option value="">No jobs found</option>
+                                                                                    <?php } ?>
+                                                                                </select>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                        <div class="field-row">
+                                                                            <?php $keyword = $this->uri->segment(4) != 'all' ? urldecode($this->uri->segment(4)) : ''; ?>
+                                                                            <label>Keyword</label>
+                                                                            <input placeholder="John Doe" class="invoice-fields" type="text" id="keyword" name="keyword" value="<?php echo set_value('keyword', $keyword); ?>" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                        <div class="field-row">
+                                                                            <label>Applicant Type</label>
+                                                                            <?php $applicant_type = $this->uri->segment(6) != 'all' ? urldecode($this->uri->segment(6)) : ''; ?>
+                                                                            <div class="hr-select-dropdown">
+                                                                                <select class="invoice-fields" name="applicant_type" id="applicant_type">
+                                                                                    <?php if (!empty($applicant_types)) { ?>
+                                                                                        <option value="all">All</option>
+                                                                                        <?php foreach ($applicant_types as $type) { ?>
+                                                                                            <option <?php echo set_select('applicant_type', $type, $applicant_type == $type); ?> value="<?php echo $type; ?>"><?php echo $type; ?></option>
+                                                                                        <?php } ?>
+                                                                                    <?php } else { ?>
+                                                                                        <option value="all">No Applicant Types found</option>
+                                                                                    <?php } ?>
+                                                                                </select>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+<!--                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">-->
+<!--                                                                        <div class="field-row">-->
+<!--                                                                            <label>Applicant Status</label>-->
+<!--                                                                            --><?php //$applicant_status = $this->uri->segment(7) != 'all' ? urldecode($this->uri->segment(7)) : '';?>
+<!--                                                                            <div class="hr-select-dropdown">-->
+<!--                                                                                <select class="invoice-fields" name="applicant_status" id="applicant_status">-->
+<!--                                                                                    --><?php //if (!empty($applicant_statuses)) { ?>
+<!--                                                                                        <option value="all">All</option>-->
+<!--                                                                                        --><?php //foreach ($applicant_statuses as $status) { ?>
+<!--                                                                                            <option --><?php //echo set_select('applicant_status', $status['name'], $applicant_status == $status['name']); ?><!-- value="--><?php //echo $status['name']; ?><!--">--><?php //echo $status['name']; ?><!--</option>-->
+<!--                                                                                        --><?php //} ?>
+<!--                                                                                    --><?php //} else { ?>
+<!--                                                                                        <option --><?php //echo $applicant_status == 'all' ? 'selected="selected"' : ''; ?><!-- value="all">All</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Not Contacted Yet' ? 'selected="selected"' : ''; ?><!-- value="Not Contacted Yet">Not Contacted Yet</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Left Message' ? 'selected="selected"' : ''; ?><!-- value="Left Message" >Left Message</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Contacted' ? 'selected="selected"' : ''; ?><!-- value="Contacted" >Contacted</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Candidate Responded' ? 'selected="selected"' : ''; ?><!-- value="Candidate Responded">Candidate Responded</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Interviewing' ? 'selected="selected"' : ''; ?><!-- value="Interviewing">Interviewing</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Submitted' ? 'selected="selected"' : ''; ?><!-- value="Submitted">Submitted</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Qualifying' ? 'selected="selected"' : ''; ?><!-- value="Qualifying">Qualifying</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Ready to Hire' ? 'selected="selected"' : ''; ?><!-- value="Ready to Hire">Ready to Hire</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Offered Job' ? 'selected="selected"' : ''; ?><!-- value="Offered Job">Offered Job</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Client Declined' ? 'selected="selected"' : ''; ?><!-- value="Client Declined">Client Declined</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Not In Consideration' ? 'selected="selected"' : ''; ?><!-- value="Not In Consideration">Not In Consideration</option>-->
+<!--                                                                                        <option --><?php //echo $applicant_status == 'Future Opportunity' ? 'selected="selected"' : ''; ?><!-- value="Future Opportunity">Future Opportunity</option>-->
+<!--                                                                                    --><?php //} ?>
+<!--                                                                                </select>-->
+<!---->
+<!--                                                                            </div>-->
+<!--                                                                        </div>-->
+<!--                                                                    </div>-->
+
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                        <div class="field-row">
+                                                                            <label class="">Date From</label>
+                                                                            <?php $start_date = $this->uri->segment(7) != 'all' && $this->uri->segment(7) != '' ? urldecode($this->uri->segment(7)) : date('m-d-Y');?>
+                                                                            <input class="invoice-fields"
+                                                                                   placeholder="<?php echo date('m-d-Y'); ?>"
+                                                                                   type="text"
+                                                                                   name="start_date_applied"
+                                                                                   id="start_date_applied"
+                                                                                   value="<?php echo set_value('start_date_applied', $start_date); ?>"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                        <div class="field-row">
+                                                                            <label class="">Date To</label>
+                                                                            <?php $end_date = $this->uri->segment(8) != 'all' && $this->uri->segment(8) != '' ? urldecode($this->uri->segment(8)) : date('m-d-Y');?>
+                                                                            <input class="invoice-fields"
+                                                                                   placeholder="<?php echo date('m-d-Y'); ?>"
+                                                                                   type="text"
+                                                                                   name="end_date_applied"
+                                                                                   id="end_date_applied"
+                                                                                   value="<?php echo set_value('end_date_applied', $end_date); ?>"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="field-row field-row-autoheight col-lg-12 text-right">
+                                                                    <a id="btn_apply_filters" class="btn btn-success" href="#" >Apply Filters</a>
+                                                                    <a id="btn_reset_filters" class="btn btn-success" href="<?php echo base_url('reports/applicant_source_report/applicants/'); ?>">Reset Filters</a>
+                                                                </div>
+
+                                                            </div>
+<!--                                                            <div class="panel-footer">-->
+<!--                                                                <div class="form-group">-->
+<!--                                                                    <input type="submit" class="submit-btn pull-right" value="Apply Filters" name="submit"/>-->
+<!--                                                                    <a class="submit-btn pull-right"-->
+<!--                                                                       href="--><?php //echo base_url('reports/applicant_source_report/' . $type); ?><!--">Reset-->
+<!--                                                                        Filters</a>-->
+<!--                                                                </div>-->
+<!--                                                                <div class="clearfix"></div>-->
+<!--                                                            </div>-->
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php if (!empty($myRecords) && !empty($myColumns)) { ?>
+                                            <div class="box-view reports-filtering">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <div class="form-group">
+                                                        <form method="post" id="export" name="export">
+                                                            <input type="submit" name="submit" class="submit-btn pull-right" value="Export" />
+                                                        </form>
+                                                        <a href="javascript:;" class="submit-btn pull-right" onclick="print_page('#print_div');">
+                                                            <i class="fa fa-print" aria-hidden="true"></i> 
+                                                            Print
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <hr>
+                                            </div>
+                                            <div class="page-header-area">
+                                                    <span class="page-heading pull-right">
+                                                        <b><?= 'Total number of applicants:    ' . sizeof($myRecords)?></b>
+                                                    </span>
+                                            </div>
+
+                                        <?php } ?>
+                                        <?php if (!empty($myRecords) && !empty($myColumns)) { ?>
+                                            <div class="table-responsive table-outer" id="print_div">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="col-xs-3">Job Title</th>
+                                                            <th class="col-xs-1">First Name</th>
+                                                            <th class="col-xs-1">Last Name</th>
+                                                            <th class="col-xs-1">Date Applied</th>
+                                                            <th class="col-xs-5">Applicant Source</th>
+                                                            <th class="col-xs-1">IP Address</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php foreach ($myRecords as $applicant) { ?>
+                                                            <tr>
+                                                                <td><?php echo $applicant['Title']; ?></td>
+                                                                <td><?php echo $applicant['first_name']; ?></td>
+                                                                <td><?php echo $applicant['last_name']; ?></td>
+                                                                <td><?php echo date_with_time($applicant['date_applied']); ?></td>
+                                                                <td><div class="table-responsive applicant_source_link_in_table"><?php echo $applicant['applicant_source']; ?></div></td>
+                                                                <td><?php echo $applicant['ip_address']; ?></td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        <?php } else { ?>
+                                            <?php if (!empty($myColumns)) { ?>
+                                                <div class="table-responsive table-outer">
+                                                    <table class="table table-bordered table-hover table-stripped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Job Title</th>
+                                                                <th>First Name</th>
+                                                                <th>Last Name</th>
+                                                                <th>Date Applied</th>
+                                                                <th>Applicant Source</th>
+                                                                <th>IP Address</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td colspan="6">No <?php echo ucwords($type); ?> Found!</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
+<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css"  />
+<script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
+
+<script>
+
+    function generate_search_url(){
+        var keyword = $('#keyword').val();
+        var job_sid = $('#job_sid').val();
+        var applicant_type = $('#applicant_type').val();
+        var start_date_applied = $('#start_date_applied').val();
+        var end_date_applied = $('#end_date_applied').val();
+
+        keyword = keyword != '' && keyword != null && keyword != undefined && keyword != 0 ? encodeURIComponent(keyword) : 'all';
+        job_sid = job_sid != '' && job_sid != null && job_sid != undefined && job_sid != 0 ? encodeURIComponent(job_sid) : 'all';
+        applicant_type = applicant_type != '' && applicant_type != null && applicant_type != undefined && applicant_type != 0 ? encodeURIComponent(applicant_type) : 'all';
+        start_date_applied = start_date_applied != '' && start_date_applied != null && start_date_applied != undefined && start_date_applied != 0 ? encodeURIComponent(start_date_applied) : 'all';
+        end_date_applied = end_date_applied != '' && end_date_applied != null && end_date_applied != undefined && end_date_applied != 0 ? encodeURIComponent(end_date_applied) : 'all';
+
+
+        var url = '<?php echo base_url('reports/applicant_source_report/applicants'); ?>' + '/' + keyword + '/' + job_sid + '/' + applicant_type + '/' + start_date_applied + '/' + end_date_applied;
+
+        $('#btn_apply_filters').attr('href', url);
+    }
+
+    $(document).ready(function () {
+
+        $('.collapse').on('shown.bs.collapse', function () {
+            $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+        }).on('hidden.bs.collapse', function () {
+            $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+        });
+
+        $('#job_sid').on('change', function (value) {
+            generate_search_url();
+        });
+
+        $('#applicant_type').on('change', function (value) {
+            generate_search_url();
+        });
+
+        $('#keyword').on('keyup', function () {
+            generate_search_url();
+        });
+
+        $('#keyword').trigger('keyup');
+
+        $('.datepicker').datepicker({dateFormat: 'mm-dd-yy'}).val();
+
+        $('#start_date_applied').datepicker({
+            dateFormat: 'mm-dd-yy',
+            onSelect: function (value) {
+                $('#end_date_applied').datepicker('option', 'minDate', value);
+                generate_search_url();
+            }
+        }).datepicker('option', 'maxDate', $('#end_date_applied').val());
+
+        $('#end_date_applied').datepicker({
+            dateFormat: 'mm-dd-yy',
+            onSelect: function (value) {
+                $('#start_date_applied').datepicker('option', 'maxDate', value);
+                generate_search_url();
+            }
+        }).datepicker('option', 'minDate', $('#start_date_applied').val());
+    });
+
+    function print_page(elem)
+    { 
+        
+        var data = ($(elem).html());
+        var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
+        
+        mywindow.document.write('<html><head><title>' + '<?php echo $title; ?>' + '</title>');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/style.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/font-awesome-animation.min.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/bootstrap.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/font-awesome.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/responsive.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/jquery-ui.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/css/jquery.datetimepicker.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/images/favi-icon.png'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/alertifyjs/css/alertify.min.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/alertifyjs/css/themes/default.min.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/select2.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/chosen.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/css/chosen.css'); ?>" type="text/css" />');
+        mywindow.document.write('</head><body >');
+        mywindow.document.write(data);
+        mywindow.document.write('</body></html>');
+        mywindow.document.write('<scr' + 'ipt src="<?php echo site_url('assets/manage_admin/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');
+        mywindow.document.write('<scr' + 'ipt type="text/javascript">$(window).load(function() { window.print(); window.close(); });</scr' + 'ipt>');
+        mywindow.document.close(); 
+        mywindow.focus(); 
+        
+    }
+    
+</script>

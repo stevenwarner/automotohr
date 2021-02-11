@@ -1,0 +1,4 @@
+<a class="btn blue-button btn-sm get_signature" href="javascript:;">Create E-Signature</a>
+<div class="img-full">
+    <img style="max-height: 75px;" src=""  id="draw_upload_img" />
+</div>

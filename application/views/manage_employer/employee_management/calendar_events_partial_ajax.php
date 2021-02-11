@@ -1,0 +1,1 @@
+<?php $this->load->view('manage_employer/application_tracking_system/calendar_events_partial_ajax'); ?>

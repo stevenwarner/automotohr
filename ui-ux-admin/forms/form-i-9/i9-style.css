@@ -1,0 +1,218 @@
+@page { margin: 0 }
+body { margin: 0 }
+.sheet {
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  page-break-after: always;
+  font-size: 14px;
+  font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+}
+
+/** Paper sizes **/
+body.A3           .sheet { width: 297mm; height: 419mm }
+body.A3.landscape .sheet { width: 420mm; height: 296mm }
+body.A4           .sheet { width: 210mm; /*height: 296mm;*/ margin: 5mm; }
+body.A4.landscape .sheet { width: 297mm; height: 209mm }
+body.A5           .sheet { width: 148mm; height: 209mm }
+body.A5.landscape .sheet { width: 210mm; height: 147mm }
+
+/** Padding area **/
+.sheet.padding-10mm { padding: 10mm }
+.sheet.padding-15mm { padding: 15mm }
+.sheet.padding-20mm { padding: 20mm }
+.sheet.padding-25mm { padding: 25mm }
+
+/** For screen preview **/
+@media screen {
+  body { background: #e0e0e0 }
+  .sheet {
+    background: white;
+    box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
+    margin: 5mm;
+  }
+}
+
+/** Fix for Chrome issue #273306 **/
+@media print {
+  body.A3.landscape { width: 420mm }
+  body.A3, body.A4.landscape { width: 297mm }
+  body.A4, body.A5.landscape { width: 210mm }
+  body.A5                    { width: 148mm }
+}
+
+.sheet-header {
+  float: left;
+  width: 100%;
+  padding: 0 0 2px 0;
+  margin: 0 0 5px 0;
+  border-bottom: 5px solid #000;
+}
+.header-logo{
+  float: left; 
+  width: 20%;
+}
+.center-col{
+  float: left; 
+  width: 60%; 
+  text-align: center;
+}
+.center-col h2,
+.center-col p{
+  margin: 0 0 5px 0;
+}
+.right-header{
+  float: left;
+  width: 20%; 
+  text-align: center;
+}
+.right-header h3,
+.right-header p{
+  margin: 0 0 5px 0;
+}
+.right-header p{
+  font-size: 14px;
+}
+.i9-table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 5px;
+  border: 1px solid #000;
+  text-align: left;
+  border-collapse: collapse;
+}
+.i9-table thead > tr > th,
+.i9-table tbody > tr > th,
+.i9-table tfoot > tr > th,
+.i9-table thead > tr > td,
+.i9-table tbody > tr > td,
+.i9-table tfoot > tr > td {
+  padding: 4px;
+  border: 1px solid #000;
+  vertical-align: top;
+}
+.bg-gray{
+  background-color: #C9C9C9;
+}
+.i9-table label{
+  font-size: 11px;
+}
+.mb-2{
+  margin-bottom: 10px !important;
+}
+.value-box {
+  float: left;
+  width: 100%;
+  min-height: 20px;
+  border-bottom: 1px solid #000;
+}
+.inline-value-box {
+  display: inline-block;
+  min-width: 88px;
+  margin: 0 5px;
+}
+.qr-code-box{
+  width: 100%;
+  height: 150px;
+  text-align: center;
+  border:1px solid #000;
+}
+.full-width{
+  float: left;
+  width: 100%;
+}
+.text-center{
+  text-align: center;
+}
+.italic{
+  font-style: italic;
+}
+.gray-box{
+  float: left;
+  width: 100%;
+  padding: 5px;
+  border:1px solid #000;
+  box-sizing: border-box;
+  margin: 0 0 7px 0;
+}
+.element-box{
+  display: inline-block;
+  margin: 0 15px 0 0;
+}
+.i9-table.border-less-head thead > tr > th,
+.i9-table.border-less-head thead > tr > td{
+  border:none !important;
+  padding: 4px !important;
+}
+.i9-table.border-less-head tbody{
+  border:1px solid #000;
+}
+.i9-table.border-less-head .no-border-bottom{
+  border: none !important;
+}
+.no-border{
+  border-bottom: none;
+}
+.i9-table .thick-border{
+  border-bottom: 4px solid #000;
+}
+.i9-table.border-less-head thead > tr > th,
+.i9-table.border-less-head tbody > tr > th,
+.i9-table.border-less-head tfoot > tr > th,
+.i9-table.border-less-head thead > tr > td,
+.i9-table.border-less-head tbody > tr > td,
+.i9-table.border-less-head tfoot > tr > td {
+  padding: 0;
+  border:1px solid #000;
+  border-collapse: collapse;
+}
+.i9-table.border-less-head .nested-table{
+  width: 100%;
+  border-collapse: collapse;
+}
+.i9-table .nested-table thead > tr > th,
+.i9-table .nested-table tbody > tr > th,
+.i9-table .nested-table tfoot > tr > th,
+.i9-table .nested-table thead > tr > td,
+.i9-table .nested-table tbody > tr > td,
+.i9-table .nested-table tfoot > tr > td {
+  padding: 4px;
+  border:1px solid #000;
+  border-collapse: collapse;
+}
+.i9-table.border-less-head .nested-table.no-border thead > tr > th,
+.i9-table.border-less-head .nested-table.no-border tbody > tr > th,
+.i9-table.border-less-head .nested-table.no-border tfoot > tr > th,
+.i9-table.border-less-head .nested-table.no-border thead > tr > td,
+.i9-table.border-less-head .nested-table.no-border tbody > tr > td,
+.i9-table.border-less-head .nested-table.no-border tfoot > tr > td {
+  border:none;
+}
+.box-lg{
+  height: 250px;
+  text-align: left;
+  padding: 5px;
+  box-sizing: border-box;
+}
+.acceptable-docs{
+  text-align: center;
+  position: relative;
+  border-top: 4px solid #000;
+  border-bottom: none;
+}
+.ordered-list {
+  margin: 0;
+  padding: 0 0 0 20px;
+}
+.ordered-list li {
+  padding: 10px 0 10px 0px;
+  border-bottom: 1px solid #000;
+}
+.ordered-list li:last-child{
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.no-cell-padding{
+  padding: 0 !important;
+}

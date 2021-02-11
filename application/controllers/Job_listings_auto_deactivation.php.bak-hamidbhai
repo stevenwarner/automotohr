@@ -1,0 +1,51 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Job_listings_auto_deactivation extends CI_Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->model('job_listings_auto_deactivation_model');
+    }
+
+    public function index()
+    {
+
+        $today_start_obj = new DateTime();
+        $today_start_obj->setTime(00, 00, 00);
+        $today_start_str = $today_start_obj->format('Y-m-d H:i:s');
+
+        $today_end_obj = new DateTime();
+        $today_end_obj->setTime(23, 59, 59);
+        $today_end_str = $today_end_obj->format('Y-m-d H:i:s');
+
+        $jobs = $this->job_listings_auto_deactivation_model->get_all_expiring_jobs($today_start_str, $today_end_str);
+
+        $expiring_job_sids = array();
+        $message_text = '';
+        foreach ($jobs as $key => $job) {
+            $expiring_job_sids[] = $job['sid'];
+            $message_text .= '<li>' . $job['sid'] . ' - ' . $job['Title'] . '</li>';
+        }
+
+        $subject = 'Jobs Automatically Deactivated!';
+        $message = '';
+        $message .= '<ol>';
+
+        if (!empty($expiring_job_sids)) {
+            $this->job_listings_auto_deactivation_model->set_active_status($expiring_job_sids, 0);
+            $message .= $message_text;
+        } else {
+            $message .= '<li>No Jobs Expiring Today</li>';
+        }
+
+        $message .= '</ol>';
+
+        if (base_url() != 'http://localhost/automotoCI/') {
+            sendMail('dev@automotohr.com', 'dev@automotohr.com', $subject, $message, 'AutomotoHR', 'dev@automotohr.com');
+        } else {
+            echo $message;
+        }
+    }
+}

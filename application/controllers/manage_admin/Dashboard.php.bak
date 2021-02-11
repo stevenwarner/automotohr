@@ -1,0 +1,932 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+//$memory_limit = ini_get('memory_limit');
+//echo $memory_limit; 
+ini_set("memory_limit","1024M");
+//$memory_limit = ini_get('memory_limit');
+//echo '<hr>'. $memory_limit; exit;
+class Dashboard extends Admin_Controller {
+    private $limit;
+    private $list_size;
+    // Set default response array
+    private $resp = array();
+    function __construct() {
+        parent::__construct();
+        $this->load->model('manage_admin/dashboard_model');
+        $this->load->model('manage_admin/users_model');
+        $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
+        // Set default response array
+        $this->resp = array('Status' => false, 'Response' => 'Invalid request');
+        $this->config->load('calendar_config');
+        $this->limit     = $this->config->item('calendar_opt')['calendar_history_limit'];
+        $this->list_size = $this->config->item('calendar_opt')['calendar_history_list_size'];
+    }
+
+    public function index() {
+        $admin_id = $this->session->userdata('user_id');
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        //check_access_permissions($security_details, 'manage_admin', 'list_admin_groups'); // Param2: Redirect URL, Param3: Function Name
+        //View data working starts
+        $companies                                                              = $this->dashboard_model->get_companies(); //Get Total employees Information
+        //  echo $this->db->last_query();
+        //  echo '<pre>'; print_r($companies); echo '</pre>';
+        $active_companies                                                       = 0;
+        $inactive_companies                                                     = 0;
+        $active_number_of_rooftops                                              = 0;
+        $inactive_number_of_rooftops                                            = 0;
+        $total_companies                                                        = count($companies);
+        $today_start                                                            = date('Y-m-d').' 00:00:01';
+        $today_end                                                              = date('Y-m-d').' 23:59:59';
+        $today_active_companies                                                 = 0;
+        $today_not_active_companies                                             = 0;  
+        $week_active_companies                                                  = 0;
+        $week_not_active_companies                                              = 0;
+        $month_active_companies                                                 = 0;
+        $month_not_active_companies                                             = 0;
+        $year_active_companies                                                  = 0;
+        $year_not_active_companies                                              = 0;
+        
+        $today_date                                                             = new DateTime($today_start);
+        $current_week_no                                                        = $today_date->format("W");
+        $current_month_no                                                       = $today_date->format("m");
+        $current_year_no                                                        = $today_date->format("Y");       
+
+        for($c=0;$c<count($companies);$c++){
+            $value = $companies[$c];
+            //  }
+            // foreach($companies as $key => $value){                                  // Process Companies data
+            if($value['active']==1){                                            // check for total active companies
+                $active_companies++;
+                $active_number_of_rooftops += $value['number_of_rooftops'];
+            } else {                                                            // check for total inactive companies
+                $inactive_companies++;
+                $inactive_number_of_rooftops += $value['number_of_rooftops'];
+            }
+            
+            if($value['registration_date']>=$today_start && $value['registration_date']<=$today_end){ // Check all companies registered today
+                if($value['active']==1){                                        // New companies registered today and are active
+                    $today_active_companies++;
+                } else {                                                        // New companies registered today and are inactive
+                    $today_not_active_companies++;
+                }
+            }
+            
+            $compnay_registeration_date                                         = $value['registration_date'];
+            $company_registeration_week                                         = new DateTime($compnay_registeration_date);
+            $company_registeration_week_no                                      = $company_registeration_week->format("W");
+            $company_registeration_month_no                                     = $company_registeration_week->format("m");
+            $company_registeration_year_no                                      = $company_registeration_week->format("Y");
+            
+            if ( ($company_registeration_week_no == $current_week_no) && ($company_registeration_year_no == $current_year_no) ) {
+                    if($value['active']==1){                                    // New companies registered current week and are active
+                        $week_active_companies++;
+                    } else {                                                    // New companies registered current week and are inactive
+                        $week_not_active_companies++;
+                    }
+            }
+            
+            if ( ($company_registeration_month_no == $current_month_no) && ($company_registeration_year_no == $current_year_no) ) {
+                    if($value['active']==1){                                    // New companies registered current month and are active
+                        $month_active_companies++;
+                    } else {                                                    // New companies registered current month and are inactive
+                        $month_not_active_companies++;
+                    }
+            }
+                        
+            if ( $company_registeration_year_no == $current_year_no ) {
+                    if ( $value['active'] == 1 ) {                              // New companies registered current month and are active
+                        $year_active_companies++;
+                    } else {                                                    // New companies registered current month and are inactive
+                        $year_not_active_companies++;
+                    }
+            }
+            unset($value);
+        }
+
+        $this->data['total_active_companies']                                   = $active_companies;
+        $this->data['total_inactive_companies']                                 = $inactive_companies;      
+        $this->data['total_companies']                                          = $total_companies;
+        $this->data['total_not_active_companies']                               = $inactive_companies;      
+        $this->data['today_active_companies']                                   = $today_active_companies;
+        $this->data['today_not_active_companies']                               = $today_not_active_companies;                
+        $this->data['week_active_companies']                                    = $week_active_companies;
+        $this->data['week_not_active_companies']                                = $week_not_active_companies;
+        $this->data['month_active_companies']                                   = $month_active_companies;
+        $this->data['month_not_active_companies']                               = $month_not_active_companies;
+        $this->data['year_active_companies']                                    = $year_active_companies;
+        $this->data['year_not_active_companies']                                = $year_not_active_companies;
+        $this->data['active_number_of_rooftops']                                = $active_number_of_rooftops;
+        $this->data['inactive_number_of_rooftops']                              = $inactive_number_of_rooftops;
+        // echo $active_number_of_rooftops.'<br>'.$inactive_number_of_rooftops;
+        $employees                                                              = $this->dashboard_model->get_employers(); //Get Total Employers Information
+        $total_employers                                                        = count($employees);
+        $total_active_employers                                                 = 0;
+        $total_not_active_employers                                             = 0;
+        $today_active_employers                                                 = 0;
+        $today_not_active_employers                                             = 0;
+        $week_active_employers                                                  = 0;
+        $week_not_active_employers                                              = 0;       
+        $month_active_employers                                                 = 0;
+        $month_not_active_employers                                             = 0;       
+        $year_active_employers                                                  = 0;
+        $year_not_active_employers                                              = 0;  
+        
+        for($e=0;$e<count($employees);$e++){
+            $value = $employees[$e];
+        //foreach($employees as $key => $value){                                  // Process employees data
+            if($value['active']==1){                                            // check for total active employees
+                $total_active_employers++;
+            } else {                                                            // check for total inactive employees
+                $total_not_active_employers++;
+            }
+            
+            if($value['registration_date']>=$today_start && $value['registration_date']<=$today_end){ // Check all employees registered today
+                if($value['active']==1){                                        // New employees registered today and are active
+                    $today_active_employers++;
+                } else {                                                        // New employees registered today and are inactive
+                    $today_not_active_employers++;
+                }
+            }
+            
+            $employee_registeration_date                                         = $value['registration_date'];
+            $employee_registeration_week                                         = new DateTime($employee_registeration_date);
+            $employee_registeration_week_no                                      = $employee_registeration_week->format("W");
+            $employee_registeration_month_no                                     = $employee_registeration_week->format("m");
+            $employee_registeration_year_no                                      = $employee_registeration_week->format("Y");
+            
+            if ( ($employee_registeration_week_no == $current_week_no) && ($employee_registeration_year_no == $current_year_no) ) {
+                    if($value['active']==1){                                    // New employees registered current week and are active
+                        $week_active_employers++;
+                    } else {                                                    // New employees registered current week and are inactive
+                        $week_not_active_employers++;
+                    }
+            }
+            
+            if ( ($employee_registeration_month_no == $current_month_no) && ($employee_registeration_year_no == $current_year_no) ) {
+                    if($value['active']==1){                                    // New employees registered current month and are active
+                        $month_active_employers++;
+                    } else {                                                    // New employees registered current month and are inactive
+                        $month_not_active_employers++;
+                    }
+            }
+                        
+            if ( $employee_registeration_year_no == $current_year_no ) {
+                    if ( $value['active'] == 1 ) {                              // New employees registered current month and are active
+                        $year_active_employers++;
+                    } else {                                                    // New employees registered current month and are inactive
+                        $year_not_active_employers++;
+                    }
+            }
+            unset($value);
+        }
+              
+        $this->data['total_employers']                                          = $total_employers;
+        $this->data['total_active_employers']                                   = $total_active_employers;
+        $this->data['total_not_active_employers']                               = $total_not_active_employers;
+        $this->data['today_active_employers']                                   = $today_active_employers;
+        $this->data['today_not_active_employers']                               = $today_not_active_employers;
+        $this->data['week_active_employers']                                    = $week_active_employers;
+        $this->data['week_not_active_employers']                                = $week_not_active_employers;
+        $this->data['month_active_employers']                                   = $month_active_employers;
+        $this->data['month_not_active_employers']                               = $month_not_active_employers;
+        $this->data['year_active_employers']                                    = $year_active_employers;
+        $this->data['year_not_active_employers']                                = $year_not_active_employers;
+        $this->data['total_online_employers']                                   = $this->users_model->get_online_users(10);
+
+        //Get Total Job Listings
+        $job_listings = $this->dashboard_model->get_total_job_listings();
+        $total_job_listings = count($job_listings);
+        $this->data['total_jobs'] = count($job_listings);
+        $active_job_listings = 0;
+        $inactive_job_listing = 0;
+        $organic_job_listing = 0;
+        foreach($job_listings as $job_listing){
+            if($job_listing['active'] == 1){
+                if($job_listing['has_job_approval_rights']==1){
+                    if($job_listing['approval_status'] == 'approved'){
+                        $active_job_listings++; 
+                    }else{
+                        $inactive_job_listing++;
+                    }
+                } else {
+                    $active_job_listings++; 
+                }
+            }else if($job_listing['active'] == 0){
+                $inactive_job_listing++;
+            }
+            // count total organic job  check
+            // if(isset($job_listing['expiry_date']) && $job_listing['expiry_date'] != NULL && $job_listing['expiry_date'] != '' && $job_listing['expiry_date'] < date('Y-m-d H:i:s') && $job_listing['organic_feed'] == 1){
+            //     $organic_job_listing++;
+            // }
+        }
+        $this->data['total_job_listings']   = $active_job_listings;
+        $this->data['inactive_job_listing'] = $inactive_job_listing;
+        $this->data['organic_job_listing']  = $this->dashboard_model->getOrganicJobCount();
+        //Get Total Job Applications
+        $today_applicants = 0;
+        $this_week_applicants = 0;
+        $this_month_applicants = 0;
+        $this_year_applicants = 0;
+        
+        $job_applications = $this->dashboard_model->get_total_job_applications();
+        
+        foreach($job_applications as $value){
+            if($value['date_applied']>=$today_start && $value['date_applied']<=$today_end){ // Get applicants count for today
+                 $today_applicants++;    
+            } 
+            
+            $application_date                                                   = $value['date_applied'];
+            $application_week                                                   = new DateTime($application_date);
+            $application_week_no                                                = $application_week->format("W");
+            $application_month_no                                               = $application_week->format("m");
+            $application_year_no                                                = $application_week->format("Y");
+            
+            if ( ($application_week_no == $current_week_no) && ($application_year_no == $current_year_no) ) {
+                    $this_week_applicants++;
+            }
+            
+            if ( ($application_month_no == $current_month_no) && ($application_year_no == $current_year_no) ) {
+                    $this_month_applicants++;
+            }
+                        
+            if ( $application_year_no == $current_year_no ) {
+                    $this_year_applicants++;
+            }
+        }
+        
+        $this->data['total_job_applications']                                   = count($job_applications);
+        $this->data['today_applicants']                                         = $today_applicants;
+        $this->data['this_week_applicants']                                     = $this_week_applicants;
+        $this->data['this_month_applicants']                                    = $this_month_applicants;
+        $this->data['this_year_applicants']                                     = $this_year_applicants;       
+        $excluded_companies                                                     = get_company_sids_excluded_from_reporting();
+
+        //Get Total Earnings For the Month
+        $total_earning_this_month                                               = $this->dashboard_model->get_total_earnings(date('Y-m-01 00:00:00'), date('Y-m-t 23:59:59'), $excluded_companies);
+        $this->data['total_earning_this_month']                                 = $total_earning_this_month;
+
+        //Get Total Earnings For the Year
+        $total_earning_this_year                                                = $this->dashboard_model->get_total_earnings(date('Y-m-d H:i:s', mktime(0, 0, 0, 1, 1, date('Y'))), date('Y-m-d H:i:s', mktime(23, 59, 59, 12, 31, date('Y'))), $excluded_companies);
+        $this->data['total_earning_this_year']                                  = $total_earning_this_year;
+
+        //Get Total Earnings
+        $total_earning_overall                                                  = $this->dashboard_model->get_total_earnings(NULL, NULL, $excluded_companies);
+        $this->data['total_earning_overall']                                    = $total_earning_overall;
+
+        $paid_marketplace_invoices_overall                                      = 0; //$this->dashboard_model->get_marketplace_invoices_total(null, null, 'paid');        
+
+
+        $my_date                                                                = new DateTime();
+        $current_week_day                                                       = intval($my_date->format('w'));
+        $first_day                                                              = clone $my_date;
+        $last_day                                                               = clone $my_date;
+
+        if ($current_week_day !== 0) {
+            $first_day->modify('last sunday');
+        }
+
+        if ($current_week_day !== 6) {
+            $last_day->modify('next saturday');
+        }
+
+        $week_start                                                             = $first_day->format('Y-m-d 00:00:00');
+        $week_end                                                               = $last_day->format('Y-m-d 23:59:59');
+
+        // Generate daily, weekly, monthly sales status
+        $paid_admin_invoices_today                                              = 0;
+        $paid_marketplace_invoices_today                                        = 0;
+        $paid_admin_invoices_this_week                                          = 0;
+        $paid_marketplace_invoices_this_week                                    = 0;
+        $paid_admin_invoices_this_month                                         = 0;
+        $paid_marketplace_invoices_this_month                                   = 0; 
+        
+        $monthly_sales_report                                                   = $this->dashboard_model->get_paid_sales(date('Y-m-01 00:00:00'), date('Y-m-t 23:59:59'), $excluded_companies);
+        
+        if(!empty($monthly_sales_report)){ // process the data
+            for($i=0; $i<count($monthly_sales_report); $i++){
+            $invoice_type                                                       = $monthly_sales_report[$i]['invoice_type'];
+            $amount                                                             = $monthly_sales_report[$i]['amount'];
+            $receipt_date                                                       = strtotime($monthly_sales_report[$i]['receipt_date']);
+                switch($invoice_type){
+                    case 'admin_invoice';
+                        if($receipt_date >= strtotime(date('Y-m-d 00:00:00')) && $receipt_date <= strtotime(date('Y-m-d 23:59:59'))){ // today paid admin invoices
+                            $paid_admin_invoices_today += $amount;
+                        }
+                        
+                        if($receipt_date >= strtotime($week_start) && $receipt_date <= strtotime($week_end)){ // week paid admin invoices
+                            $paid_admin_invoices_this_week += $amount;
+                        }
+                        
+                        if($receipt_date >= strtotime(date('Y-m-01 00:00:00')) && $receipt_date <= strtotime(date('Y-m-t 23:59:59'))){ // month paid admin invoices
+                            $paid_admin_invoices_this_month += $amount;
+                        }
+                    break;
+                    case 'market_place';
+                       if($receipt_date >= strtotime(date('Y-m-d 00:00:00')) && $receipt_date <= strtotime(date('Y-m-d 23:59:59'))){ // today paid market invoices
+                            $paid_marketplace_invoices_today += $amount;
+                        }
+                        
+                        if($receipt_date >= strtotime($week_start) && $receipt_date <= strtotime($week_end)){ // today paid admin invoices
+                            $paid_marketplace_invoices_this_week += $amount;
+                        }
+                        
+                        if($receipt_date >= strtotime(date('Y-m-01 00:00:00')) && $receipt_date <= strtotime(date('Y-m-t 23:59:59'))){ // today paid admin invoices
+                            $paid_marketplace_invoices_this_month += $amount;
+                        }
+                    break;
+
+                } 
+            }
+        }
+        
+        $this->data['paid_admin_invoices_today']                                = $paid_admin_invoices_today;
+        $this->data['paid_marketplace_invoices_today']                          = $paid_marketplace_invoices_today;
+        $this->data['paid_admin_invoices_this_week']                            = $paid_admin_invoices_this_week;
+        $this->data['paid_marketplace_invoices_this_week']                      = $paid_marketplace_invoices_this_week;
+        $this->data['paid_admin_invoices_this_month']                           = $paid_admin_invoices_this_month;
+        $this->data['paid_marketplace_invoices_this_month']                     = $paid_marketplace_invoices_this_month;
+
+        //Today
+        $unpaid_admin_invoices_today = $this->dashboard_model->get_admin_invoices_total(date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59'), 'unpaid', $excluded_companies);
+        $this->data['unpaid_admin_invoices_today'] = $unpaid_admin_invoices_today;
+
+        $unpaid_marketplace_invoices_today = $this->dashboard_model->get_marketplace_invoices_total(date('Y-m-d 00:00:00'), date('Y-m-d 23:59:59'), 'unpaid', $excluded_companies);
+        $this->data['unpaid_marketplace_invoices_today'] = $unpaid_marketplace_invoices_today;
+
+        //This Week
+        $unpaid_admin_invoices_this_week = $this->dashboard_model->get_admin_invoices_total(date('Y-m-d 00:00:00', strtotime('this monday')), date('Y-m-d 23:59:59', strtotime('this sunday')), 'unpaid', $excluded_companies);
+        $this->data['unpaid_admin_invoices_this_week'] = $unpaid_admin_invoices_this_week;
+        $unpaid_marketplace_invoices_this_week = $this->dashboard_model->get_marketplace_invoices_total(date('Y-m-d 00:00:00', strtotime('this monday')), date('Y-m-d 23:59:59', strtotime('this sunday')), 'unpaid', $excluded_companies);
+        $this->data['unpaid_marketplace_invoices_this_week'] = $unpaid_marketplace_invoices_this_week;
+
+        //This Month
+        $unpaid_admin_invoices_this_month = $this->dashboard_model->get_admin_invoices_total(date('Y-m-01 00:00:00'), date('Y-m-t 23:59:59'), 'unpaid', $excluded_companies);
+        $this->data['unpaid_admin_invoices_this_month'] = $unpaid_admin_invoices_this_month;
+        $unpaid_marketplace_invoices_this_month = $this->dashboard_model->get_marketplace_invoices_total(date('Y-m-01 00:00:00'), date('Y-m-t 23:59:59'), 'unpaid', $excluded_companies);
+        $this->data['unpaid_marketplace_invoices_this_month'] = $unpaid_marketplace_invoices_this_month;
+        
+        //Total Unpaid
+        $unpaid_admin_invoices_overall = $this->dashboard_model->get_admin_invoices_total(null, null, 'unpaid', $excluded_companies);
+        $this->data['unpaid_admin_invoices_overall'] = $unpaid_admin_invoices_overall;
+        $unpaid_marketplace_invoices_overall = $this->dashboard_model->get_marketplace_invoices_total(null, null, 'unpaid', $excluded_companies);
+        $this->data['unpaid_marketplace_invoices_overall'] = $unpaid_marketplace_invoices_overall;
+
+        //Get Invoices Count
+        $admin_invoices_count = 0;//$this->dashboard_model->get_admin_invoices_count();
+        $marketplace_invoices_count = 0;//$this->dashboard_model->get_marketplace_invoices_count();
+        
+        //Check if Admin - Start
+        $user = $this->ion_auth->user()->row();
+        $user_groups = $this->ion_auth->get_users_groups($user->id)->result();
+        
+        foreach ($user_groups as $user_group) {
+            if ($user_group->name == 'admin') {
+                $this->data['is_admin'] = true;
+                break;
+            } else {
+                $this->data['is_admin'] = false;
+            }
+        }
+        //Check if Admin - end
+        $this->data['total_invoices_count'] = intval($admin_invoices_count) + intval($marketplace_invoices_count);
+        $this->render('manage_admin/dashboard_view');
+    }
+
+
+    /**
+     * Calendar
+     * Created on: 16-05-2019
+     * 
+     * @return VOID
+     */
+    function my_events(){
+        // Sort array in ascendng order
+        if(!function_exists('ascending_sort_by_fullname')){
+            function ascending_sort_by_fullname($a, $b){
+                return $a['full_name'] > $b['full_name'];
+            }
+        }
+        // Set admin id
+        $this->data['admin_id'] = $this->session->userdata('user_id');
+        // Set scurity details
+        $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->data['admin_id']);
+        // Fetch administrator users
+        $this->data['super_admins'] = $this->dashboard_model->get_admins();
+        // Fetch users and merge them
+        $this->data['users'] = array_merge(
+            // Get demo users
+            $this->dashboard_model->get_demo_users(),
+            // Get affiliate users
+            $this->dashboard_model->get_affiliate_users(),
+            // Get affiliate referred users
+            $this->dashboard_model->get_affiliate_users(1),
+            // Get affiliate referred clients
+            $this->dashboard_model->get_affiliate_clients(1)
+        );
+        // Sort data in ascending order
+        usort( $this->data['users'], 'ascending_sort_by_fullname');
+        //
+        $this->render('manage_admin/calendar/events');
+    } 
+
+
+
+    /**
+     * Process admin calendar events
+     * Created on: 12-06-2019
+     *
+     * @accepts POST 
+     *
+     * @return JSON
+     */
+    function process_event(){
+        // Check for ajax request
+        if(!$this->input->is_ajax_request() || $this->input->method(FALSE) != 'post') { _e('Invalid request', true); exit(0); }
+        // Set admin id
+        $admin_id = $this->session->userdata('user_id');
+        // Set default event sid 
+        $event_sid = NULL;
+        // Set insert array
+        $ins = array();
+        // Set post
+        $post = $this->input->post(NULL, TRUE);
+        // Check the fields
+        // Set insert array
+        // Filter and reset fields
+        if($post['action'] != 'expired_reschedule')
+            $this->set_ins_array($post, $ins);
+        // _e($post, true);
+        // _e($ins, true, true);
+        // Add data to db
+        if($post['action'] == 'send_reminder_emails'){
+            //
+            $event = $this->dashboard_model->event_detail($post['event_sid']);
+            // Generate ICS file
+            $event['ics_file'] = generate_admin_ics_file($event, false);
+            // Genrate email and send it
+            send_admin_calendar_email_template($event, 'reminder_email', $post['emails']);
+
+            $this->resp['Status'] = true;
+            $this->resp['Response'] = 'Reminder emails sent.';
+            $this->response();
+        } else if($post['action'] == 'save'){
+            $event_sid = $this->dashboard_model->_q('admin_events', $ins);
+        } else if(($post['action'] == 'update' || $post['action'] == 'drag_update')){
+            $event_sid = $post['event_sid'];
+            $this->dashboard_model->_q('admin_events', $ins, array('sid' => $event_sid), 'update');
+        } else if($post['action'] == 'expired_reschedule'){
+            $event_sid = $post['event_sid'];
+            $new_event_details = $old_event_details = $this->dashboard_model->get_old_event_details($event_sid);
+            //
+            unset($new_event_details['sid'], $new_event_details['created_at'], $new_event_details['updated_at'], $new_event_details['external_participants']);
+            //
+            $new_event_details['parent_event_sid'] = $event_sid;
+            $new_event_details['event_date'] = $post['reschedule_date'];
+            $new_event_details['event_start_time'] = $post['reschedule_start_time'];
+            $new_event_details['event_end_time'] = $post['reschedule_end_time'];
+            $new_event_details['creator_sid'] = $this->session->userdata('user_id');
+            // Insert new row into database
+            $event_sid = $this->dashboard_model->_q('admin_events', $new_event_details);
+
+            // Check for participants
+            if(isset($old_event_details['external_participants']) && sizeof($old_event_details['external_participants'])){
+                foreach ($old_event_details['external_participants'] as $k0 => $v0) {
+                    //
+                    $v0['event_sid'] = $event_sid;
+                    // Insert external participants
+                    $this->dashboard_model->_q('admin_event_extra_participants', $v0);
+                }
+            }
+        } else if($post['action'] == 'cancel'){
+            $event_sid = $post['event_sid'];
+            $this->dashboard_model->_q(
+                'admin_events', 
+                array('event_status' => 'cancelled'), 
+                array('sid' => $event_sid),
+                'update'
+            );
+            $this->resp['Response'] = 'Event cancelled!';
+        } else if($post['action'] == 'reschedule'){
+            $event_sid = $post['event_sid'];
+            $this->dashboard_model->_q(
+                'admin_events', 
+                array('event_status' => $post['status']), 
+                array('sid' => $event_sid),
+                'update'
+            );
+            $db_date = $post['reschedule_date'];
+            // $bk_date = $post['reschedule_date'];
+            $bk_date = DateTime::createFromFormat('Y-m-d', $post['reschedule_date'])->format('F j, Y');
+            // Update email sent flag
+            if(strtotime('now') >= strtotime($db_date.' 23:59:59')){
+                $this->dashboard_model->_q(
+                    'admin_events', 
+                    array('reminder_sent_flag' => 1), 
+                    array('sid' => $event_sid),
+                    'update'
+                );
+            }
+            $this->resp['Response'] = 'Event Rescheduled for '.$bk_date.'.';
+        } else if($post['action'] == 'delete'){
+            $event_sid = $post['event_sid'];
+            $this->dashboard_model->_q(
+                'admin_events', 
+                array('sid' => $event_sid),
+                false,
+                'delete'
+            );
+            $this->dashboard_model->_q(
+                'admin_event_extra_participants', 
+                array('event_sid' => $event_sid),
+                false,
+                'delete'
+            );
+            $this->dashboard_model->_q(
+                'admin_event_history', 
+                array('event_sid' => $event_sid),
+                false,
+                'delete'
+            );
+            $this->dashboard_model->_q(
+                'admin_event_reminder_email_history', 
+                array('event_sid' => $event_sid),
+                false,
+                'delete'
+            );
+            $this->resp['Response'] = 'Event deleted!';
+        } else if($post['action'] == 'reminder_email_history'){
+            // Fetch company employers
+            $history = $this->dashboard_model->get_reminder_email_history(
+                $post['event_sid'], 
+                $post['current_page'],
+                $this->limit
+            );
+            if(!$history){
+                $this->resp['Response'] = 'no history found.';
+                $this->response();
+            }
+
+            $this->resp['Status'] = TRUE;
+            $this->resp['Response'] = 'success';
+            $this->resp['Limit']    = $this->limit;
+            $this->resp['ListSize'] = $this->list_size;
+            if(isset($history['Count'])){
+                $this->resp['Total']    = $history['Count'];
+                $this->resp['History']  = $history['History'];
+            }else
+                $this->resp['History']  = $history;
+            $this->response();
+        } else if($post['action'] == 'status_history'){
+            $event_sid = $post['event_sid'];
+            $current_page = $post['current_page'];
+            // fetch company employers
+            $history = $this->dashboard_model->get_event_availablity_requests(
+                $event_sid, 
+                $current_page,
+                $this->limit
+            );
+            if(!$history){
+                $this->resp['Response'] = 'no history found.';
+                $this->response();
+            }
+
+            // update all requests status to 
+            $this->dashboard_model->_q('admin_event_history', array('status' => '1'),  array( 'event_sid' => $event_sid ), 'update');
+
+            $this->resp['Status'] = TRUE;
+            $this->resp['Response'] = 'success';
+            $this->resp['Limit']    = $this->limit;
+            $this->resp['ListSize'] = $this->list_size;
+            if(isset($history['Count'])){
+                $this->resp['Total']    = $history['Count'];
+                $this->resp['History']  = $history['History'];
+            }else
+                $this->resp['History']  = $history;
+            $this->response();
+        }
+        // Check for default event sid
+        if($event_sid == NULL){
+            $this->resp['Response'] = 'Oops! Something went wrong while processing event. Please, try again in a few moments.';
+            $this->response();
+        }
+
+        // Only reset external users in case of
+        // save, update
+        if(in_array($post['action'], array('save', 'update'))){
+            // Delete previous external participants
+            $this->dashboard_model->_q('admin_event_extra_participants', 
+                array(
+                    'event_sid' => $event_sid, 
+                    'external_type' => 'participant'
+                ), 
+                false, 
+                'delete'
+            );
+            if(isset($post['external_participants'])){
+                // Set external participants
+                $external_participants = is_array($post['external_participants']) ? $post['external_participants'] : @json_decode($post['external_participants'], true);
+                if(sizeof($external_participants) && $external_participants[0]['name'] != ''){
+                    foreach ($external_participants as $k0 => $v0) {
+                        $this->dashboard_model->_q(
+                            'admin_event_extra_participants',
+                            array(
+                                'event_sid' => $event_sid,
+                                'external_type' => 'participant',
+                                'external_participant_name' => ucwords($v0['name']),
+                                'external_participant_email' => strtolower($v0['email']),
+                                'show_email' => (int)$v0['show_email']
+                            )
+                        );
+                    }
+                }
+            }
+
+            // Check for external users
+            if($post['event_type'] == 'demo' || $post['event_type'] == 'super admin'){
+                 // Delete previous external users
+                $this->dashboard_model->_q('admin_event_extra_participants', 
+                    array(
+                        'event_sid' => $event_sid, 
+                        'external_type' => 'user'
+                    ), 
+                    false, 
+                    'delete'
+                );
+                // Set external participants
+                $external_user_array = is_array($post['external_user_array']) ? $post['external_user_array'] : @json_decode($post['external_user_array'], true);
+                if(sizeof($external_user_array) && $external_user_array[0]['name'] != ''){
+                    foreach ($external_user_array as $k0 => $v0) {
+                        $this->dashboard_model->_q(
+                            'admin_event_extra_participants',
+                            array(
+                                'event_sid' => $event_sid,
+                                'external_type' => 'user',
+                                'external_participant_name' => ucwords($v0['name']),
+                                'external_participant_email' => strtolower($v0['email']),
+                                'show_email' => isset($v0['show_email']) ? $v0['show_email'] : 0
+                            )
+                        );
+                    }
+                }
+            }
+        }
+       
+        //
+        $this->resp['Status'] = true;
+
+        if($post['action'] == 'expired_reschedule')
+            $this->resp['Response'] = 'Event is scheduled for '.DateTime::createFromFormat('Y-m-d', $post['reschedule_date'])->format('F j, Y');
+        else if($post['action'] == 'save' || $post['action'] == 'update' || $post['action'] == 'drag_update')
+            $this->resp['Response'] = 'Event is scheduled for '.DateTime::createFromFormat('Y-m-d', $ins['event_date'])->format('F j, Y');
+
+        $this->resp['EventCode'] = $event_sid;
+
+        $event = $this->dashboard_model->event_detail($event_sid);
+        //
+        $event['diff_array'] = isset( $post['diff'] ) ? json_decode($post['diff'], true) : array();
+        if(sizeof($event['diff_array'])) $this->handle_event_changes($event_sid, $admin_id, $event['diff_array']);
+        // Generate ICS file
+        $event['ics_file'] = generate_admin_ics_file($event, in_array($post['action'], array('save', 'expired_reschedule')) ? false : true);
+        // Genrate email and send it
+        send_admin_calendar_email_template($event, in_array($post['action'], array('update')) ? 'update' : $post['action']);
+        //
+        $this->response();
+    }
+
+
+    /**
+     * Sends back JSON
+     * Created on: 12-06-2019
+     * 
+     * @param $resp Array
+     *
+     * @return VOID
+     */
+    private function response($resp = array()){
+        // Set json header for response
+        header('Content-Type: application/json');
+        // Send JSON as response
+        echo json_encode($this->resp); 
+        // KIll executionbs
+        exit(0);
+    }
+
+
+    /**
+     * Sets insert array
+     * Created on: 12-06-2019
+     *
+     * @param $post Array
+     * @param &$ins Array
+     *
+     * @return VOID
+     */
+    private function set_ins_array($post, &$ins){
+        // Check for user details
+        if($post['action'] == 'save'){
+            $ins['creator_sid'] = $post['creator_sid'];
+            $ins['event_status'] = 'pending';
+        }
+        // Set event title
+        if(isset($post['event_title']))
+            $ins['event_title'] = $post['event_title'];
+        // Set event date;
+        if(isset($post['event_date_bk']))
+            $ins['event_date']  = $post['event_date_bk'];
+        // Set event start time
+        if(isset($post['event_start_time'])){
+            $ins['event_start_time'] = $post['event_start_time'];
+        }
+        // Set event end time
+        if(isset($post['event_end_time']))
+            $ins['event_end_time']   = $post['event_end_time'];
+        // Set event type
+        if(isset($post['event_type']))
+            $ins['event_type']       = $post['event_type'];
+        // Set event category
+        if(isset($post['event_category']))
+            $ins['event_category']   = $post['event_category'];
+
+        // Set meeting details
+        if(isset($post['meeting_id'], $post['meeting_phone'], $post['meeting_url']))
+            if($post['meeting_id'] != '' && $post['meeting_phone'] != '' && $post['meeting_url'] != ''){
+                $ins['meeting_id'] = $post['meeting_id'];
+                $ins['meeting_phone'] = $post['meeting_phone'];
+                $ins['meeting_url']   = $post['meeting_url'];
+            }
+        // Set Participants
+        if(isset($post['participants']))
+            if($post['participants'] != '') $ins['participants'] = $post['participants'];
+        // Set Participants emails list
+        if(isset($post['participants_show_email']))
+            if($post['participants_show_email'] != '') $ins['participants_show_email_list'] = $post['participants_show_email'];
+        // Set comment
+        if(isset($post['comment']))
+            if($post['comment'] != '') $ins['comment'] = $post['comment'];
+        // Set reminder check & duration
+        if(isset($post['reminder_check'], $post['reminder_duration']))
+            if($post['reminder_check'] != 0 ){
+                $ins['reminder_check'] = 1;
+                $ins['reminder_duration'] = $post['reminder_duration'];
+            }
+
+        // Set user id
+        if(isset($post['user_id']))
+            if($post['user_id'] != '') $ins['user_id'] = $post['user_id'];
+        // Set user name
+        if(isset($post['user_name']))
+            if($post['user_name'] != '') $ins['user_name'] = $post['user_name'];
+        // Set user phone
+        if(isset($post['user_phone']))
+            if($post['user_phone'] != '') $ins['user_phone'] = $post['user_phone'];
+        // Set user email
+        if(isset($post['user_email']))
+            if($post['user_email'] != '') $ins['user_email'] = $post['user_email'];
+        // Set user type
+        if(isset($post['user_type']))
+            if($post['user_type'] != '') $ins['user_type']   = $post['user_type'];
+        // Set address
+        if(isset($post['event_address']))
+            if($post['event_address'] != '') $ins['event_address']   = $post['event_address'];
+
+        // Set external users and system users
+        if(isset($post['event_type']) && ($post['event_type'] == 'demo' || $post['event_type'] == 'super admin')){
+            $ins['user_type'] = 'external';
+            $ins['user_id'] = @json_encode($post['user_ids']);
+        }
+
+        // $ins['parent_event_sid'] = 0;
+        // $ins['reminder_sent_flag'] = 0;
+        // $ins['external_link_sid'] = 0;
+        // $ins['is_recur'] = 0;
+        // $ins['recur_type'] = 0;
+        // $ins['recur_start_date'] = 0;
+        // $ins['recur_end_date'] = 0;
+        // $ins['recur_list'] = 0;
+
+        // // Decode the json object
+        // $recurr = json_decode($event_add_post['recur'], true);
+        // // Check if recurr event is set
+        // if(sizeof($recurr)){
+        //     $event_data['is_recur'] = 1;
+        //     $event_data['recur_type'] = $recurr['recur_type'];
+        //     $event_data['recur_start_date'] = $recurr['recur_start_date'];
+        //     if($recurr['recur_end_date'] != '')
+        //         $event_data['recur_end_date'] = $recurr['recur_end_date'];
+        //     $event_data['recur_list'] = @json_encode($recurr['list']);
+        // }
+
+        // _e($ins, true);
+    }
+
+
+    /**
+     * Get events for admin calendar
+     * Created on: 12-06-2019
+     * 
+     * @return JSON 
+     *
+     */
+    function get_events(){
+        if(!$this->input->is_ajax_request() || !$this->input->method(false) == 'post') { _e('Invalid request'); exit(0); }
+        $post = $this->input->post(NULL, TRUE);
+        // _e($post, true);
+
+        $event_type = 'all';
+        $event_type = 'own';
+        // check for view type
+        $events = $this->dashboard_model->get_events(
+            $post['type'],
+            $post['year'],
+            $post['month'],
+            $post['day'],
+            $post['week_start'],
+            $post['week_end'],
+            $post['admin_id'],
+            $event_type
+        );
+
+        //
+        if(!$events) {
+            $this->resp['Response'] = 'No events found';
+            $this->response();
+        }
+
+        $this->resp['Status'] = TRUE;
+        $this->resp['Response'] = 'Success';
+        $this->resp['Events'] = $events;
+        $this->response();
+    }
+
+
+    /**
+     * get events from events
+     * added at: 28-03-2019
+     *
+     * @param $event_sid Integer
+     *
+     * @return JSON
+     *
+     */
+    function event_detail($event_sid){
+        // check if ajax request is not set
+        if(!$this->input->is_ajax_request() || !$this->input->method(false) == 'post') { _e('Invalid request'); exit(0); }
+        $post = $this->input->post(NULL, TRUE);
+
+        // check for view type
+        $event = $this->dashboard_model->event_detail( $event_sid );
+        //
+        if(!$event) {
+            $this->resp['Response'] = 'No event found';
+            $this->response($this->resp);
+        }
+        //
+        $this->resp['Status'] = TRUE;
+        $this->resp['Response'] = 'Success';
+        $this->resp['Event'] = $event;
+        //
+        $this->response();
+    }
+
+
+    /**
+     * Records event changes
+     * Created on: 24-06-2019
+     *
+     * @param $event_sid Integer
+     * @param $admin_id Integer
+     * @param $difference_array Array Optional
+     *
+     * @return Bool|Integer
+     *
+     */
+    private function handle_event_changes(
+        $event_sid,
+        $admin_id,
+        $difference_array = array()
+    ){
+        if(!sizeof($difference_array)) return false;
+        // Create an Insert array
+        $data_array = array(
+            'event_sid' => $event_sid,
+            'admin_id' => $admin_id,
+            'ip_address' => $this->input->ip_address(),
+            'details' => @json_encode($difference_array)
+        );
+        // Insert data
+        return $this->dashboard_model->_q('admin_event_change_history', $data_array);
+    }
+}
+
+    function nice_number($n) {
+        $n = (0+str_replace(",", "", $n));
+
+        if (!is_numeric($n)) return false;
+
+        if ($n > 1000000000000) return round(($n/1000000000000), 2).' trillion';
+        elseif ($n > 1000000000) return round(($n/1000000000), 2).' billion';
+        elseif ($n > 1000000) return round(($n/1000000), 2).' million';
+        elseif ($n > 1000) return round(($n/1000), 2).' thousand';
+
+        return number_format($n);
+    }

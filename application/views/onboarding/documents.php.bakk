@@ -1,0 +1,151 @@
+<?php
+$company_sid = 0;
+$users_type = '';
+$users_sid = 0;
+$back_url = '';
+$dependants_arr = array();
+$delete_post_url = '';
+$save_post_url = '';
+$document_g_base = '';
+$document_offer_letter_base = '';
+$document_u_base = '';
+
+if (isset($applicant)) {
+    $company_sid = $applicant['employer_sid'];
+    $users_type = 'applicant';
+    $users_sid = $applicant['sid'];
+    $back_url = base_url('onboarding/getting_started/' . $unique_sid);
+
+    $document_g_base = base_url('onboarding/sign_g_document/' . $unique_sid . '/');
+    $document_u_base = base_url('onboarding/sign_u_document/' . $unique_sid . '/');
+    $document_offer_letter_base = base_url('onboarding/sign_offer_letter/' . $unique_sid . '/');
+
+    $i9_url = base_url('onboarding/form_i9/'.$unique_sid);
+    $w4_url = base_url('onboarding/form_w4/'.$unique_sid);
+
+} else if (isset($employee)) {
+    $company_sid = $employee['parent_sid'];
+    $users_type = 'employee';
+    $users_sid = $employee['sid'];
+    $back_url = base_url('my_profile');
+
+    $document_g_base = base_url('documents_management/sign_g_document/');
+    $document_u_base = base_url('documents_management/sign_u_document/');
+    $document_offer_letter_base = base_url('documents_management/sign_offer_letter/');
+
+    $i9_url = base_url('form_i9');
+    $w4_url = base_url('form_w4');
+}
+
+?>
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                <div class="btn-panel">
+                    <a href="<?php echo $back_url; ?>" class="btn btn-info"><i class="fa fa-angle-left"></i> back</a>
+                </div>
+
+            </div>
+            <div class="<?php echo $users_type != 'applicant' ? 'col-lg-9 col-md-9 col-xs-12 col-sm-8' : 'col-lg-12 col-md-12 col-xs-12 col-sm-12'; ?>">
+                <div class="page-header">
+                    <h1 class="section-ttile">Documents</h1>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <?php if(!empty($documents)) { ?>
+                            <div class="row">
+                                <?php foreach($documents as $document) { ?>
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                        <div class="hr-box">
+                                            <div class="hr-innerpadding">
+                                                <div class="text-center text-success">
+                                                    <i class="fa fa-file-o text-blue" style="font-size: 100px; margin: 30px;"></i>
+                                                    <div style="min-height: 75px;">
+                                                        <h4 class="text-blue">
+                                                            <?php echo $document['document_type'] == 'uploaded' ? $document['document_name'] : $document['document_title']; ?>
+                                                        </h4>
+                                                    </div>
+                                                    <?php if($document['document_type'] == 'uploaded') { ?>
+                                                        <a href="<?php echo  $document_u_base . '/' . $document['document_sid']; ?>" class="btn btn-info">View Sign</a>
+                                                    <?php } else if($document['document_type'] == 'generated' && $document['is_offer_letter'] == 0) { ?>
+                                                        <a href="<?php echo $document_g_base . '/' . $document['document_sid']; ?>" class="btn btn-info">View Sign</a>
+                                                    <?php } else if($document['is_offer_letter'] == 1) { ?>
+                                                        <a href="<?php echo $document_offer_letter_base . '/' . $document['document_sid']; ?>" class="btn btn-info">View Sign</a>
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                <?php if(!empty($w4_form)){?>
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                        <div class="hr-box">
+                                            <div class="hr-innerpadding">
+                                                <div class="text-center text-success">
+                                                    <i class="fa fa-file-o text-blue" style="font-size: 100px; margin: 30px;"></i>
+                                                    <div style="min-height: 75px;">
+                                                        <h4 class="text-blue">
+                                                            W4 Form
+                                                        </h4>
+                                                    </div>
+                                                    <a href="<?php echo $w4_url; ?>" class="btn btn-info">View Sign</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } if(!empty($i9_form)){?>
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                        <div class="hr-box">
+                                            <div class="hr-innerpadding">
+                                                <div class="text-center text-success">
+                                                    <i class="fa fa-file-o text-blue" style="font-size: 100px; margin: 30px;"></i>
+                                                    <div style="min-height: 75px;">
+                                                        <h4 class="text-blue">
+                                                            I9 Form
+                                                        </h4>
+                                                    </div>
+                                                    <a href="<?php echo $i9_url; ?>" class="btn btn-info">View Sign</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                <?php foreach($old_system_documents as $document) { ?>
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                        <div class="hr-box">
+                                            <div class="hr-innerpadding">
+                                                <div class="text-center text-success">
+                                                    <i class="fa fa-file-o text-blue" style="font-size: 100px; margin: 30px;"></i>
+                                                    <div style="min-height: 75px;">
+                                                        <h4 class="text-blue">
+                                                            <?php echo $document['document_original_name']; ?>
+                                                        </h4>
+                                                    </div>
+                                                    <a href="<?php echo base_url('documents_management/old_system_document/' . $document['sid']); ?>" class="btn btn-info">View Sign</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        <?php } else { ?>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center">
+                                    <span class="no-data">No Documents</span>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+            <?php if($users_type != 'applicant') { ?>
+                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
+                    <?php $this->load->view('manage_employer/employee_hub_right_menu'); ?>
+                </div>
+            <?php } ?>
+        </div>                              
+    </div>
+</div>

@@ -1,0 +1,74 @@
+<?php
+
+class screening_questionnaires_model extends CI_Model {
+
+    function __construct() {
+        // Call the Model constructor
+        parent::__construct();
+    }
+
+    function insert_questionnaires($data) {
+        $this->db->insert('portal_screening_questionnaires', $data);
+    }
+
+    function update_questionnaires($sid, $data) {
+        $this->db->where('sid', $sid);
+        $this->db->update('portal_screening_questionnaires', $data);
+    }
+
+    function delete_questionnaires($sid) {
+        $this->db->where('sid', $sid);
+        $this->db->delete('portal_screening_questionnaires');
+    }
+
+    function get_all_questionnaires($sid) {
+        $this->db->where('sid', $sid);
+        $result = $this->db->get('portal_screening_questionnaires')->result_array();
+        return $result[0]; //seeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+    }
+
+    function get_all_questionnaires_by_employer($employer_sid) {
+        $this->db->where('employer_sid', $employer_sid);
+        $this->db->order_by("sid", "desc");
+        return $this->db->get('portal_screening_questionnaires');
+    }
+
+    function insert_questions($data) {
+        $this->db->insert('portal_questions', $data);
+        return $this->db->insert_id();
+    }
+
+    function update_questions($sid, $data) {
+        $this->db->where('sid', $sid);
+        $this->db->update('portal_questions', $data);
+    }
+
+    function delete_questions($sid) {
+        $this->db->where('sid', $sid);
+        $this->db->delete('portal_questions');
+    }
+
+    function get_all_questions($sid) {
+        $this->db->where('questionnaire_sid', $sid);
+        $this->db->order_by("sid", "desc");
+        return $this->db->get('portal_questions');
+        // return $result; //seeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+    }
+
+    function insert_question_option($data) {
+        $this->db->insert('portal_question_option', $data);
+    }
+
+    function delete_question_option($sid) {
+        $this->db->where('questions_sid', $sid);
+        $this->db->delete('portal_question_option');
+    }
+
+    function get_all_question_option($sid) {
+        $this->db->where('questions_sid', $sid);
+        $this->db->order_by("sid", "desc");
+        return $this->db->get('portal_question_option');
+        // return $result; //seeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+    }
+
+}

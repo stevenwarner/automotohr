@@ -1,0 +1,21 @@
+#gum, #recorded{
+    width:100%;
+}
+#recorded{
+    float:right;
+}
+@media screen and (max-width: 768px) {
+    #gum, #recorded{
+        width:100%;
+    }
+    .buttons{
+        margin-top:10px;
+    }
+}
+#video-error{
+    margin-top: 15px;
+    margin-left: -12px;
+}
+#add_new_question{
+    margin-bottom: 10px;
+}

@@ -1,0 +1,104 @@
+<div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+    <aside class="side-bar">
+        <a href="<?php echo base_url('employee_management') ?>">
+            <header class="sidebar-header">
+                <h1>Employee / Team Members</h1>
+            </header>
+        </a>
+        <div class="widget-wrp">
+            <div class="hr-widget">
+                <div class="browse-attachments">
+                    <ul>
+                        <li>
+                            <h4>Login Credentials</h4>
+                            <a href="<?php echo base_url('employee_login_credentials') . '/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>                            
+                        </li>
+                        <li>
+                            <h4>Background Check</h4>
+                            <a href="<?php echo base_url('background_check') . '/employee/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>                            
+                        </li>
+                        <li>
+                            <h4>Drug Testing</h4>
+                            <a href="<?php echo base_url('drug_test') . '/employee/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>              
+                        </li>
+<!--                        <li>
+                            <h4>Behavioral Assessment</h4>
+                            <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>-->
+                        <li>
+                            <h4>Reference Check</h4>
+                            <a href="<?php echo base_url('reference_checks/employee') . '/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+                        <li>
+                            <h4>Skills Test</h4>
+                            <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+                        <!--                        <li>
+                                                    <h4>Video Interview</h4>
+                                                    <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                                                </li>
+                                                <li>
+                                                    <h4>Add Schedule</h4>
+                                                    <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                                                </li>-->
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hr-widget">
+                <div class="browse-attachments">
+                    <ul>
+                        <li>
+                            <h4>Full Employment Application</h4>
+                            <a href="<?php echo base_url('full_employment_application') . '/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+                        <li>
+                            <h4>Emergency Contacts</h4>
+                            <a href="<?php echo base_url('emergency_contacts') . '/employee/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+                        <li>
+                            <h4>Occupational License Info</h4>
+                            <a href="<?php echo base_url('occupational_license_info') . '/employee/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+                        <li>
+                            <h4>Drivers License Info</h4>
+                            <a href="<?php echo base_url('drivers_license_info') . '/employee/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+                        <li>
+                            <h4>Equipment Info</h4>
+                            <a href="<?php echo base_url('equipment_info') . '/employee/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+
+                        <!--                            <li>
+                                                        <h4>W4 form and Tax withholding</h4>
+                                                        <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                                                    </li>-->
+                        <!--                            <li>
+                                                        <h4>i9 Employment Verification</h4>
+                                                        <a href="<?php //echo base_url('i9form') . '/applicant/' . $applicant_info['sid'];       ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                                                    </li>-->
+                        <li>
+                            <h4>Dependants</h4>
+                            <a href="<?php echo base_url('dependants') . '/employee/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+                        <!--
+                        <li>
+                            <h4>Benefit Elections</h4>
+                            <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+
+                        <li>
+                            <h4>Payroll</h4>
+                            <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+                        -->
+                        <li>
+                            <h4>HR Documents</h4>
+                            <a href="<?php echo base_url('my_hr_documents') . '/employee/' . $employer["sid"]; ?>">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </aside>										
+</div>

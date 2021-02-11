@@ -1,0 +1,659 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+
+	
+
+
+class employers extends Admin_Controller {
+    function __construct() {
+        parent::__construct();
+        $this->load->library('ion_auth');
+        $this->load->model('manage_admin/company_model');
+        $this->load->library("pagination");
+        $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
+    }
+
+    public function index($keyword = null, $status = 2, $company = null, $contact_name = null, $page_number = 1) {
+        $redirect_url = 'manage_admin';
+        $function_name = 'list_employers';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $this->data['page_title'] = 'Manage Employers';
+        $records_per_page = 100;
+        $my_offset = 0;
+
+        if ($page_number > 1) {
+            $my_offset = ($page_number - 1) * $records_per_page;
+        }
+
+        $keyword = $keyword == null ? 'all' : trim(urldecode($keyword));
+        $company = $company == null ? 'all' : trim(urldecode($company));
+        $contact_name = $contact_name == null ? 'all' : trim(urldecode($contact_name));
+        $status = $status == null ? 2 : $status;
+        $employers_count = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, true, $company, $contact_name);
+        $employers = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, false, $company, $contact_name);
+
+        $config = array();
+        $config['base_url'] = base_url('manage_admin/employers/' . rawurlencode($keyword) . '/' . $status . '/' . rawurlencode($company) . '/' . rawurlencode($contact_name) . '/');
+        $config['per_page'] = $records_per_page;
+        $config['uri_segment'] = 7;
+        $config['total_rows'] = $employers_count;
+        $config['num_links'] = 5;
+        $config['use_page_numbers'] = true;
+        //pagination style
+        $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+        $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+        $config['first_link'] = '&laquo;';
+        $config['first_tag_open'] = '<li class="prev page">';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = '&raquo;';
+        $config['last_tag_open'] = '<li class="next page">';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '<i class="fa fa-angle-right"></i>';
+        $config['next_tag_open'] = '<li class="next page">';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '<i class="fa fa-angle-left"></i>';
+        $config['prev_tag_open'] = '<li class="prev page">';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="javascript:;">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li class="page">';
+        $config['num_tag_close'] = '</li>';
+        $this->pagination->initialize($config);
+        $this->data['links'] = $this->pagination->create_links();
+//        $total_employers = $this->company_model->count_all_employers();
+        $this->data['employers'] = $employers;
+        $this->data['total_employers'] = $employers_count;
+        $this->data['total_rows'] = $employers_count;
+        $this->data['offset'] = $my_offset == 0 ? 1 : $my_offset;
+        $this->data['flag'] = true;
+        $this->data['end_offset'] = $my_offset == 0 ? $records_per_page > $employers_count ? $employers_count : $records_per_page : $my_offset + $records_per_page;
+        $this->form_validation->set_rules('action', 'action', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $this->render('manage_admin/company/listing_view_employers', 'admin_master');
+        } else {
+            if (isset($_POST['execute']) && $_POST['execute'] == 'multiple_action') {
+                $form_type = $_POST['type'];
+                $form_action = $_POST['action'];
+                $form_rows = $_POST['checkit'];
+                $this->company_model->perform_multiple_action($form_type, $form_action, $form_rows);
+            }
+
+            redirect('manage_admin/employers/' . $keyword . '/' . $status . '/' . $company. '/' . $contact_name . '/', $page_number, 'refresh');
+        }
+    }
+
+    private function index_old() {
+        $redirect_url = 'manage_admin';
+        $function_name = 'list_employers';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+
+        if (isset($_POST['execute']) && $_POST['execute'] == 'multiple_action') {
+            $form_type = $_POST['type'];
+            $form_action = $_POST['action'];
+            $form_rows = $_POST['checkit'];
+            $this->company_model->perform_multiple_action($form_type, $form_action, $form_rows);
+        }
+        //--------------------Search section Start---------------//
+        // get start and end from get
+        $search = array();
+        $search_data = $this->input->get(NULL, True);
+        $this->data['search'] = $search_data;
+        $this->data['flag'] = false;
+
+        foreach ($search_data as $key => $value) {
+            if ($key != 'start' && $key != 'end') {
+                if ($value != '') { // exclude these values from array
+                    $search[$key] = $value;
+                    $this->data["flag"] = true;
+                }
+            }
+        }
+
+        // calculate between from the start and get
+//        if (isset($search_data['start']) && $search_data['start'] != "" && isset($search_data['end']) && $search_data['end'] != "") {
+//            $start_date = explode('-', $search_data['start']);
+//            $start_date = $start_date[2] . '-' . $start_date[0] . '-' . $start_date[1] . ' 00:00:00';
+//            $end_date = explode('-', $search_data['end']);
+//            $end_date = $end_date[2] . '-' . $end_date[0] . '-' . $end_date[1] . ' 00:00:00';
+
+        if (isset($search_data['start']) || isset($search_data['end'])) {
+            if (isset($search_data['start']) && $search_data['start'] != "") {
+                $start_date = explode('-', $search_data['start']);
+                $start_date = $start_date[2] . '-' . $start_date[0] . '-' . $start_date[1] . ' 00:00:00';
+            } else {
+                $start_date = '01-01-1970 00:00:00';
+            }
+
+            if (isset($search_data['end']) && $search_data['end'] != "") {
+                $end_date = explode('-', $search_data['end']);
+                $end_date = $end_date[2] . '-' . $end_date[0] . '-' . $end_date[1] . ' 23:59:59';
+            } else {
+                $end_date = date('Y-m-d H:i:s');
+            }
+
+            $between = "registration_date between '" . $start_date . "' and '" . $end_date . "'";
+        }
+        //--------------------Search section End---------------//
+        //Pagination
+        $config = array();
+        $config['base_url'] = base_url() . "manage_admin/employers/";
+
+        // gets the number of records in both search and main
+        //if (isset($search_data['start']) && $search_data['start'] != "" && isset($search_data['end']) && $search_data['end'] != "") {
+        if (isset($search_data['start']) || isset($search_data['end'])) {
+            $config['total_rows'] = $this->company_model->total_employers_date($search, $between);
+        } else {
+            $config['total_rows'] = $this->company_model->total_employers($search);
+        }
+
+        // set some config properties and initilize pagination
+        $config['per_page'] = 100;
+
+        if (isset($post['per_page']) && !empty($post['per_page'])) {
+            $config['per_page'] = $post['per_page'];
+        }
+
+        $config['uri_segment'] = 3;
+        $choice = $config["total_rows"] / $config['per_page'];
+        $config['num_links'] = ceil($choice); //5;
+        $config['use_page_numbers'] = true;
+
+        //pagination style
+        $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+        $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+        $config['first_link'] = '&laquo;';
+        $config['first_tag_open'] = '<li class="prev page">';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = '&raquo;';
+        $config['last_tag_open'] = '<li class="next page">';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '<i class="fa fa-angle-right"></i>';
+        $config['next_tag_open'] = '<li class="next page">';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '<i class="fa fa-angle-left"></i>';
+        $config['prev_tag_open'] = '<li class="prev page">';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="javascript:;">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li class="page">';
+        $config['num_tag_close'] = '</li>';
+
+        $search_sid = '';
+        $search_username = '';
+        $search_email = '';
+        $search_CompanyName = '';
+        $search_start = '';
+        $search_end = '';
+
+        if (isset($_GET['sid'])) {
+            $search_sid = '?sid=' . $_GET['sid'];
+            $search_username = '&username=' . $_GET['username'];
+            $search_email = '&email=' . $_GET['email'];
+            $search_CompanyName = '&CompanyName=' . $_GET['CompanyName'];
+            $search_start = '&start=' . $_GET['start'];
+            $search_end = '&end=' . $_GET['end'];
+        }
+
+        $config['suffix'] = $search_sid . $search_username . $search_email . $search_CompanyName . $search_start . $search_end;
+        $config['first_url'] = base_url('manage_admin/employers/1') . $search_sid . $search_username . $search_email . $search_CompanyName . $search_start . $search_end;
+        $config['last_url'] = base_url('manage_admin/employers/1') . $search_sid . $search_username . $search_email . $search_CompanyName . $search_start . $search_end;
+        $config['prev_url'] = base_url('manage_admin/employers/1') . $search_sid . $search_username . $search_email . $search_CompanyName . $search_start . $search_end;
+        $config['next_url'] = base_url('manage_admin/employers/1') . $search_sid . $search_username . $search_email . $search_CompanyName . $search_start . $search_end;
+
+        $this->pagination->initialize($config);
+        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 1;
+        $my_offset = 0;
+
+        if ($page > 1) {
+            $my_offset = ($page - 1) * $config["per_page"];
+        }
+
+        $this->data['links'] = $this->pagination->create_links();
+        $this->data['page_title'] = 'Manage Employers';
+        $this->data['per_page'] = $config["per_page"];
+        $this->data['total_rows'] = $config["total_rows"];
+        $this->data['offset'] = $my_offset;
+
+        // gets all records displayed, both for search and main
+        $employersArray = array();
+        //if (isset($search_data['start']) && $search_data['start'] != "" && isset($search_data['end']) && $search_data['end'] != "") {
+        if (isset($search_data['start']) || isset($search_data['end'])) {
+            $employerData = $this->company_model->get_all_employers_date($config["per_page"], $my_offset, $search, $between);
+            $i = 0;
+
+            foreach ($employerData as $employer) {
+                $companyData = $this->company_model->get_details($employer['parent_sid'], 'company');
+
+                if (isset($companyData[0]['CompanyName'])) {
+                    $employer['CompanyName'] = $companyData[0]['CompanyName'];
+                } else {
+                    $employer['CompanyName'] = '';
+                }
+
+                $employersArray[$i] = $employer;
+                $i++;
+            }
+
+            $this->data['employers'] = $employersArray;
+            $this->data['total'] = $this->company_model->total_employers_date($search, $between);
+        } else {
+            $employerData = $this->data['employers'] = $this->company_model->get_all_employers($config["per_page"], $my_offset, $search);
+            $i = 0;
+
+            foreach ($employerData as $employer) {
+                $companyData = $this->company_model->get_details($employer['parent_sid'], 'company');
+                $employer['CompanyName'] = 'Not Found!';
+
+                if (!empty($companyData)) {
+                    $employer['CompanyName'] = $companyData[0]['CompanyName'];
+                }
+
+                $employersArray[$i] = $employer;
+                $i++;
+            }
+
+            $this->data['employers'] = $employersArray;
+            $this->data['total'] = $this->company_model->total_employers($search);
+        }
+
+        // gets company data from users, nothing picked
+        //if (isset($search_data['start']) && $search_data['start'] != "" && isset($search_data['end']) && $search_data['end'] != "") {
+        if (isset($search_data['start']) || isset($search_data['end'])) {
+            $this->data['companies'] = $this->company_model->get_all_companies_date($config["per_page"], $my_offset, $search, $between);
+        } else {
+            $this->data['companies'] = $this->company_model->get_all_companies($config["per_page"], $my_offset, $search);
+        }
+
+        $this->render('manage_admin/company/listing_view_employers', 'admin_master');
+    }
+
+    public function edit_employer($sid = NULL) {
+        $redirect_url = 'manage_admin';
+        $function_name = 'edit_employers';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $employer_detail = $this->company_model->get_details($sid, 'employer');
+        $company_detail = $this->company_model->get_details($employer_detail[0]['parent_sid'], 'company');
+        $this->data['creator'] = $employer_detail[0]['created_by'] == null ? [] : $this->company_model->getEmployeeCreator($employer_detail[0]['created_by']);
+        $this->data['show_timezone'] = isset($company_detail[0], $company_detail[0]['timezone']) ? $company_detail[0]['timezone'] : '';
+        $this->data['page_title'] = 'Edit Employer';
+        $security_access_levels = $this->company_model->get_security_access_levels();
+        $this->data['security_access_levels'] = $security_access_levels;
+        $this->load->library('form_validation');
+
+        if ($employer_detail[0]['username'] != $this->input->post('username')) {
+            $this->form_validation->set_rules('username', 'User Name', 'required|min_length[5]|trim|xss_clean|is_unique[users.username]');
+        } else {
+            $this->form_validation->set_rules('username', 'User Name', 'required|min_length[5]|trim|xss_clean');
+        }
+
+        if ($employer_detail[0]['email'] != $this->input->post('email')) {
+            $this->form_validation->set_rules('email', 'E-Mail Address', 'trim|xss_clean|valid_email|is_unique[users.email]');
+        } else {
+            $this->form_validation->set_rules('email', 'E-Mail Address', 'trim|xss_clean|valid_email');
+        }
+
+        $this->form_validation->set_rules('alternative_email', 'Alternative Email Address', 'trim|xss_clean|valid_email');
+        $this->form_validation->set_rules('direct_business_number', 'Direct Business Number', 'trim|xss_clean');
+        $this->form_validation->set_rules('cell_number', 'Cell Number', 'trim|xss_clean');
+        $this->form_validation->set_rules('job_title', 'Job Title', 'trim|xss_clean|alpha_numeric_spaces');
+
+        if ($this->form_validation->run() === FALSE) {
+            if ($employer_detail) {
+                $this->data['data'] = $employer_detail[0];
+            } else {
+                $this->session->set_flashdata('message', 'Employer does not exists!');
+                redirect('manage_admin/employers', 'refresh');
+            }
+
+            $this->load->helper('form');
+            $this->render('manage_admin/company/edit_employer');
+        } else {
+            $sid = $this->input->post('sid');
+            $action = $this->input->post('submit');
+            $data = array('username' => $this->input->post('username'),
+                            'email' => $this->input->post('email'));
+
+            $data['first_name'] = $this->input->post('first_name');
+            $data['last_name'] = $this->input->post('last_name');
+            $data['job_title'] = $this->input->post('job_title');
+            $data['direct_business_number'] = $this->input->post('direct_business_number');
+            $data['cell_number'] = $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('cell_number');
+            $data['alternative_email'] = $this->input->post('alternative_email');
+            $registration_date = $this->input->post('registration_date');
+            $data['access_level'] = $this->input->post('security_access_level');
+            $data['access_level_plus'] = $this->input->post('access_level_plus');
+            $data['complynet_status'] = $this->input->post('complynet_status');
+
+            if(IS_PTO_ENABLED == 1){
+                $data['user_shift_hours'] = $this->input->post('shift_hours', true);
+                $data['user_shift_minutes'] = $this->input->post('shift_mins', true);
+            }
+
+            if(IS_NOTIFICATION_ENABLED == 1){
+                if(!sizeof($this->input->post('notified_by', true))) $data['notified_by'] = 'email';
+                else $data['notified_by'] = implode(',', $this->input->post('notified_by', true));
+            }
+
+
+            if ($registration_date != NULL) {
+                $data['registration_date'] = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
+            } else {
+                $data['registration_date'] = NULL;
+            }
+
+            $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture'); // Picture Upload and Update
+
+            if ($profile_picture != 'error') {
+                $data['profile_picture'] = $profile_picture;
+            } else {
+                $pictures = NULL;
+            }
+
+            if(IS_TIMEZONE_ACTIVE){
+                //Added on: 25-06-2019
+                $timezone = $this->input->post('timezone', true);
+                if($timezone != '') $data['timezone'] = $timezone;
+            }
+
+            $this->company_model->update_user($sid, $data, 'Employer');
+
+            if ($action == 'Save') {
+                redirect('manage_admin/employers/', 'refresh');
+            } else {
+                redirect('manage_admin/employers/edit_employer/' . $sid, 'refresh');
+            }
+            //redirect('manage_admin/companies','refresh');
+        }
+    }
+
+    public function add_employer($company_sid = null) {
+        $redirect_url = 'manage_admin';
+        $function_name = 'edit_employers';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+
+        if ($company_sid != null) {
+            $this->data['company_sid'] = $company_sid;
+            $this->data['page_title'] = 'Create Employer';
+            $company_name = $this->company_model->get_company_name($company_sid);
+            $this->data['company_name'] = $company_name;
+            $security_access_levels = $this->company_model->get_security_access_levels();
+            $this->data['security_access_levels'] = $security_access_levels;
+            $this->form_validation->set_rules('first_name', 'First Name', 'required|trim');
+            $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim');
+            $this->form_validation->set_rules('username', 'Username', 'required|trim|is_unique[users.username]');
+            $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
+            $this->form_validation->set_rules('alternative_email', 'Alternative Email', 'trim|valid_email');
+            $this->form_validation->set_rules('job_title', 'Job Title', 'trim');
+            $this->form_validation->set_rules('direct_business_number', 'Direct Business Number', 'trim');
+            $this->form_validation->set_rules('cell_number', 'Cell Number', 'trim');
+            $this->form_validation->set_rules('security_access_level', 'Security Access Level', 'required|trim');
+
+            if ($this->form_validation->run() == false) {
+                $this->render('manage_admin/company/add_employer');
+            } else {
+                $company_sid = $this->input->post('company_sid');
+                $ip_address = getUserIP() . ' - ' . $_SERVER['HTTP_USER_AGENT'];
+                $username = $this->input->post('username');
+
+                $email = $this->input->post('email');
+                $first_name = $this->input->post('first_name');
+                $last_name = $this->input->post('last_name');
+                $job_title = $this->input->post('job_title');
+                $cell_number = $this->input->post('cell_number');
+                $direct_business_number = $this->input->post('direct_business_number');
+                $alternative_email = $this->input->post('alternative_email');
+                $access_level = $this->input->post('security_access_level');
+                $access_level_plus = $this->input->post('access_level_plus');
+                $registration_date = $this->input->post('registration_date');
+                $action = $this->input->post('action');
+                $salt = generateRandomString(48);
+
+                if($registration_date !=NULL) {
+                    $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
+                } else {
+                    $registration_date = NULL;
+                }
+
+                $insert_data = array();
+                $insert_data['ip_address'] = $ip_address;
+                $insert_data['username'] = $username;
+                $insert_data['email'] = $email;
+                $insert_data['first_name'] = $first_name;
+                $insert_data['last_name'] = $last_name;
+                $insert_data['job_title'] = $job_title;
+                $insert_data['cell_number'] = $cell_number;
+                $insert_data['registration_date'] = $registration_date;
+                $insert_data['CompanyName'] = $company_name;
+                $insert_data['direct_business_number'] = $direct_business_number;
+                $insert_data['alternative_email'] = $alternative_email;
+                $insert_data['access_level'] = $access_level;
+                $insert_data['access_level_plus'] = $access_level_plus;
+                $insert_data['salt'] = $salt;
+                $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
+                $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
+                $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');
+
+                if ($profile_picture != 'error') {
+                    $pictures = array('profile_picture'=>$profile_picture);
+                    $this->company_model->update_user($sid,$pictures);
+                } else {
+                    $pictures = NULL;
+                }
+
+                if ($action == 'sendemail') {
+                    $replacement_array = array();
+                    $replacement_array['employer_name'] = ucwords($first_name . ' ' . $last_name);
+                    $replacement_array['access_level'] = ucwords($access_level);
+                    $replacement_array['company_name'] = $company_name;
+                    $replacement_array['username'] = $username;
+                    $replacement_array['login_page'] = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="https://www.automotohr.com/login" target="_blank">Login page</a>';
+                    $replacement_array['firstname'] = $first_name;
+                    $replacement_array['lastname'] = $last_name;
+                    $replacement_array['first_name'] = $first_name;
+                    $replacement_array['last_name'] = $last_name;
+                    $replacement_array['email'] = $email;
+                    $replacement_array['create_password_link']  = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url() . "employee_management/generate_password/" . $salt . '">Create Your Password</a>';
+                    log_and_send_templated_email(NEW_EMPLOYEE_TEAM_MEMBER_NOTIFICATION, $email, $replacement_array);
+                }
+
+                $this->session->set_flashdata('message', '<strong>Success: </strong> Employer Account Created');
+                redirect('manage_admin/employers', 'refresh');
+            }
+        } else {
+            redirect('manage_admin/companies', 'refresh');
+        }
+    }
+
+    function employer_task() {
+        $redirect_url = 'manage_admin';
+        $function_name = 'show_employer_multiple_actions';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $action = $this->input->post('action');
+        $employer_id = $this->input->post('sid');
+
+        if ($action == 'delete') {
+            $this->company_model->delete_employer($employer_id);
+        }
+    }
+
+    function employer_login() {
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+        $redirect_url = 'manage_admin';
+        $function_name = 'employerlogin';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $this->load->model('dashboard_model');
+        $action = $this->input->post('action');
+        $employer_id = $this->input->post('sid');
+
+
+        if ($action == 'login') {
+
+            $result = $this->dashboard_model->update_session_details(0, $employer_id);
+            $empData = $result['employer'];
+            $system_check = NULL;
+
+            if (isset($_POST['system'])) {
+                $system_check = $_POST['system'];
+            }
+
+            $task_check = NULL;
+
+            if (isset($_POST['task'])) {
+                $task_check = $_POST['task'];
+            }
+
+            if ($system_check != null) {
+                $dataToUpdate = array('verification_key' => NULL); //removing verification key from user document
+                $this->company_model->updateUserDocument($employer_id, $dataToUpdate); //activate user
+                $updatedData = array('active' => 1);
+                $this->dashboard_model->update_user($employer_id, $updatedData);
+            } else if ($task_check != null) {
+                $updatedData = array('activation_key' => NULL); //Removing user activation_key
+                $this->dashboard_model->update_user($empData["parent_sid"], $updatedData);
+            }
+
+            $companyData = $result['company'];
+
+
+            if ($empData) {
+                $portal_detail = $result['portal'];
+                $sess_array = array();
+                $data['cart'] = db_get_cart_content($empData['parent_sid']);
+                $sess_array = array (
+                                        'company_detail' => $companyData,
+                                        'employer_detail' => $empData,
+                                        'portal_detail' => $portal_detail,
+                                        'cart' => $data['cart'],
+                                        'is_super' => 1,
+                                        'clocked_status' => $result['clocked_status']
+                                    );
+
+                $this->db->where('company_id',$sess_array['company_detail']['sid']);
+                $config = $this->db->get('incident_type_configuration')->num_rows();
+                $sess_array['incident_config'] = $config;
+                $sess_array['resource_center'] = $sess_array['company_detail']['enable_resource_center'];
+
+                $this->session->set_userdata('logged_in', $sess_array);
+                $activity_data = array();
+                $activity_data['company_sid'] = $companyData['sid'];
+                $activity_data['employer_sid'] = $empData['sid'];
+                $activity_data['company_name'] = $companyData['CompanyName'];
+                $activity_data['employer_name'] = $empData['first_name'] . ' ' . $empData['last_name'];
+                $activity_data['employer_access_level'] = $empData['access_level'];
+                $activity_data['module'] = 'Super Admin';
+                $activity_data['action_performed'] = 'Employer Login';
+                $activity_data['action_year'] = date('Y');
+                $activity_data['action_week'] = date('W');
+                $activity_data['action_timestamp'] = date('Y-m-d H:i:s');
+                $activity_data['action_status'] = '';
+                $activity_data['action_url'] = current_url();
+                $activity_data['employer_ip'] = getUserIP();
+                $activity_data['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $this->db->insert('logged_in_activitiy_tracker_super', $activity_data);
+                return "true";
+            } else
+                return "false";
+        }
+    }
+
+    function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME) {
+        require_once(APPPATH . 'libraries/aws/aws.php');
+
+        if (isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'] != '') {
+            $last_index_of_dot = strrpos($_FILES[$file_input_id]["name"], '.') + 1;
+            $file_ext = substr($_FILES[$file_input_id]["name"], $last_index_of_dot, strlen($_FILES[$file_input_id]["name"]) - $last_index_of_dot);
+            $file_name = trim($document_name . '-' . $suffix);
+            $file_name = str_replace(" ", "_", $file_name);
+            $file_name = strtolower($file_name);
+            $prefix = str_pad($company_sid, 4, '0', STR_PAD_LEFT);
+            $new_file_name = $prefix . '-' . $file_name . '-' . generateRandomString(3) . '.' . $file_ext;
+
+            if($_FILES[$file_input_id]['size'] == 0) {
+                $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
+                return 'error';
+            }
+
+            $aws = new AwsSdk();
+            $aws->putToBucket($new_file_name, $_FILES[$file_input_id]['tmp_name'], $bucket_name);
+            return $new_file_name;
+        } else {
+            return 'error';
+        }
+    }
+
+    public function change_status() {
+        $action = $this->input->post('action');
+        $employer_id = $this->input->post('sid');
+
+        if($action == 'deactive') {
+            $data = array('active'=>0);
+            $this->company_model->update_user_status($employer_id,$data);
+        } elseif($action == 'active') {
+            $data = array('active'=>1);
+            $this->company_model->update_user_status($employer_id,$data);
+        }
+    }
+
+    function send_login_credentials() {
+        $action = $this->input->post('action');
+        $sid = $this->input->post('sid');
+        $company_name = $this->input->post('name');
+        $employee_details = $this->company_model->get_employee_details($sid);
+
+        if(!empty($employee_details)) {
+            $first_name = $employee_details[0]['first_name'];
+            $last_name = $employee_details[0]['last_name'];
+            $username = $employee_details[0]['username'];
+            $access_level = $employee_details[0]['access_level'];
+            $email = $employee_details[0]['email'];
+            $salt = $employee_details[0]['salt'];
+
+            if($salt == NULL || $salt == '') {
+                $salt = generateRandomString(48);
+                $data = array('salt' => $salt);
+                $this->company_model->update_user($sid, $data);
+            }
+
+            if ($action == 'sendemail') {
+                $replacement_array = array();
+                $replacement_array['employer_name'] = ucwords($first_name . ' ' . $last_name);
+                $replacement_array['access_level'] = ucwords($access_level);
+                $replacement_array['company_name'] = $company_name;
+                $replacement_array['username'] = $username;
+                $replacement_array['login_page'] = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="https://www.automotohr.com/login" target="_blank">Login page</a>';
+                $replacement_array['firstname'] = $first_name;
+                $replacement_array['lastname'] = $last_name;
+                $replacement_array['first_name'] = $first_name;
+                $replacement_array['last_name'] = $last_name;
+                $replacement_array['email'] = $email;
+                $replacement_array['create_password_link']  = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url() . "employee_management/generate_password/" . $salt . '">Create Your Password</a>';
+                log_and_send_templated_email(NEW_EMPLOYEE_TEAM_MEMBER_NOTIFICATION, $email, $replacement_array);
+            }
+
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+    }
+}

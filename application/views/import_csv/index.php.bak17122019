@@ -1,0 +1,362 @@
+<div class="main-content">
+    <div class="dashboard-wrp">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
+                    <?php $this->load->view('manage_employer/settings_left_menu_administration'); ?>
+                </div>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="page-header-area">
+                                <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                            </div>
+                        <div class="dashboard-conetnt-wrp">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                    <h4>The Provided CSV File must be in Following Format</h4>
+                                </div>
+                                <div class="panel-body"><pre>
+<b>First Name, Last Name, E-Mail, Contact Number, Street Address, City, Zipcode, State, Country, Profile Picture URL, Access Level, Job Title, Resume URL, Cover Letter URL, Timezone,Secondary Email, Secondary Phonenumber, Other Email, Other Phone Number, Office Location, LinkedIn URL, Employee Number, Social Security Number, Date of Birth, Department, Team, Joining Date, Shift Hours, Shift Minutes</b><br>
+Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, PST, second@email.com,876544,other@mail.com,9876543,New York,https://yourwebsite.com/linkedIn,Emp007,ssn123,9/25/1994,My Department, My Team,3/7/2016,8,0
+Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Manager, Manager Sales, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, PST, second@email.com,876544,other@mail.com,9876543,New York,https://yourwebsite.com/linkedIn,Emp007,ssn123,9/25/1994,My Department, My Team,3/7/2016,8,0
+Nathan, Quite, nathan@example.com, +1823212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Hiring Manager, Technical Manager, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, PST, second@email.com,876544,other@mail.com,9876543,New York,https://yourwebsite.com/linkedIn,Emp007,ssn123,9/25/1994,My Department, My Team,3/7/2016,8,0
+Allen, Knight, allen@example.com, +1223312129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Employee, Office Assistant, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, PST, second@email.com,876544,other@mail.com,9876543,New York,https://yourwebsite.com/linkedIn,Emp007,ssn123,9/25/1994,My Department, My Team,3/7/2016,8,0
+Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Employee, Team Lead, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, PST, second@email.com,876544,other@mail.com,9876543,New York,https://yourwebsite.com/linkedIn,Emp007,ssn123,9/25/1994,My Department, My Team,3/7/2016,8,0
+                                </pre></div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                        <div class="universal-form-style-v2">
+                            <ul>
+                                <form method="post" action="javascript:void(0)" id="js-import-form" enctype="multipart/form-data">
+                                    <input type="hidden" value="upload_file" name="action" id="action" />
+                                    <li class="form-col-100">
+                                        <label>Upload CSV File</label>
+                                        <div class="upload-file invoice-fields">
+                                            <span id="name_userfile" class="selected-file">No Document</span>
+                                            <input type="file" onchange="check_file('userfile')" id="userfile" name="userfile" accept=".csv">
+                                            <a href="javascript:;">Choose File</a>
+                                        </div>
+                                    </li>
+                                    <li class="form-col-50-left">
+                                        <input type="submit" class="btn btn-success js-submit-btn disabled" value="Import Employees" disabled="true" />
+                                    </li>
+                                </form>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Loader -->
+<div id="my_loader" class="text-center js-loader">
+    <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
+        <div class="loader-icon-box">
+            <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
+            <div class="loader-text js-loader-text" style="display:block; margin-top: 35px;">Please wait while we generate a preview...
+        </div>
+    </div>
+</div>
+<script src="<?=base_url('assets/lodash/loadash.min.js');?>"></script>
+<link rel="stylesheet" href="<?=base_url('assets/alertifyjs/css/alertify.min.css');?>">
+<script src="<?=base_url('assets/alertifyjs/alertify.min.js');?>"></script>
+<script>
+    function check_file(val) {
+        $('.js-submit-btn').addClass('disabled').prop('disabled', true);
+        var fileName = $("#" + val).val();
+        
+        if (fileName.length > 0) {
+            $('#name_' + val).html(fileName.substring(0, 45));
+            var ext = fileName.split('.').pop();
+            
+            if (val == 'userfile') {
+                if (ext != "csv") {
+                    $("#" + val).val(null);
+                    alertify.error("Please select a valid File format.");
+                    $('#name_' + val).html('<p class="red">Only ( .csv ) allowed!</p>');
+                    return false;
+                } else{
+                    $('.js-submit-btn').removeClass('disabled').prop('disabled', false);
+                    return true;
+                }
+            }
+        } else {
+            $('#name_' + val).html('No file selected');
+        }
+    }
+
+    //
+    $(function importCSV(){
+        var 
+        file = [],
+        jobTitles = <?=json_encode(array('jobtitle', 'job'));?>,
+        cityTitles = <?=json_encode(array('city', 'employeecity'));?>,
+        stateTitles = <?=json_encode(array('state','employeestate'));?>,
+        resumeTitles = <?=json_encode(array('resume', 'cv', 'resumeurl'));?>,
+        countryTitles = <?=json_encode(array('country', 'employeecountry'));?>,
+        addressTitles = <?=json_encode(array('address','streetaddress', 'employeeaddressline1', 'addressline1', 'employeeaddress'));?>,
+        zipCodeTitles = <?=json_encode(array('zipcode', 'zip', 'employeezip'));?>,
+        timezoneTitles = <?=json_encode(array('timezone', 'zone'));?>,
+        lastNameTitles = <?=json_encode(array('lastname', 'lname'));?>,
+        firstNameTitles = <?=json_encode(array('firstname', 'fname'));?>,
+        coverLetterTitles = <?=json_encode(array('coverletter', 'coverletterurl'));?>,
+        phoneNumberTitles = <?=json_encode(array('phonenumber','contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber'));?>,
+        accessLevelTitles = <?=json_encode(array('accesslevel'));?>,
+        emailAddressTitles = <?=json_encode(array('email', 'emailaddress'));?>,
+        secondaryemailaddressTitles = <?=json_encode(array('secondaryemail', 'secondaryemailaddress'));?>,
+        otheremailaddressTitles = <?=json_encode(array('otheremail', 'otheremailaddress'));?>,
+        secondarymobileTitles = <?=json_encode(array('secondarymobilenumber', 'secondarymobile'));?>,
+        otherphoneTitles = <?=json_encode(array('otherphonenumber', 'otherphone'));?>, //telephonenumber
+        officelocationTitles = <?=json_encode(array('office','officelocation'));?>,
+        linkedinurlTitles = <?=json_encode(array('linkedin', 'linkedinurl'));?>,
+        employeenumberTitles = <?=json_encode(array('employeenumber'));?>,
+        socialsecurotynumberTitles = <?=json_encode(array('socialsecurotynumber','ssn'));?>,
+        dateofbirthTitles = <?=json_encode(array('dateofbirth','dob'));?>,
+        departmentTitles = <?=json_encode(array('departmentname','department'));?>,
+        teamTitles = <?=json_encode(array('teamname','team'));?>,
+        joiningdateTitles = <?=json_encode(array('joining','joiningdate'));?>,
+        hoursTitles = <?=json_encode(array('shifthours','hours'));?>,
+        minutesTitles = <?=json_encode(array('shiftminutes','minutes'));?>,
+        profilePictureTitles = <?=json_encode(array('profile', 'profilepicture', 'profilepictureurl'));?>;
+
+        loader('hide');
+        // 
+        $('#userfile').change(fileChanged);
+        //
+        $('#js-import-form').submit(formHandler);
+        //
+        function fileChanged(e){
+            if(e.target.files[0] === undefined) return;
+            var fileReader = new FileReader();
+            fileReader.onload = fileLoaded;
+            fileReader.readAsText(e.target.files[0]);
+        }
+
+        //
+        function fileLoaded(e){ file = e; }
+
+        //
+        function formHandler(e){
+            e.preventDefault();
+            var fileData = file.target.result.split(/\n/g);
+            // Get header
+            var indexes  = fileData[0].split(',');
+            // Reset index
+            indexes = indexes.map(function(v, i){
+                var index = in_array(v.toLowerCase().replace(/[^a-z]/g, '').trim());
+                return index === -1 ? 'extra' : index;
+            });
+            // Remove head
+            fileData.splice(0,1);
+            //
+            var records = [];
+            //
+            fileData.map(function(v){
+                var tmp = v.split(','),
+                record = new Object(),
+                i = 0,
+                len = tmp.length;
+                for(i; i < len; i++) record[indexes[i]] = tmp[i];
+                records.push(record); 
+            });
+            //
+            uploadRecords(records);
+        }
+
+        //
+        function in_array(index){
+            var i, len, array;
+            // Reset start and length
+            i = 0; len = firstNameTitles.length; array = firstNameTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'first_name';
+            // Reset start and length
+            i = 0; len = lastNameTitles.length; array = lastNameTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'last_name';
+            // Reset start and length
+            i = 0; len = phoneNumberTitles.length; array = phoneNumberTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'PhoneNumber';
+            // Reset start and length
+            i = 0; len = emailAddressTitles.length; array = emailAddressTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'email';
+            // Reset start and length
+            i = 0; len = addressTitles.length; array = addressTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'Location_Address';
+            // Reset start and length
+            i = 0; len = countryTitles.length; array = countryTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'Location_Country';
+            // Reset start and length
+            i = 0; len = cityTitles.length; array = cityTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'Location_City';
+            // Reset start and length
+            i = 0; len = stateTitles.length; array = stateTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'Location_State';
+            // Reset start and length
+            i = 0; len = zipCodeTitles.length; array = zipCodeTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'Location_ZipCode';
+            // Reset start and length
+            i = 0; len = jobTitles.length; array = jobTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'job_title';
+            // Reset start and length
+            i = 0; len = accessLevelTitles.length; array = accessLevelTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'access_level';
+            // Reset start and length
+            i = 0; len = profilePictureTitles.length; array = profilePictureTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'profile_picture';
+            // Reset start and length
+            i = 0; len = resumeTitles.length; array = resumeTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'resume';
+            // Reset start and length
+            i = 0; len = coverLetterTitles.length; array = coverLetterTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'cover_letter';
+            // Reset start and length
+            i = 0; len = timezoneTitles.length; array = timezoneTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'timezone';
+            // New flow
+            // Reset start and length
+            i = 0; len = secondaryemailaddressTitles.length; array = secondaryemailaddressTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'secondary_email';
+            // Reset start and length
+            i = 0; len = otheremailaddressTitles.length; array = otheremailaddressTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'other_email';
+            // Reset start and length
+            i = 0; len = secondarymobileTitles.length; array = secondarymobileTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'secondary_PhoneNumber';
+            // Reset start and length
+            i = 0; len = otherphoneTitles.length; array = otherphoneTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'other_PhoneNumber';
+            // Reset start and length
+            i = 0; len = officelocationTitles.length; array = officelocationTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'office_location';
+            // Reset start and length
+            i = 0; len = linkedinurlTitles.length; array = linkedinurlTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'linkedin_profile_url';
+            // Reset start and length
+            i = 0; len = employeenumberTitles.length; array = employeenumberTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'employee_number';
+            // Reset start and length
+            i = 0; len = socialsecurotynumberTitles.length; array = socialsecurotynumberTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'ssn';
+            // Reset start and length
+            i = 0; len = dateofbirthTitles.length; array = dateofbirthTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'dob';
+            // Reset start and length
+            i = 0; len = departmentTitles.length; array = departmentTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'department';
+            // Reset start and length
+            i = 0; len = teamTitles.length; array = teamTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'team';
+            // Reset start and length
+            i = 0; len = joiningdateTitles.length; array = joiningdateTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'joined_at';
+            // Reset start and length
+            i = 0; len = hoursTitles.length; array = hoursTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'user_shift_hours';
+            // Reset start and length
+            i = 0; len = minutesTitles.length; array = minutesTitles;
+            for(i; i < len; i++) if(index == array[i]) return 'user_shift_minutes';
+            return -1;
+        }
+
+        //
+        var chunkOBJ = {
+            current: 0,
+            // chunkSize: 2,
+            chunkSize: 50,
+            loaded: 0,
+            records: [],
+            totalChunks: 0,
+            recordsLength: 0
+        };
+        var failedCount = 0, insertedCount = 0, existedCount = 0;
+
+        //
+        function uploadRecords(records){
+            chunkOBJ.records = [];
+            //
+            chunkOBJ.recordsLength = records.length;
+            //
+            chunkOBJ.totalChunks = Math.ceil(chunkOBJ.recordsLength / Math.ceil(chunkOBJ.recordsLength / chunkOBJ.chunkSize));
+            //
+            if(chunkOBJ.totalChunks != 1)
+            chunkOBJ.records = _.chunk(records, chunkOBJ.totalChunks);
+            else chunkOBJ.records.push(records);
+            //
+            uploadChunk();
+        }
+
+        //
+        function uploadChunk(){
+            if(chunkOBJ.records[chunkOBJ.current] === undefined){
+                // TODO
+                console.log('All chunks are being uploaded..');
+                return;
+            }
+            startAddProcess(chunkOBJ.records[chunkOBJ.current]);
+        }
+
+        var xhr = null;
+        //
+        function startAddProcess(chunk){
+            //
+            if(xhr !== null) return;
+            //
+            if( chunkOBJ.records[chunkOBJ.current] === undefined){
+                loader('hide');
+                alertify.alert('SUCCESS!', 'You have successfully imported <b>'+( insertedCount )+'</b> new employees, <b>'+( existedCount )+'</b> employees already exists and <b>'+( failedCount )+'</b> employees failed to add.');
+                failedCount = existedCount = insertedCount = chunkOBJ.loaded = chunkOBJ.current = chunkOBJ.totalChunks = chunkOBJ.recordsLength = 0;
+                return;
+            }
+            //
+            chunkOBJ.loaded += chunk.length;
+            var 
+            messageRow  = "Please, be patient as we import employees.<br />";
+            messageRow += "It may take a few minutes<br />";
+            messageRow += 'Importing '+(chunkOBJ.loaded)+' of '+(chunkOBJ.recordsLength)+' employees.';
+            //
+            loader('show', messageRow);
+            xhr = $.post("<?=base_url('import-csv/handler');?>", {
+                action: 'add_employees',
+                employees: chunk
+            }, function(resp) {
+                xhr = null;
+                if(resp.Status === false){
+                    alertify.alert('ERROR!', 'Something went wrong');
+                    loader('hide');
+                    return;
+                }
+                failedCount += parseInt(resp.Failed);
+                existedCount += parseInt(resp.Existed);
+                insertedCount += parseInt(resp.Inserted);
+                // Update current and hit uploadChunk function
+                chunkOBJ.current++;
+                if(chunkOBJ.current >= chunkOBJ.records.length) {
+                    loader('hide');
+                    alertify.alert('SUCCESS!', 'You have successfully imported <b>'+( insertedCount )+'</b> new employees, <b>'+( existedCount )+'</b> employees already exists and <b>'+( failedCount )+'</b> employees failed to add.', function(){
+                        window.location = "<?=base_url('employee_management?employee_type=offline');?>";
+                    });
+                    failedCount = existedCount = insertedCount = chunkOBJ.loaded = chunkOBJ.current = chunkOBJ.totalChunks = chunkOBJ.recordsLength = 0;
+                    return;
+                }
+                uploadChunk();
+            });
+        }
+
+        //
+        function loader(show_it, msg){
+            show = show_it === undefined || show_it === true || show_it === 'show' ? 'show' : show_it;
+            msg  = msg === undefined ? '' : msg;
+            if(show_it == 'show'){
+                $('.js-loader-text').html(msg);
+                $('.js-loader').show();
+            }else{
+                $('.js-loader-text').html('');
+                $('.js-loader').fadeOut(150);
+            }
+        }
+    })
+</script>

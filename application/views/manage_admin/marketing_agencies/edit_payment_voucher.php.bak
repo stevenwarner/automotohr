@@ -1,0 +1,63 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<div class="main">
+    <div class="container-fluid">
+        <div class="row">		
+            <div class="inner-content">
+                <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
+                    <div class="dashboard-content">
+                        <div class="dash-inner-block">
+                            <div class="row">
+                                <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="dashboard-content">
+                                        <div class="dash-inner-block">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <div class="heading-title page-title">
+                                                        <span class="page-title"><i class="fa fa-cog"></i><?php echo $page_title; ?></span>
+                                                    </div>
+                                                    <div class="hr-setting-page">
+                                                        <?php echo form_open(''); ?>
+                                                            <ul>
+                                                                <li>
+                                                                    <label>Payment Method</label>
+                                                                    <div class="hr-fields-wrap">
+                                                                        <?php   echo form_input('payment_method', set_value('payment_method', $payment_method), 'class="hr-form-fileds"'); ?>
+                                                                        <?php   echo form_error('payment_method'); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Payment Reference</label>
+                                                                    <div class="hr-fields-wrap">
+                                                                        <?php   echo  form_input(array('class'=>'hr-form-fileds','type'=>'text','name'=>'payment_reference'), set_value('payment_reference',$payment_reference)); ?>
+                                                                        <?php   echo form_error('payment_reference'); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Payment Description</label>
+                                                                    <div class="hr-fields-wrap">
+                                                                        <textarea style="padding:10px; height:200px;" class="hr-form-fileds" name="payment_description"><?php echo set_value('payment_description', $payment_description); ?></textarea>
+                                                                        <?php   echo form_error('payment_description'); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="black-btn btn full-on-small" href="<?php echo base_url('manage_admin/marketing_agencies/payment_voucher/' . $payment_voucher['commission_invoice_sid']); ?>">Cancel</a>
+                                                                        <?php   echo form_submit('setting_submit','Update Payment Details',array('class'=>'site-btn'));?>
+                                                                </li>
+                                                            </ul>
+                                                        <?php echo form_close(); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

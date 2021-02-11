@@ -1,0 +1,169 @@
+<?php 
+class Facebook_configuration_model extends CI_Model {
+    function __construct() {
+        parent::__construct();
+    }
+
+    function fetch_all_active_jobs($company_sid)
+    {
+        $this->db->select('*');
+        $this->db->where('user_sid', $company_sid);
+        $this->db->where('active', 1);
+        $this->db->order_by("sid", "desc");
+        //$this->db->limit($limit, $start);
+        $this->db->from('portal_job_listings');
+        return $this->db->get()->result_array();
+    }
+
+    //Facebook Configuration - Start
+
+    public function Insert($sid, $company_sid, $fb_app_id, $fb_app_secret, $fb_page_url, $fb_unique_identifier){
+        $data = array(
+            'company_sid' => $company_sid,
+            'fb_app_id' => $fb_app_id,
+            'fb_app_secret' => $fb_app_secret,
+            'fb_page_url' => $fb_page_url,
+            'fb_unique_identifier' => $fb_unique_identifier
+        );
+
+        $this->db->insert('facebook_configuration', $data);
+    }
+
+    public function Update($sid, $company_sid, $fb_app_id, $fb_app_secret, $fb_page_url, $fb_unique_identifier){
+        $data = array(
+            'company_sid' => $company_sid,
+            'fb_app_id' => $fb_app_id,
+            'fb_app_secret' => $fb_app_secret,
+            'fb_page_url' => $fb_page_url,
+            'fb_unique_identifier' => $fb_unique_identifier
+        );
+
+        $this->db->where('sid', $sid);
+
+        $this->db->update('facebook_configuration', $data);
+    }
+
+    public function Save($sid, $company_sid, $fb_app_id, $fb_app_secret, $fb_page_url, $fb_unique_identifier){
+
+        echo $sid;
+        if($sid == null){
+            $this->Insert($sid, $company_sid, $fb_app_id, $fb_app_secret, $fb_page_url, $fb_unique_identifier);
+        }else{
+            $this->Update($sid, $company_sid, $fb_app_id, $fb_app_secret, $fb_page_url, $fb_unique_identifier);
+        }
+
+    }
+
+    public function GetFacebookConfiguration($company_sid){
+        $this->db->where('company_sid', $company_sid);
+        $result = $this->db->get('facebook_configuration')->result_array();
+
+        if(!empty($result)){
+            return $result[0];
+        }else{
+            return array();
+        }
+    }
+
+    public function GetFacebookConfigurationByUniqueString($unique_string){
+        $this->db->where('fb_unique_identifier', $unique_string);
+        $result = $this->db->get('facebook_configuration')->result_array();
+
+        if(!empty($result)){
+            return $result[0];
+        }else{
+            return array();
+        }
+    }
+
+    public function GetCompanyDetails($sid){
+        $this->db->where('sid', $sid);
+        $result = $this->db->get('users')->result_array();
+        if(!empty($result)){
+            return $result[0];
+        }else{
+
+        }
+    }
+
+    public function GetCountryNameById($sid)
+    {
+        $this->db->select('country_name');
+        $this->db->where('sid', $sid);
+        $this->db->from('countries');
+        return $this->db->get()->result_array();
+    }
+
+    public function GetStateNameById($sid)
+    {
+        $this->db->select('state_name');
+        $this->db->where('sid', $sid);
+        $this->db->from('states');
+        $this->db->where('active', '1');
+        $this->db->limit(1);
+        $result = $this->db->get()->result_array();
+
+        if(!empty($result)){
+            return $result[0];
+        }else{
+            return '';
+        }
+    }
+
+    public function GetJobsCategoryNameById($sid)
+    {
+        $this->db->select('value');
+        $this->db->where('sid', $sid);
+        $this->db->where('field_sid', '198');
+        $this->db->from('listing_field_list');
+        $result = $this->db->get()->result_array();
+
+        if(!empty($result)){
+            return $result[0];
+        }else{
+            return array();
+        }
+    }
+
+    public function UpdateUniqueIdentifier($sid, $UniqueIdentifier){
+        $this->db->where('sid', $sid);
+
+        $data = array(
+            'fb_unique_identifier' => $UniqueIdentifier
+        );
+
+        $this->db->update('facebook_configuration', $data);
+    }
+
+    //Facebook Configuration - End
+
+
+    public function get_current_package_details($company_sid){
+        $this->db->select('account_package_sid');
+        $this->db->where('sid', $company_sid);
+
+        $records_obj = $this->db->get('users');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if(!empty($records_arr)){
+            $package_sid = $records_arr[0]['account_package_sid'];
+
+            $this->db->select('*');
+            $this->db->where('sid', $package_sid);
+
+            $records_obj = $this->db->get('products');
+
+            $records_arr = $records_obj->result_array();
+
+            $records_obj->free_result();
+
+            if(!empty($records_arr)){
+                return $records_arr[0];
+            } else {
+                return array();
+            }
+        }
+    }
+
+}

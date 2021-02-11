@@ -1,0 +1,48 @@
+/* Upload box CSS */
+.csUploadArea{
+    position: relative;
+    width: 100%;
+    height: 150px;
+    background-color: #f1f1f1;
+    border-color: #eee;
+    cursor: pointer;
+}
+.csUploadInnerArea{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center
+}
+.csUploadInnerArea p{
+    font-size: 20px;
+    margin-bottom: 0;
+}
+
+.csUploadAreaImage{
+    display: block;
+    margin: auto;
+    max-width: 100%;
+}
+
+/* Loader */
+.csMFULoader{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    background-color: #ffffff;
+    z-index: 1;
+    min-height: 300px;
+}
+.csMFULoader i{
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    color: #81b431;
+}

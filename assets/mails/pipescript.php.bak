@@ -1,0 +1,102 @@
+#!/usr/bin/php -q
+<?php
+error_reporting(E_ALL);
+/* Read the message from STDIN */
+$fd = fopen("php://stdin", "r");
+$email = ""; // This will be the variable holding the data.
+while (!feof($fd)) {
+    $email .= fread($fd, 1024);
+}
+fclose($fd);
+$email = str_replace("'", '"', $email);
+$currentDate = date('Y-m-d H:i:s');
+
+
+
+/* Saves the data into DB */
+$hostname = "localhost";
+$username = "autoamr1_super";
+$password = '~fV}vXo=%wA$x=w&aZ';
+
+// Create connection
+$dbhandle = mysql_connect($hostname, $username, $password)
+        or die("Unable to connect to MySQL");
+
+
+mysql_select_db("autoamr1_hr", $dbhandle)
+        or die("Could not select examples");
+$currentDate = date('Y-m-d H:i:s');
+$result = mysql_query("insert into incoming_mails (`full_info`,`date_received`) VALUES ('" . $email . "','" . $currentDate . "')") or die('Error');
+
+//parsing email to save data in message table
+require_once('PlancakeEmailParser.php');
+//$emails = glob('C:/xampp/htdocs/automotoCI/assets/mails/*.txt');
+//foreach ($emails as $email) {
+$emailData = $email;
+$emailParser = new PlancakeEmailParser($emailData);
+
+if (strpos($emailData, 'message_id:')) {
+    $secret_key = substr($emailData, strpos($emailData, 'message_id:') + 11, 50);
+    $secret_key = trim(preg_replace('/\s+/', '', $secret_key));
+    $secret_key = str_replace('=', "", $secret_key);
+    $secret_key = str_replace(' ', '', $secret_key);
+    $secret_key = str_replace('_', '', $secret_key);
+//getting preious message data VIA secret key
+    $result = mysql_query("select * from private_message where identity_key = '$secret_key' and outbox = 1");
+    $messageData = mysql_fetch_assoc($result);
+    if (mysql_num_rows($result) > 0) {
+        $from = ($emailFrom = $emailParser->getFrom());
+        $to = $emailParser->getTo();
+        $to = $to[0];
+        $from = $emailParser->extract_email_address($from[0]);
+        $subject = $emailParser->getSubject();
+
+
+        $body = $emailParser->getHTMLBody();
+//mail('ahassan.egenie@gmail.com', 'Secret Key', $secret_key);
+        $bodyEnd = strpos($body, 'notifications@automotohr.com');
+        $range = substr($body, 0, $bodyEnd - 11);
+
+//for gmail and yahoo
+
+        if (strpos($body, '<div class="gmail_extra">')) {//solution for Gmail
+            $bodyEnd = strpos($body, '<div class="gmail_extra">') + 25;
+            $newBody = strip_tags(substr($body, 0, $bodyEnd), "<br>");
+        } elseif (strpos($body, 'wrote:')) {//solution for yahoo
+            $newBody = "";
+            $body_array = explode("<br>", $range);
+            for ($i = 0; $i < count($body_array) - 1; $i++) {
+                $newBody .= strip_tags($body_array[$i], "<br>");
+            }
+        } elseif (strpos($body, '<hr id="stopSpelling">')) {//solution for Hotmail
+            $range = strpos($body, '<hr id="stopSpelling">');
+            $newBody = strip_tags(substr($body, 0, $range), "<br>");
+        } else {//general solution, If all fails
+            $newBody = strip_tags(substr($body, 0, $bodyEnd), "<p>");
+            $explodedArray = explode('From:', $newBody);
+            $newBody = $explodedArray[0];
+        }
+
+
+
+
+mail('ahassan.egenie@gmail.com', "Query With Secret Key", "select * from private_message where identity_key = '$secret_key' and outbox = 1");
+//saving message in private message table
+        $jobId = $messageData['job_id'];
+        if (isset($messageData['job_id']) && !empty($messageData['job_id']) && $messageData['job_id'] != "") {
+            mysql_query("insert into private_message (from_id,to_id,from_type,to_type,date,subject,message,job_id) VALUES ('" . $messageData['to_id'] . "','" . $messageData['from_id'] . "','" . $messageData['to_type'] . "','" . $messageData['from_type'] . "','" . $currentDate . "','" . $subject . "','" . $newBody . "',$jobId)");
+            mail('ahassan.egenie@gmail.com', "Private message insert Query Applicant", "insert into private_message (from_id,to_id,from_type,to_type,date,subject,message,job_id) VALUES ('" . $messageData['to_id'] . "','" . $messageData['from_id'] . "','" . $messageData['to_type'] . "','" . $messageData['from_type'] . "','" . $currentDate . "','" . $subject . "','" . $newBody . "',$jobId)");
+            mysql_query("insert into private_message (from_id,to_id,from_type,to_type,date,subject,message,users_type) VALUES ('" . $messageData['to_id'] . "','" . $messageData['from_id'] . "','" . $messageData['to_type'] . "','" . $messageData['from_type'] . "','" . $currentDate . "','" . $subject . "','" . $newBody . "','employee')");
+            mail('ahassan.egenie@gmail.com', "Private message insert Query Applicant - 2", "insert into private_message (from_id,to_id,from_type,to_type,date,subject,message,users_type) VALUES ('" . $messageData['to_id'] . "','" . $messageData['from_id'] . "','" . $messageData['to_type'] . "','" . $messageData['from_type'] . "','" . $currentDate . "','" . $subject . "','" . $newBody . "','employee')");
+        } else {
+            mysql_query("insert into private_message (from_id,to_id,from_type,to_type,date,subject,message,users_type) VALUES ('" . $messageData['to_id'] . "','" . $messageData['from_id'] . "','" . $messageData['to_type'] . "','" . $messageData['from_type'] . "','" . $currentDate . "','" . $subject . "','" . $newBody . "','employee')");
+            mail('ahassan.egenie@gmail.com', "Private message insert Query Employee", "insert into private_message (from_id,to_id,from_type,to_type,date,subject,message,users_type) VALUES ('" . $messageData['to_id'] . "','" . $messageData['from_id'] . "','" . $messageData['to_type'] . "','" . $messageData['from_type'] . "','" . $currentDate . "','" . $subject . "','" . $newBody . "','employee')");
+        }
+    }
+}
+/* Saves the data into a file */
+$fdw = fopen("/home/autoamr1/public_html/assets/mails/pipemail.txt", "w+");
+fwrite($fdw, $email);
+fclose($fdw);
+///* Script End */
+?>

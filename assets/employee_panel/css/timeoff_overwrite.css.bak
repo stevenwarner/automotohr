@@ -1,0 +1,224 @@
+/*By M*/
+/*loader*/
+.cs-loader{ position: fixed; top: 0; bottom: 0; left: 0; right: 0; width: 100%; z-index: 1; background: rgba(0,0,0,.5);}
+.cs-loader-box{ position: absolute; top: 50%; bottom: 0; left: 0; right: 0; width: 300px; margin: auto; margin-top: -190px;}
+.cs-loader-box i{ font-size: 14em; color: #81b431; }
+.cs-loader-box div.cs-loader-text{ display: block; padding: 10px; color: #000; background-color: #fff; border-radius: 5px; text-align: center; font-weight: 600; margin-top: 35px; }
+.cs-calendar{ margin-top: 10px; }
+/**/
+.ajs-button{ background-color: #81b431 !important; color: #ffffff !important; padding-left: 5px !important; padding-right: 5px !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -o-border-radius: 4px; border-color: #4cae4c !important; }
+.ajs-header{ background-color: #81b431 !important; color: #ffffff !important; }
+/**/
+.cs-timeoff-history-row{
+	border: 1px solid #ccc;
+	margin: 5px;
+	margin-bottom: 10px;
+}
+.cs-timeoff-history-row ul{
+	list-style: none;
+}
+.cs-timeoff-history-row ul li{
+	display: inline-block;
+}
+
+
+
+
+
+/*.employee-add-heading{
+    margin: 50px 0px 50px 10px;
+    border-bottom: 1px solid red;
+}
+
+.form-group .employee-add-heading h4{
+    font-weight: 800;
+}
+  */
+    
+.partial-field-content {
+    border-bottom: 1px solid #dedede;
+}
+.img-dropdown .dropdown-menu{
+    width: 100%;
+    min-width: 100%;
+}
+.img-dropdown .dropdown-menu > li > a {
+    padding: 10px 20px;
+    border-bottom: 1px solid #dedede;
+}
+
+.right-content{
+    margin-bottom: 0px !important;
+}
+.employee-bottom-section {
+    border-bottom: 1px solid #dedede;
+}
+.employee-add-heading ul{
+    margin-left: 15px;
+}
+.employee-add-heading ul li{
+    margin: 15px 0px;
+}
+.img-dropdown{
+    position: relative;
+}
+.img-dropdown img {
+    width: 50px;
+    height: 50px;
+}
+.img-dropdown .dropdown-toggle{
+    height: 70px;
+    line-height: 70px;
+    display: block;
+    padding: 0 20px;
+    position: relative;
+}
+.img-dropdown img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.form-group.img-dropdown {
+    border: 1px solid #dedede;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+.img-dropdown span.hr-select-dropdown {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: auto;
+    transform: translate(-70%, -50%) !important;
+}
+
+
+
+
+
+@media screen and (max-width: 767px) {
+
+    .hide-for-desktop{
+        display: block;
+    }
+    .people-out-of-office{
+        display: block;
+    }
+    .people-out-of-office figure{
+        text-align: center;
+    }
+    .people-out-of-office figure .emp-image{
+        display: inline-block;
+    }
+    .btn-apply-filter {
+        margin-right: 10px;
+        margin-top: 7px;
+    }
+    .pto-tabs .nav-tabs .btn{
+        padding: 6px 6px;
+        font-size: 12px;
+    }
+    .pto-pagination .pagination-left-content p{
+        font-size: 13px;
+    }
+    .btn-filter-reset {
+       margin-top: 0px !important; 
+   }
+   .allowed-time-off-title-custom .pto-allowed-years .timeline-content .margin-custom{
+       margin: 10px 0px;
+   }
+   .margin-bottom-custom{
+    margin-bottom: 60px;
+}
+.pto-time-off-margin-custom{
+    margin-bottom: 10px;
+}
+.people-out-of-office-info .text-center h4{
+    font-size: 14px;
+}
+.checkbox-styling.margin-top{
+    margin-top: 0px !important;
+}
+.checbox-styling{
+    width: 20px;
+    height: 20px;
+}
+}
+
+
+.cs-custom-dd{
+	max-height: 300px;
+	overflow-y: auto;
+}
+.cs-custom-dd a{
+	padding-bottom: 20px !important;
+}
+.cs-custom-dd li h5{
+	padding-left: 60px !important;
+}
+.m15{
+	margin-left: 15px !important;
+	margin-right: 15px !important;
+}
+
+.right-content .mg-lr-0{ margin-left: 0 !important; margin-right: 0 !important; }
+
+.employee-info figure{ width: 50px !important; height: 50px !important; }
+.employee-info h4{ font-size: 16px !important;}
+
+.progress-bar-success{ background-color: #81b431 !important; }
+
+#js-page-add .js-content-area,
+#js-page-edit .js-content-area{ padding: 10px !important; }
+
+.bottom-section-pto{ padding: 65px 0; }
+
+.btn-apply-filter{ background-color: #aaaaaa !important; }
+.btn-apply-filter-active{ background-color: #81b431 !important; }
+
+.employee-info figure img{ border-radius: 3px !important; }
+.img-dropdown img{ border-radius: 3px !important; }
+
+.heading-grey th{
+    color: #000 !important;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px !important;
+}
+
+
+.cs-status-text{
+    font-weight: bold;
+}
+
+.employee-info .text a{
+    color: #111 !important;
+}
+.employee-info .text h4{
+    font-size: 18px !important; 
+}
+
+.upcoming-time-info p{
+    color: #111 !important;
+}
+
+.fa.fa-edit:hover,
+.fa.fa-pencil-square-o:hover{
+    color: #81b431 !important;
+}
+.fa.fa-archive{ color: #a94442 !important; }
+.fa.fa-check-square-o{ color: #81b431 !important; }
+
+#js-data-area .text p{ color: #000 !important; }
+.cs-bl-tabs .nav-tabs{ padding-bottom: 7px; }
+
+#js-data-area p.cs-success{ color: #81b431 !important; }
+#js-data-area p.cs-danger{ color: #a94442 !important; }
+#js-data-area p.cs-warning{ color: #8a6d3b !important; }
+
+#ui-datepicker-div{ z-index: 2 !important; }
+
+.js-policy-list-ul li{
+    color: #000;
+}
+
+.employee-info img{ border-radius: 3px !important; }

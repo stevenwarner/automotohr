@@ -1,0 +1,980 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<div class="main">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="inner-content">
+                <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
+                    <div class="dashboard-content">
+                        <div class="dash-inner-block">
+                            <div class="row">
+                                <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="heading-title page-title">
+                                        <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
+                                        <a class="black-btn pull-right" href="<?php echo base_url('manage_admin/companies'); ?>"><i class="fa fa-long-arrow-left"></i> Back to Companies</a>
+                                    </div>
+                                    <div class="add-new-company">
+                                        <div class="heading-title">
+                                            <h1 class="page-title">Company Information</h1>
+                                            <a href="<?php echo STORE_PROTOCOL_SSL . db_get_sub_domain($company_sid); ?>" class="site-btn pull-right" target="_blank">Career Website</a>
+
+                                            <?php if ($show_trial_period_button == true) { ?>
+                                                <a href="<?php echo base_url('manage_admin/companies/activate_trial_period/' . $company_info['sid']); ?>" class="site-btn pull-right"><?php echo $trial_button_text; ?></a>
+                                            <?php } ?>
+
+                                            <a href="<?php echo base_url('manage_admin/employers/add_employer/' . $company_sid)?>" class="site-btn pull-right">Add Employer</a>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Company Details <a href="<?php echo base_url('manage_admin/companies/edit_company') . '/' . $company_sid; ?>" class="site-btn pull-right">Edit</a></header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li>
+                                                                    <label>Company Name</label>
+                                                                    <div class="text">
+                                                                        <?php echo ucwords($company_info['CompanyName']); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Company Type</label>
+                                                                    <div class="text">
+                                                                        <?php echo ($company_info['is_paid'] == 1) ? 'Main' : 'Secondary'; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Address</label>
+                                                                    <div class="text">
+                                                                        <?php echo ucwords($company_info['Location_Address']) . ', ' . ucwords($company_info['Location_City']) . ', ' . ucwords($company_info['state_name']) . ', ' . ucwords($company_info['Location_ZipCode']) . ', ' . ucwords($company_info['country_name']); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Registration Date</label>
+                                                                    <div class="text">
+                                                                        <?php echo date('m-d-Y', strtotime(str_replace('-', '/', $company_info['registration_date']))); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Expiration Date</label>
+                                                                    <div class="text">
+                                                                        <?php echo date('m-d-Y', strtotime(str_replace('-', '/', $company_info['expiry_date']))); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Current Employees</label>
+                                                                    <div class="text">
+                                                                        <?php echo $company_info['number_of_employees']; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Current Applicants</label>
+                                                                    <div class="text">
+                                                                        <?php echo $company_info['number_of_applicants']; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Phone Number</label>
+                                                                    <div class="text">
+                                                                        <?php echo ucwords($company_info['PhoneNumber']); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Website</label>
+                                                                    <div class="text">
+                                                                        <?php echo $company_info['WebSite']; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <?php if ($company_info['has_job_approval_rights'] == 1) { ?>
+                                                                    <li class="inclueded-state">
+                                                                        <label>Jobs Approval</label>
+                                                                        <div style="color:green;" class="text">
+                                                                            Active
+                                                                        </div>
+                                                                    </li>
+                                                                <?php } else { ?>
+                                                                    <li class="exclueded-state">
+                                                                        <label>Jobs Approval</label>
+                                                                        <div style="color:red;" class="text">
+                                                                            In-Active
+                                                                        </div>
+                                                                    </li>
+                                                                <?php } ?>
+                                                                <?php if ($company_info['has_applicant_approval_rights'] == 1) { ?>
+                                                                    <li class="inclueded-state">
+                                                                        <label>Applicant Approval</label>
+                                                                        <div style="color:green;" class="text">
+                                                                            Active
+                                                                        </div>
+                                                                    </li>
+                                                                <?php } else { ?>
+                                                                    <li class="exclueded-state">
+                                                                        <label>Applicant Approval</label>
+                                                                        <div style="color:red;" class="text">
+                                                                            In-Active
+                                                                        </div>
+                                                                    </li>
+                                                                <?php } ?>
+                                                                <li>
+                                                                    <label>Accounts Payable Contact Person</label>
+                                                                    <div class="text">
+                                                                        <?php echo ucwords($company_info['accounts_contact_person']); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Accounts Payable Contact Number</label>
+                                                                    <div class="text">
+                                                                        <?php echo ucwords($company_info['accounts_contact_number']); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Full Billing Address</label>
+                                                                    <div class="text">
+                                                                        <?php echo ucwords($company_info['full_billing_address']); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Company Payment Type</label>
+                                                                    <div class="text">
+                                                                        <?php echo $company_info['payment_type']; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Company Past Due</label>
+                                                                    <div class="text">
+                                                                        <?php echo $company_info['past_due']; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Development Fee</label>
+                                                                    <div class="text">
+                                                                        $ <?php echo number_format($company_info['development_fee'], 2, '.', ','); ?>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">
+                                                        current packages
+                                                        <a href="<?php echo base_url('manage_admin/companies/manage_packages') . '/' . $company_sid; ?>" class="site-btn pull-right">Packages</a>
+                                                    </header>
+                                                    <?php if(!empty($company_trial_period_detail) && $company_trial_period_detail['status'] == 'enabled') { ?>
+                                                        <div class="table-outer">
+                                                                <div class="info-row">
+                                                                    <ul>
+                                                                        <li>
+                                                                            <label>Name</label>
+                                                                            <div class="text">
+                                                                                Trial Package
+                                                                            </div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <label>Description</label>
+                                                                            <div class="text">
+                                                                                Fully Featured Trial Package of the Complete System.
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="inclueded-state">
+                                                                            <label>Facebook API</label>
+                                                                            <div style="color:green;" class="text">
+                                                                                Included
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="inclueded-state">
+                                                                            <label>Deluxe Theme</label>
+                                                                            <div style="color:green;" class="text">
+                                                                                Included
+                                                                            </div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <label>Expiration date</label>
+                                                                            <div class="text"><?php echo date('m-d-Y', strtotime(str_replace('-', '/', $company_trial_period_detail['end_date']))); ?></div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <label>No. Of Rooftops</label>
+                                                                            <div class="text">Unlimited</div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                    <?php } else { ?>
+                                                        <?php if( $company_info['account_package_sid'] > 0 ) { ?>
+                                                            <div class="table-outer">
+                                                                <div class="info-row">
+                                                                    <ul>
+                                                                        <li>
+                                                                            <label>Name</label>
+                                                                            <div class="text">
+                                                                                <?php echo ucwords($company_info['package_name']); ?>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <label>Description</label>
+                                                                            <div class="text">
+                                                                                <?php echo ucwords($company_info['package_description']); ?>
+                                                                            </div>
+                                                                        </li>
+                                                                        <?php if ($company_info['package_includes_facebook_api'] == 1) { ?>
+                                                                                    <li class="inclueded-state">
+                                                                                        <label>Facebook API</label>
+                                                                                        <div style="color:green;" class="text">
+                                                                                            Included
+                                                                                        </div>
+                                                                                    </li>
+                                                                        <?php } else { ?>
+                                                                                    <li class="exclueded-state">
+                                                                                        <label>Facebook API</label>
+                                                                                        <div style="color:red;" class="text">
+                                                                                            Not Included
+                                                                                        </div>
+                                                                                    </li>
+                                                                        <?php } ?>
+                                                                        <?php if ($company_info['package_includes_deluxe_theme'] == 1) { ?>
+                                                                                    <li class="inclueded-state">
+                                                                                        <label>Deluxe Theme</label>
+                                                                                        <div style="color:green;" class="text">
+                                                                                            Included
+                                                                                        </div>
+                                                                                    </li>
+                                                                        <?php } else { ?>
+                                                                                    <li class="exclueded-state">
+                                                                                        <label>Deluxe Theme</label>
+                                                                                        <div style="color:red;" class="text">
+                                                                                            Not Included
+                                                                                        </div>
+                                                                                    </li>
+                                                                        <?php } ?>
+                                                                        <li>
+                                                                            <label>Expiration date</label>
+                                                                            <div class="text"><?php echo date('m-d-Y', strtotime(str_replace('-', '/', $company_info['expiry_date']))); ?></div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <label>No. Of Rooftops</label>
+                                                                            <div class="text"><?php echo $company_info['number_of_rooftops']; ?></div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        <?php } else { ?>
+                                                            <div class="no-data">
+                                                                No Package Assigned Yet
+                                                            </div>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Company Status</header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <form enctype="multipart/form-data" method="post" action="<?php base_url('manage_admin/companies/manage_company/') ?>" >
+                                                                <input type="hidden" id="perform_action" name="perform_action" value="set_company_status" />
+                                                                <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                                                                <ul>
+                                                                    <li class="lineheight">
+                                                                        <div class="row">
+                                                                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                                <input type="radio" id="company_status_active" name="company_status" value="1" <?php echo ($company_info['active'] == 1 ? 'checked="checked"' : '' ); ?> />&nbsp;<label for="company_status_active" style="color: green; float: none;">Active</label>
+                                                                            </div>
+                                                                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                                <input type="radio" id="company_status_inactive" name="company_status" value="0" <?php echo ($company_info['active'] == 0 ? 'checked="checked"' : '' ); ?> />&nbsp;<label for="company_status_inactive" style="color: red; float: none;">In Active</label>
+                                                                            </div>
+                                                                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                                                                <button type="submit" href="javascript:;" class="site-btn pull-right">update</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Career Site Powered By Logo</header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <form enctype="multipart/form-data" method="post" action="<?php base_url('manage_admin/companies/manage_company/') ?>" >
+                                                                <input type="hidden" id="perform_action" name="perform_action" value="set_career_site_powered_by" />
+                                                                <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                                                                <ul>
+                                                                    <li class="lineheight">
+                                                                        <div class="row">
+                                                                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                                <input type="radio" id="powered_by_active" name="footer_powered_by_logo" value="1" <?php echo ($company_portal_status['footer_powered_by_logo'] == 1 ? 'checked="checked"' : '' ); ?> />&nbsp;<label for="powered_by_active" style="color: green; float: none;">Enable</label>
+                                                                            </div>
+                                                                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                                <input type="radio" id="powered_by_inactive" name="footer_powered_by_logo" value="0" <?php echo ($company_portal_status['footer_powered_by_logo'] == 0 ? 'checked="checked"' : '' ); ?> />&nbsp;<label for="powered_by_inactive" style="color: red; float: none;">Disable</label>
+                                                                            </div>
+                                                                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                                                                <button type="submit" href="javascript:;" class="site-btn pull-right">update</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Document Management
+                                                        <a class="site-btn pull-right" href="<?php echo base_url('manage_admin/documents/' . $company_sid); ?>">Manage</a>
+                                                        <a class="site-btn pull-right" href="<?php echo base_url('manage_admin/documents/send/' . $company_sid); ?>">Send</a>
+                                                    </header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li>
+                                                                    <label>Form Name</label>
+                                                                    <div class="text text-center col-xs-6">
+                                                                        <strong>Status</strong>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Credit Card Authorization</label>
+                                                                    <div class="text text-center">
+                                                                        <?php $cc_auth_status =  ($company_documents_status['cc_auth_status'] != '' ? $company_documents_status['cc_auth_status'] : 'Not Generated');?>
+                                                                        <span class="<?php echo strtolower(str_replace(' ', '-', $cc_auth_status)); ?>">
+                                                                            <?php echo ucwords(str_replace('-', ' ', $cc_auth_status)) ?>
+                                                                            <?php if (strtolower($cc_auth_status) == 'not sent' || strtolower($cc_auth_status) == 'generated' || strtolower($cc_auth_status) == 'pre-filled' || strtolower($cc_auth_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($cc_auth_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>End User License Agreement</label>
+                                                                    <div class="text text-center">
+                                                                        <?php $eula_status = ($company_documents_status['eula_status'] != '' ? $company_documents_status['eula_status'] : 'Not Generated');?>
+                                                                        <span class="<?php echo strtolower(str_replace(' ', '-', $eula_status)); ?>">
+                                                                            <?php echo ucwords(str_replace('-', ' ', $eula_status)) ?>
+                                                                            <?php if (strtolower($eula_status) == 'not sent' || strtolower($eula_status) == 'generated' || strtolower($eula_status) == 'pre-filled' || strtolower($eula_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($eula_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Company Contacts</label>
+                                                                    <div class="text text-center">
+                                                                        <?php $company_contacts_status = ($company_documents_status['company_contacts_status'] != '' ? $company_documents_status['company_contacts_status'] : 'Not Generated' );?>
+                                                                        <span class="<?php echo strtolower(str_replace(' ', '-', $company_contacts_status)); ?>">
+                                                                            <?php echo ucwords(str_replace('-', ' ', $company_contacts_status)) ?>
+                                                                            <?php if (strtolower($company_contacts_status) == 'not sent' || strtolower($company_contacts_status) == 'generated' || strtolower($company_contacts_status) == 'pre-filled' || strtolower($company_contacts_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($company_contacts_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">
+                                                        Notification Emails Management
+                                                    </header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li>
+                                                                    <label>Manage Emails</label>
+                                                                    <a href="<?php echo base_url('manage_admin/notification_emails/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <!-- oem brands for company -->
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">
+                                                        Oem, Indepedent, Vendors
+                                                    </header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li>
+                                                                    <label>View Members of Group</label>
+                                                                    <a href="<?php echo base_url('manage_admin/companies/company_brands/' . $company_sid); ?>" class="site-btn pull-right">View</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <!-- oem brands for company -->                                                
+                                                <!-- automotive groups -->
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Members of Corporate Groups</header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <?php if(isset($automotive_groups) && sizeof($automotive_groups) > 0) { ?>
+                                                                    <?php foreach($automotive_groups as $group) { ?>
+                                                                        <li><label><?php echo ucwords($group['group_name']); ?></label></li>
+                                                                    <?php } ?>
+                                                                <?php } else { ?>
+                                                                        <li>No groups found</li>
+                                                                <?php } ?>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <!-- automotive groups -->
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Administrator Detail <a href="<?php echo base_url('manage_admin/employers/edit_employer/' . $company_admin['sid']); ?>" class="site-btn pull-right">Edit</a></header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li>
+                                                                    <label>Name</label>
+                                                                    <div class="text">
+                                                                        <?php echo ucwords($company_admin['first_name'] . ' ' . $company_admin['last_name']); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Email</label>
+                                                                    <div class="text">
+                                                                        <?php echo $company_admin['email']; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Alternative Email</label>
+                                                                    <div class="text">
+                                                                        <?php echo $company_admin['alternative_email']; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Job Title</label>
+                                                                    <div class="text">
+                                                                        <?php echo ucwords($company_admin['job_title']); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Direct Business Number</label>
+                                                                    <div class="text">
+                                                                        <?php echo $company_admin['direct_business_number']; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Cell Number</label>
+                                                                    <div class="text">
+                                                                        <?php echo $company_admin['cell_number']; ?>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Company Credit Cards</header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li class="lineheight">
+                                                                    <strong>Manage all credit cards </strong>
+                                                                    <a href="<?php echo base_url('manage_admin/misc/cc_management') . '/' . $company_sid; ?>" class="site-btn pull-right">Manage Cards</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Administrator Status</header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <form enctype="multipart/form-data" method="post" action="<?php echo base_url('manage_admin/companies/manage_company/' . $company_info['sid']) ?>" >
+                                                                <input type="hidden" id="perform_action" name="perform_action" value="set_administrator_status" />
+                                                                <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_info['sid']; ?>" />
+                                                                <input type="hidden" id="user_sid" name="user_sid" value="<?php echo $company_admin['sid']; ?>" />
+                                                                <ul>
+                                                                    <li class="lineheight">
+                                                                        <div class="row">
+                                                                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                                <input type="radio" id="company_admin_active" name="company_admin_status" value="1" <?php echo ($company_admin['active'] == 1 ? 'checked="checked"' : '' ); ?> />&nbsp;<label for="company_admin_active" style="color: green; float: none;">Active</label>
+                                                                            </div>
+                                                                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                                <input type="radio" id="company_admin_inactive" name="company_admin_status" value="0" <?php echo ($company_admin['active'] == 0 ? 'checked="checked"' : '' ); ?> />&nbsp;<label for="company_admin_inactive" style="color: red; float: none;">In Active</label>
+                                                                            </div>
+                                                                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                                                                <button type="submit" href="javascript:;" class="site-btn pull-right">update</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Facebook API Status <a href="<?php echo base_url('manage_admin/companies/manage_addons') . '/' . $company_sid; ?>" class="site-btn pull-right">Addons</a></header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <?php if ($company_info['facebook_purchased_status'] == 1) { ?>
+                                                                            <li class="inclueded-state">
+                                                                                <label>Status</label>
+                                                                                <div style="color:green;" class="text">
+                                                                                    Active
+                                                                                </div>
+                                                                            </li>
+                                                                <?php } else { ?>
+                                                                            <li class="exclueded-state">
+                                                                                <label>Status</label>
+
+                                                                                <div style="color:red;" class="text">
+                                                                                    In-Active
+                                                                                </div>
+                                                                            </li>
+                                                                <?php } ?>
+                                                                <li>
+                                                                    <label>Expiration Date</label>
+                                                                    <div class="text"><?php echo date('m-d-Y', strtotime(str_replace('-', '/', $company_info['facebook_expiry_date']))); ?></div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Deluxe Theme Status </header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <?php if ($company_info['deluxe_theme_purchased'] == 1) { ?>
+                                                                    <li class="inclueded-state">
+                                                                        <label>Status</label>
+                                                                        <div style="color:green;" class="text">
+                                                                            Active
+                                                                        </div>
+                                                                    </li>
+                                                                <?php } else { ?>
+                                                                    <li class="exclueded-state">
+                                                                        <label>Status</label>
+                                                                        <div style="color:red;" class="text">
+                                                                            In-Active
+                                                                        </div>
+                                                                    </li>
+                                                                <?php } ?>
+                                                                <li>
+                                                                    <label>&nbsp;</label>
+                                                                    <div class="text">&nbsp;</div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Company Notes</header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li>
+                                                                    <label>Billing Notes</label>
+                                                                    <div class="text">
+                                                                        <a class="site-btn pull-right" href="<?php echo base_url('manage_admin/companies/list_company_notes/billing/' . $company_sid);?>">View All</a>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>General Notes</label>
+                                                                    <div class="text">
+                                                                        <a class="site-btn pull-right" href="<?php echo base_url('manage_admin/companies/list_company_notes/general/' . $company_sid);?>">View All</a>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Company Security Access Manager</header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li>
+                                                                    <label>Security Access Level</label>
+                                                                    <div class="text">
+                                                                        <a class="site-btn pull-right" href="<?php echo base_url('manage_admin/company_security_settings/' . $company_sid);?>">Update Settings</a>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Portal Company Email Templates</header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li>
+                                                                    <strong>Email Templates</strong>
+                                                                    <a href="<?php echo base_url('manage_admin/portal_email_templates/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Employer Portal Maintenance Mode
+                                                        <a href="<?php echo base_url('manage_admin/companies/manage_maintenance_mode/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                    </header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li class="<?php echo ( $company_portal_status['maintenance_mode'] == 1 ? 'inclueded-state' : 'exclueded-state' ); ?>">
+                                                                    <label>Status</label>
+                                                                    <div style="<?php echo ( $company_portal_status['maintenance_mode'] == 1 ? 'color:green;' : 'color:red;' ); ?>" class="text">
+                                                                        <?php echo ( $company_portal_status['maintenance_mode'] == 1 ? 'Enabled' : 'Disabled' ); ?>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <!-- job category industry article -->
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Job Industry Category
+                                                        <a href="<?php echo base_url('manage_admin/companies/edit_company/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                    </header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li>
+                                                                    <label>Industry Category</label>
+                                                                    <div class="text">
+                                                                        <?php 
+                                                                                if(isset($job_category_industry) && !empty($job_category_industry)){
+                                                                                    echo $job_category_industry['industry_name']; 
+                                                                                } else {
+                                                                                    echo 'No Industry Category assigned';
+                                                                                }
+                                                                        ?>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <!-- job category industry article -->                                                                                                
+                                                <!-- Job Fairs and College student recruitment article -->                                                
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Job Fairs and Student Recruitment</header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li class="<?php echo ( $job_fair_page_status == 1 ? 'inclueded-state' : 'exclueded-state' ); ?>">
+                                                                    <label>Status</label>
+                                                                    <div style="<?php echo ( $job_fair_page_status == 1 ? 'color:green;' : 'color:red;' ); ?>" class="text">
+                                                                        <?php echo ( $job_fair_page_status == 1 ? 'Enabled' : 'Disabled' ); ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <strong>Manage Title & Description</strong>
+                                                                    <a href="<?php echo base_url('manage_admin/companies/job_fairs_recruitment/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                                <!-- Job Fairs and College student recruitment article -->
+                                            </div>
+                                        </div>
+                                        <div class="heading-title page-title">
+                                            <h1 class="page-title">Company Admin Invoices</h1>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div class="hr-promotions table-responsive">
+                                                    <div class="scrollable-area">
+                                                        <table class="table table-bordered table-stripped fixTable-header">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th colspan="4" class="text-center">Invoice Summary</th>
+                                                                    <th rowspan="2" colspan="1" class="text-center">Actions</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th colspan="1"></th>
+                                                                    <th class="text-center">Value</th>
+                                                                    <th class="text-center">Discount</th>
+                                                                    <th class="text-center">Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php if(!empty($company_admin_invoices)){?>
+                                                                    <?php foreach ($company_admin_invoices as $invoice) { ?>
+                                                                        <tr>
+                                                                            <td class="col-lg-6">
+                                                                                <div class="invoice-date">
+                                                                                    <div class="row">
+                                                                                        <div class="col-lg-12">
+                                                                                            <div class="dotted-border">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Company</strong></div>
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo ucwords($invoice['company_name']); ?></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="dotted-border">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Created Date</strong></div>
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo convert_date_to_frontend_format($invoice['created'], true);?></div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class="dotted-border">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Invoice #</strong></div>
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo $invoice['invoice_number']; ?></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="dotted-border">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Status</strong></div>
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6 <?php echo ucwords($invoice['payment_status']); ?>"><?php echo ucwords($invoice['payment_status']); ?></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="dotted-border">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Date</strong></div>
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo convert_date_to_frontend_format($invoice['payment_date'], true); ?></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <h5><strong>Item Summary</strong></h5>
+                                                                                    <ul class="item-name-summary">
+                                                                                        <?php foreach($invoice['item_names'] as $item_name) { ?>
+                                                                                            <li ><?php echo $item_name['item_name']; ?></li>
+                                                                                        <?php } ?>
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </td>
+                                                                            <!-- Start Invoice Summary -->
+                                                                            <td class="text-right col-xs-2">
+                                                                                $<?php echo number_format($invoice['value'], 2, '.', ',') ?></td>
+                                                                            <td class="text-right col-xs-2">
+                                                                                $<?php echo number_format($invoice['discount_amount'], 2, '.', ',') ?></td>
+                                                                            <td class="text-right col-xs-2">
+                                                                                <!--
+                                                                                <?php /*if ($invoice['is_discounted'] == 1) { */?>
+                                                                                    $<?php /*echo number_format($invoice['total_after_discount'], 2, '.', ',') */?>
+                                                                                <?php /*} else { */?>
+                                                                                    $<?php /*echo number_format($invoice['value'], 2, '.', ',') */?>
+                                                                                <?php /*} */?>
+                                                                                -->
+                                                                                $<?php echo number_format($invoice['total_after_discount'], 2, '.', ',') ?>
+                                                                            </td>
+                                                                            <!-- End Invoice Summary commission_invoice_sid-->                                                                        
+                                                                            <td class="text-center">
+                                                                                <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/invoice/view_admin_invoice') . '/' . $invoice['sid']; ?>">View Invoice</a>                                                                            
+                                                                                <?php if ($invoice['payment_status'] == 'unpaid') { ?>
+                                                                                    <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/invoice/apply_discount_admin_invoice') . '/' . $invoice['sid']; ?>">Apply Discount</a>
+                                                                                <?php } else { ?>
+                                                                                    <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Apply Discount</a>
+                                                                                <?php } ?>    
+                                                                                    
+                                                                                    
+                                                                                <?php if ($invoice['commission_invoice_sid'] == 0) { ?>
+                                                                                    <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/companies/generate_commisson_invoice') . '/' . $invoice['company_sid'] . '/' . $invoice['sid']; ?>">Generate CI</a>
+                                                                                <?php } else { ?>
+                                                                                    <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Generate CI</a>
+                                                                                <?php } ?>     
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                <?php if ($invoice['payment_status'] == 'unpaid' && $invoice['discount_amount'] < $invoice['value']) { ?>
+                                                                                    <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/misc/process_payment_admin_invoice') . '/' . $invoice['sid']; ?>">Process Payment</a>
+                                                                                <?php } elseif ($invoice['discount_amount'] == $invoice['value'] && $invoice['payment_status'] == 'unpaid') { ?>
+                                                                                    <button type="button" class="hr-edit-btn invoice-links" onclick="fActivateInvoiceFeatures(<?php echo $invoice['company_sid']; ?>, <?php echo $invoice['sid'] ?>);"> Activate Invoice </button>
+                                                                                <?php } else { ?>
+                                                                                    <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Process Payment</a>
+                                                                                <?php } ?>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <?php } ?>
+                                                                <?php }else{ ?>
+                                                                    <tr>
+                                                                        <td colspan="9">
+                                                                            <h3 class="no-data">Admin Invoices Not Found!</h3>
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php }?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="heading-title page-title">
+                                            <h1 class="page-title">Company Marketplace Invoices</h1>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div class="hr-promotions table-responsive">
+                                                    <div class="scrollable-area">
+                                                        <table class="table table-bordered table-stripped fixTable-header">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th colspan="4" class="text-center">Invoice Summary</th>
+                                                                    <th rowspan="2" colspan="1" class="text-center">Actions</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th colspan="1"></th>
+                                                                    <th class="text-center">Value</th>
+                                                                    <th class="text-center">Discount</th>
+                                                                    <th class="text-center">Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php if(!empty($company_portal_invoices)){?>
+                                                                    <?php foreach ($company_portal_invoices as $invoice) { ?>
+                                                                        <tr>
+                                                                            <td class="col-lg-6">
+                                                                                <div class="invoice-date">
+                                                                                    <div class="row">
+                                                                                        <div class="col-lg-12">
+                                                                                            <div class="dotted-border">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Created Date</strong></div>
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo date('m-d-Y', strtotime($invoice['date'])); ?></div>
+                                                                                                </div>  
+                                                                                            </div>
+                                                                                            <div class="dotted-border">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Invoice #</strong></div>
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo $invoice['sid']; ?></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="dotted-border">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Date</strong></div>
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?= convert_date_to_frontend_format($invoice["payment_date"], true); ?></div>
+                                                                                                </div>  
+                                                                                            </div>
+                                                                                            <div class="dotted-border">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Status</strong></div>
+                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6 <?php echo ucwords($invoice['status']); ?>"><?php echo ucwords($invoice['status']); ?></div>
+                                                                                                </div>
+                                                                                            </div>       
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <h5><strong>Item Summary</strong></h5>
+                                                                                    <ul class="item-name-summary">
+                                                                                        <?php foreach($invoice['item_names'] as $item_name) { ?>
+                                                                                            <li><?php echo $item_name['name']; ?></li>
+                                                                                        <?php } ?>
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </td>
+                                                                            <!-- Start Invoice Summary -->
+                                                                            <td class="text-right col-xs-2">
+                                                                                $ <?php echo number_format($invoice['sub_total'], 2, '.', ',') ?></td>
+                                                                            <td class="text-right col-xs-2">
+                                                                                $ <?php echo number_format($invoice['total_discount'], 2, '.', ',') ?></td>
+                                                                            <td class="text-right col-xs-2">
+                                                                                $ <?php echo number_format($invoice['total'], 2, '.', ',') ?>
+                                                                            </td>
+                                                                            <!-- End Invoice Summary -->                                                                           
+                                                                            <td class="text-center">
+                                                                                <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/invoice/edit_invoice/' . $invoice['sid']); ?>">View Invoice</a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <?php } ?>
+                                                                <?php } else { ?>
+                                                                    <tr>
+                                                                        <td colspan="9">
+                                                                            <h3 class="no-data">Marketplace Invoices Not Found!</h3>
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php }?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function fActivateInvoiceFeatures(company_sid, invoice_sid) {
+        alertify.confirm(
+                'Are you sure?',
+                'Are you sure you want to Activate all Products against this Invoice? <br /> This action is irreversable!',
+                function () {
+                    var myUrl = '<?php echo base_url('manage_admin/invoice/ajax_responder') ?>';
+                    var myRequest;
+
+                    myRequest = $.ajax({
+                        url: myUrl,
+                        type: 'POST',
+                        data: {
+                            perform_action: 'activate_invoice_features',
+                            company_sid: company_sid,
+                            invoice_sid: invoice_sid
+                        }
+                    });
+
+                    myRequest.done(function (response) {
+                        //console.log(response);
+                        if (response == 'success') {
+                            myUrl = window.location.href;
+                            window.location = myUrl;
+                        }
+                    })
+                },
+                function () {
+                    //Cancel
+                });
+    }
+
+    // get the states
+    $(document).ready(function () {
+        var myid = $('#state_id').html();
+        setTimeout(function () {
+            $("#country").change();
+        }, 1000);
+        if (myid) {
+            setTimeout(function () {
+                $('#state').val(myid);
+            }, 1200);
+        }
+    });
+
+    function getStates(val, states) {
+        var html = '';
+        if (val == '') {
+            $('#state').html('<option value="">Select State</option>');
+        } else {
+            allstates = states[val];
+            for (var i = 0; i < allstates.length; i++) {
+                var id = allstates[i].sid;
+                var name = allstates[i].state_name;
+                html += '<option value="' + id + '">' + name + '</option>';
+            }
+            $('#state').html(html);
+        }
+    }
+</script>

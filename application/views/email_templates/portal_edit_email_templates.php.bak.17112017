@@ -1,0 +1,142 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">				
+                <?php $this->load->view('manage_employer/settings_left_menu_administration'); ?><!-- manage_employer/profile_left_menu_company -->
+            </div>
+            <?php echo form_open_multipart('', array('id' => 'edittemplate')); ?>
+            <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-8">
+                        <div class="page-header-area">
+                            <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                        </div>
+                        <div class="job-title-text">                
+                            <p>Fields marked with an asterisk (<span>*</span>) are mandatory.</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-conetnt-wrp">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="universal-form-style-v2">
+                                <ul>
+                                    <?php if($template_data['is_custom'] == 0) { ?>
+                                        <?php if($template_data['template_code'] != 'rejection_letter' && $template_data['template_code'] != 'reference_request_letter' && $template_data['template_code'] != 'employment_reference_questionnaire_letter' && $template_data['template_code'] != 'hr_document_notification') { ?>
+                                            <li class="form-col-100">
+                                                <?php echo form_label('Enable Auto Responder E-mail', 'enable_auto_responder'); ?>
+                                                <br><br>
+                                                <input class="select-domain" type="checkbox" name="enable_auto_responder" value="1"
+                                                    <?php   if ($template_data['enable_auto_responder'] == 1) { echo "checked"; } ?>>
+                                                <span>&nbsp;Enable Auto Responder for <b><i><?php echo $template_data['template_name']; ?></i></b></span>
+                                            </li>
+                                        <?php } ?>
+                                    <?php   } ?>
+                                    <li class="form-col-100">
+                                        <?php //$readonly = $template_data['is_custom'] == 0 ? 'readonly' : ''; ?>
+                                        <?php echo form_label('Template Name', 'template_name'); ?>
+                                        <?php echo form_input('template_name', set_value('template_name', $template_data['template_name']), 'class="invoice-fields" readonly'); ?>
+                                        <?php echo form_error('template_name'); ?>
+                                    </li>
+                                    <li class="form-col-100">
+                                        <?php echo form_label('From Name <span class="hr-required">*</span>', 'from_name'); ?>
+                                        <?php echo form_input('from_name', set_value('from_name', $template_data['from_name']), 'class="invoice-fields"'); ?>
+                                        <?php echo form_error('from_name'); ?>
+                                    </li>
+                                    <!--<li class="form-col-100">	
+                                        <?php //echo form_label('From E-Mail <span class="hr-required">*</span>', 'from_email'); ?>									
+                                        <?php //echo form_input('from_email', set_value('from_email', $template_data['from_email']), 'class="invoice-fields"'); ?>
+                                        <?php //echo form_error('from_email'); ?>								
+                                    </li>-->
+                                    <li class="form-col-100">	
+                                        <?php echo form_label('Subject <span class="hr-required">*</span>', 'subject'); ?>									
+                                        <?php echo form_input('subject', set_value('subject', $template_data['subject']), 'class="invoice-fields"'); ?>
+                                        <?php echo form_error('subject'); ?>								
+                                    </li> 
+                                    <li class="form-col-100 autoheight">
+                                        <?php if($template_data['is_custom'] == 0) { ?>
+                                            <?php echo form_label('Email Body <span class="hr-required">*</span>', 'message_body'); ?>
+                                            <div style='margin-bottom:5px;'><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
+                                            <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
+                                            <textarea class="ckeditor" name="message_body" id="message_body" rows="8" cols="60" ><?php echo set_value('message_body', $template_data['message_body']); ?></textarea>
+                                            <?php echo form_error('message_body'); ?>
+                                        <?php } else { ?>
+                                            <div class="row">
+                                                <div class="col-md-8 col-xs-12">
+                                                    <label>Email Body <span class="hr-required">*</span></label>
+                                                    <textarea class="ckeditor"  name="message_body" id="message_body" rows="10"><?php echo set_value('message_body', $template_data['message_body']); ?></textarea>
+                                                </div>
+                                                <div class="col-md-4 col-xs-12">
+                                                    <div class="offer-letter-help-widget">
+                                                        <div class="how-it-works-insturction">
+                                                            <strong>How it's Works :</strong>
+                                                            <p class="how-works-attr">1. Add template name</p>
+                                                            <p class="how-works-attr">2. Add template subject</p>
+                                                            <p class="how-works-attr">3. Add template body</p>
+                                                            <p class="how-works-attr">4. Add data from tags below</p>
+                                                            <p class="how-works-attr">5. Save the template</p>
+                                                        </div>
+
+                                                        <div class="tags-arae">
+                                                            <strong>Tags :</strong> (select tag from below)
+                                                            <ul class="tags">
+                                                                <li>{{company_name}}</li>
+                                                                <li>{{date}}</li>
+                                                                <li>{{first_name}}</li>
+                                                                <li>{{last_name}}</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                    </li>
+                                    <li class="form-col-100">
+                                        <input type="hidden" name="action" value="edit_email_template">
+                                        <input type="submit" value="Save" onclick="return validate_form()" class="submit-btn">
+                                        <input type="button" value="Cancel" class="submit-btn btn-cancel" onClick="document.location.href = '<?= base_url('portal_email_templates') ?>'" />      
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php echo form_close(); ?>
+        </div>
+    </div>
+</div>
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
+<script language="JavaScript" type="text/javascript">
+        function validate_form() {
+            $("#edittemplate").validate({
+                ignore: ":hidden:not(select)",
+                rules: {
+                    from_name: {
+                        required: true
+                        /*pattern: /^[a-zA-Z0-9\- ]+$/*/
+                    },
+                    subject: {
+                        required: true
+                        /*pattern: /^[a-zA-Z0-9\- .]+$/*/
+                    }
+                },
+                messages: {
+                    from_email: {
+                        required: 'Please provide Valid email'
+                    },
+                    subject: {
+                        required: 'Email Subject is required',
+                        /*pattern: 'Letters, numbers, and dashes only please'*/
+                    }
+                },
+                submitHandler: function (form) {
+                    var text_pass = $.trim(CKEDITOR.instances.message_body.getData());
+                if (text_pass.length === 0) {
+                    alertify.alert('Error! E-Mail Body Missing', "E-Mail Body cannot be Empty");
+                    return false;
+                }
+                    form.submit();
+                }
+            });
+        }
+</script>

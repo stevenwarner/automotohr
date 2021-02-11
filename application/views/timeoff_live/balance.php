@@ -1,0 +1,88 @@
+
+
+<div class="main-content">
+    <div class="dashboard-wrp">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
+                    <?php $this->load->view('main/manage_pto_left_view'); ?>
+                    <div id="js-employee-off-box-desktop"></div>
+                </div>
+
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                    <!-- View Page -->
+                    <div class="right-content js-page" id="js-page-view">
+                        <div class="row mg-lr-0">
+                            <div class="border-top-section border-bottom">
+                                <div class="col-xs-12 col-lg-12">
+                                    <div class="pto-top-heading-left pl0">
+                                        <p>Time Off Balance Sheet</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mg-lr-0">
+                            <div class="pto-tabs cs-bl-tabs">
+                                <ul class="nav nav-tabs">
+                                    <button id="btn_apply_filter" type="button" class="btn btn-apply-filter">APPLY FILTER</button>
+                                </ul>
+                                <div class="filter-content">
+                                    <div class="row">
+                                        <div class="col-lg-9">
+                                            <div class="form-group">
+                                                <label class="">Employees</label>
+                                                <div class="hr-select-dropdown">
+                                                    <select class="invoice-fields" id="js-filter-employee"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="btn-filter-reset">
+                                                <br />
+                                                <button id="btn_reset" type="button" class="btn btn-reset js-reset-filter-btn">RESET</button>
+                                                <button id="btn_apply" type="button" class="btn btn-apply js-apply-filter-btn">APPLY</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Tab -->
+                        <div class="active-content">
+                            <!-- Pagination Top -->
+                            <div class="js-ip-pagination"></div>
+                            <div class="row">
+                                <div class="col-lg-12 table-responsive">
+                                    <table class="table table-bordereds table-striped table-condensed pto-policy-table">
+                                        <thead class="heading-grey js-table-head">
+                                            <tr>
+                                                <th scope="col">Employee</th>
+                                                <th scope="col">Work Anniversary Date</th>
+                                                <th scope="col">Total Time</th>
+                                                <th scope="col">Consumed Time</th>
+                                                <th scope="col">Remaining Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="js-data-area" class="cs-bl-tbl">
+                                            <tr class="js-error-row"></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- Pagination Bottom -->
+                            <div class="js-ip-pagination"></div>
+                        </div>
+                    </div>
+
+                    <!-- Employee on off for mobile -->
+                    <div id="js-employee-off-box-mobile"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<?php $this->load->view('timeoff/loader'); ?>
+<?php $this->load->view('timeoff/scripts/balance'); ?>

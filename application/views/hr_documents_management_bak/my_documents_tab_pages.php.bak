@@ -1,0 +1,740 @@
+<?php
+    $ncd = $cd = 0;
+    if (isset($applicant)) {
+        $i9_url = base_url('onboarding/form_i9/'.$unique_sid);
+        $w4_url = base_url('onboarding/form_w4/'.$unique_sid);
+        $w9_url = base_url('onboarding/form_w9/'.$unique_sid);
+    } else if (isset($employee)) {
+        $i9_url = base_url('form_i9');
+        $w4_url = base_url('form_w4');
+        $w9_url = base_url('form_w9');
+    }
+    if(isset($eev_i9) && sizeof($eev_i9)) { $i9_form['user_consent'] = $i9_form['status'] = 1 ; $i9_status = 1;}
+    else $i9_status = isset($i9_form) && sizeof($i9_form) && $i9_form['status'] != 0 && !empty($i9_form['user_consent']) && $i9_form['user_consent'] ? 1 : 0;
+
+    if(isset($eev_w4) && sizeof($eev_w4)) { $w4_form['user_consent'] = $w4_form['status'] = 1 ; $w4_status = 1;}
+    else $w4_status = isset($w4_form) && sizeof($w4_form) && $w4_form['status'] != 0 && $w4_form['user_consent'] ? 1 : 0 ;
+
+    if(isset($eev_w9) && sizeof($eev_w9)) { $w9_form['user_consent'] = $w9_form['status'] = 1 ; $w9_status = 1;}
+    else $w9_status = isset($w9_form) && sizeof($w9_form) && $w9_form['status'] != 0 && !empty($w9_form['user_consent']) && $w9_form['user_consent'] ? 1 : 0;
+
+
+    $nc = 0;
+    if($i9_status == 0 && sizeof($i9_form)) $nc++;
+    if($w4_status == 0 && sizeof($w4_form)) $nc++;
+    if($w9_status == 0 && sizeof($w9_form)) $nc++;
+?>
+<style>
+    #tab-nav > .active > a,
+    #tab-nav > .active > a:hover,
+    #tab-nav > .active > a:focus {
+        color: #fff;
+        background: #3554dc;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .nav-tabs.nav-justified > li > a {
+        color: #0000ff;
+        font-weight: bold;
+    }
+</style>
+<div class="row">
+    <div class="col-xs-12">
+        <ul class="nav nav-tabs nav-justified" style="background-color: #e0e0e0;" id="tab-nav">
+            <li class="active"><a data-toggle="tab" href="#in_complete_doc_details">Not Completed</a></li>
+            <!-- <li><a data-toggle="tab" href="#offer_letter_doc_details">Offer Letter / Pay Plan</a></li> -->
+            <li><a data-toggle="tab" href="#completed_doc_details">Completed</a></li>
+            <li><a data-toggle="tab" href="#no_action_required_doc_details">No Action Required</a></li>
+        </ul>
+        <div class="tab-content hr-documents-tab-content">
+
+            <!-- Not Completed Document Start -->
+            <div id="in_complete_doc_details" class="tab-pane fade in active hr-innerpadding">
+                <div>
+                    <h3 class="tab-title" style="color: #0000EE;">Not Completed Document Detail</h3>
+                       <div class="table-responsive full-width">
+                        <table class="table table-plane cs-w4-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-lg-10 hidden-xs">Document Name</th>
+                                    <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                    <th class="col-lg-2 hidden-xs text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!empty($assigned_documents)) { ?>
+                                    <?php $assigned_documents = array_reverse($assigned_documents);  ?>
+                                    <?php foreach ($assigned_documents as $document) { ?>
+                                        <?php if ($document['archive'] != 1) { ?>
+                                            <?php if ($document['status'] != 0) { ?>
+                                                <tr>
+                                                    <td class="col-lg-10 col-sm-12 col-xs-12">
+                                                        <?php
+                                                            echo $document['document_title']. '&nbsp;';
+                                                            echo $document['status'] ? '' : '<b>(revoked)</b>';
+                                                            echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
+                                                            echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+                                                            if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
+                                                                echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
+                                                            }
+                                                        ?>
+                                                        <div class="hidden-lg hidden-md hidden-sm">
+                                                           <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                        </div>
+                                                    </td>
+                                                    <td class="col-lg-2 text-center hidden-xs">
+                                                        <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    <?php } ?>
+                                <?php } else { ?>
+                                    <tr>
+                                        <td colspan="7" class="col-lg-12 text-center"><b>No Document(s) Found!</b></td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php if(sizeof($uncompleted_payrolls)){
+                            foreach ($uncompleted_payrolls as $k => $category_document) {
+                                ?>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <br />
+                                        <div class="panel panel-default hr-documents-tab-content">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_notcompleted<?php echo $category_document['category_sid']; ?>">
+                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                        <?php echo $category_document['name'] ; ?>
+                                                        <div class="pull-right total-records"><b>Total: <?php echo count($category_document['documents']); ?></b></div>
+                                                    </a>
+                                                </h4>
+                                            </div>
+
+                                            <div id="collapse_notcompleted<?php echo $category_document['category_sid']; ?>" class="panel-collapse collapse">
+                                                <div class="table-responsive full-width">
+                                                    <table class="table table-plane cs-w4-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="col-lg-10 hidden-xs">Document Name</th>
+                                                                <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                                                <th class="col-lg-2 text-center hidden-xs">Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php if (!empty($category_document['documents'])) { ?>
+                                                                <?php foreach ($category_document['documents'] as $document) { ?>
+                                                                <?php $ncd++; ?>
+                                                                <tr>
+                                                                    <td class="col-lg-10">
+                                                                        <?php
+                                                                            echo $document['document_title'] . '&nbsp;';
+                                                                            echo $document['status'] ? '' : '<b>(revoked)</b>';
+
+                                                                            if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
+                                                                                echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
+                                                                            }
+                                                                        ?>
+                                                                        <div class="hidden-lg hidden-md hidden-sm">
+                                                                            <?php if ($document['document_type'] == 'offer_letter') { ?>
+                                                                                <div class="">
+                                                                                    <?php
+                                                                                        if ($document['user_consent'] == 1) {
+                                                                                            $btn_name = 'View Offer Letter';
+                                                                                        } else {
+                                                                                            $btn_name = 'View Sign';
+                                                                                        }
+                                                                                    ?>
+                                                                                    <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn"><?php echo $btn_name; ?></a>
+                                                                                </div>
+                                                                            <?php } else { ?>
+                                                                                <div class="">
+                                                                                    <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                                </div>
+                                                                            <?php } ?>
+                                                                       </div>
+                                                                    </td>
+                                                                        <?php if ($document['document_type'] == 'offer_letter') { ?>
+                                                                            <td class="col-lg-2 hidden-xs text-center" >
+                                                                                <?php
+                                                                                    if ($document['user_consent'] == 1) {
+                                                                                        $btn_name = 'View Offer Letter';
+                                                                                    } else {
+                                                                                        $btn_name = 'View Sign';
+                                                                                    }
+                                                                                ?>
+                                                                                <a  href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info "><?php echo $btn_name; ?></a>
+                                                                            </td>
+                                                                        <?php } else { ?>
+                                                                            <td class="col-lg-2 hidden-xs text-center">
+                                                                                <a  href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info ">View Sign</a>
+                                                                            </td>
+                                                                        <?php } ?>
+                                                                </tr>
+                                                                    <?php //} ?>
+                                                                <?php } ?>
+                                                            <?php } else { ?>
+                                                                <tr>
+                                                                    <td colspan="7" class="col-lg-12 text-center"><b class="js-error">No Document(s) Completed!</b></td>
+                                                                </tr>
+                                                            <?php } ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                        } ?>
+                </div>
+                <br>
+                <!-- Verification Documents -->
+                <?php if($nc > 0) { ?>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default hr-documents-tab-content">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_uncompleted_fillable" >
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                          Verification Documents
+                                        <div class="pull-right total-records"><b><?php echo 'Total:' .$nc; ?></b></div>
+                                    </a>
+
+                                </h4>
+                            </div>
+
+                            <div id="collapse_uncompleted_fillable" class="panel-collapse collapse">
+                                <div class="table-responsive">
+                                    <table class="table table-plane cs-w4-table">
+                                        <thead>
+                                        <tr>
+                                            <th class="col-lg-10 hidden-xs">Document Name</th>
+                                            <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                            <th class="col-xs-2 text-center hidden-xs" colspan="2">Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php if (isset($w4_form) && sizeof($w4_form) && $w4_form['status'] != 0 && (empty($w4_form['user_consent']) || $w4_form['user_consent'] == 0)) { ?>
+                                            <tr>
+                                                <td class="col-lg-10">
+                                                    <?php
+                                                    echo 'W4 Fillable';
+                                                    echo $w4_form['status'] ? '' : '<b>(revoked)</b>';
+
+                                                    if (isset($w4_form['sent_date']) && $w4_form['sent_date'] != '0000-00-00 00:00:00') {
+                                                        echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $w4_form['sent_date'], '_this' => $this));
+                                                    }
+                                                    ?>
+                                                   <div class="hidden-sm hidden-lg text-center hidden-md">
+                                                       <a  href="<?php echo $w4_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                   </div>
+                                                </td>
+                                                <td class="col-lg-2 hidden-xs text-center">
+                                                    <a href="<?php echo $w4_url; ?>" class="btn btn-info">View Sign</a>
+                                                </td>
+                                            </tr>
+                                        <?php }?>
+                                        <?php if (isset($w9_form) && sizeof($w9_form) && $w9_form['status'] != 0 && (empty($w9_form['user_consent']) || $w9_form['user_consent'] == 0)) { ?>
+                                            <tr>
+                                                <td class="col-lg-10">
+                                                    <?php
+                                                    echo 'W9 Fillable';
+                                                    echo $w9_form['status'] ? '' : '<b>(revoked)</b>';
+
+                                                    if (isset($w9_form['sent_date']) && $w9_form['sent_date'] != '0000-00-00 00:00:00') {
+                                                        echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $w9_form['sent_date'], '_this' => $this));
+                                                    }
+                                                    ?>
+                                                    <div class="hidden-sm hidden-lg hidden-md">
+                                                       <a href="<?php echo $w9_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                   </div>
+                                                </td>
+                                                <td class="col-lg-2 hidden-xs text-center">
+                                                    <a href="<?php echo $w9_url; ?>" class="btn btn-info">View Sign</a>
+                                                </td>
+                                            </tr>
+                                        <?php }?>
+                                        <?php if (isset($i9_form) && sizeof($i9_form) && $i9_form['status'] != 0 && (empty($i9_form['user_consent']) || $i9_form['user_consent'] == 0)) { ?>
+                                            <tr>
+                                                <td class="col-lg-10">
+                                                    <?php
+                                                    echo 'I9 Fillable';
+                                                    echo $i9_form['status'] ? '' : '<b>(revoked)</b>';
+                                                    if (isset($i9_form['sent_date']) && $i9_form['sent_date'] != '0000-00-00 00:00:00') {
+                                                        echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $i9_form['sent_date'], '_this' => $this));
+                                                    }
+                                                    ?>
+                                                    <div class="hidden-sm hidden-lg hidden-md">
+                                                       <a href="<?php echo $i9_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                   </div>
+                                                </td>
+                                                <td class="col-lg-2 hidden-xs text-center">
+                                                    <a href="<?php echo $i9_url; ?>" class="btn btn-info">View Sign</a>
+                                                </td>
+                                            </tr>
+                                        <?php }?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+            </div>
+            <!-- Not Completed Document End -->
+
+            <!-- Offer Letter Document Start -->
+            <div id="offer_letter_doc_details" class="tab-pane fade in hr-innerpadding">
+                <div>
+                    <h3 class="tab-title" style="color: #0000EE;">Assigned Offer Letter / Pay Plan Detail</h3>
+                        <div class="table-responsive full-width">
+                            <table class="table table-plane cs-w4-table">
+                                <thead>
+                                    <tr>
+                                        <th class="col-lg-10 hidden-xs">Document Name</th>
+                                        <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                        <th class="col-lg-2 hidden-xs text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($assigned_offer_letters) ) { ?>
+                                        <?php $assigned_offer_letters = array_reverse($assigned_offer_letters);  ?>
+                                        <?php foreach ($assigned_offer_letters as $document) { ?>
+                                            <tr>
+                                                <td class="col-lg-10 col-sm-12 col-xs-12">
+                                                    <?php
+                                                        echo $document['document_title']. '&nbsp;';
+                                                        echo $document['status'] ? '' : '<b>(revoked)</b>';
+
+                                                        if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
+                                                            echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
+                                                        }
+                                                    ?>
+                                                    <div class="hidden-sm hidden-md hidden-lg">
+                                                         <?php if ($document['document_type'] == 'offer_letter') { ?>
+                                                              <div class="">
+                                                                    <?php
+                                                                        if ($document['user_consent'] == 1) {
+                                                                            $btn_name = 'View Offer Letter';
+                                                                        } else {
+                                                                            $btn_name = 'View Sign';
+                                                                        }
+                                                                    ?>
+                                                               <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn"><?php echo $btn_name; ?></a>
+                                                             </div>
+                                                         <?php } else { ?>
+                                                          <div class="">
+                                                              <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                          </div>
+                                                       <?php } ?>
+                                                    </div>
+                                                </td>
+                                                <?php if ($document['document_type'] == 'offer_letter') { ?>
+                                                    <td class="col-lg-2 hidden-xs text-center">
+                                                        <?php
+                                                            if ($document['user_consent'] == 1) {
+                                                                $btn_name = 'View Offer Letter';
+                                                            } else {
+                                                                $btn_name = 'View Sign';
+                                                            }
+                                                        ?>
+                                                        <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info"><?php echo $btn_name; ?></a>
+                                                    </td>
+                                                <?php } else { ?>
+                                                    <td class="col-lg-2 hidden-xs text-center">
+                                                        <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                    </td>
+                                                <?php } ?>
+                                            </tr>
+                                        <?php } ?>
+
+                                    <?php } else { ?>
+                                        <tr>
+                                            <td colspan="7" class="col-lg-12 text-center"><b>No Offer Letter Assigned!</b></td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+            </div>
+            <!-- Offer Letter Document End -->
+
+            <!-- Completed Document Start -->
+            <div id="completed_doc_details" class="tab-pane fade in hr-innerpadding">
+                <div>
+                    <!-- Category Completed Document Start -->
+
+                    <?php
+                    $fillable_count = $w4_status + $w9_status + $i9_status;
+                    if (!empty($categories_documents_completed)) { ?>
+                        <h3 class="tab-title" style="color: #0000EE;">Completed Document Detail</h3>
+                        <?php foreach ($categories_documents_completed as $category_document) { ?>
+                            <?php if(isset($category_document['documents'])){ ?>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="panel panel-default hr-documents-tab-content">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed<?php echo $category_document['category_sid']; ?>" >
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <?php echo $category_document['name']; ?>
+                                                 </a>
+                                                <div class="pull-right total-records"><b><?php echo 'Total: '.count($category_document['documents']); ?></b></div>
+                                            </h4>
+                                             
+                                        </div>
+
+                                        <div id="collapse_completed<?php echo $category_document['category_sid']; ?>" class="panel-collapse collapse">
+                                            <div class="table-responsive full-width">
+                                                <table class="table table-plane cs-w4-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="col-lg-10 hidden-xs">Document Name</th>
+                                                            <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                                            <th class="col-xs-2 text-center hidden-xs" colspan="2">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        if (count($category_document['documents']) > 0) {
+                                                            foreach ($category_document['documents'] as $document) {
+                                                                ?>
+                                                                <?php if ($document['archive'] != 1) { ?>
+                                                                    <?php if ($document['status'] != 0) { ?>
+                                                                        <tr>
+                                                                            <td class="col-lg-10 col-sm-12 col-xs-12">
+                                                                                <?php
+                                                                                echo $document['document_title']. '&nbsp;';
+                                                                                echo $document['status'] ? '' : '<b>(revoked)</b>';
+                                                                                echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
+                                                                                echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+
+                                                                                if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
+                                                                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
+                                                                                }
+                                                                                ?>
+                                                                                <div  class="hidden-sm hidden-lg hidden-md">
+                                                                                   <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                                </div>
+                                                                            </td>
+                                                                            </td>
+                                                                            <td class="col-lg-2 text-center hidden-xs">
+                                                                                <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <?php } ?>
+                                                                <?php } ?>
+                                                            <?php } ?>
+
+                                                        <?php } else { ?>
+                                                            <tr>
+                                                                <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php
+                                }
+                            } ?>
+                    <?php } if($fillable_count > 0){?>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="panel panel-default hr-documents-tab-content">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed_fillable" >
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                Verification Documents
+                                                <div class="pull-right total-records"><b><?php echo 'Total: '.$fillable_count; ?></b></div>
+                                            </a>
+
+                                        </h4>
+                                    </div>
+
+                                    <div id="collapse_completed_fillable" class="panel-collapse collapse">
+                                        <div class="table-responsive">
+                                            <table class="table table-plane cs-w4-table">
+                                                <thead>
+                                                <tr>
+                                                    <th class="col-lg-10 hidden-xs">Document Name</th>
+                                                    <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                                    <th class="col-xs-2 text-center hidden-xs" colspan="2">Actions</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <?php if (isset($w4_form) && sizeof($w4_form) && $w4_form['status'] != 0 && !empty($w4_form['user_consent']) && $w4_form['user_consent']) { ?>
+                                                    <tr>
+                                                        <td class="col-lg-10 col-sm-12 col-xs-12">
+                                                            <?php
+                                                            echo 'W4 Fillable';
+                                                            echo $w4_form['status'] ? '' : '<b>(revoked)</b>';
+
+                                                            if (isset($w4_form['sent_date']) && $w4_form['sent_date'] != '0000-00-00 00:00:00') {
+                                                                echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $w4_form['sent_date'], '_this' => $this));
+                                                            }
+                                                            ?>
+                                                           
+                                                            <div class="hidden-sm hidden-lg hidden-md">
+                                                                <a href="<?php echo $w4_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                            </div>
+                                                        </td>
+                                                        <td class="col-lg-2 hidden-xs text-center">
+                                                            <a href="<?php echo $w4_url; ?>" class="btn btn-info">View Sign</a>
+                                                        </td>
+                                                    </tr>
+                                                <?php }?>
+                                                <?php if (isset($w9_form) && sizeof($w9_form) && $w9_form['status'] != 0 && !empty($w9_form['user_consent']) && $w9_form['user_consent']) { ?>
+                                                    <tr>
+                                                        <td class="col-lg-10">
+                                                            <?php
+                                                            echo 'W9 Fillable';
+                                                            echo $w9_form['status'] ? '' : '<b>(revoked)</b>';
+
+                                                            if (isset($w9_form['sent_date']) && $w9_form['sent_date'] != '0000-00-00 00:00:00') {
+                                                                echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $w9_form['sent_date'], '_this' => $this));
+                                                            }
+                                                            ?>
+                                                            <div class="hidden-lg hidden-md hidden-sm">
+                                                                <a href="<?php echo $w9_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                            </div>
+                                                        </td>
+                                                        <td class="col-lg-2 text-center hidden-xs">
+                                                            <a href="<?php echo $w9_url; ?>" class="btn btn-info">View Sign</a>
+                                                        </td>
+                                                    </tr>
+                                                <?php }?>
+                                                <?php if (isset($i9_form) && sizeof($i9_form) && $i9_form['status'] != 0 && !empty($i9_form['user_consent']) && $i9_form['user_consent']) { ?>
+                                                    <tr>
+                                                        <td class="col-lg-10">
+                                                            <?php
+                                                            echo 'I9 Fillable';
+                                                            echo $i9_form['status'] ? '' : '<b>(revoked)</b>';
+
+                                                            if (isset($i9_form['sent_date']) && $i9_form['sent_date'] != '0000-00-00 00:00:00') {
+                                                                echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $i9_form['sent_date'], '_this' => $this));
+                                                            }
+                                                            ?>
+                                                             <div class="hidden-lg hidden-md hidden-sm">
+                                                                <a href="<?php echo $i9_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                            </div>
+                                                        </td>
+                                                        <td class="col-lg-2 hidden-xs text-center">
+                                                            <a href="<?php echo $i9_url; ?>" class="btn btn-info ">View Sign</a>
+                                                        </td>
+                                                    </tr>
+                                                <?php }?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } if(empty($categories_documents_completed) && $fillable_count == 0){
+                        ?>
+                        <td colspan="7" class="col-lg-12 text-center"><b>No Document(s) Found!</b></td>
+                        <?php
+                    } ?>
+                    <?php if (!empty($assigned_offer_letter) && $assigned_offer_letter['user_consent'] == 1) { ?>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="panel panel-default hr-documents-tab-content">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_not_completed_offer_letter">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                Offer Letter / Pay Plan
+                                                <div class="pull-right total-records"><b>Total: 1</b></div>
+                                            </a>
+                                        </h4>
+                                    </div>
+
+                                    <div id="collapse_not_completed_offer_letter" class="panel-collapse collapse">
+                                        <div class="table-responsive full-width">
+                                            <table class="table table-plane cs-w4-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-lg-10 hidden-xs">Document Name</th>
+                                                        <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                                        <th class="col-lg-2 text-right ">Actions</th>
+                                                        <th class="col-lg-2 text-center">&nbsp;</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="col-lg-10 col-sm-12 col-xs-12">
+                                                            <?php
+                                                                echo $assigned_offer_letter['document_title']. '&nbsp;';
+
+                                                                if (isset($assigned_offer_letter['assigned_date']) && $assigned_offer_letter['assigned_date'] != '0000-00-00 00:00:00') {
+                                                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $assigned_offer_letter['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
+                                                                }
+                                                            ?>
+                                                            <div class="hidden-lg hidden-md hidden-sm">
+                                                                <?php
+                                                                    if ($assigned_offer_letter['user_consent'] == 1) {
+                                                                        $btn_name = 'View Offer Letter';
+                                                                    } else {
+                                                                        $btn_name = 'View Sign';
+                                                                    }
+                                                                ?>
+                                                                <a href="<?php echo $w9_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                            </div>
+                                                        </td>
+                                                        <td class="col-lg-2 text-center hidden-xs">
+                                                            <?php
+                                                                if ($assigned_offer_letter['user_consent'] == 1) {
+                                                                    $btn_name = 'View Offer Letter';
+                                                                } else {
+                                                                    $btn_name = 'View Sign';
+                                                                }
+                                                            ?>
+                                                            <a href="<?php echo $document_offer_letter_base . '/' . $assigned_offer_letter['sid']; ?>" class="btn btn-info"><?php echo $btn_name; ?></a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                    <!-- Category Completed Document End -->
+                </div>
+            </div>
+            <!-- Completed Document End -->
+
+            <!-- No Action Required Document Start -->
+            <div id="no_action_required_doc_details" class="tab-pane fade in hr-innerpadding">
+                <div>
+                    <!-- Category No Action Required Document Start -->
+                    <?php if (!empty($categories_no_action_documents)) { ?>
+                        <h3 class="tab-title" style="color: #0000EE;">No Action Required Document Detail</h3>
+                        <?php foreach ($categories_no_action_documents as $category_document) { ?>
+                            <?php if(isset($category_document['documents'])){ ?>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="panel panel-default hr-documents-tab-content">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_no_action<?php echo $category_document['category_sid']; ?>" >
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <?php echo $category_document['name']; ?>
+                                                    <?php
+                                                        $total_record = 0;
+                                                        if (count($category_document['documents']) > 0) {
+                                                            foreach ($category_document['documents'] as $cou => $document) {
+                                                                if ($document['archive'] != 1 && $document['manual_document_type'] != 'offer_letter') {
+                                                                    $total_record = $total_record + 1;
+                                                                }
+                                                            }
+                                                        }
+                                                    ?>
+                                                    <div class="pull-right total-records"><b><?php echo 'Total: '.$total_record; ?></b></div>
+                                                </a>
+                                            </h4>
+                                        </div>
+
+                                        <div id="collapse_no_action<?php echo $category_document['category_sid']; ?>" class="panel-collapse collapse">
+                                            <div class="table-responsive">
+                                                <table class="table table-plane cs-w4-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="col-lg-10 hidden-xs">Document Name</th>
+                                                            <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                                            <th class="col-xs-2 text-center hidden-xs" colspan="2">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        if (count($category_document['documents']) > 0) {
+                                                            foreach ($category_document['documents'] as $document) {
+                                                                ?>
+                                                                <?php if ($document['archive'] != 1 && $document['manual_document_type'] != 'offer_letter') { ?>
+                                                                    <?php if ($document['status'] != 0) { ?>
+                                                                        <tr>
+                                                                            <td class="col-lg-10 col-sm-12 col-xs-12">
+                                                                                <?php
+                                                                                    echo $document['document_title']. '&nbsp;';
+                                                                                    echo $document['status'] ? '' : '<b>(revoked)</b>';
+                                                                                    echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
+                                                                                    echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+
+                                                                                    if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
+                                                                                        echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
+                                                                                    }
+
+                                                                                    if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
+                                                                                        echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
+                                                                                    } else {
+                                                                                        echo "<br><b>Signed On: </b> N/A";
+                                                                                    }
+
+                                                                                ?>
+                                                                                <div class="hidden-lg hidden-md hidden-sm">
+                                                                                    <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td class="col-lg-2 text-center hidden-xs">
+                                                                                <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <?php } ?>
+                                                                <?php } ?>
+                                                            <?php } ?>
+
+                                                        <?php } else { ?>
+                                                            <tr>
+                                                                <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php
+                                }
+                            } ?>
+                    <?php }else{
+                        ?>
+                        <td colspan="7" class="col-lg-12 text-center"><b>No Document(s) Found!</b></td>
+                        <?php
+                    } ?>
+                    <!-- Category No Action Required Document End -->
+                </div>
+            </div>
+            <!-- No Action Required Document End -->
+
+        </div>
+    </div>
+</div>
+<style>
+    .cs_mobile_btn{
+        width:100%;margin-top:10px;
+    }
+    @media (max-width: 576px) { 
+        .total-records{
+            float:none !important;
+            
+        }
+        
+     }
+</style>

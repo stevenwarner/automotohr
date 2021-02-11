@@ -1,0 +1,58 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+ini_set("memory_limit","512M");
+
+class Notifications extends Public_Controller {
+    private $res;
+    //
+    public function __construct() {
+        parent::__construct();
+        //
+        $this->res = array(
+            'Status' => false,
+            'Response' => 'Invalid request'
+        );
+        //
+        if (!$this->session->userdata('logged_in')) $this->resp();
+        //
+        $this->load->model('notification_model');
+    }
+
+
+    public function get_notifications() {
+        //
+        $ses = $this->session->userdata('logged_in');
+        //
+        $data = $this->notification_model->getNotifications(
+            $ses,
+            strtolower($ses['employer_detail']['access_level']) != 'employee' ? false : true
+        );
+        $this->load->model('Performance_review_model', 'prm');
+        $reviewCount = $this->prm->getPendingReviewCount($ses['employer_detail']['sid']);
+        if($reviewCount != 0){
+
+            $data[] = [
+                'count' => $reviewCount,
+                'link' => base_url('performance/assigned/view'),
+                'title' => 'Performance Reviews'
+            ];
+        }
+        if(!sizeof($data)){
+            $this->res['Response'] = 'No notifications found.';
+            $this->resp();
+        }
+        //
+        $this->res['Status'] = TRUE;
+        $this->res['Data'] = $data;
+        $this->res['Response'] = 'Proceed.';
+        $this->resp();
+    }
+
+
+    private function resp(){
+        header('Content-Type: application/json');
+        echo json_encode($this->res);
+        exit(0);
+    }
+
+}

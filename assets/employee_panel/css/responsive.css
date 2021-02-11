@@ -1,0 +1,431 @@
+@media only screen and (min-width: 992px) and (max-width: 1200px){ 
+	.container{
+        width: 100%;
+    }
+    .link-box{
+    	height: 200px;
+    }
+    .link-box h2{
+    	line-height: 22px;
+    	font-size: 18px;
+    }
+    .current-date span{
+		font-size: 50px;
+	}
+	.widget-box h3,
+    .colleague-pics h3{
+    	font-size: 20px;
+    }
+	ul.activities-links li a,
+    ul.quick-links li a{
+    	font-size: 12px;
+    	padding: 5px;
+    }
+    ul.quick-links li a{
+    	padding: 5px 5px 5px 16px;
+    }
+    .welcone-video-box h1{
+    	font-size: 26px;
+    	line-height: 28px;
+    }
+    ul.quick-links li a:before {
+		top: 11px;
+		left: 0;
+	}
+	.welcone-video-box .welcome-text{
+		font-size: 14px;
+	}
+	.arrow-links ul li{
+		width: 20% !important;
+	}
+	.arrow-links ul li a::before {
+		border-top: 31px solid transparent;
+		border-bottom: 31px solid transparent;
+		margin-top: -31px;
+	}
+	.arrow-links ul li a::after {
+		border-top: 31px solid transparent;
+		border-bottom: 31px solid transparent;
+		margin-top: -31px;
+	}
+	.e_sign_mobile_hide{
+		display: none;
+	}
+	.arrow-links ul li a:before{
+		margin-left: 1px;
+	}
+        .step-text {
+            width: 94px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+        .arrow-links ul li:hover .step-text,
+        .step-text:hover{
+            overflow: auto;
+            width: auto;
+        }
+}
+@media only screen and (min-width: 768px) and (max-width: 991px){ 
+	.container{
+        width: 100%;
+    }
+    .widget-box h3,
+    .colleague-pics h3{
+    	font-size: 16px;
+    }
+    ul.activities-links li a,
+    ul.quick-links li a{
+    	font-size: 12px;
+    	padding: 5px;
+    }
+    ul.quick-links li a{
+    	padding: 5px 5px 5px 16px;
+    }
+    .welcone-video-box h1{
+    	font-size: 22px;
+    }
+    ul.quick-links li a:before {
+		top: 11px;
+		left: 0;
+	}
+	.widget-box .link-box{
+		height: 150px;
+	}
+	.widget-box .link-box h2,
+	.link-box h2{
+		font-size: 18px;
+		line-height: 20px;
+	}
+	.welcone-video-box .welcome-text{
+		font-size: 14px;
+	}
+	.arrow-links ul li{
+		width: 20% !important;
+	}
+	.arrow-links ul li a::before {
+		border-top: 31px solid transparent;
+		border-bottom: 31px solid transparent;
+		margin-top: -31px;
+	}
+	.arrow-links ul li a::after {
+		border-top: 31px solid transparent;
+		border-bottom: 31px solid transparent;
+		margin-top: -31px;
+	}
+	.btn_add_participant{
+		margin: 3px 0 10px 0;
+	}
+	.listing-article figure{
+		width: 100%;
+		height: auto;
+		margin: 0 0 15px 0;
+	}
+	.listing-article .text{
+		margin: 0;
+		float: left;
+		width: 100%;
+	}
+	.post-options ul{
+		width: 100%;
+		text-align: center;
+	}
+	.post-options .post-author {
+		width: 100%;
+		text-align: center;
+		margin: 12px 0 0 0;
+	}
+	.listing-article .text h3{
+		text-align: center;
+	}
+	.e_sign_mobile_hide{
+		display: none;
+	}
+	.arrow-links ul li a:before{
+		margin-left: 1px;
+	}
+        .step-text {
+            width: 94px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: inline-block;            
+        }
+        .arrow-links ul li:hover .step-text,
+        .step-text:hover{
+            overflow: auto;
+            width: auto;
+        }
+}
+@media only screen and (max-width: 767px){ 
+	.container{
+        width: 100%;
+    }
+    .header{
+    	padding: 10px 0 0 0;
+    }
+    .main{
+    	padding: 15px 0;
+    }
+	.logo{
+		width: 100%;
+		text-align: center;
+	}
+	.navigation{
+		min-height: inherit;
+		margin: 10px 0 0 0;
+	}
+	.navigation .nav{
+		width: 100%;
+		margin: 0;
+	}
+	.navigation{
+		background-color: #3554dc !important;
+	}
+	.navigation .nav li{
+		width: 100%;
+		margin: 0 !important;
+	}
+	.navigation .nav li a{
+		padding: 5px 10px;
+		text-align: left;
+		font-size: 14px;
+		color: #fff;
+	}
+	.navigation .nav li a:hover,
+	.navigation .nav li.active a{
+		background-color: #1032c3;
+	}
+	.navigation .navbar-collapse{
+		padding: 0 !important;
+	}
+	.navigation .navbar-toggle{
+		width: 100%;
+		margin: 0;
+		position: relative;
+		border:none;
+		padding: 8px;
+		background-color: #3554dc;
+		display: none;
+	}
+	.navigation .collapse{
+		display: block !important;
+		border-bottom: 2px solid #fff;
+	}
+	.navigation .nav .open a.dropdown-toggle{
+	    background-color: #1032c3;
+	    color: #fff;
+	}
+	.navigation .nav li a{
+		border-radius: 0;
+	}
+	.navigation ul li .caret{
+		float: right;
+		margin: 5px 0 0 0;
+	}
+	.navigation .navbar-toggle .icon-bar,
+	.navigation .navbar-toggle:focus, 
+	.navigation .navbar-toggle:hover{
+		background-color: #fff !important;
+	}
+	.navigation .navbar-toggle:focus, 
+	.navigation .navbar-toggle:hover{
+		background-color: transparent !important;
+	}
+	.menu-title{
+		position: absolute;
+		top: 4px;
+		right: 10px;
+		color: #fff;
+		text-transform: uppercase;
+	}
+	.page-header .section-ttile{
+		font-size: 22px;
+	}
+	.event-calendar .fc-left, .event-calendar .fc-left h2 {
+	    width: 100%;
+	    text-align: right;
+	    font-size: 14px;
+	    margin: 6px 0 0 0;
+	}
+	.event-calendar .fc-day-header{
+		padding: 3px;
+		font-size: 12px;
+	}
+	.emp-info-box .figure{
+		width: 100%;
+		height: auto;
+		text-align: center;
+		padding: 5px 0 0 0;
+	}
+	.emp-info-box .figure img{
+		position: static;
+		display: inline-block;
+	}
+	.emp-info-box .figure span{
+		position: static;
+		display: inline-block;
+		width: auto;
+		height: 50px;
+	-webkit-transform: translate(0, 0);
+    -moz-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+	}
+	.emp-info-box .figure span{
+		width: 100%;
+		line-height: normal;
+		padding: 5px;
+		font-size: 25px;
+	}
+	.emp-info-box .text h3 span{
+		font-size: 10px;
+	}
+	.emp-info-box .text{
+		float: left;
+		width: 100%;
+		margin: 10px 0 0 0;
+		text-align: center;
+	}
+	.emp-info-strip{
+		padding: 5px 0;
+	}
+	.contact-info{
+		margin: 0;
+	}
+	.emp-info-box .text h3{
+		word-wrap: break-word;
+		font-size: 18px;
+	}
+	.widget-box{
+		margin: 0 0 15px 0;
+	}
+	.widget-box h3,
+    .colleague-pics h3{
+    	font-size: 16px;
+    	margin: 0 0 10px 0;
+    }
+    ul.activities-links li a,
+    ul.quick-links li a{
+    	font-size: 12px;
+    	padding: 5px;
+    }
+    ul.quick-links li a{
+    	padding: 5px 5px 5px 16px;
+    }
+    .welcone-video-box h1{
+    	font-size: 22px;
+    }
+    ul.quick-links li a:before {
+		top: 11px;
+		left: 0;
+	}
+	.widget-box .link-box h2,
+	.link-box h2{
+		font-size: 22px;
+		line-height: 28px;
+	}
+	.welcone-video-box .welcome-text{
+		font-size: 14px;
+	}
+	.form-wrp .btn-wrp{
+		margin: 15px 0 0 0;
+	}
+	.signature-canvas{
+		width: 400px;
+	}
+	.logo img {
+		width: auto;
+		height: 50px;
+	}
+	.emply-picture {
+		width: 100%;
+		margin: 0 0 15px 0;
+	}
+	.container-fig{
+		padding: 0;
+	}
+	.form-wrp .form-group{
+		height: auto;
+	}
+	.arrow-links ul li{
+		width: 100% !important;
+		border-bottom: 1px solid #ddd;
+	}
+	.arrow-links ul li a{
+		padding: 4px 15px;
+	}
+	.arrow-links ul li.done .star {
+		right: 15px;
+	}
+	.btn_add_participant{
+		margin: 3px 0 10px 0;
+	}
+	.listing-article figure{
+		width: 100%;
+		height: auto;
+		margin: 0 0 15px 0;
+	}
+	.listing-article .text{
+		margin: 0;
+		float: left;
+		width: 100%;
+	}
+	.post-options ul{
+		width: 100%;
+		text-align: center;
+	}
+	.post-options .post-author {
+		width: 100%;
+		text-align: center;
+		margin: 12px 0 0 0;
+	}
+	.listing-article .text h3{
+		text-align: center;
+	}
+	.mb-2{
+		margin-bottom: 10px !important;
+	}
+	.calendar-icon.text-right{
+		text-align: center;
+	}
+	.joining-date .text{
+		text-align: center;
+	}
+	.applicant-bio h1{
+		font-size: 24px;
+	}
+	.applicant-bio h2{
+		font-size: 22px;
+	}
+	.e_sign_mobile_hide{
+		display: none;
+	}
+}
+@media only screen and (min-width: 320px) and (max-width: 479px){ 
+	.container{
+        width: 100%;
+    }
+	.btn-link-wrp{
+		float: left;
+		width: 100%;
+		margin: 0;
+		position: static;
+		text-align: center;
+	}
+	.btn-panel{
+		text-align: center;
+	}
+	.upload-file + em{
+		display: inline-block;
+		width: 100%;
+	}
+	.signature-canvas{
+		width: 300px;
+	}
+	.width-280{
+		width: 280px;
+	}
+}

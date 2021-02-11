@@ -1,0 +1,410 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<div class="main">
+    <div class="container-fluid">
+        <div class="row">		
+            <div class="inner-content">
+                <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
+                    <div class="dashboard-content">
+                        <div class="dash-inner-block">
+                            <div class="row">
+                                <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="heading-title page-title">
+                                        <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
+                                    </div>
+                                    <div class="hr-search-criteria <?= $flag ? 'opened' : "" ?>">
+                                        <strong>Click to modify search criteria</strong>
+                                    </div>
+                                    <div class="hr-search-main" <?= $flag ? "style='display:block'" : "" ?>>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="col-lg-8 col-md-8 col-xs-12 col-sm-8 field-row">
+                                                    <?php $keyword = $this->uri->segment(3) == 'all' ? '' : $this->uri->segment(3); ?>
+                                                    <label>Keyword</label>
+                                                    <input type="text" name="keyword" id="keyword" value="<?php echo urldecode($keyword); ?>" class="invoice-fields">
+                                                </div>
+                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4 field-row">
+                                                     <?php $contact_name = $this->uri->segment(6) == 'all' ? '' : $this->uri->segment(6); ?>
+                                                    <label>Contact Name</label>
+                                                    <input type="text" name="contact_name" id="contact_name" value="<?php echo urldecode($contact_name); ?>" class="invoice-fields">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5 field-row">
+                                                    <?php $company_name = $this->uri->segment(5) == 'all' ? '' : $this->uri->segment(5); ?>
+                                                    <label>Company Name</label>
+                                                    <input type="text" name="company-name" id="company-name" value="<?php echo urldecode($company_name); ?>" class="invoice-fields">
+                                                </div>
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3 field-row">
+                                                    <?php $status = $this->uri->segment(4) == '' ? 2 : $this->uri->segment(4); ?>
+                                                    <label>Status:</label>
+                                                    <div class="hr-select-dropdown">
+                                                        <select class="invoice-fields" name="active" id="active">
+                                                            <option <?php echo $status == 2 ? 'selected="selected"' : ''; ?> value="2" selected>All</option>
+                                                            <option <?php echo $status == 1 ? 'selected="selected"' : ''; ?> value="1">Active</option>
+                                                            <option <?php echo $status == 0 && $status!=2 ? 'selected="selected"' : ''; ?> value="0">In-Active</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 field-row">
+                                                    <label>&nbsp;</label>
+                                                    <a id="search_btn" href="#" class="btn btn-success btn-block" style="padding: 9px;">Search</a>
+                                                </div>
+                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 field-row">
+                                                    <label>&nbsp;</label>
+                                                    <a href="<?php echo base_url('manage_admin/employers'); ?>" class="btn black-btn btn-block" style="padding: 9px;">Reset Search</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="hr-box">
+                                        <div class="hr-box-header">
+                                            <div class="hr-items-count">
+                                                <strong class="employerCount"><?php echo $total_employers; ?></strong> Employers
+                                            </div>
+                                            <?php if(check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')){ ?>
+                                                <?php $this->load->view('templates/_parts/admin_manage_multiple_actions'); ?>
+                                            <?php } ?>
+                                            <?php echo $links; ?>
+                                        </div>
+                                        <div class="hr-innerpadding">
+                                            <div class="table-responsive">
+                                                <form name="multiple_actions" id="multiple_actions_employer" method="POST">
+                                                    <table class="table table-bordered table-hover table-striped">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>
+                                                                <input type="checkbox" id="check_all">
+                                                            </th>
+                                                            <th class="text-center">ID</th>
+                                                            <th>Username</th>
+                                                            <th>Email</th>
+<!--                                                            <th>Access Level</th>-->
+                                                            <th>Contact Name</th>
+                                                            <th>Company Name</th>
+                                                            <!--<th>Registration Date</th>-->
+                                                            <!--<th><a>Status</a></th>-->
+                                                            <?php $function_names = array('show_employer_multiple_actions', 'employerLogin', 'edit_employers'); ?>
+                                                            <?php if(check_access_permissions_for_view($security_details, 'edit_employers')){ ?>
+                                                                <th class="last-col" width="1%" colspan="4">Actions</th>
+                                                            <?php } ?>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <?php if(!empty($employers)){?>
+                                                            <?php foreach ($employers as $key => $value) { ?>
+                                                                <tr id="parent_<?= $value['sid'] ?>">
+                                                                    <td><input type="checkbox" name="checkit[]" value="<?php echo $value['sid']; ?>" class="my_checkbox"></td>
+                                                                    <td class="text-center">
+                                                                        <div class="employee-profile-info">
+                                                                            <figure>
+                                                                                <?php if (!empty($value['profile_picture'])) { ?>
+                                                                                    <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $value['profile_picture']; ?>">
+                                                                                <?php } else { ?>
+                                                                                    <img class="img-responsive" src="<?= base_url() ?>assets/images/img-applicant.jpg">
+                                                                                <?php } ?>
+                                                                            </figure>
+                                                                        </div>
+                                                                        <b><?php echo $value['sid']; ?></b>
+                                                                    </td>
+                                                                    <td>
+                                                                <?php   if(empty($value['username'])){
+                                                                            echo 'Employee Onboarding';
+                                                                        } else {
+                                                                            echo $value['username']; 
+                                                                            echo '<br> <b> Access Level:</b> '. ucwords($value['access_level']);
+                                                                            echo ($value['access_level_plus'] && $value['pay_plan_flag']) ? ' Plus / Payroll' : ($value['access_level_plus'] ? ' Plus' : ($value['pay_plan_flag'] ? ' Payroll' : ''));
+                                                                            echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="'.$value['sid'].'" data-name="'.$value['company_name'].'">Send Login Email</a>';
+                                                                        } ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <?php echo $value['email'] . '<br>' . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
+                                                                        <br />
+                                                                        <b>System Date: </b><?php echo date_with_time($value['system_user_date']); ?>
+                                                                    </td>
+<!--                                                                    <td>--><?php //echo ucwords($value['access_level']); ?><!--</td>-->
+                                                                    <td>
+                                                                        <?php echo ucwords($value['first_name'] . ' ' . $value['last_name']); ?>
+                                                                        <br />
+                                                                        <b>Start Date: </b><?php echo date_with_time($value['registration_date']); ?>
+                                                                    </td>
+                                                                    <td><?php echo ucwords($value['company_name']); ?>
+                                                                    <?php   if($value['password'] == '' || is_null($value['password'])) { ?>
+                                                                                <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
+                                                                    <?php   } else { ?>
+                                                                                <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-green.png') ?>">
+                                                                    <?php   } ?>
+                                                                    </td>
+                                                                    <?php   if(check_access_permissions_for_view($security_details, 'edit_employers')){ ?>
+                                                                                <td><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'], '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
+                                                                    <?php   } ?>
+                                                                                
+                                                                    <?php   if(check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')){ ?>
+                                                                                <td><a href="javascript:;" class="btn btn-danger btn-sm" title="Delete Employer" onclick="deleteEmployer(<?= $value['sid'] ?>)"><i class="fa fa-times"></i></a>
+                                                                                    <!--<input class="hr-delete-btn" type="button" id="<?= $value['sid'] ?>" value="Delete" onclick="return deleteEmployer(this.id)" name="button">-->
+                                                                                </td>
+                                                                    <?php } ?>
+
+                                                                    <?php   if(check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')){ ?>
+                                                                            <td>
+                                                                    <?php       if($value['active']){
+                                                                                    echo '<a href="javascript:;" class="btn btn-warning btn-sm deactive_employee" id="'.$value['sid'].'" title="Disable Employee" data-attr="'.$value['sid'].'"><i class="fa fa-ban"></i></a>';
+                                                                                } else {
+                                                                                    echo '<a href="javascript:;" class="btn btn-success btn-sm active_employee" id="'.$value['sid'].'" title="Enable Employee" data-attr="'.$value['sid'].'"><i class="fa fa-shield"></i></a>';
+                                                                                } ?>
+                                                                            <!--                                                                            <input class="hr-delete-btn" type="button" id="<?= $value['sid'] ?>" value="Delete" onclick="return deleteEmployer(this.id)" name="button">-->
+                                                                            </td>
+                                                                    <?php   } ?>
+                                                                            
+                                                                    <?php   if(check_access_permissions_for_view($security_details, 'employerlogin')){ ?>
+                                                                                <td><input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLogin(this.id)" value="Login"></td>
+                                                                    <?php   } ?>
+                                                                </tr>
+                                                            <?php } ?>
+                                                        <?php } else {  ?>
+                                                            <tr>
+                                                                <td colspan="8" class="text-center">
+                                                                    <span class="no-data">No Employers Found</span>
+                                                                </td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                        </tbody>
+                                                    </table>
+                                                    <input type="hidden" name="execute" value="multiple_action">
+                                                    <input type="hidden" id="type" name="type" value="employer">
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="">
+                                            <div class="hr-items-count">
+                                                <strong class="employerCount"><?php echo $total_employers; ?></strong> Employers
+                                                <p><?php if($total_rows != 0) { echo 'Displaying <b>' . $offset . ' - ' . $end_offset . '</b> of ' . $total_rows . ' records'; } ?></p>
+                                            </div>
+                                            <?php echo $links; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).keypress(function(e) {
+        if(e.which == 13) { // enter pressed
+            $('#search_btn').click();
+        }
+    });
+    
+    $(document).on('click','.send_credentials',function(e) {
+        var sid = $(this).attr('data-attr');
+        var name = $(this).attr('data-name');
+        console.log('ID: '+sid);
+        console.log('Name: '+name);
+        var url = "<?= base_url() ?>manage_admin/employers/send_login_credentials";
+        alertify.confirm('Confirmation', "Are you sure you want to send Email to Employee?",
+            function () {
+                $.ajax({
+                    url:url,
+                    type:'POST',
+                    data:{
+                        action: 'sendemail',
+                        sid: sid,
+                        name: name
+                    },
+                    success: function(data) {
+                        if(data == 'success') {
+                            alertify.success('Email with generate password link is sent.');
+                        } else {
+                            alerty.error('there was error');
+                        }
+                    },
+                    error: function(){
+
+                    }
+                });
+            },
+            function () {
+                alertify.error('Canceled');
+            });
+    });
+    
+    $(document).on('click','.deactive_employee',function(e) {
+        var id = $(this).attr('data-attr');
+        var url = "<?= base_url() ?>manage_admin/employers/change_status";
+        alertify.confirm('Confirmation', "Are you sure you want to deactivate this Employee?",
+            function () {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        action: 'deactive',
+                        sid: id
+                    },
+                    success: function () {
+                        alertify.success('Employee have been De-Activated.');
+                        $('#'+id).removeClass('deactive_employee');
+                        $('#'+id).removeClass('btn-warning');
+                        $('#'+id).addClass('active_employee');
+                        $('#'+id).addClass('btn-success');
+                        $('#'+id).attr('title','Enable Employee');
+                        $('#'+id).find('i').removeClass('fa-ban');
+                        $('#'+id).find('i').addClass('fa-shield');
+//                        window.location.href = '<?php //echo current_url()?>//';
+                    },
+                    error: function () {
+
+                    }
+                });
+            },
+            function () {
+                alertify.error('Canceled');
+            });
+    });
+    
+    $(document).on('click','.active_employee',function(e) {
+        var id = $(this).attr('data-attr');
+        var url = "<?= base_url() ?>manage_admin/employers/change_status";
+        alertify.confirm('Confirmation', "Are you sure you want to activate this Employee?",
+            function () {
+                $.ajax({
+                    url:url,
+                    type:'POST',
+                    data:{
+                        action: 'active',
+                        sid: id
+                    },
+                    success: function(){
+                        alertify.success('Employee have been Activated.');
+                        $('#'+id).removeClass('active_employee');
+                        $('#'+id).removeClass('btn-success');
+                        $('#'+id).addClass('deactive_employee');
+                        $('#'+id).addClass('btn-warning');
+                        $('#'+id).attr('title','Disable Employee');
+                        $('#'+id).find('i').removeClass('fa-shield');
+                        $('#'+id).find('i').addClass('fa-ban');
+//                        window.location.href = '<?php //echo current_url()?>//';
+                    },
+                    error: function(){
+
+                    }
+                });
+            },
+            function () {
+                alertify.error('Canceled');
+            });
+    });
+    
+    $(document).ready(function(){
+        $('#keyword').on('keyup', update_url);
+        $('#keyword').on('blur', update_url);
+        $('#contact_name').on('keyup', update_url);
+        $('#contact_name').on('blur', update_url);
+        $('#company-name').on('keyup', update_url);
+        $('#company-name').on('blur', update_url);
+        $('#active').on('change', update_url);
+        $('#search_btn').on('click', function(e){
+            e.preventDefault();
+            update_url();
+            window.location = $(this).attr('href').toString();
+        });
+    });
+
+    function update_url(){
+        var url = '<?php echo base_url('manage_admin/employers/'); ?>';
+        var keyword = $('#keyword').val();
+        var company_name = $('#company-name').val();
+        var status = $('#active').val();
+        var contact_name = $('#contact_name').val();
+
+        keyword = keyword == '' ? 'all' : keyword;
+        company_name = company_name == '' ? 'all' : company_name;
+        contact_name = contact_name == '' ? 'all' : contact_name;
+        url = url + '/' + encodeURIComponent(keyword) + '/' + status + '/' + encodeURIComponent(company_name) + '/' + encodeURIComponent(contact_name);
+        $('#search_btn').attr('href', url);
+    }
+
+    function employerLogin(userId) {
+        url_to = "<?=base_url()?>manage_admin/employers/employer_login";
+        $.post(url_to, {action: "login", sid: userId})
+        .done(function(){
+            window.open("<?= base_url('dashboard') ?>", '_blank');
+        });
+    }
+       
+    function deleteEmployer(id) {
+        url = "<?= base_url() ?>manage_admin/employers/employer_task";
+        alertify.confirm('Confirmation', "Are you sure you want to delete this Employee?",
+        function () {
+            $.post(url, {action: 'delete', sid: id})
+            .done(function (data) {
+                employerCounter = parseInt($(".employerCount").html());
+                employerCounter--;
+                $(".employerCount").html(employerCounter);
+                $("#parent_" + id).remove();
+                alertify.success('Selected employee have been Deleted.');
+            });
+        },
+        function () {
+            alertify.error('Canceled');
+        });
+    }
+
+    function deactive_employee(id) {
+        var url = "<?= base_url() ?>manage_admin/employers/change_status";
+        alertify.confirm('Confirmation', "Are you sure you want to deactivate this Employee?",
+                function () {
+                    $.ajax({
+                        url:url,
+                        type:'POST',
+                        data:{
+                            action: 'deactive',
+                            sid: id
+                        },
+                        success: function(){
+                            alertify.success('Employee have been De-Activated.');
+                            console.log(url);
+                            return false;
+                            window.location.href = '<?php current_url()?>';
+                        },
+                        error: function(){
+
+                        }
+                    });
+                },
+                function () {
+                    alertify.error('Canceled');
+                });
+    }
+
+    function active_employee(id) {
+        var url = "<?= base_url() ?>manage_admin/employers/change_status";
+        alertify.confirm('Confirmation', "Are you sure you want to activate this Employee?",
+            function () {
+                $.ajax({
+                    url:url,
+                    type:'POST',
+                    data:{
+                        action: 'active',
+                        sid: id
+                    },
+                    success: function(){
+                        alertify.success('Employee have been Activated.');
+                        window.location.href = '<?php current_url()?>';
+                    },
+                    error: function(){
+
+                    }
+                });
+            },
+            function () {
+                alertify.error('Canceled');
+            });
+    }
+</script>

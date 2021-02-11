@@ -1,0 +1,42 @@
+<?php
+
+class Resource_page_model extends CI_Model {
+
+    function __construct() {
+        parent::__construct();
+    }
+
+    public function get_page_data($page_name){
+        $this->db->select('*');
+        $this->db->where('page_name', $page_name);
+        $record_obj = $this->db->get('dynamic_pages');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if(!empty($record_arr)){
+            return $record_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+    public function insert_page_record($data_to_insert){
+        $this->db->insert('dynamic_pages', $data_to_insert);
+    }
+
+    public function update_page_record($sid, $data_to_update){
+        $this->db->where('sid', $sid);
+        $this->db->update('dynamic_pages', $data_to_update);
+    }
+
+    public function save_page_record($sid, $data){
+        if(empty($sid) || $sid == 0){
+            $this->insert_page_record($data);
+        } else {
+            $this->update_page_record($sid, $data);
+        }
+    }
+
+
+
+}

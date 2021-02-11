@@ -1,0 +1,2976 @@
+<div class="main-content">
+    <div class="dashboard-wrp">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                            <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
+
+                            <div class="page-header-area margin-top">
+                                <span class="page-heading down-arrow">
+                                    <?php if($user_type == 'applicant'){ ?>
+                                        <a class="dashboard-link-btn" href="<?php echo base_url('applicant_profile/'.$user_sid.'/'.$job_list_sid); ?>"><i class="fa fa-chevron-left"></i>Applicant Profile</a>
+                                    <?php } else { ?>
+                                        <a class="dashboard-link-btn" href="<?php echo base_url('employee_profile/'.$user_sid); ?>"><i class="fa fa-chevron-left"></i>Employee Profile</a>
+                                    <?php }
+                                    echo $title;?>
+                                </span>
+                            </div>
+                            <?php $this->load->view('hr_documents_management_test/documents_assignment_tab_pages'); //hassan working area ?>
+                                                   
+
+                            <?php if(!$session['employer_detail']['pay_plan_flag']){?>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="hr-box">
+                                            <div class="hr-box-header">
+                                                <strong>Employment Eligibility Verification Document</strong>
+                                            </div>
+                                            <div class="hr-innerpadding">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-hover table-stripped js-verification-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="col-lg-3">Document Name</th>
+                                                                <th class="col-lg-3 text-center">Type</th>
+                                                                <th class="col-lg-3 text-center">Assigned On</th>
+                                                                <th class="col-lg-3 text-center">Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="col-lg-3">
+                                                                    W4 Fillable <?php echo sizeof($w4_form) > 0 && !$w4_form['status'] && !isset($w4_form_uploaded) ? '<b>(revoked)</b>':'' ;?>
+                                                                    <?php if((sizeof($w4_form) > 0 && $w4_form['status'])) {
+                                                                        if($w4_form['user_consent']) { ?>
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                        <?php } else { ?>
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                        <?php }
+                                                                    }else if(isset($w4_form_uploaded) && $user_type == 'employee'){ ?>
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                    <?php } ?>
+                                                                </td>
+                                                                <td class="col-lg-1 text-center">
+                                                                    <i class="fa fa-2x fa-file-text"></i>
+                                                                </td>
+                                                                <td class="col-lg-2 text-center">
+                                                                    <?php if (sizeof($w4_form) > 0 && $w4_form['status']){?>
+                                                                        <i class="fa fa-check fa-2x text-success"></i>
+                                                                        <div class="text-center">
+                                                                            <?=reset_datetime(array( 'datetime' => $w4_form['sent_date'], '_this' => $this));?>
+                                                                        </div>
+                                                                    <?php } else if(isset($w4_form_uploaded) && $user_type == 'employee') { ?>
+                                                                        <i class="fa fa-check fa-2x text-success"></i>
+                                                                        <div class="text-center">
+                                                                            <?=reset_datetime(array( 'datetime' => $w4_form_uploaded['date_uploaded'], '_this' => $this));?>
+                                                                        </div>
+                                                                    <?php } else { ?>
+                                                                        <i class="fa fa-times fa-2x text-danger"></i>
+                                                                    <?php } ?>
+                                                                </td>
+                                                                <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_fillable')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_fillable'))){ ?>
+                                                                    <td class="col-lg-3 text-center">
+                                                                        <?php if (sizeof($w4_form) > 0 && !isset($w4_form_uploaded)) { ?>
+                                                                            <?php if ($w4_form['status']) { ?>
+                                                                                <form id="form_remove_w4" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="remove_w4" />
+                                                                                </form>
+                                                                                <button onclick="func_remove_w4();" class="btn btn-danger">Revoke</button>
+                                                                                <a class="btn btn-success" data-toggle="modal" data-target="#w4_modal" href="javascript:void(0);">View Doc</a>
+                                                                                <?php if($w4_form['user_consent']){ ?>
+                                                                                    <?php if($user_type == 'employee'){ ?>
+                                                                                    <a class="btn btn-success" href="<?= base_url()."hr_documents_management_test/required_documents/employee/".$user_sid."/".$w4_form['sid']."/w4_assigned" ?>">Manage Docs</a>
+
+                                                                                    <?php } ?>
+                                                                                <?php } ?>
+                                                                            <?php } else { ?>
+                                                                                <form id="form_assign_w4" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="assign_w4"/>
+                                                                                </form>
+                                                                                <button onclick="func_assign_w4();" class="btn btn-warning">Re-Assign</button>
+                                                                                <?php if($user_type == 'employee'){ ?>
+                                                                                <button class="btn btn-success"
+                                                                                                onclick="preview_eev_document_model(this);"
+                                                                                                 data-document-type="w4"
+                                                                                                >Upload</button>
+                                                                                <?php } ?>
+                                                                        <?php }
+                                                                            }else { ?>
+                                                                                <?php if(isset($w4_form_uploaded) && $user_type == 'employee'){ ?>
+                                                                                <button class="btn btn-success"
+                                                                                        onclick="preview_eev_document_model(this);"
+                                                                                        data-document-sid="<?= $w4_form_uploaded['sid'] ?>"
+                                                                                        data-document-type="w4"
+                                                                                        data-file-name="<?= $w4_form_uploaded['s3_filename'] ?>"
+                                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $w4_form_uploaded['s3_filename']; ?>"
+                                                                                        data-download-url="<?= base_url()."hr_documents_management_test/download_upload_document/". $w4_form_uploaded['s3_filename']; ?>"
+                                                                                        >View/Update</button>
+                                                                                <a class="btn btn-success" href="<?= base_url()."hr_documents_management_test/required_documents/employee/".$user_sid."/".$w4_form_uploaded['sid'] ?>">Manage Docs</a>
+                                                                                <?php }else{ ?>
+                                                                                <form id="form_assign_w4" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="assign_w4"/>
+                                                                                </form>
+                                                                                <button onclick="func_assign_w4();" class="btn btn-success">Assign</button>
+                                                                                <?php if($user_type == 'employee'){ ?>
+                                                                                <button class="btn btn-success"
+                                                                                        onclick="preview_eev_document_model(this);"
+                                                                                         data-document-type="w4"
+                                                                                        >Upload</button>
+                                                                                <?php } ?>
+                                                                                <?php } ?>
+                                                                            <?php } ?>
+                                                                        <!--                                                                <a href="--><?php ////echo $w4_url; ?><!--" class="btn btn-success">View Sign</a>-->
+                                                                    </td>
+                                                                <?php } ?>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="col-lg-3">
+                                                                    W9 Fillable <?php echo sizeof($w9_form) > 0 && !$w9_form['status'] && !isset($w9_form_uploaded) ? '<b>(revoked)</b>':'' ;?>
+                                                                    <?php if(sizeof($w9_form) > 0 && $w9_form['status']) {
+                                                                        if($w9_form['user_consent']) { ?>
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                        <?php } else { ?>
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                        <?php }
+                                                                    }else if(isset($w9_form_uploaded) && $user_type == 'employee'){ ?>
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                    <?php } ?>
+                                                                </td>
+                                                                <td class="col-lg-1 text-center">
+                                                                    <i class="fa fa-2x fa-file-text"></i>
+                                                                </td>
+                                                                <td class="col-lg-2 text-center">
+                                                                    <?php if (sizeof($w9_form) > 0 && $w9_form['status']) { ?>
+                                                                        <i class="fa fa-check fa-2x text-success"></i>
+                                                                        <div class="text-center">
+                                                                            <?=reset_datetime(array( 'datetime' => $w9_form['sent_date'], '_this' => $this));?>
+                                                                        </div>
+                                                                        <?php } else if(isset($w9_form_uploaded) && $user_type == 'employee') { ?>
+                                                                        <i class="fa fa-check fa-2x text-success"></i>
+                                                                        <div class="text-center">
+                                                                            <?=reset_datetime(array( 'datetime' => $w9_form_uploaded['date_uploaded'], '_this' => $this));?>
+                                                                        </div>
+                                                                    <?php } else { ?>
+                                                                        <i class="fa fa-times fa-2x text-danger"></i>
+                                                                    <?php } ?>
+                                                                </td>
+                                                                <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_fillable')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_fillable'))){ ?>
+                                                                    <td class="col-lg-1 text-center">
+                                                                        <?php if (sizeof($w9_form) > 0 && !isset($w9_form_uploaded)) { ?>
+                                                                            <?php if ($w9_form['status']) { ?>
+                                                                                <form id="form_remove_w9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="remove_w9" />
+                                                                                </form>
+                                                                                <button onclick="func_remove_w9();" class="btn btn-danger">Revoke</button>
+                                                                                <a class="btn btn-success" data-toggle="modal" data-target="#w9_modal" href="javascript:void(0);">View Doc</a>
+                                                                                <?php if($w9_form['user_consent']){ ?>
+                                                                                    <?php if($user_type == 'employee'){ ?>
+                                                                                <a class="btn btn-success" href="<?= base_url()."hr_documents_management_test/required_documents/employee/".$user_sid."/".$w9_form['sid']."/w9_assigned" ?>">Manage Docs</a>
+                                                                                    <?php } ?>
+                                                                                <?php } ?>
+
+                                                                            <?php } else{?>
+                                                                                <form id="form_assign_w9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="assign_w9"/>
+                                                                                </form>
+                                                                                <button onclick="func_assign_w9();" class="btn btn-warning">Re-Assign</button>
+                                                                                <?php if($user_type == 'employee'){ ?>
+                                                                                <button class="btn btn-success"
+                                                                                                onclick="preview_eev_document_model(this);"
+                                                                                                 data-document-type="w9"
+                                                                                                >Upload</button>
+                                                                                <?php } ?>
+                                                                            <?php }
+                                                                        }else { ?>
+                                                                                <?php if(isset($w9_form_uploaded) && $user_type == 'employee'){ ?>
+                                                                                    <button class="btn btn-success"
+                                                                                        onclick="preview_eev_document_model(this);"
+                                                                                        data-document-sid="<?= $w9_form_uploaded['sid'] ?>"
+                                                                                        data-document-type="w9"
+                                                                                        data-file-name="<?= $w9_form_uploaded['s3_filename'] ?>"
+                                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $w9_form_uploaded['s3_filename']; ?>"
+                                                                                        data-download-url="<?= base_url()."hr_documents_management_test/download_upload_document/". $w9_form_uploaded['s3_filename']; ?>"
+                                                                                        >View/Update</button>
+                                                                                <a class="btn btn-success" href="<?= base_url()."hr_documents_management_test/required_documents/employee/".$user_sid."/".$w9_form_uploaded['sid'] ?>">Manage Docs</a>
+
+                                                                                <?php }else{ ?>
+                                                                                    <form id="form_assign_w9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="assign_w9"/>
+                                                                                    </form>
+                                                                                    <button onclick="func_assign_w9();" class="btn btn-success">Assign</button>
+                                                                                    <?php if($user_type == 'employee'){ ?>
+                                                                                    <button class="btn btn-success"
+                                                                                                onclick="preview_eev_document_model(this);"
+                                                                                                 data-document-type="w9"
+                                                                                                >Upload</button>
+                                                                                    <?php } ?>
+                                                                                <?php } ?>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                <?php } ?>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="col-lg-3">
+                                                                    I9 Fillable <?php echo sizeof($i9_form) > 0 && !$i9_form['status'] && !isset($i9_form_uploaded) ? '<b>(revoked)</b>':'' ;?>
+                                                                    <?php if(sizeof($i9_form) > 0  && $i9_form['status']) {
+                                                                        if($i9_form['user_consent']) { ?>
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                        <?php } else { ?>
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                        <?php }
+                                                                    }else if(isset($i9_form_uploaded) && $user_type == 'employee'){ ?>
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                    <?php } ?>
+                                                                </td>
+                                                                <td class="col-lg-1 text-center">
+                                                                    <i class="fa fa-2x fa-file-text"></i>
+                                                                </td>
+                                                                <td class="col-lg-2 text-center">
+                                                                    <?php if (sizeof($i9_form) > 0 && $i9_form['status']) { ?>
+                                                                        <i class="fa fa-check fa-2x text-success"></i>
+                                                                        <div class="text-center">
+                                                                        <?=reset_datetime(array( 'datetime' => $i9_form['sent_date'], '_this' => $this));?>
+                                                                        </div>
+                                                                        <?php } else if(isset($i9_form_uploaded) && $user_type == 'employee') { ?>
+                                                                        <i class="fa fa-check fa-2x text-success"></i>
+                                                                        <div class="text-center">
+                                                                            <?=reset_datetime(array( 'datetime' => $i9_form_uploaded['date_uploaded'], '_this' => $this));?>
+                                                                        </div>
+                                                                        <?php } else { ?>
+                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                        <?php } ?>
+                                                                </td>
+                                                                <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_fillable')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_fillable'))){ ?>
+                                                                    <td class="col-lg-1 text-center">
+                                                                        <?php if (sizeof($i9_form) > 0 && !$i9_form_uploaded) { ?>
+                                                                            <?php if ($i9_form['status']) { ?>
+                                                                                <form id="form_remove_i9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="remove_i9" />
+                                                                                </form>
+                                                                                <button onclick="func_remove_i9();" class="btn btn-danger">Revoke</button>
+                                                                                <?php if($i9_form['employer_flag']){ ?>
+                                                                                    <a class="btn btn-success" data-toggle="modal" data-target="#i9_modal" href="javascript:void(0);">View Doc</a>
+                                                                                <?php } else{ ?>
+                                                                                    <a class="btn btn-success" data-form-type="i9" href="<?php echo $user_type == 'applicant' ? base_url('form_i9/applicant') . '/' . $applicant_info['sid'] . "/" . $job_list_sid : base_url('form_i9/employee') . '/' . $employer['sid']; ?>">View Doc</a>
+                                                                                <?php } ?>
+                                                                                <?php if($i9_form['user_consent']){ ?>
+                                                                                    <?php if($user_type == 'employee'){ ?>
+                                                                                    <a class="btn btn-success" href="<?= base_url()."hr_documents_management_test/required_documents/employee/".$user_sid."/".$i9_form['sid']."/i9_assigned" ?>">Manage Docs</a>
+                                                                                    <?php } ?>
+                                                                                <?php } ?>
+
+                                                                            <?php }else{ ?>
+
+                                                                                <form id="form_assign_i9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="assign_i9"/>
+                                                                                </form>
+                                                                                <button onclick="func_assign_i9();" class="btn btn-warning">Re-Assign</button>
+                                                                                <?php if($user_type == 'employee'){ ?>
+                                                                                <button class="btn btn-success"
+                                                                                                onclick="preview_eev_document_model(this);"
+                                                                                                 data-document-type="i9"
+                                                                                                >Upload</button>
+                                                                                <?php } ?>
+                                                                            <?php }
+                                                                        }else { ?>
+                                                                                <?php if(isset($i9_form_uploaded) && $user_type == 'employee'){ ?>
+                                                                                    <button class="btn btn-success"
+                                                                                        onclick="preview_eev_document_model(this);"
+                                                                                        data-document-sid="<?= $i9_form_uploaded['sid'] ?>"
+                                                                                        data-document-type="i9"
+                                                                                        data-file-name="<?= $i9_form_uploaded['s3_filename'] ?>"
+                                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $i9_form_uploaded['s3_filename']; ?>"
+                                                                                        data-download-url="<?= base_url()."hr_documents_management_test/download_upload_document/". $i9_form_uploaded['s3_filename']; ?>"
+                                                                                        >View/Update</button>
+                                                                                <a class="btn btn-success" href="<?= base_url()."hr_documents_management_test/required_documents/employee/".$user_sid."/".$i9_form_uploaded['sid'] ?>">Manage Docs</a>
+
+                                                                                <?php }else{ ?>
+                                                                                    <form id="form_assign_i9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="assign_i9"/>
+                                                                                    </form>
+                                                                                    <button onclick="func_assign_i9();" class="btn btn-success">Assign</button>
+                                                                                    <?php if($user_type == 'employee'){ ?>
+                                                                                    <button class="btn btn-success"
+                                                                                                onclick="preview_eev_document_model(this);"
+                                                                                                 data-document-type="i9"
+                                                                                                >Upload</button>
+                                                                                    <?php } ?>
+                                                                                <?php } ?>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                <?php } ?>
+                                                            </tr>
+                                                            <?php if($user_type == 'applicant') { ?>
+                                                                <?php if($eeo_form_status == 'Yes' && !empty($eeo_form_info)){ ?>
+                                                                    <tr>
+                                                                        <td class="col-lg-3">
+                                                                            EEOC FORM
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                        </td>
+                                                                        <td class="col-lg-1 text-center">
+                                                                            <i class="fa fa-2x fa-file-text"></i>
+                                                                        </td>
+                                                                        <td class="col-lg-2 text-center">
+                                                                            <?php if (sizeof($i9_form) > 0 && $i9_form['status']) { ?>
+                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                                <div class="text-center">
+                                                                                <?=reset_datetime(array( 'datetime' => $i9_form['sent_date'], '_this' => $this));?>
+                                                                                </div>
+                                                                                <?php } else { ?>
+                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <?php } ?>
+                                                                        </td>
+                                                                        <td class="col-lg-1 text-center">
+                                                                            <!-- <form id="form_remove_eeoc" enctype="multipart/form-data" method="post" action="<?php //echo current_url(); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="revoke_eeoc" />
+                                                                            </form>
+                                                                            <button onclick="func_remove_eeoc();" class="btn btn-danger">Revoke</button> -->
+                                                                            <a class="btn btn-success" data-toggle="modal" data-target="#eeoc_modal" href="javascript:void(0);">View Doc</a>
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php } ?>
+                                                            <?php } else if ($user_type == 'employee') { ?>
+                                                                <?php if(!empty($eeo_form_info)) { ?>
+                                                                    <tr>
+                                                                        <td class="col-lg-3">
+                                                                            EEOC FORM
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                        </td>
+                                                                        <td class="col-lg-1 text-center">
+                                                                            <i class="fa fa-2x fa-file-text"></i>
+                                                                        </td>
+                                                                        <td class="col-lg-2 text-center">
+                                                                            <?php if (sizeof($i9_form) > 0 && $i9_form['status']) { ?>
+                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                                <div class="text-center">
+                                                                                <?=reset_datetime(array( 'datetime' => $i9_form['sent_date'], '_this' => $this));?>
+                                                                                </div>
+                                                                                <?php } else { ?>
+                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <?php } ?>
+                                                                        </td>
+                                                                        <td class="col-lg-1 text-center">
+                                                                            <a class="btn btn-success" data-toggle="modal" data-target="#eeoc_modal" href="javascript:void(0);">View Doc</a>
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php } ?>
+                                                            <?php } ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php }?>
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="hr-box">
+                                        <div class="hr-box-header">
+                                            All Document
+                                            <button type="button" onclick="open_uploaded_model();" class="btn btn-success pull-right">Manual Document Upload</button>
+                                        </div>
+                                        <div class="hr-innerpadding">
+                                            <div class="hr-document-list">
+                                                <!-- Active Group Document Start -->
+                                                <?php if(!empty($active_groups)) { ?>
+                                                    <?php foreach ($active_groups as $active_group) { ?>
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <div class="panel panel-default hr-documents-tab-content">
+                                                                    <div class="panel-heading">
+                                                                        <h4 class="panel-title">
+                                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_ag<?php echo $active_group['sid']; ?>" >
+                                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                                                <?php echo $active_group['name']; ?>
+                                                                                <div class="btn btn-xs btn-success">Active Group</div>
+                                                                                <div class="pull-right total-records"><b><?php echo '&nbsp;Total: '.$active_group['documents_count'];?></b></div>
+                                                                            </a>
+
+                                                                            <?php if(!$pp_flag) {
+                                                                                if (in_array($active_group['sid'], $assigned_groups)) { ?>
+                                                                                    <button
+                                                                                        class="btn btn-success btn-xs pull-right">
+                                                                                        Document Group Assigned
+                                                                                    </button>
+                                                                                <?php } else { ?>
+                                                                                    <button
+                                                                                        class="btn btn-primary btn-xs pull-right"
+                                                                                        id="btn_group_<?php echo $active_group['sid']; ?>"
+                                                                                        onclick="func_assign_document_group('<?php echo $active_group['sid']; ?>','<?php echo $user_type; ?>','<?php echo $user_sid; ?>', '<?php echo $active_group['name'] ?>')">
+                                                                                        Assign Document Group
+                                                                                    </button>
+                                                                                <?php }
+                                                                            }?>
+                                                                        </h4>
+                                                                    </div>
+
+                                                                    <div id="collapse_ag<?php echo $active_group['sid']; ?>" class="panel-collapse collapse">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-plane">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th class="col-xs-8">Document Name</th>
+                                                                                        <th class="col-xs-2">Document Type</th>
+                                                                                        <th class="col-xs-2 text-center" colspan="2">Actions</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <?php  if($active_group['documents_count'] > 0) {
+                                                                                        foreach ($active_group['documents'] as $document) { ?>
+                                                                                            <tr>
+                                                                                                <td class="col-xs-8"><?php echo $document['document_title']; ?></td>
+                                                                                                <td class="col-xs-2">
+                                                                                                    <?php  echo ucwords($document['document_type']); ?>
+                                                                                                </td>
+                                                                                                <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_doc'))) { ?>
+                                                                                                    <td>
+                                                                                                        <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids)) { ?>
+
+                                                                                                            <?php if(in_array($document['sid'], $assigned_sids)) { ?>  <!-- revoke here  -->
+                                                                                                                <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
+                                                                                                                    <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                                    <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                                </form>
+                                                                                                                <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                                                            <?php } else if (in_array($document['sid'], $completed_sids)) { ?>
+                                                                                                                <form id="form_assign_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                                                                                                                    <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                                    <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                                </form>
+                                                                                                                <?php if($document['document_type'] == 'uploaded') { ?>
+                                                                                                                    <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn blue-button btn-block btn-sm">Completed and Re-Assign</button>
+                                                                                                                <?php } else { ?>
+                                                                                                                    <button class="btn blue-button btn-sm btn-block"
+                                                                                                                        onclick="fLaunchModalGen(this);"
+                                                                                                                        data-title="<?php echo $document['document_title']; ?>"
+                                                                                                                        data-description="<?php echo $document['document_description']; ?>"
+                                                                                                                        data-document-type="<?php echo $document['document_type']; ?>"
+                                                                                                                        data-document-sid="<?php echo $document['sid']; ?>">Completed and Re-Assign</button>
+                                                                                                                <?php } ?>
+                                                                                                            <?php } else { // re-assign here ?>
+                                                                                                                <form id="form_assign_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                                                                                                                    <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                                    <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                                </form>
+                                                                                                                <?php if($document['document_type'] == 'uploaded') { ?>
+                                                                                                                    <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, title = 'Please Confirm, Re-Assign This Document', 'Are you sure you want to Re-Assign this document? <br><?= ucwords($user_type); ?> will be required to re-submit the document.');" class="btn btn-warning btn-block btn-sm">Re-Assign</button>
+                                                                                                                <?php } else { ?>
+                                                                                                                    <button class="btn btn-warning btn-sm btn-block"
+                                                                                                                            onclick="fLaunchModalGen(this, 'reassign');"
+                                                                                                                            data-title="<?php echo $document['document_title']; ?>"
+                                                                                                                            data-description="<?php echo $document['document_description']; ?>"
+                                                                                                                            data-document-type="<?php echo $document['document_type']; ?>"
+                                                                                                                            data-document-sid="<?php echo $document['sid']; ?>">Modify and Re-Assign</button>
+                                                                                                                <?php } ?>
+                                                                                                            <?php } ?>
+                                                                                                        <?php } else { ?> <!-- assign here -->
+                                                                                                            <form id="form_assign_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                                <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                                                                                                                <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                                <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                            </form>
+                                                                                                            <?php if($document['document_type'] == 'uploaded') { ?>
+                                                                                                                <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-success btn-block btn-sm">Assign</button>
+                                                                                                            <?php } else { ?>
+                                                                                                                <button class="btn btn-success btn-sm btn-block"
+                                                                                                                        onclick="fLaunchModalGen(this);"
+                                                                                                                        data-title="<?php echo $document['document_title']; ?>"
+                                                                                                                        data-description="<?php echo $document['document_description']; ?>"
+                                                                                                                        data-document-type="<?php echo $document['document_type']; ?>"
+                                                                                                                        data-document-sid="<?php echo $document['sid']; ?>">Modify and Assign</button>
+                                                                                                            <?php } ?>
+                                                                                                        <?php } ?>
+                                                                                                    </td>
+                                                                                                <?php } ?>
+                                                                                                <td>
+                                                                                                    <?php if ($document['document_type'] == 'uploaded') {
+                                                                                                        $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
+                                                                                                        $document_file = pathinfo($document_filename);
+                                                                                                        $name = explode(".",$document_filename);
+                                                                                                        $url_segment_original = $name[0]; ?>
+                                                                                                        <button class="btn btn-success btn-sm btn-block"
+                                                                                                                onclick="view_original_uploaded_doc(this);"
+                                                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
+                                                                                                                data-print-url="<?php echo $url_segment_original; ?>"
+                                                                                                                data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
+                                                                                                                data-document-sid="<?php echo $document['sid']; ?>"
+                                                                                                                data-file-name="<?php echo $document['uploaded_document_original_name']; ?>"
+                                                                                                                data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">View Doc</button>
+                                                                                                    <?php } else { ?>
+                                                                                                        <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
+                                                                                                    <?php } ?>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        <?php } ?>
+                                                                                    <?php } else { ?>
+                                                                                        <tr>
+                                                                                            <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                                <!-- Active Group Document End -->
+
+                                                <!-- In-Active Group Document Start -->
+                                                <?php if(!empty($in_active_groups)) { ?>
+                                                    <?php foreach ($in_active_groups as $active_group) { ?>
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <div class="panel panel-default hr-documents-tab-content">
+                                                                    <div class="panel-heading">
+                                                                        <h4 class="panel-title">
+                                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_ig<?php echo $active_group['sid']; ?>" >
+                                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                                                <?php echo $active_group['name']; ?>
+                                                                                <div class="btn btn-xs btn-danger">Inactive Group</div>
+                                                                                <div class="pull-right total-records"><b><?php echo '&nbsp;Total: '.$active_group['documents_count'];?></b></div>
+                                                                            </a>
+
+
+                                                                            <?php if(!$pp_flag) {
+                                                                                if (in_array($active_group['sid'], $assigned_groups)) { ?>
+                                                                                    <button
+                                                                                        class="btn btn-success btn-xs pull-right">
+                                                                                        Document Group Assigned
+                                                                                    </button>
+                                                                                <?php } else { ?>
+                                                                                    <button
+                                                                                        class="btn btn-primary btn-xs pull-right"
+                                                                                        id="btn_group_<?php echo $active_group['sid']; ?>"
+                                                                                        onclick="func_assign_document_group('<?php echo $active_group['sid']; ?>','<?php echo $user_type; ?>','<?php echo $user_sid; ?>', '<?php echo $active_group['name'] ?>')">
+                                                                                        Assign Document Group
+                                                                                    </button>
+                                                                                <?php }
+                                                                            }?>
+                                                                        </h4>
+                                                                    </div>
+                                                                    <div id="collapse_ig<?php echo $active_group['sid']; ?>" class="panel-collapse collapse">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-plane">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th class="col-xs-8">Document Name</th>
+                                                                                        <th class="col-xs-2">Document Type</th>
+                                                                                        <th class="col-xs-2 text-center" colspan="2">Actions</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <?php if($active_group['documents_count'] > 0) { ?>
+                                                                                            <?php foreach ($active_group['documents'] as $document) { ?>
+                                                                                            <tr>
+                                                                                                <td class="col-xs-8"><?php echo $document['document_title']; ?></td>
+                                                                                                <td class="col-xs-2">
+                                                                                                    <?php echo ucwords($document['document_type']); ?>
+                                                                                                </td>
+                                                                                                <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_doc'))){ ?>
+                                                                                                        <td>
+                                                                                                            <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids)) { ?>
+                                                                                                                <?php if(in_array($document['sid'], $assigned_sids)) {  // revoke here ?>
+                                                                                                                    <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
+                                                                                                                        <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                                        <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                                    </form>
+                                                                                                                    <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                                                                <?php } else { // re-assign here ?>
+                                                                                                                    <form id="form_assign_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                                                                                                                        <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                                        <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                                    </form>
+                                                                                                                    <?php if($document['document_type'] == 'uploaded') { ?>
+                                                                                                                        <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, title = 'Please Confirm, Re-Assign This Document', 'Are you sure you want to Re-Assign this document? <br><?= ucwords($user_type); ?> will be required to re-submit the document.');" class="btn btn-warning btn-block btn-sm">Re-Assign</button>
+                                                                                                                    <?php } else { ?>
+                                                                                                                        <button class="btn btn-warning btn-sm btn-block"
+                                                                                                                                onclick="fLaunchModalGen(this, 'reassign');"
+                                                                                                                                data-title="<?php echo $document['document_title']; ?>"
+                                                                                                                                data-description="<?php echo $document['document_description']; ?>"
+                                                                                                                                data-document-type="<?php echo $document['document_type']; ?>"
+                                                                                                                                data-document-sid="<?php echo $document['sid']; ?>">Modify and Re-Assign</button>
+                                                                                                                    <?php } ?>
+                                                                                                                <?php } ?>
+                                                                                                            <?php } else { // assign here ?>
+                                                                                                                <form id="form_assign_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                                                                                                                    <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                                    <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                                </form>
+                                                                                                                <?php if($document['document_type'] == 'uploaded') { ?>
+                                                                                                                    <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-success btn-block btn-sm">Assign</button>
+                                                                                                                <?php } else { ?>
+                                                                                                                    <button class="btn btn-success btn-sm btn-block"
+                                                                                                                            onclick="fLaunchModalGen(this);"
+                                                                                                                            data-title="<?php echo $document['document_title']; ?>"
+                                                                                                                            data-description="<?php echo $document['document_description']; ?>"
+                                                                                                                            data-document-type="<?php echo $document['document_type']; ?>"
+                                                                                                                            data-document-sid="<?php echo $document['sid']; ?>">Modify and Assign</button>
+                                                                                                                <?php } ?>
+                                                                                                            <?php } ?>
+                                                                                                        </td>
+                                                                                                <?php } ?>
+                                                                                                <td>
+                                                                                                    <?php if ($document['document_type'] == 'uploaded') {
+                                                                                                        $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
+                                                                                                        $document_file = pathinfo($document_filename);
+                                                                                                        $name = explode(".",$document_filename);
+                                                                                                        $url_segment_original = $name[0]; ?>
+                                                                                                        <button class="btn btn-success btn-sm btn-block"
+                                                                                                                onclick="view_original_uploaded_doc(this);"
+                                                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
+                                                                                                                data-print-url="<?php echo $url_segment_original; ?>"
+                                                                                                                data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
+                                                                                                                data-document-sid="<?php echo $document['sid']; ?>"
+                                                                                                                data-file-name="<?php echo $document['uploaded_document_original_name']; ?>"
+                                                                                                                data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">View Doc</button>
+                                                                                                    <?php } else { ?>
+                                                                                                        <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
+                                                                                                    <?php } ?>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        <?php } ?>
+                                                                                    <?php } else { ?>
+                                                                                        <tr>
+                                                                                            <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                                <!-- In-Active Group Document End -->
+
+                                                <!-- Uncategorized Document Start -->
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="panel panel-default hr-documents-tab-content">
+                                                            <div class="panel-heading">
+                                                                <h4 class="panel-title">
+                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_uncategorized_documents">
+                                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                                        Uncategorized Documents
+                                                                        <div class="btn btn-xs btn-info">Uncategorized</div>
+                                                                        <div class="pull-right total-records"><b><?php echo '&nbsp;Total: '.count($uncategorized_documents);?></b></div>
+                                                                    </a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapse_uncategorized_documents" class="panel-collapse collapse">
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-plane">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th class="col-xs-8">Document Name</th>
+                                                                                <th class="col-xs-2">Document Type</th>
+                                                                                <th class="col-xs-2 text-center" colspan="2">Actions</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <?php if(count($uncategorized_documents) > 0) { ?>
+                                                                                <?php foreach ($uncategorized_documents as $document) { ?>
+                                                                                    <tr>
+                                                                                        <td class="col-xs-6"><?php echo $document['document_title']; ?></td>
+                                                                                        <td class="col-xs-2">
+                                                                                            <?php echo ucwords($document['document_type']); ?>
+                                                                                        </td>
+                                                                                        <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_doc'))){ ?>
+                                                                                            <td>
+                                                                                                <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids)) { ?>
+                                                                                                    <?php if(in_array($document['sid'], $assigned_sids)) { ?> <!-- assign doc revoke here -->
+                                                                                                        <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                            <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
+                                                                                                            <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                            <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                        </form>
+                                                                                                        <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                                                    <?php } else if (in_array($document['sid'], $completed_sids)) { ?>
+                                                                                                        <form id="form_assign_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                            <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                                                                                                            <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                            <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                        </form>
+                                                                                                        <?php if($document['document_type'] == 'uploaded') { ?>
+                                                                                                            <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn blue-button btn-block btn-sm">Completed and Re-Assign</button>
+                                                                                                        <?php } else { ?>
+                                                                                                            <button class="btn blue-button btn-sm btn-block"
+                                                                                                                onclick="fLaunchModalGen(this);"
+                                                                                                                data-title="<?php echo $document['document_title']; ?>"
+                                                                                                                data-description="<?php echo $document['document_description']; ?>"
+                                                                                                                data-document-type="<?php echo $document['document_type']; ?>"
+                                                                                                                data-document-sid="<?php echo $document['sid']; ?>">Completed and Re-Assign</button>
+                                                                                                        <?php } ?>
+                                                                                                    <?php } else { ?> <!-- revoke doc re-assign here -->
+                                                                                                        <form id="form_assign_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                            <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                                                                                                            <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                            <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                        </form>
+                                                                                                        <?php if($document['document_type'] == 'uploaded') { ?>
+                                                                                                            <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, title = 'Please Confirm, Re-Assign This Document', 'Are you sure you want to Re-Assign this document? <br><?= ucwords($user_type); ?> will be required to re-submit the document.');" class="btn btn-warning btn-block btn-sm">Re-Assign</button>
+                                                                                                        <?php } else { ?>
+                                                                                                            <button class="btn btn-warning btn-sm btn-block"
+                                                                                                                    onclick="fLaunchModalGen(this, 'reassign');"
+                                                                                                                    data-title="<?php echo $document['document_title']; ?>"
+                                                                                                                    data-description="<?php echo $document['document_description']; ?>"
+                                                                                                                    data-document-type="<?php echo $document['document_type']; ?>"
+                                                                                                                    data-document-sid="<?php echo $document['sid']; ?>">Modify and Re-Assign</button>
+                                                                                                        <?php } ?>
+                                                                                                    <?php } ?>
+                                                                                                <?php } else { // assign here ?>
+                                                                                                    <form id="form_assign_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                                                                                                        <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                        <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                    </form>
+                                                                                                    <?php if($document['document_type'] == 'uploaded') { ?>
+                                                                                                        <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-success btn-block btn-sm">Assign</button>
+                                                                                                    <?php } else { ?>
+                                                                                                        <button class="btn btn-success btn-sm btn-block"
+                                                                                                            onclick="fLaunchModalGen(this);"
+                                                                                                            data-title="<?php echo $document['document_title']; ?>"
+                                                                                                            data-description="<?php echo $document['document_description']; ?>"
+                                                                                                            data-document-type="<?php echo $document['document_type']; ?>"
+                                                                                                            data-document-sid="<?php echo $document['sid']; ?>">Modify and Assign</button>
+                                                                                                    <?php } ?>
+                                                                                                <?php } ?>
+                                                                                            </td>
+                                                                                        <?php } ?>
+                                                                                        <td>
+                                                                                            <?php if ($document['document_type'] == 'uploaded') { ?>
+                                                                                                <?php
+                                                                                                    $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
+                                                                                                    $document_file = pathinfo($document_filename);
+                                                                                                    $name = explode(".",$document_filename);
+                                                                                                    $url_segment_original = $name[0];
+                                                                                                ?>
+                                                                                                <button class="btn btn-success btn-sm btn-block"
+                                                                                                        onclick="view_original_uploaded_doc(this);"
+                                                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
+                                                                                                        data-print-url="<?php echo $url_segment_original; ?>"
+                                                                                                        data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
+                                                                                                        data-document-sid="<?php echo $document['sid']; ?>"
+                                                                                                        data-file-name="<?php echo $document['uploaded_document_original_name']; ?>"
+                                                                                                        data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">View Doc</button>
+                                                                                            <?php } else { ?>
+                                                                                                <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
+                                                                                            <?php } ?>
+                                                                                         </td>
+                                                                                    </tr>
+                                                                                <?php } ?>
+                                                                            <?php } else { ?>
+                                                                                <tr>
+                                                                                    <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
+                                                                                </tr>
+                                                                            <?php } ?>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Uncategorized Document End -->
+
+                                                <?php if($session['employer_detail']['access_level_plus']){ ?>
+                                                    <!-- Access Level Plus Document Start -->
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <div class="panel panel-default hr-documents-tab-content">
+                                                                <div class="panel-heading">
+                                                                    <h4 class="panel-title">
+                                                                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_admin_documents">
+                                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                                            Admin Documents
+                                                                            <div class="btn btn-xs btn-info">Access Level Plus</div>
+                                                                            <div class="pull-right total-records"><b><?php echo '&nbsp;Total: '.count($access_level_manual_doc);?></b></div>
+                                                                        </a>
+                                                                    </h4>
+                                                                </div>
+                                                                <div id="collapse_admin_documents" class="panel-collapse collapse">
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-plane">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th class="col-xs-8">Document Name</th>
+                                                                                    <th class="col-xs-2">Document Type</th>
+                                                                                    <th class="col-xs-2 text-center" colspan="2">Actions</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <?php if(count($access_level_manual_doc) > 0) { ?>
+                                                                                    <?php foreach ($access_level_manual_doc as $document) { ?>
+                                                                                        <tr>
+                                                                                            <td class="col-xs-6"><?php echo $document['document_title']; ?></td>
+                                                                                            <td class="col-xs-2">
+                                                                                                <?php echo ucwords($document['document_type']); ?>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <?php if ($document['document_type'] == 'confidential') { ?>
+                                                                                                    <?php
+                                                                                                        $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
+                                                                                                        $document_file = pathinfo($document_filename);
+                                                                                                        $name = explode(".",$document_filename);
+                                                                                                        $url_segment_original = $name[0];
+                                                                                                    ?>
+                                                                                                    <button class="btn btn-success btn-sm btn-block"
+                                                                                                            onclick="view_original_uploaded_manual_doc(this);"
+                                                                                                            data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
+                                                                                                            data-print-url="<?php echo $url_segment_original; ?>"
+                                                                                                            data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
+                                                                                                            data-document-sid="<?php echo $document['sid']; ?>"
+                                                                                                            data-file-name="<?php echo $document['document_original_name']; ?>"
+                                                                                                            data-document-title="<?php echo $document['document_original_name']; ?>">View Doc</button>
+                                                                                                <?php } ?>
+                                                                                             </td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+                                                                                <?php } else { ?>
+                                                                                    <tr>
+                                                                                        <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
+                                                                                    </tr>
+                                                                                <?php } ?>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Access Level Plus Document End -->
+                                                <?php } ?>
+                                                <!--Archived Manual Documents Start -->
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="panel panel-default hr-documents-tab-content">
+                                                            <div class="panel-heading">
+                                                                <h4 class="panel-title">
+                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_archived_manual_documents">
+                                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                                         Manual Documents
+                                                                        <div class="btn btn-xs btn-info">Archived</div>
+                                                                        <div class="pull-right total-records"><b><?php echo '&nbsp;Total: '.count($archived_manual_documents);?></b></div>
+                                                                    </a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapse_archived_manual_documents" class="panel-collapse collapse">
+                                                                <div class="table-responsive full-width">
+                                                                    <table class="table table-plane">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th class="col-lg-10">Document Name</th>
+                                                                                <th class="col-lg-2 text-center">Actions</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <?php if (count($archived_manual_documents) > 0) { ?>
+                                                                                <?php foreach ($archived_manual_documents as $document) { ?>
+                                                                                    <?php if ($document['archive'] != 1) { ?>
+                                                                                        <tr>
+                                                                                            <td class="col-lg-6">
+                                                                                                <?php
+                                                                                                                        echo $document['document_title'] . '&nbsp;';
+                                                                                                                        echo $document['status'] ? '' : '<b>(revoked)</b>';
+                                                                                                                        echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
+                                                                                                                        echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+
+                                                                                                                        if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
+                                                                                                                            echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
+                                                                                                                        }
+                                                                                                                        ?>
+                                                                                            </td>
+
+                                                                                            <?php if ($document['document_type'] == 'uploaded' || $document['document_type'] == 'confidential') { ?>
+                                                                                                <td class="col-lg-2">
+                                                                                                    <form id="form_activate_hr_document_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="activate_uploaded_document" />
+                                                                                                        <input type="hidden" id="document_type" name="document_type" value="<?= $document['document_type'] ?>" />
+                                                                                                        <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                    </form>
+                                                                                                    <button class="btn btn-default btn-sm btn-block" onclick="func_unarchive_uploaded_document(<?php echo $document['sid']; ?>)">Activate</button>
+                                                                                                    <button class="btn btn-success btn-sm btn-block"
+                                                                                                        onclick="no_action_req_edit_document_model(this);"
+                                                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
+                                                                                                        data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
+                                                                                                        data-print-url="<?php echo $document['document_s3_name']; ?>"
+                                                                                                        data-print-type="assigned"
+                                                                                                        data-download-sid="<?php echo $document['sid']; ?>"
+                                                                                                        data-file-name="<?php echo $document['document_original_name']; ?>"
+                                                                                                        data-document-title="<?php echo $document['document_title']; ?>"
+                                                                                                        is-offer-letter="<?php echo $document['manual_document_type'] == "offer_letter" ? true : false; ?>"
+                                                                                                        data-categories="<?php echo isset($archived_no_action_document_categories[$document['sid']]) ? json_encode($archived_no_action_document_categories[$document['sid']]) : '[]' ?>"
+                                                                                                        data-update-accessible="<?php echo $document['document_type'] == "confidential" ? true : false; ?>">Edit Document</button>
+
+                                                                                                    <?php if ($document['document_sid'] != 0) { ?>
+                                                                                                        <button class="btn btn-success btn-sm btn-block" onclick="preview_document_model(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-url="<?php echo $document['document_s3_name']; ?>" data-print-type="assigned" data-download-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['document_original_name']; ?>" data-document-title="<?php echo $document['document_original_name']; ?>">Preview Document</button>
+                                                                                                    <?php } else if ($document['document_sid'] == 0) { ?>
+                                                                                                        <button class="btn btn-success btn-sm btn-block" onclick="preview_document_model(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-url="<?php echo $document['document_s3_name']; ?>" data-print-type="assigned" data-download-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['document_original_name']; ?>" data-document-title="<?php echo $document['document_original_name']; ?>">Preview Document</button>
+
+                                                                                                    <?php } ?>
+                                                                                                </td>
+                                                                                            <?php } else { ?>
+                                                                                                <td class="col-lg-2"><button onclick="generated_document_original_preview(<?php echo $document['sid']; ?>);" class="btn btn-success btn-sm btn-block">Preview Document</button></td>
+                                                                                            <?php } ?>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+                                                                                <?php } ?>
+                                                                            <?php } else { ?>
+                                                                                <tr>
+                                                                                    <td colspan="7" class="col-lg-12 text-center"><b>No Document(s) Found!</b></td>
+                                                                                </tr>
+                                                                            <?php } ?>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Archived Manual Documents End -->
+
+                                                <div class="row">
+                                                   <div class="col-xs-12">
+                                                       <div class="panel panel-default ems-documents">
+                                                           <div class="panel-heading">
+                                                               <h4 class="panel-title">
+                                                                   <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_total_documents">
+                                                                       <span class="glyphicon glyphicon-plus"></span>
+                                                                       All Documents
+                                                                       <div class="btn btn-xs btn-primary">All</div>
+                                                                       <div class="pull-right total-records"><b><?php echo 'Total: '.count($all_documents);?></b></div>
+                                                                   </a>
+                                                               </h4>
+                                                           </div>
+                                                           <div id="collapse_total_documents" class="panel-collapse collapse">
+                                                               <div class="table-responsive">
+                                                                   <table class="table table-plane">
+                                                                       <thead>
+                                                                           <tr>
+                                                                               <th class="col-xs-6">Document Name</th>
+                                                                               <th class="col-xs-2">Date Created</th>
+                                                                               <th class="col-xs-4 text-center" colspan="4">Actions</th>
+                                                                           </tr>
+                                                                       </thead>
+                                                                       <tbody>
+                                                                        <?php if(count($all_documents) > 0) {
+                                                                               foreach ($all_documents as $document) { ?>
+                                                                                   <tr>
+                                                                                       <td class="col-xs-6"><?php echo $document['document_title']; ?></td>
+                                                                                       <td class="col-xs-2">
+                                                                        <?php  if($document['date_created'] != NULL || $document['date_created'] != '') {
+                                                                                               echo reset_datetime(array( 'datetime' => $document['date_created'], '_this' => $this));
+                                                                                           } else {
+                                                                                               echo 'N/A';
+                                                                                           } ?>
+                                                                                       </td>
+                                                                                       <td class="col-xs-1">
+                                                                                           <form id="form_assign_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                               <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                                                                                               <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                               <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                           </form>
+                                                                                           <?php if($document['document_type'] == 'uploaded') {?>
+                                                                                               <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
+                                                                                           <?php } else { ?>
+                                                                                               <button class="btn btn-primary btn-sm btn-block"
+                                                                                                       onclick="fLaunchModalGen(this);"
+                                                                                                       data-title="<?php echo $document['document_title']; ?>"
+                                                                                                       data-description="<?php echo $document['document_description']; ?>"
+                                                                                                       data-document-type="<?php echo $document['document_type']; ?>"
+                                                                                                       data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                            <?php  } ?>
+                                                                                       </td>
+                                                                                       <td class="col-xs-1">
+                                                                                    <?php   if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document')) {?>
+                                                                                               <a href="<?php echo base_url('hr_documents_management_test/edit_hr_document/' . $document['sid']); ?>" class="btn btn-success btn-sm btn-block">Edit Info</a>
+                                                                                       <?php  } ?>
+                                                                                       </td>
+                                                                                       <td class="col-xs-1">
+                                                                                       <?php if($document['document_type'] == 'uploaded') {
+                                                                                                   $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
+                                                                                                   $document_file = pathinfo($document_filename);
+                                                                                                   $name = explode(".",$document_filename);
+                                                                                                   $url_segment_original = $name[0]; ?>
+
+                                                                                               <button class="btn btn-info btn-sm btn-block"
+                                                                                                       onclick="fLaunchModal(this);"
+                                                                                                       data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
+                                                                                                       data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
+                                                                                                       data-print-url="<?php echo $url_segment_original; ?>"
+                                                                                                       data-document-sid="<?php echo  $document['sid']; ?>"
+                                                                                                       data-file-name="<?php echo $document['uploaded_document_original_name']; ?>"
+                                                                                                       data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">Preview</button>
+                                                                                            <?php   } else { ?>
+                                                                                               <button onclick="func_get_generated_document_preview(<?php echo $document['sid']; ?>,'generated', '<?php echo addslashes($document['document_title']); ?>');" class="btn btn-info btn-sm btn-block">Preview</button>
+                                                                                                <?php  } ?>
+                                                                                       </td>
+                                                                                       <td class="col-xs-1">
+                                                                                           <form id="form_archive_hr_document_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                               <input type="hidden" id="perform_action" name="perform_action" value="archive_uploaded_document" />
+                                                                                               <input type="hidden" id="document_type" name="document_type" value="<?= $document['document_type']?>" />
+                                                                                               <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                           </form>
+                                                                                       <?php if (check_access_permissions_for_view($security_details, 'archive_document')) { ?>
+                                                                                           <button class="btn btn-warning btn-sm btn-block" onclick="func_archive_uploaded_document(<?php echo $document['sid']; ?>)">Archive</button>
+                                                                                       <?php } ?>
+                                                                                       </td>
+                                                                                       <td class="col-xs-1">
+                                                                                           <!-- Convert document to Pay Plan -->
+                                                                                           <button class="btn btn-success btn-sm btn-block" onclick="convertToPayPlan(<?=$document['sid'];?>, '<?=$document['document_type'];?>')">Convert To Pay Plan</button>
+                                                                                       </td>
+                                                                                   </tr>
+                                                                                <?php  }
+                                                                           } else { ?>
+                                                                               <tr>
+                                                                                   <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
+                                                                               </tr>
+                                                                       <?php  } ?>
+                                                                       </tbody>
+                                                                   </table>
+                                                               </div>
+                                                           </div>
+                                                       </div>
+                                                   </div>
+                                               </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="panel panel-default hr-documents-tab-content">
+                                        <div class="panel-heading <?php echo !empty($assigned_documents_history) ? 'btn-success' : ''; ?>">
+                                            <h4 class="panel-title">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_adh_1" >
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <?php echo 'Re-Assign Document History';?>
+                                                    <div class="pull-right total-records"><b><?php echo '&nbsp;Total: '.sizeof($assigned_documents_history);?></b></div>
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse_adh_1" class="panel-collapse collapse">
+                                            <div class="table-responsive">
+                                                <table class="table table-plane">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="col-lg-3">Document Name</th>
+                                                            <th class="col-lg-1 text-center">Type</th>
+                                                            <th class="col-lg-2 text-center">Sent On</th>
+                                                            <th class="col-lg-2 text-center">Acknowledged</th>
+                                                            <th class="col-lg-2 text-center">Downloaded</th>
+                                                            <th class="col-lg-1 text-center">Uploaded</th>
+                                                            <th class="col-lg-1 text-center">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php if (!empty($assigned_documents_history)) {
+                                                            foreach ($assigned_documents_history as $document) { ?>
+                                                                <tr>
+                                                                    <td class="col-lg-3">
+                                                                        <?php echo $document['document_title'] . '<br>'; ?>
+                                                                    </td>
+                                                                    <td class="col-lg-1 text-center">
+                                                                        <?php $doc_type = '';
+
+                                                                        if (!empty($document['document_extension'])) {
+                                                                            $doc_type = strtolower($document['document_extension']);
+                                                                        } ?>
+                                                                        <?php if ($doc_type == 'pdf') { ?>
+                                                                            <i class="fa fa-2x fa-file-pdf-o"></i>
+                                                                        <?php } else if (in_array($doc_type, ['ppt', 'pptx'])) { ?>
+                                                                            <i class="fa fa-2x fa-file-powerpoint-o"></i>
+                                                                        <?php } else if (in_array($doc_type, ['doc', 'docx'])) { ?>
+                                                                            <i class="fa fa-2x fa-file-o"></i>
+                                                                        <?php } else if (in_array($doc_type, ['xlsx'])) { ?>
+                                                                            <i class="fa fa-2x fa-file-excel-o"></i>
+                                                                        <?php } else if ($doc_type == '') { ?>
+                                                                            <i class="fa fa-2x fa-file-text"></i>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2 text-center">
+                                                                        <?php if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') { ?>
+                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <div class="text-center">
+                                                                                <?=reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this)); ?>
+                                                                            </div>
+                                                                        <?php } else { ?>
+                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2 text-center">
+                                                                        <?php if(!$document['acknowledgment_required']){
+                                                                            echo '<b>N/A</b>';
+                                                                        } elseif (isset($document['acknowledged_date']) && $document['acknowledged_date'] != '0000-00-00 00:00:00') { ?>
+                                                                            <?php if ($document['acknowledged'] == 0) { ?>
+                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <?php } else { ?>
+                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <?php } ?>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['acknowledged_date']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['acknowledged_date'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } elseif ($document['user_consent'] == 1) { ?>
+                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } else { ?>
+                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2 text-center">
+                                                                        <?php if(!$document['download_required']){
+                                                                            echo '<b>N/A</b>';
+                                                                        } elseif (isset($document['downloaded_date']) && $document['downloaded_date'] != '0000-00-00 00:00:00') { ?>
+                                                                            <?php if ($document['downloaded'] == 0) { ?>
+                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <?php } else { ?>
+                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <?php } ?>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['downloaded_date']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['downloaded_date'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } elseif ($document['user_consent'] == 1) { ?>
+                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } else { ?>
+                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2 text-center">
+                                                                        <?php if(!$document['signature_required']){
+                                                                            echo '<b>N/A</b>';
+                                                                        } elseif (isset($document['uploaded_date']) && $document['uploaded_date'] != '0000-00-00 00:00:00') { ?>
+                                                                            <?php if ($document['uploaded'] == 0) { ?>
+                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <?php } else { ?>
+                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <?php } ?>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['uploaded_date']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } elseif ($document['user_consent'] == 1) { ?>
+                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } else { ?>
+                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                    <td class="col-lg-1 text-center">
+                                                                        <?php if ($document['document_type'] == 'uploaded') { ?>
+                                                                            <button
+                                                                                class="btn btn-success btn-sm btn-block"
+                                                                                onclick="fLaunchModal(this);"
+                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
+                                                                                data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
+                                                                                data-file-name="<?php echo $document['document_original_name']; ?>"
+                                                                                data-document-title="<?php echo $document['document_original_name']; ?>">
+                                                                                Preview Assigned
+                                                                            </button>
+                                                                            <button
+                                                                                class="btn btn-success btn-sm btn-block"
+                                                                                onclick="fLaunchModal(this);"
+                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
+                                                                                data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
+                                                                                data-file-name="<?php echo $document['uploaded_file']; ?>"
+                                                                                data-document-title="<?php echo $document['uploaded_file']; ?>" <?= !$document['uploaded'] ? 'disabled' : ''; ?>>
+                                                                                Preview Submitted
+                                                                            </button>
+                                                                        <?php } else { ?>
+                                                                            <button
+                                                                                onclick="func_get_generated_document_history_preview(<?php echo $document['document_sid']; ?>, 'generated', 'history', '<?php echo $document['sid']; ?>');"
+                                                                                class="btn btn-success btn-sm btn-block">
+                                                                                Preview Assigned
+                                                                            </button>
+                                                                            <button
+                                                                                class="btn btn-success btn-sm btn-block"
+                                                                                onclick="fLaunchModal(this);"
+                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
+                                                                                data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
+                                                                                data-file-name="<?php echo $document['uploaded_file']; ?>"
+                                                                                data-document-title="<?php echo $document['uploaded_file']; ?>" <?= !$document['uploaded'] ? 'disabled' : ''; ?>>
+                                                                                Preview Submitted
+                                                                            </button>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php } ?>
+                                                        <?php } else { ?>
+                                                            <tr>
+                                                                <td colspan="7" class="col-lg-12 text-center"><b>No History Available</b></td>
+                                                            </tr>
+                                                        <?php }  ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="panel panel-default hr-documents-tab-content">
+                                        <div class="panel-heading <?php echo !empty($assigned_offer_letter_history) ? 'btn-success' : ''; ?>">
+                                            <h4 class="panel-title">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_aolh_2" >
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <?php echo 'Re-Assign Offer Letter History';?>
+                                                    <div class="pull-right total-records"><b><?php echo '&nbsp;Total: '.sizeof($assigned_offer_letter_history);?></b></div>
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse_aolh_2" class="panel-collapse collapse">
+                                            <div class="table-responsive">
+                                                <table class="table table-plane">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="col-lg-3">Document Name</th>
+                                                            <th class="col-lg-1 text-center">Type</th>
+                                                            <th class="col-lg-2 text-center">Sent On</th>
+                                                            <th class="col-lg-2 text-center">Acknowledged</th>
+                                                            <th class="col-lg-2 text-center">Downloaded</th>
+                                                            <th class="col-lg-1 text-center">Uploaded</th>
+                                                            <th class="col-lg-1 text-center">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php if (!empty($assigned_offer_letter_history)) {
+                                                            foreach ($assigned_offer_letter_history as $document) { ?>
+                                                                <tr>
+                                                                    <td class="col-lg-3">
+                                                                        <?php echo $document['document_title'] . '<br>'; ?>
+                                                                    </td>
+                                                                    <td class="col-lg-1 text-center">
+                                                                        <?php $doc_type = '';
+
+                                                                        if (!empty($document['document_extension'])) {
+                                                                            $doc_type = strtolower($document['document_extension']);
+                                                                        } ?>
+                                                                        <?php if ($doc_type == 'pdf') { ?>
+                                                                            <i class="fa fa-2x fa-file-pdf-o"></i>
+                                                                        <?php } else if (in_array($doc_type, ['ppt', 'pptx'])) { ?>
+                                                                            <i class="fa fa-2x fa-file-powerpoint-o"></i>
+                                                                        <?php } else if (in_array($doc_type, ['doc', 'docx'])) { ?>
+                                                                            <i class="fa fa-2x fa-file-o"></i>
+                                                                        <?php } else if (in_array($doc_type, ['xlsx'])) { ?>
+                                                                            <i class="fa fa-2x fa-file-excel-o"></i>
+                                                                        <?php } else if ($doc_type == '') { ?>
+                                                                            <i class="fa fa-2x fa-file-text"></i>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2 text-center">
+                                                                        <?php if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') { ?>
+                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['assigned_date']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } else { ?>
+                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2 text-center">
+                                                                        <?php if(!$document['acknowledgment_required']){
+                                                                            echo '<b>N/A</b>';
+                                                                        } elseif (isset($document['acknowledged_date']) && $document['acknowledged_date'] != '0000-00-00 00:00:00') { ?>
+                                                                            <?php if ($document['acknowledged'] == 0) { ?>
+                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <?php } else { ?>
+                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <?php } ?>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['acknowledged_date']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['acknowledged_date'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } elseif ($document['user_consent'] == 1) { ?>
+                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } else { ?>
+                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2 text-center">
+                                                                        <?php if(!$document['download_required']){
+                                                                            echo '<b>N/A</b>';
+                                                                        } elseif (isset($document['downloaded_date']) && $document['downloaded_date'] != '0000-00-00 00:00:00') { ?>
+                                                                            <?php if ($document['downloaded'] == 0) { ?>
+                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <?php } else { ?>
+                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <?php } ?>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['downloaded_date']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['downloaded_date'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } elseif ($document['user_consent'] == 1) { ?>
+                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } else { ?>
+                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2 text-center">
+                                                                        <?php if(!$document['signature_required']){
+                                                                            echo '<b>N/A</b>';
+                                                                        } elseif (isset($document['uploaded_date']) && $document['uploaded_date'] != '0000-00-00 00:00:00') { ?>
+                                                                            <?php if ($document['uploaded'] == 0) { ?>
+                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <?php } else { ?>
+                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <?php } ?>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['uploaded_date']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } elseif ($document['user_consent'] == 1) { ?>
+                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <div class="text-center">
+                                                                                <?php // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a'); ?>
+                                                                                <?=reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this)); ?>
+
+                                                                            </div>
+                                                                        <?php } else { ?>
+                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                    <td class="col-lg-1 text-center">
+                                                                        <?php if ($document['document_type'] == 'uploaded') { ?>
+                                                                            <button
+                                                                                class="btn btn-success btn-sm btn-block"
+                                                                                onclick="fLaunchModal(this);"
+                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
+                                                                                data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
+                                                                                data-file-name="<?php echo $document['document_original_name']; ?>"
+                                                                                data-document-title="<?php echo $document['document_original_name']; ?>">
+                                                                                Preview Assigned
+                                                                            </button>
+                                                                            <button
+                                                                                class="btn btn-success btn-sm btn-block"
+                                                                                onclick="fLaunchModal(this);"
+                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
+                                                                                data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
+                                                                                data-file-name="<?php echo $document['uploaded_file']; ?>"
+                                                                                data-document-title="<?php echo $document['uploaded_file']; ?>" <?= !$document['uploaded'] ? 'disabled' : ''; ?>>
+                                                                                Preview Submitted
+                                                                            </button>
+                                                                        <?php } else { ?>
+                                                                            <button
+                                                                                onclick="func_get_generated_document_history_preview(<?php echo $document['document_sid']; ?>, 'generated', 'history', '<?php echo $document['sid']; ?>');"
+                                                                                class="btn btn-success btn-sm btn-block">
+                                                                                Preview Assigned
+                                                                            </button>
+                                                                            <button
+                                                                                class="btn btn-success btn-sm btn-block"
+                                                                                onclick="fLaunchModal(this);"
+                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
+                                                                                data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
+                                                                                data-file-name="<?php echo $document['uploaded_file']; ?>"
+                                                                                data-document-title="<?php echo $document['uploaded_file']; ?>" <?= !$document['uploaded'] ? 'disabled' : ''; ?>>
+                                                                                Preview Submitted
+                                                                            </button>
+                                                                        <?php } ?>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php } ?>
+                                                        <?php } else { ?>
+                                                            <tr>
+                                                                <td colspan="7" class="col-lg-12 text-center"><b>No History Available</b></td>
+                                                            </tr>
+                                                        <?php }  ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <?php $this->load->view($left_navigation); ?> 
+                <?php
+ 
+ $endtime = microtime(true); // Bottom of page
+ printf("Page loaded in %f seconds", $endtime - $starttime );echo "<br><br><br>";
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Document Modal -->
+<div id="document_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="document_modal_title">Modal title</h4>
+            </div>
+            <div id="document_modal_body" class="modal-body">
+                ...
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Manual Document -->
+<div id="uploaded_document_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="uploaded_document_modal_title">Paper Form Upload</h4>
+            </div>
+            <div id="uploaded_document_modal_body" class="modal-body">
+                <form id="form_upload_document" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Browse Document <span class="staric">*</span></label>
+                            <div class="upload-file invoice-fields">
+                                <input style="height: 38px;" type="file" name="document" id="document" required onchange="check_file('document')">
+                                <p id="name_document"></p>
+                                <a href="javascript:;" style="line-height: 38px; height: 38px;">Choose File</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 margin-top">
+                            <label>Document Name<span class="staric">*</span></label>
+                            <input type="text" name="document_title" required value="" class="invoice-fields">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 margin-top">
+                            <label>Instructions / Guidance </label>
+                            <textarea class="invoice-fields autoheight ckeditor" maxlength="250"  name="document_description" id="document_description" cols="54" rows="6"></textarea>
+                            <!--                                                <p id="remaining_text" class="info">500 characters left!</p>-->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 margin-top">
+                            <label>Assigned Date</label>
+                            <input type="text" name="doc_assign_date" value="" class="invoice-fields doc_date" readonly>
+                        </div>
+                        <div class="col-xs-6 margin-top">
+                            <label>Signed Completed Date</label>
+                            <input type="text" name="doc_sign_date" value="" class="invoice-fields doc_date" readonly>
+                        </div>
+                    </div>
+                    <div class="row" id="categories_section">
+                        <div class="col-xs-12 margin-top">
+                            <label>Categories</label><br>
+                            <div class="Category_chosen">
+                                <select data-placeholder="Please Select" multiple="multiple" onchange="" name="categories[]" id="createcategories" class="categories chosen-select">
+                                    <?php if(sizeof($active_categories) > 0) { ?>
+                                        <?php foreach ($active_categories as $category) { ?>
+                                            <option value="<?php echo $category['sid']; ?>" ><?= $category['name'] ?></option>
+                                        <?php } ?>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <?php if($session['employer_detail']['access_level_plus']){?>
+                        <div class="row">
+                            <div class="col-xs-12 margin-top">
+                                <label class="control control--checkbox">
+                                    <input name="accessable" id="accessable" type="checkbox" value="" class="ej_checkbox">
+                                    <div class="control__indicator"></div>
+                                    Accessable for Admins
+                                </label>
+                            </div>
+                        </div>
+                    <?php }?>
+                    <?php if($session['employer_detail']['access_level_plus']){?>
+                        <div class="row">
+                            <div class="col-xs-12 margin-top">
+                                <label class="control control--checkbox">
+                                    <input name="is_offer_letter" id="is_offer_letter" type="checkbox" value="" class="ej_checkbox">
+                                    <div class="control__indicator"></div>
+                                    Offer Letter / Pay Plan
+                                </label>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                            <input type="hidden" id="employer_sid" name="employer_sid" value="<?php echo $employer_sid; ?>" />
+                            <input type="hidden" name="perform_action" value="assign_specific" />
+                            <button type="submit" onclick="validate_form();" class="btn btn-success pull-right">Upload to Document Center</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div id="uploaded_document_modal_footer" class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Update Manual Document -->
+<div id="no_action_document_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="no_action_document_modal_title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <div id="document_modal_upload">
+                    <form id="form_upload_document" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label class="error_message"></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 margin-top">
+                                <label>Document Name<span class="staric">*</span></label>
+                                <input type="text" name="document_title" value="" class="invoice-fields" id="update_manual_doc_title">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>Browse Document</label>
+                                <div class="upload-file invoice-fields">
+                                    <input style="height: 38px;" type="file" name="document" id="reupload_document" onchange="check_file('reupload_document')">
+                                    <p id="name_reupload_document"></p>
+                                    <a href="javascript:;" style="line-height: 38px; height: 38px;">Choose File</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 margin-top">
+                                <label>Assigned Date</label>
+                                <input type="text" name="doc_assign_date" value="" id="doc_assign_date" class="invoice-fields doc_date" readonly>
+                            </div>
+                            <div class="col-xs-6 margin-top">
+                                <label>Signed Completed Date</label>
+                                <input type="text" name="doc_sign_date" value="" id="doc_sign_date"  class="invoice-fields doc_date" readonly>
+                            </div>
+                        </div>
+                        <div class="row" id="update_categories_section">
+                            <div class="col-xs-12">
+                                <label>Categories</label>
+                                <div class="Category_chosen">
+                                    <select data-placeholder="Please Select" multiple="multiple" onchange="" name="categories[]" id="updatecategories" class="categories chosen-select">
+                                        <?php if(sizeof($active_categories) > 0) { ?>
+                                            <?php foreach ($active_categories as $category) { ?>
+                                                <option value="<?php echo $category['sid']; ?>" ><?= $category['name'] ?></option>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <?php if($session['employer_detail']['access_level_plus']){?>
+                            <div class="row">
+                                <div class="col-xs-12 margin-top">
+                                    <label class="control control--checkbox">
+                                        <input name="accessable" id="update_accessible" type="checkbox" value="" class="ej_checkbox">
+                                        <div class="control__indicator"></div>
+                                        Accessable for Admins
+                                    </label>
+                                </div>
+                            </div>
+                        <?php } ?>
+                        <?php if($session['employer_detail']['access_level_plus']){?>
+                            <div class="row">
+                                <div class="col-xs-12 margin-top">
+                                    <label class="control control--checkbox">
+                                        <input name="is_offer_letter" id="update_is_offer_letter" type="checkbox" value="" class="ej_checkbox">
+                                        <div class="control__indicator"></div>
+                                        Offer Letter / Pay Plan
+                                    </label>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="hidden" id="previous_categories" value="" />
+                                <input type="hidden" id="previous_update_accessible" value="" />
+                                <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                                <input type="hidden" id="employer_sid" name="employer_sid" value="<?php echo $employer_sid; ?>" />
+                                <input type="hidden" id="not_action_req_document_sid" name="documents_assigned_sid" value="" />
+                                <input type="hidden" name="perform_action" value="reupload_assign_specific" />
+                                <button type="button" onclick="validate_no_action_form();" class="btn btn-success pull-right">Update Manual Document</button>
+                            </div>
+                        </div>
+                        <br>
+                    </form>
+                </div>
+            </div>
+            <div id="no_action_document_modal_footer" class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+    if($user_type == 'applicant') {
+        if($eeo_form_status == 'Yes' && !empty($eeo_form_info)) {
+?>
+        <div id="eeoc_modal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header modal-header-bg">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="review_modal_title">EEOC FORM</h4>
+                    </div>
+                    <div id="review_modal_body" class="modal-body">
+                        <div class="table-responsive">
+                            <div class="container-fluid">
+                                <?php $this->load->view('eeo/eeoc_view'); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="review_modal_footer" class="modal-footer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+<?php
+        }
+    }
+?>
+
+<?php
+    if($user_type == 'employee') {
+        if(!empty($eeo_form_info)) {
+?>
+        <div id="eeoc_modal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header modal-header-bg">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="review_modal_title">EEOC FORM</h4>
+                    </div>
+                    <div id="review_modal_body" class="modal-body">
+                        <div class="table-responsive">
+                            <div class="container-fluid">
+                                <?php $this->load->view('eeo/eeoc_view'); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="review_modal_footer" class="modal-footer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+<?php
+        }
+    }
+?>
+
+<div id="model_generated_doc" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="generated_document_title">Assign This Document</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form method='post' id='register-form' name='register-form' action="<?= current_url(); ?>">
+                        <div class="col-lg-12">
+                            <div class="form-group full-width">
+                                <h4 id="gen_document_label"></h4>
+                                <b>Please review this document and make any necessary modifications. Modifications will not affect the Original Document.</b> <!--<br>The Modified document will only be sent to the <?= ucwords($user_type); ?> it was assigned to.-->
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group full-width">
+                                <label>Document Description<span class="hr-required red"> * </span></label>
+                                <textarea style="padding:5px; height:200px; width:100%;" class="ckeditor" id="gen_doc_description" name="document_description"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="offer-letter-help-widget full-width form-group">
+                                <div class="how-it-works-insturction">
+                                    <strong>How it's Works :</strong>
+                                    <p class="how-works-attr">1. Generate new Electronic Document</p>
+                                    <p class="how-works-attr">2. Enable Document Acknowledgment</p>
+                                    <p class="how-works-attr">3. Enable Electronic Signature</p>
+                                    <p class="how-works-attr">4. Insert multiple tags where applicable</p>
+                                    <p class="how-works-attr">5. Save the Document</p>
+                                </div>
+
+                                <div class="tags-arae">
+                                    <div class="col-md-12">
+                                        <h5><strong>Company Information Tags:</strong></h5>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{company_name}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{company_address}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{company_phone}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{career_site_url}}">
+                                            </div>
+                                    </div>
+                                </div>
+
+                                <div class="tags-arae">
+                                    <div class="col-md-12">
+                                        <h5><strong>Employee / Applicant Tags :</strong></h5>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{first_name}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{last_name}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{email}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{job_title}}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tags-arae">
+                                    <div class="col-md-12">
+                                        <h5><strong>Signature tags:</strong></h5>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{signature}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{signature_print_name}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{inital}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{sign_date}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{authorized_signature}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{short_text}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{text}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{text_area}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{checkbox}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                            <input type="hidden" name="document_type" id="gen-doc-type">
+                            <input type="hidden" name="document_sid" id="gen-doc-sid">
+                            <input type="hidden" id="document_sid_for_validation">
+                            <input type="hidden" id="auth_sign_sid" name="auth_sign_sid" value="0" />
+                            <div class="message-action-btn">
+                                <input type="button" value="Assign This Document" id="send-gen-doc" onclick="func_assign_generated_document();"  class="submit-btn">
+                                <!-- <button id="send-gen-doc" class="btn btn-success">Assign This Document</button> -->
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="upload_eev_document" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="uploaded_document_modal_title">Employment Eligibility Verification Document Upload</h4>
+            </div>
+            <div id="uploaded_document_modal_body" class="modal-body">
+                <form id="form_upload_eev_document" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Browse Document <span class="staric">*</span></label>
+                            <div class="upload-file invoice-fields">
+                                <input style="height: 38px;" type="file" name="document" id="eev_document" required onchange="check_file('eev_document')">
+                                <p id="name_eev_document"></p>
+                                <a href="javascript:;" style="line-height: 38px; height: 38px;">Choose File</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                            <input type="hidden" id="employer_sid" name="employer_sid" value="<?php echo $employer_sid; ?>" />
+                            <input type="hidden" name="sid" id="eev_sid" value="" />
+                            <input type="hidden" name="document_type" id="data-document-type" value="" />
+                            <input type="hidden" name="perform_action" value="upload_eev_document" />
+                            <button type="submit" id="btn_eev_document" class="btn btn-success pull-right" style="display:none">Upload</button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="preview">
+
+                    </div>
+                </form>
+            </div>
+            <div id="uploaded_document_modal_footer" class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php $this->load->view('hr_documents_management_test/authorized_signature_popup'); ?>
+
+
+<script>
+    $(document).ready(function(){
+        $('.collapse').on('shown.bs.collapse', function () {
+            $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+        }).on('hidden.bs.collapse', function () {
+            $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+        });
+        $('.categories').select2({
+            closeOnSelect : false,
+            allowHtml: true,
+            allowClear: true,
+            tags: true
+        });
+    });
+
+    function check_file(val) {
+        var fileName = $("#" + val).val();
+        if (fileName.length > 0) {
+            $('#name_' + val).html(fileName.substring(0, 38));
+            var ext = fileName.split('.').pop();
+            var ext = ext.toLowerCase();
+            if (val == 'document' || val == 'eev_document') {
+                if (ext != "pdf" && ext != "docx" && ext != "doc" && ext != "PDF" && ext != "DOCX" && ext != "DOC") {
+                    $("#" + val).val(null);
+                    $('#name_' + val).html('<p class="red">Only (.pdf .docx .doc) allowed!</p>');
+                    $('#btn_' + val).css("display","none");
+                }else{
+                    $('#btn_' + val).css("display","block");
+                }
+            }
+        } else {
+            $('#name_' + val).html('Please Select');
+        }
+    }
+
+
+    function validate_form() {
+        $("#form_upload_document").validate({});
+    }
+
+    function func_document_revoked() {
+        alertify.alert('Document Manage Error!', 'You can not Manage Revoked Document');
+    }
+
+    function func_remove_document(type, document_sid) {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to revoke this document?',
+        function () {
+            $('#form_remove_document_' + type + '_' + document_sid).submit();
+        },
+        function () {
+            alertify.error('Cancelled!');
+        });
+    }
+
+    function func_assign_document(type, document_sid, title = 'Assign This Document', message = 'Are you sure you want to assign this document?') {
+        alertify.confirm(
+        title,
+        message,
+        function () {
+            $('#form_assign_document_' + type + '_' + document_sid).submit();
+        },
+        function () {
+            alertify.error('Cancelled!');
+        });
+    }
+
+    function func_assign_generated_document() {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to assign this document?',
+        function () {
+            var word = '{{authorized_signature}}';
+            var textValue = CKEDITOR.instances.gen_doc_description.getData();
+
+            if (textValue.indexOf(word)!=-1){
+                if ($('#auth_sign_sid').val() > 0) {
+                    $('#register-form').submit();
+                } else if ($('#auth_sign_sid').val() == 0) {
+                    var company_sid = '<?php echo $company_sid; ?>';
+                    var document_sid = $('#document_sid_for_validation').val();
+                    var myurl = "<?= base_url() ?>hr_documents_management_test/check_active_auth_signature/"+document_sid+"/"+company_sid;
+                    var active_signature = '';
+
+                    $.ajax({
+                        type: "GET",
+                        url: myurl,
+                        async : false,
+                        success: function (status) {
+                            active_signature = status;
+                        }
+                    });
+
+                    if(active_signature == 1){
+                        $('#register-form').submit();
+                    } else {
+                       $('#authorized_e_Signature_Modal').modal('show');
+                    }
+                }
+            }else{
+                $('#register-form').submit();
+            }
+        },
+        function () {
+            alertify.error('Cancelled!');
+        });
+    }
+
+    function func_remove_w4() {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to revoke this document?',
+        function () {
+            $('#form_remove_w4').submit();
+        },
+        function () {
+            alertify.error('Cancelled!');
+        });
+    }
+
+    function func_assign_w4() {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to assign this document?',
+        function () {
+            $('#form_assign_w4').submit();
+        },
+        function () {
+            alertify.error('Cancelled!');
+        });
+    }
+
+    function func_remove_i9() {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to revoke this document?',
+        function () {
+            $('#form_remove_i9').submit();
+        },
+        function () {
+            alertify.error('Cancelled!');
+        });
+    }
+
+    function func_assign_i9() {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to assign this document?',
+        function () {
+            $('#form_assign_i9').submit();
+        },
+        function () {
+            alertify.error('Cancelled!');
+        });
+    }
+
+    function func_remove_w9() {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to revoke this document?',
+        function () {
+            $('#form_remove_w9').submit();
+        },
+        function () {
+            alertify.error('Cancelled!');
+        });
+    }
+
+    function func_assign_w9() {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to assign this document?',
+        function () {
+            $('#form_assign_w9').submit();
+        },
+        function () {
+            alertify.error('Cancelled!');
+        });
+    }
+
+    function open_uploaded_model() {
+        $('#uploaded_document_modal').modal("toggle");
+    }
+
+    function fLaunchModal(source) {
+        var document_preview_url = $(source).attr('data-preview-url');
+        var document_download_url = $(source).attr('data-download-url');
+        var document_title = $(source).attr('data-document-title');
+        var document_file_name = $(source).attr('data-file-name');
+        var file_extension = document_file_name.substr(document_file_name.lastIndexOf('.') + 1, document_file_name.length);
+        var modal_content = '';
+        var footer_content = '';
+        var iframe_url = '';
+
+        if (document_preview_url != '') {
+            switch (file_extension.toLowerCase()) {
+                case 'pdf':
+                    iframe_url = document_preview_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+                case 'doc':
+                case 'docx':
+                case 'xls':
+                case 'xlsx':
+                    //using office docs
+                    iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + document_preview_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+                case 'jpg':
+                case 'jpe':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                    modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
+                    break;
+                default :
+                    //using google docs
+                    iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+            }
+
+            footer_content = '<a target="_blank" download="download" class="btn btn-success" href="' + document_download_url + '">Download</a>';
+        } else {
+            modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
+            footer_content = '';
+        }
+
+        $('#document_modal_body').html(modal_content);
+        $('#document_modal_footer').html(footer_content);
+        $('#document_modal_title').html(document_title);
+        $('#document_modal').modal("toggle");
+        $('#document_modal').on("shown.bs.modal", function () {
+            if (iframe_url != '') {
+                $('#preview_iframe').attr('src', iframe_url);
+            }
+        });
+    }
+
+    function fLaunchModalGen(source, assign_type = 'assign') {
+        var document_title = $(source).attr('data-title');
+        var document_description = $(source).attr('data-description');
+        var document_type = $(source).attr('data-document-type');
+        var document_sid = $(source).attr('data-document-sid');
+        $('#document_sid_for_validation').val(document_sid);
+
+        title = 'Modify and Re-Assign This Document';
+        document_label = "Are you sure you want to Re-Assign this document [<b>" + document_title + "</b>] <br> <?php echo ucwords($user_type);?> will be required to re-submit this document";
+        button_title = 'Re-Assign this Document';
+
+        if(assign_type == 'assign') {
+            title = 'Modify and Assign This Document';
+            document_label = "Are you sure you want to assign this document: [<b>"+document_title+ "</b>]";
+            button_title = 'Assign This Document';
+        }
+
+        $('#model_generated_doc').modal('toggle');
+        // $('#gen-doc-title').val(document_title);
+        CKEDITOR.instances.gen_doc_description.setData(document_description);
+        //$('#gen-doc-description').val(document_description);
+        $('#gen-doc-type').val(document_type);
+        $('#gen-doc-sid').val(document_sid);
+        $('#send-gen-doc').val(button_title);
+        $('#generated_document_title').html(title);
+        $('#gen_document_label').html(document_label);
+    }
+
+    function func_get_generated_document_preview(document_sid, source = 'original', fetch_data = 'original') {
+        var my_request;
+        my_request = $.ajax({
+            'url': '<?php echo base_url('hr_documents_management_test/ajax_responder'); ?>',
+            'type': 'POST',
+            'data': {
+                'perform_action': 'get_generated_document_preview',
+                'document_sid': document_sid,
+                'user_type': '<?php echo $user_type; ?>',
+                'user_sid': <?php echo $user_sid; ?>,
+                'source': source,
+                'fetch_data': fetch_data
+            }
+        });
+
+        my_request.done(function (response) {
+            $('#popupmodalbody').html(response);
+            $('#popupmodallabel').html('Preview Hr Document');
+            $('#popupmodal .modal-dialog').css('width', '60%');
+            $('#popupmodal').modal('toggle');
+        });
+    }
+
+    function func_get_generated_document_history_preview(document_sid, source = 'original', fetch_data = 'original', history_sid) {
+        var my_request;
+        my_request = $.ajax({
+            'url': '<?php echo base_url('hr_documents_management_test/ajax_responder'); ?>',
+            'type': 'POST',
+            'data': {
+                'perform_action': 'get_generated_document_preview',
+                'document_sid': document_sid,
+                'user_type': '<?php echo $user_type; ?>',
+                'user_sid': <?php echo $user_sid; ?>,
+                'source': source,
+                'fetch_data': fetch_data,
+                'history_sid': history_sid
+            }
+        });
+
+        my_request.done(function (response) {
+            $('#popupmodalbody').html(response);
+            $('#popupmodallabel').html('Preview Hr Document');
+            $('#popupmodal .modal-dialog').css('width', '60%');
+            $('#popupmodal').modal('toggle');
+        });
+    }
+
+    function no_action_req_edit_document_model(source) {
+
+        var document_sid        = $(source).attr('data-download-sid');
+        var document_title      = $(source).attr('data-document-title');
+        var update_accessible   = $(source).attr('data-update-accessible');
+        var is_offer_letter     = $(source).attr('is-offer-letter');
+        var print_type          = $(source).attr('data-print-type');
+        var categories          =  $(source).attr('data-categories');
+        var assign_date         =  $(source).attr('assign-date');
+        var sign_date           =  $(source).attr('sign-date');
+        var user_type           = '<?php echo $user_type; ?>';
+        var user_sid            = '<?php echo $user_sid; ?>';
+
+        if(document_sid.length > 0){
+            $('#no_action_document_modal_title').html(document_title);
+            $("#not_action_req_document_sid").val(document_sid);
+            $("#update_manual_doc_title").val(document_title);
+            $("#update_accessible").prop("checked",update_accessible);
+            $("#update_is_offer_letter").prop("checked",is_offer_letter);
+            $("#previous_update_accessible").val(update_accessible);
+            $("#doc_assign_date").val(assign_date);
+            $("#doc_sign_date").val(sign_date);
+
+            if (is_offer_letter) {
+                $("#update_categories_section").hide();
+                $("#updatecategories").select2("val", "");
+            } else {
+                categories = JSON.parse(categories);
+                $('#previous_categories').val(categories);
+                $('#updatecategories').val(categories).trigger('change');
+            }
+
+            $('#no_action_document_modal').modal("toggle");
+        }
+    }
+
+    $("#is_offer_letter").on('click', function () {
+        if ($("#is_offer_letter").is(":checked")) {
+            $("#categories_section").hide();
+            $("#createcategories").select2("val", "");
+        } else {
+            $("#categories_section").show();
+        }
+    });
+
+    $("#update_is_offer_letter").on('click', function () {
+        if ($("#update_is_offer_letter").is(":checked")) {
+            $("#update_categories_section").hide();
+            $("#updatecategories").select2("val", "");
+        } else {
+            $("#update_categories_section").show();
+        }
+    });
+
+    function validate_no_action_form(){
+        var update_title = $("#update_manual_doc_title").val();
+
+        if(update_title == "" || update_title == null){
+            $(".error_message").text("Document Title is Required, Please Add Title.");
+            return false;
+        }
+
+        $(".error_message").text("");
+        $("#no_action_document_modal #form_upload_document").submit();
+    }
+
+    function preview_document_model(source) {
+        var document_preview_url = $(source).attr('data-preview-url');
+        var document_download_url = $(source).attr('data-download-url');
+        var document_title = $(source).attr('data-document-title');
+        var document_file_name = $(source).attr('data-file-name');
+        var file_extension = document_file_name.substr(document_file_name.lastIndexOf('.') + 1, document_file_name.length);
+        var modal_content = '';
+        var footer_content = '';
+        var iframe_url = '';
+        var document_sid = $(source).attr('data-download-sid');
+        var print_type = $(source).attr('data-print-type');
+        var user_type = '<?php echo $user_type; ?>';
+        var user_sid = '<?php echo $user_sid; ?>';
+
+        if (document_preview_url != '') {
+            switch (file_extension.toLowerCase()) {
+                case 'doc':
+                case 'docx':
+                case 'xls':
+                case 'xlsx':
+                    iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + document_preview_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+                case 'jpg':
+                case 'jpe':
+                case 'jpeg':
+                case 'png':        //             iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + document_preview_url;
+
+                case 'gif':
+                case 'JPG':
+                case 'JPE':
+                case 'JPEG':
+                case 'PNG':
+                case 'GIF':
+                    modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
+                    break;
+                default : //using google docs
+                    iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+            }
+
+        } else {
+            modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
+            footer_content = '';
+        }
+
+        $.ajax({
+            'url': '<?php echo base_url('hr_documents_management_test/get_print_url'); ?>',
+            'type': 'POST',
+            'data': {
+                'request_type': print_type,
+                'document_type': 'MS',
+                'document_sid': document_sid
+            },
+            success: function (urls) {
+                var obj = jQuery.parseJSON(urls);
+                var print_url = obj.print_url;
+                var download_url = obj.download_url;
+                footer_content = '<a target="_blank" class="btn btn-success" href="'+download_url+'">Download</a>';
+                footer_print_btn = '<a target="_blank" class="btn btn-success" href="'+print_url+'" >Print</a>';
+
+                $('#document_modal_body').html(modal_content);
+                $('#document_modal_footer').html(footer_content);
+                $('#document_modal_footer').append(footer_print_btn);
+                $('#document_modal_title').html(document_title);
+                $('#document_modal').modal("toggle");
+                $('#document_modal').on("shown.bs.modal", function () {
+
+                    if (iframe_url != '') {
+                        $('#preview_iframe').attr('src', iframe_url);
+                    }
+                });
+            }
+        });
+    }
+
+    function preview_submitted_generated_document (source) {
+        var document_sid = $(source).attr('data-print-id');
+        var document_preview_url = $(source).attr('data-preview-url');
+        var document_download_url = $(source).attr('data-download-url');
+        var document_title = $(source).attr('data-document-title');
+        var document_file_name = $(source).attr('data-file-name');
+        var file_extension = document_file_name.substr(document_file_name.lastIndexOf('.') + 1, document_file_name.length);
+        var modal_content = '';
+        var footer_content = '';
+        var iframe_url = '';
+
+        if (document_preview_url != '') {
+            switch (file_extension.toLowerCase()) {
+                case 'pdf':
+                    iframe_url = document_preview_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+            }
+
+        } else {
+            modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
+            footer_content = '';
+        }
+
+        $.ajax({
+            'url': '<?php echo base_url('hr_documents_management_test/get_print_url'); ?>',
+            'type': 'POST',
+            'data': {
+                'request_type': 'submitted',
+                'document_type': 'generated',
+                'document_sid': document_sid
+            },
+            success: function (urls) {
+                var obj = jQuery.parseJSON(urls);
+                var print_url = obj.print_url;
+                var download_url = obj.download_url;
+                footer_content = '<a target="_blank" class="btn btn-success" href="'+download_url+'">Download</a>';
+                footer_print_btn = '<a target="_blank" class="btn btn-success" href="'+print_url+'" >Print</a>';
+
+                $('#document_modal_body').html(modal_content);
+                $('#document_modal_footer').html(footer_content);
+                $('#document_modal_footer').append(footer_print_btn);
+                $('#document_modal_title').html(document_title);
+                $('#document_modal').modal("toggle");
+                $('#document_modal').on("shown.bs.modal", function () {
+
+                    if (iframe_url != '') {
+                        $('#preview_iframe').attr('src', iframe_url);
+                    }
+                });
+            }
+        });
+    }
+
+    function generated_document_original_preview(document_sid) {
+        var my_request;
+        my_request = $.ajax({
+            'url': '<?php echo base_url('hr_documents_management_test/preview_generated_doc'); ?>',
+            'type': 'POST',
+            'data': {
+                'document_sid': document_sid,
+                'user_type': '<?php echo $user_type; ?>',
+                'user_sid': '<?php echo $user_sid; ?>'
+            }
+        });
+
+        my_request.done(function (response) {
+
+            $.ajax({
+                'url': '<?php echo base_url('hr_documents_management_test/get_print_url'); ?>',
+                'type': 'POST',
+                'data': {
+                    'request_type': 'assigned',
+                    'document_type': 'generated',
+                    'document_sid': document_sid
+                },
+                success: function (urls) {
+                    var obj = jQuery.parseJSON(urls);
+                    var print_url = obj.print_url;
+                    var download_url = obj.download_url;
+                    footer_content = '<a target="_blank" class="btn btn-success" href="'+download_url+'">Download</a>';
+                    footer_print_btn = '<a target="_blank" class="btn btn-success" href="'+print_url+'" >Print</a>';
+                    $('#document_modal_body').html(response);
+                    $('#document_modal_footer').html(footer_content);
+                    $('#document_modal_footer').append(footer_print_btn);
+                    $('#document_modal_title').html('Preview Hr Document');
+                    $('#document_modal').modal("toggle");
+                }
+            });
+        });
+    }
+
+    function view_original_uploaded_doc(source) {
+        var url_segment_original = $(source).attr('data-print-url');
+        var document_preview_url = $(source).attr('data-preview-url');
+        var document_download_url = $(source).attr('data-download-url');
+        var document_title = $(source).attr('data-document-title');
+        var document_file_name = $(source).attr('data-file-name');
+        var document_sid = $(source).attr('data-document-sid');
+        var file_extension = document_file_name.substr(document_file_name.lastIndexOf('.') + 1, document_file_name.length);
+        var modal_content = '';
+        var footer_content = '';
+        var iframe_url = '';
+
+       if (document_preview_url != '') {
+            switch (file_extension.toLowerCase()) {
+                case 'doc':
+                case 'docx':
+                case 'ppt':
+                case 'pptx':
+                case 'xls':
+                case 'xlsx':
+                    iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + document_preview_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+                case 'jpg':
+                case 'jpe':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                case 'JPG':
+                case 'JPE':
+                case 'JPEG':
+                case 'PNG':
+                case 'GIF':
+                    modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
+                    footer_print_btn = '<a target="_blank" href="<?php echo base_url('hr_documents_management_test/print_generated_and_offer_later/original/generated'); ?>'+'/'+document_sid+'" class="btn btn-success">Print</a>';
+                    break;
+                default : //using google docs
+                    iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+            }
+
+        } else {
+            modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
+            footer_content = '';
+        }
+
+        $.ajax({
+            'url': '<?php echo base_url('hr_documents_management_test/get_print_url'); ?>',
+            'type': 'POST',
+            'data': {
+                'request_type': 'original',
+                'document_type': 'MS',
+                'document_sid': document_sid
+            },
+            success: function (urls) {
+                var obj = jQuery.parseJSON(urls);
+                var print_url = obj.print_url;
+                var download_url = obj.download_url;
+                footer_content = '<a target="_blank" class="btn btn-success" href="'+download_url+'">Download</a>';
+                footer_print_btn = '<a target="_blank" class="btn btn-success" href="'+print_url+'" >Print</a>';
+
+                $('#document_modal_body').html(modal_content);
+                $('#document_modal_footer').html(footer_content);
+                $('#document_modal_footer').append(footer_print_btn);
+                $('#document_modal_title').html(document_title);
+                $('#document_modal').modal("toggle");
+                $('#document_modal').on("shown.bs.modal", function () {
+
+                    if (iframe_url != '') {
+                        $('#preview_iframe').attr('src', iframe_url);
+                    }
+                });
+            }
+        });
+    }
+
+    function view_original_uploaded_manual_doc(source) {
+        var url_segment_original = $(source).attr('data-print-url');
+        var document_preview_url = $(source).attr('data-preview-url');
+        var document_download_url = $(source).attr('data-download-url');
+        var document_title = $(source).attr('data-document-title');
+        var document_file_name = $(source).attr('data-file-name');
+        var document_sid = $(source).attr('data-document-sid');
+        var file_extension = document_file_name.substr(document_file_name.lastIndexOf('.') + 1, document_file_name.length);
+        var modal_content = '';
+        var footer_content = '';
+        var iframe_url = '';
+
+       if (document_preview_url != '') {
+            switch (file_extension.toLowerCase()) {
+                case 'doc':
+                case 'docx':
+                case 'xls':
+                case 'xlsx':
+                    iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + document_preview_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+                case 'jpg':
+                case 'jpe':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                case 'JPG':
+                case 'JPE':
+                case 'JPEG':
+                case 'PNG':
+                case 'GIF':
+                    modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
+                    footer_print_btn = '<a target="_blank" href="<?php echo base_url('hr_documents_management_test/print_generated_and_offer_later/original/generated'); ?>'+'/'+document_sid+'" class="btn btn-success">Print</a>';
+                    break;
+                default : //using google docs
+                    iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+            }
+
+        } else {
+            modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
+            footer_content = '';
+        }
+
+        $.ajax({
+            'url': '<?php echo base_url('hr_documents_management_test/get_print_url'); ?>',
+            'type': 'POST',
+            'data': {
+                'request_type': 'original',
+                'document_type': 'DS',
+                'document_sid': document_sid
+            },
+            success: function (urls) {
+                var obj = jQuery.parseJSON(urls);
+                var print_url = obj.print_url;
+                var download_url = obj.download_url;
+                footer_content = '<a target="_blank" class="btn btn-success" href="'+download_url+'">Download</a>';
+                footer_print_btn = '<a target="_blank" class="btn btn-success" href="'+print_url+'" >Print</a>';
+
+                $('#document_modal_body').html(modal_content);
+                $('#document_modal_footer').html(footer_content);
+                $('#document_modal_footer').append(footer_print_btn);
+                $('#document_modal_title').html(document_title);
+                $('#document_modal').modal("toggle");
+                $('#document_modal').on("shown.bs.modal", function () {
+
+                    if (iframe_url != '') {
+                        $('#preview_iframe').attr('src', iframe_url);
+                    }
+                });
+            }
+        });
+    }
+
+    function view_original_generated_document(document_sid, doc_flag = 'generated', doc_title = 'Preview Generated Document') {
+        var my_request;
+        my_request = $.ajax({
+            'url': '<?php echo base_url('hr_documents_management_test/ajax_responder'); ?>',
+            'type': 'POST',
+            'data': {
+                'perform_action': 'get_generated_document_preview',
+                'document_sid': document_sid,
+                'source': doc_flag,
+                'fetch_data': 'original'
+            }
+        });
+
+        my_request.done(function (response) {
+            footer_content = '<a target="_blank" class="btn btn-success" href="<?php echo base_url('hr_documents_management_test/print_generated_and_offer_later/original'); ?>'+'/'+doc_flag+'/'+document_sid+'/download">Download</a>';
+            footer_print_btn = '<a target="_blank" href="<?php echo base_url('hr_documents_management_test/print_generated_and_offer_later/original'); ?>'+'/'+doc_flag+'/'+document_sid+'" class="btn btn-success">Print</a>';
+
+            $('#document_modal_body').html(response);
+            $('#document_modal_footer').html(footer_content);
+            $('#document_modal_footer').append(footer_print_btn);
+            $('#document_modal_title').html(doc_title);
+            $('#document_modal').modal("toggle");
+        });
+    }
+
+    function func_assign_document_group (group_sid, user_type, user_sid, group_name) {
+        var user_name = '<?php echo $user_info['first_name']; ?> <?php echo $user_info['last_name']; ?>';
+        alertify.confirm(
+            'Confirm Document Group Assignment?',
+            'Are you sure you want to assign <strong><i>'+group_name+'</i></strong> group to <strong><i>'+user_name+'</i></strong> ?',
+            function () {
+                var myurl = "<?php echo base_url('hr_documents_management_test/ajax_assign_group_2_applicant'); ?>"+'/'+group_sid+"/"+user_type+"/"+user_sid;
+
+                $.ajax({
+                    type: "GET",
+                    url: myurl,
+                    async : false,
+                    success: function (data) {
+                        $("#btn_group_"+group_sid).removeClass("btn btn-primary btn-block btn-sm");
+                        $("#btn_group_"+group_sid).addClass("btn btn-success btn-block btn-sm");
+                        $("#btn_group_"+group_sid).text("Group Assigned");
+
+                        alertify.success('Group Assigned Successfully');
+                        location.reload();
+                    },
+                    error: function (data) {
+
+                    }
+                });
+            },
+            function () {
+                alertify.error('Cancelled!');
+            }).set('labels', {ok: 'Yes', cancel: 'No'});
+    }
+
+    function preview_eev_document_model(source) {
+        var yoy_here='';
+        var document_file_name = $(source).attr('data-file-name');
+        $("#data-document-type").val($(source).attr('data-document-type'));
+        $("#eev_sid").val($(source).attr('data-document-sid'));
+        var document_preview_url = $(source).attr('data-preview-url');
+        var document_download_url = $(source).attr('data-download-url');
+        console.log(source);
+        var modal_content = '';
+        var footer_content = '';
+        var footer_print_btn = '';
+        var footer_print_url = '';
+        if (document_preview_url != undefined && document_preview_url != '') {
+            var file_extension = document_file_name.substr(document_file_name.lastIndexOf('.') + 1, document_file_name.length);
+        console.log(document_preview_url);
+
+            switch (file_extension.toLowerCase()) {
+            case 'doc':
+                case 'docx':
+                case 'xls':
+                case 'ppt':
+                case 'pptx':
+                case 'xlsx':
+                    iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + document_preview_url;
+                    footer_print_url = iframe_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+                case 'jpg':
+                case 'jpe':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                case 'JPG':
+                case 'JPE':
+                case 'JPEG':
+                case 'PNG':
+                case 'GIF':
+                    modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
+                    break;
+                default : //using google docs
+                    iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
+                    footer_print_url = 'https://docs.google.com/gview?url=' + document_preview_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+            }
+            footer_content = '<a target="_blank" class="btn btn-success" href="'+document_download_url+'">Download</a>';
+            footer_print_btn = '<a target="_blank" class="btn btn-success" href="'+footer_print_url+'" >Print</a>';
+
+            $('#upload_eev_document .modal-footer').html(footer_content);
+            $('#upload_eev_document .modal-footer').append(footer_print_btn);
+
+        }
+        $('#upload_eev_document .preview').html(modal_content);
+        $('#upload_eev_document').modal('show');
+    }
+
+    $("#btn_eev_document").click(function(){
+        $("#form_upload_eev_document").submit();
+        $(this).html('<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>');
+        $(this).attr("disabled", true);
+    });
+
+    function func_archive_uploaded_document(document_sid) {
+        alertify.confirm(
+            'Are you sure?',
+            'Are you sure you want to archive this document?',
+            function () {
+                $('#form_archive_hr_document_' + document_sid).submit();
+            },
+            function () {
+                alertify.error('Cancelled!');
+            });
+    }
+
+    function func_unarchive_uploaded_document(document_sid) {
+        alertify.confirm(
+                'Are you sure?',
+                'Are you sure you want to activate this document?',
+                function () {
+                    $('#form_activate_hr_document_' + document_sid).submit();
+                },
+                function () {
+                    alertify.error('Cancelled!');
+                });
+    }
+
+    $('.doc_date').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "-100:+50",
+    }).val();
+
+</script>
+<style>
+.select2-container {
+  min-width: 400px;
+}
+
+.select2-results__option {
+  padding-right: 20px;
+  vertical-align: middle;
+}
+.select2-results__option:before {
+  content: "";
+  display: inline-block;
+  position: relative;
+  height: 20px;
+  width: 20px;
+  border: 2px solid #e9e9e9;
+  border-radius: 4px;
+  background-color: #fff;
+  margin-right: 20px;
+  vertical-align: middle;
+}
+.select2-results__option[aria-selected=true]:before {
+  font-family:fontAwesome;
+  content: "\f00c";
+  color: #fff;
+  background-color: #81b431;
+  border: 0;
+  display: inline-block;
+  padding-left: 3px;
+}
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #fff;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #eaeaeb;
+    color: #272727;
+}
+.select2-container--default .select2-selection--multiple {
+    margin-bottom: 10px;
+}
+.select2-container--default.select2-container--open.select2-container--below .select2-selection--multiple {
+    border-radius: 4px;
+}
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-color: #81b431;
+    border-width: 2px;
+}
+.select2-container--default .select2-selection--multiple {
+    border-width: 2px;
+}
+.select2-container--open .select2-dropdown--below {
+
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+}
+.select2-selection .select2-selection--multiple:after {
+    content: 'hhghgh';
+}
+/* select with icons badges single*/
+.select-icon .select2-selection__placeholder .badge {
+    display: none;
+}
+.select-icon .placeholder {
+    display: none;
+}
+.select-icon .select2-results__option:before,
+.select-icon .select2-results__option[aria-selected=true]:before {
+    display: none !important;
+    /* content: "" !important; */
+}
+.select-icon  .select2-search--dropdown {
+    display: none;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice{
+    height: 25px !important;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__rendered{
+    height: 30px;
+}
+
+#document_modal_body{ background-color: #ffffff;}
+</style>
+
+<script>
+    $(function(){
+        let letter = <?=json_encode(array_reverse(array_values($assigned_offer_letters))[0]);?>
+
+        $('table.js-verification-table tbody tr').map(function(i){
+            if($(this).find('img').length != 0){
+                let
+                dn = $(this).find('td:nth-child(1)').text(),
+                aon = $(this).find('td:nth-child(3)').find('.text-center').text().trim(),
+                btn = $(this).find('td:nth-child(4)').find('a[data-toggle="modal"]').clone().text("Preview Assigned").addClass('btn-sm btn-block'),
+                db = '';
+                //
+                if($(this).find('td:nth-child(4)').find('button[data-document-type="i9"]').length !== 0){
+                    btn = $(this).find('td:nth-child(4)').find('button[data-document-type="i9"]').clone().text("Preview Assigned").addClass('btn-sm btn-block');
+                }
+                if(btn.length == 0){
+                    if($(this).find('td:nth-child(4)').find('a[data-form-type="i9"]').length !== 0){
+                        btn = $(this).find('td:nth-child(4)').find('a[data-form-type="i9"]').clone().text("Preview Assigned").addClass('btn-sm btn-block');
+                    }
+
+                }
+                if($(this).find('img').attr('src').match(/on/)){
+                    // Completed document
+                    if($('#signed_doc_details #collapse_completed-1').length == 0) {
+                        $('.panel-body').find('b.js-error').remove();
+                        $('#signed_doc_details .panel-body').append(`<div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-cdi">0</span> </b></div></a></h4></div><div id="collapse_completed-1" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th class="col-lg-8">Document Name</th><th class="col-lg-2 text-right">Actions</th><th class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
+                    }
+                    $('#signed_doc_details #collapse_completed-1 tbody').prepend(`<tr><td class="col-lg-8">${dn}<br /><strong>Assigned on: </strong>${aon}</td><td class="col-lg-2 clv-${i}"></td><td class="col-lg-2"></td></tr>`);
+                    $('.js-cd').text(
+                        parseInt($('.js-cd').text()) + 1
+                    );
+                    $('.js-cdi').text(
+                        parseInt($('.js-cdi').text()) + 1
+                    );
+                    $('#signed_doc_details').find('td[colspan="7"]').parent().remove();
+                } else{
+                    // Uncompleted Document
+                    if($('#in_complete_doc_details #collapse_ncompleted-1').length == 0) {
+                        $('.panel-body').find('b.js-error').remove();
+                        $('#in_complete_doc_details .panel-body').append(`<br /><div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_ncompleted-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-ncdi">0</span> </b></div></a></h4></div><div id="collapse_ncompleted-1" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th class="col-lg-8">Document Name</th><th class="col-lg-2 text-right">Actions</th><th class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
+                    }
+                    $('#in_complete_doc_details  #collapse_ncompleted-1 tbody').prepend(`<tr><td class="col-lg-8">${dn}<br /><strong>Assigned on: </strong>${aon}</td><td class="col-lg-2 clv-${i}"></td><td class="col-lg-2"></td></tr>`);
+                    $('.js-ncd').text(
+                        parseInt($('.js-ncd').text()) + 1
+                    );
+                    $('.js-ncdi').text(
+                        parseInt($('.js-ncdi').text()) + 1
+                    );
+                    $('#in_complete_doc_details').find('td[colspan="7"]').parent().remove();
+                    if($('.js-uncompleted-docs tbody tr').length == 0) $('.js-uncompleted-docs').remove();
+                }
+                $('.clv-'+(i)+'').html(btn);
+            }
+        });
+
+        //
+        // setOfferLetter();
+
+        function setOfferLetter(){
+            if(!letter.hasOwnProperty('sid')) return;
+            // Set button
+            let btn = '';
+            if(letter.document_type == 'uploaded'){
+                if(letter.document_s3_name != ''){
+                    btn = `
+                    <button class="btn btn-success btn-sm btn-block"
+                        onclick="preview_document_model(this);"
+                        data-preview-url="<?php echo AWS_S3_BUCKET_URL ;?>${letter.document_s3_name}"
+                        data-download-url="<?php echo AWS_S3_BUCKET_URL ;?>${letter.document_s3_name}"
+                        data-print-type="submitted"
+                        data-download-sid="${letter.sid}"
+                        data-file-name="${letter.document_s3_name}"
+                        data-document-title="${letter.document_s3_name}" ${!letter.document_s3_name ? 'disabled' : ''}>Preview Assigned</button>`;
+                }
+                else{
+                    btn = `<button onclick="func_get_generated_document_preview(${letter.document_sid}, 'generated', 'modified');" class="btn btn-success btn-sm btn-block">Preview Assigned</button>`;
+                }
+            }else{
+                btn = `
+                <button class="btn btn-success btn-sm btn-block"
+                    onclick="preview_document_model(this);"
+                    data-preview-url="<?php echo AWS_S3_BUCKET_URL; ?>${letter.document_s3_name}" data-download-url="<?php echo AWS_S3_BUCKET_URL; ?> ${letter.document_s3_name}" data-print-url="${letter.document_s3_name}"
+                    data-print-type="assigned"
+                    data-download-sid="${letter.sid}"
+                    data-file-name="${letter.document_original_name}"
+                    data-document-title="${letter.document_title}"
+                    >Preview Document</button>`;
+            }
+
+            //
+            if(letter.user_consent == 1){
+                // Completed
+                if($('#signed_doc_details #collapse_completed-2').length == 0) {
+                    $('.panel-body').find('b').remove();
+                    $('#signed_doc_details .panel-body').append(`<div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed-2"><span class="glyphicon glyphicon-plus"></span>Payroll Documents<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-cdi">0</span> </b></div></a></h4></div><div id="collapse_completed-2" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th class="col-lg-8">Document Name</th><th class="col-lg-2 text-right">Actions</th><th class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
+                }
+                $('#signed_doc_details #collapse_completed-2 tbody').prepend(`<tr><td class="col-lg-8">${letter.document_title}<br /><strong>Assigned on: </strong>${letter.assigned_date}</td><td class="col-lg-2">${btn}</td><td class="col-lg-2"></td></tr>`);
+                $('.js-cd').text(
+                    parseInt($('.js-cd').text()) + 1
+                );
+                $('#signed_doc_details').find('td[colspan="7"]').parent().remove();
+            } else{
+                // Not Completed
+                if($('#in_complete_doc_details #collapse_completed-2').length == 0) {
+                    $('.panel-body').find('b').remove();
+                    $('#in_complete_doc_details .panel-body').append(`<div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed-2"><span class="glyphicon glyphicon-plus"></span>Payroll Documents<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-cdi">1</span> </b></div></a></h4></div><div id="collapse_completed-2" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th class="col-lg-8">Document Name</th><th class="col-lg-2 text-right">Actions</th><th class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
+                }
+                $('#in_complete_doc_details #collapse_completed-2 tbody').prepend(`<tr><td class="col-lg-8">${letter.document_title}<br /><strong>Assigned on: </strong>${letter.assigned_date}</td><td class="col-lg-2">${btn}</td><td class="col-lg-2"></td></tr>`);
+                $('.js-ncd').text(
+                    parseInt($('.js-ncd').text()) + 1
+                );
+                $('#in_complete_doc_details').find('td[colspan="7"]').parent().remove();
+            }
+        }
+    })
+</script>

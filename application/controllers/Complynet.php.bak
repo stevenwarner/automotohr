@@ -1,0 +1,24 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Complynet extends Public_Controller {
+    public function __construct() {
+        parent::__construct();
+
+    }
+
+    function index(){
+        if (!$this->session->userdata('logged_in')) redirect(base_url('login'), "refresh");
+        $data['session'] = $this->session->userdata('logged_in');
+        $employer_detail = $data['session']['employer_detail'];
+        $data['access_level'] = $employer_detail['access_level'];
+        $security_details = db_get_access_level_details($employer_detail['sid']);
+        $data['security_details'] = $security_details;
+        $data['title'] = 'ComplyNet';
+        check_access_permissions($security_details, 'dashboard', 'complynet'); // Param2: Redirect URL, Param3: Function Name
+
+        $this->load->view('main/header', $data);
+        $this->load->view('complynet/index');
+        $this->load->view('main/footer');
+    }
+    
+}

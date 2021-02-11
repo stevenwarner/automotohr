@@ -1,0 +1,18 @@
+<?php 
+//echo date_default_timezone_get();
+//echo '<br><br>';
+echo '<h1>SERVER DATE & TIME: '.date('Y-m-d H:i:s').'</h1>';
+
+echo '<br><br><b>>Please press F5 to relaod time';
+//echo '<br><br>';
+//echo __dir__;
+//echo '<br><br>';
+//echo $_SERVER["PATH"];
+
+//mail('j.taylor.title@gmail.com', 'Mail From PHP INFO', 'PHP Info Called On ' . date('Y-m-d H:i:s'));
+
+//phpinfo();
+//echo "<pre>";
+//print_r(scandir(session_save_path()));
+//echo "</pre>";
+?>

@@ -1,0 +1,326 @@
+<div class="main-content">
+    <div class="dashboard-wrp">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
+                    <?php $this->load->view('main/employer_column_left_view'); ?>
+                </div>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                    <div class="dashboard-conetnt-wrp">
+                        <div class="page-header-area">
+                            <span class="page-heading down-arrow">Create A New Job</span>
+                        </div>
+                        <div class="create-job-wrap">
+                            <div class="job-title-text">                
+                                <p>Enter the information about your job posting here.<br>
+                                    Fields marked with an asterisk (<span>*</span>) are mandatory.
+                                </p>
+                            </div>
+                            <div class="universal-form-style-v2">
+                                <ul>
+                                    <form id="employers_add_job" action="" method="POST" enctype="multipart/form-data">
+                                        <li class="form-col-50-left">
+                                            <label>Title:<span class="staric">*</span></label>
+                                            <input type="text" class="invoice-fields" name="Title" id="Title" value="<?php echo set_value('Title'); ?>">
+                                            <?php echo form_error('Title'); ?>
+                                        </li>
+                                        <li class="form-col-50-right">
+                                            <label>Job Type:</label>  
+                                            <div class="hr-select-dropdown">
+                                                <select class="invoice-fields" name="JobType">
+                                                    <option value="Full Time"  <?php if (set_value('JobType') == "Full Time") { ?>selected<?php } ?>>Full Time</option>	
+                                                    <option value="Part Time"  <?php if (set_value('JobType') == "Part Time") { ?>selected<?php } ?>>Part Time </option>	
+                                                </select>
+                                            </div>
+                                        </li>
+                                        <li class="form-col-100">
+                                            <label>Job Category(s):<span class="staric">*</span></label>
+                                            <div class="Category_chosen">							
+                                                <select data-placeholder="- Please Select -" multiple="multiple" onchange="multiselectbox()" name="JobCategory[]" id="Category"  class="chosen-select">
+                                                    <?php
+                                                    if (set_value('JobCategory') !== "") {
+                                                        $JobCategoryArray = set_value('JobCategory');
+                                                    } else {
+                                                        $JobCategoryArray = array();
+                                                    }
+                                                    foreach ($data_list as $data) {
+                                                        ?>
+                                                        <option <?php if (in_array($data['id'], $JobCategoryArray)) { ?>
+                                                                selected 
+                                                            <?php } ?>
+                                                            value="<?php echo $data['id']; ?>" ><?php echo $data['value']; ?></option>
+                                                        <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div style="display: none;" id="choiceLimit">5</div>
+                                            <span class="available"><samp id="choicelimitavailable">5</samp> available</span>
+                                            <?php echo form_error('JobCategory'); ?>                                
+                                        </li>
+
+                                        <li class="form-col-50-left">
+                                            <label>Country:
+                                                <span class="staric">*</span></label>  
+                                            <div class="hr-select-dropdown">								
+                                                <select class="invoice-fields" name="Location_Country" onchange="getStates(this.value, <?php echo $states; ?>)">
+                                                    <?php foreach ($active_countries as $active_country) { ?>
+                                                        <option value="<?= $active_country["id"]; ?>"
+                                                        <?php
+                                                        if (set_value('Location_Country') == $active_country["id"]) {
+                                                            echo 'selected';
+                                                        }
+                                                        ?>>
+                                                                    <?php echo $active_country["country_name"]; ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <?php echo form_error('Location_Country'); ?>    
+                                        </li>
+                                        <li class="form-col-50-right">
+                                            <label>State:
+                                                <span class="staric">*</span></label>  
+                                            <div class="hr-select-dropdown">								
+                                                <select class="invoice-fields" name="Location_State" id="state">
+                                                    <option value="">Select State</option>  
+                                                    <option value="">Please Select your country</option> 
+                                                </select>
+                                            </div>
+                                            <?php echo form_error('Location_State'); ?>
+                                        </li>
+                                        <li class="form-col-50-left">
+                                            <label>City:
+                                                <span class="staric">*</span></label>	
+                                            <input  class="invoice-fields"  type="text" name="Location_City" id="city" value="<?php echo set_value('Location_City'); ?>" >
+                                            <?php echo form_error('Location_City'); ?>
+                                        </li>
+                                        <li class="form-col-50-right">
+                                            <label>Zip Code:</label>
+                                            <input  class="invoice-fields"  type="text" name="Location_ZipCode" id="zip_code" value="<?php echo set_value('Location_ZipCode'); ?>"  >
+                                            <?php echo form_error('Location_ZipCode'); ?>
+                                        </li>
+                                        <li class="form-col-50-left">
+                                            <label>Listing Logo:</label>
+                                            <div class="upload-file invoice-fields">
+                                                <span class="selected-file" id="name_pictures">No file selected</span>
+                                                <input type="file" name="pictures" id="pictures" onchange="check_file('pictures')">
+                                                <a href="javascript:;">Choose File</a>
+                                            </div>
+                                        </li>
+                                        <li class="form-col-50-right">
+                                            <label>Youtube video for this job:</label>
+                                            <input  class="invoice-fields"  type="text" name="YouTube_Video" id="youtubevideo" value="<?php echo set_value('YouTube_Video'); ?>" placeholder="Youtube Video Link" >
+                                            <div class="video-link" style='font-style: italic;'><b>e.g.</b> https://www.youtube.com/watch?v=XXXXXXXXXXX </div> 
+                                            <?php echo form_error('YouTube_Video'); ?>
+                                            <div style='font-style: italic; color: red;' id="video_link" ></div> 
+                                        </li>
+
+                                        <input type="hidden" value="add"  name="action">
+                                        <input type="hidden" value="1" name="active">
+                                        <div class="description-editor">
+                                            <label>Job Description:<span class="staric">*</span></label>
+                                            <textarea class="ckeditor"  name="JobDescription" id="JobDescription" 
+                                                      cols="67" rows="6"><?php echo set_value('JobDescription'); ?></textarea>
+                                                      <?php echo form_error('JobDescription'); ?>
+                                        </div>
+                                        <div class="description-editor">
+                                            <label>Job Requirements:</label>
+                                            <textarea class="ckeditor"  name="JobRequirements" id="JobRequirements" 
+                                                      cols="67" rows="6"><?php echo set_value('JobRequirements'); ?></textarea>
+                                        </div>
+                                        <li class="form-col-50-left">
+                                            <label>Salary:</label>							
+                                            <input class="invoice-fields" type="text" name="salary" id="salary" value="<?php echo set_value('salary'); ?>" >
+                                            <?php echo form_error('salary'); ?>
+                                        </li>
+                                        <li class="form-col-50-right">
+                                            <label>Salary Type:</label>  
+                                            <div class="hr-select-dropdown">
+                                                <select class="invoice-fields" name="SalaryType">
+                                                    <option value="" >Select Salary Type</option>			
+                                                    <option value="per_hour" <?php if (set_value('SalaryType') == "per_hour") { ?>selected<?php } ?>>per hour</option>
+                                                    <option value="per_week" <?php if (set_value('SalaryType') == "per_week") { ?>selected<?php } ?>>per week</option>
+                                                    <option value="per_month" <?php if (set_value('SalaryType') == "per_month") { ?>selected<?php } ?>>per month</option>
+                                                    <option value="per_year" <?php if (set_value('SalaryType') == "per_year") { ?>selected<?php } ?>>per year</option>
+                                                </select>
+                                            </div>
+                                        </li>
+                                        <?php if (!empty($screening_questions)) { ?>
+                                            <li class="form-col-100">
+                                                <label>Screening Questionnaire:</label>
+                                                <div class="hr-select-dropdown">						
+                                                    <select class="invoice-fields" name="questionnaire_sid">
+                                                        <option <?php if (set_value('questionnaire_sid') == "") { ?>selected<?php } ?> value="">Select Screening Questionnaire</option>
+                                                        <?php foreach ($screening_questions as $screening_question) { ?>
+                                                            <option <?php if (set_value('questionnaire_sid') == $screening_question['sid']) { ?>selected<?php } ?> value="<?php echo $screening_question['sid']; ?>">
+                                                                <?php echo $screening_question['caption']; ?>
+                                                            </option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>								
+                                            </li>
+                                        <?php } ?>
+
+                                        <li class="form-col-100 autoheight">
+                                            <input type="submit" value="Post" onclick="return validate_form()" class="submit-btn">
+                                            <input type="button" value="Cancel" class="submit-btn btn-cancel" onClick="document.location.href = '<?= base_url('dashboard') ?>'" />
+                                        </li>
+                                    </form>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script  language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
+<script  language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
+<script>
+                                                CKEDITOR.replace('JobDescription');
+                                                CKEDITOR.replace('JobRequirements');
+
+                                                function getStates(val, states) {
+                                                    var html = '';
+                                                    if (val == '') {
+                                                        $('#state').html('<option value="">Select State</option><option value="">Please Select your country</option>');
+                                                    } else {
+                                                        allstates = states[val];
+                                                        for (var i = 0; i < allstates.length; i++) {
+                                                            var id = allstates[i].id;
+                                                            var name = allstates[i].state_name;
+                                                            html += '<option value="' + id + '">' + name + '</option>';
+                                                        }
+                                                        $('#state').html(html);
+                                                    }
+                                                }
+
+                                                function validate_form() {
+                                                    $("#employers_add_job").validate({
+                                                        ignore: ":hidden:not(select)",
+                                                        rules: {
+                                                            Title: {
+                                                                required: true,
+                                                                pattern: /^[a-zA-Z0-9\- ]+$/
+                                                            },
+                                                            Location_Country: {
+                                                                required: true,
+                                                            },
+                                                            Location_State: {
+                                                                required: true,
+                                                            },
+                                                            Location_City: {
+                                                                required: true,
+                                                                pattern: /^[a-zA-Z0-9\- ]+$/
+                                                            },
+                                                            Location_ZipCode: {
+                                                                pattern: /^[0-9\-]+$/
+                                                            },
+                                                            salary: {
+                                                                pattern: /^[0-9\-]+$/
+                                                            }
+                                                        },
+                                                        messages: {
+                                                            Title: {
+                                                                required: 'Job title is required',
+                                                                pattern: 'Letters, numbers, and dashes only please'
+                                                            },
+                                                            Location_Country: {
+                                                                required: 'Country name is required',
+                                                            },
+                                                            Location_State: {
+                                                                required: 'State name is required',
+                                                            },
+                                                            Location_City: {
+                                                                required: 'City name is required',
+                                                                pattern: 'Letters, numbers, and dashes only please',
+                                                            },
+                                                            Location_ZipCode: {
+                                                                pattern: 'Numeric values only'
+                                                            },
+                                                            salary: {
+                                                                pattern: 'Numeric values only'
+                                                            }
+
+                                                        },
+                                                        submitHandler: function (form) {
+
+                                                            var items_length = $('#Category :selected').length;
+                                                            if (items_length == 0) {
+                                                                alertify.alert('Error! Job Category Missing', "Job Category cannot be Empty");
+                                                                return false;
+                                                            }
+
+                                                            var text_pass = $.trim(CKEDITOR.instances.JobDescription.getData());
+                                                            if (text_pass.length === 0) {
+                                                                alertify.alert('Error! Job Description Missing', "Job Description cannot be Empty");
+                                                                return false;
+                                                            }
+
+                                                            var matches = $('#youtubevideo').val().match(/https:\/\/(?:www\.)?youtube.*watch\?v=([a-zA-Z0-9\-_]+)/);
+                                                            data = $('#youtubevideo').val();
+                                                            if (data != '' && !matches) {
+                                                                alertify.alert('Error! Youtube Link Input', "Please enter a valid youtube link.");
+                                                                $("#video_link").html("Please enter a Valid Youtube Link");
+                                                                return false;
+                                                            }
+                                                            form.submit();
+                                                        }
+                                                    });
+                                                }
+                                                function check_file(val) {
+                                                    var fileName = $("#" + val).val();
+                                                    if (fileName.length > 0) {
+                                                        $('#name_' + val).html(fileName.substring(0, 45));
+                                                        var ext = fileName.split('.').pop();
+                                                        if (val == 'pictures') {
+                                                            if (ext != "jpg" && ext != "jpeg" && ext != "png" && ext != "jpe") {
+                                                                $("#" + val).val(null);
+                                                                alertify.error("Please select a valid Image format.");
+                                                                $('#name_' + val).html('<p class="red">Only (.jpg .jpeg .png) allowed!</p>');
+                                                                return false;
+                                                            } else
+                                                                return true;
+                                                        }
+                                                    } else {
+                                                        $('#name_' + val).html('No file selected');
+                                                    }
+                                                }
+
+                                                function multiselectbox() {
+                                                    var items_length = $('#Category :selected').length;
+                                                    var total_allowed = parseInt($('#choiceLimit').html());
+                                                    var total_left = total_allowed - items_length;
+                                                    if (total_left < 0) {
+                                                        total_left = 0;
+                                                    }
+                                                    $('#choicelimitavailable').html(total_left);
+                                                    var no_error = 0;
+                                                    var i = 1;
+                                                    if (items_length > total_allowed) {
+                                                        $('#Category option:selected').each(function () {
+                                                            if (i > total_allowed) {
+                                                                $(this).removeAttr("selected");
+                                                                no_error = 1;
+                                                            }
+                                                            i++;
+                                                        });
+                                                    }
+                                                    if (no_error) {
+                                                        alertify.alert("You can only select " + total_allowed + " values");
+                                                    }
+                                                }
+</script>
+<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css"  />
+<script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
+<script type="text/javascript">
+                                                $("body").ready(function () {
+                                                    var mylimit = parseInt($('#choiceLimit').html());
+                                                    multiselectbox();
+                                                    $(".chosen-select").chosen({max_selected_options: mylimit});
+                                                    $(".chosen-select").bind("liszt:maxselected", function () {
+                                                    });
+                                                    $(".chosen-select").chosen().change(function () {
+                                                    });
+                                                });
+</script>

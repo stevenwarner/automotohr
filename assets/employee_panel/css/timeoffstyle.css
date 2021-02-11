@@ -1,0 +1,1968 @@
+
+
+/*Settings CSS Start*/
+.btn-filter-reset {
+    float: right;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+.pto-pagination {
+    display: none;
+}
+.pto-pagination.current {
+    display: block;
+}
+.right-content{
+    margin-bottom: 0px !important;
+    border:1px solid #d4d4d4;
+}
+.right-content-2{
+    /*height: 500px;  */
+    border:1px solid #d4d4d4;
+    overflow: hidden;
+    margin-bottom: 50px;
+}
+.pto-top-heading-left{
+    padding: 20px 10px;
+    font-family: 'Open Sans', sans-serif; 
+    font-size: 18px;
+    font-weight: 700;
+}
+.pto-top-heading-left p{
+    margin-bottom: 0px;
+}
+.pto-top-heading-right{
+    padding: 20px 10px;
+    font-family: 'Open Sans', sans-serif; 
+    font-size: 18px;
+    font-weight: 700;
+    color: #3554dc;
+}
+.pto-top-heading-right-add-plan{
+    font-family: 'Open Sans', sans-serif; 
+    font-size: 18px;
+    font-weight: 700;
+    color: #3554dc;
+}
+.pto-top-heading-right span{
+    font-family: 'Open Sans', sans-serif; 
+    font-weight: 300;
+    color: #3554dc;
+}
+.pto-tabs .nav-tabs > li.active > a{background-color: #f5f7ff !important;}
+.pto-tabs .nav-tabs > li > a{border-radius: 0px!important;}
+.pto-tabs .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+    color: #555;
+    cursor: default;
+    background-color: #f5f7ff;
+    /*border: 3px solid #ddd;*/
+    border-bottom-color: #f5f7ff;
+}
+.pto-tabs .nav-tabs{
+    /*border-bottom: 3px solid #d4d4d4;*/
+}
+
+.border-bottom{
+    border-bottom: 3px solid #d4d4d4;
+    overflow: hidden;
+}
+.border-bottom-thin{
+    border-bottom: 1px solid #d4d4d4;
+    overflow: hidden;
+}
+.pto-tabs{
+    background-color: #f5f7ff;
+}
+
+
+.btn-apply-filter{
+    float: right;
+    background-color: #81b431;
+    color: #fff;
+    margin-right: 15px;
+    margin-top: 5px;
+}
+.btn-apply-filter:hover{
+    background-color: #5e8b18;
+    color: #fff;
+}
+.filter-content{
+    display: none;
+    padding: 15px;
+
+}
+.filter-content.show-filter{
+    display: block;
+}
+.pto-pagination .pagination-left-content {
+    padding-top: 28px;
+}
+
+.multi-select-custom .chosen-container-multi .chosen-choices {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0 6px;
+    width: 100%;
+    border: 1px solid #d2d2d2;
+    background-color: #fff;
+    cursor: text;
+    border-radius: 5px;
+    height: auto !important;
+}
+.multi-select-custom .chosen-container-multi .chosen-choices li.search-choice {
+    background-color: 
+    #81b431;
+    border-color:
+    #81b431;
+    color:
+    #ffffff;
+    background-size: 100% 0;
+}
+.multi-select-custom .chosen-container-multi .chosen-choices a.search-choice-close {
+    color: #ffffff;
+}
+.btn-filter-reset .btn-apply{
+    float: right;
+    background-color: #81b431;
+    color: #fff;
+}
+.btn-filter-reset .btn-reset{
+    float: right;
+    background-color: #bababa;
+    color: #fff;
+    margin-left: 10px;
+}
+.btn-filter-reset #btn_back{
+    margin-top: 7px;
+}
+.btn-filter-reset .btn-reset i{
+    color: #fff; 
+    font-size: 17px;           
+}
+.filter-fields{
+  padding: 0 10px;
+  font-weight: 600;
+  background-color: transparent;
+  border: 1px solid #d2d2d2;
+  border-radius: 0;
+  font-size: 14px;  
+  height: 40px;
+  border-radius: 6px;
+
+}
+.pto-plan-date{
+   position: relative;
+   float: left;
+   width: 100%; 
+}
+.pto-plan-date:after{
+   content: "\f073";
+   position: absolute;
+   top: 0;
+   right: 0;
+   width: 45px;
+   height: 40px;
+   color: #9d9d9d;
+   font-size: 14px;
+   cursor: pointer;
+   font-family: 'FontAwesome';
+   text-align: center;
+   line-height: 40px;
+   pointer-events: none;
+}
+select#template{
+    background: transparent;
+}
+.invoice-fields{
+    background-color: transparent;
+}
+
+.nav-tabs > li.active > a:focus {
+
+    cursor: default;
+    background-color: #fff;
+    /* border: 3px solid #ddd; */
+    border-bottom-color: #f5f7ff;
+    font-size: 18px;
+}
+.pto-tabs .nav-tabs > li.active > a{
+    color: #81b431 !important;
+    background-color: #ffffff !important;
+}
+
+.pto-tabs .nav-tabs > li > a {
+    border-radius: 0px!important;
+    font-size: 18px;
+    color: #000;
+    font-weight: 600;
+}
+.btn:hover, .btn:focus, .btn.focus {
+    color: #fff;
+    text-decoration: none;
+}
+.img-circle{
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+.employee-info figure {
+    float: left;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    border: 1px solid #ddd;
+}
+.employee-info figure img{
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+}
+.employee-info .text{
+    margin: 0 0 0 60px;
+}
+.employee-info .text h4{
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0;
+}
+.employee-info .text p{
+    color: #818181;
+    font-weight: normal;
+    font-size: 14px;
+    margin: 0;
+}
+.table.table-bordered {
+    background: #fff;
+}
+.heading-grey tr th{
+    color: #b0b0b0;
+}
+.text p{
+    margin-top: 16px;
+    color: #818181;
+}
+.text.active-status p{
+    color: #629f03;
+}
+.text.in-active-status p{
+    color: #de8585;
+}
+.action-employee{
+    margin-top: 16px;
+}
+.action-employee a{
+    color: #818181;
+    margin-right: 20px;
+}
+.action-employee .custom-tooltip +.tooltip > .tooltip-inner{
+    background:#fff;
+    border: 1px solid #999999;
+    color: #818181;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 15px 10px 15px;
+}
+.action-employee .custom-tooltip +.tooltip > .tooltip-arrow{
+    position: relative;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid black;
+    top: 53px;
+}
+
+.action-employee .custom-tooltip +.tooltip > .tooltip-arrow:before{
+    position: absolute;
+    content: '';
+    z-index: 10;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 9px solid white;
+    left: -9px;
+    top: -10px;
+}
+
+
+.people-out-of-office-info a{
+    color: #818181;
+    margin-right: 20px;
+}
+.people-out-of-office-info .custom-tooltip +.tooltip > .tooltip-inner{
+    background:#fff;
+    border: 1px solid #999999;
+    color: #818181;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 10px 10px 10px;
+}
+.people-out-of-office-info .custom-tooltip +.tooltip > .tooltip-arrow{
+    position: relative;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid black;
+    top: 55px;
+}
+
+.people-out-of-office-info .custom-tooltip +.tooltip > .tooltip-arrow:before{
+    position: absolute;
+    content: '';
+    z-index: 10;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 9px solid white;
+    left: -9px;
+    top: -10px;
+}
+
+.info-styling-custom a{
+    color: #818181;
+    margin-right: 20px;
+}
+.info-styling-custom .custom-tooltip +.tooltip > .tooltip-inner{
+    background:#fff;
+    border: 1px solid #999999;
+    color: #818181;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 10px 10px 10px;
+}
+.info-styling-custom .custom-tooltip +.tooltip > .tooltip-arrow{
+    position: relative;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid black;
+    top: 55px;
+}
+
+.info-styling-custom .custom-tooltip +.tooltip > .tooltip-arrow:before{
+    position: absolute;
+    content: '';
+    z-index: 10;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 9px solid white;
+    left: -9px;
+    top: -10px;
+}
+
+.pagination > li > a:hover, .pagination > li > span:hover, .pagination > li > a:focus, .pagination > li > span:focus{
+    color: #fff;
+    background-color: #81b431;
+    border-color: #81b431;
+}
+ .pagination > li > a.page-link.next-link{color: #81b431!important;}
+ .pagination > li > a.page-link.next-link:hover,
+ .pagination > li > a.page-link.next-link:focus{color: #fff!important; background-color: #81b431 !important;}
+
+ .pagination > li > a.page-link.previous-link{color: #c5c5c5!important;}
+ .pagination > li > a.page-link.previous-link:hover,
+ .pagination > li > a.page-link.previous-link:focus{color: #fff!important; background-color: #81b431 !important;}
+
+ .pagination > li > a.page-link.page-link-new{color: #000!important;}
+ .pagination > li > a.page-link.page-link-new:hover,
+ .pagination > li > a.page-link.page-link-new:focus{color: #fff!important; background-color: #81b431 !important;}
+
+ .table.table-bordered.pto-plan-table{
+    margin-bottom: 0px !important; 
+}
+.pto-add-plan-content{
+    /*height: 500px;  */
+    border:1px solid #d4d4d4;
+}
+.checkbox-styling .checkbox-sizing{
+    width: 18px;
+    height: 18px;
+    margin-top: 10px;
+
+}
+.checkbox-styling span{
+    padding-top: 5px;
+}
+.checkbox-styling-settings label{
+    display: block;
+    float: left;
+    font-size: 15px;
+    margin-top: 0px !important;
+        font-weight: initial;
+}
+.checkbox-styling-settings label span{
+    font-weight: normal;
+}
+.invoice-fields h4 span{
+    font-weight: 900;
+}
+.margin-custom{
+    margin: 10px;
+}
+.form-group.select-style{
+    margin: 0;
+    padding: 0 6px;
+    width: 100%;
+    border: 1px solid #d2d2d2;
+    background-color: #fff;
+    cursor: text;
+    border-radius: 5px;
+}
+ul.timeline {
+    list-style-type: none;
+    position: relative;
+}
+ul.timeline:before {
+    content: ' ';
+    background: #eeeeee;
+    display: inline-block;
+    position: absolute;
+    left: 29px;
+    width: 4px;
+    height: 100%;
+    z-index: 400;
+}
+ul.timeline > li {
+    margin: 20px 0;
+    padding-left: 55px;
+}
+ul.timeline > li:before {
+    content: ' ';
+    background: white;
+    display: inline-block;
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid #81b431;
+    left: 20px;
+    width: 20px;
+    height: 20px;
+    z-index: 400;
+}
+.allowed-time-off-title-custom{
+    font-weight: 700;
+}
+
+.timeline-field-title{
+    font-weight: 600;
+}
+.bottom-section-pto{
+    padding: 20px 0;
+    background-color: #fff;
+}
+.btn-button-section{
+    width: 100%;
+    border-top: 1px solid #d2d2d2;
+
+}
+.btn-button-section .btn-save{
+    float: left;
+    background-color: #81b431;
+    color: #fff;
+    margin-top: 20px;
+    margin-bottom: 20px;  
+    margin-left: 20px;  
+}
+.btn-button-section .btn-cancel{
+    float: left;
+    background-color: #bababa;
+    color: #fff;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+}
+.right-content-2{
+    display: none;
+}
+.margin-bottom{
+    margin-bottom: 30px;
+}
+.people-out-of-office {
+    background-color: #f3f3f3;
+    border: 1px solid #ababab;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+.people-out-of-office p.heading-style-custom {
+    font-weight: 700;
+    font-size: 16px;
+    padding: 10px 0 10px 20px;
+    border-bottom: 1px solid #dedede;
+}
+.padding-custom{
+    padding: 20px;
+}
+.margin-top{
+    margin-top: 20px;
+}
+.margin-top-fields{
+    margin-top: 10px;
+}
+.margin-top-settings{
+    margin-top: 10px;
+}
+.checkbox-styling-setting .info-custom i {
+    padding-left: 4px;
+    padding-top: 12px;
+    font-size: 20px;
+}
+.info-styling-custom .info-custom{
+    display: inline-block;
+}
+.font-wieght-light{
+    font-weight: 500;
+}
+.font-wieght-bold{
+    font-weight: 800;
+}
+/*.border-radious-custom{
+    border-radius: 6px;
+}
+*/
+.form-control.form-control-custom{
+    width: 50px;
+    display: inline-block;
+}
+.form-group-custom{
+    display: inline-block;
+}
+.form-group-custom-settings{
+    margin-bottom: 0px !important;
+}
+
+.radio-custom label{
+    display: block;
+}
+.select2-container--default .select2-selection--single{
+    background-color: transparent !important;
+    border: 1px solid #d2d2d2 !important;
+}
+.select2-container .select2-selection--single .select2-selection__rendered{
+    padding-left: 8px !important;
+    padding-right: 20px !important;
+
+}
+.hide-for-desktop{display: none;}
+@media screen and (max-width: 767px) {
+
+    .hide-for-desktop{
+        display: block;
+    }
+    .people-out-of-office{
+        display: block;
+    }
+    .people-out-of-office figure{
+        text-align: center;
+    }
+    .people-out-of-office figure .emp-image{
+        display: inline-block;
+    }
+    .btn-apply-filter {
+        margin-right: 10px;
+        margin-top: 7px;
+    }
+    .pto-tabs .nav-tabs .btn{
+        padding: 6px 6px;
+        font-size: 12px;
+    }
+    .pto-pagination .pagination-left-content p{
+        font-size: 13px;
+    }
+   .allowed-time-off-title-custom .pto-allowed-years .timeline-content .margin-custom{
+       margin: 10px 0px;
+   }
+   .margin-bottom-custom{
+    margin-bottom: 60px;
+}
+    .btn-filter-reset {
+     margin-top: 0px !important; 
+ }
+.pto-time-off-margin-custom{
+    margin-bottom: 10px;
+}
+.people-out-of-office-info .text-center h4{
+    font-size: 14px;
+}
+.checkbox-styling{
+    margin-top: 0px !important;
+}
+.checbox-styling{
+    width: 20px;
+    height: 20px;
+}
+}
+/*Settings CSS End*/
+
+
+
+
+
+/*PTO Policies CSS Starts Here*/
+.col-lg-12.checkbox-styling.margin-top {
+    margin: 40px 0px 10px 15px;
+} 
+.demo-page-list.pto-allowed-years ul > li:before {
+    border-radius: 100%;
+    left: 20px;
+    z-index: 2;
+    top: 23px;
+    background-color: #fff;
+    border: 3px solid #81b431;
+    color: #81b431;
+    height: 32px;
+    line-height: 24px;
+    font-weight: 700;
+}
+.demo-page-list.pto-allowed-years ul > li{
+    padding: 0 0 0 70px;
+}
+.demo-page-list.pto-allowed-years ul{
+    position: relative;
+}
+.demo-page-list.pto-allowed-years ul:after{
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    left: 34px;
+    background-color: #eee;
+}
+.timeline-content {
+    padding: 15px;
+    background-color: #f4f4f4;
+    position: relative;
+    border-radius: 5px;
+}
+.timeline-content:before{
+    content: "";
+    position: absolute;
+    top: 15px;
+    width: 4px;
+    left: -8px;
+    width: 15px;
+    height: 15px;
+    background-color: #f4f4f4;
+    transform: rotate(45deg);
+}
+.pto-top-heading-left{
+    padding: 20px 10px;
+    font-family: 'Open Sans', sans-serif; 
+    font-size: 18px;
+    font-weight: 700;
+}
+.pto-top-heading-left p{
+    margin-bottom: 0px;
+}
+.pto-top-heading-right{
+    padding: 20px 10px;
+    font-family: 'Open Sans', sans-serif; 
+    font-size: 18px;
+    font-weight: 700;
+    color: #3554dc;
+}
+.pto-top-heading-right-add-plan{
+    font-family: 'Open Sans', sans-serif; 
+    font-size: 18px;
+    font-weight: 700;
+    color: #3554dc;
+}
+.pto-top-heading-right span{
+    font-family: 'Open Sans', sans-serif; 
+    font-weight: 300;
+    color: #3554dc;
+}
+.pto-tabs .nav-tabs > li.active > a{background-color: #f5f7ff !important;}
+.pto-tabs .nav-tabs > li > a{border-radius: 0px!important;}
+.pto-tabs .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+    color: #555;
+    cursor: default;
+    background-color: #f5f7ff;
+    /*border: 3px solid #ddd;*/
+    border-bottom-color: #f5f7ff;
+}
+.pto-tabs .nav-tabs{
+    /*border-bottom: 3px solid #d4d4d4;*/
+}
+
+.pto-tabs{
+    background-color: #f5f7ff;
+}
+.filter-content{
+    display: none;
+    padding: 15px;
+
+}
+.filter-content.show-filter{
+    display: block;
+}
+.form-group .form-control.form-control-custom-height{
+    height: 40px;
+}
+.multi-select-custom .chosen-container-multi .chosen-choices {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0 6px;
+    width: 100%;
+    border: 1px solid #d2d2d2;
+    background-color: #fff;
+    cursor: text;
+    border-radius: 5px;
+    height: auto !important;
+}
+.multi-select-custom .chosen-container-multi .chosen-choices li.search-choice {
+    background-color: 
+    #81b431;
+    border-color:
+    #81b431;
+    color:
+    #ffffff;
+    background-size: 100% 0;
+}
+.multi-select-custom .chosen-container-multi .chosen-choices a.search-choice-close {
+    color: #ffffff;
+}
+.filter-fields{
+    padding: 0 10px;
+    font-weight: 600;
+    background-color: transparent;
+    border: 1px solid #d2d2d2;
+    border-radius: 0;
+    font-size: 14px;  
+    height: 40px;
+    border-radius: 6px;
+
+}
+.pto-plan-date{
+    position: relative;
+    float: left;
+    width: 100%; 
+}
+.pto-plan-date:after{
+    content: "\f073";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 45px;
+    height: 40px;
+    color: #9d9d9d;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'FontAwesome';
+    text-align: center;
+    line-height: 40px;
+    pointer-events: none;
+}
+select#template{
+    background: transparent;
+}
+    .nav-tabs > li.active > a:focus {
+
+        cursor: default;
+        background-color: #fff;
+        /* border: 3px solid #ddd; */
+        border-bottom-color: #f5f7ff;
+        font-size: 18px;
+    }
+    .btn:hover, .btn:focus, .btn.focus {
+        color: #fff;
+        text-decoration: none;
+    }
+    .table.table-bordered {
+        background: #fff;
+    }
+    .text p{
+        margin-top: 16px;
+        color: #818181;
+    }
+    .text.active-status p{
+        color: #629f03;
+    }
+    .text.in-active-status p{
+        color: #de8585;
+    }
+    
+    .people-out-of-office {
+        background-color: #f3f3f3;
+        border: 1px solid #ababab;
+        border-radius: 5px;
+        margin-bottom: 30px;
+    }
+    .people-out-of-office p.heading-style-custom {
+        font-weight: 700;
+        font-size: 16px;
+        padding: 10px 0 10px 20px;
+        border-bottom: 1px solid #dedede;
+    }
+    .padding-custom{
+        padding: 20px;
+    }
+.checkbox-styling label{
+    display: block;
+    float: left;
+    font-weight: 500;
+    font-size: 16px;
+}
+.margin-top{
+    margin-bottom: 20px;
+}
+.timeline-title{
+    font-weight: 700;
+
+}
+.margin-bottom{
+    margin-bottom: 30px;
+}
+.people-out-of-office {
+    background-color: #f3f3f3;
+    border: 1px solid #ababab;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+.people-out-of-office p.heading-style-custom {
+    font-weight: 700;
+    font-size: 16px;
+    padding: 10px 0 10px 20px;
+    border-bottom: 1px solid #dedede;
+}
+.padding-custom{
+    padding: 20px;
+}
+
+
+
+
+
+
+
+.select2-container--default .select2-selection--single{
+    background-color: transparent !important;
+    border: 1px solid #d2d2d2 !important;
+}
+.select2-container .select2-selection--single .select2-selection__rendered{
+    padding-left: 8px !important;
+    padding-right: 20px !important;
+}
+
+
+.hide-for-desktop{display: none;}
+@media screen and (max-width: 767px) {
+
+    .hide-for-desktop{
+        display: block;
+    }
+    .people-out-of-office{
+        display: block;
+    }
+    .people-out-of-office figure{
+        text-align: center;
+    }
+   .allowed-time-off-title-custom .pto-allowed-years .timeline-content .margin-custom{
+       margin: 10px 0px;
+   }
+   .margin-bottom-custom{
+    margin-bottom: 15px;
+}
+.pto-time-off-margin-custom{
+    margin-bottom: 10px;
+}
+.people-out-of-office-info .text-center h4{
+    font-size: 14px;
+}
+.checkbox-styling.margin-top{
+    margin-top: 0px !important;
+}
+.checbox-styling{
+    width: 20px;
+    height: 20px;
+}
+.margin-right{
+    margin-right: 15px;
+}
+}
+
+/*PTO Policies CSS Ends Here*/
+
+
+
+
+
+
+
+/*PTO Employees Policy CSS Starts Here*/
+
+.demo-page-list.pto-allowed-years ul > li:before {
+    border-radius: 100%;
+    left: 20px;
+    z-index: 2;
+    top: 23px;
+    background-color: #fff;
+    border: 3px solid #81b431;
+    color: #81b431;
+    height: 32px;
+    line-height: 24px;
+    font-weight: 700;
+}
+.demo-page-list.pto-allowed-years ul > li{
+    padding: 0 0 0 70px;
+}
+.demo-page-list.pto-allowed-years ul{
+    position: relative;
+}
+.demo-page-list.pto-allowed-years ul:after{
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    left: 34px;
+    background-color: #eee;
+}
+.timeline-content {
+    padding: 15px;
+    background-color: #f4f4f4;
+    position: relative;
+    border-radius: 5px;
+}
+.timeline-content:before{
+    content: "";
+    position: absolute;
+    top: 15px;
+    width: 4px;
+    left: -8px;
+    width: 15px;
+    height: 15px;
+    background-color: #f4f4f4;
+    transform: rotate(45deg);
+}
+        .multi-select-custom .chosen-container-multi .chosen-choices {
+            position: relative;
+            overflow: hidden;
+            margin: 0;
+            padding: 0 6px;
+            width: 100%;
+            border: 1px solid #d2d2d2;
+            background-color: #fff;
+            cursor: text;
+            border-radius: 5px;
+            height: auto !important;
+        }
+        .multi-select-custom .chosen-container-multi .chosen-choices li.search-choice {
+            background-color: 
+            #81b431;
+            border-color:
+            #81b431;
+            color:
+            #ffffff;
+            background-size: 100% 0;
+        }
+        .multi-select-custom .chosen-container-multi .chosen-choices a.search-choice-close {
+            color: #ffffff;
+        }
+        .filter-fields{
+          padding: 0 10px;
+          font-weight: 600;
+          background-color: transparent;
+          border: 1px solid #d2d2d2;
+          border-radius: 0;
+          font-size: 14px;  
+          height: 40px;
+          border-radius: 6px;
+
+      }
+      .pto-plan-date{
+       position: relative;
+       float: left;
+       width: 100%; 
+   }
+   .pto-plan-date:after{
+       content: "\f073";
+       position: absolute;
+       top: 0;
+       right: 0;
+       width: 45px;
+       height: 40px;
+       color: #9d9d9d;
+       font-size: 14px;
+       cursor: pointer;
+       font-family: 'FontAwesome';
+       text-align: center;
+       line-height: 40px;
+       pointer-events: none;
+   }
+   select#template{
+    background: transparent;
+}
+.nav-tabs > li.active > a:focus {
+
+    cursor: default;
+    background-color: #fff;
+    /* border: 3px solid #ddd; */
+    border-bottom-color: #f5f7ff;
+    font-size: 18px;
+}
+.btn:hover, .btn:focus, .btn.focus {
+    color: #fff;
+    text-decoration: none;
+}
+.table.table-bordered {
+    background: #fff;
+}
+.text p{
+    margin-top: 16px;
+    color: #818181;
+}
+.text.active-status p{
+    color: #629f03;
+}
+.text.in-active-status p{
+    color: #de8585;
+}
+
+.people-out-of-office {
+    background-color: #f3f3f3;
+    border: 1px solid #ababab;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+.people-out-of-office p.heading-style-custom {
+    font-weight: 700;
+    font-size: 16px;
+    padding: 10px 0 10px 20px;
+    border-bottom: 1px solid #dedede;
+}
+.padding-custom{
+    padding: 20px;
+}
+.checkbox-styling label{
+    display: block;
+    float: left;
+    font-weight: 500;
+    font-size: 16px;
+    margin-top: 20px;
+}
+.margin-bottom{
+    margin-bottom: 20px;
+}
+.timeline-title{
+    font-weight: 700;
+
+}
+.select2-container--default .select2-selection--single{
+    background-color: transparent !important;
+    border: 1px solid #d2d2d2 !important;
+}
+.select2-container .select2-selection--single .select2-selection__rendered{
+    padding-left: 8px !important;
+    padding-right: 20px !important;
+}
+
+
+
+
+/*PTO Employees Policy CSS Ends Here*/
+
+
+
+
+
+/*PTO Approver CSS Starts Here*/
+
+.multi-select-custom .chosen-container-multi .chosen-choices {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0 6px;
+    width: 100%;
+    border: 1px solid #d2d2d2;
+    background-color: #fff;
+    cursor: text;
+    border-radius: 5px;
+    height: auto !important;
+}
+.multi-select-custom .chosen-container-multi .chosen-choices li.search-choice {
+    background-color: 
+    #81b431;
+    border-color:
+    #81b431;
+    color:
+    #ffffff;
+    background-size: 100% 0;
+}
+.multi-select-custom .chosen-container-multi .chosen-choices a.search-choice-close {
+    color: #ffffff;
+}
+.filter-fields{
+  padding: 0 10px;
+  font-weight: 600;
+  background-color: transparent;
+  border: 1px solid #d2d2d2;
+  border-radius: 0;
+  font-size: 14px;  
+  height: 40px;
+  border-radius: 6px;
+
+}
+.pto-plan-date{
+   position: relative;
+   float: left;
+   width: 100%; 
+}
+.pto-plan-date:after{
+   content: "\f073";
+   position: absolute;
+   top: 0;
+   right: 0;
+   width: 45px;
+   height: 40px;
+   color: #9d9d9d;
+   font-size: 14px;
+   cursor: pointer;
+   font-family: 'FontAwesome';
+   text-align: center;
+   line-height: 40px;
+   pointer-events: none;
+}
+select#template{
+    background: transparent;
+}
+.nav-tabs > li.active > a:focus {
+
+    cursor: default;
+    background-color: #fff;
+    /* border: 3px solid #ddd; */
+    border-bottom-color: #f5f7ff;
+    font-size: 18px;
+}
+.btn:hover, .btn:focus, .btn.focus {
+    color: #fff;
+    text-decoration: none;
+}
+.table.table-bordered {
+    background: #fff;
+}
+.text p{
+    margin-top: 16px;
+    color: #818181;
+}
+.text.active-status p{
+    color: #629f03;
+}
+.text.in-active-status p{
+    color: #de8585;
+}
+.checkbox-styling label{
+    display: block;
+    float: left;
+    font-weight: 500;
+    font-size: 16px;
+}
+.margin-custom label{font-weight: initial;}
+.margin-bottom{
+    margin-bottom: 30px;
+}
+.people-out-of-office {
+    background-color: #f3f3f3;
+    border: 1px solid #ababab;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+.people-out-of-office p.heading-style-custom {
+    font-weight: 700;
+    font-size: 16px;
+    padding: 10px 0 10px 20px;
+    border-bottom: 1px solid #dedede;
+}
+.padding-custom{
+    padding: 20px;
+}
+.margin-top{
+    margin-top: 15px;
+}
+.margin-left{
+    margin-left: 15px;
+}
+
+.select2-container--default .select2-selection--single{
+    background-color: transparent !important;
+    border: 1px solid #d2d2d2 !important;
+}
+.select2-container .select2-selection--single .select2-selection__rendered{
+    padding-left: 8px !important;
+    padding-right: 20px !important;
+}
+
+
+/*PTO Approver CSS Ends Here*/
+
+
+
+/*PTO Plans CSS Starts Here*/
+ 
+.col-lg-12.checkbox-styling.margin-top {
+    margin: 40px 0px 10px 15px;
+} 
+        .multi-select-custom .chosen-container-multi .chosen-choices {
+            position: relative;
+            overflow: hidden;
+            margin: 0;
+            padding: 0 6px;
+            width: 100%;
+            border: 1px solid #d2d2d2;
+            background-color: #fff;
+            cursor: text;
+            border-radius: 5px;
+            height: auto !important;
+        }
+        .multi-select-custom .chosen-container-multi .chosen-choices li.search-choice {
+            background-color: 
+            #81b431;
+            border-color:
+            #81b431;
+            color:
+            #ffffff;
+            background-size: 100% 0;
+        }
+        .multi-select-custom .chosen-container-multi .chosen-choices a.search-choice-close {
+            color: #ffffff;
+        }
+        .filter-fields{
+          padding: 0 10px;
+          font-weight: 600;
+          background-color: transparent;
+          border: 1px solid #d2d2d2;
+          border-radius: 0;
+          font-size: 14px;  
+          height: 40px;
+          border-radius: 6px;
+
+      }
+      .pto-plan-date{
+         position: relative;
+         float: left;
+         width: 100%; 
+     }
+     .pto-plan-date:after{
+         content: "\f073";
+         position: absolute;
+         top: 0;
+         right: 0;
+         width: 45px;
+         height: 40px;
+         color: #9d9d9d;
+         font-size: 14px;
+         cursor: pointer;
+         font-family: 'FontAwesome';
+         text-align: center;
+         line-height: 40px;
+         pointer-events: none;
+     }
+     select#template{
+        background: transparent;
+    }
+    .nav-tabs > li.active > a:focus {
+
+        cursor: default;
+        background-color: #fff;
+        /* border: 3px solid #ddd; */
+        border-bottom-color: #f5f7ff;
+        font-size: 18px;
+    }
+    .btn:hover, .btn:focus, .btn.focus {
+        color: #fff;
+        text-decoration: none;
+    }
+    .table.table-bordered {
+        background: #fff;
+    }
+     .text p{
+        margin-top: 16px;
+        color: #818181;
+    }
+    .text.active-status p{
+        color: #629f03;
+    }
+    .text.in-active-status p{
+        color: #de8585;
+    }
+.margin-custom{
+    margin: 10px;
+}
+.margin-custom{
+   /* margin: 30px;*/
+}
+.margin-bottom{
+    margin-bottom: 30px;
+}
+.people-out-of-office {
+    background-color: #f3f3f3;
+    border: 1px solid #ababab;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+.people-out-of-office p.heading-style-custom {
+    font-weight: 700;
+    font-size: 16px;
+    padding: 10px 0 10px 20px;
+    border-bottom: 1px solid #dedede;
+}
+.padding-custom{
+    padding: 20px;
+}
+
+
+
+.select2-container--default .select2-selection--single{
+    background-color: transparent !important;
+    border: 1px solid #d2d2d2 !important;
+}
+.select2-container .select2-selection--single .select2-selection__rendered{
+    padding-left: 8px !important;
+    padding-right: 20px !important;
+
+}
+.hide-for-desktop{display: none;}
+@media screen and (max-width: 767px) {
+
+    .hide-for-desktop{
+        display: block;
+    }
+    .people-out-of-office{
+        display: block;
+    }
+    .people-out-of-office figure{
+        text-align: center;
+    }
+ .allowed-time-off-title-custom .pto-allowed-years .timeline-content .margin-custom{
+     margin: 10px 0px;
+ }
+ .margin-bottom-custom{
+    margin-bottom: 60px;
+}
+.pto-time-off-margin-custom{
+    margin-bottom: 10px;
+}
+.people-out-of-office-info .text-center h4{
+    font-size: 14px;
+}
+.checkbox-styling.margin-top{
+    margin-top: 0px !important;
+}
+.checbox-styling{
+    width: 20px;
+    height: 20px;
+}
+}
+
+/*PTO Plans CSS Starts Here*/
+
+/*PTO Request CSS Starts Here*/
+
+
+.col-lg-12.checkbox-styling.margin-top {
+        margin: 40px 0px 10px 15px;
+    } 
+    .filter-content.show-filter{
+        display: block;
+    }
+        .filter-fields{
+          padding: 0 10px;
+          font-weight: 600;
+          background-color: transparent;
+          border: 1px solid #d2d2d2;
+          border-radius: 0;
+          font-size: 14px;  
+          height: 40px;
+          border-radius: 6px;
+      }
+.nav-tabs > li.active > a:focus {
+
+    cursor: default;
+    background-color: #fff;
+    /* border: 3px solid #ddd; */
+    border-bottom-color: #f5f7ff;
+    font-size: 18px;
+}
+.nav-tabs.apply-filter-header{
+    border-bottom: none;
+    margin-top: 10px;
+}
+.upcoming-time-info .icon-image {
+    float: left;
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+}
+.upcoming-time-info .icon-image img{
+    width: 100%;
+    height: 100%;
+}
+.upcoming-time-info .text{
+    margin: 5px 0 0 50px;
+}
+.upcoming-time-info .text h4{
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0;
+}
+.upcoming-time-info .text p{
+    color: #818181;
+    font-weight: normal;
+    font-size: 14px;
+    margin: 0;
+}
+.upcoming-time-info .text p span{    
+    font-weight: bold;
+}
+.denied-button{
+    margin-top: 15px;
+}
+.denied-button .denied-stat{
+    padding: 7px 20px;
+    border: 1px solid #c03b3b;
+    border-radius: 6px;
+    color: #c03b3b;
+}
+.approved-button{
+    margin-top: 15px;
+}
+.approved-button .approved-stat{
+    padding: 7px 20px;
+    border: 1px solid #489528;
+    border-radius: 6px;
+    color: #489528;
+}
+.cancelled-button{
+    margin-top: 15px;
+}
+.cancelled-button .cancelled-stat{
+    padding: 7px 20px;
+    border: 1px solid #f7cccc;
+    border-radius: 6px;
+    color: #f7cccc;
+}
+.progress-bar-custom.progress .progress-bar.progress-bar-success{
+    background-color: #81b431;
+}
+.progress-bar-custom{
+    margin-top: 7px;
+}
+
+.progress-bar-custom .progress{
+    margin-bottom: 0px;
+}
+.progress-bar-custom .progress-percent{
+    text-align: center;
+}
+.pagination-mb-0{
+    margin-bottom: 0px;
+}
+.progress-bar-custom .progress-bar-tooltip{
+    margin-left: 0px;
+}
+.progress-bar-custom .progress-bar-tooltip a{
+    display: block;
+}
+.notes-employee{
+    margin-top: 16px;
+}
+.notes-employee a{
+    color: #818181;
+    margin-right: 20px;
+}
+.notes-employee .custom-tooltip +.tooltip > .tooltip-inner{
+    background:#fff;
+    border: 1px solid #999999;
+    color: #818181;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 15px 10px 15px;
+}
+.notes-employee .custom-tooltip +.tooltip > .tooltip-arrow{
+    position: relative;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid black;
+    top: 53px;
+}
+
+.notes-employee .custom-tooltip +.tooltip > .tooltip-arrow:before{
+    position: absolute;
+    content: '';
+    z-index: 10;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 9px solid white;
+    left: -9px;
+    top: -10px;
+}
+/*.new-tooltip-hover a{
+    color: #818181;
+    margin-right: 20px;
+}
+.new-tooltip-hover{
+    position: relative;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid black;
+    top: 53px;
+}
+
+.new-tooltip-hover:before{
+    position: absolute;
+    content: '';
+    z-index: 10;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 9px solid white;
+    left: -9px;
+    top: -10px;
+}
+.tooltip-inner {
+    white-space:pre-wrap;
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+.approve-employee{
+    margin-top: 16px;
+}
+.approve-employee a{
+    color: #818181;
+    margin-right: 20px;
+}
+.approve-employee .custom-tooltip +.tooltip > .tooltip-inner{
+    background:#fff;
+    border: 1px solid #999999;
+    color: #818181;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 15px 10px 15px;
+}
+.approve-employee .custom-tooltip +.tooltip > .tooltip-arrow{
+    position: relative;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid black;
+    top: 53px;
+}
+
+.approve-employee .custom-tooltip +.tooltip > .tooltip-arrow:before{
+    position: absolute;
+    content: '';
+    z-index: 20;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 9px solid white;
+    left: -9px;
+    top: -10px;
+}
+.approve-reject-employee{
+    margin-left: 40px;
+}
+.approve-reject-employee a{
+    color: #818181;
+    margin-right: 20px;
+}
+.approve-reject-employee .custom-tooltip +.tooltip > .tooltip-inner{
+    background:#fff;
+    border: 1px solid #999999;
+    color: #818181;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 15px 10px 15px;
+}
+.approve-reject-employee .custom-tooltip +.tooltip > .tooltip-arrow {
+    width: 0;
+    height: 0;
+    right: -12px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #999999;
+    transform: rotate(-90deg);
+    top: 15px !important;
+}
+
+.approve-reject-employee .custom-tooltip +.tooltip > .tooltip-arrow:before {
+    position: absolute;
+    content: '';
+    z-index: 30;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 9px solid white;
+    transform: rotate(0deg);
+    left: -9px;
+    top: -11px;
+}
+.progress-bar-tooltip{
+    margin-left: 30px;
+}
+.progress-bar-tooltip a{
+    color: #818181;
+    margin-right: 20px;
+}
+.table-responsive.custom-table-responsive {
+    padding: 20px 0 0 0;
+    overflow: visible;
+}
+
+.text-all span{
+    float: left;
+    display: inline-block;
+}
+
+
+/*PTO Request CSS Ends Here*/
+
+
+
+
+
+
+
+
+
+
+/*PTO Report CSS Starts Here*/
+
+.box{
+    display: inline-block;
+  position: relative;
+}
+.box:hover .tooltip--multiline {
+  display: block;
+}
+.tooltip--multiline .left-tooltip-content{
+    width: 49%;
+    float: left;
+}
+.tooltip--multiline .right-tooltip-content{
+     width: 49%;
+    float: right;
+}
+.clearfix-tooltip{
+    display: block;
+    clear: both;
+}
+
+.tooltip--multiline {
+    background: #000;
+    color: #fff;
+    display: none;
+    padding: 10px;
+    position: absolute;
+    bottom: 75%;
+    width: 225px;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0%);
+    -moz-transform: translate(-50%, 0%);
+    -ms-transform: translate(-50%, 0%);
+    -o-transform: translate(-50%, 0%);
+    transform: translate(-50%, 0%);
+    border-radius: 7px;
+    background-color: white;
+    color: #000;
+    border: 1px solid #999999;
+}
+.tooltip--multiline:before {
+    border-top: 10px solid #999999;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0%);
+    -moz-transform: translate(-50%, 0%);
+    -ms-transform: translate(-50%, 0%);
+    -o-transform: translate(-50%, 0%);
+    transform: translate(-50%, 0%);
+    border-radius: 0px;
+}
+.tooltip--multiline:after {
+    border-top: 9px solid #fff;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0%);
+    -moz-transform: translate(-50%, 0%);
+    -ms-transform: translate(-50%, 0%);
+    -o-transform: translate(-50%, 0%);
+    transform: translate(-50%, 0%);
+    border-radius: 0px;
+}
+.left-tooltip-content{
+    color: #818181;
+}
+.right-tooltip-content{
+    color: #c6c6c6;
+}
+
+/*PTO Report CSS Ends Here*/
+
+
+/*Create PTO Request Starts Here*/
+
+.btn-pto-request {
+    margin: 6px 0 0 0;
+    background-color: #768def;
+    color: #fff;
+    border: none;
+}
+.btn-pto-request:hover{
+    background-color: #5b79fb;
+}
+.partial-field-content {
+    border-bottom: 1px solid #dedede;
+}
+.partial-field-heading {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    margin: 0 0 10px 0;
+}
+.img-dropdown .dropdown-menu{
+    width: 100%;
+    min-width: 100%;
+}
+.img-dropdown .dropdown-menu > li > a {
+    padding: 10px 20px;
+    border-bottom: 1px solid #dedede;
+}
+
+.employee-bottom-section {
+    border: 1px solid #dedede;
+    padding: 15px;
+}
+.employee-bottom-section ul {
+    padding: 15px
+}
+.employee-add-heading{
+    border-bottom: 1px solid #eee;
+
+}
+.employee-add-heading h4{
+    font-size: 16px;
+    font-weight: 600;
+
+}
+.employee-bottom-section p{
+    font-size: 16px;
+    font-weight: 600;
+}
+.employee-add-heading ul{
+    margin-left: 15px;
+}
+.employee-add-heading ul li{
+    margin: 15px 0px;
+}
+.img-dropdown{
+    position: relative;
+}
+.img-dropdown img {
+    width: 50px;
+    height: 50px;
+}
+.img-dropdown .dropdown-toggle{
+    height: 70px;
+    line-height: 70px;
+    display: block;
+    padding: 0 20px;
+    position: relative;
+}
+.img-dropdown img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.form-group.img-dropdown {
+    border: 1px solid #dedede;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+.img-dropdown span.pto-plan-date-from {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: auto;
+    transform: translate(-70%, -50%) !important;
+}
+
+
+
+
+
+@media screen and (max-width: 767px) {
+
+    .hide-for-desktop{
+        display: block;
+    }
+    .people-out-of-office{
+        display: block;
+    }
+    .people-out-of-office figure{
+        text-align: center;
+    }
+    .btn-filter-reset {
+       margin-top: 0px !important; 
+   }
+   .allowed-time-off-title-custom .pto-allowed-years .timeline-content .margin-custom{
+       margin: 10px 0px;
+   }
+   .margin-bottom-custom{
+    margin-bottom: 60px;
+}
+.pto-time-off-margin-custom{
+    margin-bottom: 10px;
+}
+.people-out-of-office-info .text-center h4{
+    font-size: 14px;
+}
+.checkbox-styling.margin-top{
+    margin-top: 0px !important;
+}
+.checbox-styling{
+    width: 20px;
+    height: 20px;
+}
+
+/*Create PTO Request Ends Here*/
+
+
+
+/*PTO Report Starts Here*/
+@media screen and (max-width: 767px) {
+
+    .hide-for-desktop{
+        display: block;
+    }
+    .people-out-of-office{
+        display: block;
+    }
+    .people-out-of-office figure{
+        text-align: center;
+    }
+    .pto-tabs .nav-tabs .btn{
+        padding: 6px 6px;
+        font-size: 12px;
+    }
+    .btn-filter-reset {
+       margin-top: 0px !important; 
+   }
+   .allowed-time-off-title-custom .pto-allowed-years .timeline-content .margin-custom{
+       margin: 10px 0px;
+   }
+   .margin-bottom-custom{
+    margin-bottom: 60px;
+}
+.pto-time-off-margin-custom{
+    margin-bottom: 10px;
+}
+.people-out-of-office-info .text-center h4{
+    font-size: 14px;
+}
+.checkbox-styling.margin-top{
+    margin-top: 0px !important;
+}
+.checbox-styling{
+    width: 20px;
+    height: 20px;
+}
+/*PTO Report Ends Here*/
+
+
+/*PTO Request Report Starts Here*/
+@media screen and (max-width: 767px) {
+
+    .hide-for-desktop{
+        display: block;
+    }
+    .people-out-of-office{
+        display: block;
+    }
+    .people-out-of-office figure{
+        text-align: center;
+    }
+    .btn-filter-reset {
+       margin-top: 0px !important; 
+   }
+   .allowed-time-off-title-custom .pto-allowed-years .timeline-content .margin-custom{
+       margin: 10px 0px;
+   }
+   .margin-bottom-custom{
+    margin-bottom: 60px;
+}
+.pto-time-off-margin-custom{
+    margin-bottom: 10px;
+}
+.people-out-of-office-info .text-center h4{
+    font-size: 14px;
+}
+.checkbox-styling.margin-top{
+    margin-top: 0px !important;
+}
+.checbox-styling{
+    width: 20px;
+    height: 20px;
+}
+}
+
+/*PTO Request Report Ends Here*/
+
+
+/*PTO Requests Starts Here*/
+@media screen and (max-width: 767px) {
+
+    .hide-for-desktop{
+        display: block;
+    }
+    .people-out-of-office{
+        display: block;
+    }
+    .people-out-of-office figure{
+        text-align: center;
+    }
+    .btn-filter-reset {
+       margin-top: 0px !important; 
+   }
+   .allowed-time-off-title-custom .pto-allowed-years .timeline-content .margin-custom{
+       margin: 10px 0px;
+   }
+   .margin-bottom-custom{
+    margin-bottom: 60px;
+}
+.pto-time-off-margin-custom{
+    margin-bottom: 10px;
+}
+.people-out-of-office-info .text-center h4{
+    font-size: 14px;
+}
+.checkbox-styling.margin-top{
+    margin-top: 0px !important;
+}
+.checbox-styling{
+    width: 20px;
+    height: 20px;
+}
+}
+
+/*PTO Requests Ends Here*/

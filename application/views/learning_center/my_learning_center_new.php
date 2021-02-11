@@ -1,0 +1,169 @@
+<?php
+    $company_sid = 0;
+    $users_type = '';
+    $users_sid = 0;
+    $back_url = '';
+    $dependants_arr = array();
+    $delete_post_url = '';
+    $save_post_url = '';
+    $watch_video_base_url = '';
+
+if (isset($applicant)) {
+    $company_sid = $applicant['employer_sid'];
+    $users_type = 'applicant';
+    $users_sid = $applicant['sid'];
+    $back_url = base_url('onboarding/dashboard/' . $unique_sid);
+    $watch_video_base_url = base_url('onboarding/watch_video/' . $unique_sid);
+    $delete_post_url = current_url();
+    $save_post_url = current_url();
+} else if (isset($employee)) {
+    $company_sid = $employee['parent_sid'];
+    $users_type = 'employee';
+    $users_sid = $employee['sid'];
+    $back_url = $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system');
+    $watch_video_base_url = base_url('learning_center/watch_video/');
+    $delete_post_url = current_url();
+    $save_post_url = current_url();
+} ?>
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                        <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-arrow-left"></i> Dashboard</a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
+                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
+                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                <div class="page-header">
+                    <h1 class="section-ttile">Learning Center</h1>
+                </div>
+                <div class="panel panel-default lc-tabs-panel">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs nav-justified">
+                            <li class="active"><a href="#online_videos" data-toggle="tab">Online Videos</a></li>
+                            <li><a href="#training_sessions" data-toggle="tab">Training Sessions</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="online_videos">
+                                <!--<div class="table-responsive">-->
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                            <div class="dashboard-conetnt-wrp">
+                                                <?php if($videos) { //echo '<pre>'; print_r($videos); echo '</pre>'; exit;?>
+                                                        <div class="announcements-listing">
+                                                <?php   foreach ($videos as $video) { ?>
+                                                            <article class="listing-article">
+                                                                <figure>
+                                                            <?php if($video['video_source'] == 'youtube') { ?>
+                                                                        <a href="<?php echo $watch_video_base_url . '/' . $video['sid']; ?>">
+                                                                            <img src="https://img.youtube.com/vi/<?php echo $video['video_id']; ?>/hqdefault.jpg"/>
+                                                                        </a>
+                                                            <?php } if($video['video_source'] == 'vimeo') { 
+                                                                        $thumbnail_image = vimeo_video_data($video['video_id']); ?> 
+                                                                        <a href="<?php echo $watch_video_base_url . '/' . $video['sid']; ?>"><img src="<?php echo $thumbnail_image;?>"/></a>
+                                                            <?php   } else { ?>
+                                                                        <a href="<?php echo $watch_video_base_url . '/' . $video['sid']; ?>">
+                                                                            <video id="video" width="214" height="145">
+                                                                                <source src="<?php echo base_url('assets/uploaded_videos/'.$video['video_id']); ?>" type="video/mp4">
+                                                                            </video>
+                                                                        </a>
+                                                            <?php   } ?>
+                                                                </figure>
+                                                                <div class="text">
+                                                                    <h3><a href="<?php echo $watch_video_base_url . '/' . $video['sid']; ?>"><?php echo $video['video_title']; ?></a></h3>
+                                                                    <div class="post-options">
+                                                                        <ul>
+                                                                            <li><?php echo reset_datetime(array('datetime' => $video['created_date'], '_this' => $this)); ?></li>
+                                                                        </ul>
+                                                                        <span class="post-author"><a href="<?php echo $watch_video_base_url . '/' . $video['sid']; ?>" class="btn btn-block btn-info">Watch Video</a></span>
+                                                                    </div>
+                                                                    <div class="full-width announcement-des" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                                                        <?php echo strlen($video['video_description']) > 100 ? substr($video['video_description'],0,100)." ..." : $video['video_description']; ?>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
+                                                <?php   } ?>
+                                                    </div>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="tab-pane fade" id="training_sessions">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th rowspan="2" class="col-xs-3 valign-middle">Topic</th>
+                                            <th rowspan="2" class="col-xs-2 text-center valign-middle">Date</th>
+                                            <th colspan="2" class="col-xs-1 text-center valign-middle">Time</th>
+                                            <th rowspan="2" class="col-xs-1 text-center valign-middle">Session Status</th>
+                                            <th rowspan="2" class="col-xs-2 text-center valign-middle" colspan="3">Actions</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="col-xs-1 text-center valign-middle">Start</th>
+                                            <th class="col-xs-1 text-center valign-middle">End</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php if(!empty($assigned_sessions)) { ?>
+                                            <?php foreach($assigned_sessions as $session) { if($session['sid'] == '')  continue;  ?>
+                                                <tr>
+                                                    <td><?php echo $session['session_topic']; ?></td>
+<!--                                                    <td class="text-center">--><?php //echo ucwords($session['session_status']);?><!--</td>-->
+                                                    <td class="text-center"><?=reset_datetime(array( 'datetime' => $session['session_date'], 'from_format' => 'Y-m-d', '_this' => $this)); ?></td>
+                                                    <td class="text-center"><?=reset_datetime(array( 'datetime' => $session['session_date'].''.$session['session_start_time'], 'from_format' => 'Y-m-dH:i:s', '_this' => $this, 'format' => 'h:iA')); ?></td>
+                                                    <td class="text-center"><?=reset_datetime(array( 'datetime' => $session['session_date'].''.$session['session_end_time'], 'from_format' => 'Y-m-dH:i:s', '_this' => $this, 'format' => 'h:iA')); ?></td>
+                                                    <td class="text-center"><?php echo ucwords($session['session_status'] == 'pending' ? 'scheduled' : $session['session_status']); ?></td>
+                                                    <td class="text-center"><a class="btn btn-block btn-info" href="<?= base_url('learning_center/view_training_session/'.$session['sid']);?>">View</a></td>
+                                                    
+                                                </tr>
+                                            <?php } ?>
+                                        <?php } else { ?>
+                                            <tr>
+                                                <td class="text-center" colspan="8">
+                                                    <span class="no-data">No Sessions found!</span>
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('.collapse').on('shown.bs.collapse', function () {
+            $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+        }).on('hidden.bs.collapse', function () {
+            $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+        });
+    });
+
+    function func_submit_form(form_id, alert_message){
+        alertify.confirm(
+            'Are you sure?',
+            alert_message,
+            function(){
+                $('#' + form_id).submit();
+            },
+            function(){
+                alertify.error('Cancelled!');
+            });
+    }
+</script>

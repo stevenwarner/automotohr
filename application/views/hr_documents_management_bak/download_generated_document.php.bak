@@ -1,0 +1,79 @@
+
+<div class="main" style="">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="btn-panel">
+                </div>
+                <div class="page-header">
+                    <h1 class="section-ttile">Review & Sign Assigned Document</h1>
+                    <strong>Information:</strong> If you are unable to view the document, kindly reload the page.
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="original_document_download">
+                        <div id="jstopdf" class="hr-box" style="background: #fff;">
+                            <div class="alert alert-info">
+                                <strong><?php  echo ucwords($document['document_title']); ?></strong>
+                            </div>
+                            <div class="hr-innerpadding">
+                                <div class="row">
+                                    <div class="col-xs-12" id="required_fields_div">
+                                        <?php if ($print == 'submitted') { ?>
+                                            <iframe src="<?php echo $document['submitted_description']; ?>" id="printf" name="printf" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>
+                                        <?php } else { ?>
+                                            <div> 
+                                                <?php echo html_entity_decode($original_document_description); ?>
+                                            </div>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="is_signature" value="false">
+<input type="hidden" id="is_signature_initial" value="false">
+<input type="hidden" id="is_signature_date" value="false">
+<script type="text/javascript" src="<?php echo base_url('assets/js/jquery-1.11.3.min.js'); ?>"></script>
+<script src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
+
+<script type="text/javascript">
+	$( window ).on( "load", function() {
+        var draw = kendo.drawing;
+        draw.drawDOM($("#original_document_download"), {
+            avoidLinks: true,
+            paperSize: "A4",
+            margin: { bottom: "1cm" },
+            scale: 0.6
+        })
+        .then(function(root) {
+            return draw.exportPDF(root);
+        })
+        .done(function(data) {
+            var consent = '<?php echo isset($document['user_consent']) ? $document['user_consent'] : 0; ?>';
+            var pdfdata = "";
+            if(consent == 0) {
+                pdfdata = data;
+            } else {
+                <?php if ($print == 'original'): ?>
+                    pdfdata = data
+                <?php else: ?>
+                    pdfdata = '<?php echo $document['submitted_description']; ?>';
+                <?php endif ?>
+            }
+            
+            kendo.saveAs({
+                dataURI: pdfdata,
+                fileName: '<?php echo ucwords($document['document_title']).".pdf"; ?>',
+            });
+        });  
+        setTimeout(function(){
+            window.close();
+        }, 3000);  
+    });
+</script>
+

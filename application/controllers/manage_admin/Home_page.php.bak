@@ -1,0 +1,106 @@
+<?php
+
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Home_page extends Admin_Controller {
+
+    function __construct() {
+        parent::__construct();
+        $this->load->model('manage_admin/home_page_model');
+        require_once(APPPATH . 'libraries/aws/aws.php');
+        $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
+    }
+
+    public function customize_home_page() {
+        // ** Check Security Permissions Checks - Start ** //
+        $redirect_url       = 'manage_admin';
+        $function_name      = 'customize_page';
+
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        // ** Check Security Permissions Checks - End ** //
+
+
+        //View data working starts
+        $this->data['page_title'] = 'Home Page Customization';
+
+        //getting Homepage customize data
+        $this->data['home_page'] = $this->home_page_model->get_home_page_custom_data();
+
+        $this->form_validation->set_rules('header_text', 'Header Text', 'trim|xss_clean|required');
+        $this->form_validation->set_rules('hr_video', 'HR and Recruiting Video', 'trim|xss_clean|required');
+        if ($this->form_validation->run() === FALSE) {
+            $this->render('manage_admin/home_page/customize_home_page');
+        } else {
+            $formData = $this->input->post(NULL, TRUE);
+
+            if (isset($formData['header_text'])) {
+                $dataToSave['header_text'] = $formData['header_text'];
+            }
+
+            if (isset($formData['header_sub_text'])) {
+                $dataToSave['header_sub_text'] = $formData['header_sub_text'];
+            }
+
+            if ($formData['header_flag'] == 'header_video_flag') {//video is selected for home page header
+                $youtube_link = $formData['header_video'];
+                $youtube_code = substr($youtube_link, strpos($youtube_link, '=') + 1, strlen($youtube_link));
+
+                $dataToSave['header_video'] = $youtube_code;
+                $dataToSave['header_video_flag'] = 1;
+                $dataToSave['header_banner_flag'] = 0;
+            } elseif ($formData['header_flag'] == 'header_banner_flag') {// Image banner is selected for home page header
+                if (isset($_FILES['header_banner']) && $_FILES['header_banner']['name'] != '') {
+                    $file = explode(".", $_FILES["header_banner"]["name"]);
+                    $document = $file[0] . '_' . generateRandomString(10) . '.' . end($file);
+                    $aws = new AwsSdk();
+                    $aws->putToBucket($document, $_FILES["header_banner"]["tmp_name"], AWS_S3_BUCKET_NAME);
+                } else {
+                    $document = $formData['old_header_banner'];
+                }
+                $dataToSave['header_banner'] = $document;
+                $dataToSave['header_banner_flag'] = 1;
+                $dataToSave['header_video_flag'] = 0;
+            }
+
+
+            if (isset($formData['hr_video'])) {//HR video for home page header
+                $youtube_link = $formData['hr_video'];
+                $youtube_code = substr($youtube_link, strpos($youtube_link, '=') + 1, strlen($youtube_link));
+                $dataToSave['hr_video'] = $youtube_code;
+            }
+
+            if (isset($_FILES['why_us_banner_1']) && $_FILES['why_us_banner_1']['name'] != '') {//Why us banner no: 1
+                $file = explode(".", $_FILES["why_us_banner_1"]["name"]);
+                $dataToSave['why_us_banner_1'] = $file[0] . '_' . generateRandomString(10) . '.' . end($file);
+                $aws = new AwsSdk();
+                $aws->putToBucket($dataToSave['why_us_banner_1'], $_FILES["why_us_banner_1"]["tmp_name"], AWS_S3_BUCKET_NAME);
+            } else {
+                $dataToSave['why_us_banner_1'] = $formData['old_why_us_banner_1'];
+            }
+
+
+            if (isset($_FILES['why_us_banner_2']) && $_FILES['why_us_banner_2']['name'] != '') {//Why us banner no: 1
+                $file = explode(".", $_FILES["why_us_banner_2"]["name"]);
+                $dataToSave['why_us_banner_2'] = $file[0] . '_' . generateRandomString(10) . '.' . end($file);
+                $aws = new AwsSdk();
+                $aws->putToBucket($dataToSave['why_us_banner_2'], $_FILES["why_us_banner_2"]["tmp_name"], AWS_S3_BUCKET_NAME);
+            } else {
+                $dataToSave['why_us_banner_2'] = $formData['old_why_us_banner_2'];
+            }
+
+
+            if (!isset($this->data['home_page'])) {
+                $this->home_page_model->insert_home_page_custom_data($dataToSave);
+            } else {
+                $this->home_page_model->update_home_page_custom_data($dataToSave);
+            }
+
+            $this->session->set_flashdata('message', 'Homepage changes saved successfully.');
+            redirect('manage_admin/home_page/customize_home_page', 'refresh');
+        }
+    }
+
+}

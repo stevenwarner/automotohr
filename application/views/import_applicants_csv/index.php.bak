@@ -1,0 +1,95 @@
+<div class="main-content">
+    <div class="dashboard-wrp">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
+                    <?php $this->load->view('manage_employer/settings_left_menu_administration'); ?>
+                </div>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="page-header-area">
+                                <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                            </div>
+                            <div class="dashboard-conetnt-wrp">
+                                <div class="panel panel-success">
+                                    <div class="panel-heading">
+                                        <h4>The Provided CSV File must be in Following Format</h4>
+                                    </div>
+                                    <div class="panel-body">
+<pre>
+<b>First Name, Last Name, E-Mail, Contact Number, Street Address, City, Zipcode, State, Country, Profile Picture URL, Resume URL, Cover Letter URL, Job Title</b><br>
+Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/jason_snow_resume.docx, https://yourwebsite.com/cover_letter/jason_snow_cover.docx, General Manager
+Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Manager Sales
+Nathan, Quite, nathan@example.com, +1823212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Technical Manager
+Allen, Knight, allen@example.com, +1223312129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Office Assistant
+Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Team Lead
+</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                        <div class="universal-form-style-v2">
+                            <ul>
+                                <form method="post" enctype="multipart/form-data">
+                                    <input type="hidden" value="upload_file" name="action" id="action" />
+                                    <li class="form-col-100">
+                                        <label>Upload CSV File</label>
+                                        <div class="upload-file invoice-fields">
+                                            <span id="name_userfile" class="selected-file">No Document</span>
+                                            <input type="file" onchange="check_file('userfile')" id="userfile" name="userfile" accept=".csv">
+                                            <a href="javascript:;">Choose File</a>
+                                        </div>
+                                    </li>
+                                    <li class="form-col-50-left">
+                                        <input type="submit" class="submit-btn" id="importSubmit" value="Import" />
+                                    </li>
+                                </form>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/waitMe.min.css">
+<script src="<?= base_url() ?>assets/js/waitMe.min.js"></script>
+<script>
+    function check_file(val) {
+        var fileName = $("#" + val).val();
+        if (fileName.length > 0) {
+            $('#name_' + val).html(fileName.substring(0, 45));
+            var ext = fileName.split('.').pop();
+            if (val == 'userfile') {
+                if (ext != "csv") {
+                    $("#" + val).val(null);
+                    alertify.error("Please select a valid File format.");
+                    $('#name_' + val).html('<p class="red">Only ( .csv ) allowed!</p>');
+                    return false;
+                } else
+                    return true;
+            }
+        } else {
+            $('#name_' + val).html('No file selected');
+        }
+    }
+
+    $('#importSubmit').click(function (e) {
+        $('body').waitMe({
+            effect: 'timer',
+            text: 'Please Wait!',
+            bg: 'rgba(255, 255, 255, 0.7)',
+            color: '#81b431',
+            maxSize: '',
+            textPos: 'vertical',
+            fontSize: '30px',
+            source: ''
+        });
+    });
+</script>

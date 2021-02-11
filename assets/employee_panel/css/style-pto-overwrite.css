@@ -1,0 +1,60 @@
+.pto-policies {
+    position: relative;
+}
+    .main.pto-main-wrp{ background-color: #fff; }
+   .widget-box {
+    float: left;
+    width: 100%;
+    margin: 0 0 25px 0;
+} .widget-box .link-box {
+    margin: 0;
+}.link-box h2 {
+    font-size: 27px;
+    color: #fff;
+    padding: 10px 15px;
+    line-height: 30px;
+    margin: 0;
+}
+.link-box {
+    height: 250px;
+    background-color: #8e44ad;
+    position: relative;
+    /* overflow: hidden; */
+    margin: 15px 0;
+}.bg-cyan {
+    background-color: #44ad9d;}
+.pto-policies .widget-box .link-box h2 {
+    font-size: 23px;
+}.pto-policies .widget-box .current-date {
+    margin-top: 30px;
+}.full-width {
+    float: left;
+    width: 100%;
+}.current-date {
+    padding: 0 15px;
+    color: #fff;
+}.pto-policies .widget-box .link-box:after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: url(../images/clock-icon.png) no-repeat 40% 90%;
+}
+.dashboard-link-btn2,
+.dashboard-link-btn2 i,
+.progress-bar-custom .progress-percent-custom{
+    color: #81b431 !important;
+}
+.pto-tabs .nav-tabs .btn-apply-filter:hover{
+    background-color: #81b431 !important;   
+}
+.progress-bar-custom .progress-bar.progress-bar-success.progress-bar-success-blue{
+    background-color: #81b431 !important;   
+
+}
+.js-policy-list-ul li,
+.js-policy-list-ul li span{
+    color: #000 !important;
+}

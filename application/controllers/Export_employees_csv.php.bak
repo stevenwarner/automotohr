@@ -1,0 +1,225 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Export_employees_csv extends Public_Controller {
+    public function __construct() {
+        parent::__construct();
+        $this->load->helper('path');
+        $this->load->model('dashboard_model');
+        $this->load->model('export_csv_model');
+    }
+
+    public function index() {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'export_employee_csv'); // Param2: Redirect URL, Param3: Function Name
+            $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
+            
+            if ($this->form_validation->run() == false) {
+                $data['title'] = 'Export Employees CSV';
+                $company_sid = $data['session']['company_detail']['sid'];
+                $employer_sid = $data['session']['employer_detail']['sid'];
+                $access_level_plus=$data['session']['employer_detail']['access_level_plus'];
+                $pay_plan_flag=$data['session']['employer_detail']['pay_plan_flag'];
+                $data["access_levels"] = $this->dashboard_model->get_security_access_levels();
+                $data["company_sid"] = $company_sid;
+                $data["pay_plan_flag"]=$pay_plan_flag;
+                $data["access_level_plus"]=$access_level_plus;
+                $this->load->view('main/header', $data);
+                $this->load->view('export_employees_csv/index');
+                $this->load->view('main/footer');
+            } else {
+                $perform_action = $this->input->post('perform_action');
+
+                switch ($perform_action) {
+                    case 'export_employees':
+                        $access_level_plus=$data['session']['employer_detail']['access_level_plus'];
+                        $pay_plan_flag=$data['session']['employer_detail']['pay_plan_flag'];
+                        //
+                        if($access_level_plus == 1 || $pay_plan_flag == 1){
+                            $checked_boxes = explode(',', $this->input->post("test"));
+                        }
+                        $access_level = $this->input->post('access_level');
+                        $company_sid = $this->input->post('company_sid');
+                        $status = $this->input->post('status');
+                        $employees = $this->export_csv_model->get_all_employees($company_sid, $access_level, $status);
+                                            
+                        $export_data = array();
+                        $i = 0;
+                        $rows = '';
+                        //                        
+                        foreach ($employees as $key => $employee) { 
+                            $extra_info = @unserialize($employee['extra_info']);
+                            $employee['secondary_email'] = isset($extra_info['secondary_email']) ? $extra_info['secondary_email'] : '';
+                            $employee['secondary_PhoneNumber'] = isset($extra_info['secondary_PhoneNumber']) ? $extra_info['secondary_PhoneNumber'] : '';
+                            $employee['other_email'] = isset($extra_info['other_email']) ? $extra_info['other_email'] : '';
+                            $employee['other_PhoneNumber'] = isset($extra_info['other_PhoneNumber']) ? $extra_info['other_PhoneNumber'] : '';
+                            $employee['title'] = isset($extra_info['title']) ? $extra_info['title'] : '';
+                            $employee['office_location'] = isset($extra_info['office_location']) ? $extra_info['office_location'] : '';
+
+                            $export_data[$i]['first_name'] =  $employee['first_name'];  // good to go
+                            $export_data[$i]['last_name'] =  $employee['last_name'];   // good to go
+                            $export_data[$i]['email'] =  $employee['email'];          // good to go
+                            $export_data[$i]['phone_number'] =  $employee['PhoneNumber'];    // good to go
+                            $export_data[$i]['address'] =  $employee['Location_Address']; // good to go
+                            $export_data[$i]['city'] =  $employee['Location_City']; // good to go
+                            $export_data[$i]['zipcode'] =  $employee['Location_ZipCode']; // good to go
+                            $state_sid = $employee['Location_State']; // good to go
+                            $country_sid = $employee['Location_Country']; // good to go
+                           
+                            
+                            
+                            if($state_sid > 0){
+                                $state_info = db_get_state_name($state_sid);
+                                $export_data[$i]['state'] =  $state_info['state_name'];
+                                $export_data[$i]['country'] =  $state_info['country_name'];
+                            } else {
+                                $export_data[$i]['state'] =  '';
+                                
+                                if($country_sid > 0) {
+                                    if($country_sid == 227){
+                                        $export_data[$i]['country'] =  'United States';
+                                    } else {
+                                        $export_data[$i]['country'] =  'Canada';
+                                    }
+                                } else {
+                                    $export_data[$i]['country'] =  '';
+                                }
+                            }
+                            
+                            if (!empty($employee['profile_picture'])) {
+                                $export_data[$i]['pictures'] = AWS_S3_BUCKET_URL . $employee['profile_picture']; // good to go
+                            } else {
+                                $export_data[$i]['pictures'] = '';
+                            }
+                            
+                            if ($employee['is_executive_admin'] == 1) {
+                                $export_data[$i]['access_level'] = 'Executive Admin';
+                            } else {
+                                $export_data[$i]['access_level'] = $employee['access_level'];
+                            }
+                             $export_data[$i]['job_title'] = $employee['job_title'];
+                            if ($employee['active'] == 1) {
+                                $export_data[$i]['status'] = 'Active Employee';
+                            } else {
+                                $export_data[$i]['status'] = 'Archived Employee';
+                            }
+                            $header='';
+                            if(($access_level_plus == 1 || $pay_plan_flag == 1) && sizeof($checked_boxes)!=0 ){
+                                foreach($checked_boxes as $key => $value){ 
+                                    $header.=$value.',';
+                                    $export_data[$i][$value] = (in_array($value, array('resume', 'cover_letter_url')) && $employee[$value] != '' && $employee[$value] != null ? AWS_S3_BUCKET_URL : '').$employee[$value];
+                                }
+                                $header=','.substr($header,0,-1);
+                            }
+                            //$export_data[$i]['access_level'] =  $employee['access_level'];
+                            // good to go
+                            $row='';
+                            foreach($export_data[$i] as $key => $value){
+                                $row.=$value.',';
+                            }
+                            $row = substr($row,0,-1);
+                            $rows .= $row.PHP_EOL;
+                            $i++;
+                        }
+                        $header_row = 'First Name,Last Name,E-Mail,Contact Number,Street Address,City,Zipcode,State,Country,Profile Picture,Access Level,Job Title,Status'.$header;
+                        $file_content = '';
+                        $file_content .= $header_row . PHP_EOL;
+                        $file_content .= $rows;
+                        $file_size = 0;
+
+                        if (function_exists('mb_strlen')) {
+                            $file_size = mb_strlen($file_content, '8bit');
+                        } else {
+                            $file_size = strlen($file_content);
+                        }
+
+                        header('Pragma: public');     // required
+                        header('Expires: 0');         // no cache
+                        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                        header('Cache-Control: private', false);
+                        header('Content-Type: text/csv');  // Add the mime type from Code igniter.
+                        header('Content-Disposition: attachment; filename="employees_' . date('Y_m_d-H:i:s') . '.csv"');  // Add the file name
+                        header('Content-Transfer-Encoding: binary');
+                        header('Content-Length: ' . $file_size); // provide file size
+                        header('Connection: close');
+                        echo $header_row . PHP_EOL;
+                        echo $rows;
+                        break;
+                        
+                        /************************************************************************************
+                        foreach ($employees as $key => $employee) {
+                            $country_sid = $employee['Location_Country'];
+                            $state_sid = $employee['Location_State'];
+                            $state_info = db_get_state_name($state_sid);
+                            $employees[$key]['country'] = $state_info['country_name'];
+                            $employees[$key]['state'] = $state_info['state_name'];
+                            $employees[$key]['city'] = $employee['Location_City'];
+                            $employees[$key]['address'] = $employee['Location_Address'];
+                            $employees[$key]['zipcode'] = $employee['Location_ZipCode'];
+                            $employees[$key]['phone'] = $employee['PhoneNumber'];
+
+                            if (!empty($employee['profile_picture'])) {
+                                $employees[$key]['profile_picture'] = AWS_S3_BUCKET_URL . $employee['profile_picture'];
+                            }
+
+                            unset($employees[$key]['Location_Country']);
+                            unset($employees[$key]['Location_State']);
+                            unset($employees[$key]['Location_City']);
+                            unset($employees[$key]['Location_Address']);
+                            unset($employees[$key]['Location_ZipCode']);
+                            unset($employees[$key]['PhoneNumber']);
+                            ksort($employees[$key], SORT_STRING);
+                        }
+
+                        $headers = array();
+                        $rows = '';
+                                                
+                        if (!empty($employees)) {
+                            foreach ($employees as $employee) {
+                                $headers = array_keys($employee);
+                                $row = '';
+                                
+                                foreach ($headers as $header) {
+                                    $row .= trim(str_replace(',', ' ', $employee[$header])) . ',';
+                                }
+
+                                $rows .= $row . PHP_EOL;
+                            }
+                        }
+
+                        $header_row = implode(',', $headers);
+                        $file_content = '';
+                        $file_content .= $header_row . ',' . PHP_EOL;
+                        $file_content .= $rows;
+                        $file_size = 0;
+
+                        if (function_exists('mb_strlen')) {
+                            $file_size = mb_strlen($file_content, '8bit');
+                        } else {
+                            $file_size = strlen($file_content);
+                        }
+
+                        header('Pragma: public');     // required
+                        header('Expires: 0');         // no cache
+                        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                        header('Cache-Control: private', false);
+                        header('Content-Type: text/csv');  // Add the mime type from Code igniter.
+                        header('Content-Disposition: attachment; filename="employees_' . date('Y_m_d') . '.csv"');  // Add the file name
+                        header('Content-Transfer-Encoding: binary');
+                        header('Content-Length: ' . $file_size); // provide file size
+                        header('Connection: close');
+
+                        echo $header_row . ',' . PHP_EOL;
+                        echo $rows;
+                        break; */
+                }
+            }
+        } else {
+            redirect('login', 'refresh');
+        }
+    }
+
+}

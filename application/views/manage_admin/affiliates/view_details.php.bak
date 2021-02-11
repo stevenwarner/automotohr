@@ -1,0 +1,243 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<div class="main">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="inner-content">
+                <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
+                    <div class="dashboard-content">
+                        <div class="dash-inner-block">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                                    <div class="heading-title">
+                                        <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
+                                        <a id="back_btn" href="<?php echo base_url('manage_admin/affiliates')?>" class="black-btn pull-right"><i class="fa fa-arrow-left"> </i> Go Back</a>
+                                    </div>
+                                    <div class="add-new-company">
+                                        <div class="heading-title">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <span class="page-title"><?php echo $page_sub_title; ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php   if(sizeof($affiliation)>0) { ?>
+                                            <form method="post" action="" class="form" enctype="multipart">
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>First Name <i class="fa fa-asterisk text-danger"></i></label>
+                                                        <input type="text" name="first_name" value="<?php echo ucfirst($affiliation['first_name']);?>" class="hr-form-fileds">
+                                                        <?php echo form_error("first_name"); ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>Last Name <i class="fa fa-asterisk text-danger"></i></label>
+                                                        <input type="text" name="last_name" value="<?php echo ucfirst($affiliation['last_name']);?>" class="hr-form-fileds">
+                                                        <?php echo form_error("last_name"); ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>Email <i class="fa fa-asterisk text-danger"></i></label>
+                                                        <input type="email" name="email" value="<?php echo $affiliation['email'];?>" class="hr-form-fileds">
+                                                        <?php echo form_error("email"); ?>
+                                                    </div>
+                                                </div>
+                                                <?php  if($uri_segment == "affiliates") { ?>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row field-row-autoheight">
+                                                            <label>Paypal Email</label>
+                                                            <input type="text" name="paypal_email" value="<?php echo $affiliation['paypal_email'];?>" class="hr-form-fileds">
+                                                            <?php echo form_error("paypal_email"); ?>
+                                                        </div>
+                                                    </div>
+                                                <?php  } ?>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>Company</label>
+                                                        <input type="text" name="company" value="<?php echo $affiliation['company']; ?>" class="hr-form-fileds">
+                                                        <?php echo form_error("company"); ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>Street</label>
+                                                        <input type="text" name="street" value="<?php echo $affiliation['street'];?>" class="hr-form-fileds">
+                                                        <?php echo form_error("street"); ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>City</label>
+                                                        <input type="text" name="city" value="<?php echo $affiliation['city'];?>" class="hr-form-fileds">
+                                                        <?php echo form_error("city"); ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>State</label>
+                                                        <input type="text" name="state" value="<?php echo $affiliation['state'];?>" class="hr-form-fileds">
+                                                        <?php echo form_error("state"); ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>Zip Code</label>
+                                                        <input type="text" name="zip_code" value="<?php echo $affiliation['zip_code'];?>" class="hr-form-fileds">
+                                                        <?php echo form_error("zip_code"); ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>Country</label>
+                                                        <input type="text" name="country" value="<?php echo $affiliation['country'];?>" class="hr-form-fileds">
+                                                        <?php echo form_error("country"); ?>
+                                                    </div>
+                                                </div>
+                                                <?php  if($uri_segment == "affiliates") { ?>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row field-row-autoheight">
+                                                            <label>Method Of Promotion</label>
+                                                            <input type="text" name="method_of_promotion" value="<?php echo $affiliation['method_of_promotion'];?>" class="hr-form-fileds">
+                                                            <?php echo form_error("method_of_promotion"); ?>
+                                                        </div>
+                                                    </div>
+                                                <?php  } ?>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>Website</label>
+                                                        <input type="text" name="website" value="<?php echo $affiliation['website'];?>" class="hr-form-fileds">
+                                                        <?php echo form_error("website"); ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>Contact Number</label>
+                                                        <input type="text" name="contact_number" value="<?php echo $affiliation['contact_number'];?>" class="hr-form-fileds">
+                                                        <?php echo form_error("contact_number"); ?>
+                                                    </div>
+                                                </div>
+                                            
+                                                <?php  if($uri_segment == "affiliates") { ?>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row field-row-autoheight">
+                                                            <label>Email List</label>
+                                                            <input type="text" name="email_list" value="<?php echo $affiliation['email_list']; ?>" class="hr-form-fileds">
+                                                            <?php echo form_error("email_list"); ?>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?>
+                                                <div class="<?=$uri_segment == "affiliates" ? 'col-lg-12 col-md-12 col-xs-12 col-sm-12' : 'col-lg-6 col-md-6 col-xs-12 col-sm-6';?>">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>Timezone</label>
+                                                        <?=timezone_dropdown(
+                                                            $affiliation['timezone'],
+                                                            array(
+                                                                'name' => 'timezone',
+                                                                'id' => 'timezone',
+                                                                'class' => 'hr-form-fileds js-timezone',
+                                                                'style' => 'padding: 0;'
+                                                            )
+                                                        );  ?>
+                                                        <?php echo form_error("timezone"); ?>
+                                                    </div>
+                                                </div>
+                                                <?php  if($uri_segment == "affiliates") { ?>
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                        <div class="field-row field-row-autoheight">
+                                                            <label for="special_notes">Special Notes</label>
+                                                            <textarea name="special_notes" cols="40" rows="10" class="hr-form-fileds field-row-autoheight valid" aria-invalid="false"><?php echo $affiliation['special_notes']; ?></textarea>
+                                                            <?php echo form_error("special_notes"); ?>
+                                                        </div>
+                                                    </div>
+                                                <?php  } ?>
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                        <div class="form-group">
+                                                            <a class="black-btn" href="<?php echo site_url('manage_admin/'.$uri_segment.'/view_details/'.$affiliation['sid']);?>"> Cancel </a> 
+                                                            <input type="submit" value="Update" class="site-btn text-right">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                <?php       } ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
+<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css"  />
+<script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#admin').chosen();
+        $('#assigned-admin').submit(function () {
+            if($('#admin').val()==null){
+                alertify.error('Please Assign An Admin');
+                return false;
+            }
+        });
+        $('.accept').click(function(){
+            var id = $(this).attr('id');
+            alertify.confirm('Confirmation', "Are you sure you want to Accept this Application?",
+                function () {
+                    $.ajax({
+                        type: 'POST',
+                        data:{
+                            status:1,
+                            id: id
+                        },
+                        url: '<?= base_url('manage_admin/affiliates/accept_reject')?>',
+                        success: function(data){
+                            if(data == 'exist'){
+                                window.location.href = '<?php echo base_url('manage_admin/affiliates/view_details/')?>/' + id;
+                            }else{
+                                window.location.href = '<?php echo base_url('manage_admin/marketing_agencies/edit_marketing_agency/')?>/' + data;
+                            }
+                        },
+                        error: function(){
+
+                        }
+                    });
+                },
+                function () {
+                    alertify.error('Canceled');
+                });
+        });
+        $('.reject').click(function(){
+            var id = $(this).attr('id');
+            alertify.confirm('Confirmation', "Are you sure you want to Reject this Application?",
+                function () {
+                    $.ajax({
+                        type: 'POST',
+                        data:{
+                            status:2,
+                            id: id
+                        },
+                        url: '<?= base_url('manage_admin/affiliates/accept_reject')?>',
+                        success: function(data){
+                            location.reload();
+                        },
+                        error: function(){
+
+                        }
+                    });
+                },
+                function () {
+                    alertify.error('Canceled');
+                });
+        });
+    });
+
+    $('#timezone').select2();
+</script>

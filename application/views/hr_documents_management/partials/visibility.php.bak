@@ -1,0 +1,56 @@
+<?php 
+    $selectedRoles = isset($document_info['is_available_for_na']) && !empty($document_info['is_available_for_na']) ? explode(',', $document_info['is_available_for_na']) : [];
+    $selectedEmployees = isset($document_info['allowed_employees']) && !empty($document_info['allowed_employees']) ? explode(',', $document_info['allowed_employees']) : [];
+    $roles = [
+        'hiring_manager' => 'Hiring Manager',
+        'admin' => 'Admin'
+    ];
+?>
+
+<!-- Visibility to Roles and Employees -->
+<div class="row">
+    <div class="col-xs-12">
+        <div class="hr-box">
+            <div class="hr-box-header">
+                <strong>Visibility</strong>
+            </div>
+            <div class="hr-box-innerpadding">
+                <!-- Roles -->
+                <div class="col-xs-12">
+                    <br />
+                    <label>Select Roles <i class="fa fa-question-circle" data-toggle="propover" title="Note" data-content="This document will be visible to the selected Roles."></i></label>
+                    <select multiple="true" id="js-roles" name="selected_roles[]">
+                        <?php foreach($roles as $key => $role) { ?>
+                            <option value="<?=$key;?>" <?=in_array($key, $selectedRoles) ? 'selected="true"' : '';?>><?=$role;?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <!-- Employees -->
+                <div class="col-xs-12">
+                    <label>Select Specific Employee(s) <i class="fa fa-question-circle" data-toggle="propover" title="Note" data-content="This document will be visible to the selected Employee(s)."></i></label>
+                    <select multiple="true" id="js-specific-employee-visibility" name="selected_employees[]">
+                        <?php foreach($employeesList as $key => $employee) { ?>
+                            <?php if($employee['access_level_plus'] == 1 || $employee['access_level'] == 'Manager' || $employee['access_level'] == 'Employee') continue; ?>
+                            <option value="<?=$employee['sid'];?>" <?=in_array($employee['sid'], $selectedEmployees) ? 'selected="true"' : '';?>><?=remakeEmployeeName($employee);?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>.select2-container--default .select2-selection--multiple .select2-selection__rendered{ height: auto !important;}</style>
+
+<script>
+    $('#js-roles').select2({
+        closeOnSelect: false
+    });
+    $('#js-specific-employee-visibility').select2({
+        closeOnSelect: false
+    });
+    $('[data-toggle="propover"]').popover({
+        trigger: 'hover',
+        placement: 'right'
+    });
+</script>

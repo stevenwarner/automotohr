@@ -1,0 +1,141 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Form_company_contacts extends CI_Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->model('manage_admin/documents_model');
+    }
+
+    public function index($verification_key = null, $pre_fill_flag = null)
+    {
+        if ($verification_key != null) {
+
+            $document_record = $this->documents_model->get_document_record('company_contacts', $verification_key);
+
+            if (!empty($document_record)) {
+                $status = $document_record['status'];
+
+                $company_sid = $document_record['company_sid'];
+
+                $data = array();
+                $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
+                $this->form_validation->set_message('required', '%s Required');
+
+                if ($_POST) {
+                    if (isset($_POST['employees'])) {
+                        $employees = $this->input->post('employees');
+
+
+                        //Main Contact
+                        $this->form_validation->set_rules('employees[0][first_name]', 'First Name', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[0][last_name]', 'Last Name', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[0][primary_email]', 'Email', 'xss_clean|trim|valid_email');
+                        $this->form_validation->set_rules('employees[0][secondary_email]', 'Alt Email', 'xss_clean|trim|valid_email');
+                        $this->form_validation->set_rules('employees[0][mobile_number]', 'Mobile', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[0][telephone]', 'Telephone', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[0][title]', 'Title', 'xss_clean|trim');
+
+                        //IT Person
+                        $this->form_validation->set_rules('employees[1][first_name]', 'First Name', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[1][last_name]', 'Last Name', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[1][primary_email]', 'Email', 'xss_clean|trim|valid_email');
+                        $this->form_validation->set_rules('employees[1][secondary_email]', 'Alt Email', 'xss_clean|trim|valid_email');
+                        $this->form_validation->set_rules('employees[1][mobile_number]', 'Mobile', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[1][telephone]', 'Telephone', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[1][title]', 'Title', 'xss_clean|trim');
+
+                        //Creative Person
+                        $this->form_validation->set_rules('employees[2][first_name]', 'First Name', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[2][last_name]', 'Last Name', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[2][primary_email]', 'Email', 'xss_clean|trim|valid_email');
+                        $this->form_validation->set_rules('employees[2][secondary_email]', 'Alt Email', 'xss_clean|trim|valid_email');
+                        $this->form_validation->set_rules('employees[2][mobile_number]', 'Mobile', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[2][telephone]', 'Telephone', 'xss_clean|trim');
+                        $this->form_validation->set_rules('employees[2][title]', 'Title', 'xss_clean|trim');
+
+                    }
+                }
+
+                if ($this->form_validation->run() == false) {
+                    echo validation_errors();
+
+                } else {
+                    //echo '<pre>';
+                    //print_r($_POST);
+                    //exit;
+
+                    $company_name = $this->input->post('company_name');
+                    $platform_activation_date = $this->input->post('platform_activation_date');
+                    $team_onboarding_date = $this->input->post('team_onboarding_date');
+                    $team_onboarding_time = $this->input->post('team_onboarding_time');
+                    $it_meeting_date = $this->input->post('it_meeting_date');
+                    $it_meeting_time = $this->input->post('it_meeting_time');
+                    $cp_meeting_date = $this->input->post('cp_meeting_date');
+                    $cp_meeting_time = $this->input->post('cp_meeting_time');
+
+                    $dataToSave = array();
+                    $dataToSave['company_name'] = $company_name;
+                    $dataToSave['platform_activation_date'] = convert_date_to_db_format($platform_activation_date);
+                    $dataToSave['team_onboarding_date'] = convert_date_to_db_format($team_onboarding_date);
+                    $dataToSave['team_onboarding_time'] = $team_onboarding_time;
+                    $dataToSave['it_meeting_date'] = convert_date_to_db_format($it_meeting_date);
+                    $dataToSave['it_meeting_time'] = $it_meeting_time;
+                    $dataToSave['cp_meeting_date'] = convert_date_to_db_format($cp_meeting_date);
+                    $dataToSave['cp_meeting_time'] = $cp_meeting_time;
+
+                    $this->documents_model->update_document_record('company_contacts', $verification_key, $dataToSave, 'pre-filled');
+
+                    $employees = $this->input->post('employees');
+
+                    if (!empty($employees)) {
+                        $this->documents_model->insert_company_contact_records($company_sid, $employees);
+                    }
+
+                    if($pre_fill_flag != null){
+                        $this->session->set_flashdata('message', 'Form Successfully Pre-Filled.');
+
+                        redirect('manage_admin/documents/' . $company_sid, 'refresh');
+                    }else{
+                        $this->session->set_flashdata('message', '"We Appreciate Your Business"');
+
+                        $this->documents_model->update_document_status('company_contacts', $verification_key, 'signed');
+
+                        redirect('thank_you', 'refresh');
+                    }
+
+                }
+
+                if($pre_fill_flag != null){
+                    $data['pre_fill'] = 'pre_fill';
+                }else{
+                    $data['pre_fill'] = '';
+                }
+
+                if($status == 'signed'){
+                    $data['readonly'] = ' readonly="readonly" ';
+                    $data['disabled'] = ' disabled="disabled" ';
+                }else{
+                    $data['readonly'] = '';
+                    $data['disabled'] = '';
+                }
+                $data['page_title'] = 'Company Contacts';
+                $data['verification_key'] = $verification_key;
+                $data['company_sid'] = $company_sid;
+                $data['form_document_company_contacts_sid'] = $document_record['sid'];
+                $data['document_record'] = $document_record;
+
+
+                $this->load->view('form_company_contacts/index', $data);
+            } else {
+                redirect('login', 'refresh');
+            }
+        } else {
+            redirect('login', 'refresh');
+        }
+
+    }
+
+}

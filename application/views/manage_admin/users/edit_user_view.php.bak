@@ -1,0 +1,138 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<div class="main">
+    <div class="container-fluid">
+        <div class="row">		
+            <div class="inner-content">
+                <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
+                    <div class="dashboard-content">
+                        <div class="dash-inner-block">
+                            <div class="row">
+                                <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="heading-title page-title">
+                                        <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                            <div class="hr-user-form">
+                                                <p>Fields marked with an asterisk (<span class="hr-required">*</span>) are mandatory</p>
+                                                <?php echo form_open('', array('class' => 'form-horizontal')); ?>
+                                                <ul>
+                                                    <li>
+                                                        <?php echo form_label('First name <span class="hr-required">*</span>', 'first_name'); ?>
+                                                        <div class="hr-fields-wrap">
+                                                            <?php echo form_input('first_name', set_value('first_name', $user->first_name), 'class="hr-form-fileds"'); ?>
+                                                            <?php echo form_error('first_name'); ?>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <?php echo form_label('Last name <span class="hr-required">*</span>', 'last_name'); ?>
+                                                        <div class="hr-fields-wrap">
+                                                            <?php echo form_input('last_name', set_value('last_name', $user->last_name), 'class="hr-form-fileds"'); ?>
+                                                            <?php echo form_error('last_name'); ?>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <?php echo form_label('Company', 'company'); ?>
+                                                        <div class="hr-fields-wrap">
+                                                            <?php echo form_input('company', set_value('company', $user->company), 'class="hr-form-fileds"'); ?>
+                                                            <?php echo form_error('company'); ?>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <?php echo form_label('Phone', 'phone'); ?>
+                                                        <div class="hr-fields-wrap">
+                                                            <?php echo form_input('phone', set_value('phone', $user->phone), 'class="hr-form-fileds"'); ?>
+                                                            <?php echo form_error('phone'); ?>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <?php echo form_label('Username <span class="hr-required">*</span>', 'username'); ?>
+                                                        <div class="hr-fields-wrap">
+                                                            <?php echo form_input('username', set_value('username', $user->username), array('id'=>'disabledTextInput','class'=>'hr-form-fileds form-control', 'disabled'=>'disabled'));
+                                                            //echo form_error('username'); ?>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <?php echo form_label('email <span class="hr-required">*</span>', 'Email'); ?>
+                                                        <div class="hr-fields-wrap">
+                                                            <?php echo form_input('email', set_value('email', $user->email), 'class="hr-form-fileds"'); ?>
+                                                            <?php echo form_error('email'); ?>
+                                                        </div>
+                                                    </li>
+                                                    
+                                                    <?php if(IS_TIMEZONE_ACTIVE) { ?>
+                                                    <!-- Timezone -->
+                                                    <li class="js-timezone-row">
+                                                        <?php echo form_label('Timezone <span class="hr-required">*</span>', 'Timezone'); ?>
+                                                        <div class="hr-fields-wrap">
+                                                            <?=timezone_dropdown(
+                                                                $user->timezone,
+                                                                array(
+                                                                    'name' => 'timezone',
+                                                                    'id' => 'timezone',
+                                                                    'class' => 'hr-form-fileds js-timezone',
+                                                                    'style' => 'padding: 0;'
+                                                                )
+                                                            );  ?>
+                                                            <?php echo form_error('email'); ?>
+                                                        </div>
+                                                    </li>
+                                                    <?php } ?>    
+<!--                                                    <li>-->
+<!--                                                        --><?php //echo form_label('Change password', 'password'); ?>
+<!--                                                        <div class="hr-fields-wrap">-->
+<!--                                                            --><?php //echo form_password('password', '', 'class="hr-form-fileds"'); ?>
+<!--                                                            --><?php //echo form_error('password'); ?>
+<!--                                                        </div>-->
+<!--                                                    </li>-->
+<!--                                                    <li>-->
+<!--                                                        --><?php //echo form_label('Confirm changed password', 'password_confirm'); ?>
+<!--                                                        <div class="hr-fields-wrap">-->
+<!--                                                            --><?php //echo form_password('password_confirm', '', 'class="hr-form-fileds"'); ?>
+<!--                                                            --><?php //echo form_error('password_confirm'); ?>
+<!--                                                        </div>-->
+<!--                                                    </li>-->
+                                                    <?php if($profile_type=='team'){ ?>
+                                                        <li>
+                                                            <label><?php echo form_label('Groups', 'groups[]'); ?></label>
+                                                            <div class="hr-fields-wrap">
+                                                                <?php if (isset($groups)) {
+                                                                            foreach ($groups as $group) {
+                                                                                echo '<div class="checkbox">';
+                                                                                echo '<label>';
+                                                                                echo form_radio('groups[]', $group->id, set_checkbox('groups[]', $group->id, in_array($group->id, $usergroups)));
+                                                                                echo ' ' . $group->name;
+                                                                                echo '</label>';
+                                                                                echo '</div>';
+                                                                            }
+                                                                        } ?>
+                                                            </div>
+                                                        </li>
+                                                    <?php } ?>
+                                                    <li>
+                                                        <?php echo form_submit('submit', 'Update Profile', 'class="site-btn"'); ?>
+                                                        <a href="<?= base_url('manage_admin/users'); ?>" class="btn black-btn" type="submit">Cancel</a>
+                                                    </li>
+                                                </ul>
+                                                <?php echo form_hidden('user_id', $user->id); ?>
+                                                <?php echo form_close(); ?>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php if(IS_TIMEZONE_ACTIVE) { ?>
+<script>
+    $('.js-timezone').select2();
+</script>
+<?php } ?>

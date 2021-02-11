@@ -1,0 +1,38 @@
+/* Add button */
+.cs-btn-add{
+    background-color: #0000ff;
+    color: #ffffff  !important;
+    padding: 7px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-right: 0;
+}
+.cs-btn-add i{ color: #ffffff  !important; }
+
+a.cs-green-bg{
+    background-color: #81b431 !important;
+    color: #ffffff !important; 
+}
+a.cs-green-bg i{
+    color: #ffffff !important; 
+}
+
+/* Tab mouse */
+.js-tab{
+    cursor: pointer;
+}
+
+
+
+/* Helpers */
+.pl0{ padding-left: 0 !important; }
+.pr0{ padding-right: 0 !important; }
+
+.pl10{ padding-left: 10px !important; }
+.pr10{ padding-right: 10px !important; }
+
+.ml0{ margin-left: 0 !important; }
+.mr0{ margin-right: 0 !important; }
+
+.ml10{ margin-left: 10px !important; }
+.mr10{ margin-right: 10px !important; }
