@@ -1,0 +1,143 @@
+<?php
+
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Applicant_origination_tracker_report extends CI_Controller {
+
+    public function __construct() {
+        parent::__construct();
+        $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
+        $this->load->library("pagination");
+        $this->load->model('Reports_model');
+    }
+
+    public function index($company_sid, $source = 'all', $startdate = 'all', $enddate = 'all') {
+        if ($this->session->userdata('executive_loggedin')) {
+            $data = $this->session->userdata('executive_loggedin');
+            $data['title'] = 'Applicant Origination Tracking Report';
+            $data['company_sid'] = $company_sid;
+
+            //**** working code ****//
+            $source = urldecode($source);
+            $start_date = urldecode($startdate);
+            $end_date = urldecode($enddate);
+            $data['flag'] = false;
+            $this->form_validation->set_data($this->input->get(NULL, true));
+
+            if(!empty($start_date) && $start_date != 'all') {
+                $start_date_applied = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
+            } else {
+                $start_date_applied = date('Y-m-d 00:00:00');
+            }
+
+            if(!empty($end_date) && $end_date != 'all') {
+                $end_date_applied = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
+            } else {
+                $end_date_applied = date('Y-m-d 23:59:59');
+            }
+//            $start_date = '2015-01-01 00:00:00';
+//            $end_date = date('Y-m-d H:i:s');
+//            if (isset($_GET['submit']) && $_GET['submit'] == 'Apply Filters') {
+//                $search_data = $this->input->get(NULL, true);
+//
+//                if (isset($search_data['start']) && $search_data['start'] != "") {
+//                    $start_date = explode('-', $search_data['start']);
+//                    $start_date = $start_date[2] . '-' . $start_date[0] . '-' . $start_date[1] . ' 00:00:00';
+//                }
+//
+//                if (isset($search_data['end']) && $search_data['end'] != "") {
+//                    $end_date = explode('-', $search_data['end']);
+//                    $end_date = $end_date[2] . '-' . $end_date[0] . '-' . $end_date[1] . ' 23:59:59';
+//                }
+//                $data['flag'] = true;
+//                $data['flag'] = true;
+//                $data['search'] = $search_data;
+//            }
+//            if($source!='all')
+            $data['flag'] = true;
+            $applicant_sources = array();
+            $applicant_sources[] = 'automoto_social';
+            $applicant_sources[] = 'career_website';
+            $applicant_sources[] = 'glassdoor';
+            $applicant_sources[] = 'indeed';
+            $applicant_sources[] = 'juju';
+            $applicant_sources[] = 'jobs2careers';
+            $applicant_sources[] = 'ziprecruiter';
+            $data['applicant_sources'] = $applicant_sources;
+
+            $data['companies_applicants_by_source'] = $this->get_company_applicants_by_source($company_sid, $source, $start_date_applied, $end_date_applied);
+
+            //**** working code ****//
+
+            /** export sheet file * */
+            if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
+                if (isset($data['companies_applicants_by_source']) && sizeof($data['companies_applicants_by_source']) > 0) {
+
+                    header('Content-Type: text/csv; charset=utf-8');
+                    header('Content-Disposition: attachment; filename=data.csv');
+                    $output = fopen('php://output', 'w');
+
+                    $company_applicants_by_source = $data['companies_applicants_by_source'];
+                    $company_info = $company_applicants_by_source['company_info'];
+                    $applicants_by_source = $company_applicants_by_source['applicants_by_source'];
+                    fputcsv($output, array('Company Name : ' . ucwords($company_info['CompanyName'])));
+                    fputcsv($output, array());
+                    if (!empty($applicants_by_source)) {
+                        foreach ($applicants_by_source as $key => $source_applicants) {
+                            fputcsv($output, array(ucwords(str_replace('_', ' ', $key))));
+                            fputcsv($output, array('Total : ' . count($source_applicants) . ' Applicant(s)'));
+                            fputcsv($output, array('Application Date', 'Applicant Name', 'Job Title', 'Email'));
+                            if (!empty($source_applicants)) {
+                                foreach ($source_applicants as $applicant) {
+                                    $input = array();
+                                    $input['date_applied'] = convert_date_to_frontend_format($applicant['date_applied']);
+                                    $input['name'] = ucwords($applicant['first_name'] . ' ' . $applicant['last_name']);
+                                    $input['job_title'] = ucwords($applicant['job_title']);
+                                    $input['email'] = ucwords($applicant['email']);
+                                    fputcsv($output, $input);
+                                }
+                            } else {
+                                fputcsv($output, array('No Applicants'));
+                            }
+                            fputcsv($output, array());
+                        }
+                    } else {
+                        fputcsv($output, array('No Applicants'));
+                    }
+                    fputcsv($output, array());
+                    fclose($output);
+                    exit;
+                } else {
+                    $this->session->set_flashdata('message', 'No data found.');
+                }
+            }
+            /** export sheet file * */
+            $this->load->view('main/header', $data);
+            $this->load->view('reports/applicant_origination_tracker_report');
+            $this->load->view('main/footer');
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
+    private function get_company_applicants_by_source($company_sid, $applicant_sources = array(), $start_date, $end_date) {
+
+        $applicants_by_source = array();
+
+//        foreach ($applicant_sources as $applicant_source) {
+            $applicants = $this->Reports_model->get_applicants_by_source($company_sid, $applicant_sources, $start_date, $end_date);
+            $applicants_by_source[$applicant_sources] = $applicants;
+//        }
+
+        $company_info = get_company_details($company_sid);
+        //$applicants = $this->Reports_model->get_applicants_by_source($company_sid, null, $start_date, $end_date);
+        //$applicants_by_source['career_website'] = array_merge($applicants, $applicants_by_source['career_website']);
+
+        $company_data = array();
+        $company_data['company_info'] = $company_info;
+        $company_data['applicants_by_source'] = $applicants_by_source;
+
+        return $company_data;
+    }
+
+}

@@ -1,0 +1,51 @@
+@media only screen and (min-width: 1201px) and (max-width: 1400px){
+  
+}
+@media only screen and (min-width: 992px) and (max-width: 1200px){
+    .container{
+        width: 100%;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 991px){
+    .container{
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 767px){
+    .main {
+        padding: 20px 0 120px 0;
+    }
+    .bt-panel{
+        text-align: center;
+    }
+    .bt-panel .btn{
+        margin: 5px;
+    }
+    table.bt .text-center {
+        text-align: left;
+    }
+    table.bt tfoot th:before, table.bt tfoot td:before, table.bt tbody td:before {
+        width: 7.5em !important;
+    }
+    table.bt tfoot th, table.bt tfoot td, table.bt tbody td {
+        border-bottom: 1px solid #ddd !important;
+    }
+    table.bt tr:nth-child(odd){
+        background-color: #f2f2f2;
+    }
+    .basic-table .bt-content{
+        float: left;
+        width: 100%;
+    }
+    .select-msg-receiver .form-group{
+        border-right:none;
+        padding: 8px 0;
+        border-bottom: 1px solid #ddd;
+    }
+    .select-msg-receiver .form-group.no-border-right{
+        border: none;
+    }
+}
+@media only screen and (min-width: 320px) and (max-width: 480px){
+
+}
