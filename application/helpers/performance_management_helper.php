@@ -72,7 +72,6 @@ if(!function_exists('res')){
     }
 }
 
-
 /**
  * Get Question Body
  * 
@@ -121,7 +120,6 @@ if(!function_exists('getQuestionBody')){
     }
 }
 
-
 /**
  * Get Label
  * 
@@ -142,7 +140,6 @@ if(!function_exists('getLabel')){
     }
 }
 
-
 /**
  * Get Default Labels
  * 
@@ -160,5 +157,30 @@ if(!function_exists('getDefaultLabel')){
             4 => 'Agree',
             5 => 'Strongly Agree'
         ];
+    }
+}
+
+/**
+ * Get logged in employer access level
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/11/2021
+ * 
+ * @method get_instance
+ * 
+ * @return Array
+ */
+if(!function_exists('getEmployerAccessLevel')){
+    function getEmployerAccessLevel(){
+        // Get CI instance
+        $_this = &get_instance();
+        //
+        $ses = $_this->session->userdata('logged_in');
+        //
+        if(empty($ses)) return 0;
+        //
+        if($ses['employer_detail']['access_level_plus'] == 1 || $ses['employer_detail']['pay_plan_flag'] == 1) return 1;
+        //
+        return 0;
     }
 }

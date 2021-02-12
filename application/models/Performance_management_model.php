@@ -142,7 +142,7 @@ class Performance_management_model extends CI_Model{
     /**
      * Get default template by id
      * 
-     * @employee
+     * @employee  Mubashir Ahmed
      * @date      02/10/2021
      * 
      * @param  Integer       $templateId
@@ -156,6 +156,304 @@ class Performance_management_model extends CI_Model{
         ->where('sid', $templateId)
         ->get('performance_management_templates')
         ->row_array();
+    }
+
+    /**
+     * Get company active employee by 
+     * permission
+     * 
+     * @employee  Mubashir Ahmed
+     * @date      02/11/2021
+     * 
+     * @method  getUserFields
+     * @method  getMyEmployees
+     * @method  getTeamsAndDepartmentsWithEmployees
+     * 
+     * @param  Integer       $employerId 
+     * @param  Integer       $companyId 
+     * @param  Integer       $hasAccess 
+     *                       (Default 0)
+     * @return Array
+     */
+    function getEmployeeListWithDepartments($employerId, $companyId, $hasAccess = 0){
+        // If not a super admin
+        $employeeIds = -1;
+        //
+        if(!$hasAccess){
+            $employeeIds = $this->getMyEmployees($employerId);
+            
+            if(empty($employeeIds)) return [];
+        }
+        // Get employees
+        $this->db
+        ->select("
+            ".( getUserFields() )."
+            IF(users.joined_at = '' OR users.joined_at = NULL, DATE_FORMAT(users.registration_date, '%Y-%m-%d'), users.joined_at) as joined_at,
+            users.employee_type
+        ")
+        ->from('users')
+        ->where('users.active', 1)
+        ->where('users.terminated_status', 0)
+        ->where('users.parent_sid', $companyId)
+        ->order_by('users.first_name', 'ASC');
+        //
+        if(is_array($employees)) $this->db->where_in('users.sid', $employeeIds);
+        //
+        $employees = $this->db->get()->result_array();
+        //
+        if(empty($employees)) return [];
+        // Get teams and departments
+        $dta = $this->getTeamsAndDepartmentsWithEmployees($companyId);
+        //
+        foreach($employees as $k => $employee){
+            //
+            if(!isset($dta[$employee['userId']])) $employees[$k]['departmentIds'] = $employees[$k]['teamIds'] = [];
+            else{
+                $dta[$employee['userId']]['departmentIds'] = array_unique($dta[$employee['userId']]['departmentIds'], SORT_STRING);
+                $dta[$employee['userId']]['teamIds'] = array_unique($dta[$employee['userId']]['teamIds'], SORT_STRING);
+                $employees[$k] = array_merge($employee, $dta[$employee['userId']]);
+            }
+        }
+        //
+        return $employees;
+    }
+    
+    /**
+     * Get my employees
+     * 
+     * @employee  Mubashir Ahmed
+     * @date      02/11/2021
+     * 
+     * @param  Integer       $employerId 
+     * @return Array
+     */
+    function getMyEmployees($employerId){
+        //
+        $teamIds = $departmentIds = [];
+        // Get team Ids
+        $teams = $this->db
+            ->select('departments_team_management.sid, departments_management.sid as department_sid')
+            ->from('departments_team_management')
+            ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+            ->where('departments_team_management.status', 1)
+            ->where('departments_team_management.is_deleted', 0)
+            ->where('departments_management.status', 1)
+            ->where('departments_management.is_deleted', 0)
+            ->where("FIND_IN_SET({$employerId}, departments_team_management.team_lead) > ", 0, false)
+            ->get()
+            ->result_array();
+        //
+        if(!empty($teams)){
+            $teamIds = array_column($teams, 'sid');
+            $departmentIds = array_column($teams, 'department_sid');
+        }
+        // Get departments
+        $this->db
+        ->select('sid')
+        ->from('departments_management')
+        ->where('status', 1)
+        ->where('is_deleted', 0)
+        ->where("FIND_IN_SET({$employerId}, supervisor) > ", 0, false);
+        //
+        if(!empty($departmentIds)){
+            $this->db->where_not_in('sid', $departmentIds);
+        }
+        //
+        $departments =  $this->db
+        ->get()
+        ->result_array();
+        //
+        if(!empty($departments)){
+            $departmentIds = array_merge($departmentIds, array_column($departments, 'sid'));
+        }
+        //
+        if(empty($departmentIds) && empty($teamIds)) return [];
+        // Get employee Ids
+        $this->db->select('employee_sid')
+        ->from('departments_employee_2_team');
+        //
+        if(!empty($departmentIds) && !empty($teamIds)){
+            $this->db->where_in('department_sid', $departmentIds);
+            $this->db->or_where_in('team_sid', $teamIds);
+        } else if(!empty($departmentIds)){
+            $this->db->where_in('department_sid', $departmentIds);
+        } else if(!empty($teamIds)){
+            $this->db->where_in('team_sid', $teamIds);
+        }
+        //
+        $employees = $this->db->get()->result_array();
+        //
+        if(!empty($employees)) return array_column($employees, 'employee_sid');
+        return [];
+    }
+
+
+    /**
+     * Get company teams & departments with employees
+     * 
+     * @employee  Mubashir Ahmed
+     * @date      02/11/2021
+     * 
+     * @param  Integer       $companyId 
+     * @return Array
+     */
+    function getTeamsAndDepartmentsWithEmployees($companyId){
+        //
+        $ra = [];
+        //
+        $teamIds = $departmentIds = [];
+        // Get team Ids
+        $teams = $this->db
+            ->select('departments_team_management.sid, departments_management.sid as department_sid')
+            ->from('departments_team_management')
+            ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+            ->where('departments_team_management.status', 1)
+            ->where('departments_team_management.is_deleted', 0)
+            ->where('departments_management.status', 1)
+            ->where('departments_management.is_deleted', 0)
+            ->where("departments_management.company_sid", $companyId)
+            ->get()
+            ->result_array();
+        //
+        if(!empty($teams)){
+            $teamIds = array_column($teams, 'sid');
+            $departmentIds = array_column($teams, 'department_sid');
+        }
+        // Get departments
+        $this->db
+        ->select('sid')
+        ->from('departments_management')
+        ->where('status', 1)
+        ->where('is_deleted', 0)
+        ->where("company_sid", $companyId);
+        //
+        if(!empty($departmentIds)){
+            $this->db->where_not_in('sid', $departmentIds);
+        }
+        //
+        $departments =  $this->db
+        ->get()
+        ->result_array();
+        //
+        if(!empty($departments)){
+            $departmentIds = array_merge($departmentIds, array_column($departments, 'sid'));
+        }
+        //
+        if(empty($departmentIds) && empty($teamIds)) return $ra;
+        
+        // Get department employee Ids
+        if(!empty($departmentIds)){
+            //
+            $departmentEmployees =
+            $this->db->select('employee_sid, department_sid')
+            ->from('departments_employee_2_team')
+            ->where_in('department_sid', $departmentIds)
+            ->get()
+            ->result_array();
+            //
+            if(!empty($departmentEmployees)){
+                foreach($departmentEmployees as $employee){
+                    //
+                    if(!isset($ra[$employee['employee_sid']]))
+                        $ra[$employee['employee_sid']] = ['departmentIds' => [], 'teamIds' => []];
+                    //    
+                    $ra[$employee['employee_sid']]['departmentIds'][] = $employee['department_sid'];
+                }
+            }
+        }
+
+        // Get team employee Ids
+        if(!empty($teamIds)){
+            //
+            $teamEmployees =
+            $this->db->select('employee_sid, team_sid')
+            ->from('departments_employee_2_team')
+            ->where_in('team_sid', $teamIds)
+            ->get()
+            ->result_array();
+            //
+            if(!empty($teamEmployees)){
+                foreach($teamEmployees as $employee){
+                    //
+                    if(!isset($ra[$employee['employee_sid']]))
+                        $ra[$employee['employee_sid']] = ['departmentIds' => [], 'teamIds' => []];
+                    //    
+                    $ra[$employee['employee_sid']]['teamIds'][] = $employee['team_sid'];
+                }
+            }
+        }
+
+        return $ra;
+    }
+
+    /**
+     * Get company teams & departments
+     * 
+     * @employee  Mubashir Ahmed
+     * @date      02/11/2021
+     * 
+     * @param  Integer  $companyId 
+     * @return Array
+     */
+    function getTeamsAndDepartments($companyId){
+        //
+        $ra = [];
+        // Get team Ids
+        $ra['teams'] = $this->db
+            ->select('
+                departments_team_management.sid, 
+                departments_team_management.name
+            ')
+            ->from('departments_team_management')
+            ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+            ->where('departments_team_management.status', 1)
+            ->where('departments_team_management.is_deleted', 0)
+            ->where('departments_management.status', 1)
+            ->where('departments_management.is_deleted', 0)
+            ->where("departments_management.company_sid", $companyId)
+            ->order_by('departments_team_management.name', 'ASC')
+            ->get()
+            ->result_array();
+            // Get departments
+            $ra['departments'] = $this->db
+            ->select('sid, name')
+            ->from('departments_management')
+            ->where('status', 1)
+            ->where('is_deleted', 0)
+            ->where("company_sid", $companyId)
+            ->order_by('name', 'ASC')
+            ->get()
+            ->result_array();
+       
+
+        return $ra;
+    }
+    
+    
+    /**
+     * Get company job titles
+     * 
+     * @employee  Mubashir Ahmed
+     * @date      02/11/2021
+     * 
+     * @param  Integer  $companyId 
+     * @return Array
+     */
+    function getCompanyJobTitles($companyId){
+        //
+        return
+        $this->db
+        ->select('job_title')
+        ->distinct()
+        ->from('users')
+        ->where('parent_sid', $companyId)
+        ->where('active', 1)
+        ->where('terminated_status', 0)
+        ->where('job_title <> ', NULL)
+        ->where('job_title != ', '')
+        ->order_by('job_title', 'ASC')
+        ->get()
+        ->result_array();
     }
     
 }

@@ -15,6 +15,8 @@
 
         <!-- Page Body -->
         <div class="csPageBoxBody p10">
+            <!-- Loader -->
+            <div class="csIPLoader jsIPLoader" data-page="create_review"><i class="fa fa-circle-o-notch fa-spin"></i></div>
             <div class="row">
                 <!-- Left menu -->
                 <div class="col-sm-2 col-xs-12">
@@ -42,6 +44,7 @@
                 <!-- Content Area -->
                 <div class="col-sm-10 col-xs-12">
                     <div class="csPageContent">
+                       
                         <!-- Template Section -->
                         <div class="csPageSection jsPageSection" data-key="templates">
                             <!-- Box Header -->
@@ -341,23 +344,19 @@
                             <div class="csPageBoxBody">
                                 <div class="row">
                                     <!-- Filter Bar -->
-                                    <div class="col-sm-3 col-xs-12">
+                                    <div class="col-sm-4 col-xs-12">
                                         <div class="csFilterBox p10">
                                             <h4>
                                                 Rule Settings
                                                 <span class="csBTNBox">
-                                                    <button class="btn btn-black btn-xs">Reset</button>
+                                                    <button class="btn btn-black btn-xs jsResetFilter">Reset</button>
                                                 </span>
                                             </h4>
                                             <!-- Individual Row -->
                                             <div class="row pa10 pb10">
                                                 <div class="col-sm-12">
-                                                    <label class="">Individuals</label>
-                                                    <select class="select2" id="jsFilterIndividuals"
-                                                        name="jsFilterIndividuals[]" multiple="true">
-                                                        <option value="">Mubashir Ahmed</option>
-                                                        <option value="">Ahmed Saleemi</option>
-                                                    </select>
+                                                    <label>Individuals</label>
+                                                    <select id="jsFilterIndividuals" multiple="true"></select>
                                                 </div>
                                             </div>
                                             <!-- Include -->
@@ -366,9 +365,12 @@
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
                                                     <label>Departments</label>
-                                                    <select class="select2" id="jsFilterDepartments" multiple>
-                                                        <option value="">Department 1</option>
-                                                        <option value="">Department 2</option>
+                                                    <select id="jsFilterDepartments" multiple>
+                                                        <?php if(!empty($dnt['departments'])): ?>
+                                                        <?php   foreach($dnt['departments'] as $department): ?>
+                                                        <option value="<?=$department['sid'];?>"><?=$department['name'];?></option>
+                                                        <?php   endforeach; ?>
+                                                        <?php   endif; ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -376,9 +378,12 @@
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
                                                     <label>Teams</label>
-                                                    <select class="select2" id="jsFilterTeams" multiple>
-                                                        <option value="">Team 1</option>
-                                                        <option value="">Team 2</option>
+                                                    <select id="jsFilterTeams" multiple>
+                                                    <?php if(!empty($dnt['teams'])): ?>
+                                                        <?php   foreach($dnt['teams'] as $team): ?>
+                                                        <option value="<?=$team['sid'];?>"><?=$team['name'];?></option>
+                                                        <?php   endforeach; ?>
+                                                        <?php   endif; ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -386,9 +391,9 @@
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
                                                     <label>Employment Type</label>
-                                                    <select class="select2" id="jsFilterEmploymentType" multiple>
-                                                        <option value="">Full-time</option>
-                                                        <option value="">Part-time</option>
+                                                    <select id="jsFilterEmploymentType" multiple>
+                                                        <option value="fulltime">Full-time</option>
+                                                        <option value="parttime">Part-time</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -396,9 +401,12 @@
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
                                                     <label>Job Titles</label>
-                                                    <select class="select2" id="jsFilterJobTitles" multiple>
-                                                        <option value="">Software Engineer</option>
-                                                        <option value="">QA</option>
+                                                    <select id="jsFilterJobTitles" multiple>
+                                                    <?php if(!empty($jobTitles)): ?>
+                                                        <?php   foreach($jobTitles as $jobTitle):?>
+                                                        <option value="<?=$jobTitle['job_title'];?>"><?=$jobTitle['job_title'];?></option>
+                                                        <?php   endforeach; ?>
+                                                        <?php   endif; ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -408,127 +416,59 @@
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
                                                     <label>Exclude Individuals</label>
-                                                    <select class="select2" id="jsFilterDepartments" multiple>
-                                                        <option value="">Mubashir Ahmed</option>
-                                                        <option value="">Ahmed Saleemi</option>
-                                                    </select>
+                                                    <select id="jsFilterExcludeEmployees" multiple></select>
                                                 </div>
                                             </div>
                                             <!-- Teams Row -->
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
                                                     <label>Exclude New Hires</label>
-                                                    <select class="select2" id="jsFilterTeams">
-                                                        <option value="">None</option>
-                                                        <option value="">up to 30 days from hire date</option>
-                                                        <option value="">up to 60 days from hire date</option>
-                                                        <option value="">up to 90 days from hire date</option>
+                                                    <select id="jsFilterExcludeNewHires">
+                                                        <option value="0">None</option>
+                                                        <option value="30">up to 30 days from hire date</option>
+                                                        <option value="60">up to 60 days from hire date</option>
+                                                        <option value="90">up to 90 days from hire date</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <!-- Content Area -->
-                                    <div class="col-sm-9 col-xs-12 pl0">
+                                    <div class="col-sm-8 col-xs-12 pl0">
                                         <div class="csContentArea">
                                             <div class="csPageBoxHeader pa10">
                                                 <ul>
-                                                    <li><a href="" class="active">Included (0)</a></li>
-                                                    <li><a href="">Excluded (0)</a></li>
+                                                    <li><a href="javascript:void(0)" class="active jsShiftTab" data-target="included">Included <span id="jsIncudedEmployeeCount">(0)</span></a></li>
+                                                    <li><a href="javascript:void(0)" class="jsShiftTab" data-target="excluded">Excluded <span id="jsExcludedEmployeeCount">(0)</span></a></li>
                                                 </ul>
                                             </div>
                                             <div class="csPageBoxBody">
-                                                <table class="table table-striped table-condensed">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Full Name</th>
-                                                            <th>Department</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="csEBox">
-                                                                    <figure>
-                                                                        <img src="<?=randomData('img');?>"
-                                                                            class="csRadius50" />
-                                                                    </figure>
-                                                                    <div class="csEBoxText">
-                                                                        <h4 class="mb0"><?=randomData('name');?></h4>
-                                                                        <p class="mb0">(QA) [Admin Plus]</p>
-                                                                        <p>Jan 01 2021, Sunday</p>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <h5>Development</h5>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="csEBox">
-                                                                    <figure>
-                                                                        <img src="<?=randomData('img');?>"
-                                                                            class="csRadius50" />
-                                                                    </figure>
-                                                                    <div class="csEBoxText">
-                                                                        <h4 class="mb0"><?=randomData('name');?></h4>
-                                                                        <p class="mb0">(QA) [Admin Plus]</p>
-                                                                        <p>Jan 01 2021, Sunday</p>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <h5>Development</h5>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="csEBox">
-                                                                    <figure>
-                                                                        <img src="<?=randomData('img');?>"
-                                                                            class="csRadius50" />
-                                                                    </figure>
-                                                                    <div class="csEBoxText">
-                                                                        <h4 class="mb0"><?=randomData('name');?></h4>
-                                                                        <p class="mb0">(QA) [Admin Plus]</p>
-                                                                        <p>Jan 01 2021, Sunday</p>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <h5>Development</h5>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div class="csPageBoxFooter p10">
-                                                <div class="row">
-                                                    <div class="col-sm-6"><strong class="mt10">Showing 10 of
-                                                            100</strong></div>
-                                                    <div class="col-sm-6">
-                                                        <ul class="pagination csPagination">
-                                                            <li class="page-item"><a href="javascript:void(0)">First</a>
-                                                            </li>
-                                                            <li class="page-item"><a
-                                                                    href="javascript:void(0)">&laquo;</a></li>
-                                                            <li class="page-item"><a href="javascript:void(0)">1</a>
-                                                            </li>
-                                                            <li class="page-item"><a href="javascript:void(0)">2</a>
-                                                            </li>
-                                                            <li class="page-item"><a href="javascript:void(0)">3</a>
-                                                            </li>
-                                                            <li class="page-item"><a href="javascript:void(0)">4</a>
-                                                            </li>
-                                                            <li class="page-item"><a
-                                                                    href="javascript:void(0)">&raquo;</a></li>
-                                                            <li class="page-item"><a href="javascript:void(0)">Last</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
+                                                <!-- Loader -->
+                                                <div class="csIPLoader jsIPLoader" data-page="review_incexc"><i class="fa fa-circle-o-notch fa-spin"></i></div>
+                                                <div class="jsTabSection" data-id="included">
+                                                    <table class="table table-striped table-condensed">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Full Name</th>
+                                                                <th>Department</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="jsReviewIncludedWrap"></tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="jsTabSection dn" data-id="excluded">
+                                                    <table class="table table-striped table-condensed">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Full Name</th>
+                                                                <th>Department</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="jsReviewExcludedWrap"></tbody>
+                                                    </table>
                                                 </div>
                                             </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -536,9 +476,9 @@
 
                             <div class="csPageBoxFooter p10">
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i> Back To Schedule</button>
-                                    <button class="btn btn-orange btn-lg"><i class="fa fa-arrow-circle-right"></i>Save & Next</button>
-                                    <button class="btn btn-black btn-lg"><i class="fa fa-edit"></i> Finish Later</button>
+                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="schedule"><i class="fa fa-long-arrow-left"></i> Back To Schedule</button>
+                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="reviewers"><i class="fa fa-arrow-circle-right"></i>Save & Next</button>
+                                    <button class="btn btn-black btn-lg jsFinishLater dn"><i class="fa fa-edit"></i> Finish Later</button>
                                 </span>
                                 <div class="clearfix"></div>
                             </div>
@@ -566,13 +506,8 @@
                                                 <input type="radio" name="reviewerType" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <!-- <label class="control control--radio">
-                                                Direct Reports
-                                                <input type="radio" name="reviewerType" />
-                                                <div class="control__indicator"></div>
-                                            </label> <br /> -->
                                             <label class="control control--radio">
-                                                Peers (Peers sharing their manager)
+                                                Peers (Colleagues)
                                                 <input type="radio" name="reviewerType" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
@@ -581,11 +516,9 @@
                                                 <input type="radio" name="reviewerType" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <br />
-                                            <select class="select2" multiple="multiple">
-                                                <option value="1">Mubashir Ahmed</option>
-                                                <option value="2">Ahmed Saleemi</option>
-                                            </select>
+                                            <div class="dn" id="jsReviewSpecificReviewersBox">
+                                                <select id="jsReviewSpecificReviewers" multiple="multiple"></select>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -593,50 +526,14 @@
                                     <!-- Row 2 -->
                                     <div class="row">
                                         <div class="col-sm-3 col-xs-12">
-                                            <h5>Reviewees (3)</h5>
+                                            <h5>Reviewees <span id="jsReviewTotalRevieweeCount"></span></h5>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
                                             <h5>Assigned Reviewers</h5>
                                         </div>
                                     </div>
                                     <div class="bbt"></div>
-                                    <?php for($i =0; $i < 10; $i++) { ?>
-                                    <!-- Row 3 -->
-                                    <div class="csAddReviewerSection">
-                                        <div class="row">
-                                            <div class="col-sm-3 col-xs-12">
-                                                <div class="csEBox">
-                                                    <figure>
-                                                        <img src="<?=randomData('img');?>" class="csRadius50" />
-                                                    </figure>
-                                                    <div class="csEBoxText">
-                                                        <h4 class="mb0"><?=randomData('name');?></h4>
-                                                        <p class="mb0">(QA) [Admin Plus]</p>
-                                                        <p>Jan 01 2021, Sunday</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-9 col-xs-12">
-                                                <ul>
-                                                    <li><span>Managers</span>,</li>
-                                                    <li><span>Others</span></li>
-                                                </ul>
-                                                <a href="javascript:void(0)" class="btn  btn-link pl0">
-                                                    <i class="fa fa-plus-circle"></i> Include Reviewer
-                                                </a>
-                                                <a href="javascript:void(0)" class="btn  btn-link pl0">
-                                                    <i class="fa fa-plus-circle"></i> Exclude Reviewers
-                                                </a>
-                                                <div class="dn">
-                                                    <select class="select2" multiple="multiple">
-                                                        <option value="1">Mubashir Ahmed</option>
-                                                        <option value="2">Ahmed Saleemi</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <?php } ?>
+                                    <div id="jsReviewRevieweeWrap"></div>
                                 </div>
                             </div>
                             <!--  -->

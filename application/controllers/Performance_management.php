@@ -188,6 +188,10 @@ class Performance_management extends Public_Controller{
         $this->pargs['templates']['personal'] = $this->pmm->getPersonalTemplates($this->pargs['companyId'], ['sid', 'name']);
         // Get company templates
         $this->pargs['templates']['company'] = $this->pmm->getCompanyTemplates(['sid', 'name']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // Get job titles
+        $this->pargs['jobTitles'] = $this->pmm->getCompanyJobTitles($this->pargs['companyId']);
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -249,11 +253,11 @@ class Performance_management extends Public_Controller{
      * @return JSON
      */
     function get_handler(){
-        $d = [];
-        // Get session
-        $session = $this->checkLogin($d, true);
+        $pargs = [];
+        // Check session
+        $isLogin = $this->checkLogin($pargs, true);
         //
-        if(!$session) res($this->resp);
+        if(!$isLogin) res($this->resp);
         //
         $this->resp['Redirect'] = false;
         //
@@ -291,6 +295,16 @@ class Performance_management extends Public_Controller{
                 $this->resp['Status'] = true;
                 $this->resp['Response'] = 'Proceed.';
                 $this->resp['Data'] = $template;
+                //
+                res($this->resp);
+            break;
+            // Get employee list with dnt
+            case "employeeListWithDnT":
+                $list = $this->pmm->getEmployeeListWithDepartments($pargs['employerId'], $pargs['companyId'], getEmployerAccessLevel());
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                $this->resp['Data'] = $list;
                 //
                 res($this->resp);
             break;

@@ -1,4 +1,6 @@
-// Create create review object
+/**
+ * 
+ */
 const reviewOBJ = {
     title: '',
     description: '',
@@ -88,6 +90,13 @@ const reviewOBJ = {
 };
 
 /**
+ * 
+ */
+const stepCaller = {
+    'reviewers': loadReviewerStep
+}
+
+/**
  * Click
  * 
  * Review step
@@ -117,6 +126,8 @@ $('.jsReviewStep').click(function(e) {
         } else {
             $('.jsFinishLater').hide();
         }
+        //
+        if (stepCaller[step] !== undefined) stepCaller[step]();
         //
         $('.jsPageSection').hide(0);
         $(`.jsPageSection[data-key="${step}"]`).show(0);
@@ -188,8 +199,12 @@ function getTemplateQuestions(id, type) {
  */
 function validateStep(step, cb) {
     //
+    cb();
+    return;
     switch (step) {
         case "reviewees":
+            cb();
+            return;
             if (reviewOBJ.title == '') {
                 alertify.alert('WARNING!', getError('required_review_title'), function() {});
                 return false;
@@ -220,7 +235,254 @@ function validateStep(step, cb) {
                 }
             }
             break;
+        case "reviewers":
+            cb();
+            return;
+            if (reviewOBJ.reviewees.included.length == 0) {
+                alertify.alert('WARNING!', getError('required_review_reviewees'), function() {});
+                return false;
+            }
+            break;
     }
     //
     cb();
 }
+
+/**
+ * Get employees list with dnt
+ * 
+ * @return {Promise}
+ */
+function getEmployeeListWithDnT() {
+    return new Promise(function(res) {
+        $.get(`${urls.handler}get/employeeListWithDnT`)
+            .done(function(resp) { res(resp); })
+            .fail(function(resp) {
+                res(getMessage(resp.status, true));
+            });
+    });
+}
+
+/**
+ * Make employee view
+ * 
+ * @param  {Boolean|Undefined} byPass
+ * @return {Void}
+ */
+function makeEmployeeView(byPass) {
+    //
+    ml(true, 'review_incexc');
+    //
+    $('#jsReviewIncludedWrap').html('');
+    $('#jsReviewExcludedWrap').html('');
+    //
+    const allEmployees = window.performanceManagement.employees;
+    //
+    let inc = [];
+    let exc = [];
+
+    if (byPass === true) {
+        inc = allEmployees;
+    } else {
+        //
+        const filter = {
+            individuals: $('#jsFilterIndividuals').val() || [],
+            departments: $('#jsFilterDepartments').val() || [],
+            teams: $('#jsFilterTeams').val() || [],
+            employmentTypes: $('#jsFilterEmploymentType').val() || [],
+            jobTitles: $('#jsFilterJobTitles').val() || [],
+            excludedIndividuals: $('#jsFilterExcludeEmployees').val() || [],
+            excludedNewHires: $('#jsFilterExcludeNewHires').val() || 0
+        };
+        //
+        allEmployees.map(function(em) {
+            // Excluded employee
+            //
+            if ($.inArray(em.userId, filter.excludedIndividuals) !== -1) {
+                exc.push(em);
+                return;
+            }
+            //
+            if (moment().diff(moment(em.joined_at, dateTimeFormats.ymd), 'days') <= filter.excludedNewHires) {
+                exc.push(em);
+                return;
+            }
+
+            // Included employee
+            //
+            if ($.inArray(em.userId, filter.individuals) !== -1) {
+                inc.push(em);
+                return;
+            }
+            //
+            if (_.intersection(em.departmentIds, filter.departments).length > 0) {
+                inc.push(em);
+                return;
+            }
+            //
+            if (_.intersection(em.teamIds, filter.teams).length > 0) {
+                inc.push(em);
+                return;
+            }
+            //
+            if ($.inArray(em.employee_type, filter.employmentTypes) !== -1) {
+                inc.push(em);
+                return;
+            }
+            //
+            if ($.inArray(em.job_title, filter.jobTitles) !== -1) {
+                inc.push(em);
+                return;
+            }
+
+            //
+            inc.push(em);
+        });
+    }
+    //
+    reviewOBJ.reviewees.included = inc;
+    reviewOBJ.reviewees.excluded = exc;
+    //
+    $('#jsIncudedEmployeeCount').text(`(${inc.length})`);
+    $('#jsExcludedEmployeeCount').text(`(${exc.length})`);
+    //
+    if (inc.length > 0) {
+        let rows = '';
+        inc.map(function(ie) {
+                    rows += `
+            <tr>
+                <td>
+                    <div class="csEBox">
+                        <figure>
+                            <img src="${getImageURL(ie.profile_picture)}"
+                                class="csRadius50" />
+                        </figure>
+                        <div class="csEBoxText">
+                            <h4 class="mb0"><strong>${ie.first_name} ${ie.last_name}</strong></h4>
+                            <p class="mb0">${remakeEmployeeName(ie, false)}</p>
+                            <p>${moment(ie.joined_at, dateTimeFormats.ymt).format(dateTimeFormats.mdy)}</p>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <h5>${ie.departmentIds.length > 0 ? $(`#jsFilterDepartments option[value="${ie.departmentIds[0]}"]`).text() : '-'}</h5>
+                </td>
+            </tr>
+            `;
+        });
+        $('#jsReviewIncludedWrap').html(rows);
+    } else{
+        $('#jsReviewIncludedWrap').html('<tr><td colspan="2"><p class="alert alert-info text-center">No included employees were found.</p></td></tr>');
+    }
+    //
+    if (exc.length > 0) {
+        let rows = '';
+        exc.map(function(ie) {
+                    rows += `
+            <tr>
+                <td>
+                    <div class="csEBox">
+                        <figure>
+                            <img src="${getImageURL(ie.profile_picture)}"
+                                class="csRadius50" />
+                        </figure>
+                        <div class="csEBoxText">
+                            <h4 class="mb0"><strong>${ie.first_name} ${ie.last_name}</strong></h4>
+                            <p class="mb0">${remakeEmployeeName(ie, false)}</p>
+                            <p>${moment(ie.joined_at, dateTimeFormats.ymt).format(dateTimeFormats.mdy)}</p>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <h5>${ie.departmentIds.length > 0 ? $(`#jsFilterDepartments option[value="${ie.departmentIds[0]}"]`).text() : '-'}</h5>
+                </td>
+            </tr>
+            `;
+        });
+        $('#jsReviewExcludedWrap').html(rows);
+    } else{
+        $('#jsReviewExcludedWrap').html('<tr><td colspan="2"><p class="alert alert-info text-center">No excluded employees were found.</p></td></tr>');
+    }
+    //
+    ml(false, 'review_incexc');
+}
+
+/**
+ * 
+ */
+function loadReviewerStep(){
+    $('#jsReviewTotalRevieweeCount').text(`(${reviewOBJ.reviewees.included.length})`);
+
+    //
+    let rows = '';
+    reviewOBJ.reviewees.included.map(function(em){
+        rows += `
+        <!-- Row -->
+        <div class="csAddReviewerSection jsRevieweeRow" data-id="${em.userId}">
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    <div class="csEBox">
+                        <figure>
+                            <img src="${getImageURL(em.profile_picture)}" class="csRadius50" />
+                        </figure>
+                        <div class="csEBoxText">
+                            <h4 class="mb0"><strong>${em.first_name} ${em.last_name}</strong></h4>
+                            <p class="mb0">${remakeEmployeeName(em, false)}</p>
+                            <p>${moment(em.joined_at, dateTimeFormats.ymd).format(dateTimeFormats.mdy)}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-9 col-xs-12">
+                    <ul>
+                        <li class="jsPopoverHover"><span>Included Reviewers (0)</span>,</li>
+                        <li><span>Excluded Reviewers (0)</span></li>
+                    </ul>
+                    <button  class="btn  btn-link pl0">
+                        <i class="fa fa-plus-circle"></i> Include Reviewer
+                    </button>
+                    <button  class="btn  btn-link pl0">
+                        <i class="fa fa-plus-circle"></i> Exclude Reviewer
+                    </button>
+                    <div class="dn" class="jsReviewIncludeReviewerBox">
+                        <select multiple="multiple"></select>
+                    </div>
+                    <div class="dn" class="jsReviewExcludeReviewerBox">
+                        <select multiple="multiple"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+
+    //
+    $('#jsReviewRevieweeWrap').html(rows);
+
+    //
+    $('.jsPopoverHover').popover({
+        title: 'Included Reviewers',
+        placement: "top auto"
+        // template:
+    });
+}
+
+
+// Calls
+// Get employees with D&T
+getEmployeeListWithDnT()
+    .then(function(resp) {
+        if (resp.Data !== undefined && resp.Data.length > 0) {
+            window.performanceManagement.employees = resp.Data;
+            //
+            let options = '';
+            //
+            window.performanceManagement.employees.map(function(em) {
+                options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
+            });
+            $('#jsFilterIndividuals').html(options).select2();
+            $('#jsFilterExcludeEmployees').html(options).select2();
+            $('#jsReviewSpecificReviewers').html(options).select2();
+            //
+            makeEmployeeView(true);
+        }
+    });

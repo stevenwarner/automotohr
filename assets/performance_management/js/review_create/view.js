@@ -27,6 +27,14 @@ $(function() {
 
     //
     $('#jsReviewRepeatType').select2({ minimumResultsForSearch: -1 });
+    $('#jsFilterIndividuals').select2();
+    $('#jsFilterDepartments').select2({ minimumResultsForSearch: -1 });
+    $('#jsFilterTeams').select2({ minimumResultsForSearch: -1 });
+    $('#jsFilterEmploymentType').select2({ minimumResultsForSearch: -1 });
+    $('#jsFilterJobTitles').select2({ minimumResultsForSearch: -1 });
+    $('#jsFilterExcludeNewHires').select2({ minimumResultsForSearch: -1 });
+    $('#jsFilterExcludeEmployees').select2();
+    $('#jsReviewSpecificReviewers').select2();
 
 
     // Events
@@ -223,6 +231,21 @@ $(function() {
         }
     });
 
+    /**
+     * Change
+     * 
+     * 
+     * @returns {Void}
+     */
+    $('#jsReviewRepeatType').change(makeEmployeeView);
+    $('#jsFilterIndividuals').change(makeEmployeeView);
+    $('#jsFilterDepartments').change(makeEmployeeView);
+    $('#jsFilterTeams').change(makeEmployeeView);
+    $('#jsFilterEmploymentType').change(makeEmployeeView);
+    $('#jsFilterJobTitles').change(makeEmployeeView);
+    $('#jsFilterExcludeNewHires').change(makeEmployeeView);
+    $('#jsFilterExcludeEmployees').change(makeEmployeeView);
+
 
     // Functions
 
@@ -375,4 +398,8 @@ $(function() {
         boxCount++;
     }
 
+
+
+    // Hide loader
+    ml(false, 'create_review');
 });

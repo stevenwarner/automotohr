@@ -33,6 +33,7 @@ const
 <script type="text/javascript" src="<?=base_url('assets/select2/select2.min.js');?>"></script>
 <script type="text/javascript" src="<?=base_url('assets/js/pagination.min.js');?>"></script>
 <script type="text/javascript" src="<?=base_url('assets/js/moment.min.js');?>"></script>
+<script type="text/javascript" src="<?=base_url('assets/lodash/loadash.min.js');?>"></script>
 
 <!-- Common functions -->
 <script src="<?=base_url('assets/performance_management/js/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>

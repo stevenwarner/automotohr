@@ -1,66 +1,144 @@
-//
-window.performanceManagement = {
-    PaginationOBJ: {}
-};
-//
-// Mobile menu
+/**
+ * Add performance management object 
+ * to window object
+ */
+window.performanceManagement = {};
+
+/**
+ * Click
+ * 
+ * Triggers when page modal closes
+ * 
+ * @param  {Object} e
+ * @return {Void}
+ */
+$(document).on('click', '.jsModalCancel', (e) => {
+    //
+    e.preventDefault();
+    //
+    if ($(e.target).data('ask') != undefined) {
+        //
+        alertify.confirm(
+            'Any unsaved changes will be lost.',
+            () => {
+                //
+                $(e.target).closest('.csModal').fadeOut(300);
+                //
+                $('body').css('overflow-y', 'auto');
+                //
+                $('#ui-datepicker-div').remove();
+            }
+        ).set('labels', {
+            ok: 'LEAVE',
+            cancel: 'NO, i WILL STAY'
+        }).set(
+            'title', 'Notice!'
+        );
+    } else {
+        //
+        $(e.target).closest('.csModal').fadeOut(300);
+        //
+        $('body').css('overflow-y', 'auto');
+        //
+        $('#ui-datepicker-div').remove();
+    }
+});
+
+/**
+ * Click
+ * 
+ * Triggers on filter button
+ * 
+ * @param  {Object} e
+ * @return {Void}
+ */
+$('.jsFilterBtn').click(function(e) {
+    e.preventDefault();
+    $(`.${$(this).data('target')}`).toggle();
+});
+
+/**
+ * Click
+ * 
+ * Triggers on top menu on mobile
+ * 
+ * @param  {Object} e
+ * @return {Void}
+ */
 $('.csMobile span i').click(function(e) { $('.csVertical').toggle(); });
-//
-function getImageURL(img) {
-    if (img == '' || img == null) {
-        return `${baseURL}assets/images/img-applicant.jpg`;
-    } else return `${awsURL}${img}`;
+
+/**
+ * Click
+ * 
+ * Handle tab shift
+ * 
+ */
+$('.jsShiftTab').click(function(e) {
+    ml(true, 'review_incexc');
+    //
+    e.preventDefault();
+    $('.jsShiftTab').removeClass('active');
+    $(this).addClass('active');
+    //
+    $('.jsTabSection').addClass('dn');
+    $(`.jsTabSection[data-id="${$(this).data('target')}"]`).removeClass('dn');
+    //
+    ml(false, 'review_incexc');
+});
+
+/**
+ * Check if input is empty or not
+ * 
+ * @param  {String} str 
+ * @return {Boolean}  
+ */
+function isEmpty(str) {
+    return str == '' || str == null || str == undefined ? true : false;
 }
 
-//
+/**
+ * Make image url
+ * 
+ * @param  {String} img 
+ * @return {String}
+ */
+function getImageURL(img) {
+    if (img == '' || img == null) {
+        return `${urls.base}assets/images/img-applicant.jpg`;
+    } else return `${urls.aws }${img}`;
+}
+
+/**
+ * Make employee number
+ * 
+ * @param  {Integer} i 
+ * @param  {Integer} n 
+ * @return {Integer}
+ */
 function getEmployeeId(i, n) {
     return n == '' || n == null ? i : n;
 }
 
-//
+/**
+ * Capitalize words
+ * 
+ * @param  {String} str 
+ * @return {String} 
+ */
 function ucwords(str) {
     return (str + '').replace(/^([a-z])|\s+([a-z])/g, function($1) {
         return $1.toUpperCase();
     });
 }
 
-// 
-function isEmpty(str) {
-    return str == '' || str == null || str == undefined ? true : false;
-}
-
-//
-$(document).on('keyup', '.js-number', function() {
-    $(this).val(
-        $(this).val().replace(/[^0-9]/, '')
-    );
-});
-
-//
-$('.jsToggle').click(function(e) {
-    //
-    e.preventDefault();
-    //
-    if ($(this).find('i').hasClass('fa-minus-circle')) {
-        $(this).find('i')
-            .removeClass('fa-minus-circle')
-            .addClass('fa-plus-circle');
-        //
-        $(`div[data-target="${$(this).data('target')}"]`).hide();
-    } else {
-        $(this).find('i')
-            .removeClass('fa-plus-circle')
-            .addClass('fa-minus-circle');
-        //
-        $(`div[data-target="${$(this).data('target')}"]`).show();
-    }
-});
-
-//
-function remakeEmployeeName(
-    o,
-    d
-) {
+/**
+ * Make employee name and role
+ * 
+ * @param  {Object}  o 
+ * @param  {Boolean} d 
+ * @return {String}
+ */
+function remakeEmployeeName(o, d) {
     //
     let r = '';
     //
@@ -82,8 +160,13 @@ function remakeEmployeeName(
     return r;
 }
 
-
-// Loader
+/**
+ * Page loader
+ * 
+ * @param  {Boolean} doShow 
+ * @param  {String}  p 
+ * @return {Void}
+ */
 function ml(doShow, p) {
     //
     p = p === undefined ? `.jsIPLoader` : `.jsIPLoader[data-page="${p}"]`;
@@ -92,18 +175,14 @@ function ml(doShow, p) {
     else $(p).show();
 }
 
-//
-function getField(f) {
-    let field = $(f).val();
-    if (!field || field == 0 || field == null) return 0;
-    return field;
-}
-
-// Modal
-function Modal(
-    options,
-    cb
-) {
+/**
+ * Modal page
+ * 
+ * @param   {Object}   options 
+ * @param   {Function} cb 
+ * @returns {Void}
+ */
+function Modal(options, cb) {
     //
     let html = `
     <!-- Custom Modal -->
@@ -137,196 +216,15 @@ function Modal(
     if (typeof(cb) === 'function') cb();
 }
 
-//
-$(document).on('click', '.jsModalCancel', (e) => {
-    //
-    e.preventDefault();
-    //
-    if ($(e.target).data('ask') != undefined) {
-        //
-        alertify.confirm(
-            'Any unsaved changes will be lost.',
-            () => {
-                //
-                $(e.target).closest('.csModal').fadeOut(300);
-                //
-                $('body').css('overflow-y', 'auto');
-                //
-                $('#ui-datepicker-div').remove();
-            }
-        ).set('labels', {
-            ok: 'LEAVE',
-            cancel: 'NO, i WILL STAY'
-        }).set(
-            'title', 'Notice!'
-        );
-    } else {
-        //
-        $(e.target).closest('.csModal').fadeOut(300);
-        //
-        $('body').css('overflow-y', 'auto');
-        //
-        $('#ui-datepicker-div').remove();
-    }
-});
-
-
-// Pagination
-// Pagination
-// Get previous page
-$(document).on('click', '.js-pagination-prev', pagination_event);
-// Get first page
-$(document).on('click', '.js-pagination-first', pagination_event);
-// Get last page
-$(document).on('click', '.js-pagination-last', pagination_event);
-// Get next page
-$(document).on('click', '.js-pagination-next', pagination_event);
-// Get page
-$(document).on('click', '.js-pagination-shift', pagination_event);
-// TODO convert it into a plugin
-function load_pagination(limit, list_size, target_ref, page_type) {
-    //
-    var obj = window.timeoff.PaginationOBJ[page_type];
-    // parsing to int
-    limit = parseInt(limit);
-    obj['page'] = parseInt(obj['page']);
-    // get paginate array
-    var page_array = paginate(obj['count'], obj['Main']['page'], limit, list_size);
-    // append the target ul
-    // to top and bottom of table
-    var rows = '';
-    rows += '<div class="">';
-    rows += '<div class="col-lg-12">';
-    rows += '   <div class="row pto-pagination">';
-    rows += '       <div class="col-xs-12 col-lg-3">';
-    rows += '           <div class="pagination-left-content js-showing-target">';
-    rows += '               <div class="js-show-record"></div>';
-    rows += '           </div>';
-    rows += '       </div>';
-    rows += '       <div class="col-xs-12 col-lg-9">';
-    rows += '           <nav aria-label="Pagination">';
-    rows += '               <ul class="pagination cs-pagination js-pagination"></ul>';
-    rows += '           </nav>';
-    rows += '       </div>';
-    rows += '   </div>';
-    rows += '</div>';
-    rows += '</div>';
-
-    target_ref.html(rows);
-    // set rows append table
-    var target = target_ref.find('.js-pagination');
-    var targetShowing = target_ref.find('.js-showing-target');
-    // get total items number
-    var total_records = page_array.total_pages;
-    // load pagination only there
-    // are more than one page
-    if (obj['count'] >= limit) {
-        // generate li for
-        // pagination
-        var rows = '';
-        // move to one step back
-        rows += '<li class="page-item"><a href="javascript:void(0)" data-page-type="' + (page_type) + '" class="' + (obj['Main']['page'] == 1 ? '' : 'js-pagination-first') + '">First</a></li>';
-        rows += '<li class="page-item"><a href="javascript:void(0)" data-page-type="' + (page_type) + '" class="' + (obj['Main']['page'] == 1 ? '' : 'js-pagination-prev') + '">&laquo;</a></li>';
-        // generate 5 li
-        $.each(page_array.pages, function(index, val) {
-            rows += '<li class="' + (val == obj['Main']['page'] ? 'active page-item' : '') + '"><a href="javascript:void(0)" data-page-type="' + (page_type) + '" data-page="' + (val) + '" class="' + (obj['Main']['page'] != val ? 'js-pagination-shift' : '') + '">' + (val) + '</a></li>';
-        });
-        // move to one step forward
-        rows += '<li class="page-item"><a href="javascript:void(0)" data-page-type="' + (page_type) + '" class="' + (obj['Main']['page'] == page_array.total_pages ? '' : 'js-pagination-next') + '">&raquo;</a></li>';
-        rows += '<li class="page-item"><a href="javascript:void(0)" data-page-type="' + (page_type) + '" class="' + (obj['Main']['page'] == page_array.total_pages ? '' : 'js-pagination-last') + '">Last</a></li>';
-        // append to ul
-        target.html(rows);
-    }
-    // append showing of records
-    targetShowing.html('<p>Showing ' + (page_array.start_index + 1) + ' - ' + (page_array.end_index != -1 ? (page_array.end_index + 1) : 1) + ' of ' + (obj['count']) + '</p>');
-}
-// Paginate logic
-function paginate(total_items, current_page, page_size, max_pages) {
-    // calculate total pages
-    var total_pages = Math.ceil(total_items / page_size);
-
-    // ensure current page isn't out of range
-    if (current_page < 1) current_page = 1;
-    else if (current_page > total_pages) current_page = total_pages;
-
-    var start_page, end_page;
-    if (total_pages <= max_pages) {
-        // total pages less than max so show all pages
-        start_page = 1;
-        end_page = total_pages;
-    } else {
-        // total pages more than max so calculate start and end pages
-        var max_pagesBeforecurrent_page = Math.floor(max_pages / 2);
-        var max_pagesAftercurrent_page = Math.ceil(max_pages / 2) - 1;
-        if (current_page <= max_pagesBeforecurrent_page) {
-            // current page near the start
-            start_page = 1;
-            end_page = max_pages;
-        } else if (current_page + max_pagesAftercurrent_page >= total_pages) {
-            // current page near the end
-            start_page = total_pages - max_pages + 1;
-            end_page = total_pages;
-        } else {
-            // current page somewhere in the middle
-            start_page = current_page - max_pagesBeforecurrent_page;
-            end_page = current_page + max_pagesAftercurrent_page;
-        }
-    }
-
-    // calculate start and end item indexes
-    var start_index = (current_page - 1) * page_size;
-    var end_index = Math.min(start_index + page_size - 1, total_items - 1);
-
-    // create an array of pages to ng-repeat in the pager control
-    var pages = Array.from(Array((end_page + 1) - start_page).keys()).map(i => start_page + i);
-
-    // return object with all pager properties required by the view
-    return {
-        total_items: total_items,
-        // current_page: current_page,
-        // page_size: page_size,
-        total_pages: total_pages,
-        start_page: start_page,
-        end_page: end_page,
-        start_index: start_index,
-        end_index: end_index,
-        pages: pages
-    };
-}
-//
-function pagination_event() {
-    //
-    var i = $(this).data('page-type');
-    // When next is press
-    if ($(this).hasClass('js-pagination-next') === true) {
-        window.timeoff.PaginationOBJ[i]['Main']['page'] = window.timeoff.PaginationOBJ[i]['Main']['page'] + 1;
-        window.timeoff.PaginationOBJ[i]['cb']($(this));
-    } else if ($(this).hasClass('js-pagination-prev') === true) {
-        window.timeoff.PaginationOBJ[i]['Main']['page'] = window.timeoff.PaginationOBJ[i]['Main']['page'] - 1;
-        window.timeoff.PaginationOBJ[i]['cb']($(this));
-    } else if ($(this).hasClass('js-pagination-first') === true) {
-        window.timeoff.PaginationOBJ[i]['Main']['page'] = 1;
-        window.timeoff.PaginationOBJ[i]['cb']($(this));
-    } else if ($(this).hasClass('js-pagination-last') === true) {
-        window.timeoff.PaginationOBJ[i]['Main']['page'] = window.timeoff.PaginationOBJ[i]['pages'];
-        window.timeoff.PaginationOBJ[i]['cb']($(this));
-    } else if ($(this).hasClass('js-pagination-shift') === true) {
-        window.timeoff.PaginationOBJ[i]['Main']['page'] = parseInt($(this).data('page'));
-        window.timeoff.PaginationOBJ[i]['cb']($(this));
-    }
-}
-
-// 
-$('.jsFilterBtn').click(function(e) {
-    e.preventDefault();
-    $(`.${$(this).data('target')}`).toggle();
-});
-
-// strips tags
+/**
+ * Strip html tags
+ * 
+ * @param  {String} str 
+ * @return {String}
+ */
 function strip_tags(str) {
     return $('<div/>').html(str).text();
 }
-
 
 /**
  * Get errors
@@ -346,6 +244,7 @@ function getError(errorCode, isError) {
         required_review_end_date: "Review end date is required.",
         required_review_repeat_val: "Review recur value is required.",
         required_review_due_val: "Review due value is required.",
+        required_review_reviewees: "Please, at least select one reviewee.",
     };
     //
     if (isError === true)
@@ -369,7 +268,6 @@ function handleRedirect() {
     );
 }
 
-
 /**
  * Clean numeric input
  * 
@@ -379,3 +277,17 @@ function handleRedirect() {
 function nb(i) {
     return i.replace(/[^0-9]/g, '');
 }
+
+/**
+ * Get column as array
+ * 
+ * @param  {name} column 
+ * @return {Array}
+ */
+Array.prototype.arrayColumn = function(column) {
+    return this.map(function(el) {
+        // gets corresponding 'column'
+        if (el.hasOwnProperty(column)) return el[column];
+        // removes undefined values
+    }).filter(function(el) { return typeof el != 'undefined'; });
+};
