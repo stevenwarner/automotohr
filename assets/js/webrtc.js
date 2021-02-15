@@ -21,7 +21,7 @@ if (!isSecureOrigin) {
     location.protocol = 'HTTPS';
 }
 
-navigator.getUserMedia  = navigator.getUserMedia ||
+navigator.getUserMedia = navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
     navigator.mozGetUserMedia ||
     navigator.msGetUserMedia;
@@ -75,14 +75,14 @@ function toggleRecording() {
 }
 
 function startRecording() {
-    var options = {mimeType: 'video/webm', bitsPerSecond: 100000};
+    var options = { mimeType: 'video/webm', bitsPerSecond: 100000 };
     recordedBlobs = [];
     try {
         mediaRecorder = new MediaRecorder(window.stream, options);
     } catch (e0) {
         console.log('Unable to create MediaRecorder with options Object: ', e0);
         try {
-            options = {mimeType: 'video/webm,codecs=vp9', bitsPerSecond: 100000};
+            options = { mimeType: 'video/webm,codecs=vp9', bitsPerSecond: 100000 };
             mediaRecorder = new MediaRecorder(window.stream, options);
         } catch (e1) {
             console.log('Unable to create MediaRecorder with options Object: ', e1);
@@ -104,7 +104,6 @@ function startRecording() {
     mediaRecorder.onstop = handleStop;
     mediaRecorder.ondataavailable = handleDataAvailable;
     mediaRecorder.start(10);
-    console.log('MediaRecorder started', mediaRecorder);
 }
 
 function stopRecording() {
@@ -114,7 +113,7 @@ function stopRecording() {
 }
 
 function play() {
-    var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
+    var superBuffer = new Blob(recordedBlobs, { type: 'video/webm' });
     recordedVideo.src = window.URL.createObjectURL(superBuffer);
 }
 
@@ -135,12 +134,12 @@ function play() {
 //}
 
 function download() {
-    var blob = new Blob(recordedBlobs, {type: 'video/webm'});
+    var blob = new Blob(recordedBlobs, { type: 'video/webm' });
     var url = window.URL.createObjectURL(blob);
     var a = document.createElement('a');
     var reader = new FileReader();
 
-    reader.onload = function (event) {
+    reader.onload = function(event) {
         $('#download').text('Uploading...');
         $("#download").prop("disabled", true);
         var fd = new FormData();
@@ -152,7 +151,7 @@ function download() {
             data: fd,
             processData: false,
             contentType: false
-        }).done(function (data) {
+        }).done(function(data) {
             if (data == 'error') {
                 // do something on error
             } else {

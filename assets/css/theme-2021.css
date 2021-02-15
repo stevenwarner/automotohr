@@ -689,9 +689,7 @@
 }
 
 .csPageWrap a.btn-orange:hover,
-.csPageWrap button.btn-orange:hover,
-.csPageWrap a.btn-orange:focus,
-.csPageWrap button.btn-orange:focus {
+.csPageWrap button.btn-orange:hover {
     background-color: #ffffff;
     color: #fd7b5b;
     border: 1px solid #fd7b5b;
@@ -1161,4 +1159,11 @@ nav.navigation ul li a {
     color: #fd7a2a;
     /* color: #81b431; */
     transform: translate(-50%, -50%);
+}
+
+
+/*  */
+
+.-webkit-media-controls-panel {
+    display: block !important;
 }

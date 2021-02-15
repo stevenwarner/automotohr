@@ -40,6 +40,7 @@ const
 
 
 <?php if(in_array('create', $this->uri->segment_array())): ?>
+    <script src="<?=base_url('assets/performance_management/js/video_record'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
     <!-- Create Review -->
     <script src="<?=base_url('assets/performance_management/js/review_create/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
     <script src="<?=base_url('assets/performance_management/js/review_create/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>

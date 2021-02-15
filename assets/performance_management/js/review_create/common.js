@@ -35,7 +35,8 @@ const reviewOBJ = {
         reviewRepeatType: $('#jsReviewRepeatType'),
         reviewContinue: $('#jsReviewContinue'),
         reviewDue: $('#jsReviewDue'),
-        finishLater: $('.jsFinishLater')
+        finishLater: $('.jsFinishLater'),
+        questionsView: $('.jsQuestionViewWrap')
     },
     // Functions
     // Clear review details
@@ -55,8 +56,11 @@ const reviewOBJ = {
         else this.targets.finishLater.removeClass('dn');
     },
     // Set review questions
-    setQuestions: function(questions) {
-        this.questions = questions;
+    setQuestions: function(questions, type) {
+        if (type == 'add') this.questions.push(questions);
+        else if (type === undefined) this.questions = questions;
+        //
+        this.remakeQuestionsView();
     },
     // Set index
     setIndexValue: function(index, value, sub) {
@@ -87,13 +91,76 @@ const reviewOBJ = {
         });
 
     },
+    //
+    sortQuestion: function(index, direction) {
+        //
+        if (direction == 'up') {
+            const previous = Object.assign(reviewOBJ.questions[index - 1]);
+            reviewOBJ.questions[index - 1] = reviewOBJ.questions[index];
+            reviewOBJ.questions[index] = previous;
+        } else {
+            const next = Object.assign(reviewOBJ.questions[index + 1]);
+            reviewOBJ.questions[index + 1] = reviewOBJ.questions[index];
+            reviewOBJ.questions[index] = next;
+        }
+        //
+        this.remakeQuestionsView();
+    },
+    //
+    remakeQuestionsView: function() {
+        //
+        rows = '';
+        if (this.questions.length === 0) {
+            rows += `
+            <div class="csQuestionRow">
+                <h4 class="alert alert-info text-center">You haven't added any questions.</h4>
+            </div>`;
+        } else {
+            //
+            const questionsLength = this.questions.length - 1;
+            //
+            this.questions.map(function(question, index) {
+                rows += `<div class="csQuestionRow" data-id="${index}">`;
+                rows += `   <div class="csFeedbackViewBox p10">`;
+                rows += `       <h4>`;
+                rows += `           <strong>Question ${index+1}</strong>`;
+                rows += `           <span class="csBTNBox">`;
+                if (index != questionsLength) {
+                    rows += `           <i class="fa fa-long-arrow-down jsQuestionMoveDown" title="Move down" placement="top"></i>`;
+                }
+                if (index != 0) {
+                    rows += `           <i class="fa fa-long-arrow-up jsQuestionMoveUp" title="Move up" placement="top"></i>`;
+                }
+                rows += `           <span>|</span>`;
+                rows += `           <i class="fa fa-clone jsQuestionClone" title="Clone question" placement="top"></i>`;
+                rows += `           <i class="fa fa-trash"  title="Delete question" placement="top"></i>`;
+                rows += `           <i class="fa fa-pencil" title="Edit question" placement="top"></i>`;
+                rows += `           </span>`;
+                rows += `       </h4>`;
+                rows += `       <h4><strong>${question.title}</strong></h4>`;
+                if (!isEmpty(question.text)) {
+                    rows += `       <p>${question.text}</p>`;
+                }
+                if (!isEmpty(question.video_help)) {
+                    rows += `       <video controls="true"><source src="${question.video_help}" type="video/webm"></source></video>`;
+                }
+                rows += `   </div>`;
+                rows += `</div>`;
+            });
+        }
+        //
+        this.targets.questionsView.html(rows);
+        //
+        $('.jsReviewStep[data-to="questions"]').click();
+    }
 };
 
 /**
  * 
  */
 const stepCaller = {
-    'reviewers': loadReviewerStep
+    'reviewers': loadReviewerStep,
+    'questions': loadQuestionStep
 }
 
 /**
@@ -464,6 +531,14 @@ function loadReviewerStep(){
         placement: "top auto"
         // template:
     });
+};
+
+/**
+ * Start question
+ */
+function loadQuestionStep(){
+    // TODO load prefill questions if any
+    //
 }
 
 

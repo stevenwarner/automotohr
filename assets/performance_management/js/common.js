@@ -245,6 +245,7 @@ function getError(errorCode, isError) {
         required_review_repeat_val: "Review recur value is required.",
         required_review_due_val: "Review due value is required.",
         required_review_reviewees: "Please, at least select one reviewee.",
+        required_question: "Question is required.",
     };
     //
     if (isError === true)

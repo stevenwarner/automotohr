@@ -16,7 +16,8 @@
         <!-- Page Body -->
         <div class="csPageBoxBody p10">
             <!-- Loader -->
-            <div class="csIPLoader jsIPLoader" data-page="create_review"><i class="fa fa-circle-o-notch fa-spin"></i></div>
+            <div class="csIPLoader jsIPLoader" data-page="create_review"><i class="fa fa-circle-o-notch fa-spin"></i>
+            </div>
             <div class="row">
                 <!-- Left menu -->
                 <div class="col-sm-2 col-xs-12">
@@ -44,12 +45,13 @@
                 <!-- Content Area -->
                 <div class="col-sm-10 col-xs-12">
                     <div class="csPageContent">
-                       
+
                         <!-- Template Section -->
-                        <div class="csPageSection jsPageSection" data-key="templates">
+                        <div class="csPageSection jsPageSection dn" data-key="templates">
                             <!-- Box Header -->
                             <div class="csPageBoxHeader p10">
-                                <h3>Craft a new review from the ground up or pick a template with insightful questions.</h3>
+                                <h3>Craft a new review from the ground up or pick a template with insightful questions.
+                                </h3>
                             </div>
                             <!-- Box Body -->
                             <div class="csPageBoxBody p10">
@@ -61,12 +63,14 @@
                                         <div class="col-sm-9 col-xs-12">
                                             <label class="control control--radio">
                                                 New Review
-                                                <input type="radio" name="templateType" class="jsReviewType" value="new" checked />
+                                                <input type="radio" name="templateType" class="jsReviewType" value="new"
+                                                    checked />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
                                             <label class="control control--radio">
                                                 Use Template
-                                                <input type="radio" name="templateType" class="jsReviewType" value="template" />
+                                                <input type="radio" name="templateType" class="jsReviewType"
+                                                    value="template" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
@@ -80,7 +84,8 @@
                                     <h4 class="pl10  pb10">
                                         Templates
                                         <span class="csBTNBox">
-                                            <a href="<?=purl('settings/templates');?>" class="btn btn-black mt0">Manage Templates</a>
+                                            <a href="<?=purl('settings/templates');?>" class="btn btn-black mt0">Manage
+                                                Templates</a>
                                         </span>
                                     </h4>
                                 </div>
@@ -95,65 +100,75 @@
                                             </div>
                                         </div>
                                         <?php if(!empty($templates['personal'])): ?>
-                                            <div class="row">
-                                        <?php   foreach($templates['personal'] as $template): ?>
-                                                <!-- Template row -->
-                                                <div class="col-sm-3">
-                                                    <div class="csPageBox csRadius5 jsTemplateBox" data-id="<?=$template['sid'];?>" data-type="personal" data-name="<?=$template['name'];?>">
-                                                        <div class="csPageBoxHeader p10">
-                                                            <span class="csBTNBox ">
-                                                                <button class="btn btn-orange btn-xs jsTemplateQuestionsView"><strong><i class="fa fa-eye"></i> View Questions</strong></button>
-                                                            </span>
-                                                            <div class="clearfix"></div>
-                                                        </div>
-                                                        <div class="csPageBoxBody p10">
-                                                            <h4><strong><?=$template['name'];?></strong></h4>
-                                                        </div>
+                                        <div class="row">
+                                            <?php   foreach($templates['personal'] as $template): ?>
+                                            <!-- Template row -->
+                                            <div class="col-sm-3">
+                                                <div class="csPageBox csRadius5 jsTemplateBox"
+                                                    data-id="<?=$template['sid'];?>" data-type="personal"
+                                                    data-name="<?=$template['name'];?>">
+                                                    <div class="csPageBoxHeader p10">
+                                                        <span class="csBTNBox ">
+                                                            <button
+                                                                class="btn btn-orange btn-xs jsTemplateQuestionsView"><strong><i
+                                                                        class="fa fa-eye"></i> View
+                                                                    Questions</strong></button>
+                                                        </span>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <div class="csPageBoxBody p10">
+                                                        <h4><strong><?=$template['name'];?></strong></h4>
                                                     </div>
                                                 </div>
-                                        <?php   endforeach; ?>
                                             </div>
+                                            <?php   endforeach; ?>
+                                        </div>
                                         <?php else: ?>
-                                            <!-- Error Box -->
-                                            <div class="csErrorBox">
-                                                <i class="fa fa-info-circle"></i>
-                                                <p>There are currently no custom templates.</p>
-                                            </div>
+                                        <!-- Error Box -->
+                                        <div class="csErrorBox">
+                                            <i class="fa fa-info-circle"></i>
+                                            <p>There are currently no custom templates.</p>
+                                        </div>
                                         <?php endif; ?>
                                     </div>
                                     <!-- Company Templates -->
                                     <div class="csSection">
-                                         <!--  -->
-                                         <div class="row">
+                                        <!--  -->
+                                        <div class="row">
                                             <div class="col-sm-12">
                                                 <h5>Company Templates (<?=count($templates['company']);?>)</h5>
                                             </div>
                                         </div>
                                         <?php if(!empty($templates['company'])): ?>
-                                            <div class="row">
-                                        <?php   foreach($templates['company'] as $template): ?>
-                                                <!-- Template row -->
-                                                <div class="col-sm-3">
-                                                    <div class="csPageBox csRadius5 jsTemplateBox" data-id="<?=$template['sid'];?>" data-type="company" data-name="<?=$template['name'];?>">
-                                                        <div class="csPageBoxHeader p10">
-                                                            <span class="csBTNBox ">
-                                                                <button class="btn btn-orange btn-xs jsTemplateQuestionsView"><strong><i class="fa fa-eye"></i> View Questions</strong></button>
-                                                            </span>
-                                                            <div class="clearfix"></div>
-                                                        </div>
-                                                        <div class="csPageBoxBody p10">
-                                                            <h4><strong><?=$template['name'];?></strong></h4>
-                                                        </div>
+                                        <div class="row">
+                                            <?php   foreach($templates['company'] as $template): ?>
+                                            <!-- Template row -->
+                                            <div class="col-sm-3">
+                                                <div class="csPageBox csRadius5 jsTemplateBox"
+                                                    data-id="<?=$template['sid'];?>" data-type="company"
+                                                    data-name="<?=$template['name'];?>">
+                                                    <div class="csPageBoxHeader p10">
+                                                        <span class="csBTNBox ">
+                                                            <button
+                                                                class="btn btn-orange btn-xs jsTemplateQuestionsView"><strong><i
+                                                                        class="fa fa-eye"></i> View
+                                                                    Questions</strong></button>
+                                                        </span>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <div class="csPageBoxBody p10">
+                                                        <h4><strong><?=$template['name'];?></strong></h4>
                                                     </div>
                                                 </div>
-                                        <?php   endforeach; ?>
                                             </div>
+                                            <?php   endforeach; ?>
+                                        </div>
                                         <?php else: ?>
-                                            <!-- Error Box -->
-                                            <div class="csErrorBox">
-                                                <i class="fa fa-info-circle"></i>
-                                                <p>There are currently no custom templates.</p>
-                                            </div>
+                                        <!-- Error Box -->
+                                        <div class="csErrorBox">
+                                            <i class="fa fa-info-circle"></i>
+                                            <p>There are currently no custom templates.</p>
+                                        </div>
                                         <?php endif; ?>
 
                                     </div>
@@ -163,7 +178,8 @@
                             <div class="csPageBoxFooter pa10">
                                 <!--  -->
                                 <span class="csBTNBox">
-                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="schedule"><i class="fa fa-arrow-circle-right"></i> Next</button>
+                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="schedule"><i
+                                            class="fa fa-arrow-circle-right"></i> Next</button>
                                 </span>
                                 <!--  -->
                                 <div class="clearfix"></div>
@@ -190,7 +206,8 @@
                                             <label>Description</label>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
-                                            <textarea class="form-control csRadius5" rows="3" id="jsReviewDescription"></textarea>
+                                            <textarea class="form-control csRadius5" rows="3"
+                                                id="jsReviewDescription"></textarea>
                                         </div>
                                     </div>
 
@@ -211,17 +228,20 @@
                                         <div class="col-sm-9 col-xs-12">
                                             <label class="control control--radio">
                                                 One-time only
-                                                <input type="radio" name="frequency" class="jsReviewFrequency" value="onetime" checked />
+                                                <input type="radio" name="frequency" class="jsReviewFrequency"
+                                                    value="onetime" checked />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
                                             <label class="control control--radio">
                                                 Recurring
-                                                <input type="radio" name="frequency" class="jsReviewFrequency" value="repeat" />
+                                                <input type="radio" name="frequency" class="jsReviewFrequency"
+                                                    value="repeat" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
                                             <label class="control control--radio">
                                                 Custom Schedule
-                                                <input type="radio" name="frequency" class="jsReviewFrequency" value="custom" />
+                                                <input type="radio" name="frequency" class="jsReviewFrequency"
+                                                    value="custom" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
@@ -234,16 +254,16 @@
                                                 <label class="pa10">Review Period</label>
                                             </div>
                                             <div class="col-sm-3 col-xs-12 pr0">
-                                                <input type="text" class="form-control csRadius100" id="jsReviewStartDate" readonly
-                                                    placeholder="MM/DD/YYYY" />
+                                                <input type="text" class="form-control csRadius100"
+                                                    id="jsReviewStartDate" readonly placeholder="MM/DD/YYYY" />
                                             </div>
                                             <div class="col-sm-1 col-xs-12 pl0 pr0">
                                                 <p class="text-center ma10"><i class="fa fa-minus"
                                                         style="font-size: 22px;"></i></p>
                                             </div>
                                             <div class="col-sm-3 col-xs-12 pl0">
-                                                <input type="text" class="form-control csRadius100" id="jsReviewEndDate" readonly
-                                                    placeholder="MM/DD/YYYY" />
+                                                <input type="text" class="form-control csRadius100" id="jsReviewEndDate"
+                                                    readonly placeholder="MM/DD/YYYY" />
                                             </div>
                                         </div>
 
@@ -253,7 +273,8 @@
                                                 <label class="pa10">Recur Every</label>
                                             </div>
                                             <div class="col-sm-2 col-xs-12">
-                                                <input type="text" class="form-control csRadius100" placeholder="0" id="jsReviewRepeatVal" />
+                                                <input type="text" class="form-control csRadius100" placeholder="0"
+                                                    id="jsReviewRepeatVal" />
                                             </div>
                                             <div class="col-sm-2 col-xs-12">
                                                 <select id="jsReviewRepeatType">
@@ -310,7 +331,8 @@
                                                 <label class="pa10">When are reviews due?</label>
                                             </div>
                                             <div class="col-sm-2 col-xs-12">
-                                                <input type="text" class="form-control csRadius100" placeholder="0" id="jsReviewDue" />
+                                                <input type="text" class="form-control csRadius100" placeholder="0"
+                                                    id="jsReviewDue" />
                                             </div>
                                             <div class="col-sm-7 col-xs-12">
                                                 <h5>days after they start</h5>
@@ -322,9 +344,12 @@
                             <!-- Footer -->
                             <div class="csPageBoxFooter p10">
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="templates"><i class="fa fa-long-arrow-left"></i> Back To Templates</button>
-                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="reviewees"><i class="fa fa-arrow-circle-right"></i>Save & Next</button>
-                                    <button class="btn btn-black btn-lg dn jsFinishLater"><i class="fa fa-edit"></i> Finish Later</button>
+                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="templates"><i
+                                            class="fa fa-long-arrow-left"></i> Back To Templates</button>
+                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="reviewees"><i
+                                            class="fa fa-arrow-circle-right"></i>Save & Next</button>
+                                    <button class="btn btn-black btn-lg dn jsFinishLater"><i class="fa fa-edit"></i>
+                                        Finish Later</button>
                                 </span>
                                 <!--  -->
                                 <div class="clearfix"></div>
@@ -368,7 +393,8 @@
                                                     <select id="jsFilterDepartments" multiple>
                                                         <?php if(!empty($dnt['departments'])): ?>
                                                         <?php   foreach($dnt['departments'] as $department): ?>
-                                                        <option value="<?=$department['sid'];?>"><?=$department['name'];?></option>
+                                                        <option value="<?=$department['sid'];?>">
+                                                            <?=$department['name'];?></option>
                                                         <?php   endforeach; ?>
                                                         <?php   endif; ?>
                                                     </select>
@@ -379,7 +405,7 @@
                                                 <div class="col-sm-12">
                                                     <label>Teams</label>
                                                     <select id="jsFilterTeams" multiple>
-                                                    <?php if(!empty($dnt['teams'])): ?>
+                                                        <?php if(!empty($dnt['teams'])): ?>
                                                         <?php   foreach($dnt['teams'] as $team): ?>
                                                         <option value="<?=$team['sid'];?>"><?=$team['name'];?></option>
                                                         <?php   endforeach; ?>
@@ -402,9 +428,10 @@
                                                 <div class="col-sm-12">
                                                     <label>Job Titles</label>
                                                     <select id="jsFilterJobTitles" multiple>
-                                                    <?php if(!empty($jobTitles)): ?>
+                                                        <?php if(!empty($jobTitles)): ?>
                                                         <?php   foreach($jobTitles as $jobTitle):?>
-                                                        <option value="<?=$jobTitle['job_title'];?>"><?=$jobTitle['job_title'];?></option>
+                                                        <option value="<?=$jobTitle['job_title'];?>">
+                                                            <?=$jobTitle['job_title'];?></option>
                                                         <?php   endforeach; ?>
                                                         <?php   endif; ?>
                                                     </select>
@@ -438,13 +465,18 @@
                                         <div class="csContentArea">
                                             <div class="csPageBoxHeader pa10">
                                                 <ul>
-                                                    <li><a href="javascript:void(0)" class="active jsShiftTab" data-target="included">Included <span id="jsIncudedEmployeeCount">(0)</span></a></li>
-                                                    <li><a href="javascript:void(0)" class="jsShiftTab" data-target="excluded">Excluded <span id="jsExcludedEmployeeCount">(0)</span></a></li>
+                                                    <li><a href="javascript:void(0)" class="active jsShiftTab"
+                                                            data-target="included">Included <span
+                                                                id="jsIncudedEmployeeCount">(0)</span></a></li>
+                                                    <li><a href="javascript:void(0)" class="jsShiftTab"
+                                                            data-target="excluded">Excluded <span
+                                                                id="jsExcludedEmployeeCount">(0)</span></a></li>
                                                 </ul>
                                             </div>
                                             <div class="csPageBoxBody">
                                                 <!-- Loader -->
-                                                <div class="csIPLoader jsIPLoader" data-page="review_incexc"><i class="fa fa-circle-o-notch fa-spin"></i></div>
+                                                <div class="csIPLoader jsIPLoader" data-page="review_incexc"><i
+                                                        class="fa fa-circle-o-notch fa-spin"></i></div>
                                                 <div class="jsTabSection" data-id="included">
                                                     <table class="table table-striped table-condensed">
                                                         <thead>
@@ -468,7 +500,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -476,9 +508,12 @@
 
                             <div class="csPageBoxFooter p10">
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="schedule"><i class="fa fa-long-arrow-left"></i> Back To Schedule</button>
-                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="reviewers"><i class="fa fa-arrow-circle-right"></i>Save & Next</button>
-                                    <button class="btn btn-black btn-lg jsFinishLater dn"><i class="fa fa-edit"></i> Finish Later</button>
+                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="schedule"><i
+                                            class="fa fa-long-arrow-left"></i> Back To Schedule</button>
+                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="reviewers"><i
+                                            class="fa fa-arrow-circle-right"></i>Save & Next</button>
+                                    <button class="btn btn-black btn-lg jsFinishLater dn"><i class="fa fa-edit"></i>
+                                        Finish Later</button>
                                 </span>
                                 <div class="clearfix"></div>
                             </div>
@@ -538,10 +573,13 @@
                             </div>
                             <!--  -->
                             <div class="csPageBoxFooter p10">
-                                    <span class="csBTNBox">
-                                        <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i> Back  To Reviewees</button>
-                                        <button class="btn btn-orange btn-lg"><i class="fa fa-arrow-circle-right"></i>Save & Next</button>
-                                        <button class="btn btn-black btn-lg"><i class="fa fa-edit"></i> Finish Later</button>
+                                <span class="csBTNBox">
+                                    <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i> Back To
+                                        Reviewees</button>
+                                    <button class="btn btn-orange btn-lg"><i class="fa fa-arrow-circle-right"></i>Save &
+                                        Next</button>
+                                    <button class="btn btn-black btn-lg"><i class="fa fa-edit"></i> Finish
+                                        Later</button>
                                 </span>
                                 <div class="clearfix"></div>
                             </div>
@@ -560,80 +598,227 @@
                                 </h4>
                             </div>
                             <!-- Body -->
-                            <div class="csPageBoxBody">
-                                <?php for($i = 1; $i < 10; $i ++) { ?>
+                            <div class="csPageBoxBody jsQuestionViewWrap bbb p10">
                                 <div class="csQuestionRow">
-                                    <div class="csFeedbackViewBox p10">
-                                        <h4>
-                                            <strong>Question <?=$i;?></strong>
-                                            <span class="csBTNBox">
-                                                <i class="fa fa-long-arrow-down" title="Move down" placement="top"></i>
-                                                <i class="fa fa-long-arrow-up" title="Move up" placement="top"></i>
-                                                <span>|</span>
-                                                <i class="fa fa-clone" title="Clone question" placement="top"></i>
-                                                <i class="fa fa-trash"  title="Delete question" placement="top"></i>
-                                                <i class="fa fa-pencil" title="Edit question" placement="top"></i>
-                                            </span>
-                                        </h4>
-                                        
-                                        <h4><strong>Please add any additional feedback you'd like to note for this
-                                                person?</strong></h4>
-                                        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repellendus
-                                            molestiae
-                                            ducimus nam beatae autem placeat, corrupti quam.
-                                        </p>
-                                        <label class="control control--checkbox mb10">
-                                            Not Applicable
-                                            <input type="checkbox" name="" id="">
-                                            <div class="control__indicator"></div>
-                                        </label>
-                                        <br />
-                                        <br />
-                                        <!--  -->
-                                        <ul>
-                                            <li>
-                                                <div class="csFeedbackViewBoxTab">
-                                                    <p class="mb0">1</p>
-                                                    <p>Strongly Agree</p>
+                                    <h4 class="alert alert-info text-center">You haven't added any questions.</h4>
+                                </div>
+                            </div>
+                            <!-- Body2 -->
+                            <div class="csPageBoxBody p10 ">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4><strong>Add a question</strong></h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <!-- Add Question -->
+                                        <div class="jsAddQuestion">
+                                            <!-- Question Body -->
+                                            <div class="csPageBoxBody p10">
+                                                <!--  -->
+                                                <div class="csForm">
+                                                    <!-- Question  -->
+                                                    <div class="row mb10">
+                                                        <div class="col-sm-3 col-xs-12">
+                                                            <label>Question <span class="csRequired"></span></label>
+                                                        </div>
+                                                        <div class="col-sm-9 col-xs-12">
+                                                            <input class="form-control"
+                                                                placeholder="e.g. What would you do differently next quarter?"
+                                                                id="jsQuestionVal" />
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Description  -->
+                                                    <div class="row mb10">
+                                                        <div class="col-sm-3 col-xs-12">
+                                                            <label>Description</label>
+                                                        </div>
+                                                        <div class="col-sm-9 col-xs-12">
+                                                            <textarea class="form-control"
+                                                                id="jsQuestionDescription"></textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="bbb ma10 mb10"></div>
+
+                                                    <!-- Video help  -->
+                                                    <div class="row mb10">
+                                                        <div class="col-sm-3 col-xs-12">
+                                                            <label>Video Help</label>
+                                                        </div>
+                                                        <div class="col-sm-9 col-xs-12">
+                                                            <label class="control control--checkbox">
+                                                                <input type="checkbox" id="jsStartVideoRecord" /> Record a video
+                                                                <div class="control__indicator"></div>
+                                                            </label> <br />
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <div class="jsVideoRecorderBox dn">
+                                                                        <p class="alert alert-danger"><strong>To use this
+                                                                                feature, please, make sure you have allowed
+                                                                                microphone and camera access.</strong></p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6 col-xs-12">
+                                                                    <div class="jsVideoRecorderBox dn">
+                                                                        <video id="jsVideoRecorder" width="100%"></video>
+                                                                        <!--  -->
+                                                                        <button class="btn btn-orange btn-lg dn"
+                                                                            id="jsVideoRecordButton">Start Recording</button>
+                                                                        <!--  -->
+                                                                        <button class="btn btn-orange btn-lg dn"
+                                                                            id="jsVideoPauseButton">Pause Recording</button>
+                                                                        <!--  -->
+                                                                        <button class="btn btn-orange btn-lg dn"
+                                                                            id="jsVideoResumeButton">Resume Recording</button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6 col-xs-12">
+                                                                    <div class="jsVideoPreviewBox dn">
+                                                                        <video id="jsVideoPreview" width="100%"></video>
+                                                                        <button class="btn btn-orange btn-lg"
+                                                                            id="jsVideoPlayVideo"><i class="fa fa-play"></i>
+                                                                            Play Video</button>
+                                                                        <button class="btn btn-black btn-lg"
+                                                                            id="jsVideoRemoveButton"><i
+                                                                                class="fa fa-times-circle"></i> Remove
+                                                                            Video</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="bbb ma10 mb10"></div>
+
+                                                    <!-- Type  -->
+                                                    <div class="row mb10">
+                                                        <div class="col-sm-3 col-xs-12">
+                                                            <label>Response Type <span class="csRequired"></span></label>
+                                                        </div>
+                                                        <div class="col-sm-9 col-xs-12">
+                                                            <select id="jsQuestionType">
+                                                                <option value="text">Text Box</option>
+                                                                <option value="rating">Rating Scale</option>
+                                                                <option value="text-n-rating">Rating Scale & Text Box</option>
+                                                                <option value="multiple-choice">Multiple Choice</option>
+                                                                <option value="multiple-choice">Multiple Choice & Text Box
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Rating Scale  -->
+                                                    <div class="row mb10 jsQuestionRatingScaleBox dn">
+                                                        <div class="col-sm-3 col-xs-12">
+                                                            <label>Rating Scale</label>
+                                                        </div>
+                                                        <div class="col-sm-9 col-xs-12">
+                                                            <select id="jsQuestionRatingScale">
+                                                                <option value="1">1</option>
+                                                                <option value="2">2</option>
+                                                                <option value="3">3</option>
+                                                                <option value="4">4</option>
+                                                                <option value="5">5</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Options  -->
+                                                    <div class="row mb10">
+                                                        <div class="col-sm-3 col-xs-12">
+                                                            <label>Options</label>
+                                                        </div>
+                                                        <div class="col-sm-9 col-xs-12">
+                                                            <label class="control control--checkbox">
+                                                                <input type="checkbox" id="jsQuestionUseLabels" /> Use Labels
+                                                                <div class="control__indicator"></div>
+                                                            </label> <br />
+                                                            <label class="control control--checkbox">
+                                                                <input type="checkbox" id="jsQuestionIncludeNA" /> Include N/A
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Ratings -->
+                                                    <div class="row mb10 jsQuestionRatingValBox dn">
+                                                        <div class="col-sm-3 col-xs-12">
+                                                            <label>Ratings</label>
+                                                        </div>
+                                                        <div class="col-sm-9 col-xs-12">
+                                                            <div class="form-group jsQuestionRatingScaleValBox">
+                                                                <label>Rating 1</label>
+                                                                <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                                    value="<?=getDefaultLabel()[1];?>" data-id="1" />
+                                                            </div>
+                                                            <div class="form-group jsQuestionRatingScaleValBox">
+                                                                <label>Rating 2</label>
+                                                                <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                                    value="<?=getDefaultLabel()[2];?>" data-id="2" />
+                                                            </div>
+                                                            <div class="form-group jsQuestionRatingScaleValBox">
+                                                                <label>Rating 3</label>
+                                                                <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                                    value="<?=getDefaultLabel()[3];?>" data-id="3" />
+                                                            </div>
+                                                            <div class="form-group jsQuestionRatingScaleValBox">
+                                                                <label>Rating 4</label>
+                                                                <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                                    value="<?=getDefaultLabel()[4];?>" data-id="4" />
+                                                            </div>
+                                                            <div class="form-group jsQuestionRatingScaleValBox">
+                                                                <label>Rating 5</label>
+                                                                <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                                    value="<?=getDefaultLabel()[5];?>" data-id="5" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Assigned to  -->
+                                                    <div class="row mb10 dn">
+                                                        <div class="col-sm-3 col-xs-12">
+                                                            <label>Assigned to <span class="csRequired"></span></label>
+                                                        </div>
+                                                        <div class="col-sm-9 col-xs-12">
+                                                            <label class="control control--checkbox">
+                                                                <input type="checkbox" id="jsQuestionReportingManager" />
+                                                                Reporting Manager
+                                                                <div class="control__indicator"></div>
+                                                            </label> <br />
+                                                            <label class="control control--checkbox">
+                                                                <input type="checkbox" id="jsQuestionSelf" /> Self
+                                                                <div class="control__indicator"></div>
+                                                            </label> <br />
+                                                            <label class="control control--checkbox">
+                                                                <input type="checkbox" id="jsQuestionPeer" /> Peers and others
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </li>
-                                            <li>
-                                                <div class="csFeedbackViewBoxTab">
-                                                    <p class="mb0">2</p>
-                                                    <p>Agree</p>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="csFeedbackViewBoxTab">
-                                                    <p class="mb0">3</p>
-                                                    <p>Neutral</p>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="csFeedbackViewBoxTab">
-                                                    <p class="mb0">4</p>
-                                                    <p>Disagree</p>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="csFeedbackViewBoxTab">
-                                                    <p class="mb0">5</p>
-                                                    <p>Strongly disagree</p>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        
-                                        <textarea class="form-control"></textarea>
+                                            </div>
+                                            <!-- Question Footer -->
+                                            <div class="csPageBoxFooter p10">
+                                                <span class="csBTNBox">
+                                                    <button class="btn btn-orange btn-lg jsSaveQuestion"><i
+                                                            class="fa fa-plus-circle"></i> Add Question</button>
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <?php } ?>
+                               
                             </div>
                             <!--  -->
                             <div class="csPageBoxFooter ban p10">
-                                    <span class="csBTNBox">
-                                        <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i> Back To Reviewers</button>
-                                        <button class="btn btn-orange btn-lg"><i class="fa fa-arrow-circle-right"></i>Save & Next</button>
-                                        <button class="btn btn-black btn-lg"><i class="fa fa-edit"></i> Finish Later</button>
+                                <span class="csBTNBox">
+                                    <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i> Back To
+                                        Reviewers</button>
+                                    <button class="btn btn-orange btn-lg"><i class="fa fa-arrow-circle-right"></i>Save &
+                                        Next</button>
+                                    <button class="btn btn-black btn-lg"><i class="fa fa-edit"></i> Finish
+                                        Later</button>
                                 </span>
                                 <div class="clearfix"></div>
                             </div>
@@ -663,14 +848,18 @@
                             <!-- Footer -->
                             <div class="csPageBoxFooter pa10">
                                 <span class="csBTNBoxLeft">
-                                    <button class="btn btn-black btn-lg"><i class="fa fa-edit"></i> Finish Later</button>
+                                    <button class="btn btn-black btn-lg"><i class="fa fa-edit"></i> Finish
+                                        Later</button>
                                 </span>
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i> Back</button>
-                                    <button class="btn btn-orange btn-lg"><i class="fa fa-arrow-circle-right"></i>Save & Finish</button>
+                                    <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i>
+                                        Back</button>
+                                    <button class="btn btn-orange btn-lg"><i class="fa fa-arrow-circle-right"></i>Save &
+                                        Finish</button>
                                 </span>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
