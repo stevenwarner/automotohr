@@ -116,7 +116,29 @@ $db['default'] = array(
 		'failover' => array(),
 		'save_queries' => TRUE
 	);
-	} else {
+} else if(preg_match('/applybuz/', $_SERVER['HTTP_HOST'])){
+	$db['default'] = array(
+		'dsn'	=> '',
+		'hostname' => 'localhost',
+		'username' => 'applybuz_admin',
+		'password' => 'GzMleF!5?A0D',
+		'database' => 'applybuz_db',
+		'dbdriver' => 'mysqli',
+		'dbprefix' => '',
+		'pconnect' => FALSE,
+		'db_debug' => (ENVIRONMENT !== 'production'),
+		'cache_on' => TRUE,
+		'cachedir' => '',
+		'char_set' => 'utf8',
+		'dbcollat' => 'utf8_general_ci',
+		'swap_pre' => '',
+		'encrypt' => FALSE,
+		'compress' => TRUE,
+		'stricton' => FALSE,
+		'failover' => array(),
+		'save_queries' => false
+	);
+} else {
   $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
