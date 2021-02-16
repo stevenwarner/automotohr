@@ -56,9 +56,11 @@ const reviewOBJ = {
         else this.targets.finishLater.removeClass('dn');
     },
     // Set review questions
-    setQuestions: function(questions, type) {
+    setQuestions: function(questions, type, id) {
         if (type == 'add') this.questions.push(questions);
-        else if (type === undefined) this.questions = questions;
+        else if (type == 'edit') {
+            this.questions[id] = questions;
+        } else if (type === undefined) this.questions = questions;
         //
         this.remakeQuestionsView();
     },
@@ -117,35 +119,10 @@ const reviewOBJ = {
             </div>`;
         } else {
             //
-            const questionsLength = this.questions.length - 1;
+            const ql = this.questions.length - 1;
             //
             this.questions.map(function(question, index) {
-                rows += `<div class="csQuestionRow" data-id="${index}">`;
-                rows += `   <div class="csFeedbackViewBox p10">`;
-                rows += `       <h4>`;
-                rows += `           <strong>Question ${index+1}</strong>`;
-                rows += `           <span class="csBTNBox">`;
-                if (index != questionsLength) {
-                    rows += `           <i class="fa fa-long-arrow-down jsQuestionMoveDown" title="Move down" placement="top"></i>`;
-                }
-                if (index != 0) {
-                    rows += `           <i class="fa fa-long-arrow-up jsQuestionMoveUp" title="Move up" placement="top"></i>`;
-                }
-                rows += `           <span>|</span>`;
-                rows += `           <i class="fa fa-clone jsQuestionClone" title="Clone question" placement="top"></i>`;
-                rows += `           <i class="fa fa-trash"  title="Delete question" placement="top"></i>`;
-                rows += `           <i class="fa fa-pencil" title="Edit question" placement="top"></i>`;
-                rows += `           </span>`;
-                rows += `       </h4>`;
-                rows += `       <h4><strong>${question.title}</strong></h4>`;
-                if (!isEmpty(question.text)) {
-                    rows += `       <p>${question.text}</p>`;
-                }
-                if (!isEmpty(question.video_help)) {
-                    rows += `       <video controls="true"><source src="${question.video_help}" type="video/webm"></source></video>`;
-                }
-                rows += `   </div>`;
-                rows += `</div>`;
+                rows += getQuestionRow(question, index, ql);
             });
         }
         //
@@ -155,6 +132,28 @@ const reviewOBJ = {
     }
 };
 
+
+//
+const cp = new mVideoRecorder({
+    recorderPlayer: 'jsVideoRecorder',
+    previewPlayer: 'jsVideoPreview',
+    recordButton: 'jsVideoRecordButton',
+    playRecordedVideoBTN: 'jsVideoPlayVideo',
+    removeRecordedVideoBTN: 'jsVideoRemoveButton',
+    pauseRecordedVideoBTN: 'jsVideoPauseButton',
+    resumeRecordedVideoBTN: 'jsVideoResumeButton',
+});
+//
+const cp2 = new mVideoRecorder({
+    recorderPlayer: 'jsVideoRecorderEdit',
+    previewPlayer: 'jsVideoPreviewEdit',
+    recordButton: 'jsVideoRecordButtonEdit',
+    playRecordedVideoBTN: 'jsVideoPlayVideoEdit',
+    removeRecordedVideoBTN: 'jsVideoRemoveButtonEdit',
+    pauseRecordedVideoBTN: 'jsVideoPauseButtonEdit',
+    resumeRecordedVideoBTN: 'jsVideoResumeButtonEdit',
+});
+
 /**
  * 
  */
@@ -162,6 +161,8 @@ const stepCaller = {
     'reviewers': loadReviewerStep,
     'questions': loadQuestionStep
 }
+
+stepCaller['questions']();
 
 /**
  * Click
@@ -537,8 +538,36 @@ function loadReviewerStep(){
  * Start question
  */
 function loadQuestionStep(){
-    // TODO load prefill questions if any
+    resetQuestionView();
+}
+
+
+/**
+ * 
+ */
+function resetQuestionView() {
     //
+    $('#jsQuestionType').select2({ minimumResultsForSearch: -1 });
+    $('#jsQuestionRatingScale').select2({ minimumResultsForSearch: -1 });
+    //
+    $('#jsQuestionVal').val('');
+    $('#jsQuestionVal').val('Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta excepturi?');
+    $('#jsQuestionDescription').val('');
+    $('#jsQuestionDescription').val('veritatis quia alias molestias eveniet necessitatibus hic porro odit saepe similique ipsa nisi quas corrupti accusantium itaque, molestiae harum reiciendis.');
+    $('#jsStartVideoRecord').prop('checked', false);
+    $('#jsQuestionType').select2('val', 'text');
+    $('#jsQuestionRatingScale').select2('val', 1);
+    $('.jsQuestionRatingScaleBox').addClass('dn');
+    $('#jsQuestionUseLabels').prop('checked', false);
+    $('#jsQuestionIncludeNA').prop('checked', false);
+    $('.jsQuestionRatingValBox').addClass('dn');
+    $('#jsQuestionReportingManager').prop('checked', false);
+    $('#jsQuestionSelf').prop('checked', false);
+    $('#jsQuestionPeer').prop('checked', false);
+    $('.jsVideoRecorderBox').addClass('dn');
+    //
+    cp.close();
+    cp.remove();
 }
 
 

@@ -292,3 +292,95 @@ Array.prototype.arrayColumn = function(column) {
         // removes undefined values
     }).filter(function(el) { return typeof el != 'undefined'; });
 };
+
+/**
+ * 
+ * @param {Object}  question 
+ * @param {Integer} index 
+ * @param {Integer} questionsLength 
+ */
+function getQuestionRow(question, index, questionsLength) {
+    //
+    let rows = '';
+    //
+    rows += `<div class="csQuestionRow" data-id="${index}">`;
+    rows += `   <div class="csFeedbackViewBox p10">`;
+    rows += `       <h4 class="bbb pb10">`;
+    rows += `           <strong>Question ${index+1}</strong>`;
+    rows += `           <span class="csBTNBox">`;
+    if (index != questionsLength) {
+        rows += `           <i class="fa fa-long-arrow-down jsQuestionMoveDown" title="Move down" placement="top"></i>`;
+    }
+    if (index != 0) {
+        rows += `           <i class="fa fa-long-arrow-up jsQuestionMoveUp" title="Move up" placement="top"></i>`;
+    }
+    rows += `           <span>|</span>`;
+    rows += `           <i class="fa fa-clone jsQuestionClone" title="Clone this question" placement="top"></i>`;
+    rows += `           <i class="fa fa-trash jsQuestionDelete"  title="Delete this question" placement="top"></i>`;
+    rows += `           <i class="fa fa-pencil jsQuestionEdit" title="Edit this question" placement="top"></i>`;
+    rows += `           </span>`;
+    rows += `       </h4>`;
+    rows += `       <h4><strong>${question.title}</strong></h4>`;
+    if (!isEmpty(question.text)) {
+        rows += `       <p>${question.text}</p>`;
+    }
+    if (!isEmpty(question.video_help)) {
+        rows += `       <video controls="true" style="width: 250px;"><source src="${question.video_help}" type="video/webm"></source></video><br />`;
+    }
+    //
+    if (question.not_applicable === 1) {
+        rows += '<label class="control control--checkbox">';
+        rows += '   <input type="checkbox" class="jsQuestionNA" /> Not Applicable';
+        rows += '   <div class="control__indicator"></div>';
+        rows += '</label><br />';
+    }
+
+    //
+    if ($.inArray(question.question_type, ['text-n-rating', 'rating']) !== -1) {
+        rows += '<ul>';
+        for (let i = 1; i <= question.scale; i++) {
+            rows += '<li>';
+            rows += '   <div class="csFeedbackViewBoxTab">';
+            rows += `       <p class="mb0">${i}</p>`;
+            if (question.labels_flag === 1) {
+                rows += `   <p>${question.label_question[i]}</p>`;
+            }
+            rows += '   </div>';
+            rows += '</li>';
+        }
+        rows += '</ul>';
+    }
+
+    //
+    if ($.inArray(question.question_type, ['multiple-choice-with-text', 'multiple-choice']) !== -1) {
+        rows += '<br /><label class="control control--radio">';
+        rows += `   <input type="radio" class="jsQuestionNA" name="jsQuestionMultipleChoice${index}" /> Yes`;
+        rows += '   <div class="control__indicator"></div>';
+        rows += '</label> &nbsp;&nbsp;';
+        rows += '<label class="control control--radio">';
+        rows += `   <input type="radio" class="jsQuestionNA" name="jsQuestionMultipleChoice${index}" /> No`;
+        rows += '   <div class="control__indicator"></div>';
+        rows += '</label>';
+    }
+
+    //
+    if ($.inArray(question.question_type, ['rating', 'multiple-choice']) === -1) {
+        rows += '<div class="csFeedbackViewBoxComment">';
+        rows += '    <div class="row">';
+        rows += '        <div class="col-sm-12 col-xs-12">';
+        rows += '            <h5><strong>Feedback (Elaborate)</strong></h5>';
+        rows += '            <textarea rows="3" class="form-control"></textarea>';
+        rows += '        </div>';
+        rows += '    </div>';
+        rows += '</div>';
+    }
+
+    //
+    rows += ''
+
+
+    rows += `   </div>`;
+    rows += `</div>`;
+
+    return rows;
+}

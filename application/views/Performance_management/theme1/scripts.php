@@ -27,7 +27,8 @@ const
         name: "<?=isset($employeeName) ? $employeeName : '';?>",
         level: <?=$level;?>
     }
-    page = "<?=isset($page) ? $page : ''?>";
+    page = "<?=isset($page) ? $page : ''?>",
+    labels= <?=json_encode(getDefaultLabel());?>;
 </script>
 
 <script type="text/javascript" src="<?=base_url('assets/select2/select2.min.js');?>"></script>

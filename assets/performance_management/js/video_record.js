@@ -67,7 +67,7 @@ function mVideoRecorder(opt) {
             this.isRecording = false;
             this.playButton.disabled = false;
 
-            $('.jsVideoPreviewBox').removeClass('dn');
+            this.targetVideo.parentElement.classList.remove('dn');
         }
     };
 
@@ -75,7 +75,7 @@ function mVideoRecorder(opt) {
      * Start the video recording
      */
     this.startRecording = () => {
-        let options = { mimeType: 'video/webm', bitsPerSecond: 100000 };
+        let options = { mimeType: 'video/webm', bitsPerSecond: 10000000 };
         this.recordedBlobs = [];
         try {
             this.mediaRecorder = new MediaRecorder(window.stream, options);
@@ -97,12 +97,13 @@ function mVideoRecorder(opt) {
                 }
             }
         }
-        this.recordButton.textContent = 'Stop Recording';
+        this.recordButton.innerHTML = '<i class="fa fa-stop-circle"></i> Stop Recording';
         this.playButton.disabled = true;
         this.mediaRecorder.onstop = this.handleStop;
         this.mediaRecorder.ondataavailable = this.handleDataAvailable;
         this.mediaRecorder.start(10);
-        this.pauseButton.classList.remove('dn');
+        this.pauseRecordingButton.classList.remove('dn');
+        this.resumeRecordingButton.classList.add('dn');
     };
 
     /**
@@ -110,7 +111,7 @@ function mVideoRecorder(opt) {
      */
     this.stopRecording = (step) => {
         this.pauseRecordingButton.classList.add('dn');
-        this.recordButton.textContent = 'Start Recording';
+        this.recordButton.innerHTML = '<i class="fa fa-stop"></i> Start Recording';
         this.mediaRecorder.stop();
         this.targetVideo.controls = true;
         this.play();
@@ -139,6 +140,7 @@ function mVideoRecorder(opt) {
      */
     this.handleSourceOpen = () => {
         sourceBuffer = this.mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+        console.log(sourceBuffer);
     };
 
     /**
@@ -148,6 +150,7 @@ function mVideoRecorder(opt) {
         if (event.data && event.data.size > 0) {
             this.recordedBlobs.push(event.data);
         }
+        window.recordedBlobs = this.recordedBlobs;
     };
 
     /**
@@ -167,7 +170,7 @@ function mVideoRecorder(opt) {
     this.successCallback = (stream) => {
         window.stream = stream;
         this.mediaSource = new MediaSource;
-        this.mediaSource.addEventListener('sourceopen', this.handleSourceOpen, false);
+        this.mediaSource.addEventListener('sourceopen', this.handleSourceOpen);
         //
         this.recordButton.onclick = this.toggleRecording;
         this.pauseRecordingButton.onclick = this.pauseRecording;
@@ -216,6 +219,7 @@ function mVideoRecorder(opt) {
         this.isRecording = false;
         this.targetVideo.parentElement.classList.add('dn');
         this.targetVideo.src = null;
+        this.recordedBlobs = [];
     };
 
     /**
@@ -230,13 +234,15 @@ function mVideoRecorder(opt) {
      */
     this.close = () => {
         this.isRecording = false;
-        this.pauseButton.classList.add('dn');
-        this.recordButton.classList.add('dn');
-        window.stream.getTracks().forEach(function(track) {
-            if (track.readyState == 'live') {
-                track.stop();
-            }
-        });
+        this.pauseRecordingButton.classList.add('dn');
+        this.resumeRecordingButton.classList.add('dn');
+        if (window.stream !== undefined) {
+            window.stream.getTracks().forEach(function(track) {
+                if (track.readyState == 'live') {
+                    track.stop();
+                }
+            });
+        }
     };
 
     /**

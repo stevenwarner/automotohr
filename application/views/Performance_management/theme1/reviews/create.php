@@ -585,13 +585,13 @@
                             </div>
                         </div>
                         <!-- Questions -->
-                        <div class="csPageSection jsPageSection dn" data-key="questions">
+                        <div class="csPageSection jsPageSection" data-key="questions">
                             <!-- Header -->
                             <div class="csPageBoxHeader p10">
                                 <h4>
                                     <strong>Questions</strong>
                                     <span class="csBTNBox">
-                                        <button class="btn btn-orange mtn8">
+                                        <button class="btn btn-orange mtn8 jsReviewBackStep" data-to="add_question">
                                             <i class="fa fa-plus-circle"></i> Add A Question
                                         </button>
                                     </span>
@@ -603,215 +603,8 @@
                                     <h4 class="alert alert-info text-center">You haven't added any questions.</h4>
                                 </div>
                             </div>
-                            <!-- Body2 -->
-                            <div class="csPageBoxBody p10 ">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4><strong>Add a question</strong></h4>
-                                    </div>
-                                    <div class="panel-body">
-                                        <!-- Add Question -->
-                                        <div class="jsAddQuestion">
-                                            <!-- Question Body -->
-                                            <div class="csPageBoxBody p10">
-                                                <!--  -->
-                                                <div class="csForm">
-                                                    <!-- Question  -->
-                                                    <div class="row mb10">
-                                                        <div class="col-sm-3 col-xs-12">
-                                                            <label>Question <span class="csRequired"></span></label>
-                                                        </div>
-                                                        <div class="col-sm-9 col-xs-12">
-                                                            <input class="form-control"
-                                                                placeholder="e.g. What would you do differently next quarter?"
-                                                                id="jsQuestionVal" />
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Description  -->
-                                                    <div class="row mb10">
-                                                        <div class="col-sm-3 col-xs-12">
-                                                            <label>Description</label>
-                                                        </div>
-                                                        <div class="col-sm-9 col-xs-12">
-                                                            <textarea class="form-control"
-                                                                id="jsQuestionDescription"></textarea>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="bbb ma10 mb10"></div>
-
-                                                    <!-- Video help  -->
-                                                    <div class="row mb10">
-                                                        <div class="col-sm-3 col-xs-12">
-                                                            <label>Video Help</label>
-                                                        </div>
-                                                        <div class="col-sm-9 col-xs-12">
-                                                            <label class="control control--checkbox">
-                                                                <input type="checkbox" id="jsStartVideoRecord" /> Record a video
-                                                                <div class="control__indicator"></div>
-                                                            </label> <br />
-                                                            <div class="row">
-                                                                <div class="col-sm-12">
-                                                                    <div class="jsVideoRecorderBox dn">
-                                                                        <p class="alert alert-danger"><strong>To use this
-                                                                                feature, please, make sure you have allowed
-                                                                                microphone and camera access.</strong></p>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-6 col-xs-12">
-                                                                    <div class="jsVideoRecorderBox dn">
-                                                                        <video id="jsVideoRecorder" width="100%"></video>
-                                                                        <!--  -->
-                                                                        <button class="btn btn-orange btn-lg dn"
-                                                                            id="jsVideoRecordButton">Start Recording</button>
-                                                                        <!--  -->
-                                                                        <button class="btn btn-orange btn-lg dn"
-                                                                            id="jsVideoPauseButton">Pause Recording</button>
-                                                                        <!--  -->
-                                                                        <button class="btn btn-orange btn-lg dn"
-                                                                            id="jsVideoResumeButton">Resume Recording</button>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-6 col-xs-12">
-                                                                    <div class="jsVideoPreviewBox dn">
-                                                                        <video id="jsVideoPreview" width="100%"></video>
-                                                                        <button class="btn btn-orange btn-lg"
-                                                                            id="jsVideoPlayVideo"><i class="fa fa-play"></i>
-                                                                            Play Video</button>
-                                                                        <button class="btn btn-black btn-lg"
-                                                                            id="jsVideoRemoveButton"><i
-                                                                                class="fa fa-times-circle"></i> Remove
-                                                                            Video</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="bbb ma10 mb10"></div>
-
-                                                    <!-- Type  -->
-                                                    <div class="row mb10">
-                                                        <div class="col-sm-3 col-xs-12">
-                                                            <label>Response Type <span class="csRequired"></span></label>
-                                                        </div>
-                                                        <div class="col-sm-9 col-xs-12">
-                                                            <select id="jsQuestionType">
-                                                                <option value="text">Text Box</option>
-                                                                <option value="rating">Rating Scale</option>
-                                                                <option value="text-n-rating">Rating Scale & Text Box</option>
-                                                                <option value="multiple-choice">Multiple Choice</option>
-                                                                <option value="multiple-choice">Multiple Choice & Text Box
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Rating Scale  -->
-                                                    <div class="row mb10 jsQuestionRatingScaleBox dn">
-                                                        <div class="col-sm-3 col-xs-12">
-                                                            <label>Rating Scale</label>
-                                                        </div>
-                                                        <div class="col-sm-9 col-xs-12">
-                                                            <select id="jsQuestionRatingScale">
-                                                                <option value="1">1</option>
-                                                                <option value="2">2</option>
-                                                                <option value="3">3</option>
-                                                                <option value="4">4</option>
-                                                                <option value="5">5</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Options  -->
-                                                    <div class="row mb10">
-                                                        <div class="col-sm-3 col-xs-12">
-                                                            <label>Options</label>
-                                                        </div>
-                                                        <div class="col-sm-9 col-xs-12">
-                                                            <label class="control control--checkbox">
-                                                                <input type="checkbox" id="jsQuestionUseLabels" /> Use Labels
-                                                                <div class="control__indicator"></div>
-                                                            </label> <br />
-                                                            <label class="control control--checkbox">
-                                                                <input type="checkbox" id="jsQuestionIncludeNA" /> Include N/A
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Ratings -->
-                                                    <div class="row mb10 jsQuestionRatingValBox dn">
-                                                        <div class="col-sm-3 col-xs-12">
-                                                            <label>Ratings</label>
-                                                        </div>
-                                                        <div class="col-sm-9 col-xs-12">
-                                                            <div class="form-group jsQuestionRatingScaleValBox">
-                                                                <label>Rating 1</label>
-                                                                <input type="text" class="form-control jsQuestionRatingScaleVal"
-                                                                    value="<?=getDefaultLabel()[1];?>" data-id="1" />
-                                                            </div>
-                                                            <div class="form-group jsQuestionRatingScaleValBox">
-                                                                <label>Rating 2</label>
-                                                                <input type="text" class="form-control jsQuestionRatingScaleVal"
-                                                                    value="<?=getDefaultLabel()[2];?>" data-id="2" />
-                                                            </div>
-                                                            <div class="form-group jsQuestionRatingScaleValBox">
-                                                                <label>Rating 3</label>
-                                                                <input type="text" class="form-control jsQuestionRatingScaleVal"
-                                                                    value="<?=getDefaultLabel()[3];?>" data-id="3" />
-                                                            </div>
-                                                            <div class="form-group jsQuestionRatingScaleValBox">
-                                                                <label>Rating 4</label>
-                                                                <input type="text" class="form-control jsQuestionRatingScaleVal"
-                                                                    value="<?=getDefaultLabel()[4];?>" data-id="4" />
-                                                            </div>
-                                                            <div class="form-group jsQuestionRatingScaleValBox">
-                                                                <label>Rating 5</label>
-                                                                <input type="text" class="form-control jsQuestionRatingScaleVal"
-                                                                    value="<?=getDefaultLabel()[5];?>" data-id="5" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Assigned to  -->
-                                                    <div class="row mb10 dn">
-                                                        <div class="col-sm-3 col-xs-12">
-                                                            <label>Assigned to <span class="csRequired"></span></label>
-                                                        </div>
-                                                        <div class="col-sm-9 col-xs-12">
-                                                            <label class="control control--checkbox">
-                                                                <input type="checkbox" id="jsQuestionReportingManager" />
-                                                                Reporting Manager
-                                                                <div class="control__indicator"></div>
-                                                            </label> <br />
-                                                            <label class="control control--checkbox">
-                                                                <input type="checkbox" id="jsQuestionSelf" /> Self
-                                                                <div class="control__indicator"></div>
-                                                            </label> <br />
-                                                            <label class="control control--checkbox">
-                                                                <input type="checkbox" id="jsQuestionPeer" /> Peers and others
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- Question Footer -->
-                                            <div class="csPageBoxFooter p10">
-                                                <span class="csBTNBox">
-                                                    <button class="btn btn-orange btn-lg jsSaveQuestion"><i
-                                                            class="fa fa-plus-circle"></i> Add Question</button>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                               
-                            </div>
                             <!--  -->
-                            <div class="csPageBoxFooter ban p10">
+                            <div class="csPageBoxFooter p10">
                                 <span class="csBTNBox">
                                     <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i> Back To
                                         Reviewers</button>
@@ -859,7 +652,416 @@
                                 </span>
                             </div>
                         </div>
+                        <!-- Add Question -->
+                        <div class="csPageSection jsPageSection dn" data-key="add_question">
+                            <div class="csPageBoxHeader p10">
+                                <h4>
+                                    <strong>Add a Question</strong>
+                                    <span class="csBTNBox">
+                                        <button class="btn btn-black btn-lg mtn8 jsReviewBackStep" data-to="questions"><i class="fa fa-times-circle"></i> Cancel</button>
+                                        <button class="btn btn-orange btn-lg mtn8 jsSaveQuestion"><i class="fa fa-save"></i> Save Question</button>
+                                    </span>
+                                </h4>
+                            </div>
+                            <!-- Body2 -->
+                            <div class="csPageBoxBody p10">
+                                <!-- Add Question -->
+                                <div class="jsAddQuestion">
+                                    <!-- Question Body -->
+                                    <div class="csPageBoxBody p10">
+                                        <!--  -->
+                                        <div class="csForm">
+                                            <!-- Question  -->
+                                            <div class="row mb10">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Question <span class="csRequired"></span></label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <input class="form-control"
+                                                        placeholder="e.g. What would you do differently next quarter?"
+                                                        id="jsQuestionVal" />
+                                                </div>
+                                            </div>
 
+                                            <!-- Description  -->
+                                            <div class="row mb10">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Description</label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <textarea class="form-control"
+                                                        id="jsQuestionDescription"></textarea>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Options  -->
+                                            <div class="row mb10">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Options</label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsQuestionUseLabels" /> Use Labels
+                                                        <div class="control__indicator"></div>
+                                                    </label> <br />
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsQuestionIncludeNA" /> Include N/A
+                                                        <div class="control__indicator"></div>
+                                                    </label> <br />
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsStartVideoRecord" /> Include a Video
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                    <!--  -->
+                                                    <div class="csVideoHelpBox">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="jsVideoRecorderBox dn">
+                                                                    <p class="alert alert-danger"><strong>To use this
+                                                                            feature, please, make sure you have allowed
+                                                                            microphone and camera access.</strong></p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 col-xs-12">
+                                                                <div class="jsVideoRecorderBox dn">
+                                                                    <video id="jsVideoRecorder" width="100%"></video>
+                                                                    <!--  -->
+                                                                    <button class="btn btn-orange btn-lg dn"
+                                                                        id="jsVideoRecordButton">Start Recording</button>
+                                                                    <!--  -->
+                                                                    <button class="btn btn-black btn-lg dn"
+                                                                        id="jsVideoPauseButton"><i class="fa fa-pause-circle"></i> Pause Recording</button>
+                                                                    <!--  -->
+                                                                    <button class="btn btn-black btn-lg dn"
+                                                                        id="jsVideoResumeButton"><i class="fa fa-play-circle"></i> Resume Recording</button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 col-xs-12">
+                                                                <div class="jsVideoPreviewBox dn">
+                                                                    <video id="jsVideoPreview" width="100%"></video>
+                                                                    <button class="btn btn-orange btn-lg"
+                                                                        id="jsVideoPlayVideo"><i class="fa fa-play"></i>
+                                                                        Play Video</button>
+                                                                    <button class="btn btn-black btn-lg"
+                                                                        id="jsVideoRemoveButton"><i
+                                                                            class="fa fa-times-circle"></i> Remove
+                                                                        Video</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Type  -->
+                                            <div class="row mb10">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Response Type <span class="csRequired"></span></label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <select id="jsQuestionType">
+                                                        <option value="text">Text Box</option>
+                                                        <option value="rating">Rating Scale</option>
+                                                        <option value="text-n-rating">Rating Scale & Text Box</option>
+                                                        <option value="multiple-choice">Multiple Choice</option>
+                                                        <option value="multiple-choice-with-text">Multiple Choice & Text Box
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Rating Scale  -->
+                                            <div class="row mb10 jsQuestionRatingScaleBox dn">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Rating Scale</label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <select id="jsQuestionRatingScale">
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Ratings -->
+                                            <div class="row mb10 jsQuestionRatingValBox dn">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Ratings</label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <div class="form-group jsQuestionRatingScaleValBox">
+                                                        <label>Rating 1</label>
+                                                        <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                            value="<?=getDefaultLabel()[1];?>" data-id="1" />
+                                                    </div>
+                                                    <div class="form-group jsQuestionRatingScaleValBox">
+                                                        <label>Rating 2</label>
+                                                        <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                            value="<?=getDefaultLabel()[2];?>" data-id="2" />
+                                                    </div>
+                                                    <div class="form-group jsQuestionRatingScaleValBox">
+                                                        <label>Rating 3</label>
+                                                        <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                            value="<?=getDefaultLabel()[3];?>" data-id="3" />
+                                                    </div>
+                                                    <div class="form-group jsQuestionRatingScaleValBox">
+                                                        <label>Rating 4</label>
+                                                        <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                            value="<?=getDefaultLabel()[4];?>" data-id="4" />
+                                                    </div>
+                                                    <div class="form-group jsQuestionRatingScaleValBox">
+                                                        <label>Rating 5</label>
+                                                        <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                            value="<?=getDefaultLabel()[5];?>" data-id="5" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Assigned to  -->
+                                            <div class="row mb10 dn">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Assigned to <span class="csRequired"></span></label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsQuestionReportingManager" />
+                                                        Reporting Manager
+                                                        <div class="control__indicator"></div>
+                                                    </label> <br />
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsQuestionSelf" /> Self
+                                                        <div class="control__indicator"></div>
+                                                    </label> <br />
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsQuestionPeer" /> Peers and others
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Question Footer -->
+                                    <div class="csPageBoxFooter p10">
+                                        <span class="csBTNBox">
+                                            <button class="btn btn-black btn-lg jsReviewBackStep" data-to="questions"><i
+                                                    class="fa fa-times-circle"></i> Cancel</button>
+                                            <button class="btn btn-orange btn-lg jsSaveQuestion"><i
+                                                    class="fa fa-save"></i> Save Question</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Edit Question -->
+                        <div class="csPageSection jsPageSection dn" data-key="edit_question">
+                            <div class="csPageBoxHeader p10">
+                                <h4>
+                                    <strong>Edit a Question</strong>
+                                    <span class="csBTNBox">
+                                        <button class="btn btn-black btn-lg mtn8 jsReviewBackStep" data-to="questions"><i class="fa fa-times-circle"></i> Cancel</button>
+                                        <button class="btn btn-orange btn-lg mtn8 jsUpdateQuestion"><i class="fa fa-save"></i> Update Question</button>
+                                    </span>
+                                </h4>
+                            </div>
+                            <!-- Body2 -->
+                            <div class="csPageBoxBody p10">
+                                <!-- Edit Question -->
+                                <div class="jsEditQuestion">
+                                    <!-- Question Body -->
+                                    <div class="csPageBoxBody p10">
+                                        <!--  -->
+                                        <div class="csForm">
+                                            <!-- Question  -->
+                                            <div class="row mb10">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Question <span class="csRequired"></span></label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <input class="form-control"
+                                                        placeholder="e.g. What would you do differently next quarter?"
+                                                        id="jsQuestionValEdit" />
+                                                </div>
+                                            </div>
+
+                                            <!-- Description  -->
+                                            <div class="row mb10">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Description</label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <textarea class="form-control"
+                                                        id="jsQuestionDescriptionEdit"></textarea>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Options  -->
+                                            <div class="row mb10">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Options</label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsQuestionUseLabelsEdit" /> Use Labels
+                                                        <div class="control__indicator"></div>
+                                                    </label> <br />
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsQuestionIncludeNAEdit" /> Include N/A
+                                                        <div class="control__indicator"></div>
+                                                    </label> <br />
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsStartVideoRecordEdit" /> Include a Video
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                    <!--  -->
+                                                    <div class="csVideoHelpBox">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="jsVideoRecorderBoxEdit dn">
+                                                                    <p class="alert alert-danger"><strong>To use this
+                                                                            feature, please, make sure you have allowed
+                                                                            microphone and camera access.</strong></p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 col-xs-12">
+                                                                <div class="jsVideoRecorderBoxEdit dn">
+                                                                    <video id="jsVideoRecorderEdit" width="100%"></video>
+                                                                    <!--  -->
+                                                                    <button class="btn btn-orange btn-lg dn"
+                                                                        id="jsVideoRecordButtonEdit"><i class="fa fa-stop"></i> Start Recording</button>
+                                                                    <!--  -->
+                                                                    <button class="btn btn-orange btn-lg dn"
+                                                                        id="jsVideoPauseButtonEdit"><i class="fa fa-pause-circle"></i> Pause Recording</button>
+                                                                    <!--  -->
+                                                                    <button class="btn btn-orange btn-lg dn"
+                                                                        id="jsVideoResumeButtonEdit"><i class="fa fa-play-circle"></i> Resume Recording</button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 col-xs-12">
+                                                                <div class="jsVideoPreviewBoxEdit dn">
+                                                                    <video id="jsVideoPreviewEdit" width="100%"></video>
+                                                                    <button class="btn btn-orange btn-lg"
+                                                                        id="jsVideoPlayVideoEdit"><i class="fa fa-play"></i>
+                                                                        Play Video</button>
+                                                                    <button class="btn btn-black btn-lg"
+                                                                        id="jsVideoRemoveButtonEdit"><i
+                                                                            class="fa fa-times-circle"></i> Remove
+                                                                        Video</button>
+                                                                </div>
+                                                                <div class="jsVideoPreview2BoxEdit dn">
+                                                                    <video id="jsVideoPreview2Edit" width="100%"></video>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Type  -->
+                                            <div class="row mb10">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Response Type <span class="csRequired"></span></label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <select id="jsQuestionTypeEdit">
+                                                        <option value="text">Text Box</option>
+                                                        <option value="rating">Rating Scale</option>
+                                                        <option value="text-n-rating">Rating Scale & Text Box</option>
+                                                        <option value="multiple-choice">Multiple Choice</option>
+                                                        <option value="multiple-choice-with-text">Multiple Choice & Text Box
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Rating Scale  -->
+                                            <div class="row mb10 jsQuestionRatingScaleBoxEdit dn">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Rating Scale</label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <select id="jsQuestionRatingScaleEdit">
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Ratings -->
+                                            <div class="row mb10 jsQuestionRatingValBoxEdit dn">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Ratings</label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <div class="form-group jsQuestionRatingScaleValBoxEdit">
+                                                        <label>Rating 1</label>
+                                                        <input type="text" class="form-control jsQuestionRatingScaleValEdit"
+                                                            value="<?=getDefaultLabel()[1];?>" data-id="1" />
+                                                    </div>
+                                                    <div class="form-group jsQuestionRatingScaleValBoxEdit">
+                                                        <label>Rating 2</label>
+                                                        <input type="text" class="form-control jsQuestionRatingScaleValEdit"
+                                                            value="<?=getDefaultLabel()[2];?>" data-id="2" />
+                                                    </div>
+                                                    <div class="form-group jsQuestionRatingScaleValBoxEdit">
+                                                        <label>Rating 3</label>
+                                                        <input type="text" class="form-control jsQuestionRatingScaleValEdit"
+                                                            value="<?=getDefaultLabel()[3];?>" data-id="3" />
+                                                    </div>
+                                                    <div class="form-group jsQuestionRatingScaleValBoxEdit">
+                                                        <label>Rating 4</label>
+                                                        <input type="text" class="form-control jsQuestionRatingScaleValEdit"
+                                                            value="<?=getDefaultLabel()[4];?>" data-id="4" />
+                                                    </div>
+                                                    <div class="form-group jsQuestionRatingScaleValBoxEdit">
+                                                        <label>Rating 5</label>
+                                                        <input type="text" class="form-control jsQuestionRatingScaleValEdit"
+                                                            value="<?=getDefaultLabel()[5];?>" data-id="5" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Assigned to  -->
+                                            <div class="row mb10 dn">
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <label>Assigned to <span class="csRequired"></span></label>
+                                                </div>
+                                                <div class="col-sm-9 col-xs-12">
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsQuestionReportingManagerEdit" />
+                                                        Reporting Manager
+                                                        <div class="control__indicator"></div>
+                                                    </label> <br />
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsQuestionSelfEdit" /> Self
+                                                        <div class="control__indicator"></div>
+                                                    </label> <br />
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" id="jsQuestionPeerEdit" /> Peers and others
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Question Footer -->
+                                    <div class="csPageBoxFooter p10">
+                                        <span class="csBTNBox">
+                                            <input type="hidden" id="jsQuestionId" />
+                                            <button class="btn btn-black btn-lg jsReviewBackStep" data-to="questions"><i
+                                                    class="fa fa-times-circle"></i> Cancel</button>
+                                            <button class="btn btn-orange btn-lg jsUpdateQuestion"><i
+                                                    class="fa fa-save"></i> Update Question</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
