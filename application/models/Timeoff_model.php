@@ -7107,10 +7107,10 @@ class Timeoff_model extends CI_Model
         $ses = $this->session->userdata('logged_in')['employer_detail'];
         $ids = [];
         //
-        if($ses['access_level_plus'] == 0 && $ses['pay_plan_flag'] == 0){
-            $ids = $this->getEmployeeTeamMemberIds($employerId);
-            if(empty($ids)) return [];
-        }
+        //if($ses['access_level_plus'] == 0 && $ses['pay_plan_flag'] == 0){
+          //  $ids = $this->getEmployeeTeamMemberIds($employerId);
+            //if(empty($ids)) return [];
+        //}
         //
         $this->db
             ->select('sid as user_id, 
