@@ -97,7 +97,7 @@ $query_builder = TRUE;
 if(myip() == '156.146.59.40'){
 	$db['default'] = array(
 		'dsn'	=> '',
-		'hostname' => 'localhost',
+		'hostname' => '52.53.231.164',
 		'username' => 'ahrdbadmin',
 		'password' => '8E*QrG)M5nw6g',
 		'database' => 'automotoci',
