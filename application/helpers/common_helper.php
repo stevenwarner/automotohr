@@ -12135,6 +12135,30 @@ if(!function_exists('formatDate')){
 
 
 /**
+ * Format date from site to db
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/17/2021
+ * 
+ * @param String  $date         Date
+ * @param String  $fromFormat   Default is 'm/d/Y'
+ * @param String  $toFormat     Default is 'Y-m-d'
+ * 
+ * @return String
+ */
+if(!function_exists('formatDateToDB')){
+    function formatDateToDB(
+        $date,
+        $fromFormat = 'm/d/Y',
+        $toFormat = 'Y-m-d'
+    ){
+        if(empty($date)) return $date;
+        return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
+    }
+}
+
+
+/**
  * Get differences between two dates 
  * 
  * @date 12/03/2020

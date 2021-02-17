@@ -47,7 +47,7 @@
                     <div class="csPageContent">
 
                         <!-- Template Section -->
-                        <div class="csPageSection jsPageSection dn" data-key="templates">
+                        <div class="csPageSection jsPageSection" data-key="templates">
                             <!-- Box Header -->
                             <div class="csPageBoxHeader p10">
                                 <h3>Craft a new review from the ground up or pick a template with insightful questions.
@@ -211,6 +211,49 @@
                                         </div>
                                     </div>
 
+                                    <!--  -->
+                                    <div class="row mb10">
+                                        <div class="col-sm-3 col-xs-12">
+                                            <label>Visibility</label>
+                                        </div>
+                                        <div class="col-sm-9 col-xs-12">
+                                            <div class="mb10">
+                                                <label>Roles</label>
+                                                <select id="jsReviewVisibilityRoles" multiple>
+                                                    <option value="admin">Admin</option>
+                                                    <option value="hiring_manager">Hiring Manager</option>
+                                                    <option value="manager">Manager</option>
+                                                    <option value="employee">Employee</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb10">
+                                                <label>Departments</label>
+                                                <select id="jsReviewVisibilityDepartments" multiple>
+                                                    <?php if(!empty($dnt['departments'])): ?>
+                                                    <?php   foreach($dnt['departments'] as $department): ?>
+                                                    <option value="<?=$department['sid'];?>">
+                                                        <?=$department['name'];?></option>
+                                                    <?php   endforeach; ?>
+                                                    <?php   endif; ?>
+                                                </select>
+                                            </div>
+                                            <div class="mb10">
+                                                <label>Teams</label>
+                                                <select id="jsReviewVisibilityTeams" multiple>
+                                                    <?php if(!empty($dnt['teams'])): ?>
+                                                    <?php   foreach($dnt['teams'] as $team): ?>
+                                                    <option value="<?=$team['sid'];?>"><?=$team['name'];?></option>
+                                                    <?php   endforeach; ?>
+                                                    <?php   endif; ?>
+                                                </select>
+                                            </div>
+                                            <div class="mb10">
+                                                <label>Individuals</label>
+                                                <select id="jsReviewVisibilityIndividuals" multiple></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="bbt mb10"></div>
 
                                     <!--  -->
@@ -220,10 +263,11 @@
                                         </div>
                                     </div>
 
+
                                     <!-- Schedule -->
                                     <div class="row mb10">
                                         <div class="col-sm-3 col-xs-12">
-                                            <label>Frequency</label>
+                                            <label>Frequency <span class="csRequired"></span></label>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
                                             <label class="control control--radio">
@@ -251,7 +295,7 @@
                                         <!-- Period -->
                                         <div class="row mb10">
                                             <div class="col-sm-3 col-xs-12">
-                                                <label class="pa10">Review Period</label>
+                                                <label class="pa10">Review Period <span class="csRequired"></span></label>
                                             </div>
                                             <div class="col-sm-3 col-xs-12 pr0">
                                                 <input type="text" class="form-control csRadius100"
@@ -270,7 +314,7 @@
                                         <!-- Repeat -->
                                         <div class="row mb10 jsFrequencyBox jsFrequencyRepeatBox dn">
                                             <div class="col-sm-3 col-xs-12">
-                                                <label class="pa10">Recur Every</label>
+                                                <label class="pa10">Recur Every <span class="csRequired"></span></label>
                                             </div>
                                             <div class="col-sm-2 col-xs-12">
                                                 <input type="text" class="form-control csRadius100" placeholder="0"
@@ -278,9 +322,9 @@
                                             </div>
                                             <div class="col-sm-2 col-xs-12">
                                                 <select id="jsReviewRepeatType">
-                                                    <option value="days">Days</option>
-                                                    <option value="weeks">Weeks</option>
-                                                    <option value="months">Months</option>
+                                                    <option value="day">Days</option>
+                                                    <option value="week">Weeks</option>
+                                                    <option value="month">Months</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -328,7 +372,7 @@
                                         <!-- Review Due -->
                                         <div class="row mb10">
                                             <div class="col-sm-3 col-xs-12">
-                                                <label class="pa10">When are reviews due?</label>
+                                                <label class="pa10">When are reviews due? <span class="csRequired"></span></label>
                                             </div>
                                             <div class="col-sm-2 col-xs-12">
                                                 <input type="text" class="form-control csRadius100" placeholder="0"
@@ -528,27 +572,27 @@
                                     <!-- Row 1 -->
                                     <div class="row">
                                         <div class="col-sm-3 col-xs-12">
-                                            <label>Reviewers</label>
+                                            <label>Reviewers <span class="csRequired"></span></label>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
                                             <label class="control control--radio">
                                                 Reporting Manager
-                                                <input type="radio" name="reviewerType" />
+                                                <input type="radio" name="reviewerType" class="jsReviewerType" value="reporting_manager" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
                                             <label class="control control--radio">
                                                 Self-Review
-                                                <input type="radio" name="reviewerType" />
+                                                <input type="radio" name="reviewerType" class="jsReviewerType" value="self" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
                                             <label class="control control--radio">
                                                 Peers (Colleagues)
-                                                <input type="radio" name="reviewerType" />
+                                                <input type="radio" name="reviewerType" class="jsReviewerType" value="peer" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
                                             <label class="control control--radio">
                                                 Specific Reviewers
-                                                <input type="radio" name="reviewerType" />
+                                                <input type="radio" name="reviewerType" class="jsReviewerType" value="specific" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
                                             <div class="dn" id="jsReviewSpecificReviewersBox">
@@ -574,18 +618,18 @@
                             <!--  -->
                             <div class="csPageBoxFooter p10">
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i> Back To
+                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="reviewees"><i class="fa fa-long-arrow-left"></i> Back To
                                         Reviewees</button>
-                                    <button class="btn btn-orange btn-lg"><i class="fa fa-arrow-circle-right"></i>Save &
+                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="questions"><i class="fa fa-arrow-circle-right"></i>Save &
                                         Next</button>
-                                    <button class="btn btn-black btn-lg"><i class="fa fa-edit"></i> Finish
+                                    <button class="btn btn-black btn-lg jsFinishLater"><i class="fa fa-edit"></i> Finish
                                         Later</button>
                                 </span>
                                 <div class="clearfix"></div>
                             </div>
                         </div>
                         <!-- Questions -->
-                        <div class="csPageSection jsPageSection" data-key="questions">
+                        <div class="csPageSection jsPageSection dn" data-key="questions">
                             <!-- Header -->
                             <div class="csPageBoxHeader p10">
                                 <h4>

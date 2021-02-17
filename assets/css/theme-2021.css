@@ -992,7 +992,7 @@
 }
 
 .select2-container--default .select2-results__option[aria-selected=true] {
-    background-color: #ffffff;
+    background-color: #ddd;
 }
 
 .select2-container--default .select2-results__option[aria-selected=true]:hover {
@@ -1131,10 +1131,10 @@ nav.navigation ul li a {
 
 .csModal .csModalButtonWrap button,
 .csModal .csModalButtonWrap a {
-    border-radius: 100px !important;
-    -webkit-border-radius: 100px !important;
-    -moz-border-radius: 100px !important;
-    -o-border-radius: 100px !important;
+    border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    -o-border-radius: 5px !important;
 }
 
 

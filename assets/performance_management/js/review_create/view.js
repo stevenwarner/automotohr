@@ -2,7 +2,6 @@ $(function() {
     // Declerations
     let boxCount = 1;
 
-
     // Binds
 
     $('#jsReviewStartDate').datepicker({
@@ -27,6 +26,9 @@ $(function() {
     });
 
     //
+    $('#jsReviewVisibilityRoles').select2({ minimumResultsForSearch: -1 });
+    $('#jsReviewVisibilityDepartments').select2({ minimumResultsForSearch: -1 });
+    $('#jsReviewVisibilityTeams').select2({ minimumResultsForSearch: -1 });
     $('#jsReviewRepeatType').select2({ minimumResultsForSearch: -1 });
     $('#jsFilterIndividuals').select2();
     $('#jsFilterDepartments').select2({ minimumResultsForSearch: -1 });
@@ -70,6 +72,50 @@ $(function() {
     });
 
     /**
+     * 
+     */
+    $('.jsFinishLater').click(function() {
+        ml(true, 'create_review');
+        saveReview($('.jsPageSection:visible').find('.jsReviewBackStep').data().to, 1);
+    });
+
+    /**
+     * Change
+     * 
+     * Set roles
+     */
+    $('#jsReviewVisibilityRoles').change(function() {
+        reviewOBJ.visibility.roles = $(this).val() || [];
+    });
+
+    /**
+     * Change
+     * 
+     * Set departments
+     */
+    $('#jsReviewVisibilityDepartments').change(function() {
+        reviewOBJ.visibility.departments = $(this).val() || [];
+    });
+
+    /**
+     * Change
+     * 
+     * Set teams
+     */
+    $('#jsReviewVisibilityTeams').change(function() {
+        reviewOBJ.visibility.teams = $(this).val() || [];
+    });
+
+    /**
+     * Change
+     * 
+     * Set individuals
+     */
+    $('#jsReviewVisibilityIndividuals').change(function() {
+        reviewOBJ.visibility.individuals = $(this).val() || [];
+    });
+
+    /**
      * Click
      * 
      * Frequency change
@@ -88,6 +134,7 @@ $(function() {
             $('.jsFrequencyCustom').show();
             //
             loadCustomRuns(reviewOBJ.schedule.customRuns);
+            loadCustomRuns();
         }
     });
 
@@ -563,6 +610,13 @@ $(function() {
             o.video_help = undefined;
             reviewOBJ.setQuestions(o, 'edit', $('#jsQuestionId').val());
         }
+    });
+
+    /**
+     * 
+     */
+    $('.jsReviewerType').change(function() {
+        reviewOBJ.reviewers.type = $(this).val();
     });
 
 

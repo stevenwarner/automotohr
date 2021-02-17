@@ -239,12 +239,14 @@ function getError(errorCode, isError) {
         404: 'We are unable to process your request at this moment. Please, try again in a few moments.',
         redirect: 'Your session is expired. Please, re-login to continue the work.',
         confirm_delete: "Do you really want to delete this row?",
+        finish_later_review: "You have successfully saved the review as a draft. You can edit the review from the reviews screen.",
         required_review_title: "Review title is required.",
         required_review_start_date: "Review start date is required.",
         required_review_end_date: "Review end date is required.",
         required_review_repeat_val: "Review recur value is required.",
         required_review_due_val: "Review due value is required.",
         required_review_reviewees: "Please, at least select one reviewee.",
+        required_review_reviewers: "Please, select reviewers.",
         required_question: "Question is required.",
     };
     //

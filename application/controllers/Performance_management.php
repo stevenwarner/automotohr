@@ -22,6 +22,8 @@ class Performance_management extends Public_Controller{
     private $pargs;
     //
     private $resp = [];
+    //
+    private $tables = [];
 
     /**
      * Contructor
@@ -33,11 +35,21 @@ class Performance_management extends Public_Controller{
         //
         parent::__construct();
         //
+        $this->tables = [
+            'PM' => 'performance_management',
+            'PMT' => 'performance_management_templates',
+            'PMCT' => 'performance_management_company_templates',
+            'USER' => 'users',
+            'DM' => 'departments_management',
+            'DTM' => 'departments_team_management',
+            'DME' => 'departments_employee_2_team',
+        ];
+        //
         $this->pargs = [];
         // Load helper
-        $this->load->helper('performance_management');
+        $this->load->helper($this->tables['PM']);
         // Load modal
-        $this->load->model('performance_management_model', 'pmm');
+        $this->load->model('performance_management_model', 'pmm', TRUE, $this->tables);
         // Load user agent
         $this->load->library('user_agent');
         //
@@ -243,6 +255,21 @@ class Performance_management extends Public_Controller{
         $this->load->view("main/footer");
     }
 
+    /**
+     * handler
+     * 
+     * @employee Mubashir Ahmed
+     * @date     02/17/2021
+     * 
+     * @return Void
+     */
+    function handler(){
+        if($this->input->method(false) == 'get') $this->get_handler();
+        else if($this->input->method(false) == 'post') $this->post_handler();
+        else{
+            res(['Status' => false, 'Response' => 'Invalid request made.']);
+        }
+    }
 
     /**
      * Get handler
@@ -311,6 +338,142 @@ class Performance_management extends Public_Controller{
         endswitch;
     }
 
+    /**
+     * Post handler
+     * 
+     * @employee Mubashir Ahmed
+     * @date     02/10/2021
+     * 
+     * @return JSON
+     */
+    function post_handler(){
+        $pargs = [];
+        // Check session
+        $isLogin = $this->checkLogin($pargs, true);
+        //
+        if(!$isLogin) res($this->resp);
+        //
+        $this->resp['Redirect'] = false;
+        //
+        $params = $this->input->post(NULL, TRUE);
+        //
+        switch($params['action']):
+            // Save review
+            case "save_review":
+                //
+                $ins = [];
+                $ins['company_sid'] = $pargs['companyId'];
+                $ins['review_title'] = $params['title'];
+                $ins['description'] = $params['description'];
+                $ins['frequency'] = $params['schedule']['frequency'];
+                $ins['review_start_date'] = $params['schedule']['reviewStartDate'];
+                $ins['review_end_date'] = $params['schedule']['reviewEndDate'];
+                $ins['repeat_after'] = $params['schedule']['repeatVal'];
+                $ins['repeat_type'] = $params['schedule']['repeatType'];
+                $ins['review_runs'] = $params['schedule']['customRuns'];
+                $ins['repeat_review'] = $params['schedule']['continueReview'];
+                $ins['review_due'] = $params['schedule']['reviewDue'];
+                $ins['visibility_roles'] = implode(',', $params['visibility']['roles']);
+                $ins['visibility_departments'] = implode(',', $params['visibility']['departments']);
+                $ins['visibility_teams'] = implode(',', $params['visibility']['teams']);
+                $ins['visibility_employees'] = implode(',', $params['visibility']['individuals']);
+                //
+                if($ins['frequency'] == 'custom'){
+                    $ins['repeat_after'] = 0;
+                    $ins['review_start_date'] = 
+                    $ins['review_end_date'] = ''; 
+                    $ins['repeat_type'] = 'day';
+                } else{
+                    $ins['review_due'] = 0;
+                    $ins['review_runs'] = '[]';
+                    $ins['repeat_review'] = 0;
+                }
+                //
+                if($ins['frequency'] == 'onetime'){
+                    $ins['repeat_after'] = 0;
+                    $ins['repeat_type'] = 'day';
+                }
+                //
+                $ins['review_start_date'] = formatDateToDB($ins['review_start_date']);
+                $ins['review_end_date'] = formatDateToDB($ins['review_end_date']);
+                $ins['last_updated_by'] = $pargs['employerId'];
+                // Insert the review into the database
+                $reviewId = $this->pmm->_insert($this->tables['PM'], $ins);
+                // History array
+                $ins = [];
+                $ins['review_sid'] = $reviewId;
+                $ins['employee_sid'] = $pargs['employerId'];
+                $ins['action'] = 'review_created';
+                $ins['action_fields'] = json_encode(['action' => 'created', 'msg' => '']);
+                // Insert the review log
+                $this->pmm->_insert('perfomance_management_log', $ins);
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                $this->resp['Data'] = $reviewId;
+                //
+                res($this->resp);
+            break;
+            // Update review
+            case "update_review":
+                // For Schedule
+                if($params['step'] == 'schedule'){
+                    //
+                    $ins = [];
+                    $ins['review_title'] = $params['title'];
+                    $ins['description'] = $params['description'];
+                    $ins['frequency'] = $params['schedule']['frequency'];
+                    $ins['review_start_date'] = $params['schedule']['reviewStartDate'];
+                    $ins['review_end_date'] = $params['schedule']['reviewEndDate'];
+                    $ins['repeat_after'] = $params['schedule']['repeatVal'];
+                    $ins['repeat_type'] = $params['schedule']['repeatType'];
+                    $ins['review_runs'] = $params['schedule']['customRuns'];
+                    $ins['repeat_review'] = $params['schedule']['continueReview'];
+                    $ins['review_due'] = $params['schedule']['reviewDue'];
+                    $ins['visibility_roles'] = implode(',', $params['visibility']['roles']);
+                    $ins['visibility_departments'] = implode(',', $params['visibility']['departments']);
+                    $ins['visibility_teams'] = implode(',', $params['visibility']['teams']);
+                    $ins['visibility_employees'] = implode(',', $params['visibility']['individuals']);
+                    //
+                    if($ins['frequency'] == 'custom'){
+                        $ins['repeat_after'] = 0;
+                        $ins['review_start_date'] = 
+                        $ins['review_end_date'] = ''; 
+                        $ins['repeat_type'] = 'day';
+                    } else{
+                        $ins['review_due'] = 0;
+                        $ins['review_runs'] = '[]';
+                        $ins['repeat_review'] = 0;
+                    }
+                    //
+                    if($ins['frequency'] == 'onetime'){
+                        $ins['repeat_after'] = 0;
+                        $ins['repeat_type'] = 'day';
+                    }
+                    //
+                    $ins['review_start_date'] = formatDateToDB($ins['review_start_date']);
+                    $ins['review_end_date'] = formatDateToDB($ins['review_end_date']);
+                    $ins['last_updated_by'] = $pargs['employerId'];
+                }
+
+                // For Reviewees
+                if($params['step'] == 'reviewees'){
+                    //
+                    $upd = [];
+                    $upd['included_employees'] = isset($params['reviewees']['included']) ? json_encode($params['reviewees']['included']) : '[]';
+                    $upd['excluded_employees'] = isset($params['reviewees']['excluded']) ? json_encode($params['reviewees']['excluded']) : '[]';
+                    //
+                    $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
+                }
+                
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                //
+                res($this->resp);
+            break;
+        endswitch;
+    }
 
     /**
      * Check user session and set data

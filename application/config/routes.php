@@ -1261,5 +1261,6 @@ $route['performance-management/review/create'] = 'Performance_management/create_
 $route['performance-management/goal/create'] = 'Performance_management/create_goal';
 $route['performance-management/goals'] = 'Performance_management/goals';
 // Handler
+$route['performance-management/handler'] = 'Performance_management/handler';
 $route['performance-management/handler/get/(.+)'] = 'Performance_management/get_handler';
 $route['performance-management/handler/post'] = 'Performance_management/post_handler';

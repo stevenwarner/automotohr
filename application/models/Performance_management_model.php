@@ -1,11 +1,54 @@
 <?php
 
 class Performance_management_model extends CI_Model{
-    function __construct(){
+    /**
+     * 
+     */
+    private $tables;
+
+    /**
+     * 
+     */
+    function __construct($tables){
+        $this->tables = $tables;
         parent::__construct();
     }
 
-     /**
+    /**
+     * Insert data into the database
+     * 
+     * @employee Mubashir Ahmed
+     * @date     02/17/2021
+     * 
+     * @param  String $tableName
+     * @param  Array  $data
+     * 
+     * @return Integer
+     */
+    function _insert($tableName, $data){
+        $this->db->insert($tableName, $data);
+        return $this->db->insert_id();
+    }
+    
+    /**
+     * Update data into the database
+     * 
+     * @employee Mubashir Ahmed
+     * @date     02/17/2021
+     * 
+     * @param  String $tableName
+     * @param  Array  $data
+     * @param  Array  $where
+     * 
+     * @return Void
+     */
+    function _update($tableName, $data, $where){
+        $this->db
+        ->where($where)
+        ->update($tableName, $data);
+    }
+
+    /**
      * Get company templates
      * 
      * @param Array|String $columns
@@ -24,7 +67,7 @@ class Performance_management_model extends CI_Model{
         ->where('is_archived', $archived)
         ->order_by('name', 'ASC');
         //
-        $a = $this->db->get('performance_management_templates');
+        $a = $this->db->get($this->tables['PMT']);
         $b = $a->result_array();
         // Free result
         $a->free_result();
@@ -68,7 +111,7 @@ class Performance_management_model extends CI_Model{
             $this->db->limit($inset, $offset);
         }
         //
-        $a = $this->db->get('performance_management_company_templates');
+        $a = $this->db->get($this->tables['PMCT']);
         $b = $a->result_array();
         // Free result
         $a->free_result();
@@ -76,7 +119,7 @@ class Performance_management_model extends CI_Model{
         if($page == 1){
             return [
                 'Records' => $b,
-                'Count' => $this->db->where('is_archived', $archived)->count_all_results('performance_management_company_templates')
+                'Count' => $this->db->where('is_archived', $archived)->count_all_results($this->tables['PMCT'])
             ];
         }
         //
@@ -98,7 +141,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select('questions')
         ->where('sid', $templateId)
-        ->get('performance_management_company_templates')
+        ->get($this->tables['PMCT'])
         ->row_array()['questions'];
     }
 
@@ -116,7 +159,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select('questions')
         ->where('sid', $templateId)
-        ->get('performance_management_templates')
+        ->get($this->tables['PMCT'])
         ->row_array()['questions'];
     }
     
@@ -135,7 +178,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select(is_array($columns) ? implode(',', $columns) : $columns)
         ->where('sid', $templateId)
-        ->get('performance_management_company_templates')
+        ->get($this->tables['PMCT'])
         ->row_array();
     }
     
@@ -154,7 +197,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select(is_array($columns) ? implode(',', $columns) : $columns)
         ->where('sid', $templateId)
-        ->get('performance_management_templates')
+        ->get($this->tables['PMT'])
         ->row_array();
     }
 
@@ -232,14 +275,14 @@ class Performance_management_model extends CI_Model{
         $teamIds = $departmentIds = [];
         // Get team Ids
         $teams = $this->db
-            ->select('departments_team_management.sid, departments_management.sid as department_sid')
-            ->from('departments_team_management')
-            ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
-            ->where('departments_team_management.status', 1)
-            ->where('departments_team_management.is_deleted', 0)
-            ->where('departments_management.status', 1)
-            ->where('departments_management.is_deleted', 0)
-            ->where("FIND_IN_SET({$employerId}, departments_team_management.team_lead) > ", 0, false)
+            ->select("{$this->tables['DTM']}.sid, {$this->tables['DM']}.sid as department_sid")
+            ->from("{$this->tables['DTM']}")
+            ->join("{$this->tables['DM']}", "{$this->tables['DM']}.sid = {$this->tables['DTM']}.department_sid", 'inner')
+            ->where("{$this->tables['DTM']}.status", 1)
+            ->where("{$this->tables['DTM']}.is_deleted", 0)
+            ->where("{$this->tables['DM']}.status", 1)
+            ->where("{$this->tables['DM']}.is_deleted", 0)
+            ->where("FIND_IN_SET({$employerId}, {$this->tables['DTM']}.team_lead) > ", 0, false)
             ->get()
             ->result_array();
         //
@@ -250,7 +293,7 @@ class Performance_management_model extends CI_Model{
         // Get departments
         $this->db
         ->select('sid')
-        ->from('departments_management')
+        ->from("{$this->tables['DM']}")
         ->where('status', 1)
         ->where('is_deleted', 0)
         ->where("FIND_IN_SET({$employerId}, supervisor) > ", 0, false);
@@ -270,7 +313,7 @@ class Performance_management_model extends CI_Model{
         if(empty($departmentIds) && empty($teamIds)) return [];
         // Get employee Ids
         $this->db->select('employee_sid')
-        ->from('departments_employee_2_team');
+        ->from("{$this->tables['DME']}");
         //
         if(!empty($departmentIds) && !empty($teamIds)){
             $this->db->where_in('department_sid', $departmentIds);
@@ -304,14 +347,14 @@ class Performance_management_model extends CI_Model{
         $teamIds = $departmentIds = [];
         // Get team Ids
         $teams = $this->db
-            ->select('departments_team_management.sid, departments_management.sid as department_sid')
-            ->from('departments_team_management')
-            ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
-            ->where('departments_team_management.status', 1)
-            ->where('departments_team_management.is_deleted', 0)
-            ->where('departments_management.status', 1)
-            ->where('departments_management.is_deleted', 0)
-            ->where("departments_management.company_sid", $companyId)
+            ->select("{$this->tables['DTM']}.sid, {$this->tables['DM']}.sid as department_sid")
+            ->from("{$this->tables['DTM']}")
+            ->join("{$this->tables['DM']}", "{$this->tables['DM']}.sid = {$this->tables['DTM']}.department_sid", 'inner')
+            ->where("{$this->tables['DTM']}.status", 1)
+            ->where("{$this->tables['DTM']}.is_deleted", 0)
+            ->where("{$this->tables['DM']}.status", 1)
+            ->where("{$this->tables['DM']}.is_deleted", 0)
+            ->where("{$this->tables['DM']}.company_sid", $companyId)
             ->get()
             ->result_array();
         //
@@ -322,7 +365,7 @@ class Performance_management_model extends CI_Model{
         // Get departments
         $this->db
         ->select('sid')
-        ->from('departments_management')
+        ->from("{$this->tables['DM']}")
         ->where('status', 1)
         ->where('is_deleted', 0)
         ->where("company_sid", $companyId);
@@ -346,7 +389,7 @@ class Performance_management_model extends CI_Model{
             //
             $departmentEmployees =
             $this->db->select('employee_sid, department_sid')
-            ->from('departments_employee_2_team')
+            ->from("{$this->tables['DME']}")
             ->where_in('department_sid', $departmentIds)
             ->get()
             ->result_array();
@@ -367,7 +410,7 @@ class Performance_management_model extends CI_Model{
             //
             $teamEmployees =
             $this->db->select('employee_sid, team_sid')
-            ->from('departments_employee_2_team')
+            ->from("{$this->tables['DME']}")
             ->where_in('team_sid', $teamIds)
             ->get()
             ->result_array();
@@ -400,24 +443,24 @@ class Performance_management_model extends CI_Model{
         $ra = [];
         // Get team Ids
         $ra['teams'] = $this->db
-            ->select('
-                departments_team_management.sid, 
-                departments_team_management.name
-            ')
-            ->from('departments_team_management')
-            ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
-            ->where('departments_team_management.status', 1)
-            ->where('departments_team_management.is_deleted', 0)
-            ->where('departments_management.status', 1)
-            ->where('departments_management.is_deleted', 0)
-            ->where("departments_management.company_sid", $companyId)
-            ->order_by('departments_team_management.name', 'ASC')
+            ->select("
+                {$this->tables['DTM']}.sid, 
+                {$this->tables['DTM']}.name
+            ")
+            ->from("{$this->tables['DTM']}")
+            ->join("{$this->tables['DM']}", "{$this->tables['DM']}.sid = {$this->tables['DTM']}.department_sid", "inner")
+            ->where("{$this->tables['DTM']}.status", 1)
+            ->where("{$this->tables['DTM']}.is_deleted", 0)
+            ->where("{$this->tables['DM']}.status", 1)
+            ->where("{$this->tables['DM']}.is_deleted", 0)
+            ->where("{$this->tables['DM']}.company_sid", $companyId)
+            ->order_by("{$this->tables['DTM']}.name", 'ASC')
             ->get()
             ->result_array();
             // Get departments
             $ra['departments'] = $this->db
             ->select('sid, name')
-            ->from('departments_management')
+            ->from("{$this->tables['DM']}")
             ->where('status', 1)
             ->where('is_deleted', 0)
             ->where("company_sid", $companyId)
@@ -428,7 +471,6 @@ class Performance_management_model extends CI_Model{
 
         return $ra;
     }
-    
     
     /**
      * Get company job titles
@@ -445,7 +487,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select('job_title')
         ->distinct()
-        ->from('users')
+        ->from("{$this->tables['USER']}")
         ->where('parent_sid', $companyId)
         ->where('active', 1)
         ->where('terminated_status', 0)
@@ -454,6 +496,34 @@ class Performance_management_model extends CI_Model{
         ->order_by('job_title', 'ASC')
         ->get()
         ->result_array();
+    }
+
+    /**
+     * Get review by id
+     * 
+     * @param Array|String $columns
+     *                     Default is '*'
+     * @param Booleon      $archived 
+     *                     Default is '0'
+     * 
+     * @return Array
+     */
+    function getReviewById(
+        $columns = '*', 
+        $archived = 0
+    ){
+        $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where('is_archived', $archived)
+        ->order_by('name', 'ASC')
+        ->limit(1);
+        //
+        $a = $this->db->get($this->tables['PM']);
+        $b = $a->result_array();
+        // Free result
+        $a->free_result();
+        //
+        return $b;
     }
     
 }

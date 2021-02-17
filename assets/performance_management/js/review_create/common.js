@@ -1,168 +1,171 @@
 /**
  * 
  */
-const reviewOBJ = {
-    title: '',
-    description: '',
-    visibility: {
-        roles: [],
-        departments: [],
-        teams: [],
-        individuals: []
-    },
-    schedule: {
-        frequency: 'onetime',
-        reviewStartDate: '',
-        reviewEndDate: '',
-        repeatVal: 0,
-        repeatType: 'days',
-        continueReview: 0,
-        reviewDue: 0,
-        reviewDueType: 'days',
-        customRuns: []
-    },
-    reviewees: {
-        included: [],
-        excluded: []
-    },
-    reviewers: {},
-    questions: [],
-    targets: {
-        reviewTitleHeader: $('#jsReviewTitleHeader'),
-        reviewTitle: $('#jsReviewTitle'),
-        reviewDescription: $('#jsReviewDescription'),
-        reviewRepeatVal: $('#jsReviewRepeatVal'),
-        reviewRepeatType: $('#jsReviewRepeatType'),
-        reviewContinue: $('#jsReviewContinue'),
-        reviewDue: $('#jsReviewDue'),
-        finishLater: $('.jsFinishLater'),
-        questionsView: $('.jsQuestionViewWrap')
-    },
-    // Functions
-    // Clear review details
-    clearReview: function() {
-        this.title = '';
-        this.description = '';
-        this.questions = [];
-    },
-    // Set review title
-    setTitle: function(title) {
-        this.title = title;
-        this.targets.reviewTitle.val(this.title);
-        //
-        this.targets.reviewTitleHeader.text(this.title != '' ? ` - ${this.title}` : '');
-        //
-        if (this.title == '') this.targets.finishLater.addClass('dn');
-        else this.targets.finishLater.removeClass('dn');
-    },
-    // Set review questions
-    setQuestions: function(questions, type, id) {
-        if (type == 'add') this.questions.push(questions);
-        else if (type == 'edit') {
-            this.questions[id] = questions;
-        } else if (type === undefined) this.questions = questions;
-        //
-        this.remakeQuestionsView();
-    },
-    // Set index
-    setIndexValue: function(index, value, sub) {
-        if (sub !== undefined) this[sub][index] = value;
-        else this[index] = value;
-    },
-    // Add custom run
-    addCustomRun: function(data) {
-        //
-        let index = -1;
-        //
-        if (this.schedule.customRuns.length === 0) {
-            this.schedule.customRuns.push(data);
-            return;
-        } else {
-            this.schedule.customRuns.map(function(d, k) {
-                if (d.id === data.id) index = k;
-            });
+const
+    reviewOBJ = {
+        id: 0,
+        title: '',
+        description: '',
+        visibility: {
+            roles: [],
+            departments: [],
+            teams: [],
+            individuals: []
+        },
+        schedule: {
+            frequency: 'onetime',
+            reviewStartDate: '',
+            reviewEndDate: '',
+            repeatVal: 0,
+            repeatType: 'days',
+            continueReview: 0,
+            reviewDue: 0,
+            reviewDueType: 'days',
+            customRuns: []
+        },
+        reviewees: {
+            included: [],
+            excluded: []
+        },
+        reviewers: {
+            type: '',
+            employees: {}
+        },
+        questions: [],
+        targets: {
+            reviewTitleHeader: $('#jsReviewTitleHeader'),
+            reviewTitle: $('#jsReviewTitle'),
+            reviewDescription: $('#jsReviewDescription'),
+            reviewRepeatVal: $('#jsReviewRepeatVal'),
+            reviewRepeatType: $('#jsReviewRepeatType'),
+            reviewContinue: $('#jsReviewContinue'),
+            reviewDue: $('#jsReviewDue'),
+            finishLater: $('.jsFinishLater'),
+            questionsView: $('.jsQuestionViewWrap')
+        },
+        // Functions
+        // Clear review details
+        clearReview: function() {
+            this.title = '';
+            this.description = '';
+            this.questions = [];
+        },
+        // Set review title
+        setTitle: function(title) {
+            this.title = title;
+            this.targets.reviewTitle.val(this.title);
             //
-            if (index === -1) this.schedule.customRuns.push(data);
-            else this.schedule.customRuns[index] = data;
-        }
-    },
-    // Remove custom run
-    removeCustomRun: function(index) {
-        this.schedule.customRuns.map((d, k) => {
-            if (d.id === index) this.schedule.customRuns.splice(k, 1);
-        });
+            this.targets.reviewTitleHeader.text(this.title != '' ? ` - ${this.title}` : '');
+            //
+            if (this.title == '') this.targets.finishLater.addClass('dn');
+            else this.targets.finishLater.removeClass('dn');
+        },
+        // Set review questions
+        setQuestions: function(questions, type, id) {
+            if (type == 'add') this.questions.push(questions);
+            else if (type == 'edit') {
+                this.questions[id] = questions;
+            } else if (type === undefined) this.questions = questions;
+            //
+            this.remakeQuestionsView();
+        },
+        // Set index
+        setIndexValue: function(index, value, sub) {
+            if (sub !== undefined) this[sub][index] = value;
+            else this[index] = value;
+        },
+        // Add custom run
+        addCustomRun: function(data) {
+            //
+            let index = -1;
+            //
+            if (this.schedule.customRuns.length === 0) {
+                this.schedule.customRuns.push(data);
+                return;
+            } else {
+                this.schedule.customRuns.map(function(d, k) {
+                    if (d.id === data.id) index = k;
+                });
+                //
+                if (index === -1) this.schedule.customRuns.push(data);
+                else this.schedule.customRuns[index] = data;
+            }
+        },
+        // Remove custom run
+        removeCustomRun: function(index) {
+            this.schedule.customRuns.map((d, k) => {
+                if (d.id === index) this.schedule.customRuns.splice(k, 1);
+            });
 
-    },
-    //
-    sortQuestion: function(index, direction) {
+        },
         //
-        if (direction == 'up') {
-            const previous = Object.assign(reviewOBJ.questions[index - 1]);
-            reviewOBJ.questions[index - 1] = reviewOBJ.questions[index];
-            reviewOBJ.questions[index] = previous;
-        } else {
-            const next = Object.assign(reviewOBJ.questions[index + 1]);
-            reviewOBJ.questions[index + 1] = reviewOBJ.questions[index];
-            reviewOBJ.questions[index] = next;
-        }
+        sortQuestion: function(index, direction) {
+            //
+            if (direction == 'up') {
+                const previous = Object.assign(reviewOBJ.questions[index - 1]);
+                reviewOBJ.questions[index - 1] = reviewOBJ.questions[index];
+                reviewOBJ.questions[index] = previous;
+            } else {
+                const next = Object.assign(reviewOBJ.questions[index + 1]);
+                reviewOBJ.questions[index + 1] = reviewOBJ.questions[index];
+                reviewOBJ.questions[index] = next;
+            }
+            //
+            this.remakeQuestionsView();
+        },
         //
-        this.remakeQuestionsView();
-    },
-    //
-    remakeQuestionsView: function() {
-        //
-        rows = '';
-        if (this.questions.length === 0) {
-            rows += `
+        remakeQuestionsView: function() {
+            //
+            rows = '';
+            if (this.questions.length === 0) {
+                rows += `
             <div class="csQuestionRow">
                 <h4 class="alert alert-info text-center">You haven't added any questions.</h4>
             </div>`;
-        } else {
+            } else {
+                //
+                const ql = this.questions.length - 1;
+                //
+                this.questions.map(function(question, index) {
+                    rows += getQuestionRow(question, index, ql);
+                });
+            }
             //
-            const ql = this.questions.length - 1;
+            this.targets.questionsView.html(rows);
             //
-            this.questions.map(function(question, index) {
-                rows += getQuestionRow(question, index, ql);
-            });
+            $('.jsReviewStep[data-to="questions"]').click();
         }
-        //
-        this.targets.questionsView.html(rows);
-        //
-        $('.jsReviewStep[data-to="questions"]').click();
-    }
-};
+    },
 
+    //
+    cp = new mVideoRecorder({
+        recorderPlayer: 'jsVideoRecorder',
+        previewPlayer: 'jsVideoPreview',
+        recordButton: 'jsVideoRecordButton',
+        playRecordedVideoBTN: 'jsVideoPlayVideo',
+        removeRecordedVideoBTN: 'jsVideoRemoveButton',
+        pauseRecordedVideoBTN: 'jsVideoPauseButton',
+        resumeRecordedVideoBTN: 'jsVideoResumeButton',
+    }),
+    //
+    cp2 = new mVideoRecorder({
+        recorderPlayer: 'jsVideoRecorderEdit',
+        previewPlayer: 'jsVideoPreviewEdit',
+        recordButton: 'jsVideoRecordButtonEdit',
+        playRecordedVideoBTN: 'jsVideoPlayVideoEdit',
+        removeRecordedVideoBTN: 'jsVideoRemoveButtonEdit',
+        pauseRecordedVideoBTN: 'jsVideoPauseButtonEdit',
+        resumeRecordedVideoBTN: 'jsVideoResumeButtonEdit',
+    }),
 
-//
-const cp = new mVideoRecorder({
-    recorderPlayer: 'jsVideoRecorder',
-    previewPlayer: 'jsVideoPreview',
-    recordButton: 'jsVideoRecordButton',
-    playRecordedVideoBTN: 'jsVideoPlayVideo',
-    removeRecordedVideoBTN: 'jsVideoRemoveButton',
-    pauseRecordedVideoBTN: 'jsVideoPauseButton',
-    resumeRecordedVideoBTN: 'jsVideoResumeButton',
-});
-//
-const cp2 = new mVideoRecorder({
-    recorderPlayer: 'jsVideoRecorderEdit',
-    previewPlayer: 'jsVideoPreviewEdit',
-    recordButton: 'jsVideoRecordButtonEdit',
-    playRecordedVideoBTN: 'jsVideoPlayVideoEdit',
-    removeRecordedVideoBTN: 'jsVideoRemoveButtonEdit',
-    pauseRecordedVideoBTN: 'jsVideoPauseButtonEdit',
-    resumeRecordedVideoBTN: 'jsVideoResumeButtonEdit',
-});
+    /**
+     * 
+     */
+    stepCaller = {
+        'reviewers': loadReviewerStep,
+        'questions': loadQuestionStep
+    };
 
-/**
- * 
- */
-const stepCaller = {
-    'reviewers': loadReviewerStep,
-    'questions': loadQuestionStep
-}
-
-stepCaller['questions']();
 
 /**
  * Click
@@ -266,13 +269,8 @@ function getTemplateQuestions(id, type) {
  * @return {Void}
  */
 function validateStep(step, cb) {
-    //
-    cb();
-    return;
     switch (step) {
         case "reviewees":
-            cb();
-            return;
             if (reviewOBJ.title == '') {
                 alertify.alert('WARNING!', getError('required_review_title'), function() {});
                 return false;
@@ -302,14 +300,22 @@ function validateStep(step, cb) {
                     return false;
                 }
             }
+            // Save the review
+            saveReview('schedule');
             break;
         case "reviewers":
-            cb();
-            return;
             if (reviewOBJ.reviewees.included.length == 0) {
                 alertify.alert('WARNING!', getError('required_review_reviewees'), function() {});
                 return false;
             }
+            saveReview('reviewees');
+            break;
+        case "questions":
+            if (Object.keys(reviewOBJ.reviewers.employees).length == 0) {
+                alertify.alert('WARNING!', getError('required_review_reviewers'), function() {});
+                return false;
+            }
+            saveReview('reviewees');
             break;
     }
     //
@@ -480,7 +486,6 @@ function makeEmployeeView(byPass) {
  */
 function loadReviewerStep(){
     $('#jsReviewTotalRevieweeCount').text(`(${reviewOBJ.reviewees.included.length})`);
-
     //
     let rows = '';
     reviewOBJ.reviewees.included.map(function(em){
@@ -522,10 +527,8 @@ function loadReviewerStep(){
         </div>
         `;
     });
-
     //
     $('#jsReviewRevieweeWrap').html(rows);
-
     //
     $('.jsPopoverHover').popover({
         title: 'Included Reviewers',
@@ -540,7 +543,6 @@ function loadReviewerStep(){
 function loadQuestionStep(){
     resetQuestionView();
 }
-
 
 /**
  * 
@@ -570,6 +572,86 @@ function resetQuestionView() {
     cp.remove();
 }
 
+/**
+ * 
+ * @param {*} step 
+ * @param {*} doRedirect 
+ */
+async function saveReview(step, doRedirect){
+    //
+    if(reviewOBJ.id == 0){
+        reviewOBJ.id = await getSavedReviewId();
+    }
+    //
+    switch(step){
+        case "schedule":
+            await updateReview({
+                step: step,
+                title: reviewOBJ.title, 
+                description: reviewOBJ.description,
+                schedule: reviewOBJ.schedule,
+                visibility: reviewOBJ.visibility
+            });
+        break;
+        case "reviewees":
+            await updateReview({
+                step: step,
+                reviewees: {
+                    included: reviewOBJ.reviewees.included.arrayColumn('userId') || [],
+                    excluded: reviewOBJ.reviewees.excluded.arrayColumn('userId') || []
+                }
+            });
+        break;
+    }
+    //
+    if(doRedirect !== undefined){
+        //
+        alertify.alert('SUCCESS!', getError('finish_later_review'), function(){
+            window.location.href = urls.base + '/performance-management/reviews';
+        });
+    }
+}
+
+/**
+ * 
+ */
+function getSavedReviewId(){
+    return new Promise((res) => {
+        $.post(
+            urls.handler,{
+                action: 'save_review',
+                title: reviewOBJ.title, 
+                description: reviewOBJ.description,
+                schedule: reviewOBJ.schedule,
+                visibility: reviewOBJ.visibility
+            }, (resp) => {
+                if(resp.Redirect === true){
+                    handleRedirect();
+                    return;
+                }
+                reviewOBJ.id = resp.Data;
+            }
+        );
+    });
+}
+
+/**
+ * 
+ * @param {*} data 
+ */
+function updateReview(data){
+    return new Promise((res) => {
+        $.post(
+            urls.handler, Object.assign({action: 'update_review', id: reviewOBJ.id}, data), (resp) => {
+                if(resp.Redirect === true){
+                    handleRedirect();
+                    return;
+                }
+                res();
+            }
+        );
+    });
+}
 
 // Calls
 // Get employees with D&T
@@ -586,6 +668,7 @@ getEmployeeListWithDnT()
             $('#jsFilterIndividuals').html(options).select2();
             $('#jsFilterExcludeEmployees').html(options).select2();
             $('#jsReviewSpecificReviewers').html(options).select2();
+            $('#jsReviewVisibilityIndividuals').html(options).select2({closeOnSelect: false});
             //
             makeEmployeeView(true);
         }
