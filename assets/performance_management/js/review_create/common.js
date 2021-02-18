@@ -32,6 +32,7 @@ const
             employees: {}
         },
         questions: [],
+        feedback: 1,
         targets: {
             reviewTitleHeader: $('#jsReviewTitleHeader'),
             reviewTitle: $('#jsReviewTitle'),
@@ -179,6 +180,13 @@ $('.jsReviewStep').click(function(e) {
     //
     const step = $(this).data('to');
     //
+    if (step === undefined) {
+        //
+        ml(true, 'create_review');
+        finishReviewSave();
+        return;
+    }
+    //
     validateStep(step, () => {
         //
         $('li.jsReviewStep').removeClass('active');
@@ -236,7 +244,7 @@ $('.jsReviewBackStep').click(function(e) {
  */
 function getTemplateQuestionsPreview(id, type) {
     return new Promise(function(res) {
-        $.get(`${urls.handler}get/template-questions-h/${id}/${type}`)
+        $.get(`${pm.urls.handler}get/template-questions-h/${id}/${type}`)
             .done(function(resp) { res(resp); })
             .fail(function(resp) {
                 res(getMessage(resp.status, true));
@@ -253,7 +261,7 @@ function getTemplateQuestionsPreview(id, type) {
  */
 function getTemplateQuestions(id, type) {
     return new Promise(function(res) {
-        $.get(`${urls.handler}get/template/${id}/${type}`)
+        $.get(`${pm.urls.handler}get/template/${id}/${type}`)
             .done(function(resp) { res(resp); })
             .fail(function(resp) {
                 res(getMessage(resp.status, true));
@@ -300,26 +308,39 @@ function validateStep(step, cb) {
                     return false;
                 }
             }
-            // Save the review
-            saveReview('schedule');
+            if (typeof cb === 'function') saveReview('schedule');
             break;
         case "reviewers":
-            if (reviewOBJ.reviewees.included.length == 0) {
+            if (!validateStep('reviewees')) return false;
+            if (reviewOBJ.reviewees.length === 0) {
                 alertify.alert('WARNING!', getError('required_review_reviewees'), function() {});
                 return false;
             }
-            saveReview('reviewees');
+            if (typeof cb === 'function') saveReview('reviewees');
             break;
         case "questions":
-            if (Object.keys(reviewOBJ.reviewers.employees).length == 0) {
+            if (!validateStep('reviewees')) return false;
+            if (!validateStep('reviewers')) return false;
+            if (reviewOBJ.reviewees.included.length !== Object.keys(reviewOBJ.reviewers.employees).length) {
                 alertify.alert('WARNING!', getError('required_review_reviewers'), function() {});
                 return false;
             }
-            saveReview('reviewees');
+            if (typeof cb === 'function') saveReview('reviewers');
+            break;
+        case "feedback":
+            if (!validateStep('reviewees')) return false;
+            if (!validateStep('reviewers')) return false;
+            if (!validateStep('questions')) return false;
+            if (reviewOBJ.questions.length === 0) {
+                alertify.alert('WARNING!', getError('required_review_questions'), function() {});
+                return false;
+            }
+            if (typeof cb === 'function') saveReview('questions');
             break;
     }
     //
-    cb();
+    if (typeof(cb) === 'function') cb();
+    else return true;
 }
 
 /**
@@ -329,7 +350,7 @@ function validateStep(step, cb) {
  */
 function getEmployeeListWithDnT() {
     return new Promise(function(res) {
-        $.get(`${urls.handler}get/employeeListWithDnT`)
+        $.get(`${pm.urls.handler}get/employeeListWithDnT`)
             .done(function(resp) { res(resp); })
             .fail(function(resp) {
                 res(getMessage(resp.status, true));
@@ -350,7 +371,7 @@ function makeEmployeeView(byPass) {
     $('#jsReviewIncludedWrap').html('');
     $('#jsReviewExcludedWrap').html('');
     //
-    const allEmployees = window.performanceManagement.employees;
+    const allEmployees = pm.employees;
     //
     let inc = [];
     let exc = [];
@@ -377,7 +398,7 @@ function makeEmployeeView(byPass) {
                 return;
             }
             //
-            if (moment().diff(moment(em.joined_at, dateTimeFormats.ymd), 'days') <= filter.excludedNewHires) {
+            if (moment().diff(moment(em.joined_at, pm.dateTimeFormats.ymd), 'days') <= filter.excludedNewHires) {
                 exc.push(em);
                 return;
             }
@@ -434,7 +455,7 @@ function makeEmployeeView(byPass) {
                         <div class="csEBoxText">
                             <h4 class="mb0"><strong>${ie.first_name} ${ie.last_name}</strong></h4>
                             <p class="mb0">${remakeEmployeeName(ie, false)}</p>
-                            <p>${moment(ie.joined_at, dateTimeFormats.ymt).format(dateTimeFormats.mdy)}</p>
+                            <p>${moment(ie.joined_at, pm.dateTimeFormats.ymt).format(pm.dateTimeFormats.mdy)}</p>
                         </div>
                     </div>
                 </td>
@@ -463,7 +484,7 @@ function makeEmployeeView(byPass) {
                         <div class="csEBoxText">
                             <h4 class="mb0"><strong>${ie.first_name} ${ie.last_name}</strong></h4>
                             <p class="mb0">${remakeEmployeeName(ie, false)}</p>
-                            <p>${moment(ie.joined_at, dateTimeFormats.ymt).format(dateTimeFormats.mdy)}</p>
+                            <p>${moment(ie.joined_at, pm.dateTimeFormats.ymt).format(pm.dateTimeFormats.mdy)}</p>
                         </div>
                     </div>
                 </td>
@@ -491,7 +512,7 @@ function loadReviewerStep(){
     reviewOBJ.reviewees.included.map(function(em){
         rows += `
         <!-- Row -->
-        <div class="csAddReviewerSection jsRevieweeRow" data-id="${em.userId}">
+        <div class="csAddReviewerSection jsRevieweeRow bbb pb10 pa10" data-id="${em.userId}">
             <div class="row">
                 <div class="col-sm-3 col-xs-12">
                     <div class="csEBox">
@@ -501,26 +522,34 @@ function loadReviewerStep(){
                         <div class="csEBoxText">
                             <h4 class="mb0"><strong>${em.first_name} ${em.last_name}</strong></h4>
                             <p class="mb0">${remakeEmployeeName(em, false)}</p>
-                            <p>${moment(em.joined_at, dateTimeFormats.ymd).format(dateTimeFormats.mdy)}</p>
+                            <p>${moment(em.joined_at, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.mdy)}</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-9 col-xs-12">
-                    <ul>
-                        <li class="jsPopoverHover"><span>Included Reviewers (0)</span>,</li>
-                        <li><span>Excluded Reviewers (0)</span></li>
-                    </ul>
-                    <button  class="btn  btn-link pl0">
-                        <i class="fa fa-plus-circle"></i> Include Reviewer
-                    </button>
-                    <button  class="btn  btn-link pl0">
-                        <i class="fa fa-plus-circle"></i> Exclude Reviewer
-                    </button>
-                    <div class="dn" class="jsReviewIncludeReviewerBox">
-                        <select multiple="multiple"></select>
+                    <div class="row">
+                        <div class="col-sm-3 col-xs-12">
+                            <p>Included Reviewers (<span class="jsIncludedCount">0</span>)</p>
+                            <button  class="btn btn-black btn-xs jsIncludeReviewer">
+                                <i class="fa fa-plus-circle"></i> Include Reviewer
+                            </button>
+                        </div>
+                        <div class="col-sm-3 col-xs-12">
+                            <p>Excluded Reviewers (<span class="jsExcludedCount">0</span>)</p>
+                            <button  class="btn btn-black btn-xs jsExcludedReviewer">
+                                <i class="fa fa-plus-circle"></i> Exclude Reviewer
+                            </button>
+                        </div>
                     </div>
-                    <div class="dn" class="jsReviewExcludeReviewerBox">
-                        <select multiple="multiple"></select>
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12">
+                            <div class="dn jsReviewExcludeReviewerBox">
+                                <select class="jsReviewExcludeReviewerSelect" multiple="multiple"></select>
+                            </div>
+                            <div class="dn jsReviewIncludeReviewerBox">
+                                <select class="jsReviewIncludeReviewerSelect" multiple="multiple"></select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -602,12 +631,25 @@ async function saveReview(step, doRedirect){
                 }
             });
         break;
+        case "reviewers":
+            //
+            await updateReview({
+                step: step,
+                reviewer: reviewOBJ.reviewers
+            });
+        break;
+        case "questions":
+            await updateReview({
+                step: step,
+                questions: reviewOBJ.questions
+            });
+        break;
     }
     //
     if(doRedirect !== undefined){
         //
         alertify.alert('SUCCESS!', getError('finish_later_review'), function(){
-            window.location.href = urls.base + '/performance-management/reviews';
+            window.location.href = pm.urls.base + '/performance-management/reviews';
         });
     }
 }
@@ -618,7 +660,7 @@ async function saveReview(step, doRedirect){
 function getSavedReviewId(){
     return new Promise((res) => {
         $.post(
-            urls.handler,{
+            pm.urls.handler,{
                 action: 'save_review',
                 title: reviewOBJ.title, 
                 description: reviewOBJ.description,
@@ -642,7 +684,7 @@ function getSavedReviewId(){
 function updateReview(data){
     return new Promise((res) => {
         $.post(
-            urls.handler, Object.assign({action: 'update_review', id: reviewOBJ.id}, data), (resp) => {
+            pm.urls.handler, Object.assign({action: 'update_review', id: reviewOBJ.id}, data), (resp) => {
                 if(resp.Redirect === true){
                     handleRedirect();
                     return;
@@ -653,44 +695,61 @@ function updateReview(data){
     });
 }
 
+/**
+ * 
+ */
+function finishReviewSave(){
+    $.post(
+        `${pm.urls.base}performance-management/handler`,
+        {
+            action: 'finish_save_review',
+            id: reviewOBJ.id,
+            feedback: reviewOBJ.feedback
+        },
+        (resp) => {
+            console.log(resp);
+        }
+    );
+}
+
 // Calls
 // Get employees with D&T
 getEmployeeListWithDnT()
     .then(function(resp) {
         if (resp.Data !== undefined && resp.Data.length > 0) {
-            window.performanceManagement.employees = resp.Data;
+            pm.employees = resp.Data;
             //
             let options = '';
             let tmpIds = {};
             //
-            window.performanceManagement.employees.map(function(em) {
+            pm.employees.map(function(em) {
                 tmpIds[em.userId] = em;
                 options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
             });
             $('#jsFilterIndividuals').html(options).select2();
             $('#jsFilterExcludeEmployees').html(options).select2();
-            $('#jsReviewSpecificReviewers').html(options).select2();
+            $('#jsReviewSpecificReviewers').html(options).select2({closeOnSelect: false});
             $('#jsReviewVisibilityIndividuals').html(options).select2({closeOnSelect: false});
             //
             makeEmployeeView(true);
 
             //
             if (typeof(dnt) !== 'undefined') {
-                window.performanceManagement.departments = {};
+                pm.departments = {};
                 dnt.departments.map((rec) => {
-                    window.performanceManagement.departments[rec.sid] = [];
+                    pm.departments[rec.sid] = [];
                     //
                     rec.supervisor.split(',').map((i) => {
-                        window.performanceManagement.departments[rec.sid].push(tmpIds[i]);
+                        pm.departments[rec.sid].push(tmpIds[i]);
                     });
                 });
                 //
-                window.performanceManagement.teams = {};
+                pm.teams = {};
                 dnt.teams.map((rec) => {
-                    window.performanceManagement.teams[rec.sid] = [];
+                    pm.teams[rec.sid] = [];
                     //
                     rec.team_lead.split(',').map((i) => {
-                        window.performanceManagement.teams[rec.sid].push(tmpIds[i]);
+                        pm.teams[rec.sid].push(tmpIds[i]);
                     });
                 });
                 //

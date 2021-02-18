@@ -5,30 +5,35 @@
 
 <!--  -->
 <script>
-const
-    urls = {
-        base: "<?=rtrim(base_url(), '/');?>/",
-        handler: "<?=rtrim(base_url(), '/');?>/performance-management/handler/",
-        aws: "<?=AWS_S3_BUCKET_URL;?>"
-    },
-    dateTimeFormats = {
-        ymdf: 'MM/DD/YYYY',
-        ymd: 'YYYY-MM-DD',
-        ymdt: 'YYYY-MM-DD H:i:s',
-        md: 'MMM D',
-        d: 'dddd',
-        mdy: 'MMM DD YYYY, ddd',
-        mdyt: 'MMM DD YYYY, ddd hh:mm a'
-    },
-    companyId = <?=$companyId;?>,
-    employerId = <?=$employerId;?>,
-    employee = {
-        id: <?=isset($employeeId) ? $employeeId : 0;?>,
-        name: "<?=isset($employeeName) ? $employeeName : '';?>",
-        level: <?=$level;?>
-    }
-    page = "<?=isset($page) ? $page : ''?>",
-    labels= <?=json_encode(getDefaultLabel());?>;
+    /**
+     * Add performance management object 
+     * to window object
+     */
+    window.pm = {
+        urls: {
+            base: "<?=rtrim(base_url(), '/');?>/",
+            handler: "<?=rtrim(base_url(), '/');?>/performance-management/handler/",
+            aws: "<?=AWS_S3_BUCKET_URL;?>"
+        },
+        dateTimeFormats: {
+            ymdf: 'MM/DD/YYYY',
+            ymd: 'YYYY-MM-DD',
+            ymdt: 'YYYY-MM-DD H:i:s',
+            md: 'MMM D',
+            d: 'dddd',
+            mdy: 'MMM DD YYYY, ddd',
+            mdyt: 'MMM DD YYYY, ddd hh:mm a'
+        },
+        companyId: <?=$companyId;?>,
+        employerId: <?=$employerId;?>,
+        employee: {
+            id: <?=isset($employeeId) ? $employeeId : 0;?>,
+            name: "<?=isset($employeeName) ? $employeeName : '';?>",
+            level: <?=$level;?>
+        },
+        page: "<?=isset($page) ? $page : ''?>",
+        labels: <?=json_encode(getDefaultLabel());?>
+    };
     <?php if(isset($dnt)): ?>
         const dnt = <?=json_encode($dnt);?>;
     <?php endif; ?>

@@ -466,11 +466,44 @@ class Performance_management extends Public_Controller{
                     $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
                 }
                 
+                // For Reviewers
+                if($params['step'] == 'reviewers'){
+                    //
+                    $upd = [];
+                    $upd['reviewers'] = json_encode($params['reviewer']);
+                    //
+                    $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
+                }
+               
+                // For Questions
+                if($params['step'] == 'questions'){
+                    //
+                    $upd = [];
+                    $upd['questions'] = json_encode($params['questions']);
+                    //
+                    $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
+                }
+                
                 //
                 $this->resp['Status'] = true;
                 $this->resp['Response'] = 'Proceed.';
                 //
                 res($this->resp);
+            break;
+            // Save
+            case "finish_save_review":
+                //
+                $upd = [];
+                $upd['share_feedback'] = json_encode($params['feedback']);
+                $upd['is_draft'] = 0;
+                // Get review
+                $review = $this->pmm->getReviewByid($params['id'], ['included_employees', 'reviewers', 'questions']);
+                // Lets set reviwees
+                // TODO
+                // Save reviewees and process
+                //
+                $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
+                _e($params, true);
             break;
         endswitch;
     }

@@ -575,24 +575,24 @@
                                             <label>Reviewers <span class="csRequired"></span></label>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
-                                            <label class="control control--radio">
+                                            <label class="control control--checkbox">
                                                 Reporting Manager
-                                                <input type="radio" name="reviewerType" class="jsReviewerType" value="reporting_manager" />
+                                                <input type="checkbox" name="reviewerTypeRM" class="jsReviewerType" value="reporting_manager" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control control--radio">
+                                            <label class="control control--checkbox">
                                                 Self-Review
-                                                <input type="radio" name="reviewerType" class="jsReviewerType" value="self" />
+                                                <input type="checkbox" name="reviewerTypeSR" class="jsReviewerType" value="self_review" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control control--radio">
+                                            <label class="control control--checkbox">
                                                 Peers (Colleagues)
-                                                <input type="radio" name="reviewerType" class="jsReviewerType" value="peer" />
+                                                <input type="checkbox" name="reviewerTypeP" class="jsReviewerType" value="peer" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control control--radio">
+                                            <label class="control control--checkbox">
                                                 Specific Reviewers
-                                                <input type="radio" name="reviewerType" class="jsReviewerType" value="specific" />
+                                                <input type="checkbox" name="reviewerTypeSR" class="jsReviewerType" value="specific" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
                                             <div class="dn" id="jsReviewSpecificReviewersBox">
@@ -650,11 +650,11 @@
                             <!--  -->
                             <div class="csPageBoxFooter p10">
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i> Back To
+                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="reviewers"><i class="fa fa-long-arrow-left"></i> Back To
                                         Reviewers</button>
-                                    <button class="btn btn-orange btn-lg"><i class="fa fa-arrow-circle-right"></i>Save &
+                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="feedback"><i class="fa fa-arrow-circle-right"></i>Save &
                                         Next</button>
-                                    <button class="btn btn-black btn-lg"><i class="fa fa-edit"></i> Finish
+                                    <button class="btn btn-black btn-lg jsFinishLater"><i class="fa fa-edit"></i> Finish
                                         Later</button>
                                 </span>
                                 <div class="clearfix"></div>
@@ -672,11 +672,11 @@
                                     <h5>Tell us how you want managers to share feedback with their reports.</h5>
                                     <br />
                                     <ul>
-                                        <li class="active csRadius5">
+                                        <li class="csRadius5 jsReviewFeedback" data-share="1">
                                             <i class="fa fa-eye"></i> The manager summarizes all reviews and shares the
                                             summary with their report
                                         </li>
-                                        <li class="csRadius5">
+                                        <li class="csRadius5 jsReviewFeedback" data-share="0">
                                             <i class="fa fa-eye-slash"></i> Nothing is shared with their report
                                         </li>
                                     </ul>
@@ -684,15 +684,13 @@
                             </div>
                             <!-- Footer -->
                             <div class="csPageBoxFooter pa10">
-                                <span class="csBTNBoxLeft">
-                                    <button class="btn btn-black btn-lg"><i class="fa fa-edit"></i> Finish
-                                        Later</button>
-                                </span>
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg"><i class="fa fa-long-arrow-left"></i>
-                                        Back</button>
-                                    <button class="btn btn-orange btn-lg"><i class="fa fa-arrow-circle-right"></i>Save &
+                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="questions"><i class="fa fa-long-arrow-left"></i>
+                                        Back To Questions</button>
+                                    <button class="btn btn-orange btn-lg jsReviewStep" ><i class="fa fa-arrow-circle-right"></i>Save &
                                         Finish</button>
+                                    <button class="btn btn-black btn-lg jsFinishLater"><i class="fa fa-edit"></i> Finish
+                                        Later</button>
                                 </span>
                             </div>
                         </div>

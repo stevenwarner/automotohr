@@ -1,10 +1,4 @@
 /**
- * Add performance management object 
- * to window object
- */
-window.performanceManagement = {};
-
-/**
  * Click
  * 
  * Triggers when page modal closes
@@ -104,8 +98,8 @@ function isEmpty(str) {
  */
 function getImageURL(img) {
     if (img == '' || img == null) {
-        return `${urls.base}assets/images/img-applicant.jpg`;
-    } else return `${urls.aws }${img}`;
+        return `${pm.urls.base}assets/images/img-applicant.jpg`;
+    } else return `${pm.urls.aws }${img}`;
 }
 
 /**
@@ -385,4 +379,37 @@ function getQuestionRow(question, index, questionsLength) {
     rows += `</div>`;
 
     return rows;
+}
+
+/**
+ * Object.assign polyfil
+ */
+if (typeof Object.assign !== 'function') {
+    // Must be writable: true, enumerable: false, configurable: true
+    Object.defineProperty(Object, "assign", {
+        value: function assign(target, varArgs) { // .length of function is 2
+            'use strict';
+            if (target === null || target === undefined) {
+                throw new TypeError('Cannot convert undefined or null to object');
+            }
+
+            var to = Object(target);
+
+            for (var index = 1; index < arguments.length; index++) {
+                var nextSource = arguments[index];
+
+                if (nextSource !== null && nextSource !== undefined) {
+                    for (var nextKey in nextSource) {
+                        // Avoid bugs when hasOwnProperty is shadowed
+                        if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                            to[nextKey] = nextSource[nextKey];
+                        }
+                    }
+                }
+            }
+            return to;
+        },
+        writable: true,
+        configurable: true
+    });
 }

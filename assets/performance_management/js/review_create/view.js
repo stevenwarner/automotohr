@@ -3,12 +3,11 @@ $(function() {
     let boxCount = 1;
 
     // Binds
-
     $('#jsReviewStartDate').datepicker({
         changeYear: true,
         changeMonth: true,
         minDate: 0,
-        formatDate: dateTimeFormats.ymdf,
+        formatDate: pm.dateTimeFormats.ymdf,
         onSelect: function(d) {
             $('#jsReviewEndDate').datepicker('option', 'minDate', d);
             reviewOBJ.setIndexValue('reviewStartDate', d, 'schedule');
@@ -19,7 +18,7 @@ $(function() {
         changeYear: true,
         changeMonth: true,
         minDate: 0,
-        formatDate: dateTimeFormats.ymdf,
+        formatDate: pm.dateTimeFormats.ymdf,
         onSelect: function(d) {
             reviewOBJ.setIndexValue('reviewEndDate', d, 'schedule')
         }
@@ -615,25 +614,187 @@ $(function() {
     /**
      * 
      */
-    $('.jsReviewerType').change(function() {
+    $('.jsReviewerType').click(function() {
         reviewOBJ.reviewers.type = $(this).val();
+        //
+        $('#jsReviewSpecificReviewersBox').addClass('dn');
+        $('#jsReviewSpecificReviewers').select2('val', null);
+        //
+        $('.jsReviewExcludeReviewerBox').addClass('dn');
+        //
+        $('.jsReviewIncludeReviewerBox').addClass('dn');
         //
         switch ($(this).val()) {
             case "reporting_manager":
-                addReportingManagers();
+                if ($(this).prop('checked') === true) {
+                    $('.jsReviewerType[value="self_review"]').prop('checked', false);
+                    $('.jsReviewerType[value="peer"]').prop('checked', false);
+                    $('.jsReviewerType[value="specific"]').prop('checked', false);
+                    addReportingManagers();
+                } else {
+                    cleanReviewers();
+                }
                 break;
-            case "self":
-                addSelf();
+            case "self_review":
+                if ($(this).prop('checked') === true) {
+                    $('.jsReviewerType[value="reporting_manager"]').prop('checked', false);
+                    $('.jsReviewerType[value="peer"]').prop('checked', false);
+                    $('.jsReviewerType[value="specific"]').prop('checked', false);
+                    addSelf();
+                } else {
+                    cleanReviewers();
+                }
                 break;
             case "peer":
-                addPeer();
+                if ($(this).prop('checked') === true) {
+                    $('.jsReviewerType[value="reporting_manager"]').prop('checked', false);
+                    $('.jsReviewerType[value="self_review"]').prop('checked', false);
+                    $('.jsReviewerType[value="specific"]').prop('checked', false);
+                    addPeer();
+                } else {
+                    cleanReviewers();
+                }
                 break;
-            case "speciifc":
-                specificReviewer();
+            case "specific":
+                cleanReviewers();
+                if ($(this).prop('checked') === true) {
+                    $('.jsReviewerType[value="self_review"]').prop('checked', false);
+                    $('.jsReviewerType[value="peer"]').prop('checked', false);
+                    $('.jsReviewerType[value="reporting_manager"]').prop('checked', false);
+                    $('#jsReviewSpecificReviewersBox').removeClass('dn');
+                } else {
+                    $('#jsReviewSpecificReviewersBox').addClass('dn');
+                }
+                break;
+            default:
+                cleanReviewers();
                 break;
         }
     });
 
+    /**
+     * 
+     * @param {*} reviewType 
+     */
+    $('#jsReviewSpecificReviewers').change(function() {
+        specificReviewers($(this).val());
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsIncludeReviewer', function(e) {
+        e.preventDefault();
+        //
+        const target = $(this).closest('.jsRevieweeRow');
+        const employeeId = target.data().id;
+        //
+        let options = '';
+        //
+        let ids = getIncEclIds(reviewOBJ.reviewers.employees[employeeId]);
+        const included = ids['included'];
+        //
+        pm.employees.map((em) => {
+            if (ids['excluded'][em.userId] !== undefined) return;
+            options += `<option value="${em.userId}" ${included[em.userId] !== undefined ? 'selected' : ''}>${remakeEmployeeName(em)}</option>`;
+        });
+        //
+        target.find('.jsReviewIncludeReviewerBox select').html(options).select2();
+        //
+        target.find('.jsReviewExcludeReviewerBox').addClass('dn');
+        target.find('.jsReviewIncludeReviewerBox').removeClass('dn');
+        target.find('.jsExcludedReviewer').removeClass('btn-orange').addClass('btn-black');
+        $(this).removeClass('btn-black').addClass('btn-orange');
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsExcludedReviewer', function(e) {
+        e.preventDefault();
+        //
+        const target = $(this).closest('.jsRevieweeRow');
+        const employeeId = target.data().id;
+        //
+        let options = '';
+        //
+        let ids = getIncEclIds(reviewOBJ.reviewers.employees[employeeId]);
+        const included = ids['included'];
+        const excluded = ids['excluded'];
+        const all = _.assign(included, ids['excluded']);
+        //
+        if (Object.keys(all).length > 0) {
+            $.each(all, (i, em) => {
+                options += `<option value="${em.userId}" ${excluded[em.userId] !== undefined ? 'selected' : ''}>${remakeEmployeeName(em)}</option>`;
+            });
+        }
+        //
+        target.find('.jsReviewExcludeReviewerBox select').html(options).select2();
+        //
+        target.find('.jsReviewIncludeReviewerBox').addClass('dn');
+        target.find('.jsReviewExcludeReviewerBox').removeClass('dn');
+        target.find('.jsIncludeReviewer').removeClass('btn-orange').addClass('btn-black');
+        $(this).removeClass('btn-black').addClass('btn-orange');
+    });
+
+    /**
+     * 
+     */
+    $(document).on('change', '.jsReviewIncludeReviewerBox select', function() {
+        //
+        const target = $(this).closest('.jsRevieweeRow');
+        const employeeId = target.data().id;
+        const reviewers = $(this).val();
+        //
+        let employees = {};
+        //
+        if (reviewers !== null) {
+            pm.employees.map((em) => {
+                if ($.inArray(em.userId, reviewers) !== -1) employees[em.userId] = em;
+            });
+        }
+        //
+        if (reviewOBJ.reviewers.employees[employeeId] === undefined) reviewOBJ.reviewers.employees[employeeId] = {};
+        reviewOBJ.reviewers.employees[employeeId]['custom'] = employees;
+        // Set count
+        setReviewerCount();
+
+    });
+
+    /**
+     * 
+     */
+    $(document).on('change', '.jsReviewExcludeReviewerBox select', function() {
+        //
+        const target = $(this).closest('.jsRevieweeRow');
+        const employeeId = target.data().id;
+        const reviewers = $(this).val();
+        //
+        let employees = {};
+        //
+        if (reviewers !== null) {
+            pm.employees.map((em) => {
+                if ($.inArray(em.userId, reviewers) !== -1) employees[em.userId] = em;
+            });
+        }
+        //
+        if (reviewOBJ.reviewers.employees[employeeId] === undefined) reviewOBJ.reviewers.employees[employeeId] = {};
+        reviewOBJ.reviewers.employees[employeeId]['excluded'] = employees;
+        // Set count
+        setReviewerCount();
+    });
+
+    /**
+     * 
+     * @param {*} reviewType 
+     */
+    $('.jsReviewFeedback').click(function(e) {
+        e.preventDefault();
+        $('.jsReviewFeedback').removeClass('active');
+        $(this).addClass('active');
+        //
+        reviewOBJ.feedback = $(this).data().share;
+    });
 
     // Functions
 
@@ -823,9 +984,17 @@ $(function() {
     function addReportingManagers() {
         reviewOBJ.reviewees.included.map((rewiewee) => {
             let o = getReportingManagers(rewiewee.teamIds);
-            reviewOBJ.reviewers.employees[rewiewee.userId] = {};
+            if (reviewOBJ.reviewers.employees[rewiewee.userId] === undefined) reviewOBJ.reviewers.employees[rewiewee.userId] = {};
+            else {
+                reviewOBJ.reviewers.employees[rewiewee.userId]['reporting_manager'] = undefined;
+                reviewOBJ.reviewers.employees[rewiewee.userId]['self_review'] = undefined;
+                reviewOBJ.reviewers.employees[rewiewee.userId]['peer'] = undefined;
+                reviewOBJ.reviewers.employees[rewiewee.userId]['specific'] = undefined;
+            }
             reviewOBJ.reviewers.employees[rewiewee.userId]['reporting_manager'] = o;
         });
+        // Set count
+        setReviewerCount();
     }
 
     /**
@@ -833,9 +1002,19 @@ $(function() {
      */
     function addSelf() {
         reviewOBJ.reviewees.included.map((rewiewee) => {
-            reviewOBJ.reviewers.employees[rewiewee.userId] = {};
-            reviewOBJ.reviewers.employees[rewiewee.userId]['self'] = rewiewee;
+            if (reviewOBJ.reviewers.employees[rewiewee.userId] === undefined) reviewOBJ.reviewers.employees[rewiewee.userId] = {};
+            else {
+                reviewOBJ.reviewers.employees[rewiewee.userId]['reporting_manager'] = undefined;
+                reviewOBJ.reviewers.employees[rewiewee.userId]['self_review'] = undefined;
+                reviewOBJ.reviewers.employees[rewiewee.userId]['peer'] = undefined;
+                reviewOBJ.reviewers.employees[rewiewee.userId]['specific'] = undefined;
+            }
+            reviewOBJ.reviewers.employees[rewiewee.userId]['self_review'] = {};
+            reviewOBJ.reviewers.employees[rewiewee.userId]['self_review'][rewiewee.userId] = {};
+            reviewOBJ.reviewers.employees[rewiewee.userId]['self_review'][rewiewee.userId] = rewiewee;
         });
+        // Set count
+        setReviewerCount();
     }
 
     /**
@@ -844,9 +1023,17 @@ $(function() {
     function addPeer() {
         reviewOBJ.reviewees.included.map((rewiewee) => {
             let o = getMyPeer(rewiewee.teamIds, rewiewee.userId);
-            reviewOBJ.reviewers.employees[rewiewee.userId] = {};
+            if (reviewOBJ.reviewers.employees[rewiewee.userId] === undefined) reviewOBJ.reviewers.employees[rewiewee.userId] = {};
+            else {
+                reviewOBJ.reviewers.employees[rewiewee.userId]['reporting_manager'] = undefined;
+                reviewOBJ.reviewers.employees[rewiewee.userId]['self_review'] = undefined;
+                reviewOBJ.reviewers.employees[rewiewee.userId]['peer'] = undefined;
+                reviewOBJ.reviewers.employees[rewiewee.userId]['specific'] = undefined;
+            }
             reviewOBJ.reviewers.employees[rewiewee.userId]['peer'] = o;
         });
+        // Set count
+        setReviewerCount();
     }
 
     /**
@@ -859,7 +1046,7 @@ $(function() {
         let employeeIds = {};
         //
         teamIds.map((teamId) => {
-            teamLeads = _.concat(teamLeads, window.performanceManagement.teams[teamId]);
+            teamLeads = _.concat(teamLeads, pm.teams[teamId]);
         });
         //
         if (teamLeads.length !== 0) {
@@ -873,14 +1060,14 @@ $(function() {
 
     /**
      * 
-     * @param {Integer} teamIds 
-     * @param {Integer} employeeId 
+     * @param {Integer} teamIds
+     * @param {Integer} employeeId
      */
     function getMyPeer(teamIds, employeeId) {
         //
         let employeeIds = {};
         //
-        window.performanceManagement.employees.map((em) => {
+        pm.employees.map((em) => {
             if (_.intersection(em.teamIds, teamIds).length > 0 && em.userId != employeeId) {
                 employeeIds[em.userId] = em;
             }
@@ -889,10 +1076,97 @@ $(function() {
         return employeeIds;
     }
 
+    /**
+     * 
+     * @param {Array|Null} reviewers 
+     */
+    function specificReviewers(reviewers) {
+        //
+        let employees = {};
+        //
+        if (reviewers !== null) {
+            pm.employees.map((em) => {
+                if ($.inArray(em.userId, reviewers) !== -1) employees[em.userId] = em;
+            });
+        }
+        //
+        reviewOBJ.reviewees.included.map((reviewee) => {
+            if (reviewOBJ.reviewers.employees[reviewee.userId] === undefined) reviewOBJ.reviewers.employees[reviewee.userId] = {};
+            reviewOBJ.reviewers.employees[reviewee.userId]['specific'] = employees;
+        });
 
+        // Set count
+        setReviewerCount();
+    }
 
+    /**
+     * 
+     */
+    function cleanReviewers() {
+        reviewOBJ.reviewees.included.map((reviewee) => {
+            if (reviewOBJ.reviewers.employees[reviewee.userId] !== undefined) {
+                reviewOBJ.reviewers.employees[reviewee.userId]['reporting_manager'] = undefined;
+                reviewOBJ.reviewers.employees[reviewee.userId]['self_review'] = undefined;
+                reviewOBJ.reviewers.employees[reviewee.userId]['peer'] = undefined;
+                reviewOBJ.reviewers.employees[reviewee.userId]['specific'] = undefined;
+                //
+                if (reviewOBJ.reviewers.employees[reviewee.userId]['custom'] === undefined) {
+                    reviewOBJ.reviewers.employees[reviewee.userId]['exclude'] = undefined;
+                }
+            }
+        });
+        setReviewerCount();
+    }
 
+    /**
+     * 
+     * @param {Object} o 
+     */
+    function getIncEclIds(o) {
+        o = o === undefined ? {} : o;
+        //
+        let e = {
+            included: {},
+            excluded: o.excluded || {}
+        };
+        //
+        if (o === null) return e;
+        //
+        if (o.reporting_manager !== undefined) e.included = o.reporting_manager;
+        else if (o.self_review !== undefined) e.included = o.self_review;
+        else if (o.peer !== undefined) e.included = o.peer;
+        else if (o.specific !== undefined) e.included = o.specific;
+        //
+        if (o.custom !== undefined) {
+            e.included = _.assign(e.included, o.custom);
+        }
+        //
+        e.included = Object.assign({}, e.included);
+        //
+        if (Object.keys(e.excluded).length > 0) {
+            // Remove excluded from included
+            $.each(e.included, function(i, v) {
+                if (e.excluded[v.userId] !== undefined) {
+                    delete e.included[i];
+                }
+            });
+        }
+        //
+        return e;
+    }
 
+    /**
+     * 
+     */
+    function setReviewerCount() {
+        $.each(reviewOBJ.reviewers.employees, function(i, reviewer) {
+            //
+            let e = getIncEclIds(reviewer);
+            //
+            $(`.jsRevieweeRow[data-id="${i}"]`).find('.jsIncludedCount').text(Object.keys(e.included).length);
+            $(`.jsRevieweeRow[data-id="${i}"]`).find('.jsExcludedCount').text(Object.keys(e.excluded).length);
+        });
+    }
 
 
     // Hide loader
