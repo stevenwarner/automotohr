@@ -29,6 +29,9 @@ const
     }
     page = "<?=isset($page) ? $page : ''?>",
     labels= <?=json_encode(getDefaultLabel());?>;
+    <?php if(isset($dnt)): ?>
+        const dnt = <?=json_encode($dnt);?>;
+    <?php endif; ?>
 </script>
 
 <script type="text/javascript" src="<?=base_url('assets/select2/select2.min.js');?>"></script>

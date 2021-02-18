@@ -445,7 +445,8 @@ class Performance_management_model extends CI_Model{
         $ra['teams'] = $this->db
             ->select("
                 {$this->tables['DTM']}.sid, 
-                {$this->tables['DTM']}.name
+                {$this->tables['DTM']}.name,
+                {$this->tables['DTM']}.team_lead
             ")
             ->from("{$this->tables['DTM']}")
             ->join("{$this->tables['DM']}", "{$this->tables['DM']}.sid = {$this->tables['DTM']}.department_sid", "inner")
@@ -457,9 +458,9 @@ class Performance_management_model extends CI_Model{
             ->order_by("{$this->tables['DTM']}.name", 'ASC')
             ->get()
             ->result_array();
-            // Get departments
-            $ra['departments'] = $this->db
-            ->select('sid, name')
+        // Get departments
+        $ra['departments'] = $this->db
+            ->select('sid, name, supervisor')
             ->from("{$this->tables['DM']}")
             ->where('status', 1)
             ->where('is_deleted', 0)

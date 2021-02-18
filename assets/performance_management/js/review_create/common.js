@@ -661,8 +661,10 @@ getEmployeeListWithDnT()
             window.performanceManagement.employees = resp.Data;
             //
             let options = '';
+            let tmpIds = {};
             //
             window.performanceManagement.employees.map(function(em) {
+                tmpIds[em.userId] = em;
                 options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
             });
             $('#jsFilterIndividuals').html(options).select2();
@@ -671,5 +673,27 @@ getEmployeeListWithDnT()
             $('#jsReviewVisibilityIndividuals').html(options).select2({closeOnSelect: false});
             //
             makeEmployeeView(true);
+
+            //
+            if (typeof(dnt) !== 'undefined') {
+                window.performanceManagement.departments = {};
+                dnt.departments.map((rec) => {
+                    window.performanceManagement.departments[rec.sid] = [];
+                    //
+                    rec.supervisor.split(',').map((i) => {
+                        window.performanceManagement.departments[rec.sid].push(tmpIds[i]);
+                    });
+                });
+                //
+                window.performanceManagement.teams = {};
+                dnt.teams.map((rec) => {
+                    window.performanceManagement.teams[rec.sid] = [];
+                    //
+                    rec.team_lead.split(',').map((i) => {
+                        window.performanceManagement.teams[rec.sid].push(tmpIds[i]);
+                    });
+                });
+                //
+            }
         }
     });

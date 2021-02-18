@@ -617,6 +617,21 @@ $(function() {
      */
     $('.jsReviewerType').change(function() {
         reviewOBJ.reviewers.type = $(this).val();
+        //
+        switch ($(this).val()) {
+            case "reporting_manager":
+                addReportingManagers();
+                break;
+            case "self":
+                addSelf();
+                break;
+            case "peer":
+                addPeer();
+                break;
+            case "speciifc":
+                specificReviewer();
+                break;
+        }
     });
 
 
@@ -802,6 +817,77 @@ $(function() {
         return d;
     }
 
+    /**
+     * 
+     */
+    function addReportingManagers() {
+        reviewOBJ.reviewees.included.map((rewiewee) => {
+            let o = getReportingManagers(rewiewee.teamIds);
+            reviewOBJ.reviewers.employees[rewiewee.userId] = {};
+            reviewOBJ.reviewers.employees[rewiewee.userId]['reporting_manager'] = o;
+        });
+    }
+
+    /**
+     * 
+     */
+    function addSelf() {
+        reviewOBJ.reviewees.included.map((rewiewee) => {
+            reviewOBJ.reviewers.employees[rewiewee.userId] = {};
+            reviewOBJ.reviewers.employees[rewiewee.userId]['self'] = rewiewee;
+        });
+    }
+
+    /**
+     * 
+     */
+    function addPeer() {
+        reviewOBJ.reviewees.included.map((rewiewee) => {
+            let o = getMyPeer(rewiewee.teamIds, rewiewee.userId);
+            reviewOBJ.reviewers.employees[rewiewee.userId] = {};
+            reviewOBJ.reviewers.employees[rewiewee.userId]['peer'] = o;
+        });
+    }
+
+    /**
+     * 
+     * @param {Integer} teamIds 
+     */
+    function getReportingManagers(teamIds) {
+        //
+        let teamLeads = [];
+        let employeeIds = {};
+        //
+        teamIds.map((teamId) => {
+            teamLeads = _.concat(teamLeads, window.performanceManagement.teams[teamId]);
+        });
+        //
+        if (teamLeads.length !== 0) {
+            teamLeads.map((em) => {
+                employeeIds[em.userId] = em;
+            });
+        }
+        //
+        return employeeIds;
+    }
+
+    /**
+     * 
+     * @param {Integer} teamIds 
+     * @param {Integer} employeeId 
+     */
+    function getMyPeer(teamIds, employeeId) {
+        //
+        let employeeIds = {};
+        //
+        window.performanceManagement.employees.map((em) => {
+            if (_.intersection(em.teamIds, teamIds).length > 0 && em.userId != employeeId) {
+                employeeIds[em.userId] = em;
+            }
+        });
+        //
+        return employeeIds;
+    }
 
 
 
