@@ -574,16 +574,16 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                                     Log</a>
                             </div>
                         <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'sms_enquiries_log')) { ?>
+                       <!--  <?php //if (check_access_permissions_for_view($security_details, 'sms_enquiries_log')) { ?>
                             <div class="menu-item">
                                 <a <?php
-                                if (base_url(uri_string()) == site_url('manage_admin/sms_enquiries') || $this->uri->segment(2) == 'sms_log' || $this->uri->segment(2) == 'sms_enquiries' || $this->uri->segment(2) == 'logs') {
-                                    echo 'class="active"';
+                                //if (base_url(uri_string()) == site_url('manage_admin/sms_enquiries') || $this->uri->segment(2) == 'sms_log' || $this->uri->segment(2) == 'sms_enquiries' || $this->uri->segment(2) == 'logs') {
+                                    //echo 'class="active"';
                                 }
-                                ?> href="<?php echo site_url('manage_admin/sms_enquiries'); ?>">SMS Enquiries
+                                ?> href="<?php //echo site_url('manage_admin/sms_enquiries'); ?>">SMS Enquiries
                                     Log</a>
                             </div>
-                        <?php } ?>
+                        <?php } ?> -->
                         <?php if (check_access_permissions_for_view($security_details, 'notification_email_log')) { ?>
                             <div class="menu-item">
                                 <a <?php
