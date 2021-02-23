@@ -74,7 +74,40 @@
                                                         <p><span class="js-words">0</span> words / <span class="js-sms">0</span> sms (160 words/sms )</p>
                                                     </div>
                                                     <div class="col-md-4 col-xs-12">
-                                                       <?=$side_work;?>
+                                                       <!-- <?php //echo $side_work;?> -->
+                                                        <div class="offer-letter-help-widget pull-right">
+                                                            <div class="how-it-works-insturction">
+                                                                <strong>How it\'s Works :</strong>
+                                                                <p class="how-works-attr">1. Edit template name</p>
+                                                                <p class="how-works-attr">2. Edit template subject</p>
+                                                                <p class="how-works-attr">3. Edit template body</p>
+                                                                <p class="how-works-attr">4. Edit data from tags below</p>
+                                                                <p class="how-works-attr">5. Update the template</p>
+                                                            </div>
+
+                                                            <div class="tags-area pull-left">
+                                                                <strong>Company Information Tags :</strong>
+                                                                <ul class="tags">
+                                                                    <li>{{company_name}}</li>
+                                                                </ul>
+
+                                                            </div>
+                                                            <div class="tags-area pull-left">
+                                                                <!-- <br /> -->
+                                                                <strong>Employee / Applicant Tags :</strong>
+                                                                <ul class="tags">
+                                                                    <?php
+                                                                        $template_tags = $magic_tags[$template_data['template_name']];
+
+                                                                        if (!empty($template_tags)) {
+                                                                            foreach ($template_tags as $tag) {
+                                                                                echo '<li>'.$tag.'</li>';
+                                                                            }
+                                                                        }
+                                                                    ?>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </li>

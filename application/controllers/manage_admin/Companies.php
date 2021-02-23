@@ -1449,7 +1449,7 @@ class Companies extends Admin_Controller {
                     case 'set_company_sms_status':
                         $company_sid = $this->input->post('company_sid');
                         $this->company_model->set_sms_module_status($company_sid, $this->input->post('sms_module_status', TRUE));
-                        if($this->input->post('sms_module_status', TRUE) == 1 && in_array($company_sid, array(51)) ){
+                        if($this->input->post('sms_module_status', TRUE) == 1 && in_array($company_sid, array(51,57)) ){
                             $response = $this->sms_buy_process($company_sid);
                             $this->session->set_flashdata('message', $response);
                         }

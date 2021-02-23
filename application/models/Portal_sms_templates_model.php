@@ -12,7 +12,6 @@ class portal_sms_templates_model extends CI_Model {
     }
 
     function getTemplateDetails($sid, $company_sid) {
-        $this->db->where('status', 1);
         $this->db->where('sid', $sid);
         $this->db->where('company_sid', $company_sid);
         return $this->db->get('portal_sms_templates')->result_array();

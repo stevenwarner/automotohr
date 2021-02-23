@@ -118,8 +118,9 @@ class Portal_sms_templates extends Public_Controller {
                         $this->session->set_flashdata('message', '<b>Success:</b> Email template <b><i>' . $template_name . ' </b></i>updated successfully');
                         redirect('portal_sms_templates', 'refresh');
                     }
-
-
+                    //
+                    $data['magic_tags'] = $this->get_sms_magic_tags();
+                    //
                     $this->load->view('main/header', $data);
                     $this->load->view('sms_templates/portal_edit_sms_templates');
                     $this->load->view('main/footer');
@@ -145,6 +146,60 @@ class Portal_sms_templates extends Public_Controller {
         }else{
             echo 0;
         }
+    }
+
+    public function get_sms_magic_tags () {
+        $magic_tags = array();
+        //
+        $magic_tags['Billing and Invoice'][0] = "{{invoice_number}}";
+        $magic_tags['Billing and Invoice'][2] = "{{contact_name}}";
+        //
+        $magic_tags['New Applicant'][0] = "{{job_title}}";
+        $magic_tags['New Applicant'][2] = "{{contact_name}}";
+        //
+        $magic_tags['Employment Application'][0] = "{{applicant_name}}";
+        $magic_tags['Employment Application'][2] = "{{contact_name}}";
+        //
+        $magic_tags['License Expiration'][0] = "{{applicant_name}}";
+        $magic_tags['License Expiration'][1] = "{{license_type}}";
+        $magic_tags['License Expiration'][3] = "{{contact_name}}";
+        //
+        $magic_tags['Onboarding Request'][0] = "{{applicant_name}}";
+        $magic_tags['Onboarding Request'][2] = "{{contact_name}}";
+        //
+        $magic_tags['Offer Letter'][0] = "{{applicant_name}}";
+        $magic_tags['Offer Letter'][2] = "{{contact_name}}";
+        //
+        $magic_tags['New Job Listing'][0] = "{{job_title}}";
+        $magic_tags['New Job Listing'][2] = "{{contact_name}}";
+        //
+        $magic_tags['New Calendar Event Template'][0] = "{{category_name}}";
+        $magic_tags['New Calendar Event Template'][1] = "{{applicant_name}}";
+        $magic_tags['New Calendar Event Template'][2] = "{{profile_link}}";
+        $magic_tags['New Calendar Event Template'][3] = "{{resume_link}}";
+        $magic_tags['New Calendar Event Template'][4] = "{{event_url}}";
+        $magic_tags['New Calendar Event Template'][5] = "{{event_button}}";
+        $magic_tags['New Calendar Event Template'][7] = "{{contact_name}}";
+        //
+        $magic_tags['Update Calendar Event Template'][0] = "{{category_name}}";
+        $magic_tags['Update Calendar Event Template'][1] = "{{applicant_name}}";
+        $magic_tags['Update Calendar Event Template'][2] = "{{event_url}}";
+        $magic_tags['Update Calendar Event Template'][3] = "{{event_button}}";
+        $magic_tags['Update Calendar Event Template'][5] = "{{contact_name}}";
+        //
+        $magic_tags['New Announcement Notification'][1] = "{{contact_name}}";
+        //
+        $magic_tags['Edit Announcement Notification'][0] = "{{title}}";
+        $magic_tags['Edit Announcement Notification'][1] = "{{event_start_date}}";
+        $magic_tags['Edit Announcement Notification'][2] = "{{event_end_date}}";
+        $magic_tags['Edit Announcement Notification'][4] = "{{contact_name}}";
+        //
+        $magic_tags['Hr Document Notification'][0] = "{{first_name}}";
+        $magic_tags['Hr Document Notification'][1] = "{{last_name}}";
+        $magic_tags['Hr Document Notification'][2] = "{{url}}";
+        $magic_tags['Hr Document Notification'][4] = "{{contact_name}}";
+        //
+        return $magic_tags;
     }
 
 
