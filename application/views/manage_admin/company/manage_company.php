@@ -412,7 +412,7 @@
                                                 <!-- Sms Module -->
                                                 <article class="information-box">
                                                     <header class="hr-box-header">SMS Module
-                                                     <a href="<?php echo base_url('manage_admin/companies/manage_sms') . '/' . $company_sid; ?>" class="site-btn pull-right">Manage</a>
+                                                     <a href="<?php echo base_url('manage_admin/companies/manage_sms') . '/' . $company_sid; ?>" class="site-btn pull-right hidden">Manage</a>
                                                      </header>
                                                     <div class="table-outer">
                                                         <div class="info-row">

@@ -35,18 +35,20 @@
                                         <table class="table table-bordered table-hover table-stripped">
                                             <thead>
                                                 <tr>
-                                                    <th class="col-xs-7">Template Name</th>
+                                                    <th class="col-xs-3">Template Name</th>
+                                                    <th class="col-xs-5">Template Body</th>
                                                     <th class="col-xs-1 text-center">Type</th>
-                                                    <th class="col-xs-4 text-center">Action</th>
+                                                    <th class="col-xs-1 text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php if(sizeof($all_templates) > 0) {
                                                     foreach($all_templates as $templates){ ?>
                                                         <tr>
-                                                            <td class="col-lg-9"><?php echo $templates['template_name']; ?></td>
-                                                            <td class="col-lg-1 text-center"><?php if($templates['is_custom']==0){ echo 'Default'; } else { echo 'Custom'; }?></td>
-                                                            <td class="col-lg-2 text-center">
+                                                            <td><?php echo $templates['template_name']; ?></td>
+                                                            <td><?php echo nl2br($templates['sms_body']); ?></td>
+                                                            <td><?php if($templates['is_custom']==0){ echo 'Default'; } else { echo 'Custom'; }?></td>
+                                                            <td>
                                                                 <a class="btn btn-success btn-sm" href="<?= base_url('portal_sms_templates/edit_sms_template') ?>/<?= $templates['sid'] ?>">Edit</a>
                                                                 <?php if($templates['is_custom']==1){ ?>
                                                                     <a class="btn btn-danger btn-sm delete" href="javascript:;" data-key="<?= $templates['sid'] ?>">Delete</a>

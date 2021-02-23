@@ -1449,9 +1449,9 @@ class Companies extends Admin_Controller {
                     case 'set_company_sms_status':
                         $company_sid = $this->input->post('company_sid');
                         $this->company_model->set_sms_module_status($company_sid, $this->input->post('sms_module_status', TRUE));
-                        if($this->input->post('sms_module_status', TRUE) == 1 && in_array($company_sid, array(51,57)) ){
+                        if($this->input->post('sms_module_status', TRUE) == 1){
                             $response = $this->sms_buy_process($company_sid);
-                            $this->session->set_flashdata('message', $response);
+                            $this->session->set_flashdata('message', $response == 1 ? "You have successfully activated the SMS module." : "Something went wrong");
                         }
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
 
@@ -2209,17 +2209,22 @@ class Companies extends Admin_Controller {
         // For Sandbox mode
         if(SMS_MODE == 'sandbox'){
             if(IS_SANDBOX) {
-                $this
+                $is_record = $this
                 ->company_model
-                ->save_company_phone_number(array(
-                    'company_sid' => $company_sid,
-                    'phone_sid' => 'MG2798b7fc2bce2a1c7121f5aaf809c298',
-                    'message_service_sid' => 'MG359e34ef1e42c763d3afc96c5ff28eaf',
-                    'message_service_name' => 'Development',
-                    'phone_number' => '+15005550006',
-                    'purchaser_type' => 'admin',
-                    'purchaser_id' => $this->ion_auth->user()->row()->id
-                ));
+                ->get_company_phone_by_sid($company_sid);
+                if(!$is_record){
+                    $this
+                    ->company_model
+                    ->save_company_phone_number(array(
+                        'company_sid' => $company_sid,
+                        'phone_sid' => 'MG2798b7fc2bce2a1c7121f5aaf809c298',
+                        'message_service_sid' => 'MG359e34ef1e42c763d3afc96c5ff28eaf',
+                        'message_service_name' => 'Development',
+                        'phone_number' => '+15005550006',
+                        'purchaser_type' => 'admin',
+                        'purchaser_id' => $this->ion_auth->user()->row()->id
+                    ));
+                }
                 return true;
             }
         }
