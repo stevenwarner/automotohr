@@ -460,10 +460,10 @@ define('ATS_SERVICE', 'GG359e34ef1e42c763d3afc96c5ff28eae');
 define('ADMIN_SERVICE', 'MG8e049516f449aa23989691750e3468d4');
 
 // Sandbox Checks
-define('IS_SANDBOX', 1);
-define('SMS_MODE', 'sandbox');
+define('IS_SANDBOX', 0);
+// define('SMS_MODE', 'sandbox');
 // define('SMS_MODE', 'staging');
-// define('SMS_MODE', 'production');
+define('SMS_MODE', 'production');
 
 //Sorting settings
 define('SORT_COLUMN', 'first_name');
