@@ -1708,7 +1708,7 @@ if(!function_exists('sendSMS')){
                 $_this
                     ->twilioapp
                     ->setMessageServiceSID($data['message_service_sid'])
-                    ->getPhone($data['phone_number'], 'number');
+                    ->setSenderPhone($data['phone_number'], 'number');
             }
             $resp = $_this
                 ->twilioapp

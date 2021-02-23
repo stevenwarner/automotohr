@@ -17,7 +17,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | environments.
 |
 */
-if($_SERVER['HTTP_HOST']=='localhost'){
+if($_SERVER['HTTP_HOST']=='automotohr.local'){
+    $config['base_url'] = 'http://automotohr.local/';
+} else if($_SERVER['HTTP_HOST']=='localhost'){
     $config['base_url'] = 'http://localhost/ahr/';
 } else {
     $root=(isset($_SERVER['HTTPS']) ? "https://" : "http://").$_SERVER['HTTP_HOST'];
@@ -25,7 +27,7 @@ if($_SERVER['HTTP_HOST']=='localhost'){
     $config['base_url'] = $root;
 }
 
-$config['base_url']= 'https://www.automotohr.com/';
+// $config['base_url']= 'https://www.automotohr.com/';
 
 /*
 |--------------------------------------------------------------------------
