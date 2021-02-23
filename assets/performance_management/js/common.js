@@ -242,6 +242,7 @@ function getError(errorCode, isError) {
         required_review_reviewees: "Please, at least select one reviewee.",
         required_review_reviewers: "Please, select reviewers.",
         required_question: "Question is required.",
+        review_saved: "You have successfully created a review.",
     };
     //
     if (isError === true)
@@ -261,6 +262,34 @@ function handleRedirect() {
         getError('redirect')['Response'],
         function() {
             window.location.reload();
+        }
+    );
+}
+
+/**
+ * Handle Error
+ * 
+ * @return {Void}
+ */
+function handleError(msg) {
+    alertify.alert(
+        'WARNING!',
+        msg,
+        function() {}
+    );
+}
+
+/**
+ * Handle Success
+ * 
+ * @return {Void}
+ */
+function handleSuccess(msg, cb) {
+    alertify.alert(
+        'SUCCESS!',
+        msg,
+        function() {
+            if (cb !== undefined) cb();
         }
     );
 }
@@ -413,3 +442,11 @@ if (typeof Object.assign !== 'function') {
         configurable: true
     });
 }
+
+/**
+ * 
+ */
+$('.jsFilterBTN').click(function(event) {
+    event.preventDefault();
+    $(`#${$(this).data().target}`).toggle();
+});

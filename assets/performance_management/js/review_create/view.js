@@ -375,7 +375,11 @@ $(function() {
                 if (file !== 'data:')
                     o.video_help = file;
                 //
-                reviewOBJ.setQuestions(o, 'add');
+                let questionIndex = reviewOBJ.setQuestions(o, 'add');
+                //
+                if (o.video_help !== undefined) {
+                    convertVideoToUrl(o.video_help, questionIndex);
+                }
                 resetQuestionView();
             });
         } else {
@@ -424,7 +428,11 @@ $(function() {
         const question = Object.assign(reviewOBJ.questions[$(this).closest('.csQuestionRow').data('id')]);
         question['sort_order'] = reviewOBJ.questions.length;
         //
-        reviewOBJ.setQuestions(question, 'add');
+        let questionIndex = reviewOBJ.setQuestions(question, 'add');
+        //
+        if (question.video_help !== undefined) {
+            convertVideoToUrl(question.video_help, questionIndex);
+        }
     });
 
 
@@ -603,6 +611,10 @@ $(function() {
                 else o.video_help = question.video_help;
                 //
                 reviewOBJ.setQuestions(o, 'edit', $('#jsQuestionId').val());
+                //
+                if (o.video_help !== undefined) {
+                    convertVideoToUrl(o.video_help, $('#jsQuestionId').val());
+                }
             });
         } else {
             //

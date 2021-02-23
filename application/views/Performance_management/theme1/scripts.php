@@ -54,3 +54,9 @@
     <script src="<?=base_url('assets/performance_management/js/review_create/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
     <script src="<?=base_url('assets/performance_management/js/review_create/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
 <?php endif; ?>
+
+<?php if(in_array('reviews', $this->uri->segment_array())): ?>
+    <!-- Review Listing -->
+    <script src="<?=base_url('assets/performance_management/js/review/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+    <script src="<?=base_url('assets/performance_management/js/review/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+<?php endif; ?>

@@ -26,6 +26,11 @@ class Performance_management_model extends CI_Model{
      * @return Integer
      */
     function _insert($tableName, $data){
+        if(isset($data[0]) && count($data) == 1) $data = $data[0];
+        //
+        if(isset($data[1])) 
+        $this->db->insert_batch($tableName, $data);
+        else
         $this->db->insert($tableName, $data);
         return $this->db->insert_id();
     }
@@ -510,17 +515,18 @@ class Performance_management_model extends CI_Model{
      * @return Array
      */
     function getReviewById(
+        $id,
         $columns = '*', 
         $archived = 0
     ){
         $this->db
         ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where('sid', $id)
         ->where('is_archived', $archived)
-        ->order_by('name', 'ASC')
         ->limit(1);
         //
         $a = $this->db->get($this->tables['PM']);
-        $b = $a->result_array();
+        $b = $a->row_array();
         // Free result
         $a->free_result();
         //

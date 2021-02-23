@@ -63,12 +63,17 @@ const
         },
         // Set review questions
         setQuestions: function(questions, type, id) {
-            if (type == 'add') this.questions.push(questions);
-            else if (type == 'edit') {
+            let index;
+            if (type == 'add') {
+                this.questions.push(questions);
+                index = this.questions.length - 1;
+            } else if (type == 'edit') {
                 this.questions[id] = questions;
+                index = id;
             } else if (type === undefined) this.questions = questions;
             //
             this.remakeQuestionsView();
+            return index;
         },
         // Set index
         setIndexValue: function(index, value, sub) {
@@ -639,9 +644,16 @@ async function saveReview(step, doRedirect){
             });
         break;
         case "questions":
+            //
+            let questions = [];
+            $.each(reviewOBJ.questions, (i, question) => {
+                questions[i] = question;
+                questions[i]['video_help'] = undefined;
+            });
+            //
             await updateReview({
                 step: step,
-                questions: reviewOBJ.questions
+                questions: questions
             });
         break;
     }
@@ -707,7 +719,22 @@ function finishReviewSave(){
             feedback: reviewOBJ.feedback
         },
         (resp) => {
-            console.log(resp);
+            if(resp.Redirect === true){
+                localStorage.setItem(`Review${reviewOBJ.id}`, JSON.stringify(reviewOBJ));
+                handleRedirect();
+                return;
+            }
+            
+            if(resp.Status === false){
+                handleError(resp.Response);
+                return;
+            }
+
+            //
+            handleSuccess(getError('review_saved'), () => {
+                window.location.href = `${pm.urls.base}performance-management/reviews`;
+            });
+            return;
         }
     );
 }
@@ -756,3 +783,21 @@ getEmployeeListWithDnT()
             }
         }
     });
+
+    /**
+     * 
+     */
+    function convertVideoToUrl(base64, questionIndex){
+        $.post(
+            `${pm.urls.base}performance-management/handler`, {
+                action: 'basetovideo',
+                id: reviewOBJ.id,
+                questionId: questionIndex,
+                data: base64
+            }
+        ).fail(function(){
+            setTimeout(() => {
+                convertVideoToUrl(base64, questionIndex);
+            }, 1000);
+        });
+    }

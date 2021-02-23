@@ -43,6 +43,9 @@ class Performance_management extends Public_Controller{
             'DM' => 'departments_management',
             'DTM' => 'departments_team_management',
             'DME' => 'departments_employee_2_team',
+            'PMR' => 'performance_management_reviewees',
+            'PMRV' => 'performance_management_reviewers',
+            'PMQ' => 'performance_management_review_questions',
         ];
         //
         $this->pargs = [];
@@ -212,7 +215,6 @@ class Performance_management extends Public_Controller{
         $this->load->view("main/footer");
     }
     
-    
     /**
      * Goals - Create Goal
      * 
@@ -358,6 +360,20 @@ class Performance_management extends Public_Controller{
         $params = $this->input->post(NULL, TRUE);
         //
         switch($params['action']):
+            // Video
+            case "basetovideo":
+                $video = str_replace('data:video/webm;base64,', '', $this->input->post('data'));
+                //
+                $pd = APPPATH.'../assets/performance_management/videos/'.$params['id'].'/';
+                // _e($video, true, true);
+                $filename = 'video_'.($params['questionId']).'.webm';
+                //
+                if(!is_dir($pd)) mkdir($pd, 0777, true);
+                //
+                $handler = fopen($pd.$filename, 'wb');
+                fwrite($handler, base64_decode($video));
+                fclose($handler);
+            break;
             // Save review
             case "save_review":
                 //
@@ -366,11 +382,11 @@ class Performance_management extends Public_Controller{
                 $ins['review_title'] = $params['title'];
                 $ins['description'] = $params['description'];
                 $ins['frequency'] = $params['schedule']['frequency'];
-                $ins['review_start_date'] = $params['schedule']['reviewStartDate'];
-                $ins['review_end_date'] = $params['schedule']['reviewEndDate'];
+                $ins['review_start_date'] = !empty($params['schedule']['reviewStartDate']) ? $params['schedule']['reviewStartDate'] : NULL;
+                $ins['review_end_date'] = !empty($params['schedule']['reviewEndDate']) ? $params['schedule']['reviewEndDate'] : NULL;
                 $ins['repeat_after'] = $params['schedule']['repeatVal'];
                 $ins['repeat_type'] = $params['schedule']['repeatType'];
-                $ins['review_runs'] = $params['schedule']['customRuns'];
+                $ins['review_runs'] = json_encode($params['schedule']['customRuns']);
                 $ins['repeat_review'] = $params['schedule']['continueReview'];
                 $ins['review_due'] = $params['schedule']['reviewDue'];
                 $ins['visibility_roles'] = implode(',', $params['visibility']['roles']);
@@ -394,8 +410,12 @@ class Performance_management extends Public_Controller{
                     $ins['repeat_type'] = 'day';
                 }
                 //
-                $ins['review_start_date'] = formatDateToDB($ins['review_start_date']);
-                $ins['review_end_date'] = formatDateToDB($ins['review_end_date']);
+                if(!empty($ins['review_start_date'])){
+                    $ins['review_start_date'] = formatDateToDB($ins['review_start_date']);
+                    $ins['review_end_date'] = formatDateToDB($ins['review_end_date']);
+                } else{
+                    unset($ins['review_start_date'], $ins['review_end_date']);
+                }
                 $ins['last_updated_by'] = $pargs['employerId'];
                 // Insert the review into the database
                 $reviewId = $this->pmm->_insert($this->tables['PM'], $ins);
@@ -423,11 +443,11 @@ class Performance_management extends Public_Controller{
                     $ins['review_title'] = $params['title'];
                     $ins['description'] = $params['description'];
                     $ins['frequency'] = $params['schedule']['frequency'];
-                    $ins['review_start_date'] = $params['schedule']['reviewStartDate'];
-                    $ins['review_end_date'] = $params['schedule']['reviewEndDate'];
+                    $ins['review_start_date'] = !empty($params['schedule']['reviewStartDate']) ? $params['schedule']['reviewStartDate'] : NULL;
+                    $ins['review_end_date'] = !empty($params['schedule']['reviewEndDate']) ? $params['schedule']['reviewEndDate'] : NULL;
                     $ins['repeat_after'] = $params['schedule']['repeatVal'];
                     $ins['repeat_type'] = $params['schedule']['repeatType'];
-                    $ins['review_runs'] = $params['schedule']['customRuns'];
+                    $ins['review_runs'] = json_encode($params['schedule']['customRuns']);
                     $ins['repeat_review'] = $params['schedule']['continueReview'];
                     $ins['review_due'] = $params['schedule']['reviewDue'];
                     $ins['visibility_roles'] = implode(',', $params['visibility']['roles']);
@@ -451,8 +471,12 @@ class Performance_management extends Public_Controller{
                         $ins['repeat_type'] = 'day';
                     }
                     //
-                    $ins['review_start_date'] = formatDateToDB($ins['review_start_date']);
-                    $ins['review_end_date'] = formatDateToDB($ins['review_end_date']);
+                    if(!empty($ins['review_start_date'])){
+                        $ins['review_start_date'] = formatDateToDB($ins['review_start_date']);
+                        $ins['review_end_date'] = formatDateToDB($ins['review_end_date']);
+                    } else{
+                        unset($ins['review_start_date'], $ins['review_end_date']);
+                    }
                     $ins['last_updated_by'] = $pargs['employerId'];
                 }
 
@@ -494,16 +518,90 @@ class Performance_management extends Public_Controller{
             case "finish_save_review":
                 //
                 $upd = [];
-                $upd['share_feedback'] = json_encode($params['feedback']);
+                $upd['share_feedback'] = $params['feedback'];
                 $upd['is_draft'] = 0;
+                $upd['questions'] = '';
+                $upd['reviewers'] = '';
+                $upd['included_employees '] = '';
                 // Get review
-                $review = $this->pmm->getReviewByid($params['id'], ['included_employees', 'reviewers', 'questions']);
+                $review = $this->pmm->getReviewByid($params['id'], ['included_employees', 'reviewers', 'questions', 'review_start_date', 'review_end_date']);
+                //
+                $is_started = 0;
+                if($review['review_start_date'] >= date('Y-m-d', strtolower('now')) && $review['review_end_date'] < date('Y-m-d', strtolower('now'))) $is_started = 1;
+                //
+                $ins = [];
                 // Lets set reviwees
-                // TODO
-                // Save reviewees and process
+                foreach(json_decode($review['included_employees'], true) as $reviewee){
+                    $t = [];
+                    $t['review_sid']  = $params['id'];
+                    $t['reviewee_sid']  = $reviewee;
+                    if(!empty($review['review_start_date'])){
+                        $t['start_date']  = $review['review_start_date'];
+                        $t['end_date']  = $review['review_end_date'];
+                    }
+                    $t['is_started']  = $is_started;
+                    //
+                    $ins[] = $t;
+                }
+                //
+                $this->pmm->_insert($this->tables['PMR'], $ins);
+                //
+                $ins = [];
+                // Lets set reviewers
+                foreach(json_decode($review['reviewers'], true)['employees'] as $k => $reviewer){
+                    //
+                    $revieweeId = $k;
+                    $reviewers = [];
+                    $reviewers = !empty($reviewer['reporting_manager']) ? array_merge($reviewers, array_keys($reviewer['reporting_manager'])) : $reviewers;
+                    $reviewers = !empty($reviewer['self_review']) ? array_merge($reviewers, array_keys($reviewer['self_review'])) : $reviewers;
+                    $reviewers = !empty($reviewer['peer']) ? array_merge($reviewers, array_keys($reviewer['peer'])) : $reviewers;
+                    $reviewers = !empty($reviewer['specific']) ? array_merge($reviewers, array_keys($reviewer['specific'])) : $reviewers;
+                    if(!empty($reviewer['custom'])){
+                        $reviewers = array_merge($reviewers, array_keys($reviewer['custom']));
+                        //
+                        if(!empty($reviewer['excluded'])){
+                            $reviewers = array_diff($reviewers, array_keys($reviewer['excluded']));
+                        }
+                    }
+                    //
+                    $reviewers = array_unique($reviewers, SORT_STRING);
+                    //
+                    if(!empty($reviewers)){
+                        foreach($reviewers as $em){
+                            $t = [];
+                            $t['review_sid']  = $params['id'];
+                            $t['reviewee_sid']  = $revieweeId;
+                            $t['reviewer_sid']  = $em;
+                            $t['added_by']  = $pargs['employerId'];
+                            //
+                            $ins[] = $t;
+                        }
+                    }
+                }
+                //
+                $this->pmm->_insert($this->tables['PMRV'], $ins);
+                //
+                $ins = [];
+                // Lets add questions
+                $questions = json_decode($review['questions'], true);
+                //
+                foreach($questions as $question){
+                    $t = [];
+                    $t['review_sid'] = $params['id'];
+                    $t['question'] = json_encode($question['question']);
+                    //
+                    $ins[] = $t;
+                }
+                //
+                $this->pmm->_insert($this->tables['PMQ'], $ins);
                 //
                 $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
-                _e($params, true);
+                //
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                //
+                res($this->resp);
             break;
         endswitch;
     }
