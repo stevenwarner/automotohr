@@ -2273,7 +2273,7 @@ class Companies extends Admin_Controller {
             //
             if(isset($resp['Error'])) return $resp;
             // Let's create a messag service
-            $MessageServiceCode = $resp->Sid;
+            $MessageServiceCode = $resp['Sid'];
         }
 
         // Link number to MessageService
