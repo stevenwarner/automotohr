@@ -70,8 +70,8 @@
                             <div class="col-sm-3">
                                 <br />
                                 <span class="csBTNBox">
-                                    <button class="btn btn-orange">Apply</button>
-                                    <button class="btn btn-black">Reset</button>
+                                    <button class="btn btn-orange btn-lg jsFilterApplyBtn">Apply</button>
+                                    <button class="btn btn-black btn-lg jsFilterResetBtn">Reset</button>
                                 </span>
                             </div>
                         </div>
@@ -91,177 +91,7 @@
                                         <th class="col-sm-2"></th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <p>Review 1 <a class="btn btn-xs alert-success">Running</a></p>
-                                        </td>
-                                        <td>
-                                            <p>Jan 01 2021, Sunday</p>
-                                        </td>
-                                        <td>
-                                            <div class="progress csRadius100">
-                                                <div class="progress-bar" role="progressbar" aria-valuenow="0"
-                                                    aria-valuemin="50" aria-valuemax="100" style="width: 50%;"></div>
-                                            </div>
-                                            <small>50%</small>
-                                        </td>
-                                        <td>
-                                            <div class="progress csRadius100">
-                                                <div class="progress-bar" role="progressbar" aria-valuenow="0"
-                                                    aria-valuemin="50" aria-valuemax="100" style="width: 0%;"></div>
-                                            </div>
-                                            <small>0%</small>
-                                        </td>
-                                        <td>
-                                            <div class="csBTNBox">
-
-                                                <a href="<?=purl('review/1');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
-                                                <div class="dropdown">
-                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenu1"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="true">
-                                                        <i class="fa fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                                        <li><a href="#">Download Report</a></li>
-                                                        <li><a href="#">Print</a></li>
-                                                        <li><a href="#">Save As Template</a></li>
-                                                        <li role="separator" class="divider"></li>
-                                                        <li><a href="#">End Review</a></li>
-                                                        <li><a href="#">Archive Review</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <p>Review 2 <a class="btn btn-xs alert-warning">Pending</a></p>
-                                        </td>
-                                        <td>
-                                            <p>Jan 01 2021, Sunday</p>
-                                        </td>
-                                        <td>
-
-                                            <small>0%</small>
-                                        </td>
-                                        <td>
-                                            <div class="progress csRadius100">
-                                                <div class="progress-bar" role="progressbar" aria-valuenow="0"
-                                                    aria-valuemin="50" aria-valuemax="100" style="width: 0%;"></div>
-                                            </div>
-                                            <small>0%</small>
-                                        </td>
-                                        <td>
-                                            <div class="csBTNBox">
-
-                                                <a href="<?=purl('review/2');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
-                                                <div class="dropdown">
-                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenu1"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="true">
-                                                        <i class="fa fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                                        <li><a href="#">Download Report</a></li>
-                                                        <li><a href="#">Print</a></li>
-                                                        <li><a href="#">Save As Template</a></li>
-                                                        <li role="separator" class="divider"></li>
-                                                        <li><a href="#">End Review</a></li>
-                                                        <li><a href="#">Archive Review</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <p>Review 3 <a class="btn btn-xs alert-danger">Ended</a></p>
-                                        </td>
-                                        <td>
-                                            <p>Jan 01 2021, Sunday</p>
-                                        </td>
-                                        <td>
-                                            <div class="progress csRadius100">
-                                                <div class="progress-bar" role="progressbar" aria-valuenow="0"
-                                                    aria-valuemin="50" aria-valuemax="100" style="width: 0%;"></div>
-                                            </div>
-                                            <small>0%</small>
-                                        </td>
-                                        <td>
-                                            <div class="progress csRadius100">
-                                                <div class="progress-bar" role="progressbar" aria-valuenow="0"
-                                                    aria-valuemin="50" aria-valuemax="100" style="width: 60%;"></div>
-                                            </div>
-                                            <small>60%</small>
-                                        </td>
-                                        <td>
-                                            <div class="csBTNBox">
-
-                                                <a href="<?=purl('review/3');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
-                                                <div class="dropdown">
-                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenu1"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="true">
-                                                        <i class="fa fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                                        <li><a href="#">Download Report</a></li>
-                                                        <li><a href="#">Print</a></li>
-                                                        <li><a href="#">Save As Template</a></li>
-                                                        <li role="separator" class="divider"></li>
-                                                        <li><a href="#">End Review</a></li>
-                                                        <li><a href="#">Archive Review</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <p>Review 4</p>
-                                        </td>
-                                        <td>
-                                            <p>Jan 01 2021, Sunday</p>
-                                        </td>
-                                        <td>
-                                            <div class="progress csRadius100">
-                                                <div class="progress-bar" role="progressbar" aria-valuenow="0"
-                                                    aria-valuemin="50" aria-valuemax="100" style="width: 100%;"></div>
-                                            </div>
-                                            <small>100%</small>
-                                        </td>
-                                        <td>
-                                            <div class="progress csRadius100">
-                                                <div class="progress-bar" role="progressbar" aria-valuenow="0"
-                                                    aria-valuemin="50" aria-valuemax="100" style="width: 100%;"></div>
-                                            </div>
-                                            <small>100%</small>
-                                        </td>
-                                        <td>
-                                            <div class="csBTNBox">
-
-                                                <a href="<?=purl('review/4');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
-                                                <div class="dropdown">
-                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenu1"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="true">
-                                                        <i class="fa fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                                        <li><a href="#">Download Report</a></li>
-                                                        <li><a href="#">Print</a></li>
-                                                        <li><a href="#">Save As Template</a></li>
-                                                        <li role="separator" class="divider"></li>
-                                                        <li><a href="#">End Review</a></li>
-                                                        <li><a href="#">Archive Review</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="jsReviewWrap"></tbody>
                             </table>
                         </div>
                     </div>
@@ -270,23 +100,7 @@
                     <div class="clearfix"></div>
                 </div>
                 <!--  -->
-                <div class="csPageBoxFooter p10">
-                    <div class="row">
-                        <div class="col-sm-6"><strong class="mt10">Showing 10 of 100</strong></div>
-                        <div class="col-sm-6">
-                            <ul class="pagination csPagination">
-                                <li class="page-item"><a href="javascript:void(0)">First</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">&laquo;</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">1</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">2</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">3</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">4</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">&raquo;</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">Last</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <div class="csPageBoxFooter jsPageBoxFooter p10"></div>
             </div>
         </div>
     </div>

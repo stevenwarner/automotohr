@@ -532,5 +532,152 @@ class Performance_management_model extends CI_Model{
         //
         return $b;
     }
+
+    /**
+     * 
+     */
+    function getAllCompanyEmployees($companyId){
+        $a = $this->db
+        ->select('
+            first_name,
+            last_name,
+            profile_picture,
+            sid as userId,
+            access_level
+        ')
+        ->where('parent_sid', $companyId)
+        ->where('active', 1)
+        ->where('terminated_status', 0)
+        ->get('users');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+    /**
+     * 
+     */
+    function getReviews($companyId, $employeeId, $employeeRole, $level, $filter = []){
+        // When the employe is not super admin
+        if($level != 1){
+            $dt = $this->getEmployeeDTR($employeeId, $employeeRole);
+            //
+            $Role = $dt['Role'];
+            $Teams = $dt['Teams'];
+            $Departments = $dt['Departments'];
+        }
+        //
+        $this->db
+        ->select('
+            sid,
+            review_title,
+            status,
+            review_start_date,
+            review_end_date
+        ')
+        ->from($this->tables['PM'])
+        ->where('company_sid', $companyId)
+        ->order_by('sid', 'desc');
+        //
+        if($level != 1){
+            $this->db->group_start();
+            $this->db->where('visibility_roles', $Role);
+            $this->db->or_where_in('visibility_departments', $Teams);
+            $this->db->or_where_in('visibility_teams', $Departments);
+            $this->db->or_where_in('visibility_employees', $employeeId);
+            $this->db->group_end();
+        }
+        //
+        if(count($filter)){
+            $this->db->where('is_archived', $filter['reviewStatus'] != 'archived' ? 0 : 1);
+            $this->db->where('is_draft', $filter['reviewStatus'] == 'draft' ? 1 : 0);
+        }
+        //
+        $a = $this->db->get();
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        if(!empty($b)){
+            //
+            $reviewIds = array_column($b, 'sid');
+            //
+            $a = 
+            $this->db
+            ->select('review_sid, reviewer_sid, is_completed, is_manager')
+            ->get($this->tables['PMRV']);
+            //
+            $c = $a->result_array();
+            $a->free_result();
+            //
+            if(empty($c)) return [];
+            //
+            $newReviewers = [];
+            //
+            foreach($c as $k => $v){
+                $newReviewers[$v['review_sid']][] = ['reviewer_Id' => $v['reviewer_sid'], 'reviewer_type' => $v['is_manager'] == 1 ? 'Feeback' : 'Review', 'completion_status' => $v['is_completed'] ];
+            }
+            //
+            $reviewIds = array_column($c, 'review_sid');
+            //
+            $filterCount = count($filter);
+            //
+            foreach($b as $k => $v){
+                //
+                if($filterCount && $filter['reviewType'] != -1){
+                    if(!in_array($v['sid'], $reviewIds)) {
+                        unset($b[$k]);
+                        continue;
+                    }
+                }
+                //
+                $b[$k]['reviewers'] = $newReviewers[$v['sid']];
+            }
+            //
+            $b = array_values($b);
+        }
+        //
+        return $b;
+    }
+
+
+
+    /**
+     * 
+     */
+    private function getEmployeeDTR($employeeId, $employeeRole){
+        //
+        $r = [
+            'Role' => strtolower($employeeRole),
+            'Teams' => [],
+            'Departments' => []
+        ];
+        //
+        $b = 
+        $this->db
+        ->select('
+            departments_team_management.sid as team_ids,
+            departments_team_management.sid as department_ids
+        ')
+        ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
+        ->join('documents_management', 'documents_management.sid = departments_employee_2_team.department_si', 'inner')
+        ->from('departments_employee_2_team')
+        ->where('departments_team_management.status', 1)
+        ->where('departments_team_management.is_deleted', 0)
+        ->where('documents_management.status', 1)
+        ->where('documents_management.is_deleted', 0)
+        ->where('departments_employee_2_team.employee_sid', $employeeId)
+        ->get()
+        ->result_array();
+        //
+        if(!empty($b)){
+            $r['Teams'] = array_column($b, 'team_ids');
+            $r['Departments'] = array_column($b, 'department_ids');
+        }
+        //
+        return $b;
+    }
     
 }

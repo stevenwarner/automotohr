@@ -337,6 +337,17 @@ class Performance_management extends Public_Controller{
                 //
                 res($this->resp);
             break;
+
+            // Get all company employees
+            case "get_all_company_employees":
+                $list = $this->pmm->getAllCompanyEmployees($pargs['companyId']);
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                $this->resp['Data'] = $list;
+                //
+                res($this->resp);
+            break;
         endswitch;
     }
 
@@ -588,7 +599,8 @@ class Performance_management extends Public_Controller{
                 foreach($questions as $question){
                     $t = [];
                     $t['review_sid'] = $params['id'];
-                    $t['question'] = json_encode($question['question']);
+                    $t['question_type'] = $question['question_type'];
+                    $t['question'] = json_encode($question);
                     //
                     $ins[] = $t;
                 }
@@ -599,6 +611,15 @@ class Performance_management extends Public_Controller{
                 //
                 //
                 $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                //
+                res($this->resp);
+            break;
+
+            // Review listing
+            case "get_review_listing":
+                $this->resp['Data'] = $this->pmm->getReviews($pargs['companyId'], $pargs['employerId'], $pargs['employerRole'], $pargs['level']);
+                $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed.';
                 //
                 res($this->resp);
@@ -628,12 +649,13 @@ class Performance_management extends Public_Controller{
         //
         $data['companyId'] = $data['session']['company_detail']['sid'];
         $data['companyName'] = $data['session']['company_detail']['CompanyName'];
-        $data['companyDetails'] = $data['session']['company_detail'];
         $data['employerDetails'] = $data['session']['employer_detail'];
+        $data['companyDetails'] = $data['session']['company_detail'];
         $data['employerId'] = $data['session']['employer_detail']['sid'];
         $data['employerName'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
         $data['isSuperAdmin'] = $data['session']['employer_detail']['access_level_plus'];
         $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 || $data['session']['employer_detail']['pay_plan_flag'] == 1 ? 1 : 0;
+        $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
         //
         if ($return) return true;
         else $data['security_details'] = db_get_access_level_details($data['employerId'], NULL, $data['session']);

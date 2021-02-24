@@ -446,6 +446,14 @@ if (typeof Object.assign !== 'function') {
 /**
  * 
  */
+function convertDate(inp) {
+    return moment(inp, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.mdy);
+}
+
+
+/**
+ * 
+ */
 $('.jsFilterBTN').click(function(event) {
     event.preventDefault();
     $(`#${$(this).data().target}`).toggle();

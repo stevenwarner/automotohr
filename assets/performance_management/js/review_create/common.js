@@ -72,7 +72,7 @@ const
                 index = id;
             } else if (type === undefined) this.questions = questions;
             //
-            this.remakeQuestionsView();
+            this.remakeQuestionsView(type === undefined ? false : true);
             return index;
         },
         // Set index
@@ -120,7 +120,7 @@ const
             this.remakeQuestionsView();
         },
         //
-        remakeQuestionsView: function() {
+        remakeQuestionsView: function(doClick) {
             //
             rows = '';
             if (this.questions.length === 0) {
@@ -138,8 +138,10 @@ const
             }
             //
             this.targets.questionsView.html(rows);
-            //
-            $('.jsReviewStep[data-to="questions"]').click();
+            if (doClick) {
+                //
+                $('.jsReviewStep[data-to="questions"]').click();
+            }
         }
     },
 

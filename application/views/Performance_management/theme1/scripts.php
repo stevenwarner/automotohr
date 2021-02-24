@@ -12,6 +12,7 @@
     window.pm = {
         urls: {
             base: "<?=rtrim(base_url(), '/');?>/",
+            pbase: "<?=rtrim(base_url(), '/');?>/performance-management/",
             handler: "<?=rtrim(base_url(), '/');?>/performance-management/handler/",
             aws: "<?=AWS_S3_BUCKET_URL;?>"
         },
