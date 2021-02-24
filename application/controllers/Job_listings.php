@@ -1339,7 +1339,7 @@ class Job_listings extends Public_Controller {
                         $this->dashboard_model->add_modifications_record($datatoinsert);
 
                         //send new updated job to remarket
-                        $this->sendJobDetailsToRemarket($listing_data,$formpost['sid'],$data['session']['company_detail'],$myListing['JobCategory']);
+                        // $this->sendJobDetailsToRemarket($listing_data,$formpost['sid'],$data['session']['company_detail'],$myListing['JobCategory']);
                     }
 
                     if($hasNewModuleAccess){
