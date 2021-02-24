@@ -779,6 +779,16 @@ class Application_tracking_system extends Public_Controller {
             } else {
                 $formpost = $this->input->post(NULL, TRUE);
 
+                if (isset($formpost['email']) ) {
+                    $email_exist = $this->application_tracking_system_model->check_applicant_email_exist($app_id, $company_sid, $formpost['email']);
+
+                    if ($email_exist == 'record_found') {
+                        $this->session->set_flashdata('message', '<b>Error:</b> This email address already taken!');
+                        redirect("applicant_profile/" . $app_id . '/' . $job_list_sid, "location");
+                    }
+                }
+
+
                 if ($data['applicant_info']['email'] != $formpost['email']) {
                     $dataToUpdate = array(
                         'to_id' => $formpost['email']

@@ -1525,6 +1525,25 @@ class Application_tracking_system_model extends CI_Model {
         return $this->db->get("outsource_onboarding_emails")->num_rows();
     }
 
+    function check_applicant_email_exist($app_id, $company_sid, $email) {
+        $this->db->select('sid');
+        $this->db->where('employer_sid', $company_sid);
+        $this->db->where('email', $email);
+        $this->db->where('sid <>', $app_id);
+        $this->db->order_by('sid', 'desc');
+        $this->db->limit(1);
+        $this->db->from('portal_job_applications');
+        $result = $this->db->get()->result_array();
+
+        if (sizeof($result) > 0) {
+            $output = 'record_found';
+        } else {
+            $output = 'no_record_found';
+        }
+
+        return $output;
+    }
+
     function update_private_message_to_id($job_id, $email, $data) {
         $this->db->where('to_id', $email)
                 ->where('job_id', $job_id)
