@@ -418,7 +418,7 @@ class Job_listings extends Public_Controller {
 
                 $jobId                                                          = $this->dashboard_model->add_listing($listing_data);  //Now call dashboard_model function to insert data in DB
                 //send new created job to remarket
-                // $this->sendJobDetailsToRemarket($listing_data,$jobId,$data['session']['company_detail']);
+                $this->sendJobDetailsToRemarket($listing_data,$jobId,$data['session']['company_detail']);
 
                 if($per_job_listing_charge == 1 && (isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it')) {
                     $this->dashboard_model->deduct_product_qty($listing_data['ppj_product_id'], $company_id, $listing_data['ppj_expiry_days']);
@@ -1339,7 +1339,7 @@ class Job_listings extends Public_Controller {
                         $this->dashboard_model->add_modifications_record($datatoinsert);
 
                         //send new updated job to remarket
-                        // $this->sendJobDetailsToRemarket($listing_data,$formpost['sid'],$data['session']['company_detail'],$myListing['JobCategory']);
+                        $this->sendJobDetailsToRemarket($listing_data,$formpost['sid'],$data['session']['company_detail'],$myListing['JobCategory']);
                     }
 
                     if($hasNewModuleAccess){
@@ -1782,7 +1782,7 @@ class Job_listings extends Public_Controller {
 
                     $jobId                                                      = $this->dashboard_model->add_listing($listing_data);
                     //send new cloned job to remarket
-                    // $this->sendJobDetailsToRemarket($listing_data,$jobId,$data['session']['company_detail']);
+                    $this->sendJobDetailsToRemarket($listing_data,$jobId,$data['session']['company_detail']);
 
                     if($per_job_listing_charge == 1 && (isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it')) {
                         $this->dashboard_model->deduct_product_qty($listing_data['ppj_product_id'], $company_id, $listing_data['ppj_expiry_days']);
