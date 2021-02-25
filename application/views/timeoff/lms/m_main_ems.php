@@ -10,8 +10,10 @@
                                 class="fa fa-calendar-o"></i> Holidays</a></li>
                     <li><a href="" class="btn btn-orange jsCalendarView" title="Show calendar" placement="top"><i
                                 class="fa fa-calendar"></i> Calendar</a></li>
+                                <?php if($level == 1 || $is_approver) { ?>
                     <li><a href="" class="btn btn-orange jsCreateRequest" id="jsCreateTimeOffForEmployee" title="Create a time off" placement="top"><i
                                 class="fa fa-plus-circle"></i> Create a time off</a></li>
+                                <?php } ?>
                     <li class="toRight" style="margin-right: 5px;"><a href="" class="csTabAnchor jsTeamShiftTab"
                             title="Show time offs for my team members" placement="top" data-key="0">All Time-off</a></li>
                     <li class="toRight"><a href="" class="csTabAnchor jsTeamShiftTab active" title="Show my time offs"
