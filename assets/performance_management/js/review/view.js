@@ -107,6 +107,112 @@ $(function() {
         $('#jsFilterStatus').select2('val', -1);
     });
 
+    /**
+     * 
+     */
+    $(document).on('click', '.jsReviewStatus', function(event) {
+        //
+        event.preventDefault();
+        //
+        const
+            reviewId = $(this).closest('tr').data().id,
+            type = $(this).data().type;
+        //
+        if (reviewId === undefined) return;
+        //
+        ml(true, loaderName);
+        //
+        reviewStatusChange(reviewId, type)
+            .then((res) => {
+                //
+                ml(false, loaderName);
+                //
+                if (res.Redirect === true) {
+                    handleRedirect();
+                    return
+                }
+                //
+                if (res.Status === false) {
+                    handleError(getError('change_review_status_error'));
+                    return
+                }
+                //
+                handleSuccess(getError('change_review_status_success'));
+                //
+                loadReviews();
+            });
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsEndReview', function(event) {
+        //
+        event.preventDefault();
+        //
+        const
+            reviewId = $(this).closest('tr').data().id
+            //
+        if (reviewId === undefined) return;
+        //
+        ml(true, loaderName);
+        //
+        endReview(reviewId)
+            .then((res) => {
+                //
+                ml(false, loaderName);
+                //
+                if (res.Redirect === true) {
+                    handleRedirect();
+                    return
+                }
+                //
+                if (res.Status === false) {
+                    handleError(getError('review_end_error'));
+                    return
+                }
+                //
+                handleSuccess(getError('review_end_success'));
+                //
+                loadReviews();
+            });
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsReopenReview', function(event) {
+        //
+        event.preventDefault();
+        //
+        const
+            reviewId = $(this).closest('tr').data().id
+            //
+        if (reviewId === undefined) return;
+        //
+        ml(true, loaderName);
+        //
+        reopenReview(reviewId)
+            .then((res) => {
+                //
+                ml(false, loaderName);
+                //
+                if (res.Redirect === true) {
+                    handleRedirect();
+                    return
+                }
+                //
+                if (res.Status === false) {
+                    handleError(getError('review_reopen_error'));
+                    return
+                }
+                //
+                handleSuccess(getError('review_reopen_success'));
+                //
+                loadReviews();
+            });
+    });
+
     //
     loadReviews();
 
@@ -118,12 +224,16 @@ $(function() {
         //
         if (XHR !== null) XHR.abort();
         //
+        ml(true, loaderName);
+        //
         XHR = $.post(
             pm.urls.handler, {
-                action: 'get_review_listing'
+                action: 'get_review_listing',
+                filter: filter
             },
             (resp) => {
                 XHR = null;
+                ml(false, loaderName);
                 //
                 if (resp.Redirect === true) {
                     handleRedirect();
@@ -203,13 +313,24 @@ $(function() {
             rows += `                   <i class="fa fa-ellipsis-v"></i>`;
             rows += `               </button>`;
             rows += `               <ul class="dropdown-menu ulToLeft" aria-labelledby="dropdownMenu${review.sid}">`;
-            rows += `                   <li><a href="${pm.urls.pbase}download/review/${review.sid}">Download Report</a></li>`;
-            rows += `                   <li><a href="${pm.urls.pbase}print/review/${review.sid}">Print</a></li>`;
-            rows += `                   <li><a href="javascript:void(0)" class="jsSaveReviewAsTemplate">Save As Template</a></li>`;
+            rows += `                   <li><a href="${pm.urls.pbase}download/review/${review.sid}"><i class="fa fa-download"></i> Download Report</a></li>`;
+            rows += `                   <li><a href="${pm.urls.pbase}print/review/${review.sid}"><i class="fa fa-print"></i> Print</a></li>`;
+            if (review.is_template == 0) {
+                rows += `                   <li><a href="javascript:void(0)" class="jsSaveReviewAsTemplate"><i class="fa fa-save"></i> Save As Template</a></li>`;
+            }
             rows += `                   <li role="separator" class="divider"></li>`;
-            rows += `                   <li><a href="javascript:void(0)" class="jsAddReviewers">Add Reviewers</a></li>`;
-            rows += `                   <li><a href="javascript:void(0)" class="jsEndReview">End Review</a></li>`;
-            rows += `                   <li><a href="javascript:void(0)" class="jsArchiveReview">Archive Review</a></li>`;
+            rows += `                   <li><a href="javascript:void(0)" class="jsAddReviewers"><i class="fa fa-plus-circle"></i> Add Reviewers</a></li>`;
+            if (review.status == 'started') {
+                rows += `                   <li><a href="javascript:void(0)" class="jsEndReview"><i class="fa fa-stop-circle"></i> End Review</a></li>`;
+            }
+            if (review.status == 'ended') {
+                rows += `                   <li><a href="javascript:void(0)" class="jsReopenReview"><i class="fa fa-stop-circle"></i> Re-open Review</a></li>`;
+            }
+            if (review.is_archived == 0) {
+                rows += `                   <li><a href="javascript:void(0)" class="jsReviewStatus" data-type="1"><i class="fa fa-archive"></i> Archive Review</a></li>`;
+            } else {
+                rows += `                   <li><a href="javascript:void(0)" class="jsReviewStatus" data-type="0"><i class="fa fa-check"></i> Activate Review</a></li>`;
+            }
             rows += `               </ul>`;
             rows += `           </div>`;
             rows += `       </div>`;
@@ -218,6 +339,50 @@ $(function() {
         });
         //
         $('#jsReviewWrap').html(rows);
+    }
+
+
+    /**
+     * 
+     */
+    function reviewStatusChange(reviewId, type) {
+        return new Promise((res) => {
+            $.post(pm.urls.handler, {
+                action: 'change_review_status',
+                reviewId: reviewId,
+                type: type
+            }, (resp) => {
+                res(resp);
+            });
+        });
+    }
+
+    /**
+     * 
+     */
+    function endReview(reviewId) {
+        return new Promise((res) => {
+            $.post(pm.urls.handler, {
+                action: 'end_review',
+                reviewId: reviewId
+            }, (resp) => {
+                res(resp);
+            });
+        });
+    }
+
+    /**
+     * 
+     */
+    function reopenReview(reviewId) {
+        return new Promise((res) => {
+            $.post(pm.urls.handler, {
+                action: 'reopen_review',
+                reviewId: reviewId
+            }, (resp) => {
+                res(resp);
+            });
+        });
     }
 
 });

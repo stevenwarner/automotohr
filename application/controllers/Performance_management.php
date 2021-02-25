@@ -107,6 +107,7 @@ class Performance_management extends Public_Controller{
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
+        // $this->load->view("{$this->pp}add_reviewee", $this->pargs);
         $this->load->view("{$this->pp}reviews/{$this->mp}index", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
@@ -618,7 +619,79 @@ class Performance_management extends Public_Controller{
 
             // Review listing
             case "get_review_listing":
-                $this->resp['Data'] = $this->pmm->getReviews($pargs['companyId'], $pargs['employerId'], $pargs['employerRole'], $pargs['level']);
+                $this->resp['Data'] = $this->pmm->getReviews($pargs['companyId'], $pargs['employerId'], $pargs['employerRole'], $pargs['level'], $params['filter']);
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed.';
+                //
+                res($this->resp);
+            break;
+            
+            // Convert review to template
+            case "convert_review_to_template":
+                //
+                $isSaved = $this->pmm->saveReviewAsTemplate($pargs['companyId'], $pargs['employerId'], $params['reviewId']);
+                //
+                if(!$isSaved){
+                    res($this->resp);
+                }
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed.';
+                //
+                res($this->resp);
+            break;
+            
+            // Change review status
+            case "change_review_status":
+                //
+                $this->pmm->_update(
+                    $this->tables['PM'],
+                    ['is_archived' => $params['type']],
+                    ['sid' => $params['reviewId']]
+                );
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed.';
+                //
+                res($this->resp);
+            break;
+            
+            // End review
+            case "end_review":
+                //
+                $this->pmm->_update(
+                    $this->tables['PM'],
+                    ['status' => 'ended'],
+                    ['sid' => $params['reviewId']]
+                );
+                //
+                $this->pmm->_update(
+                    $this->tables['PMR'],
+                    ['is_started' => 2],
+                    ['review_sid' => $params['reviewId']]
+                );
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed.';
+                //
+                res($this->resp);
+            break;
+            
+            // Re-open review
+            case "reopen_review":
+                //
+                $this->pmm->_update(
+                    $this->tables['PM'],
+                    ['status' => 'started'],
+                    ['sid' => $params['reviewId']]
+                );
+                //
+                $this->pmm->_update(
+                    $this->tables['PMR'],
+                    ['is_started' => 1],
+                    ['review_sid' => $params['reviewId']]
+                );
+                //
                 $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed.';
                 //

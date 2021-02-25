@@ -243,6 +243,14 @@ function getError(errorCode, isError) {
         required_review_reviewers: "Please, select reviewers.",
         required_question: "Question is required.",
         review_saved: "You have successfully created a review.",
+        convert_review_to_template_error: "Something went wrong while saving the review as template.",
+        convert_review_to_template_success: "You have successfully saved the review as a new template.",
+        change_review_status_error: "Something went wrong while changing the review status.",
+        change_review_status_success: "You have successfully changed the review status.",
+        review_end_error: "Something went wrong while ending the review.",
+        review_end_success: "You have successfully ended the review.",
+        review_reopen_error: "Something went wrong while re-opening the review.",
+        review_reopen_success: "You have successfully re-opened the review.",
     };
     //
     if (isError === true)
@@ -448,6 +456,21 @@ if (typeof Object.assign !== 'function') {
  */
 function convertDate(inp) {
     return moment(inp, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.mdy);
+}
+
+
+/**
+ * 
+ */
+function saveReviewAsTemplate(reviewId) {
+    return new Promise((res) => {
+        $.post(pm.urls.handler, {
+            action: 'convert_review_to_template',
+            reviewId: reviewId
+        }, (resp) => {
+            res(resp);
+        });
+    });
 }
 
 

@@ -1,6 +1,11 @@
 /**
  * 
  */
+const loaderName = 'review_listing';
+
+/**
+ * 
+ */
 function getCompanyEmployees() {
     $.get(
         `${pm.urls.handler}get/get_all_company_employees`,
@@ -42,6 +47,36 @@ function getProgress(reviewerArray, reviewerType) {
     return returnOBJ;
 }
 
+/**
+ * 
+ */
+$(document).on('click', '.jsSaveReviewAsTemplate', function(event) {
+    event.preventDefault();
+    //
+    const reviewId = $(this).closest('tr').data().id;
+    //
+    if (reviewId === undefined) return;
+    //
+    ml(true, loaderName);
+    //
+    saveReviewAsTemplate(reviewId)
+        .then((res) => {
+            //
+            ml(false, loaderName);
+            //
+            if (res.Redirect === true) {
+                handleRedirect();
+                return
+            }
+            //
+            if (res.Status === false) {
+                handleError(getError('convert_review_to_template_error'));
+                return
+            }
+            //
+            handleSuccess(getError('convert_review_to_template_success'));
+        });
+});
 
 //
 getCompanyEmployees();

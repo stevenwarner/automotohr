@@ -574,6 +574,8 @@ class Performance_management_model extends CI_Model{
             sid,
             review_title,
             status,
+            is_template,
+            is_archived,
             review_start_date,
             review_end_date
         ')
@@ -625,11 +627,24 @@ class Performance_management_model extends CI_Model{
             $filterCount = count($filter);
             //
             foreach($b as $k => $v){
-                //
-                if($filterCount && $filter['reviewType'] != -1){
-                    if(!in_array($v['sid'], $reviewIds)) {
-                        unset($b[$k]);
-                        continue;
+                if($level != 1){
+                    //
+                    if($filterCount && $filter['reviewType'] != -1){
+                        //
+                        $filteredArray = 
+                        //
+                        array_filter($newReviewers[$v['sid']], function($row){
+                            if($filter['reviewType'] == 'review'){
+                                if($row['is_manager'] == 0 && $row['reviewer_Id'] == $employeeId) return true;
+                            } else if($filter['reviewType'] == 'feedback'){
+                                if($row['is_manager'] == 1 && $row['reviewer_Id'] == $employeeId) return true;
+                            }
+                        });
+                        //
+                        if(empty($filteredArray)) {
+                            unset($b[$k]);
+                            continue;
+                        }
                     }
                 }
                 //
@@ -678,6 +693,46 @@ class Performance_management_model extends CI_Model{
         }
         //
         return $b;
+    }
+
+    /**
+     * 
+     * @date 02/25/2021
+     */
+    function saveReviewAsTemplate(
+        $companyId,
+        $employeeId,
+        $reviewId
+    ){
+        $a =    
+        $this->db
+        ->select('pm.review_title, pmrq.question')
+        ->from('performance_management pm')
+        ->join('performance_management_review_questions pmrq', 'pmrq.review_sid = pm.sid')
+        ->where('pm.sid', $reviewId)
+        ->where('pm.company_sid', $companyId)
+        ->get();
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        if(empty($b)) return false;
+        //
+        $ins = [];
+        $ins['company_sid'] = $companyId;
+        $ins['employee_sid'] = $employeeId;
+        $ins['review_sid'] = $reviewId;
+        $ins['name'] = $b[0]['review_title'];
+        $ins['questions'] = '['.implode(',',array_column($b, 'question')).']';
+        //
+        $this->db
+        ->insert('performance_management_company_templates', $ins);
+        //
+        $this->db
+        ->where('sid', $reviewId)
+        ->update('performance_management', ['is_template' => 1]);
+        //
+        return true;
     }
     
 }
