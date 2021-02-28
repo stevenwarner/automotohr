@@ -52,6 +52,29 @@ class Performance_management_model extends CI_Model{
         ->where($where)
         ->update($tableName, $data);
     }
+    
+    /**
+     * Update data into the database
+     * 
+     * @employee Mubashir Ahmed
+     * @date     02/17/2021
+     * 
+     * @param  String $tableName
+     * @param  Array  $data
+     * @param  Array  $where
+     * 
+     * @return Void
+     */
+    function checkAndInsert($tableName, $data, $where){
+        //
+        if(
+            !$this->db->where($where)->count_all_results($tableName)
+        ){
+            return $this->_insert($tableName, $data);
+        }
+        //
+        return false;
+    }
 
     /**
      * Get company templates
@@ -733,6 +756,47 @@ class Performance_management_model extends CI_Model{
         ->update('performance_management', ['is_template' => 1]);
         //
         return true;
+    }
+
+    /**
+     * 
+     */
+    function getReviwerListByRevieweeId($reviewId, $revieweeId){
+        $a = 
+        $this->db
+        ->select('reviewer_sid')
+        ->from($this->tables['PMRV'])
+        ->where('review_sid', $reviewId)
+        ->where('reviewee_sid', $revieweeId)
+        ->get();
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        if(empty($b)) return [];
+        return array_column($b, 'reviewer_sid');
+    }
+
+    /**
+     * 
+     */
+    function getManagerOffEmployee($employeeId){
+        $a =
+        $this->db
+        ->select('dtm.team_lead')
+        ->from('departments_employee_2_team dm2t')
+        ->join('departments_team_management dtm', 'dtm.sid = dm2t.team_sid')
+        ->where('dm2t.employee_sid', $employerId)
+        ->where('dtm.status', 1)
+        ->where('dtm.is_deleted', 0)
+        ->get();
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        if(empty($b)) return [];
+        //
+        return array_unique(explode(',', implode(',', array_column($b, 'team_lead'))), SORT_STRING);
     }
     
 }

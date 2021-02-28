@@ -338,7 +338,6 @@ class Performance_management extends Public_Controller{
                 //
                 res($this->resp);
             break;
-
             // Get all company employees
             case "get_all_company_employees":
                 $list = $this->pmm->getAllCompanyEmployees($pargs['companyId']);
@@ -346,6 +345,15 @@ class Performance_management extends Public_Controller{
                 $this->resp['Status'] = true;
                 $this->resp['Response'] = 'Proceed.';
                 $this->resp['Data'] = $list;
+                //
+                res($this->resp);
+            break;
+            // Get all company employees
+            case "get_reviewers_list":
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                $this->resp['Data'] = $this->pmm->getReviwerListByRevieweeId($params[1], $params[2]);
                 //
                 res($this->resp);
             break;
@@ -691,6 +699,41 @@ class Performance_management extends Public_Controller{
                     ['is_started' => 1],
                     ['review_sid' => $params['reviewId']]
                 );
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed.';
+                //
+                res($this->resp);
+            break;
+            
+            // Add a reviewer
+            case "add_reviewer":
+                //
+                $managersList = $this->pmm->getManagerOffEmployee($params['revieweeId']);
+                //
+                $ins = [];
+                //
+                foreach($params['reviewerId'] as $reviewer){
+                    $t = [];
+                    $t['review_sid'] = $params['reviewId'];
+                    $t['reviewee_sid'] = $params['revieweeId'];
+                    $t['reviewer_sid'] = $reviewer;
+                    $t['added_by'] = $pargs['employerId'];
+                    $t['is_completed'] = 0;
+                    $t['is_manager'] = in_array($reviewer, $managersList) ? 1 : 0;
+                    //
+                    $ins[] = $t;
+                }
+                //
+                $this->pmm->_insert($this->tables['PMRV'], $ins);
+                // Check and insert reviewer
+                $this->pmm->checkAndInsert($this->tables['PMR'], [
+                    'review_sid' => $params['reviewId'],
+                    'reviewee_sid' => $params['revieweeId']
+                ], [
+                    'review_sid' => $params['reviewId'],
+                    'reviewee_sid' => $params['revieweeId']
+                ]);
                 //
                 $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed.';

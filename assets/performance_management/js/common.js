@@ -251,6 +251,9 @@ function getError(errorCode, isError) {
         review_end_success: "You have successfully ended the review.",
         review_reopen_error: "Something went wrong while re-opening the review.",
         review_reopen_success: "You have successfully re-opened the review.",
+        add_reviewee_error: "Something went wrong while validating the reviewee.",
+        add_reviewer_reviewee_error: "Please select a reviewee.",
+        add_reviewer_reviewer_error: "Please, select a reviewer.",
     };
     //
     if (isError === true)
