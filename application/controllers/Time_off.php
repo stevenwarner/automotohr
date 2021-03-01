@@ -5854,7 +5854,7 @@ class Time_off extends Public_Controller
                 //
                 log_and_sendEmail(
                     $approverTemplateI['FromEmail'],
-                    $request['email'],
+                    $approver['email'],
                     $approverTemplateI['Subject'],
                     $CHF['header'] . $approverTemplateI['Body'] . $CHF['footer'],
                     $approverTemplateI['FromName']
