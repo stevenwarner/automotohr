@@ -31,10 +31,11 @@
         // ],
         [
             'title' => 'Create a Goal',
-            'url' => '/goal/create',
+            'url' => 'javascript:void(0)',
             'slug' => 'goal/create',
             'icon' => 'plus-square',
-            'segment' => 'goal/create'
+            'segment' => 'goal/create',
+            'class' => 'jsCreateGoal'
         ],
         [
             'title' => 'Goals',

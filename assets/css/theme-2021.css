@@ -1175,3 +1175,15 @@ nav.navigation ul li a {
     left: auto;
     right: 0;
 }
+
+
+/*  */
+
+.csCursorSelect {
+    cursor: pointer;
+}
+
+.csCursorSelect:hover,
+.csCursorSelect.active {
+    border-color: #fd7b5b;
+}

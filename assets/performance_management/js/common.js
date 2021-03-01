@@ -254,6 +254,14 @@ function getError(errorCode, isError) {
         add_reviewee_error: "Something went wrong while validating the reviewee.",
         add_reviewer_reviewee_error: "Please select a reviewee.",
         add_reviewer_reviewer_error: "Please, select a reviewer.",
+        goal_title: "Please, add a goal title.",
+        goal_start_date: "Please, add a goal start date.",
+        goal_end_date: "Please, add a goal end date.",
+        goal_type: "Please, select a goal type.",
+        goal_employee: "Please, select an employee.",
+        goal_target: "Please, select a goal target.",
+        save_goal_error: "Something went wrong while adding the goal.",
+        save_goal_success: "You have successfully added a new goal.",
     };
     //
     if (isError === true)
@@ -484,3 +492,60 @@ $('.jsFilterBTN').click(function(event) {
     event.preventDefault();
     $(`#${$(this).data().target}`).toggle();
 });
+
+/**
+ * 
+ */
+$(document).on('click', '.jsPageSectionBTN', function(event) {
+    //
+    event.preventDefault();
+    //
+    $('.jsPageSection').fadeOut(0);
+    $(`.jsPageSection[data-key="${$(this).data().target}"]`).fadeIn(0);
+});
+
+
+/**
+ * Get employees list with dnt
+ * 
+ * @return {Promise}
+ */
+function getCompanyEmployees() {
+    return new Promise(function(res) {
+        $.get(`${pm.urls.handler}get/employeeListWithDnT`)
+            .done(function(resp) { res(resp); })
+            .fail(function(resp) {
+                res(getMessage(resp.status, true));
+            });
+    });
+}
+
+
+getCompanyEmployees()
+.then((resp) => {
+    pm.cemployees = resp.Data;
+});
+
+
+/**
+ * 
+ */
+function getMeasureSymbol(unit) {
+    return unit == 1 ? '%' : (unit == 3 ? '$' : '');
+}
+
+/**
+ * 
+ */
+function getEmployee(employeeId, index){
+    if(pm.cemployees === undefined || pm.cemployees.length === 0) return {};
+    //
+    let i = 0,
+    il = pm.cemployees.length;
+    //
+    for(i; i < il; i++){
+        if(pm.cemployees[i][index] == employeeId) return pm.cemployees[i];
+    }
+    //
+    return {};
+}

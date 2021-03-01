@@ -46,6 +46,7 @@ class Performance_management extends Public_Controller{
             'PMR' => 'performance_management_reviewees',
             'PMRV' => 'performance_management_reviewers',
             'PMQ' => 'performance_management_review_questions',
+            'G' => 'goals',
         ];
         //
         $this->pargs = [];
@@ -354,6 +355,24 @@ class Performance_management extends Public_Controller{
                 $this->resp['Status'] = true;
                 $this->resp['Response'] = 'Proceed.';
                 $this->resp['Data'] = $this->pmm->getReviwerListByRevieweeId($params[1], $params[2]);
+                //
+                res($this->resp);
+            break;
+            // Get goal body
+            case "goal_body":
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                $this->resp['Data'] = $this->load->view("{$this->pp}goals/{$this->mp}create", [], true);
+                //
+                res($this->resp);
+            break;
+            // Get company goals
+            case "company_goals":
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                $this->resp['Data'] = $this->pmm->getCompanyGoals($pargs['companyId']);
                 //
                 res($this->resp);
             break;
@@ -737,6 +756,45 @@ class Performance_management extends Public_Controller{
                 //
                 $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed.';
+                //
+                res($this->resp);
+            break;
+            
+            //
+            case "save_goal":
+                //
+                $goal = $params['goal'];
+                //
+                $ins = [];
+                $ins['title'] = $goal['title'];
+                $ins['target'] = $goal['target'];
+                $ins['status'] = 1;
+                $ins['end_date'] = formatDateToDB($goal['endDate']);
+                $ins['goal_type'] = $goal['goalType'];
+                $ins['start_date'] = formatDateToDB($goal['startDate']);
+                $ins['company_sid'] = $pargs['companyId'];
+                $ins['description'] = $goal['description'];
+                $ins['employee_sid'] = empty($goal['employeeId']) ? 0 : $goal['employeeId'];
+                $ins['measure_type'] = $goal['measure'];
+                $ins['aligned_goal_sid'] =  empty($goal['alignedGoal']) ? 0 : $goal['alignedGoal'];
+                //
+                $insertId = $this->pmm->_insert($this->tables['G'], $ins);
+                //
+                if(!$insertId){
+                    $this->resp['Response'] = 'Something went wrong while adding goal.';
+                    res($this->resp);
+                }
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                res($this->resp);
+            break;
+
+            //
+            case "get_goals":
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
+                $this->resp['Data'] = $this->pmm->getGoalsByFilter($pargs['companyId'], $pargs['employerId'], $params['filter']);
                 //
                 res($this->resp);
             break;

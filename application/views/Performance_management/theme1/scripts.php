@@ -47,6 +47,7 @@
 
 <!-- Common functions -->
 <script src="<?=base_url('assets/performance_management/js/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+<script src="<?=base_url('assets/performance_management/js/goals/create'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
 
 
 <?php if(in_array('create', $this->uri->segment_array())): ?>
@@ -66,4 +67,10 @@
     <!-- Review Single Listing -->
     <script src="<?=base_url('assets/performance_management/js/review/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
     <script src="<?=base_url('assets/performance_management/js/review/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+<?php endif; ?>
+
+<?php if(in_array('goals', $this->uri->segment_array())): ?>
+    <!-- Review Single Listing -->
+    <script src="<?=base_url('assets/performance_management/js/goals/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+    <script src="<?=base_url('assets/performance_management/js/goals/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
 <?php endif; ?>

@@ -798,5 +798,46 @@ class Performance_management_model extends CI_Model{
         //
         return array_unique(explode(',', implode(',', array_column($b, 'team_lead'))), SORT_STRING);
     }
+
+    /**
+     * 
+     */
+    function getCompanyGoals($companyId){
+        $a = $this->db
+        ->select('sid, title, measure_type, target')
+        ->where('company_sid', $companyId)
+        ->where('goal_type', 4)
+        ->where('status', 1)
+        ->order_by('title', 'ASC')
+        ->get('goals');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+    
+    
+    /**
+     * 
+     */
+    function getGoalsByFilter($companyId, $employeeId, $filter){
+        $this->db
+        ->select('sid, title, description, measure_type, target, completed_target, start_date, end_date, employee_sid')
+        ->where('company_sid', $companyId)
+        ->order_by('sid', 'DESC');
+        //
+        if($filter['status'] != -1) $this->db->where('status', $filter['status'] == 'active' ? 1 : 0);
+        if($filter['type'] != -1) $this->db->where('goal_type', $filter['type']);
+        if($filter['type'] == 1) $this->db->where('employee_sid', $employeeId);
+        if($filter['employeeId'] != -1 && $filter['employeeId'] != 0) $this->db->where('employee_sid', $filter['employeeId']);
+        //
+        $a = $this->db->get('goals');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
     
 }
