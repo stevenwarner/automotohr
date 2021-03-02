@@ -858,4 +858,21 @@ class Performance_management_model extends CI_Model{
         return $b;
     }
     
+    /**
+     * 
+     */
+    function getGoalHistory($companyId, $goalId){
+        $this->db
+        ->select('action, note, created_at, employee_sid')
+        ->where('goal_sid', $goalId)
+        ->order_by('sid', 'DESC');
+        //
+        $a = $this->db->get('goal_history');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+    
 }

@@ -268,6 +268,43 @@ $(function() {
         );
     });
 
+    /**
+     * 
+     */
+    $(document).on('click', '.jsGoalHistory', function(event) {
+        //
+        event.preventDefault();
+        //
+        const goalBox = $(this).closest('.jsGoalBox');
+        //
+        const goalId = goalBox.data('id');
+        //
+        const goal = goalsOBJ[goalId];
+        //
+        Modal({
+            Id: 'jsGoalHistoryModal',
+            Title: `${goal.title} history`,
+            Body: '',
+            Loader: 'jsGoalHistoryModalLoader',
+        }, () => {
+            //
+            $.get(`${pm.urls.handler}get/history/${goalId}`, (resp) => {
+                //
+                if (resp.Redirect === true) {
+                    handleRedirect();
+                    return;
+                }
+                //
+                if (resp.Status === false) {
+                    handleError();
+                    return;
+                }
+                //
+                setHistoryView(resp.Data, 'jsGoalHistoryModal', 'jsGoalHistoryModalLoader');
+            });
+        });
+    });
+
 
     /**
      * 
@@ -341,9 +378,10 @@ $(function() {
             rows += `                <strong>${goal.title}</strong>`;
             rows += `                <span class="pull-right">`;
             if (goal.status == 1)
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose"><i class="fa fa-times-circle mr0"></i> Mark As Closed</button>`;
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose jsPopover" title="Close this goal"><i class="fa fa-times-circle mr0"></i> Mark As Closed</button>`;
             else
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen"><i class="fa fa-times-circle mr0"></i> Mark As Open</button>`;
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen jsPopover" title="Open this goal"><i class="fa fa-times-circle mr0"></i> Mark As Open</button>`;
+            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalHistory jsPopover" title="Show history"><i class="fa fa-history mr0"></i></button>`;
             rows += `                </span>`;
             rows += `            </h4>`;
             rows += `        </div>`;
@@ -522,6 +560,10 @@ $(function() {
 
         $('.jsGoalWrap').html(rows);
         $('.jsIPLoader').hide(0);
+        //
+        $('.jsPopover').tooltip({
+            placement: 'top auto'
+        });
     }
 
     /**
@@ -587,6 +629,61 @@ $(function() {
         $('#jsVGEmployee').html(options).select2();;
     }
 
+    /**
+     * 
+     */
+    function setHistoryView(data, modalId, loader) {
+        //
+        if (data.length === 0) {
+            $(`#${modalId} .csModalBody`).html('<p class="alert alert-info text">No history found.</p>');
+            ml(false, loader);
+            return;
+        }
+        //
+        let rows = '';
+        rows += '<div class="container">';
+        rows += '<div class="csPageWrap">';
+        rows += '<div class="csPageBox">';
+        rows += '<table class="table table-striped">';
+        rows += '   <thead>';
+        rows += '       <tr>';
+        rows += '           <th>Action</th>';
+        rows += '           <th>Action Taken</th>';
+        rows += '       </tr>';
+        rows += '   </thead>';
+        //
+        data.map((history) => {
+            let em = getEmployee(history.employee_sid, 'userId');
+            rows += `<tr>`;
+            rows += `   <td>${getAction(JSON.parse(history.note), history.action, em)}</td>`;
+            rows += `   <td>${moment(history.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</td>`;
+            rows += `</tr>`;
+        });
+        rows += `</table>`;
+        rows += `</div>`;
+        rows += `</div>`;
+        rows += `</div>`;
+        //
+        $(`#${modalId} .csModalBody`).html(rows);
+    }
+
+    /**
+     * 
+     */
+    function getAction(o, action, em) {
+        //
+        console.log(action);
+        let row = '-';
+        if (action == 'created') {
+            row = `<strong>${remakeEmployeeName(em)}</strong> created the goal.`;
+        } else if (action == 'updated') {
+            row = `<strong>${remakeEmployeeName(em)}</strong> updated the goal.`;
+        } else if (action == 'commented') {
+            row = `<strong>${remakeEmployeeName(em)}</strong> commented on the goal.`;
+        }
+        //
+        return row;
+    }
     //
     loadGoals();
     //

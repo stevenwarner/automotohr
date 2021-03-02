@@ -412,6 +412,18 @@ class Performance_management extends Public_Controller{
                 //
                 res($this->resp);
             break;
+            // Get goal history
+            case "history":
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                $this->resp['Data'] = $this->pmm->getGoalHistory(
+                    $pargs['companyId'],
+                    $params[1]
+                );
+                //
+                res($this->resp);
+            break;
         endswitch;
     }
 
