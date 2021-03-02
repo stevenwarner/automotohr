@@ -47,6 +47,8 @@ class Performance_management extends Public_Controller{
             'PMRV' => 'performance_management_reviewers',
             'PMQ' => 'performance_management_review_questions',
             'G' => 'goals',
+            'GC' => 'goal_comments',
+            'GH' => 'goal_history',
         ];
         //
         $this->pargs = [];
@@ -259,6 +261,28 @@ class Performance_management extends Public_Controller{
         $this->load->view("main/footer");
     }
 
+
+    /**
+     * Goals - List Goal
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/08/2021
+     * 
+     * @return Void
+     */
+    function lms_goals(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - List Goals';
+
+        $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
+        $this->load->view("{$this->pp}header", $this->pargs);
+        $this->load->view("{$this->pp}lms/goals/{$this->mp}view", $this->pargs);
+        $this->load->view("{$this->pp}footer", $this->pargs);
+        $this->load->view("main/footer");
+    }
+
     /**
      * handler
      * 
@@ -373,6 +397,18 @@ class Performance_management extends Public_Controller{
                 $this->resp['Status'] = true;
                 $this->resp['Response'] = 'Proceed.';
                 $this->resp['Data'] = $this->pmm->getCompanyGoals($pargs['companyId']);
+                //
+                res($this->resp);
+            break;
+            // Get goal comments
+            case "comments":
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'Proceed.';
+                $this->resp['Data'] = $this->pmm->getGoalComments(
+                    $pargs['companyId'],
+                    $params['1']
+                );
                 //
                 res($this->resp);
             break;
@@ -785,6 +821,14 @@ class Performance_management extends Public_Controller{
                     res($this->resp);
                 }
                 //
+                $ins = [];
+                $ins['goal_sid'] = $insertId;
+                $ins['employee_sid'] = $pargs['employerId'];
+                $ins['action'] = 'created';
+                $ins['note'] = '[]';
+                //
+                $this->pmm->_insert($this->tables['GH'], $ins);
+                //
                 $this->resp['Status'] = true;
                 $this->resp['Response'] = 'Proceed.';
                 res($this->resp);
@@ -795,6 +839,76 @@ class Performance_management extends Public_Controller{
                 $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed';
                 $this->resp['Data'] = $this->pmm->getGoalsByFilter($pargs['companyId'], $pargs['employerId'], $params['filter']);
+                //
+                res($this->resp);
+            break;
+
+            //
+            case "update_goal":
+                //
+                $upd = [];
+                $upd['on_track'] = $params['onTrack'];
+                $upd['completed_target'] = $params['completedTarget'];
+                $upd['target'] = $params['target'];
+                //
+                $this->pmm->_update($this->tables['G'], $upd, ['sid' => $params['sid']]);
+                //
+                $ins = [];
+                $ins['goal_sid'] = $params['sid'];
+                $ins['employee_sid'] = $pargs['employerId'];
+                $ins['action'] = 'updated';
+                $ins['note'] = json_encode($upd);
+                //
+                $this->pmm->_insert($this->tables['GH'], $ins);
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
+                //
+                res($this->resp);
+            break;
+           
+            //
+            case "save_comment":
+                //
+                $ins = [];
+                $ins['goal_sid'] = $params['goalId'];
+                $ins['sender_sid'] = $params['employeeId'];
+                $ins['message'] = $params['message'];
+                //
+                $this->pmm->_insert($this->tables['GC'], $ins);
+                //
+                $hins = [];
+                $hins['goal_sid'] = $params['goalId'];
+                $hins['employee_sid'] = $pargs['employerId'];
+                $hins['action'] = 'commented';
+                $hins['note'] = json_encode($ins);
+                //
+                $this->pmm->_insert($this->tables['GH'], $hins);
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
+                //
+                res($this->resp);
+            break;
+            
+            //
+            case "change_goal_status":
+                //
+                $upd = [];
+                $upd['status'] = $params['status'];
+                //
+                $this->pmm->_update($this->tables['G'], $upd, ['sid' => $params['goalId']]);
+                //
+                $ins = [];
+                $ins['goal_sid'] = $params['goalId'];
+                $ins['employee_sid'] = $pargs['employerId'];
+                $ins['action'] = 'updated';
+                $ins['note'] = json_encode($upd);
+                //
+                $this->pmm->_insert($this->tables['GH'], $ins);
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
                 //
                 res($this->resp);
             break;

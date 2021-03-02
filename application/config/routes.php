@@ -1264,3 +1264,5 @@ $route['performance-management/goals'] = 'Performance_management/goals';
 $route['performance-management/handler'] = 'Performance_management/handler';
 $route['performance-management/handler/get/(.+)'] = 'Performance_management/get_handler';
 $route['performance-management/handler/post'] = 'Performance_management/post_handler';
+// LMS
+$route['performance-management/lms/goals'] = 'Performance_management/lms_goals';

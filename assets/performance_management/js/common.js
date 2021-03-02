@@ -181,7 +181,7 @@ function Modal(options, cb) {
     let html = `
     <!-- Custom Modal -->
     <div class="csModal" id="${options.Id}">
-        <div class="container-fluid">
+        <div class="container">
             <div class="csModalHeader">
                 <h3 class="csModalHeaderTitle">
                     ${options.Title}
@@ -522,9 +522,9 @@ function getCompanyEmployees() {
 
 
 getCompanyEmployees()
-.then((resp) => {
-    pm.cemployees = resp.Data;
-});
+    .then((resp) => {
+        pm.cemployees = resp.Data;
+    });
 
 
 /**
@@ -537,14 +537,14 @@ function getMeasureSymbol(unit) {
 /**
  * 
  */
-function getEmployee(employeeId, index){
-    if(pm.cemployees === undefined || pm.cemployees.length === 0) return {};
+function getEmployee(employeeId, index) {
+    if (pm.cemployees === undefined || pm.cemployees.length === 0) return {};
     //
     let i = 0,
-    il = pm.cemployees.length;
+        il = pm.cemployees.length;
     //
-    for(i; i < il; i++){
-        if(pm.cemployees[i][index] == employeeId) return pm.cemployees[i];
+    for (i; i < il; i++) {
+        if (pm.cemployees[i][index] == employeeId) return pm.cemployees[i];
     }
     //
     return {};

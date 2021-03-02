@@ -1,11 +1,13 @@
 $(function() {
 
     const filter = {
-        status: 'active',
+        status: -1,
         type: 1,
         employeeId: 0
     };
     let XHR = null;
+    //
+    let goalsOBJ = {};
 
     /**
      * 
@@ -30,7 +32,7 @@ $(function() {
     /**
      * 
      */
-    $('.jsVGEmployee').change(() => {
+    $('#jsVGEmployee').change(function() {
         //
         filter.employeeId = $(this).val();
         applyFilter();
@@ -39,10 +41,231 @@ $(function() {
     /**
      * 
      */
-    $('.jsVGStatus').change(() => {
+    $('#jsVGStatus').change(function() {
         //
         filter.status = $(this).val();
         applyFilter();
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsGoalUpdateBTN', function(event) {
+        //
+        event.preventDefault();
+        //
+        const goalBox = $(this).closest('.jsGoalBox');
+        //
+        const goalId = goalBox.data('id');
+        //
+        const goal = goalsOBJ[goalId];
+        //
+        goalBox.find('.jsGoalTrack').select2({
+            minimumResultsForSearch: -1
+        }).select2('val', goal.on_track);
+        goalBox.find('.jsGoalCompletedTarget').val(goal.completed_target);
+        goalBox.find('.jsGoalTarget').val(goal.target);
+        //
+        goalBox.find('.jsBoxSection').fadeOut(0);
+        goalBox.find(`.jsBoxSection[data-key="update"]`).fadeIn(0);
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsGoalUpdateBtn', function(event) {
+        //
+        event.preventDefault();
+        //
+        const goalBox = $(this).closest('.jsGoalBox');
+        //
+        goalBox.find('.jsIPLoader').fadeIn(0);
+        //
+        let obj = {
+            completedTarget: goalBox.find('.jsGoalCompletedTarget').val().trim(),
+            target: goalBox.find('.jsGoalTarget').val().trim(),
+            onTrack: goalBox.find('.jsGoalTrack').val()
+        };
+        //
+        if (obj.completedTarget == '') {
+            handleError(getError('goal_update_error'));
+            return;
+        }
+        obj.action = 'update_goal';
+        obj.sid = goalBox.data('id');
+        //
+        $.post(pm.urls.handler, obj, (resp) => {
+            //
+            if (resp.Redirect === true) {
+                handleedirect();
+                return;
+            }
+            //
+            if (resp.Status === false) {
+                handleError(getError());
+                return;
+            }
+            //
+            handleSuccess(getError('goal_update_success'), loadGoals);
+        });
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsGoalCommentBtn', function(event) {
+        //
+        event.preventDefault();
+        //
+        const goalBox = $(this).closest('.jsGoalBox');
+        //
+        const goalId = goalBox.data('id');
+        //
+        const goal = goalsOBJ[goalId];
+        //
+        goalBox.find('.jsBoxSection').fadeOut(0);
+        goalBox.find(`.jsBoxSection[data-key="comment"]`).fadeIn(0);
+        //
+        goalBox.find('.jsIPLoader').fadeIn(0);
+        //
+        $.get(`${pm.urls.handler}get/comments/${goalId}`, (resp) => {
+            //
+            if (resp.Redirect === true) {
+                handleRedirect();
+                return;
+            }
+            //
+            if (resp.Status === false) {
+                handleError();
+                return;
+            }
+            //
+            setCommentView(resp.Data, goalBox);
+        });
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsGoalCommentSaveBtn', function(event) {
+        //
+        event.preventDefault();
+        //
+        const goalBox = $(this).closest('.jsGoalBox');
+        //
+        if (goalBox.find('.jsGoalComment').val() == '') {
+            handleError(getError('comment_missing'));
+            return;
+        }
+        //
+        const goalId = goalBox.data('id');
+        //
+        goalBox.find('.jsIPLoader').fadeIn(0);
+        //
+        $.post(
+            pm.urls.handler, {
+                action: "save_comment",
+                message: goalBox.find('.jsGoalComment').val().trim(),
+                goalId: goalId,
+                employeeId: pm.employerId
+            }, (resp) => {
+                //
+                if (resp.Redirect === true) {
+                    handleRedirect();
+                    return;
+                }
+                //
+                if (resp.Status === false) {
+                    handleError();
+                    return;
+                }
+                //
+                goalBox.find('.jsGoalComment').val('');
+                //
+                goalBox.find('.jsGoalCommentBtn').trigger('click');
+            }
+        );
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsBoxSectionBackBtn', function(event) {
+        //
+        event.preventDefault();
+        //
+        const goalBox = $(this).closest('.jsGoalBox');
+        //
+        goalBox.find('.jsBoxSection').fadeOut(0);
+        goalBox.find(`.jsBoxSection[data-key="${$(this).data('to')}"]`).fadeIn(0);
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsGoalStatusClose', function(event) {
+        //
+        event.preventDefault();
+        //
+        const goalBox = $(this).closest('.jsGoalBox');
+        //
+        const goalId = goalBox.data('id');
+        //
+        $.post(
+            pm.urls.handler, {
+                action: 'change_goal_status',
+                goalId: goalId,
+                status: 0
+            },
+            (resp) => {
+                //
+                if (resp.Redirect === true) {
+                    handleRedirect();
+                    return;
+                }
+                //
+                if (resp.Status === false) {
+                    handleError();
+                    return;
+                }
+                //
+                handleSuccess(getError('goal_closed_success'), applyFilter);
+            }
+        );
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsGoalStatusOpen', function(event) {
+        //
+        event.preventDefault();
+        //
+        const goalBox = $(this).closest('.jsGoalBox');
+        //
+        const goalId = goalBox.data('id');
+        //
+        $.post(
+            pm.urls.handler, {
+                action: 'change_goal_status',
+                goalId: goalId,
+                status: 1
+            },
+            (resp) => {
+                //
+                if (resp.Redirect === true) {
+                    handleRedirect();
+                    return;
+                }
+                //
+                if (resp.Status === false) {
+                    handleError();
+                    return;
+                }
+                //
+                handleSuccess(getError('goal_open_success'), applyFilter);
+            }
+        );
     });
 
 
@@ -87,15 +310,17 @@ $(function() {
     /**
      * 
      */
-    function setView(goals){
-        if(goals.length === 0){
+    function setView(goals) {
+        goalsOBJ = {};
+        if (goals.length === 0) {
             $('.jsGoalWrap').html('<p class="alert alert-info text-center">No records found.</p>');
             return;
-        } 
+        }
         //
         let rows = '<div class="row">';
         //
         goals.map((goal) => {
+            goalsOBJ[goal.sid] = goal;
             //
             let startDate = moment(goal.start_date, 'YYYY-MM-DD');
             let endDate = moment(goal.end_date, 'YYYY-MM-DD');
@@ -105,96 +330,265 @@ $(function() {
             let completed = goal.completed_target * 100 / goal.target;
             let pp = totalDays2 * 100 / totalDays;
             pp = pp >= 99 ? 99 : pp
-            //
-            rows += `<div class="col-sm-4 col-xs-12">`;
-            rows +=`    <div class="csPageBox csRadius5 csGoalCard">`;
-            rows +=`        <div class="csPageBoxHeader p10">`;
-            rows +=`            <h4>`;
-            rows +=`                <strong>${goal.title}</strong>`;
-            rows +=`                <span class="csBTNBox">`;
-            rows +=`                    <button class="btn mt0">`;
-            rows +=`                        <i class="fa fa-ellipsis-v"></i>`;
-            rows +=`                    </button>`;
-            rows +=`                </span>`;
-            rows +=`            </h4>`;
-            rows +=`        </div>`;
-            rows +=`        <div class="csPageBoxBody">`;
-            rows +=`            <div class="csGoalCardDesc p10">`;
-            rows +=`                <h5>${goal.description}</h5>`;
-            rows +=`            </div>`;
-            rows +=`            <div class="csGoalCardProgress p10">`;
-            rows +=`                <h4>`;
-            rows +=`                    <span class="csBTNBox">`;
-            rows +=`                        ${getMeasureSymbol(goal.measure_type)} ${goal.completed_target} / ${goal.target}`;
-            rows +=`                    </span>`;
-            rows +=`                </h4>`;
-            rows +=`                <div class="clearfix"></div>`;
-            rows +=`                <div class="progress">`;
-            rows +=`                    <div class="progress-bar" role="progressbar"`;
-            rows +=`                        aria-valuenow="${completed}" aria-valuemin="0" aria-valuemax="100"`;
-            rows +=`                        style="width: ${completed}%;"></div>`;
-            rows +=`                    <div class="csProgressPointer" style="left: ${pp}%;" title="sdad"></div>`;
-            rows +=`                </div>`;
-            rows +=`                <span class="csBTNBoxLeft">`;
-            rows +=`                    <p>${startDate.format(pm.dateTimeFormats.mdy)}</p>`;
-            rows +=`                </span>`;
-            rows +=`                <span class="csBTNBox">`;
-            rows +=`                    <p>${endDate.format(pm.dateTimeFormats.mdy)}</p>`;
-            rows +=`                </span>`;
-            rows +=`                <div class="clearfix"></div>`;
-            rows +=`            </div>`;
-            rows +=`            <!--  -->`;
-            rows +=`            <div class="csGoalCardEmp p10">`;
-            rows +=`                <div class="row">`;
-            rows +=`                    <div class="col-sm-8 col-sm-12">`;
-            if(filter.type == 1){
-                //
+                // 
+            rows += ` <!-- Box -->`;
+            rows += `<div class="col-sm-3 col-xs-12">`;
+            rows += `    <div class="csPageBox csRadius5 jsGoalBox" data-id="${goal.sid}">`;
+            rows += `       <div class="csIPLoader jsIPLoader" data-page="goal_box"><i class="fa fa-circle-o-notch fa-spin"></i></div>`;
+            rows += `        <!-- HEADER -->`;
+            rows += `        <div class="csPageHeader bbb pl10 pr10">`;
+            rows += `            <h4>`;
+            rows += `                <strong>${goal.title}</strong>`;
+            rows += `                <span class="pull-right">`;
+            if (goal.status == 1)
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose"><i class="fa fa-times-circle mr0"></i> Mark As Closed</button>`;
+            else
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen"><i class="fa fa-times-circle mr0"></i> Mark As Open</button>`;
+            rows += `                </span>`;
+            rows += `            </h4>`;
+            rows += `        </div>`;
+            rows += `        <!-- Main screen -->`;
+            rows += `        <div class="csPageSection jsBoxSection" data-key="main">`;
+            rows += `            <!-- BODY -->`;
+            rows += `            <div class="csPageBody csGoalBoxH p10">`;
+            rows += `                <!--  -->`;
+            rows += `                <div class="row">`;
+            rows += `                    <!-- Employee -->`;
+            rows += `                    <div class="col-sm-8 col-xs-12">`;
+            if (filter.type == 1) {
                 let em = getEmployee(goal.employee_sid, 'userId');
-                //
-                rows +=`                        <div class="csEBox">`;
-                rows +=`                            <figure>`;
-                rows +=`                                <img src="${getImageURL(em.image)}" />`;
-                rows +=`                            </figure>`;
-                rows +=`                            <div class="csEBoxText">`;
-                rows +=`                                <h4 class="mb0">`;
-                rows +=`                                    <strong>${em.first_name} ${em.last_name}</strong>`;
-                rows +=`                                </h4>`;
-                rows +=`                                <p>${remakeEmployeeName(em)}</p>`;
-                rows +=`                            </div>`;
-                rows +=`                        </div>`;
+                rows += `                        <div class="csEBox">`;
+                rows += `                            <figure>`;
+                rows += `                                <img src="${getImageURL(em.image)}" />`;
+                rows += `                            </figure>`;
+                rows += `                            <div class="csEBoxText">`;
+                rows += `                                <h4 class="mb0 ma10"><strong>${em.first_name} ${em.last_name}</strong></h4>`;
+                rows += `                                <p class="mb0"><strong>${remakeEmployeeName(em, false)}</strong></p>`;
+                rows += `                                <p><strong>#${getEmployeeId(em.userId, em.employee_number)}</strong></p>`;
+                rows += `                            </div>`;
+                rows += `                        </div>`;
+            } else {
+                rows += `                        <div class="csEBox">`;
+                rows += `                            <figure>`;
+                rows += `                                <img src="${getImageURL(pm.companyLogo)}" />`;
+                rows += `                            </figure>`;
+                rows += `                            <div class="csEBoxText">`;
+                rows += `                                <h4 class="mb0 ma10"><strong>${pm.companyName}</strong></h4>`;
+                rows += `                            </div>`;
+                rows += `                        </div>`;
             }
-            rows +=`                    </div>`;
-            rows +=`                    <div class="col-sm-4 col-sm-12">`;
-            rows +=`                        <h4 class="mb0 text-success text-right">On Track</h4>`;
-            rows +=`                        <p class="text-right">As of ${todayDate.format(pm.dateTimeFormats.md)}</p>`;
-            rows +=`                    </div>`;
-            rows +=`                </div>`;
-            rows +=`            </div>`;
-            rows +=`            <div class="csGoalCardFooter">`;
-            rows +=`                <div class="csPageBoxFooter p10">`;
-            rows +=`                    <div class="row">`;
-            rows +=`                        <div class="col-sm-6 col-xs-12">`;
-            rows +=`                            <button`;
-            rows +=`                                class="btn btn-orange btn-lg form-control"><i`;
-            rows +=`                                    class="fa fa-pencil"></i> Update</button>`;
-            rows +=`                        </div>`;
-            rows +=`                        <div class="col-sm-6 col-xs-12">`;
-            rows +=`                            <button class="btn btn-black btn-lg form-control"><i class="fa fa-comment"></i> Comment</button>`;
-            rows +=`                        </div>`;
-            rows +=`                    </div>`;
-            rows +=`                </div>`;
-            rows +=`            </div>`;
-            rows +=`            <div class="clearfix"></div>`;
-            rows +=`        </div>`;
-            rows +=`    </div>`;
-            rows +=`</div>`;
+            rows += `                    </div>`;
+            rows += `                    <!-- Track Row -->`;
+            rows += `                    <div class="col-sm-4 col-xs-12">`;
+            rows += `                        <div class="text-right">`;
+            rows += `                            <h4 class="mb0"><strong>${goal.on_track == 1 ? "On" : "Off"} Track</strong></h4>`;
+            rows += `                            <p class="ma0">As Of ${todayDate.format(pm.dateTimeFormats.mdy)}</p>`;
+            rows += `                        </div>`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `                <div class="row">`;
+            rows += `                    <div class="col-sm-12">`;
+            rows += `                        <p class="text-right">`;
+            rows += `                            <strong>${getMeasureSymbol(goal.measure_type)} ${goal.completed_target} / ${goal.target}</strong>`;
+            rows += `                        </p>`;
+            rows += `                    </div>`;
+            rows += `                    <div class="col-sm-12 col-xs-12">`;
+            rows += `                        <div class="progress">`;
+            rows += `                            <div class="progress-bar" style="width:  ${completed}%;"></div>`;
+            rows += `                        </div>`;
+            rows += `                        <div class="row ma10">`;
+            rows += `                            <div class="col-sm-6">`;
+            rows += `                                <p><strong>${startDate.format(pm.dateTimeFormats.mdy)}</strong></p>`;
+            rows += `                            </div>`;
+            rows += `                            <div class="col-sm-6">`;
+            rows += `                                <p class="text-right"><strong>${endDate.format(pm.dateTimeFormats.mdy)}</strong></p>`;
+            rows += `                            </div>`;
+            rows += `                        </div>`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `                <div class="row">`;
+            rows += `                    <div class="col-sm-12 col-xs-12">`;
+            rows += `                        <h5${goal.description}</h5>`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `                `;
+            rows += `            </div>`;
+            rows += `            <!-- FOOTER -->`;
+            rows += `            <div class="csPageFooter bbt p10">`;
+            rows += `                <div class="row">`;
+            rows += `                    <div class="col-sm-6 col-xs-12">`;
+            rows += `                        <button class="btn btn-orange form-control jsGoalUpdateBTN"><i class="fa fa-pencil"></i> Update</button>`;
+            rows += `                    </div>`;
+            rows += `                    <div class="col-sm-6 col-xs-12">`;
+            rows += `                        <button class="btn btn-black form-control jsGoalCommentBtn"><i class="fa fa-comment"></i> Comment</button>`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `            </div>`;
+            rows += `        </div>`;
+            rows += `        <!-- Comment screen -->`;
+            rows += `        <div class="csPageSection jsBoxSection dn" data-key="comment">`;
+            rows += `            <!-- BODY -->`;
+            rows += `            <div class="csPageBody csGoalBoxH">`;
+            rows += `                <ul class="csChatMenu jsGoalCommentWrap"></ul>`;
+            rows += `            </div>`;
+            rows += `            <!-- FOOTER -->`;
+            rows += `            <div class="csPageFooter bbt p10">`;
+            rows += `                <div class="row">`;
+            rows += `                    <div class="col-sm-8 col-xs-12">`;
+            rows += `                        <textarea class="form-control jsGoalComment" placeholder="John Doe has completed his tasks."></textarea>`;
+            rows += `                    </div>`;
+            rows += `                    <div class="col-sm-4 col-xs-12">`;
+            rows += `                        <button class="btn btn-orange form-control jsGoalCommentSaveBtn"><i class="fa fa-save"></i> Save</button>`;
+            rows += `                        <button class="btn btn-black form-control jsBoxSectionBackBtn" data-to="main"><i class="fa fa-times"></i> Cancel</button>`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `            </div>`;
+            rows += `        </div>`;
+            rows += `        `;
+            rows += `        <!-- Update -->`;
+            rows += `        <div class="csPageSection jsBoxSection dn" data-key="update">`;
+            rows += `            <!-- BODY -->`;
+            rows += `            <div class="csPageBody p10 csGoalBoxH">`;
+            rows += `                <div class="row">`;
+            rows += `                    <div class="col-sm-5 col-xs-12">`;
+            rows += `                        <h4><strong>Status</strong></h4>`;
+            rows += `                    </div>`;
+            rows += `                    <div class="col-sm-7 col-xs-12">`;
+            rows += `                        <select class="jsGoalTrack">`;
+            rows += `                            <option value="1">On Track</option>`;
+            rows += `                            <option value="0">Off Track</option>`;
+            rows += `                        </select>`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `                <div class="row">`;
+            rows += `                    <div class="col-sm-5 col-xs-12">`;
+            rows += `                        <h4><strong>Completed Target</strong></h4>`;
+            rows += `                    </div>`;
+            rows += `                    <div class="col-sm-7 col-xs-12">`;
+            rows += `                        <input type="text" class="form-control jsGoalCompletedTarget" />`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `                <div class="row">`;
+            rows += `                    <div class="col-sm-5 col-xs-12">`;
+            rows += `                        <h4><strong>Target</strong></h4>`;
+            rows += `                    </div>`;
+            rows += `                    <div class="col-sm-7 col-xs-12">`;
+            rows += `                        <input type="text" class="form-control jsGoalTarget" value="" />`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `            </div>`;
+            rows += `            <!-- FOOTER -->`;
+            rows += `            <div class="csPageFooter bbt p10">`;
+            rows += `                <div class="row">`;
+            rows += `                    <div class="col-sm-6 col-xs-12">`;
+            rows += `                        <button class="btn btn-orange form-control jsGoalUpdateBtn"><i class="fa fa-save"></i> Save</button>`;
+            rows += `                    </div>`;
+            rows += `                    <div class="col-sm-6 col-xs-12">`;
+            rows += `                        <button class="btn btn-black form-control jsBoxSectionBackBtn" data-to="main"><i class="fa fa-times"></i> Cancel</button>`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `            </div>`;
+            rows += `        </div>`;
+            rows += `        <!-- Visibility -->`;
+            rows += `        <div class="csPageSection jsBoxSection dn" data-key="visibility">`;
+            rows += `            <!-- BODY -->`;
+            rows += `            <div class="csPageBody p10 csGoalBoxH">`;
+            rows += `                <div class="row">`;
+            rows += `                    <div class="col-sm-12 col-xs-12">`;
+            rows += `                        <h4><strong>Employees</strong></h4>`;
+            rows += `                    </div>`;
+            rows += `                    <div class="col-sm-12 col-xs-12">`;
+            rows += `                        <select></select>`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `            </div>`;
+            rows += `            <!-- FOOTER -->`;
+            rows += `            <div class="csPageFooter bbt p10">`;
+            rows += `                <div class="row">`;
+            rows += `                    <div class="col-sm-6 col-xs-12">`;
+            rows += `                        <button class="btn btn-orange form-control"><i class="fa fa-save"></i> Save</button>`;
+            rows += `                    </div>`;
+            rows += `                    <div class="col-sm-6 col-xs-12">`;
+            rows += `                        <button class="btn btn-black form-control"><i class="fa fa-times"></i> Cancel</button>`;
+            rows += `                    </div>`;
+            rows += `                </div>`;
+            rows += `            </div>`;
+            rows += `        </div>`;
+            rows += `    </div>`;
+            rows += `</div>`;
         });
         //
         rows += '</div>';
 
         $('.jsGoalWrap').html(rows);
+        $('.jsIPLoader').hide(0);
+    }
+
+    /**
+     * 
+     */
+    function setCommentView(comments, goalBox) {
+        if (comments.length === 0) {
+            $('.jsGoalCommentWrap').html('<li><p class="alert alert-info text-center">No comments found.</p></li>');
+            goalBox.find('.jsIPLoader').fadeOut(0);
+            return;
+        }
+        //
+        let rows = '';
+        //
+        comments.map((comment) => {
+            //
+            let em = getEmployee(comment.sender_sid, 'userId');
+            //
+            let imgRow = '';
+            imgRow += `        <div class="col-sm-2 col-xs-2">`;
+            imgRow += `            <img src="${getImageURL(em.image)}" />`;
+            imgRow += `        </div>`;
+            //
+            let dataRow = '';
+            dataRow += `        <div class="col-sm-10 col-xs-10 ${pm.employerId === parseInt(em.userId) ? 'pr0' : 'pl0'}">`;
+            dataRow += `            <span><strong>${em.first_name} ${em.last_name}</strong> ${remakeEmployeeName(em, false)}</span>`;
+            dataRow += `            <p>${comment.message}`;
+            dataRow += `                <span>${moment(comment.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</span>`;
+            dataRow += `            </p>`;
+            dataRow += `        </div>`;
+            //
+            rows += `<li>`;
+            rows += `    <div class="row">`;
+            rows += pm.employerId === parseInt(em.userId) ? dataRow + imgRow : imgRow + dataRow;
+            rows += `    </div>`;
+            rows += `</li>`;
+        });
+        //
+        goalBox.find('.jsGoalCommentWrap').html(rows);
+        goalBox.find('.jsIPLoader').fadeOut(0);
+        //
+        goalBox.find('.jsGoalCommentWrap').scrollTop(goalBox.find('.jsGoalCommentWrap')[0].scrollHeight);
+    }
+
+    /**
+     * 
+     */
+    function loadEmployeesInFilter() {
+        //
+        if (pm.cemployees === undefined) {
+            setTimeout(loadEmployeesInFilter, 1000);
+            return;
+        }
+        //
+        if (pm.cemployees.length === 0) return;
+        //
+        let options = '<option value="-1">All</option>';
+        //
+        pm.cemployees.map((em) => {
+            options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
+        });
+        //
+        $('#jsVGEmployee').html(options).select2();;
     }
 
     //
     loadGoals();
+    //
+    loadEmployeesInFilter();
 });

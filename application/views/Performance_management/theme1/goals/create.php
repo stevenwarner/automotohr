@@ -1,4 +1,4 @@
-<div class="">
+<div class="container">
     <div class="csPageSection jsPageSection" data-key="main">
         <!-- Body -->
         <div class="csPageBoxBody p10">
@@ -31,7 +31,7 @@
                         <input type="text" readonly class="form-control csRadius100" id="jsCGStartDate" placeholder="MM/DD/YYYY"  />
                     </div>
                     <div class="col-sm-1 col-xs-12 pl0 pl0 pr0">
-                        <span class="text-center">-</span>
+                        <p class="text-center" style="font-size: 25px; font-weight: 900;">-</p>
                     </div>
                     <div class="col-sm-3 col-xs-12 pl0">
                         <input type="text" readonly class="form-control csRadius100" id="jsCGEndDate" placeholder="MM/DD/YYYY"  />

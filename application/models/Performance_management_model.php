@@ -823,16 +823,34 @@ class Performance_management_model extends CI_Model{
      */
     function getGoalsByFilter($companyId, $employeeId, $filter){
         $this->db
-        ->select('sid, title, description, measure_type, target, completed_target, start_date, end_date, employee_sid')
+        ->select('sid, title, description, measure_type, target, completed_target, start_date, end_date, employee_sid, on_track, status')
         ->where('company_sid', $companyId)
         ->order_by('sid', 'DESC');
         //
-        if($filter['status'] != -1) $this->db->where('status', $filter['status'] == 'active' ? 1 : 0);
+        if($filter['status'] != -1) $this->db->where('status', $filter['status']);
         if($filter['type'] != -1) $this->db->where('goal_type', $filter['type']);
         if($filter['type'] == 1) $this->db->where('employee_sid', $employeeId);
         if($filter['employeeId'] != -1 && $filter['employeeId'] != 0) $this->db->where('employee_sid', $filter['employeeId']);
         //
         $a = $this->db->get('goals');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+    
+    
+    /**
+     * 
+     */
+    function getGoalComments($companyId, $goalId){
+        $this->db
+        ->select('sender_sid, message, created_at')
+        ->where('goal_sid', $goalId)
+        ->order_by('sid', 'ASC');
+        //
+        $a = $this->db->get('goal_comments');
         //
         $b = $a->result_array();
         $a->free_result();
