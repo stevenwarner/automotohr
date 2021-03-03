@@ -39,10 +39,17 @@
                                 <input name="ej_active[]" type="checkbox" value="<?= $listing['sid'] ?>" id="<?= $listing['sid'] ?>"  class="checkbox1">
                             </td>
                             <td><?php echo $listing['Title']; ?></td>
-                            <td class="text-center"><?php
-                                if($job_approval_module_status == 1 && $listing["approval_status"] == 'pending') echo 'N/A';
-                                else echo reset_datetime( array( 'datetime' => $listing[ $listing['activation_date'] != null && $listing['activation_date'] != '' ? 'activation_date' : 'approval_status_change_datetime'  ], '_this' => $this, 'from_zone' => $session['employer_detail']['timezone'], 'new_zone' => $session['employer_detail']['timezone']) );
-                            ?></td>
+                            <td class="text-center">
+                                <?php
+                                if($job_approval_module_status == 1 && $listing["approval_status"] == 'pending') {
+                                 echo 'N/A';
+                                } else {
+                                    //echo reset_datetime( array( 'datetime' => $listing[ $listing['activation_date'] != null && $listing['activation_date'] != '' ? 'activation_date' : 'approval_status_change_datetime'  ], '_this' => $this, 'from_zone' => $session['employer_detail']['timezone'], 'new_zone' => $session['employer_detail']['timezone']) );
+                                    echo formatDate($listing['activation_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+                                }    
+                                ?>
+                                
+                            </td>
                             <td class="text-center"><?php echo $listing['views']; ?></td>
                             <?php if ($job_approval_module_status == 1) { ?>
                                 <td class="text-center">
@@ -96,11 +103,11 @@
                                                     </li>
                                                 <?php } ?>
 
-<!--                                                --><?php //if (check_access_permissions_for_view($security_details, 'delete_archive_job')) { ?>
-<!--                                                    <li>-->
-<!--                                                        <a href="javascript:void(0);" onclick="func_archive_job(--><?php //echo $listing['sid']; ?><!-- );"><i class="fa fa-archive"></i> Archive this Job</a>
-<!--                                                    </li>-->
-<!--                                                --><?php //} ?>
+                                                <!--  --><?php //if (check_access_permissions_for_view($security_details, 'delete_archive_job')) { ?>
+                                                <!-- <li>-->
+                                                    <!-- <a href="javascript:void(0);" onclick="func_archive_job(--><?php //echo $listing['sid']; ?><!-- );"><i class="fa fa-archive"></i> Archive this Job</a>
+                                                <!-- </li>-->
+                                                <!-- --><?php //} ?>
                                             <?php } ?>
 
                                             <?php if ($listing["active"] == 2) { ?>
