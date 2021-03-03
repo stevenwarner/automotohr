@@ -79,7 +79,7 @@
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                     <div class="form-group">
                                                         <label>City or Town <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_city_or_town "></i></label>
-                                                        <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_apt_number']: ''?>" name="section1_city_town" class="form-control" <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'readonly';}?>/>
+                                                        <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_city_town']: ''?>" name="section1_city_town" class="form-control" <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'readonly';}?>/>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">

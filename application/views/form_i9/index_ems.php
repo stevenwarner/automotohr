@@ -121,7 +121,7 @@
                                                     class="fa fa-question-circle-o modalShow"
                                                     src="section_1_city_or_town "></i></label>
                                             <input autocomplete="nope" type="text"
-                                                value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_apt_number'] : '' ?>"
+                                                value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_city_town'] : '' ?>"
                                                 name="section1_city_town" class="form-control input-grey" />
                                         </div>
                                     </div>
