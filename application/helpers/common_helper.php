@@ -12129,6 +12129,9 @@ if(!function_exists('formatDate')){
         $toFormat = 'm/d/Y'
     ){
         if(empty($date) || preg_match('/0000/', $date)) return $date;
+        //
+        $t = explode(' ', $date);
+        $date = $t[0];
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
 }
@@ -12539,3 +12542,39 @@ if(!function_exists('downloadAWSFileToBrowser')){
         }
     }
 }
+
+
+
+/**
+ * 
+ */
+if(!function_exists('getSelect')){
+    function getSelect($options, $pre = []){
+        //
+        $o = '';
+        //
+        if(!empty($pre)){
+            $o .= '<option value="'.(key($pre)).'">'.($pre[key($pre)]).'</option>';
+        }
+        if(!empty($options)){
+            foreach($options as $option){
+                $option = array_values($option);
+                $o .= '<option value="'.($option[0]).'">'.($option[1]).'</option>';
+            }
+        }
+        //
+        return $o;
+    }
+}
+
+/**
+ * 
+ */
+if(!function_exists('getImageURL')){
+    function getImageURL($img) {
+        if ($img == '' || $img == null) {
+            return base_url('assets/images/img-applicant.jpg');
+        } else return AWS_S3_BUCKET_URL.$img;
+    }
+}
+

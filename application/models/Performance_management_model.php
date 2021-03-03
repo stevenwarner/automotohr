@@ -547,6 +547,7 @@ class Performance_management_model extends CI_Model{
         ->where('sid', $id)
         ->where('is_archived', $archived)
         ->limit(1);
+        // 
         //
         $a = $this->db->get($this->tables['PM']);
         $b = $a->row_array();
@@ -566,7 +567,12 @@ class Performance_management_model extends CI_Model{
             last_name,
             profile_picture,
             sid as userId,
-            access_level
+            access_level,
+            access_level_plus,
+            pay_plan_flag,
+            is_executive_admin,
+            job_title,
+            IF(joined_at is null, registration_date, joined_at) as joined_at
         ')
         ->where('parent_sid', $companyId)
         ->where('active', 1)
@@ -679,8 +685,6 @@ class Performance_management_model extends CI_Model{
         //
         return $b;
     }
-
-
 
     /**
      * 
@@ -817,7 +821,6 @@ class Performance_management_model extends CI_Model{
         return $b;
     }
     
-    
     /**
      * 
      */
@@ -839,8 +842,7 @@ class Performance_management_model extends CI_Model{
         //
         return $b;
     }
-    
-    
+      
     /**
      * 
      */
@@ -868,6 +870,95 @@ class Performance_management_model extends CI_Model{
         ->order_by('sid', 'DESC');
         //
         $a = $this->db->get('goal_history');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+
+    /**
+     * 
+     */
+    function getReview($reviewId){
+        //
+        $review = $this->getReviewById($reviewId, ['review_title', 'share_feedback']);
+        // Get Review Reviewees
+        $review['Reviewees'] = $this->getReviewReviewees($reviewId);
+        $review['Reviewers'] = $this->getReviewReviewers($reviewId);
+        //
+        return $review;
+    }
+    
+    /**
+     * 
+     */
+    function getReviewWithQuestions($reviewId, $revieweeId, $reviewerId){
+        //
+        $review = $this->getReviewById($reviewId, ['review_title', 'share_feedback']);
+        // Get Review Reviewees
+        $review['Reviewee'] = $this->getReviewReviewees($reviewId, $revieweeId);
+        $review['Reviewer'] = $this->getReviewReviewers($reviewId, $revieweeId, $reviewerId);
+        $review['Questions'] = $this->getReviewQuestions($reviewId);
+        //
+        return $review;
+    }
+
+    /**
+     * 
+     */
+    function getReviewReviewees($reviewId, $revieweeId = 0){
+        //
+        $this->db
+        ->select('reviewee_sid, start_date, end_date, is_started')
+        ->where('review_sid', $reviewId);
+        //
+        if($revieweeId !== 0) $this->db->where('reviewee_sid', $revieweeId);
+        //
+        $a = $this->db->get('performance_management_reviewees');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+    
+    /**
+     * 
+     */
+    function getReviewReviewers($reviewId, $revieweeId = 0, $reviewerId = 0){
+        //
+        $this->db
+        ->select('reviewee_sid, reviewer_sid, is_manager, is_completed')
+        ->where('review_sid', $reviewId);
+        //
+        if($revieweeId !== 0) $this->db->where('reviewee_sid', $revieweeId);
+        if($reviewerId !== 0) $this->db->where('reviewer_sid', $reviewerId);
+        $a = $this->db->get('performance_management_reviewers');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+    
+    /**
+     * 
+     */
+    function getReviewQuestions($reviewId){
+        //
+        $a = $this->db
+        ->select('
+            pmrq.sid,
+            pmrq.question,
+            pmra.answer
+        ')
+        ->from('performance_management_review_questions pmrq')
+        ->join('performance_management_review_answers pmra', 'pmra.review_question_sid = pmrq.sid', 'left')
+        ->where('pmrq.review_sid', $reviewId)
+        ->order_by('pmrq.sid', 'ASC')
+        ->get();
         //
         $b = $a->result_array();
         $a->free_result();

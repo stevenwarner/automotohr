@@ -131,7 +131,25 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Review';
-
+        $this->pargs['pid'] = $reviewId;
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['userId']] = [
+                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
+                    'role' => remakeEmployeeName($employee, false),
+                    'img' => getImageURL($employee['image'])
+                ];
+            }
+        }
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        //
+        $this->pargs['review'] = $this->pmm->getReview($reviewId);
+        // _e($this->pargs['review'], true, true);
+        //
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
         $this->load->view("{$this->pp}reviews/{$this->mp}review", $this->pargs);
@@ -179,6 +197,23 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Feedback';
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['userId']] = [
+                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
+                    'role' => remakeEmployeeName($employee, false),
+                    'img' => getImageURL($employee['image']),
+                    'joined' => formatDate($employee['joined_at'], 'Y-m-d', 'M d D, Y')
+                ];
+            }
+        }
+        //
+        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
+        $this->pargs['pid'] = $reviewId;
+        $this->pargs['pem'] = $employeeId;
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -919,6 +954,78 @@ class Performance_management extends Public_Controller{
                 //
                 $this->pmm->_insert($this->tables['GH'], $ins);
                 //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
+                //
+                res($this->resp);
+            break;
+
+            //
+            case "save_answer":
+                //
+                $ins = [];
+                $ins['review_question_sid'] = $params['questionId'];
+                $ins['reviewee_sid'] = $params['revieweeId'];
+                $ins['review_reviewer_sid'] = $pargs['employerId'];
+                $ins['answer'] = json_encode($params['question']);
+                //
+                $insertId = $this->pmm->checkAndInsert(
+                    'performance_management_review_answers', 
+                    $ins, [
+                        'review_question_sid' => $params['questionId'],
+                        'reviewee_sid' => $params['revieweeId'],
+                        'review_reviewer_sid' => $pargs['employerId']
+                    ]
+                );
+                //
+                if(!$insertId){
+                    $this->pmm->_update(
+                        'performance_management_review_answers', 
+                        $ins, [
+                            'review_question_sid' => $params['questionId'],
+                            'reviewee_sid' => $params['revieweeId'],
+                            'review_reviewer_sid' => $pargs['employerId']
+                        ]
+                    );
+                }
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
+                //
+                res($this->resp);
+            break;
+            
+            //
+            case "save_bulk_answer":
+                //
+                $ins = [];
+                $ins['reviewee_sid'] = $params['revieweeId'];
+                $ins['review_reviewer_sid'] = $pargs['employerId'];
+                //
+                foreach($params['questions'] as $questionId => $answer):
+                    //
+                    $ins['review_question_sid'] = $questionId;
+                    $ins['answer'] = json_encode($answer);
+                    //
+                    $insertId = $this->pmm->checkAndInsert(
+                        'performance_management_review_answers', 
+                        $ins, [
+                            'review_question_sid' => $questionId,
+                            'reviewee_sid' => $params['revieweeId'],
+                            'review_reviewer_sid' => $pargs['employerId']
+                        ]
+                    );
+                    //
+                    if(!$insertId){
+                        $this->pmm->_update(
+                            'performance_management_review_answers', 
+                            $ins, [
+                                'review_question_sid' => $questionId,
+                                'reviewee_sid' => $params['revieweeId'],
+                                'review_reviewer_sid' => $pargs['employerId']
+                            ]
+                        );
+                    }
+                endforeach;
                 $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed';
                 //

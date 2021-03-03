@@ -187,7 +187,7 @@ $(document).on('click', '.jsAddRevieweeSave', function(event) {
 function getAddRevieweeBody(reviewId) {
     let html = '';
     //
-    html += `<div class="container-fluid">`;
+    html += `<div class="container">`;
     html += `    <form>`;
     html += `        <!--  -->`;
     html += `        <div class="csPageBody">`;
@@ -209,8 +209,8 @@ function getAddRevieweeBody(reviewId) {
     html += `        <div class="csPageFooter bbt pa10">`;
     html += `            <div class="form-group">`;
     html += `                <label></label>`;
-    html += `                <button class="btn btn-black jsModalCancel">Cancel</button>`;
     html += `                <button class="btn btn-orange jsAddRevieweeSave">Save</button>`;
+    html += `                <button class="btn btn-black jsModalCancel">Cancel</button>`;
     html += `                <input type="hidden" value="${reviewId}" id="jsAddReviewReviewId" />`;
     html += `            </div>`;
     html += `        </div>`;

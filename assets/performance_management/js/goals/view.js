@@ -672,7 +672,6 @@ $(function() {
      */
     function getAction(o, action, em) {
         //
-        console.log(action);
         let row = '-';
         if (action == 'created') {
             row = `<strong>${remakeEmployeeName(em)}</strong> created the goal.`;

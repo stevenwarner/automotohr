@@ -1,3 +1,45 @@
+<?php
+
+    $reviewerOBJ = [];
+    //
+    if(!empty($review['Reviewers'])){
+        foreach($review['Reviewers'] as $reviewer){
+            //
+            if(!isset($reviewerOBJ[$reviewer['reviewee_sid']])) $reviewerOBJ[$reviewer['reviewee_sid']] = ['Reviewers' => [], 'Managers' => []];
+            //
+            $reviewerOBJ[$reviewer['reviewee_sid']][$reviewer['is_manager'] == 0 ? 'Reviewers' : 'Managers'][] = $reviewer;
+        }
+    }
+    //
+    $progress = [];
+    $progress['reviewers']['total']
+     = array_filter($review['Reviewers'], function($reviewer){
+        return $reviewer['is_manager'] == 0;
+    });
+    //
+    $progress['reviewers']['completed'] = array_filter($review['Reviewers'], function($reviewer){
+        return $reviewer['is_manager'] == 0 && $reviewer['is_completed'] == 1;
+    });
+    // 
+    $progress['reviewers']['total_per'] = 100;
+    $progress['reviewers']['completed_per'] = ceil((count($progress['reviewers']['completed']) * 100 )/ count($progress['reviewers']['total']));
+    $progress['reviewers']['pending_per'] = 100  - $progress['reviewers']['completed_per'];
+    //
+    $progress['managers']['total']
+     = array_filter($review['Reviewers'], function($reviewer){
+        return $reviewer['is_manager'] == 1;
+    });
+    //
+    $progress['managers']['completed'] = array_filter($review['Reviewers'], function($reviewer){
+        return $reviewer['is_manager'] == 1 && $reviewer['is_completed'] == 1;
+    });
+    // 
+    $progress['managers']['total_per'] = 100;
+    $progress['managers']['completed_per'] = ceil((count($progress['managers']['completed']) * 100 )/ count($progress['managers']['total']));
+    $progress['managers']['pending_per'] = 100  - $progress['managers']['completed_per'];
+
+?>
+
 <div class="container-fluid">
     <!-- Heading -->
     <div class="csPageHeading">
@@ -27,8 +69,8 @@
                             </ul>
                         </div>
                     </span>
-                    <strong>Review 1 <span class="btn alert-success">Running</span></strong> <br />
-                    <p>Last Run by Mubashir Ahmed on Jan 01 2021, Sunday</p>
+                    <strong><?=$review['review_title'];?> <span class="btn alert-success"><?=$review['status'] == 'pending' ? 'Pending' : ( $review['status'] == 'started' ? 'Running' : 'Ended');?></span></strong> <br />
+                    <!-- <p>Last Run by Mubashir Ahmed on Jan 01 2021, Sunday</p> -->
                 </h1>
             </div>
         </div>
@@ -39,31 +81,25 @@
         <div class="col-sm-12 col-xs-12">
             <!-- Content Area -->
             <div class="csPageBox csRadius5">
+                <!-- Loader -->
+                <div class="csIPLoader jsIPLoader dn" data-page="review_listing"><i class="fa fa-circle-o-notch fa-spin"></i></div>
                 <!-- Heading -->
                 <div class="csPageBoxHeader pa10 pl10 pr10">
                     <div class="row">
                         <div class="col-sm-6">
                             <ul>
-                                <li><a href="" class="active">Reviewees (16)</a></li>
-                                <li><a href="">Reviewers (5)</a></li>
+                                <li><a href="javascript:void(0)" class="active">Reviewees (<span><?=count($review['Reviewees']);?></span>)</a></li>
+                                <li><a href="javascript:void(0)">Reviewers (<span><?=count($review['Reviewers']);?></span>)</a></li>
                             </ul>
                         </div>
                         <div class="col-sm-3">
                             <select id="jsFilterDepartments">
-                                <option value="">All Departments</option>
-                                <option value="">Department 1</option>
-                                <option value="">Department 2</option>
-                                <option value="">Department 3</option>
-                                <option value="">Department 4</option>
+                                <?php echo getSelect($dnt['departments'], [-1 => 'All Departments']); ?>
                             </select>
                         </div>
                         <div class="col-sm-3">
                             <select id="jsFilterTeams">
-                                <option value="">All Teams</option>
-                                <option value="">Team 1</option>
-                                <option value="">Team 2</option>
-                                <option value="">Team 3</option>
-                                <option value="">Team 4</option>
+                                <?php echo getSelect($dnt['teams'], [-1 => 'All Teams']); ?>
                             </select>
                         </div>
                     </div>
@@ -77,181 +113,152 @@
                                 <h3><strong>Reviewers Progress</strong></h3>
                                 <div class="progress csRadius100">
                                     <div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0"
-                                        aria-valuemax="100" style="width: 20%;"></div>
+                                        aria-valuemax="100" style="width: <?=$progress['reviewers']['completed_per'];?>%;"></div>
                                 </div>
                                 <ul>
                                     <li>
                                         <span class="csRadius50 active"></span>
-                                        80% Completed
+                                        <?=$progress['reviewers']['completed_per'];?>% Completed
                                     </li>
                                     <li>
                                         <span class="csRadius50"></span>
-                                        20% Not Completed
+                                        <?=$progress['reviewers']['pending_per'];?>% Not Completed
                                     </li>
                                 </ul>
                             </div>
+                            <?php if($review['share_feedback'] == 1):?>
                             <div class="col-sm-6">
                                 <h3><strong>Manager Feedback Progress</strong></h3>
                                 <div class="progress csRadius100">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0"
-                                        aria-valuemax="100" style="width: 100%;"></div>
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0"
+                                        aria-valuemax="100" style="width: <?=$progress['managers']['completed_per'];?>%;"></div>
                                 </div>
                                 <ul>
                                     <li>
                                         <span class="csRadius50 active"></span>
-                                        100% Completed
+                                        <?=$progress['managers']['completed_per'];?>% Completed
                                     </li>
                                     <li>
                                         <span class="csRadius50"></span>
-                                        0% Not Completed
+                                        <?=$progress['managers']['pending_per'];?>% Not Completed
                                     </li>
                                 </ul>
                             </div>
+                            <?php endif;?>
                         </div>
                     </div>
                     <div class="csPageBodyData">
-                        <div class="table-sreponsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th class="col-sm-4">Reviewee</th>
-                                        <th class="col-sm-2">Review Period</th>
-                                        <th class="col-sm-2">Reviewer Progress</th>
-                                        <th class="col-sm-2">Manager Feedback Progress</th>
-                                        <th class="col-sm-2"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="csEBox">
-                                                <figure>
-                                                    <img src="<?=randomData('img');?>"
-                                                        class="csRadius50" />
-                                                </figure>
-                                                <div class="csEBoxText">
-                                                    <h4 class="mb0"><strong><?=randomData('name');?></strong></h4>
-                                                    <p class="">(QA) [Admin Plus]</p>
-                                                    <a href="" class="btn btn-black btn-xs cdRadius5">View Profile</a>
+                        <!-- Reviewees -->
+                        <div class="csPajeSection jsPageSection" data-id="reviewees">
+                            <div class="table-reponsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-sm-4">Reviewee</th>
+                                            <th class="col-sm-2">Review Period</th>
+                                            <th class="col-sm-2">Reviewer Progress</th>
+                                            <th class="col-sm-2">Manager Feedback Progress</th>
+                                            <th class="col-sm-2"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php if(!empty($review['Reviewees'])):
+                                        foreach($review['Reviewees'] as $reviewee):?>
+                                        <tr>
+                                            <td>
+                                                <div class="csEBox">
+                                                    <figure>
+                                                        <img src="<?=$employees[$reviewee['reviewee_sid']]['img'];?>"
+                                                            class="csRadius50" />
+                                                    </figure>
+                                                    <div class="csEBoxText">
+                                                        <h4 class="mb0"><strong><?=$employees[$reviewee['reviewee_sid']]['name'];?></strong></h4>
+                                                        <p><?=$employees[$reviewee['reviewee_sid']]['role'];?></p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p>Jan 01 - Jan 05</p>
-                                        </td>
-                                        <td>
-                                            <p>no reviewers</p>
-                                        </td>
-                                        <td>
-                                            <div class="csPBox">
-                                                <ul class="mb0">
-                                                    <li><img src="<?=randomData('img');?>" class="csRadius50"></li>
-                                                    <li><img src="<?=randomData('img');?>" class="csRadius50"></li>
-                                                    <li><img src="<?=randomData('img');?>" class="csRadius50"></li>
-                                                </ul>
-                                                <span>60% Not Shared</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="csBTNBox">
-
-                                                <a href="<?=purl('reviewer_feedback/1/1');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
-                                                <div class="dropdown">
-                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenu1"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="true">
-                                                        <i class="fa fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                                        <li><a href="#">Remove Revieww</a></li>
-                                                        <li role="separator" class="divider"></li>
-                                                        <li><a href="#">Settings</a></li>
-                                                    </ul>
+                                            </td>
+                                            <td>
+                                                <p><?=formatDate($reviewee['start_date'], 'Y-m-d', 'M d, Y');?> - <?=formatDate($reviewee['end_date'], 'Y-m-d', 'M d, Y');?></p>
+                                            </td>
+                                            <td>
+                                                <?php if(empty($reviewerOBJ[$reviewee['reviewee_sid']]['Reviewers'])): ?>
+                                                <p>no reviewers</p>
+                                                <?php else:?>
+                                                    <div class="csPBox">
+                                                        <ul class="mb0">
+                                                <?php 
+                                                    $sharedCount = 0;
+                                                    $i = 3;
+                                                    foreach($reviewerOBJ[$reviewee['reviewee_sid']]['Reviewers'] as $k => $reviewer): 
+                                                        if($k <= $i):
+                                                            echo '<li><img src="'.($employees[$reviewer['reviewer_sid']]['img']).'" class="csRadius50"></li>';
+                                                        endif;
+                                                        if($reviewer['is_completed'] == 1 ) $sharedCount ++;
+                                                ?>
+                                                <?php endforeach; ?>
+                                                        </ul>
+                                                        <span><?=ceil(($sharedCount * 100) / count($reviewerOBJ[$reviewee['reviewee_sid']]['Reviewers']))?>% Not Completed</span>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <?php if(empty($reviewerOBJ[$reviewee['reviewee_sid']]['Managers'])): ?>
+                                                <p>no managers</p>
+                                                <?php else:?>
+                                                    <div class="csPBox">
+                                                        <ul class="mb0">
+                                                <?php 
+                                                    $sharedCount = 0;
+                                                    $i = 3;
+                                                    foreach($reviewerOBJ[$reviewee['reviewee_sid']]['Managers'] as $k => $reviewer): 
+                                                        if($k <= $i):
+                                                            echo '<li><img src="'.($employees[$reviewer['reviewer_sid']]['img']).'" class="csRadius50"></li>';
+                                                        endif;
+                                                        if($reviewer['is_completed'] == 1 ) $sharedCount ++;
+                                                ?>
+                                                <?php endforeach; ?>
+                                                        </ul>
+                                                        <span><?=ceil(($sharedCount * 100) / count($reviewerOBJ[$reviewee['reviewee_sid']]['Managers']))?>% Not Completed</span>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <div class="csBTNBox">
+                                                    <?php if($review['status'] != 'pending'):?>
+                                                    <?php  if(in_array($employerId, array_column($reviewerOBJ[$reviewee['reviewee_sid']]['Managers'], 'reviewer_sid'))): ?>
+                                                    <a href="<?=purl('feedback/'.($pid).'/'.($reviewee['reviewee_sid']).'');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
+                                                    <?php else: ?>
+                                                    <a href="<?=purl('reviewer_feedback/'.($pid).'/'.($reviewee['reviewee_sid']).'');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
+                                                    <?php endif; ?>
+                                                    <?php endif; ?>
+                                                    <div class="dropdown dn">
+                                                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu1"
+                                                            data-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="true">
+                                                            <i class="fa fa-ellipsis-v"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                                            <li><a href="#">Remove Revieww</a></li>
+                                                            <li role="separator" class="divider"></li>
+                                                            <li><a href="#">Settings</a></li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="csEBox">
-                                                <figure>
-                                                    <img src="<?=randomData('img');?>"
-                                                        class="csRadius50" />
-                                                </figure>
-                                                <div class="csEBoxText">
-                                                    <h4 class="mb0"><strong><?=randomData('name');?></strong></h4>
-                                                    <p class="">(QA) [Admin Plus]</p>
-                                                    <a href="" class="btn btn-black btn-xs cdRadius5">View Profile</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p>Jan 01 - Jan 05</p>
-                                        </td>
-                                        <td>
-                                        <div class="csPBox">
-                                                <ul class="mb0">
-                                                    <li><img src="<?=randomData('img');?>" class="csRadius50"></li>
-                                                    <li><img src="<?=randomData('img');?>" class="csRadius50"></li>
-                                                    <li><img src="<?=randomData('img');?>" class="csRadius50"></li>
-                                                </ul>
-                                                <span>60% Not Shared</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="csPBox">
-                                                <ul class="mb0">
-                                                    <li><img src="<?=randomData('img');?>" class="csRadius50"></li>
-                                                    <li><img src="<?=randomData('img');?>" class="csRadius50"></li>
-                                                    <li><img src="<?=randomData('img');?>" class="csRadius50"></li>
-                                                </ul>
-                                                <span>60% Not Shared</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="csBTNBox">
-
-                                                <a href="<?=purl('feedback/1/1');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
-                                                <div class="dropdown">
-                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenu1"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="true">
-                                                        <i class="fa fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                                        <li><a href="#">Remove Revieww</a></li>
-                                                        <li role="separator" class="divider"></li>
-                                                        <li><a href="#">Settings</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach;
+                                        endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+                        <!-- Reviewers -->
+                        <div class="csPajeSection jsPageSection" data-id="reviewers"></div>
+                       
                     </div>
 
                     <!--  -->
                     <div class="clearfix"></div>
-                </div>
-                <!--  -->
-                <div class="csPageBoxFooter p10">
-                    <div class="row">
-                        <div class="col-sm-6"><strong class="mt10">Showing 10 of 100</strong></div>
-                        <div class="col-sm-6">
-                            <ul class="pagination csPagination">
-                                <li class="page-item"><a href="javascript:void(0)">First</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">&laquo;</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">1</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">2</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">3</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">4</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">&raquo;</a></li>
-                                <li class="page-item"><a href="javascript:void(0)">Last</a></li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

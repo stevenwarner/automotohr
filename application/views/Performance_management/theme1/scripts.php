@@ -35,6 +35,8 @@
             level: <?=$level;?>
         },
         page: "<?=isset($page) ? $page : ''?>",
+        Id: <?=isset($pid) ? $pid : 0; ?>,
+        Pem: <?=isset($pem) ? $pem : 0; ?>,
         labels: <?=json_encode(getDefaultLabel());?>
     };
     <?php if(isset($dnt)): ?>
@@ -65,10 +67,16 @@
     <script src="<?=base_url('assets/performance_management/js/reviews/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
 <?php endif; ?>
 
-<?php if(in_array('reviews', $this->uri->segment_array())): ?>
+<?php if(in_array('review', $this->uri->segment_array())): ?>
     <!-- Review Single Listing -->
     <script src="<?=base_url('assets/performance_management/js/review/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
     <script src="<?=base_url('assets/performance_management/js/review/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+<?php endif; ?>
+
+<?php if(in_array('reviewer_feedback', $this->uri->segment_array())): ?>
+    <!-- -->
+    <script src="<?=base_url('assets/performance_management/js/reviewer_feedback/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+    <script src="<?=base_url('assets/performance_management/js/reviewer_feedback/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
 <?php endif; ?>
 
 <?php if(in_array('goals', $this->uri->segment_array())): ?>
