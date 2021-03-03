@@ -79,6 +79,12 @@
     <script src="<?=base_url('assets/performance_management/js/reviewer_feedback/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
 <?php endif; ?>
 
+<?php if(in_array('feedback', $this->uri->segment_array())): ?>
+    <!-- -->
+    <script src="<?=base_url('assets/performance_management/js/feedback/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+    <script src="<?=base_url('assets/performance_management/js/feedback/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+<?php endif; ?>
+
 <?php if(in_array('goals', $this->uri->segment_array())): ?>
     <!-- Review Single Listing -->
     <script src="<?=base_url('assets/performance_management/js/goals/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>

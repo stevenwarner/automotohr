@@ -71,6 +71,9 @@
                         <?php if(!empty($ques['description'])): ?>
                         <p><?=$ques['description'];?></p>
                         <?php endif;?>
+                        <?php if(!empty($ques['video_link'])): ?>
+                            <video src="<?=getVideoURL($ques['video_link'], $pid);?>" controls="true" style="width: 100%;"></video>
+                        <?php endif;?>
                         <div class="jsQuestionBox" data-id="<?=$question['sid'];?>">
                             <?php echo getQuestionBody($ques, $answ); ?>
                         </div>

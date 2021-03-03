@@ -135,6 +135,8 @@ $(function() {
                     handleRedirect();
                     return;
                 }
+                //
+                alertify.success(`Answer saved.`);
             }
         );
     }

@@ -173,6 +173,23 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Feedback';
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['userId']] = [
+                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
+                    'role' => remakeEmployeeName($employee, false),
+                    'img' => getImageURL($employee['image']),
+                    'joined' => formatDate($employee['joined_at'], 'Y-m-d', 'M d D, Y')
+                ];
+            }
+        }
+        //
+        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
+        $this->pargs['pid'] = $reviewId;
+        $this->pargs['pem'] = $employeeId;
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);

@@ -2,12 +2,12 @@
     <!--  -->
     <div class="row">
         <!-- Left sidebar -->
-        <div class="col-sm-2 col-xs-12">
+        <div class="col-sm-2 col-xs-12 csSticky csStickyTop">
             <!-- Heading -->
             <div class="csPageHeading">
                 <div class="row">
                     <div class="col-sm-12">
-                        <a href="<?=purl('review/1');?>" class="btn btn-black"><i class="fa fa-long-arrow-left"></i>
+                        <a href="<?=purl('review/'.($pid).'');?>" class="btn btn-black"><i class="fa fa-long-arrow-left"></i>
                             Review Details</a>
                     </div>
                 </div>
@@ -15,13 +15,13 @@
                     <div class="col-sm-12">
                         <div class="csEVBox">
                             <figure>
-                                <img src="<?=randomData('img');?>" class="csRadius50" />
+                                <img src="<?=$employees[$pem]['img'];?>"
+                                    class="csRadius50" />
                             </figure>
                             <div class="csEBoxText">
-                                <h4 class="mb0"><strong><?=randomData('name');?></strong></h4>
-                                <p class="mb0">(QA) [Admin Plus]</p>
-                                <p class="">Jan 01 2021, Tuesday</p>
-                                <a href="" class="btn btn-orange btn-xs cdRadius5">View Profile</a>
+                                <h4 class="mb0"><strong><?=$employees[$pem]['name'];?></strong></h4>
+                                <p class="mb0"><?=$employees[$pem]['role'];?></p>
+                                <p><?=$employees[$pem]['joined'];?></p>
                             </div>
                         </div>
                     </div>
@@ -32,16 +32,9 @@
         <div class="col-sm-7 col-xs-12">
             <div class="csPageBoxHeader bbn">
                 <div class="csPageBoxReviewPeriod">
-                    <span class="csBTNBoxLeft">
-                        <select id="jsFilterReviewPeriod">
-                            <option value="">Jan 01 - Jan 15</option>
-                        </select>
-                    </span>
                     <span class="csBTNBox">
-                        <a href="javascript:void(0)" class="btn btn-orange csRadius100"><i
-                                class="fa fa-pencil-square-o"></i> Finish Later</a>
-                        <a href="javascript:void(0)" class="btn btn-orange csRadius100"><i class="fa fa-download"></i>
-                            Download</a>
+                        <a href="javascript:void(0);" class="btn btn-orange btn-lg jsQuestionSaveBtn"><i class="fa fa-save"></i> Save</a>
+                        <a href="javascript:void(0)" class="btn btn-black btn-lg jsQuestionFLBtn"><i class="fa fa-pencil-square-o"></i> Finish Later</a>
                     </span>
                     <div class="clearfix"></div>
                 </div>
@@ -49,25 +42,37 @@
             <!-- Main Content Area -->
             <div class="csPageBox csRadius5">
                 <!-- Header -->
-                <div class="csPageBoxHeader p10">
-                    <h2 class="mt0"><strong>Review 1</strong></h2>
+                <div class="csPageBoxHeader pl10">
+                    <h3><strong><?=$review['review_title'];?></strong></h3>
                 </div>
+                <?php if($review['share_feedback'] == 1): ?>
                 <!-- Header -->
                 <div class="csPageBoxHeader p10">
-                    <h4 style="color: #cc1100;"><strong><i class="fa fa-eye"></i> Your feedback will be visible to
-                            <?=randomData('name');?> once submitted.</strong></h4>
+                    <h5 style="color: #cc1100;"><strong><i class="fa fa-eye"></i> Your feedback will be visible to <?=$employees[$pem]['name'];?> once submitted.</strong></h5>
                 </div>
+                <?php endif; ?>
                 <!-- Body -->
                 <div class="csPageBoxBody p10">
-                    <?php for($i = 1; $i < 10; $i++){ ?>
-                    <div class="csFeedbackViewBox <?=$i == 9 ? 'bbn' : '';?>">
-                        <h4 class="pa10 pb10"><strong>Question <?=$i;?></strong></h4>
-
-                        <h4><strong>Please add any additional feedback you'd like to note for this
-                                person?</strong>
-                        </h4>
-                        <p>Please leave comments to explain your rating choice.</p>
-
+                <?php 
+                        $answers = [];
+                        foreach($review['Questions'] as $key => $question):
+                        $ques = json_decode($question['question'], true);
+                        $answ = json_decode($question['answer'], true);
+                        //
+                        if(!empty($answ)) {
+                            $answers[$question['sid']] = $answ;
+                        }
+                    ?>
+                    <div class="csFeedbackViewBox">
+                        <h4 class="pa10 pb10"><strong>Question <?=$key +1;?></strong></h4>
+                        
+                        <h4><strong><?=$ques['title'];?></strong></h4>
+                        <?php if(!empty($ques['description'])): ?>
+                        <p><?=$ques['description'];?></p>
+                        <?php endif;?>
+                        <?php if(!empty($ques['video_link'])): ?>
+                            <video src="<?=getVideoURL($ques['video_link'], $pid);?>" controls="true" style="width: 100%;"></video>
+                        <?php endif;?>
                         <div class="csFeedbackViewBoxPreview">
                             <div class="csFeedbackViewBoxPreviewRow">
                                 <div class="row">
@@ -97,7 +102,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="csFeedbackViewBoxPreviewRow">
+                            <div class="csFeedbackViewBoxPreviewRow bbn">
                                 <div class="row">
                                     <div class="col-sm-4 col-xs-12">
                                         <div class="csEBox">
@@ -117,66 +122,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="csFeedbackViewBoxComment">
-                            <div class="row">
-                                <div class="col-sm-4 col-xs-12">
-                                    <h5><strong>Share Feedback</strong></h5>
-                                    <div class="csShareBox">
-                                        <div class="csEBox">
-                                            <figure>
-                                                <img src="<?=randomData('img');?>" class="csRadius50" />
-                                            </figure>
-                                            <div class="csEBoxText">
-                                                <h4><strong><?=randomData('name');?></strong></h4>
-                                                <p>(QA) [Admin Plus]</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-8 col-xs-12 ma10">
-                                    <ul>
-                                        <li>
-                                            <div class="csFeedbackViewBoxTab">
-                                                <p class="mb0">1</p>
-                                                <p>Strongly Agree</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="csFeedbackViewBoxTab">
-                                                <p class="mb0">2</p>
-                                                <p>Agree</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="csFeedbackViewBoxTab">
-                                                <p class="mb0">3</p>
-                                                <p>Neutral</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="csFeedbackViewBoxTab">
-                                                <p class="mb0">4</p>
-                                                <p>Disagree</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="csFeedbackViewBoxTab">
-                                                <p class="mb0">5</p>
-                                                <p>Strongly disagree</p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    <textarea rows="3" class="form-control"></textarea>
-                                    <span class="csBTNBox">
-                                        <a href="" class="btn btn-orange btn-xs ma10">Save Feedback</a>
-                                    </span>
-                                </div>
-                            </div>
+                        <div class="jsQuestionBox" data-id="<?=$question['sid'];?>">
+                            <?php echo getQuestionBody($ques, $answ); ?>
                         </div>
                         <!--  -->
                         <!-- <div class="clearfix"></div> -->
                     </div>
-                    <?php } ?>
+                    <?php endforeach; ?>
                 </div>
                 <!-- Footer -->
                 <div class="csPageBoxFooter p10">
