@@ -2,7 +2,7 @@
     $company_name = ucwords($session['company_detail']['CompanyName']);
 ?>
 <?php if (!$load_view) { ?>
-  
+<link rel="stylesheet" href="<?= base_url(); ?>/assets/mFileUploader/index.css" /> 
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -19,6 +19,15 @@
                                     <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
                                     <?php echo $title; ?></span>
                             </div>
+                            <!-- start upload -->
+                            <div class="row" style="padding: 13px 1px;">
+                                <div class="col-xs-12">
+                                    <label>Upload i9 Form</label>
+                                    <input style="display: none;" type="file" name="document" id="uploar_i9_form">
+                                    <button type="button" id="btn_eev_document" class="btn btn-success pull-right" style="display: none; margin:10px 0px;">Upload</button>
+                                </div>
+                            </div>
+                            <!-- end upload -->
                             <div class="form-wrp">
                                 <?php if(sizeof($pre_form)>0  && $pre_form['user_consent']!=NULL && $pre_form['user_consent']!=0){ ?>
                                     <div class="row mb-2">
@@ -1361,11 +1370,85 @@
         </div>
     </div>
 </div>
-    <?php $this->load->view('form_i9/pop_up_info'); ?>
-    <?php $this->load->view('static-pages/e_signature_popup'); ?>
+<?php $this->load->view('form_i9/pop_up_info'); ?>
+<?php $this->load->view('static-pages/e_signature_popup'); ?>
 
+<!-- Loader Start -->
+<div id="document_loader" class="text-center my_loader" style="display: none; z-index: 1234;" >
+    <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
+    <div class="loader-icon-box">
+        <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
+        <div class="loader-text" id="loader_text_div" style="display:block; margin-top: 35px;">
+            Please wait while we are uploading I9 form.
+        </div>
+    </div>
+</div>
+<!-- Loader End -->
+
+
+    <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/mFileUploader/index.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/i9-form.js"></script>
     <script type="text/javascript">
+        $("#btn_eev_document").hide();
+        //
+        $('#uploar_i9_form').mFileUploader({
+            fileLimit: '2MB', // Default is '2MB', Use -1 for no limit (Optional)
+            allowedTypes: ['pdf','doc','docx'],  //(Optional)
+            text: 'Click / Drag to upload', // (Optional)
+            onSuccess: (file, event) => {
+                $("#btn_eev_document").show();
+            }, // file will the uploaded file object and event will be the actual event  (Optional)
+            onError: (errorCode, event) => {
+                $("#btn_eev_document").hide();
+            }, // errorCode will either 'size' or 'type' and event will be the actual event  (Optional)
+            placeholderImage: '' // Default is empty ('') but can be set any image  (Optional)
+        });
+
+        $("#btn_eev_document").on('click', function(e){
+            e.preventDefault();
+            var upload_file = $('#uploar_i9_form').mFileUploader('get');
+
+            if ($.isEmptyObject(upload_file)) {
+                alertify.alert('ERROR!', 'Please select a file to upload.');
+                return false;
+            } else if (upload_file.hasError == true) {
+                alertify.alert('ERROR!', 'Please select a valid file format.');
+                return false;
+            } else {
+                $('#document_loader').show();
+
+                var form_data = new FormData();
+                form_data.append('document', upload_file);
+                form_data.append('document_sid', '<?php echo $pre_form['sid']; ?>');
+                form_data.append('user_sid', '<?php echo $pre_form['user_sid']; ?>');
+                form_data.append('user_type', '<?php echo $pre_form['user_type']; ?>');
+                form_data.append('perform_action', 'upload_i9_form');
+
+                $.ajax({
+                    url: '<?= base_url('form_i9/ajax_responder') ?>',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'post',
+                    data: form_data,
+                    success: function (resp) {
+                        $('#document_loader').hide();
+                        if(resp.Status === false){
+                            alertify.alert('ERROR!', resp.Response);
+                            return;
+                        }
+                        // On success
+                        alertify.alert('SUCCESS!', resp.Response, function(){
+                            window.location.reload();
+                        });
+                        
+                    },
+                    error: function () {
+                    }
+                });
+            }
+        });
+
         $('.modalShow').click(function(event){
             
             event.preventDefault();
@@ -1385,6 +1468,7 @@
         });
 
         $(document).ready(function(){
+           
             $(document).on('click','#close-popup-modal',function(){
                 $('#myPopupModal').modal('toggle');
             });

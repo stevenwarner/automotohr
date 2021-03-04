@@ -221,4 +221,33 @@ class Form_wi9_model extends CI_Model
             $this->db->update('applicant_w9form',$upload_form_array);
         }
     }
+
+     function check_i9_exist($user_type, $user_sid) {
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->from('applicant_i9form');
+
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+    function insert_i9_form_record($data_to_insert) {
+        $this->db->insert('applicant_i9form', $data_to_insert);
+    }
+
+    function i9_forms_history($data_to_insert) {
+        $this->db->insert('applicant_i9form_history', $data_to_insert);
+    }
+
+    function delete_i9_form($sid) {
+        $this->db->where('sid', $sid);
+        $this->db->delete('applicant_i9form');
+    }
 }
