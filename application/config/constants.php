@@ -516,9 +516,9 @@ define('ASSIGNEDOCIMPL', TRUE);
 define('DOB_LIMIT', '-100:+0');
 define('JOINING_DATE_LIMIT', '1960:+0');
 define('STARTING_DATE_LIMIT', '1960:+0');
-define('DATE', 'M D Y, d');
+define('DATE', 'M d Y, D');
 define('DB_DATE', 'Y-m-d');
-define('DATE_WITH_TIME', 'M D Y, d h:m');
+define('DATE_WITH_TIME', 'M d Y, D H:m:s');
 define('DB_DATE_WITH_TIME', 'Y-m-d H:i:s');
 //
 define('XSYM', '✖');
