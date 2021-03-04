@@ -22,9 +22,9 @@
                             <!-- start upload -->
                             <div class="row" style="padding: 13px 1px;">
                                 <div class="col-xs-12">
-                                    <label>Upload i9 Form</label>
+                                    <label>Upload I9 Form</label>
                                     <input style="display: none;" type="file" name="document" id="uploar_i9_form">
-                                    <button type="button" id="btn_eev_document" class="btn btn-success pull-right" style="display: none; margin:10px 0px;">Upload</button>
+                                    <button type="button" id="btn_eev_document" class="btn btn-success pull-right" style="display: none; margin:10px 0px;">Upload I9</button>
                                 </div>
                             </div>
                             <!-- end upload -->
@@ -1392,8 +1392,8 @@
         $("#btn_eev_document").hide();
         //
         $('#uploar_i9_form').mFileUploader({
-            fileLimit: '2MB', // Default is '2MB', Use -1 for no limit (Optional)
-            allowedTypes: ['pdf','doc','docx'],  //(Optional)
+            fileLimit: -1, // Default is '2MB', Use -1 for no limit (Optional)
+            allowedTypes: ['pdf'],  //(Optional)
             text: 'Click / Drag to upload', // (Optional)
             onSuccess: (file, event) => {
                 $("#btn_eev_document").show();
@@ -1438,8 +1438,8 @@
                             return;
                         }
                         // On success
-                        alertify.alert('SUCCESS!', resp.Response, function(){
-                            window.location.reload();
+                        alertify.alert('SUCCESS!', 'You have successfully uploaded the I9 form.', function(){
+                            window.location.href = "<?=base_url("hr_documents_management/documents_assignment/employee/".( $pre_form['user_sid'])."");?>";
                         });
                         
                     },
