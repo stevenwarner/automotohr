@@ -900,7 +900,7 @@ class Performance_management_model extends CI_Model{
         // Get Review Reviewees
         $review['Reviewee'] = $this->getReviewReviewees($reviewId, $revieweeId);
         $review['Reviewer'] = $this->getReviewReviewers($reviewId, $revieweeId, $reviewerId);
-        $review['Questions'] = $this->getReviewQuestions($reviewId);
+        $review['Questions'] = $this->getReviewQuestions($reviewId, $revieweeId, $reviewerId);
         //
         return $review;
     }
@@ -946,17 +946,22 @@ class Performance_management_model extends CI_Model{
     /**
      * 
      */
-    function getReviewQuestions($reviewId){
+    function getReviewQuestions($reviewId, $revieweeId, $reviewerId){
         //
-        $a = $this->db
+        $this->db
         ->select('
             pmrq.sid,
             pmrq.question,
             pmra.answer
         ')
         ->from('performance_management_review_questions pmrq')
-        ->join('performance_management_review_answers pmra', 'pmra.review_question_sid = pmrq.sid', 'left')
-        ->where('pmrq.review_sid', $reviewId)
+        ->join('performance_management_review_answers pmra', "
+            pmra.review_question_sid = pmrq.sid AND
+            pmra.review_reviewer_sid = {$reviewerId} AND
+            pmra.reviewee_sid = {$revieweeId}
+        ", 'left')
+        ->where('pmrq.review_sid', $reviewId);
+        $a = $this->db
         ->order_by('pmrq.sid', 'ASC')
         ->get();
         //
@@ -965,5 +970,106 @@ class Performance_management_model extends CI_Model{
         //
         return $b;
     }
+
+
+    /**
+     * 
+     */
+    function getReviewWithQuestionsForManager($reviewId, $employerId){
+        //
+        $review = $this->getReviewWithQuestions($reviewId, $employerId);
+        //
+        foreach($review['Questions'] as $k => $v){
+            $reviewersAnswer = $this->getReviewQuestions($reviewId, $employerId);
+            // _e($v, true, true);
+        }
+        //
+        return $review;
+    }
+
+     /**
+     * Get timeoff email template
+     * 
+     * @employee Mubashir Ahmed
+     * @date     02/07/2021
+     * 
+     * @param Integer $templateId
+     * 
+     * @return Array
+     */
+    function getEmailTemplate($templateId){
+        $a = $this->db
+        ->select()
+        ->where('sid', $templateId)
+        ->limit(1)
+        ->get('email_templates');
+        //
+        $b = $a->row_array();
+        $a = $a->free_result();
+        //
+        if(!count($b)) return [];
+        //
+        return [
+            'Subject' => $b['subject'],
+            'Body' => $b['text'],
+            'FromEmail' => !empty($b['from_email']) ? $b['from_email'] : 'no-reply@automotohr.com',
+            'FromName' => !empty($b['from_name']) ? $b['from_name'] : '{{company_name}}'
+        ];
+    }
+
+    /**
+     * 
+     */
+    function getGoals($employeeId){
+        $this->db
+        ->select('sid, title, description, measure_type, target, completed_target, start_date, end_date, employee_sid, on_track')
+        ->where('employee_sid', $employeeId)
+        ->where('status', 1)
+        ->order_by('sid', 'DESC');
+        //
+        $a = $this->db->get('goals');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
     
+    /**
+     * 
+     */
+    function getReviewsByType(
+        $employeeId,
+        $type = 'assigned'
+    ){
+        $this->db
+        ->select('
+            pmrs.reviewee_sid,
+            pmr.end_date,
+            pmr.review_sid
+        ')
+        ->from('performance_management_reviewers pmrs')
+        ->join('performance_management_reviewees pmr', 'pmr.reviewee_sid = pmrs.reviewee_sid')
+        ->where('pmrs.reviewer_sid', $employeeId)
+        ->where('pmrs.is_manager', $type == 'assigned' ? 0 : 1)
+        ->where('pmrs.is_completed', 0)
+        ->where('pmr.is_started', 1)
+        ->order_by('pmrs.sid', 'DESC');
+        //
+        $a = $this->db->get();
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+
+    /**
+     * 
+     */
+    function isManager($employeeId, $employerId){
+        //
+        return in_array($employeeId, $this->getMyEmployees($employerId));
+    }
 }

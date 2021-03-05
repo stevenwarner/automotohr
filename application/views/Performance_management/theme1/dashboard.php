@@ -19,16 +19,22 @@
                     <h4>
                         <strong class="csHeading">My Goals</strong>
                         <span class="csBTNBox">
-                            <a href="javascript:void(0)" class="btn btn-orange mt0"><i class="fa fa-plus-circle"></i> Add Goal</a>
+                            <a href="javascript:void(0)" class="btn btn-orange mt0 jsCreateGoal"><i class="fa fa-plus-circle"></i> Add a Goal</a>
                         </span>
                     </h4>
                 </div>
                 <div class="csPageBoxBody p10">
+                <?php if(empty($goals)): ?>
                     <div id="jsGoalContainer">
                         <p class="csCaughtBox">
                             You haven't set any goals yet <br />
                         </p>
                     </div>
+                <?php else: 
+                        foreach($goals as $goal): ?>
+                        
+                <?php endforeach; 
+                endif; ?>
                     <!--  -->
                     <div class="clearfix"></div>
                 </div>
@@ -40,9 +46,9 @@
             <div class="csPageBox csRadius5">
                 <div class="csPageBoxHeader p10">
                     <h4>
-                        <strong class="csHeading">Assigned Reviews (38)</strong>
+                        <strong class="csHeading">Assigned Reviews (<?=count($assignedReviews);?>)</strong>
                         <span class="csBTNBox">
-                            <a href="<?=purl('review/view/assigned');?>" class="btn btn-orange mt0"><i
+                            <a href="<?=purl('reviews');?>" class="btn btn-orange mt0"><i
                                     class="fa fa-eye"></i>
                                 View All</a>
                         </span>
@@ -50,22 +56,32 @@
                 </div>
                 <div class="csPageBoxBody p10">
                     <div id="jsAssignedReviewContainer">
-                        <?php for($i=0; $i < 10; $i++){ ?>
-                        <div class="col-sm-4">
-                            <div class="csEBox">
-                                <figure>
-                                    <img src="<?=randomData('img');?>"
-                                        class="csRadius50" />
-                                </figure>
-                                <div class="csEBoxText">
-                                    <h4 class="mb0"><strong><?=randomData('name');?></strong></h4>
-                                    <p class="mb0">(QA) [Admin Plus]</p>
-                                    <p>Due in 30 days</p>
-                                    <a href="" class="btn btn-xs alert-black csRadius100">Start Review</a>
+                    <?php if(count($assignedReviews)):
+                            foreach($assignedReviews as $row):
+                                $em = $employees[$row['reviewee_sid']];
+                            ?>
+                            <div class="col-sm-4">
+                                <div class="csEBox">
+                                    <figure>
+                                        <img src="<?=getImageURL($em['img']);?>"
+                                            class="csRadius50" />
+                                    </figure>
+                                    <div class="csEBoxText">
+                                        <h4 class="mb0"><strong><?=$em['name'];?></strong></h4>
+                                        <p class="mb0"><?=$em['role'];?></p>
+                                        <p><?=getDueText($row['end_date']);?></p>
+                                        <a href="<?=base_url('performance-management/reviewer_feedback/'.($row['review_sid']).'/'.($row['reviewee_sid']));?>" target="blank" class="btn btn-xs alert-black csRadius100">Start Review</a>
+                                    </div>
                                 </div>
                             </div>
+                    <?php endforeach; else: ?>
+                        <div id="jsFeedbackReviewContainer">
+                            <p class="csCaughtBox">
+                                <i class="fa fa-check"></i> <br />
+                                You are all caught up
+                            </p>
                         </div>
-                        <?php } ?>
+                    <?php  endif; ?>
                     </div>
                     <!--  -->
                     <div class="clearfix"></div>
@@ -76,20 +92,42 @@
             <div class="csPageBox csRadius5">
                 <div class="csPageBoxHeader p10">
                     <h4>
-                        <strong class="csHeading">Feedback For You (0)</strong>
+                        <strong class="csHeading">Feedback For You (<?=count($feedbackReviews);?>)</strong>
                         <span class="csBTNBox dn">
-                            <a href="<?=purl('review/view/feedback');?>" class="btn btn-orange"><i
+                            <a href="<?=purl('reviews');?>" class="btn btn-orange"><i
                                     class="fa fa-eye"></i>
                                 View All</a>
                         </span>
                     </h4>
                 </div>
                 <div class="csPageBoxBody p10">
-                    <div id="jsFeedbackReviewContainer">
-                        <p class="csCaughtBox">
-                            <i class="fa fa-check"></i> <br />
-                            You are all caught up
-                        </p>
+                <div id="jsAssignedReviewContainer">
+                    <?php if(count($feedbackReviews)):
+                            foreach($feedbackReviews as $row):
+                                $em = $employees[$row['reviewee_sid']];
+                            ?>
+                            <div class="col-sm-4">
+                                <div class="csEBox">
+                                    <figure>
+                                        <img src="<?=getImageURL($em['img']);?>"
+                                            class="csRadius50" />
+                                    </figure>
+                                    <div class="csEBoxText">
+                                        <h4 class="mb0"><strong><?=$em['name'];?></strong></h4>
+                                        <p class="mb0"><?=$em['role'];?></p>
+                                        <p><?=getDueText($row['end_date']);?></p>
+                                        <a href="<?=base_url('performance-management/reviewer_feedback/'.($row['review_sid']).'/'.($row['reviewee_sid']));?>" target="blank" class="btn btn-xs alert-black csRadius100">Start Review</a>
+                                    </div>
+                                </div>
+                            </div>
+                    <?php endforeach; else: ?>
+                        <div id="jsFeedbackReviewContainer">
+                            <p class="csCaughtBox">
+                                <i class="fa fa-check"></i> <br />
+                                You are all caught up
+                            </p>
+                        </div>
+                    <?php  endif; ?>
                     </div>
                     <!--  -->
                     <div class="clearfix"></div>

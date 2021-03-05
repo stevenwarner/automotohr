@@ -573,3 +573,7 @@ define('TIMEOFF_MAGIC_QUOTES', implode(',', [
   'first_name',
   'last_name'
 ]));
+
+// Performance management email ids
+define('REVIEW_ADDED', 399);
+define('REVIEW_EXPIRING', 400);

@@ -85,6 +85,23 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Dashboard';
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['userId']] = [
+                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
+                    'role' => remakeEmployeeName($employee, false),
+                    'img' => getImageURL($employee['image'])
+                ];
+            }
+        }
+        // Get goals 
+        $this->pargs['goals'] = $this->pmm->getGoals($this->pargs['employerId']);
+        // Get Assigned Reviews 
+        $this->pargs['assignedReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'assigned');
+        $this->pargs['feedbackReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'feedback');
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -148,7 +165,6 @@ class Performance_management extends Public_Controller{
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         //
         $this->pargs['review'] = $this->pmm->getReview($reviewId);
-        // _e($this->pargs['review'], true, true);
         //
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -187,9 +203,11 @@ class Performance_management extends Public_Controller{
             }
         }
         //
-        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
+        $this->pargs['review'] = $this->pmm->getReviewWithQuestionsForManager($reviewId, $employeeId, $this->pargs['employerId']);
         $this->pargs['pid'] = $reviewId;
         $this->pargs['pem'] = $employeeId;
+
+        _e($this->pargs['review'], true, true);
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -231,6 +249,11 @@ class Performance_management extends Public_Controller{
         $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
         $this->pargs['pid'] = $reviewId;
         $this->pargs['pem'] = $employeeId;
+        
+        // _e(
+        //     $this->pargs['review'],
+        //     true, true
+        // );
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -711,6 +734,7 @@ class Performance_management extends Public_Controller{
                             $t['review_sid']  = $params['id'];
                             $t['reviewee_sid']  = $revieweeId;
                             $t['reviewer_sid']  = $em;
+                            $t['is_manager']  = $this->pmm->isManager($revieweeId, $em);
                             $t['added_by']  = $pargs['employerId'];
                             //
                             $ins[] = $t;
@@ -1102,5 +1126,22 @@ class Performance_management extends Public_Controller{
             return strip_tags(trim($i));
         }, $r);
         return $r;
+    }
+
+    /**
+     * 
+     */
+    private function sendNotifications(
+        $reviewId,
+        $companyId,
+        $companyName,
+        $type = 'added'
+    ){ 
+        // Get request
+        $review = $this->pmm->getReviewId($reviewId);
+        //
+        $CHF = message_header_footer($companyId, $companyName); 
+        // Get template
+        $template =  $this->pmm->getEmailTemplate(REVIEW_ADDED);
     }
 }

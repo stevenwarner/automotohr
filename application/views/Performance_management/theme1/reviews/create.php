@@ -20,7 +20,7 @@
             </div>
             <div class="row">
                 <!-- Left menu -->
-                <div class="col-sm-2 col-xs-12">
+                <div class="col-sm-2 col-xs-12 csSticky csStickyTop">
                     <ul class="csPageLeftMenu ma10">
                         <li class="jsReviewStep active" data-to="templates">
                             <span>Templates</span> <i class="fa fa-long-arrow-right"></i>
@@ -629,9 +629,9 @@
                             </div>
                         </div>
                         <!-- Questions -->
-                        <div class="csPageSection jsPageSection dn" data-key="questions">
+                        <div class="csPageSection jsPageSection  dn" data-key="questions">
                             <!-- Header -->
-                            <div class="csPageBoxHeader p10">
+                            <div class="csPageBoxHeader csSticky csStickyTop p10" style="background-color: #fff;">
                                 <h4>
                                     <strong>Questions</strong>
                                     <span class="csBTNBox">

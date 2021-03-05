@@ -12595,3 +12595,40 @@ if(!function_exists('getVideoURL')){
     }
 }
 
+
+/**
+ * 
+ */
+if(!function_exists('getDueText')){
+    function getDueText($endDate) {
+        $endDate .= ' 23:59:59';
+        $startDate = date('Y-m-d 23:59:59', strtotime('now'));
+        $now = new DateTime($startDate);
+        $ago = new DateTime($endDate);
+        $diff = $now->diff($ago);
+
+        $diff->w = floor($diff->d / 7);
+        $diff->d -= $diff->w * 7;
+
+        $string = array(
+            'y' => 'year',
+            'm' => 'month',
+            'w' => 'week',
+            'd' => 'day',
+            'h' => 'hour',
+            'i' => 'minute',
+            's' => 'second',
+        );
+        foreach ($string as $k => &$v) {
+            if ($diff->$k) {
+                $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+            } else {
+                unset($string[$k]);
+            }
+        }
+
+        if (!$full) $string = array_slice($string, 0, 1);
+        return $string ? 'Due in '.implode(', ', $string) . '' : 'Expired';
+    }
+}
+
