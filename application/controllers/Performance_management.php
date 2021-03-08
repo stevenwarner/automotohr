@@ -328,6 +328,10 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - List Goals';
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -350,7 +354,12 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - List Goals';
-
+        $this->pargs['employee'] = $this->pargs['employerDetails'];
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        //
         $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
         $this->load->view("{$this->pp}lms/goals/{$this->mp}view", $this->pargs);
@@ -899,6 +908,18 @@ class Performance_management extends Public_Controller{
                 $ins['company_sid'] = $pargs['companyId'];
                 $ins['description'] = $goal['description'];
                 $ins['employee_sid'] = empty($goal['employeeId']) ? 0 : $goal['employeeId'];
+                //
+                if($ins['goal_type'] == 2) {
+                    $ins['employee_sid'] = empty($goal['teamId']) ? 0 : $goal['teamId'];
+                }
+                if($ins['goal_type'] == 3) {
+                    $ins['employee_sid'] = empty($goal['departmentId']) ? 0 : $goal['departmentId'];
+                }
+                //
+                $ins['roles'] = json_encode($goal['roles']);
+                $ins['teams'] = json_encode($goal['teams']);
+                $ins['departments'] = json_encode($goal['departments']);
+                $ins['employees'] = json_encode($goal['employees']);
                 $ins['measure_type'] = $goal['measure'];
                 $ins['aligned_goal_sid'] =  empty($goal['alignedGoal']) ? 0 : $goal['alignedGoal'];
                 //
@@ -945,6 +966,31 @@ class Performance_management extends Public_Controller{
                 $ins['goal_sid'] = $params['sid'];
                 $ins['employee_sid'] = $pargs['employerId'];
                 $ins['action'] = 'updated';
+                $ins['note'] = json_encode($upd);
+                //
+                $this->pmm->_insert($this->tables['GH'], $ins);
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
+                //
+                res($this->resp);
+            break;
+            
+            //
+            case "update_visibility":
+                //
+                $upd = [];
+                $upd['roles'] = json_encode($params['roles']);
+                $upd['teams'] = json_encode($params['teams']);
+                $upd['departments'] = json_encode($params['departments']);
+                $upd['employees'] = json_encode($params['employees']);
+                //
+                $this->pmm->_update($this->tables['G'], $upd, ['sid' => $params['goalId']]);
+                //
+                $ins = [];
+                $ins['goal_sid'] = $params['goalId'];
+                $ins['employee_sid'] = $pargs['employerId'];
+                $ins['action'] = 'updated visibility';
                 $ins['note'] = json_encode($upd);
                 //
                 $this->pmm->_insert($this->tables['GH'], $ins);

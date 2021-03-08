@@ -166,9 +166,9 @@
         </header>
         <!-- Header End -->
 
-        <?php if (isset($theme) && $theme == 1) { ?>
+        <?php if (true) { ?>
             <div class="emp-info-strip">
-                <div class="container">
+                <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="emp-info-box">
@@ -208,3 +208,142 @@
                 </div>
             </div>
         <?php } ?>    
+        <style>
+    .notification-bell {
+        border: none;
+        margin: 0px 20px 0 0;
+        margin-top: -10px;
+        font-size: 25px;
+        border-radius: 5px;
+        cursor: pointer;
+        border: none;
+        color: #fff;
+        height: 65px;
+        background-color: transparent;
+        position: relative;
+    }
+    .notification-count {
+        position: absolute;
+        top: 4px;
+        right: -10px;
+        font-size: 12px;
+        color: #fff;
+        padding: 5px;
+        width: 25px;
+        height: 25px;
+        line-height: 15px;
+        background-color: #81b431;
+        border-radius: 100%;
+    }
+    .count-increament {
+        background-color: #b4052c;
+    }
+    .notify-me .dropdown-menu.dropdown-menu-wide {
+        max-width: 350px !important;
+        width: 100%;
+        left: auto;
+        right: 125px;
+        margin-top: 12px;
+        padding: 0;
+        max-height: 300px;
+        border-radius: 0;
+        z-index: 9999;
+        border: none;
+    }
+    .notify-me .dropdown-menu.dropdown-menu-wide {
+        min-height: 300px;
+        max-height: 400px;
+    }
+    .notify-me .dropdown-menu:before {
+        content: '';
+        position: absolute;
+        top: -21px;
+        left: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        margin: auto;
+        border-left: 16px solid transparent;
+        border-right: 16px solid transparent;
+        border-bottom: 20px solid #fff;
+    }
+    .notify-me .dropdown-menu > li {
+        display: inline-block;
+        width: 100%;
+        vertical-align: top;
+        margin-left: 0;
+    }
+    .notify-me .dropdown-menu > li a {
+        display: block;
+        float: left;
+        width: 100%;
+        text-transform: capitalize;
+        padding: 25px 10px;
+        border: 2px solid #e0e0e0;
+        margin: -1px 0;
+        background-color: #FFFFFF;
+        color: #000000;
+    }
+    .notify-me .dropdown-menu > li a:hover {
+        background-color: #81b431;
+        color: #ffffff;
+    }
+    .notify-me .dropdown-menu:before {
+        content: '';
+        position: absolute;
+        top: -21px;
+        right: 17px;
+        width: 0;
+        height: 0;
+        border-left: 16px solid transparent;
+        border-right: 16px solid transparent;
+        border-bottom: 20px solid #fff;
+    }
+    .faa-shake, .faa-shake.animated, .faa-shake.animated-hover:hover {
+        -webkit-animation: bell-shake 8s ease infinite;
+        animation: bell-shake 8s ease infinite;
+    }
+
+    @media only screen and (max-width: 576px) {
+        .notify-me{ text-align: center !important; float: none !important; }
+        .notify-me .fa{ color: #ffffff !important; }
+        .notify-me .dropdown-menu.dropdown-menu-wide{ right: 10px !important; }
+    }
+    @-webkit-keyframes bell-shake {
+      1% { -webkit-transform: rotateZ(15deg); transform-origin: 50% 10%;}
+      2% { -webkit-transform: rotateZ(-15deg); transform-origin: 50% 10%;}
+      3% { -webkit-transform: rotateZ(20deg); transform-origin: 50% 10%;}
+      4% { -webkit-transform: rotateZ(-20deg); transform-origin: 50% 10%;}
+      5% { -webkit-transform: rotateZ(15deg); transform-origin: 50% 10%;}
+      6% { -webkit-transform: rotateZ(-15deg); transform-origin: 50% 10%;}
+      7% { -webkit-transform: rotateZ(0); transform-origin: 50% 10%;}
+      100% { -webkit-transform: rotateZ(0); transform-origin: 50% 10%;}
+    }
+
+    @-moz-keyframes bell-shake {
+      1% { -moz-transform: rotateZ(15deg); transform-origin: 50% 0%; }
+      2% { -moz-transform: rotateZ(-15deg); transform-origin: 50% 0%;}
+      3% { -moz-transform: rotateZ(20deg); transform-origin: 50% 0%; }
+      4% { -moz-transform: rotateZ(-20deg); transform-origin: 50% 0%;}
+      5% { -moz-transform: rotateZ(15deg); transform-origin: 50% 0%; }
+      6% { -moz-transform: rotateZ(-15deg); transform-origin: 50% 0%;}
+      7% { -moz-transform: rotateZ(0); transform-origin: 50% 0%;   }
+      100% { -moz-transform: rotateZ(0); transform-origin: 50% 0%;  }
+    }
+
+    @keyframes bell-shake {
+      1% { transform: rotateZ(15deg); transform-origin: 50% 0%; }
+      2% { transform: rotateZ(-15deg); transform-origin: 50% 0%;}
+      3% { transform: rotateZ(20deg); transform-origin: 50% 0%; }
+      4% { transform: rotateZ(-20deg); transform-origin: 50% 0%;}
+      5% { transform: rotateZ(15deg); transform-origin: 50% 0%; }
+      6% { transform: rotateZ(-15deg); transform-origin: 50% 0%;}
+      7% { transform: rotateZ(0); transform-origin: 50% 0%;   }
+      100% { transform: rotateZ(0); transform-origin: 50% 0%;   }
+    }
+
+    .ui-datepicker-header, .ui-datepicker-calendar .ui-state-active, .ui-datepicker-prev:hover, .ui-datepicker-next:hover{
+        background-color: #3554dc;
+    }
+
+</style>

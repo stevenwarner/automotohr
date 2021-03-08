@@ -7,11 +7,16 @@ $(function() {
             endDate: '',
             goalType: '',
             employeeId: '',
+            teamId: '',
+            departmentId: '',
             measure: '',
             target: '',
-            alignedGoal: ''
+            alignedGoal: '',
+            roles: [],
+            teams: [],
+            departments: [],
+            employees: []
         };
-
     /**
      * 
      */
@@ -49,6 +54,7 @@ $(function() {
             pm.companyGoals = companyGoals.Data;
             //
             $('#jsCreateGoalModal .csModalBody').append(resp.Data);
+
             //
             $('#jsCGStartDate').datepicker({
                 changeYear: true,
@@ -80,6 +86,94 @@ $(function() {
             $('#jsCGType').select2({ minimumResultsForSearch: -1 });
             $('#jsCGEmployee').html(options).select2();
             $('#jsCGMeasure').select2({ minimumResultsForSearch: -1 });
+            //
+            options = '<option value= "0"> [Select a team] </option>';
+            //
+            dnt['teams'].map((team) => {
+                options += `<option value="${team.sid}">${team.name}</option>`;
+            });
+            $('#jsCGTeam').html(options).select2();
+            //
+            options = '<option value= "0"> [Select a department] </option>';
+            //
+            dnt['departments'].map((department) => {
+                options += `<option value="${department.sid}">${department.name}</option>`;
+            });
+            $('#jsCGDepartment').html(options).select2();
+            //
+            if (pm.permission.isSuperAdmin === undefined) {
+                $('.jsCGBoxVisibilty').hide();
+            }
+            //
+            if (pm.permission.isSuperAdmin === undefined) {
+                if (
+                    pm.permission.teamIds.length === 0 &&
+                    pm.permission.departmentIds.length === 0 &&
+                    pm.permission.employeeIds.length === 0
+                ) {
+                    $('.jsCGTypeBox').hide();
+                    $('.jsCGBoxTeam').hide();
+                    $('.jsCGBoxDepartment').hide();
+                    $('.jsCGBoxIndividual').hide();
+                    $('#jsCGEmployee').select2('val', pm.employerId);
+                    $('#jsCGType').select2('val', 1);
+                }
+                //
+                let typeOptions = ' <option value="0">[Select a type]</option>';
+                if (
+                    pm.permission.departmentIds.length > 0
+                ) {
+                    typeOptions += '<option value="3">Departments</option>';
+                }
+                if (
+                    pm.permission.employeeIds.length > 0
+                ) {
+                    typeOptions += '<option value="1">Individual</option>';
+                }
+                if (
+                    pm.permission.teamIds.length > 0
+                ) {
+                    typeOptions += '<option value="2">Team</option>';
+                }
+
+                $('#jsCGType').html(typeOptions).select2();
+            }
+            //
+            options = '<option value="0">[Select a role]</option>';
+            options += '<option value="admin">Admin</option>';
+            options += '<option value="hiring_manager">Hiring Manager</option>';
+            options += '<option value="manager">Manager</option>';
+            options += '<option value="employee">Employee</option>';
+            //
+            $('#jsCGVisibilityRoles').html(options).select2({ minimumResultsForSearch: -1 });
+            //
+            options = '<option value="0">[Select a team]</option>';
+            //
+            dnt['teams'].map((team) => {
+                if (pm.permission.teamIds !== undefined) {
+                    if ($.inArray(team.sid, pm.permission.teamIds) === -1) { return; }
+                }
+                options += `<option value="${team.sid}">${team.name}</option>`;
+            });
+            $('#jsCGVisibilityTeams').html(options).select2();
+            //
+            options = '<option value="0">[Select a department]</option>';
+            dnt['departments'].map((team) => {
+                if (pm.permission.departmentIds !== undefined) {
+                    if ($.inArray(team.sid, pm.permission.departmentIds) === -1) { return; }
+                }
+                options += `<option value="${team.sid}">${team.name}</option>`;
+            });
+            $('#jsCGVisibilityDepartments').html(options).select2();
+            options = '<option value="0">[Select an employee]</option>';
+            //
+            pm.employees.map((em) => {
+                if (pm.permission.employeeIds !== undefined) {
+                    if ($.inArray(em.userId, pm.permission.employeeIds) === -1) { return; }
+                }
+                options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
+            });
+            $('#jsCGVisibilityEmployees').html(options).select2();
             //
             ml(false, 'jsCreateGoalModalLoader');
             //
@@ -139,9 +233,21 @@ $(function() {
         goal.goalType = $(this).val();
         //
         if (goal.goalType == 1) {
+            $('.jsCGBoxTeam').addClass('dn');
+            $('.jsCGBoxDepartment').addClass('dn');
             $('.jsCGBoxIndividual').removeClass('dn');
-        } else {
+        } else if (goal.goalType == 2) {
+            $('.jsCGBoxTeam').removeClass('dn');
             $('.jsCGBoxIndividual').addClass('dn');
+            $('.jsCGBoxDepartment').addClass('dn');
+        } else if (goal.goalType == 3) {
+            $('.jsCGBoxTeam').addClass('dn');
+            $('.jsCGBoxIndividual').addClass('dn');
+            $('.jsCGBoxDepartment').removeClass('dn');
+        } else {
+            $('.jsCGBoxTeam').addClass('dn');
+            $('.jsCGBoxIndividual').addClass('dn');
+            $('.jsCGBoxDepartment').addClass('dn');
         }
     });
 
@@ -150,6 +256,48 @@ $(function() {
      */
     $(document).on('change', '#jsCGEmployee', function() {
         goal.employeeId = $(this).val();
+    });
+
+    /**
+     * 
+     */
+    $(document).on('change', '#jsCGTeam', function() {
+        goal.teamId = $(this).val();
+    });
+
+    /**
+     * 
+     */
+    $(document).on('change', '#jsCGDepartment', function() {
+        goal.departmentId = $(this).val();
+    });
+
+    /**
+     * 
+     */
+    $(document).on('change', '#jsCGVisibilityRoles', function() {
+        goal.roles = $(this).val() || [];
+    });
+
+    /**
+     * 
+     */
+    $(document).on('change', '#jsCGVisibilityTeams', function() {
+        goal.teams = $(this).val() || [];
+    });
+
+    /**
+     * 
+     */
+    $(document).on('change', '#jsCGVisibilityDepartments', function() {
+        goal.departments = $(this).val() || [];
+    });
+
+    /**
+     * 
+     */
+    $(document).on('change', '#jsCGVisibilityEmployees', function() {
+        goal.employees = $(this).val() || [];
     });
 
     /**
@@ -202,6 +350,14 @@ $(function() {
             handleError(getError('goal_employee'));
             return;
         }
+        if (goal.goalType == 2 && (goal.teamId == null || goal.teamId == '')) {
+            handleError(getError('goal_team'));
+            return;
+        }
+        if (goal.goalType == 3 && (goal.departmentId == null || goal.departmentId == '')) {
+            handleError(getError('goal_department'));
+            return;
+        }
         if (goal.target == '') {
             handleError(getError('goal_target'));
             return;
@@ -227,11 +383,18 @@ $(function() {
                     goal.endDate = '';
                     goal.goalType = '';
                     goal.employeeId = '';
+                    goal.teamId = '';
+                    goal.departmentId = '';
                     goal.measure = '';
                     goal.target = '';
                     goal.alignedGoal = '';
+                    goal.roles = '';
+                    goal.departments = '';
+                    goal.teams = '';
+                    goal.employees = '';
                     //
                     $('.jsModalCancel').trigger('click');
+                    window.location.reload();
                 });
             }
         );
@@ -280,6 +443,5 @@ $(function() {
         });
     }
 
-    
 
 });

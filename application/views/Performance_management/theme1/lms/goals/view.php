@@ -11,9 +11,11 @@
                     </select>
                 </div>
                 <div class="col-sm-3 col-xs-12">
+                <?php  if($level == 1) { ?>
                     <select id="jsVGEmployee">
                         <option value="-1">All</option>
                     </select>
+                <?php }?>
                 </div>
                 <div class="col-sm-6 col-xs-12">
                     <span class="csBTNBox">
@@ -30,10 +32,18 @@
                 <div class="row">
                     <div class="col-sm-12 col-sm-12">
                         <ul>
-                            <li><a href="javascript:void(0)" data-id="1" class="jsVGType active">Individual Goals</a></li>
-                            <li><a href="javascript:void(0)" data-id="2" class="jsVGType">Team Goals</a></li>
-                            <li><a href="javascript:void(0)" data-id="3" class="jsVGType">Department Goals</a></li>
+                            <li><a href="javascript:void(0)" data-id="1" class="jsVGType active">My Goals</a></li>
+                            <?php  if($level == 0) { ?>
+                            <?php  if(!empty($permission['teamIds'])) { ?>
+                                <li><a href="javascript:void(0)" data-id="2" class="jsVGType">Team Goals</a></li>
+                            <?php  } ?>
+                            <?php  if(!empty($permission['departmentIds'])) { ?>
+                                <li><a href="javascript:void(0)" data-id="3" class="jsVGType">Department Goals</a></li>
+                            <?php  } }else{ ?>
                             <li><a href="javascript:void(0)" data-id="4" class="jsVGType">Company Goals</a></li>
+                            <li><a href="javascript:void(0)" data-id="3" class="jsVGType">Department Goals</a></li>
+                            <li><a href="javascript:void(0)" data-id="2" class="jsVGType">Team Goals</a></li>
+                            <?php } ?>
                         </ul>
                     </div>
                 </div>

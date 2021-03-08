@@ -826,7 +826,7 @@ class Performance_management_model extends CI_Model{
      */
     function getGoalsByFilter($companyId, $employeeId, $filter){
         $this->db
-        ->select('sid, title, description, measure_type, target, completed_target, start_date, end_date, employee_sid, on_track, status')
+        ->select('sid, title, description, measure_type, target, completed_target, start_date, end_date, employee_sid, on_track, status, roles, teams, departments, employees')
         ->where('company_sid', $companyId)
         ->order_by('sid', 'DESC');
         //
@@ -1071,5 +1071,57 @@ class Performance_management_model extends CI_Model{
     function isManager($employeeId, $employerId){
         //
         return in_array($employeeId, $this->getMyEmployees($employerId));
+    }
+
+    /**
+     * 
+     */
+    function getEmployeePermission(
+        $employerId,
+        $isPlus
+    ){
+        //
+        if($isPlus == 1) return ['isSuperAdmin' => 1];
+        //
+        return $this->getTDEUnderEmployee($employerId);
+    }
+
+    /**
+     * 
+     */
+    function getTDEUnderEmployee($employerId){
+        //
+        $d = $this->db
+        ->select('de2t.employee_sid, dm.sid as department_sid')
+        ->from('departments_employee_2_team de2t')
+        ->join('departments_team_management dtm', 'dtm.sid = de2t.team_sid')
+        ->where('dtm.status', 1)
+        ->where('dtm.is_deleted', 0)
+        ->join('departments_management dm', 'dm.sid = de2t.department_sid')
+        ->where('dm.status', 1)
+        ->where('dm.is_deleted', 0)
+        ->where("FIND_IN_SET({$employerId}, dm.supervisor) > 0", false, false)
+        ->get()
+        ->result_array();
+
+        //
+        $t = $this->db
+        ->select('de2t.employee_sid, dtm.sid as team_sid')
+        ->from('departments_employee_2_team de2t')
+        ->join('departments_team_management dtm', 'dtm.sid = de2t.team_sid')
+        ->where('dtm.status', 1)
+        ->where('dtm.is_deleted', 0)
+        ->join('departments_management dm', 'dm.sid = de2t.department_sid')
+        ->where('dm.status', 1)
+        ->where('dm.is_deleted', 0)
+        ->where("FIND_IN_SET({$employerId}, dtm.team_lead) > 0", false, false)
+        ->get()
+        ->result_array();
+
+        return [
+            'teamIds' => array_column($t, 'team_sid'),
+            'departmentIds' => array_column($d, 'department_sid'),
+            'employeeIds' => array_unique(array_merge(array_column($d, 'employee_sid'), array_column($t, 'employee_sid')), SORT_STRING)
+        ];
     }
 }

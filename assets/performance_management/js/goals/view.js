@@ -305,6 +305,139 @@ $(function() {
         });
     });
 
+    /**
+     * 
+     */
+    $(document).on('click', '.jsEditVisibility', function(event) {
+        //
+        event.preventDefault();
+        //
+        const goalBox = $(this).closest('.jsGoalBox');
+        //
+        const goalId = goalBox.data('id');
+        //
+        const goal = goalsOBJ[goalId];
+        //
+        Modal({
+            Id: 'jsGoalVisibiltyModal',
+            Title: `${goal.title} - Visibility`,
+            Body: '',
+            Loader: 'jsGoalVisibiltyModalLoader',
+        }, () => {
+            let rows = `
+            <div class="container">
+            <div class="row mb10 jsCGBoxVisibilty">
+                <div class="col-sm-3 col-xs-12">
+                    <label class="pa10">Who has access</label>
+                </div>
+                <div class="col-sm-9 col-xs-12">
+                    <div class="row">
+                        <div class="col-sm-12 ma10">
+                            <label>Roles</label>
+                            <select multiple id="jsEGVisibilityRoles"></select> 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 ma10">
+                            <label>Teams</label>
+                            <select multiple id="jsEGVisibilityTeams"></select> 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 ma10">
+                            <label>Departments</label>
+                            <select multiple id="jsEGVisibilityDepartments"></select> 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 ma10">
+                            <label>Employees</label>
+                            <select multiple id="jsEGVisibilityEmployees"></select> 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 ma10">
+                            <button id="jsEGSaveBtn" data-id="${goalId}" class="btn btn-orange btn-lg">Update Visibility</button>
+                        </div>
+                    </div>
+                </div>
+            </div></div>`;
+            $('#jsGoalVisibiltyModal .csModalBody').html(rows);
+            let options = '';
+            //
+            options = '<option value="0">[Select a role]</option>';
+            options += '<option value="admin">Admin</option>';
+            options += '<option value="hiring_manager">Hiring Manager</option>';
+            options += '<option value="manager">Manager</option>';
+            options += '<option value="employee">Employee</option>';
+            //
+            $('#jsEGVisibilityRoles').html(options).select2({ minimumResultsForSearch: -1 });
+            //
+            options = '<option value="0">[Select a team]</option>';
+            //
+            dnt['teams'].map((team) => {
+                options += `<option value="${team.sid}">${team.name}</option>`;
+            });
+            $('#jsEGVisibilityTeams').html(options).select2();
+            //
+            options = '<option value="0">[Select a department]</option>';
+            dnt['departments'].map((team) => {
+                options += `<option value="${team.sid}">${team.name}</option>`;
+            });
+            $('#jsEGVisibilityDepartments').html(options).select2();
+            //
+            options = '<option value="0">[Select an employee]</option>';
+            //
+            pm.cemployees.map((em) => {
+                options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
+            });
+            $('#jsEGVisibilityEmployees').html(options).select2();
+            //
+            let roles = goal.roles != '' ? JSON.parse(goal.roles) : [];
+            let teams = goal.teams != '' ? JSON.parse(goal.teams) : [];
+            let departments = goal.departments != '' ? JSON.parse(goal.departments) : [];
+            let employees = goal.employees != '' ? JSON.parse(goal.employees) : [];
+            //
+            console.log(goal, roles)
+            $('#jsEGVisibilityRoles').select2('val', roles);
+            $('#jsEGVisibilityTeams').select2('val', teams);
+            $('#jsEGVisibilityDepartments').select2('val', departments);
+            $('#jsEGVisibilityEmployees').select2('val', employees);
+        });
+    });
+
+
+    $(document).on('click', '#jsEGSaveBtn', function(event) {
+        event.preventDefault();
+        //
+        ml(true, 'jsGoalVisibiltyModalLoader');
+        $.post(pm.urls.handler, {
+            action: 'update_visibility',
+            goalId: $(this).data('id'),
+            roles: $('#jsEGVisibilityRoles').val() || [],
+            teams: $('#jsEGVisibilityTeams').val() || [],
+            departments: $('#jsEGVisibilityDepartments').val() || [],
+            employees: $('#jsEGVisibilityEmployees').val() || []
+        }, () => {
+            //
+            if (resp.Redirect === true) {
+                handleRedirect();
+                return;
+            }
+            //
+            if (resp.Status === false) {
+                handleError(getError());
+                return;
+            }
+            //
+            handleSuccess(getError('visibility_updated'), () => {
+                $('.jsModalCancel').trigger('click');
+                window.location.reload();
+            })
+        });
+    });
+
+
 
     /**
      * 
@@ -357,6 +490,24 @@ $(function() {
         let rows = '<div class="row">';
         //
         goals.map((goal) => {
+            if (filter.type == 1) {
+                //
+                if (pm.permission.employeeIds !== undefined && goal.) {
+                    if ($.inArray(goal.employee_sid, pm.permission.employeeIds) === -1) { return; }
+                }
+            }
+            if (filter.type == 2) {
+                //
+                if (pm.permission.teamIds !== undefined && goal.) {
+                    if ($.inArray(goal.employee_sid, pm.permission.teamIds) === -1) { return; }
+                }
+            }
+            if (filter.type == 3) {
+                //
+                if (pm.permission.departmentIds !== undefined && goal.) {
+                    if ($.inArray(goal.employee_sid, pm.permission.departmentIds) === -1) { return; }
+                }
+            }
             goalsOBJ[goal.sid] = goal;
             //
             let startDate = moment(goal.start_date, 'YYYY-MM-DD');
@@ -378,10 +529,11 @@ $(function() {
             rows += `                <strong>${goal.title}</strong>`;
             rows += `                <span class="pull-right">`;
             if (goal.status == 1)
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose jsPopover" title="Close this goal"><i class="fa fa-times-circle mr0"></i> Mark As Closed</button>`;
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose jsPopover" title="Close this goal"><i class="fa fa-times-circle mr0"></i></button>`;
             else
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen jsPopover" title="Open this goal"><i class="fa fa-times-circle mr0"></i> Mark As Open</button>`;
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen jsPopover" title="Open this goal"><i class="fa fa-check-circle  mr0"></i></button>`;
             rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalHistory jsPopover" title="Show history"><i class="fa fa-history mr0"></i></button>`;
+            rows += `                    <button class="btn btn-black btn-xs mt0 jsEditVisibility jsPopover" title="Edit Visibility"><i class="fa fa-users mr0"></i></button>`;
             rows += `                </span>`;
             rows += `            </h4>`;
             rows += `        </div>`;
@@ -411,7 +563,13 @@ $(function() {
                 rows += `                                <img src="${getImageURL(pm.companyLogo)}" />`;
                 rows += `                            </figure>`;
                 rows += `                            <div class="csEBoxText">`;
-                rows += `                                <h4 class="mb0 ma10"><strong>${pm.companyName}</strong></h4>`;
+                if (filter.type == 2) {
+                    rows += `                                <h4 class="mb0 ma10"><strong>${getTeamName(goal.employee_sid)}</strong></h4>`;
+                } else if (filter.type == 3) {
+                    rows += `                                <h4 class="mb0 ma10"><strong>${getDepartmentName(goal.employee_sid)}</strong></h4>`;
+                } else {
+                    rows += `                                <h4 class="mb0 ma10"><strong>${pm.companyName}</strong></h4>`;
+                }
                 rows += `                            </div>`;
                 rows += `                        </div>`;
             }
@@ -623,6 +781,9 @@ $(function() {
         let options = '<option value="-1">All</option>';
         //
         pm.cemployees.map((em) => {
+            if (pm.permission.employeeIds !== undefined) {
+                if ($.inArray(em.userId, pm.permission.employeeIds) === -1) { return; }
+            }
             options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
         });
         //
@@ -682,6 +843,28 @@ $(function() {
         }
         //
         return row;
+    }
+    //
+    function getTeamName(teamId) {
+        let i = 0,
+            il = dnt['teams'].length;
+        //
+        for (i; i < il; i++) {
+            if (dnt['teams'][i]['sid'] == teamId) return dnt['teams'][i]['name'];
+        }
+        //
+        return '';
+    }
+    //
+    function getDepartmentName(departmentId) {
+        let i = 0,
+            il = dnt['departments'].length;
+        //
+        for (i; i < il; i++) {
+            if (dnt['departments'][i]['sid'] == departmentId) return dnt['departments'][i]['name'];
+        }
+        //
+        return '';
     }
     //
     loadGoals();
