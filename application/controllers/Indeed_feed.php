@@ -140,7 +140,19 @@ class Indeed_feed extends CI_Controller {
 
     public function indeedPostUrl() {
         // error_reporting(E_ALL);
-
+        //
+        @mail('mubashir.saleemi123@gmail.com', 'Indeed - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
+        //
+        $folder = APPPATH.'../applicant/indeed';
+        //
+        if(!is_dir($folder)) mkdir($folder, 0777, true);
+        // 
+        $categories_file = fopen($folder.'/Indeed_Applicant_Recieve_' . date('Y_m_d_H_i_s') . '.json', 'w');
+        //
+        fwrite($categories_file, file_get_contents('php://input'));
+        //
+        fclose($categories_file);
+        //
         if (file_get_contents('php://input')) {
             $jSonData = file_get_contents('php://input');
             $data = json_decode($jSonData, true);
