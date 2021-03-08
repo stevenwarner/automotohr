@@ -350,7 +350,7 @@ $(function() {
             handleError(getError('goal_employee'));
             return;
         }
-        if (goal.goalType == 2 && (goal.teamId == null || goal.teamId == '')) {
+        if (goal.goalType == 2 && (goal.teagitmId == null || goal.teamId == '')) {
             handleError(getError('goal_team'));
             return;
         }

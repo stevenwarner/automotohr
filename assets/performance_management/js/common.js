@@ -259,6 +259,8 @@ function getError(errorCode, isError) {
         goal_end_date: "Please, add a goal end date.",
         goal_type: "Please, select a goal type.",
         goal_employee: "Please, select an employee.",
+        goal_team: "Please, select a team.",
+        goal_department: "Please, select a department.",
         goal_target: "Please, select a goal target.",
         save_goal_error: "Something went wrong while adding the goal.",
         save_goal_success: "You have successfully added a new goal.",
