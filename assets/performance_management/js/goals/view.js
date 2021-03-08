@@ -492,19 +492,19 @@ $(function() {
         goals.map((goal) => {
             if (filter.type == 1) {
                 //
-                if (pm.permission.employeeIds !== undefined && goal.) {
+                if (pm.permission.employeeIds !== undefined) {
                     if ($.inArray(goal.employee_sid, pm.permission.employeeIds) === -1) { return; }
                 }
             }
             if (filter.type == 2) {
                 //
-                if (pm.permission.teamIds !== undefined && goal.) {
+                if (pm.permission.teamIds !== undefined) {
                     if ($.inArray(goal.employee_sid, pm.permission.teamIds) === -1) { return; }
                 }
             }
             if (filter.type == 3) {
                 //
-                if (pm.permission.departmentIds !== undefined && goal.) {
+                if (pm.permission.departmentIds !== undefined) {
                     if ($.inArray(goal.employee_sid, pm.permission.departmentIds) === -1) { return; }
                 }
             }
