@@ -458,6 +458,9 @@ class Facebook_feed extends CI_Controller
 
         // $dt = file_get_contents(APPPATH.'../assets/fba/20200612004053.json');
         $dt = file_get_contents('php://input');
+        //
+        @mail('mubashir.saleemi123@gmail.com', 'Facebook - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r($dt, true));
+        //
         if (!$dt) exit(0);
         $f = fopen(APPPATH . '../assets/fba/' . time() . '.json', 'w');
         fwrite($f, $dt);

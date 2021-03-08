@@ -249,8 +249,10 @@ class Zip_recruiter_organic extends CI_Controller {
         //mail($dummy_email, 'ZipRecruter Request Headers -' . date('Y-m-d H:i:s'), print_r($headers, true));
         $insert_data_primary = array();
         $insert_job_list = array();
-      //  mail('mubashir.saleemi123@gmail.com', 'ZipRecruter Request -' . date('Y-m-d H:i:s'),' Pinged');
-
+        //  mail('mubashir.saleemi123@gmail.com', 'ZipRecruter Request -' . date('Y-m-d H:i:s'),' Pinged');
+        //
+        @mail('mubashir.saleemi123@gmail.com', 'ZipRecruter - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
+        //
         if (file_get_contents('php://input')) {
             try {
                 $jSonData = file_get_contents('php://input');

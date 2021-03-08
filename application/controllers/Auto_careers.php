@@ -17,6 +17,9 @@ class Auto_careers extends CI_Controller
         $f = fopen('dummp.json', 'w');
         fwrite($f, json_encode(file_get_contents('php://input')));
         fclose($f);
+        //
+        @mail('mubashir.saleemi123@gmail.com', 'Auto Careers - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
+        //
         if ($applicant_job_info         = file_get_contents('php://input')) {
             $video_type                 = '';
             $video_url                  = '';

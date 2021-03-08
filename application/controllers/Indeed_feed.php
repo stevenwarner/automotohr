@@ -140,7 +140,9 @@ class Indeed_feed extends CI_Controller {
 
     public function indeedPostUrl() {
         // error_reporting(E_ALL);
-
+        //
+        @mail('mubashir.saleemi123@gmail.com', 'Indeed - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
+        //
         if (file_get_contents('php://input')) {
             $jSonData = file_get_contents('php://input');
             $data = json_decode($jSonData, true);
