@@ -410,6 +410,94 @@ class Form_i9 extends Public_Controller
         }
     }
 
+    public function ajax_responder() {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_sid = $data["session"]["company_detail"]["sid"];
+            $employer_sid = $data["session"]["employer_detail"]["sid"];
+            $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
+            if ($this->form_validation->run() == false) {
+                //Handle Get
+            } else {
+                $perform_action = $this->input->post('perform_action');
+
+                switch ($perform_action) {
+                    case 'upload_i9_form':
+                        $document_sid = $this->input->post('document_sid');
+                        $user_type = $this->input->post('user_type');
+                        $user_sid = $this->input->post('user_sid');
+                        $user_type = empty($user_type) ? null : $user_type;
+                        $user_sid = empty($user_sid) ? null : $user_sid;
+
+                        $uploaded_document_original_name = $_FILES['document']['name'];
+                        $document_name = 'eev-i9_form-document';
+
+                        $uploaded_document_s3_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_name), $employer_sid, AWS_S3_BUCKET_NAME);
+
+                        $data_to_insert = array();
+                        $response = array();
+
+                        if ($uploaded_document_s3_name != 'error') {
+                            //
+                            $already_assigned_i9 = $this->form_wi9_model->check_i9_exist('employee', $user_sid); //Here type will always be employee
+
+                            if (empty($already_assigned_i9)) {
+                                $i9_data_to_insert = array();
+                                $i9_data_to_insert['user_sid'] = $user_sid;
+                                $i9_data_to_insert['user_type'] = $user_type;
+                                $i9_data_to_insert['company_sid'] = $company_sid;
+                                $i9_data_to_insert['sent_status'] = 1;
+                                $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                                $i9_data_to_insert['status'] = 1;
+                                $i9_data_to_insert['s3_filename'] = $uploaded_document_s3_name;
+                                $i9_data_to_insert['emp_app_sid'] = $employer_sid;
+                                $i9_data_to_insert['employer_flag'] = 1;
+                                $i9_data_to_insert['applicant_flag'] = 1;
+                                $i9_data_to_insert['applicant_filled_date'] = date('Y-m-d H:i:s');
+                                $i9_data_to_insert['employer_filled_date'] = date('Y-m-d H:i:s');
+                                $i9_data_to_insert['user_consent'] = 1;
+                                $this->form_wi9_model->insert_i9_form_record($i9_data_to_insert);
+                            } else {
+                                $already_assigned_i9['i9form_ref_sid'] = $already_assigned_i9['sid'];
+                                unset($already_assigned_i9['sid']);
+                                $this->form_wi9_model->i9_forms_history($already_assigned_i9);
+                                $this->form_wi9_model->delete_i9_form($already_assigned_i9['i9form_ref_sid']);
+                                $i9_data_to_insert = array();
+                                $i9_data_to_insert['s3_filename'] = $uploaded_document_s3_name;
+                                $i9_data_to_insert['sid'] = $already_assigned_i9['i9form_ref_sid'];
+                                $i9_data_to_insert['user_sid'] = $user_sid;
+                                $i9_data_to_insert['user_type'] = $user_type;
+                                $i9_data_to_insert['company_sid'] = $company_sid;
+                                $i9_data_to_insert['sent_status'] = 1;
+                                $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                                $i9_data_to_insert['status'] = 1;
+                                $i9_data_to_insert['emp_app_sid'] = $employer_sid;
+                                $i9_data_to_insert['employer_flag'] = 1;
+                                $i9_data_to_insert['applicant_flag'] = 1;
+                                $i9_data_to_insert['applicant_filled_date'] = date('Y-m-d H:i:s');
+                                $i9_data_to_insert['employer_filled_date'] = date('Y-m-d H:i:s');
+                                $i9_data_to_insert['user_consent'] = 1;
+                                $this->form_wi9_model->insert_i9_form_record($i9_data_to_insert);
+                            }
+
+                            
+                            $response['Status'] = TRUE;
+                            $response['Response'] = 'i9 form upload successfully';
+                        }  else {
+                            $response['Status'] = FALSE;
+                            $response['Response'] = 'Something went wrong!';
+                        }  
+
+                        header('Content-Type: application/json');
+                        echo json_encode($response);
+                        exit(0);
+
+                        break;
+                }
+            }
+        }
+    }
+
     public function ajax_handler()
     {
 

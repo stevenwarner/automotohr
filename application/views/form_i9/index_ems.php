@@ -1,5 +1,7 @@
 <?php
     $company_name = ucwords($session['company_detail']['CompanyName']);
+    $db_preparer_serialized_data = sizeof($pre_form) > 0 && $pre_form['section1_preparer_or_translator'] != null ? unserialize($pre_form['section1_preparer_or_translator']) : array();
+    $prepared_section = $db_preparer_serialized_data['section1_preparer_or_translator'] ;
 ?>
 <div class="main">
     <div class="container">
@@ -119,7 +121,7 @@
                                                     class="fa fa-question-circle-o modalShow"
                                                     src="section_1_city_or_town "></i></label>
                                             <input autocomplete="nope" type="text"
-                                                value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_apt_number'] : '' ?>"
+                                                value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_city_town'] : '' ?>"
                                                 name="section1_city_town" class="form-control input-grey" />
                                         </div>
                                     </div>
@@ -366,7 +368,7 @@
 
                         <!--                                        Un Serialize Preparer Options Data -->
                         <?php
-                            $db_preparer_serialized_data = sizeof($pre_form) > 0 && $pre_form['section1_preparer_or_translator'] != null ? unserialize($pre_form['section1_preparer_or_translator']) : array();
+                            // $db_preparer_serialized_data = sizeof($pre_form) > 0 && $pre_form['section1_preparer_or_translator'] != null ? unserialize($pre_form['section1_preparer_or_translator']) : array();
                         ?>
                         <div class="hr-box">
                             <div class="hr-box-header">
@@ -1598,7 +1600,9 @@ $(document).ready(function() {
         $('#option-3').hide();
         $('#option-4').hide();
     }
-    var prep_div = '<?php echo isset($db_preparer_serialized_data['section1_preparer_or_translator ']) > 0 ? $db_preparer_serialized_data['section1_preparer_or_translator '] : '' ?>';
+    // var prep_div = '<?php echo isset($db_preparer_serialized_data['section1_preparer_or_translator ']) > 0 ? $db_preparer_serialized_data['section1_preparer_or_translator '] : '' ?>';
+    var prep_div = '<?=$prepared_section?>';
+   
     if (prep_div == 'used') {
         $('.preparer-number-div').show();
     } else {

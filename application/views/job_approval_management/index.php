@@ -53,7 +53,7 @@
                                                             <td class="text-center">
                                                                 <?php echo ucwords($job['approval_status']); ?>
                                                                 <br />
-                                                                <?=reset_datetime(array( 'datetime' => $job['activation_date'], '_this' => $this)); ?>
+                                                                <?php echo formatDate($job['activation_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                                             </td>
                                                             <td class="text-center">
                                                                 <a target="_blank" class="submit-btn" type="button" href="<?php echo base_url('edit_listing') . '/' . $job['sid'] ?>">View / Edit</a>
@@ -108,7 +108,7 @@
                                                                 <td class="text-center">
                                                                     <?php echo ucwords($job['approval_status']); ?>
                                                                     <br />
-                                                                    <?=reset_datetime(array( 'datetime' => $job['approval_status_change_datetime'], '_this' => $this)); ?>
+                                                                    <?php echo formatDate($job['approval_status_change_datetime'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                                                 </td>
                                                                 <td class="text-center">
                                                                     <?php echo ucwords($job['approval_status_by']); ?>
@@ -167,8 +167,8 @@
                                                                     <?php if($job['active']==1) {echo '<p class="green"> [Active]</p>'; } ?></td>
                                                                 <td class="text-center">
                                                                     <p class="red"><?php echo ucwords($job['approval_status']); ?></p>
-                                                                    <br />`
-                                                                    <?=reset_datetime(array( 'datetime' => $job['approval_status_change_datetime'], '_this' => $this)); ?>
+                                                                    <br />
+                                                                    <?php echo formatDate($job['approval_status_change_datetime'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                                                 </td>
                                                                 <td class="text-center">
                                                                     <?php echo ucwords($job['approval_status_by']); ?>
