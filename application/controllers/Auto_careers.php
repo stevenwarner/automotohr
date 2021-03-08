@@ -20,6 +20,16 @@ class Auto_careers extends CI_Controller
         //
         @mail('mubashir.saleemi123@gmail.com', 'Auto Careers - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
         //
+        $folder = APPPATH.'../applicant/autocareers';
+        //
+        if(!is_dir($folder)) mkdir($folder, 0777, true);
+        // Create json file for all filters job categories
+        $categories_file = fopen($folder.'/AutoCareers_Applicant_Recieve_' . date('Y_m_d_H_i_s') . '.json', 'w');
+        //
+        fwrite($categories_file, file_get_contents('php://input'));
+        //
+        fclose($categories_file);
+        //
         if ($applicant_job_info         = file_get_contents('php://input')) {
             $video_type                 = '';
             $video_url                  = '';

@@ -253,6 +253,16 @@ class Zip_recruiter_organic extends CI_Controller {
         //
         @mail('mubashir.saleemi123@gmail.com', 'ZipRecruter - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
         //
+        $folder = APPPATH.'../applicant/zipRecruter';
+        //
+        if(!is_dir($folder)) mkdir($folder, 0777, true);
+        // 
+        $categories_file = fopen($folder.'/ZipRecruter_Applicant_Recieve_' . date('Y_m_d_H_i_s') . '.json', 'w');
+        //
+        fwrite($categories_file, file_get_contents('php://input'));
+        //
+        fclose($categories_file);
+        //
         if (file_get_contents('php://input')) {
             try {
                 $jSonData = file_get_contents('php://input');
