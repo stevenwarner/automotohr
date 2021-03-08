@@ -102,6 +102,10 @@ class Performance_management extends Public_Controller{
         // Get Assigned Reviews 
         $this->pargs['assignedReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'assigned');
         $this->pargs['feedbackReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'feedback');
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -124,6 +128,10 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Reviews';
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -161,6 +169,8 @@ class Performance_management extends Public_Controller{
                 ];
             }
         }
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
         // Get department & teams list
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         //
@@ -202,6 +212,10 @@ class Performance_management extends Public_Controller{
                 ];
             }
         }
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         //
         $this->pargs['review'] = $this->pmm->getReviewWithQuestionsForManager($reviewId, $employeeId, $this->pargs['employerId']);
         $this->pargs['pid'] = $reviewId;
@@ -245,6 +259,10 @@ class Performance_management extends Public_Controller{
                 ];
             }
         }
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         //
         $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
         $this->pargs['pid'] = $reviewId;
@@ -282,6 +300,8 @@ class Performance_management extends Public_Controller{
         $this->pargs['templates']['personal'] = $this->pmm->getPersonalTemplates($this->pargs['companyId'], ['sid', 'name']);
         // Get company templates
         $this->pargs['templates']['company'] = $this->pmm->getCompanyTemplates(['sid', 'name']);
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
         // Get department & teams list
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         // Get job titles
@@ -307,6 +327,10 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Create a goal';
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);

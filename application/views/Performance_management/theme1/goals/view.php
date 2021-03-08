@@ -30,7 +30,7 @@
                 <div class="row">
                     <div class="col-sm-12 col-sm-12">
                         <ul>
-                            <li><a href="javascript:void(0)" data-id="1" class="jsVGType active">My Goals</a></li>
+                            <li><a href="javascript:void(0)" data-id="1" class="jsVGType active">Individual Goals</a></li>
                             <?php  if($level == 0) { ?>
                             <?php  if(!empty($permission['teamIds'])) { ?>
                                 <li><a href="javascript:void(0)" data-id="2" class="jsVGType">Team Goals</a></li>

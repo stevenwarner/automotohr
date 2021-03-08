@@ -264,6 +264,8 @@ function getError(errorCode, isError) {
         goal_target: "Please, select a goal target.",
         save_goal_error: "Something went wrong while adding the goal.",
         save_goal_success: "You have successfully added a new goal.",
+        goal_closed_success: "You have successfully closed the goal.",
+        goal_open_success: "You have successfully opened the goal.",
     };
     //
     if (isError === true)
