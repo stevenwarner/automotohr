@@ -280,6 +280,7 @@ $(function() {
         const goalId = goalBox.data('id');
         //
         const goal = goalsOBJ[goalId];
+        $('.csModal').remove();
         //
         Modal({
             Id: 'jsGoalHistoryModal',
@@ -317,6 +318,7 @@ $(function() {
         const goalId = goalBox.data('id');
         //
         const goal = goalsOBJ[goalId];
+        $('.csModal').remove();
         //
         Modal({
             Id: 'jsGoalVisibiltyModal',
@@ -398,7 +400,6 @@ $(function() {
             let departments = goal.departments != '' ? JSON.parse(goal.departments) : [];
             let employees = goal.employees != '' ? JSON.parse(goal.employees) : [];
             //
-            console.log(goal, roles)
             $('#jsEGVisibilityRoles').select2('val', roles);
             $('#jsEGVisibilityTeams').select2('val', teams);
             $('#jsEGVisibilityDepartments').select2('val', departments);
@@ -670,9 +671,9 @@ $(function() {
             rows += `                    </div>`;
             rows += `                    <div class="col-sm-4 col-xs-12">`;
             if (hasAccess) {
-                rows += `                        <button class="btn btn-orange form-control jsGoalCommentSaveBtn"><i class="fa fa-save"></i> Save</button>`;
+                rows += `                        <button class="btn btn-orange form-control jsGoalCommentSaveBtn"><i class="fa fa-save"></i> </button>`;
             }
-            rows += `                        <button class="btn btn-black form-control jsBoxSectionBackBtn" data-to="main"><i class="fa fa-times"></i> Cancel</button>`;
+            rows += `                        <button class="btn btn-black form-control jsBoxSectionBackBtn" data-to="main"><i class="fa fa-times"></i> </button>`;
             rows += `                    </div>`;
             rows += `                </div>`;
             rows += `            </div>`;
