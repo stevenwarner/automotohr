@@ -775,14 +775,14 @@
                                             <div class="dashboard-widget-box">
                                                 <figure><i class="fa fa-pencil-square-o <?php echo $review['Pending'] > 0 ? 'start_animation' : ''; ?>"></i></figure>
                                                 <h2 class="post-title">
-                                                    <a href="<?= base_url("performance/show"); ?>">Performance Review</a>
+                                                    <a href="<?= base_url("performance-management/dashboard"); ?>">Performance Management</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
-                                                    <span class="green">'<?=$review['Pending'];?>' Performance Reviews Today</span><br>
-                                                    <small style="font-size: 12px"><?=$review['Total'];?> Total Performance Reviews</small>
+                                                    <span class="green">'<?=$review['Pending'];?>' Reviews Today</span><br>
+                                                    <small style="font-size: 12px"><?=$review['Total'];?> Total Reviews</small>
                                                 </div>
                                                 <div class="button-panel">
-                                                    <a href="<?= base_url("performance/review/view"); ?>" class="site-btn">Show</a>
+                                                    <a href="<?= base_url("performance-management/dashboard"); ?>" class="site-btn">Show</a>
                                                 </div>
                                             </div>
                                         </div>

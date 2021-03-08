@@ -145,8 +145,14 @@
             </div>
         </div>
         <!--  -->
+        <link rel="stylesheet" href="<?=base_url('assets/css/theme-2021.css?v='.time());?>">
+        <!--  -->
         <?php if (in_array('timeoff', $this->uri->segment_array())) { ?>
             <?php $this->load->view('timeoff/style'); ?>
+        <?php }?>
+        <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
+        <!-- Performance Management  -->
+            <?php $this->load->view("{$pp}styles"); ?>
         <?php }?>
     </head>
 
@@ -394,6 +400,7 @@
                                         $class == 'complynet' ||
                                         $class == 'turnover_cost_calculator' ||
                                         $class == 'paid_time_off' ||
+                                        $class == 'performance_management' ||
                                         $class == 'goals' ||
                                         $class == 'govt_user' ||
                                         $class == 'terminate_employee' ||

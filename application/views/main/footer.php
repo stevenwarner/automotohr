@@ -175,6 +175,7 @@ if ($class != 'dashboard' &&
     $class != 'manage_ems' &&
     $class != 'complynet' &&
     $class != 'paid_time_off' &&
+    $class != 'performance_management' &&
     $class != 'time_off' &&
     $class != 'govt_user' &&
     $class != 'assign_bulk_documents' &&
@@ -347,6 +348,9 @@ if ($class != 'dashboard' &&
 </footer>
 <?php if($class == 'time_off'){ ?>
     <?php $this->load->view('timeoff/scripts'); ?>
+<?php } ?>
+<?php if($class == 'performance_management'){ ?>
+    <?php $this->load->view("{$pp}scripts"); ?>
 <?php } ?>
 <span id="get_footer_url" style="display:none;"><?php echo base_url(); ?></span>
 <div class="cart-bg outer-cart-overlay"></div>

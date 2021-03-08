@@ -12129,6 +12129,33 @@ if(!function_exists('formatDate')){
         $toFormat = 'm/d/Y'
     ){
         if(empty($date) || preg_match('/0000/', $date)) return $date;
+        //
+        $t = explode(' ', $date);
+        $date = $t[0];
+        return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
+    }
+}
+
+
+/**
+ * Format date from site to db
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/17/2021
+ * 
+ * @param String  $date         Date
+ * @param String  $fromFormat   Default is 'm/d/Y'
+ * @param String  $toFormat     Default is 'Y-m-d'
+ * 
+ * @return String
+ */
+if(!function_exists('formatDateToDB')){
+    function formatDateToDB(
+        $date,
+        $fromFormat = 'm/d/Y',
+        $toFormat = 'Y-m-d'
+    ){
+        if(empty($date)) return $date;
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
 }
@@ -12515,3 +12542,93 @@ if(!function_exists('downloadAWSFileToBrowser')){
         }
     }
 }
+
+
+
+/**
+ * 
+ */
+if(!function_exists('getSelect')){
+    function getSelect($options, $pre = []){
+        //
+        $o = '';
+        //
+        if(!empty($pre)){
+            $o .= '<option value="'.(key($pre)).'">'.($pre[key($pre)]).'</option>';
+        }
+        if(!empty($options)){
+            foreach($options as $option){
+                $option = array_values($option);
+                $o .= '<option value="'.($option[0]).'">'.($option[1]).'</option>';
+            }
+        }
+        //
+        return $o;
+    }
+}
+
+/**
+ * 
+ */
+if(!function_exists('getImageURL')){
+    function getImageURL($img) {
+        if ($img == '' || $img == null) {
+            return base_url('assets/images/img-applicant.jpg');
+        } else return AWS_S3_BUCKET_URL.$img;
+    }
+}
+
+/**
+ * 
+ */
+if(!function_exists('getVideoURL')){
+    function getVideoURL($url, $id, $module = 'performance_management') {
+        if ($url == '' || $url == null) {
+            return '';
+        }
+        
+        switch($module):
+            case "performance_management":
+                return base_url("assets/performance_management/videos/{$id}/{$url}");
+            break;
+        endswitch;
+    }
+}
+
+
+/**
+ * 
+ */
+if(!function_exists('getDueText')){
+    function getDueText($endDate) {
+        $endDate .= ' 23:59:59';
+        $startDate = date('Y-m-d 23:59:59', strtotime('now'));
+        $now = new DateTime($startDate);
+        $ago = new DateTime($endDate);
+        $diff = $now->diff($ago);
+
+        $diff->w = floor($diff->d / 7);
+        $diff->d -= $diff->w * 7;
+
+        $string = array(
+            'y' => 'year',
+            'm' => 'month',
+            'w' => 'week',
+            'd' => 'day',
+            'h' => 'hour',
+            'i' => 'minute',
+            's' => 'second',
+        );
+        foreach ($string as $k => &$v) {
+            if ($diff->$k) {
+                $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+            } else {
+                unset($string[$k]);
+            }
+        }
+
+        if (!$full) $string = array_slice($string, 0, 1);
+        return $string ? 'Due in '.implode(', ', $string) . '' : 'Expired';
+    }
+}
+
