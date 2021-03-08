@@ -508,6 +508,27 @@ $(function() {
                     if ($.inArray(goal.employee_sid, pm.permission.departmentIds) === -1) { return; }
                 }
             }
+            // Visibility
+            let hasAccess = false;
+            //
+            if (pm.employee.level != 1) {
+                //
+                let cem = getEmployee(pm.employerId, 'userId');
+                //
+                const roles = goal.roles != '' ? JSON.parse(goal.roles) : [];
+                const teams = goal.teams != '' ? JSON.parse(goal.teams) : [];
+                const departments = goal.departments != '' ? JSON.parse(goal.departments) : [];
+                const employees = goal.employees != '' ? JSON.parse(goal.employees) : [];
+                //
+                if ($.inArray(ce.access_level.toLowerCase(), roles) !== -1) {
+                    hasAccess = true;
+                } else if ($.inArray(cem.teamIds, teams) !== -1) {
+                    hasAccess = true;
+                } else if ($.inArray(cem.departmentIds, departments) !== -1) {
+                    hasAccess = true;
+                }
+            } else hasAccess = true;
+            //
             goalsOBJ[goal.sid] = goal;
             //
             let startDate = moment(goal.start_date, 'YYYY-MM-DD');
@@ -528,12 +549,16 @@ $(function() {
             rows += `            <h4>`;
             rows += `                <strong>${goal.title}</strong>`;
             rows += `                <span class="pull-right">`;
-            if (goal.status == 1)
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose jsPopover" title="Close this goal"><i class="fa fa-times-circle mr0"></i></button>`;
-            else
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen jsPopover" title="Open this goal"><i class="fa fa-check-circle  mr0"></i></button>`;
+            if (hasAccess) {
+                if (goal.status == 1)
+                    rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose jsPopover" title="Close this goal"><i class="fa fa-times-circle mr0"></i></button>`;
+                else
+                    rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen jsPopover" title="Open this goal"><i class="fa fa-check-circle  mr0"></i></button>`;
+            }
             rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalHistory jsPopover" title="Show history"><i class="fa fa-history mr0"></i></button>`;
-            rows += `                    <button class="btn btn-black btn-xs mt0 jsEditVisibility jsPopover" title="Edit Visibility"><i class="fa fa-users mr0"></i></button>`;
+            if (pm.employee.level == 1) {
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsEditVisibility jsPopover" title="Edit Visibility"><i class="fa fa-users mr0"></i></button>`;
+            }
             rows += `                </span>`;
             rows += `            </h4>`;
             rows += `        </div>`;
@@ -613,7 +638,10 @@ $(function() {
             rows += `            <div class="csPageFooter bbt p10">`;
             rows += `                <div class="row">`;
             rows += `                    <div class="col-sm-6 col-xs-12">`;
-            rows += `                        <button class="btn btn-orange form-control jsGoalUpdateBTN"><i class="fa fa-pencil"></i> Update</button>`;
+
+            if (hasAccess) {
+                rows += `                        <button class="btn btn-orange form-control jsGoalUpdateBTN"><i class="fa fa-pencil"></i> Update</button>`;
+            }
             rows += `                    </div>`;
             rows += `                    <div class="col-sm-6 col-xs-12">`;
             rows += `                        <button class="btn btn-black form-control jsGoalCommentBtn"><i class="fa fa-comment"></i> Comment</button>`;
@@ -631,10 +659,14 @@ $(function() {
             rows += `            <div class="csPageFooter bbt p10">`;
             rows += `                <div class="row">`;
             rows += `                    <div class="col-sm-8 col-xs-12">`;
-            rows += `                        <textarea class="form-control jsGoalComment" placeholder="John Doe has completed his tasks."></textarea>`;
+            if (hasAccess) {
+                rows += `                        <textarea class="form-control jsGoalComment" placeholder="John Doe has completed his tasks."></textarea>`;
+            }
             rows += `                    </div>`;
             rows += `                    <div class="col-sm-4 col-xs-12">`;
-            rows += `                        <button class="btn btn-orange form-control jsGoalCommentSaveBtn"><i class="fa fa-save"></i> Save</button>`;
+            if (hasAccess) {
+                rows += `                        <button class="btn btn-orange form-control jsGoalCommentSaveBtn"><i class="fa fa-save"></i> Save</button>`;
+            }
             rows += `                        <button class="btn btn-black form-control jsBoxSectionBackBtn" data-to="main"><i class="fa fa-times"></i> Cancel</button>`;
             rows += `                    </div>`;
             rows += `                </div>`;
