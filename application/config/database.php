@@ -117,25 +117,46 @@ $db['default'] = array(
 		'save_queries' => TRUE
 	);
 	} else {
-  $db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'automoto_super',
-	'password' => '6Q?lgxvOo9u_EZpgVM',
-	'database' => 'automoto_hr',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => TRUE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => TRUE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
-);  
+		$db['default'] = array(
+			'dsn'	=> '',
+			'hostname' => '172.31.18.37',
+			'username' => 'ahrdbadmin',
+			'password' => '8E*QrG)M5nw6g',
+			'database' => 'automoto_hr',
+			'dbdriver' => 'mysqli',
+			'dbprefix' => '',
+			'pconnect' => FALSE,
+			'db_debug' => (ENVIRONMENT !== 'production'),
+			'cache_on' => TRUE,
+			'cachedir' => '',
+			'char_set' => 'utf8',
+			'dbcollat' => 'utf8_general_ci',
+			'swap_pre' => '',
+			'encrypt' => FALSE,
+			'compress' => TRUE,
+			'stricton' => FALSE,
+			'failover' => array(),
+			'save_queries' => FALSE
+		);
+//   $db['default'] = array(
+// 	'dsn'	=> '',
+// 	'hostname' => 'localhost',
+// 	'username' => 'automoto_super',
+// 	'password' => '6Q?lgxvOo9u_EZpgVM',
+// 	'database' => 'automoto_hr',
+// 	'dbdriver' => 'mysqli',
+// 	'dbprefix' => '',
+// 	'pconnect' => FALSE,
+// 	'db_debug' => (ENVIRONMENT !== 'production'),
+// 	'cache_on' => TRUE,
+// 	'cachedir' => '',
+// 	'char_set' => 'utf8',
+// 	'dbcollat' => 'utf8_general_ci',
+// 	'swap_pre' => '',
+// 	'encrypt' => FALSE,
+// 	'compress' => TRUE,
+// 	'stricton' => FALSE,
+// 	'failover' => array(),
+// 	'save_queries' => TRUE
+// );  
 }
