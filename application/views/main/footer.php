@@ -736,36 +736,36 @@ if ($class != 'dashboard' &&
         //check_ccd_mini
 
         //PTO Related Common functions
-        function pto_formated_minutes(pto_format,default_slot,Minutes, report = false){
-            var finalResult = '';
-            if(Minutes == 0 && !report){
-                finalResult = 'Infinite';
-            }else{
-                var D = 0;
-                var H = 0;
-                var M = 0;
-                if(pto_format == 'D:H:M'){
-                    var D = parseInt((Minutes)/(default_slot * 60));
-                    var H = parseInt(((Minutes)%(default_slot * 60))/60);
-                    var M = parseInt(((Minutes)%(default_slot * 60))%60);
-                    finalResult = D + ' Day(s) ' + H + ' Hour(s) ' + M + 'Minute(s)';
-                }else if(pto_format == 'H:M'){
-                    var H = parseInt((Minutes)/60);
-                    var M = parseInt((Minutes)%60);
-                    finalResult = H + ' Hour(s) ' + M + 'Minute(s)';
-                }else if(pto_format == 'D'){
-                    var D = ((Minutes)/(default_slot * 60)).toFixed(2);
-                    finalResult = D + ' Day(s) ';
-                }else if(pto_format == 'M'){
-                    var M = Minutes;
-                    finalResult =  M + 'Minute(s)';
-                }else if(pto_format == 'H'){
-                    var H = ((Minutes)/60).toFixed(2);
-                    finalResult = H + ' Hour(s) ';
-                }
-            }
-            return finalResult;
-        }
+        // function pto_formated_minutes(pto_format,default_slot,Minutes, report = false){
+        //     var finalResult = '';
+        //     if(Minutes == 0 && !report){
+        //         finalResult = 'Infinite';
+        //     }else{
+        //         var D = 0;
+        //         var H = 0;
+        //         var M = 0;
+        //         if(pto_format == 'D:H:M'){
+        //             var D = parseInt((Minutes)/(default_slot * 60));
+        //             var H = parseInt(((Minutes)%(default_slot * 60))/60);
+        //             var M = parseInt(((Minutes)%(default_slot * 60))%60);
+        //             finalResult = D + ' Day(s) ' + H + ' Hour(s) ' + M + 'Minute(s)';
+        //         }else if(pto_format == 'H:M'){
+        //             var H = parseInt((Minutes)/60);
+        //             var M = parseInt((Minutes)%60);
+        //             finalResult = H + ' Hour(s) ' + M + 'Minute(s)';
+        //         }else if(pto_format == 'D'){
+        //             var D = ((Minutes)/(default_slot * 60)).toFixed(2);
+        //             finalResult = D + ' Day(s) ';
+        //         }else if(pto_format == 'M'){
+        //             var M = Minutes;
+        //             finalResult =  M + 'Minute(s)';
+        //         }else if(pto_format == 'H'){
+        //             var H = ((Minutes)/60).toFixed(2);
+        //             finalResult = H + ' Hour(s) ';
+        //         }
+        //     }
+        //     return finalResult;
+        // }
         function fetchPtoFormat(){
             $.post(baseURI+'handler', {
                 action: 'fetch_company_pto_format'
@@ -941,8 +941,11 @@ if ($class != 'dashboard' &&
             return inputs;
         }
 
-        function convertIntoMinutes($days = 0, $hours = 0, $minutes = 0){
-            $totalMinutes = parseInt(Number($days * default_slot * 60) + Number($hours * 60) + Number($minutes));
+        function convertIntoMinutes($days, $hours, $minutes){
+            var days = $days != '' && $days != null ? $days : 0;
+            var hours = $hours != '' && $hours != null ? $hours : 0;
+            var minutes = $minutes != '' && $minutes != null ? $minutes : 0;
+            $totalMinutes = parseInt(Number(days * default_slot * 60) + Number(hours * 60) + Number(minutes));
             return $totalMinutes;
         }
 
@@ -998,7 +1001,7 @@ if ($class != 'dashboard' &&
     </script>
     <script>
         $(function(){
-            let shortCut = {
+            var shortCut = {
                 't': "<?=base_url('timeoff/requests');?>",
                 'e': "<?=base_url('employee_management');?>",
                 'a': "<?=base_url('application_tracking_system/active/all/all/all/all/all/all/all/all/all');?>",
@@ -1008,7 +1011,13 @@ if ($class != 'dashboard' &&
                 'm': "<?=base_url('employee_management_system');?>",
             };
             //
-            $(document).keydown((e) => {
+            // $(document).keydown((e) => {
+            //     if(e.shiftKey && e.altKey && shortCut[e.key.toLowerCase()] !== undefined){
+            //         window.location.href = shortCut[e.key.toLowerCase()];
+            //     }
+            // });
+
+            $(document).keydown(function(e){
                 if(e.shiftKey && e.altKey && shortCut[e.key.toLowerCase()] !== undefined){
                     window.location.href = shortCut[e.key.toLowerCase()];
                 }

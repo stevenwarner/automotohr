@@ -66,3 +66,14 @@ dummp.json
 tes.php
 ahr-example-access.log
 ahr-example-error.log
+
+
+images
+images/*
+
+public_html
+public_html/*
+
+sitemap.xml
+applicant
+applicant/*
