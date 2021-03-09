@@ -556,9 +556,9 @@ $(function() {
                     rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose jsPopover" title="Close this goal"><i class="fa fa-times-circle mr0"></i></button>`;
                 else
                     rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen jsPopover" title="Open this goal"><i class="fa fa-check-circle  mr0"></i></button>`;
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalUpdateBTN jsPopover" title="Show history"><i class="fa fa-pencil mr0"></i></button>`;
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalUpdateBTN jsPopover" title="Update Goal"><i class="fa fa-pencil mr0"></i></button>`;
             }
-            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalHistory jsPopover" title="Update Goal"><i class="fa fa-history mr0"></i></button>`;
+            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalHistory jsPopover" title="Show history"><i class="fa fa-history mr0"></i></button>`;
             rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalCommentBtn jsPopover" title="Comments"><i class="fa fa-comment mr0"></i></button>`;
             if (pm.employee.level == 1) {
                 rows += `                    <button class="btn btn-black btn-xs mt0 jsEditVisibility jsPopover" title="Edit Visibility"><i class="fa fa-users mr0"></i></button>`;
@@ -628,10 +628,10 @@ $(function() {
             rows += `                        </div>`;
             rows += `                        <div class="row ma10">`;
             rows += `                            <div class="col-sm-6">`;
-            rows += `                                <p><strong>${startDate.format(pm.dateTimeFormats.mdy)}</strong></p>`;
+            rows += `                                <p><strong>${startDate.format(pm.dateTimeFormats.mdy)}<br /> Start Date</strong></p>`;
             rows += `                            </div>`;
             rows += `                            <div class="col-sm-6">`;
-            rows += `                                <p class="text-right"><strong>${endDate.format(pm.dateTimeFormats.mdy)}</strong></p>`;
+            rows += `                                <p class="text-right"><strong>${endDate.format(pm.dateTimeFormats.mdy)}<br /> Due Date</strong></p>`;
             rows += `                            </div>`;
             rows += `                        </div>`;
             rows += `                    </div>`;

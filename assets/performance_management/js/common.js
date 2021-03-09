@@ -267,6 +267,8 @@ function getError(errorCode, isError) {
         goal_closed_success: "You have successfully closed the goal.",
         goal_open_success: "You have successfully opened the goal.",
         visibility_updated: "You have successfully updated the visibility.",
+        comment_missing: "Please, write a comment beforing saving it.",
+        goal_update_success: "You have successfully updated the goal.",
     };
     //
     if (isError === true)
