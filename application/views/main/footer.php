@@ -1020,8 +1020,7 @@ if ($class != 'dashboard' &&
             });
         });
     </script>
-    <!-- <script src="<?=base_url('assets/js/common.min.js');?>?v=<?=time();?>"></script> -->
-    <script src="<?=base_url('assets/js/common.js');?>?v=<?=time();?>"></script>
+    <script src="<?=base_url('assets/js/common.min.js');?>?v=<?=time();?>"></script>
         </body>
 </html>
     <?php } else { ?>
