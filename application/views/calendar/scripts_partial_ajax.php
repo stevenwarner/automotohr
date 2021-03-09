@@ -2,6 +2,8 @@
 <link href="<?= base_url() ?>assets/calendar/fullcalendar.print.css" rel="stylesheet" media="print"/>
 <script src="<?= base_url() ?>assets/calendar/moment.min.js"></script>
 <script src="<?= base_url() ?>assets/calendar/fullcalendar.min.js"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+
 
 <!-- lodash -->
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
@@ -126,44 +128,80 @@
         //
         if(event.type != 'timeoff') return;
         //
+        var body_title = "<strong>"+event.employee_name+"time-off</strong>";
+        var body_content = '';
+        var img_path = event.img == '' || event.img == null ? 'https://www.automotohr.com/assets/images/img-applicant.jpg' : "<?=AWS_S3_BUCKET_URL;?>"+event.img;
+        var content_date = event.from_date == event.to_date ? moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') : (moment(event.from_date, 'YYY-MM-DD').format('MMM DD YYYY, ddd')+' - '+moment(event.to_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd'));
+        body_content += '<div class="row">';    
+        body_content += '   <div class="col-sm-4">';    
+        body_content += '       <img src="'+img_path+'" style="max-width: 100%;" />';    
+        body_content += '   </div>';    
+        body_content += '   <div class="col-sm-8">';    
+        body_content += '       <p>'+event.employee_name+'</p>';    
+        body_content += '   </div>';    
+        body_content += '</div>';    
+        body_content += '<hr />';    
+        body_content += '<div class="row">';    
+        body_content += '   <div class="col-sm-12">';    
+        body_content += '       <p><strong>Date:</strong>'+content_date+'</p>';    
+        body_content += '       <p><strong>Time:</strong>'+event.timeoff_breakdown.text+'</p>';    
+        if (event.approver != 2) {
+            body_content += '       <p><strong>Policy:</strong>'+event.policy+'</p>';    
+            body_content += '       <p><strong>Status:</strong>'+event.timeoff_status+'</p>';   
+            if (event.reason != '' && event.reason != null) {
+                body_content += '       <p><strong>Reason:</strong>'+event.reason+'</p>';   
+            }
+        }
+        body_content += '   </div>';    
+        body_content += '</div>'; 
+        //
         $(_this).popover({
-            title: `<strong>${event.employee_name} time-off</strong>`,
+            title: body_title,
             placement:'top',
             trigger : 'hover',
             html: true,
-            content: `
-                <div class="row">
-                    <div class="col-sm-4">
-                        <img src="${event.img == '' || event.img == null ? 'https://www.automotohr.com/assets/images/img-applicant.jpg' : `<?=AWS_S3_BUCKET_URL;?>${event.img}`}" style="max-width: 100%;" />
-                    </div>
-                    <div class="col-sm-8">
-                        <p>${event.employee_name}</p>
-                        <!-- <p title="Employee number">${event.employee_number}</p> -->
-                    </div>
-                </div>
-                <hr />
-                <div class="row">
-                    <div class="col-sm-12">
-                    <p><strong>Date:</strong> ${event.from_date == event.to_date ? moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') : (moment(event.from_date, 'YYY-MM-DD').format('MMM DD YYYY, ddd')+' - '+moment(event.to_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd'))}</p>
-                    <p><strong>Time:</strong> ${event.timeoff_breakdown.text}</p>
-                    ${
-                        event.approver == 2 ? '' :
-                        `
-                            <p><strong>Policy:</strong> ${event.policy}</p>
-                            <p><strong>Status:</strong> ${event.timeoff_status}</p>
-                            ${
-                            event.reason != '' && event.reason != null ? 
-                            `<p><strong>Reason:</strong> ${event.reason}</p>` :
-                            ''
-                        }
-                        `
-                    }
-                        
-                    </div>
-                </div>
-            `,
+            content: body_content,
             container:'body'
-        }).popover('show');
+        }).popover('show');   
+        //    
+        // $(_this).popover({
+        //     title: `<strong>${event.employee_name} time-off</strong>`,
+        //     placement:'top',
+        //     trigger : 'hover',
+        //     html: true,
+        //     content: `
+        //         <div class="row">
+        //             <div class="col-sm-4">
+        //                 <img src="${event.img == '' || event.img == null ? 'https://www.automotohr.com/assets/images/img-applicant.jpg' : `<?=AWS_S3_BUCKET_URL;?>${event.img}`}" style="max-width: 100%;" />
+        //             </div>
+        //             <div class="col-sm-8">
+        //                 <p>${event.employee_name}</p>
+        //                 <!-- <p title="Employee number">${event.employee_number}</p> -->
+        //             </div>
+        //         </div>
+        //         <hr />
+        //         <div class="row">
+        //             <div class="col-sm-12">
+        //             <p><strong>Date:</strong> ${event.from_date == event.to_date ? moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') : (moment(event.from_date, 'YYY-MM-DD').format('MMM DD YYYY, ddd')+' - '+moment(event.to_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd'))}</p>
+        //             <p><strong>Time:</strong> ${event.timeoff_breakdown.text}</p>
+        //             ${
+        //                 event.approver == 2 ? '' :
+        //                 `
+        //                     <p><strong>Policy:</strong> ${event.policy}</p>
+        //                     <p><strong>Status:</strong> ${event.timeoff_status}</p>
+        //                     ${
+        //                     event.reason != '' && event.reason != null ? 
+        //                     `<p><strong>Reason:</strong> ${event.reason}</p>` :
+        //                     ''
+        //                 }
+        //                 `
+        //             }
+                        
+        //             </div>
+        //         </div>
+        //     `,
+        //     container:'body'
+        // }).popover('show');
     }
     $(function () {
 
@@ -3976,7 +4014,8 @@
             var end_index = Math.min(start_index + page_size - 1, total_items - 1);
 
             // create an array of pages to ng-repeat in the pager control
-            var pages = Array.from(Array((end_page + 1) - start_page).keys()).map(i => start_page + i);
+            // var pages = Array.from(Array((end_page + 1) - start_page).keys()).map(i => start_page + i);
+            var pages = Array.from(Array((end_page + 1) - start_page).keys()).map(function (i) {start_page + i});
 
             // return object with all pager properties required by the view
             return {
