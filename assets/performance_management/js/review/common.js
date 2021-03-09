@@ -11,7 +11,7 @@ $(document).on('click', '.jsAddReviewers', function(event) {
     event.preventDefault();
     //
     const
-        reviewId = $(this).closest('tr').data().id;
+        reviewId = $(this).data().id === undefined ? $(this).closest('tr').data().id : $(this).data().id;
     //
     if (reviewId === undefined) return;
     //

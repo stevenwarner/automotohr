@@ -84,7 +84,7 @@ if(!function_exists('res')){
  * @return String
  */
 if(!function_exists('getQuestionBody')){
-    function getQuestionBody($question, $answer = []){
+    function getQuestionBody($question, $answer = [], $reviewId){
         //
         $id = rand(1, 22222);
         //

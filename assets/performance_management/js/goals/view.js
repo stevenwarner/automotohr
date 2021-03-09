@@ -495,7 +495,33 @@ $(function() {
         let rows = '<div class="row">';
         //
         goals.map((goal) => {
+            //
+            const roles = goal.roles != '' ? JSON.parse(goal.roles) : [];
+            const teams = goal.teams != '' ? JSON.parse(goal.teams) : [];
+            const departments = goal.departments != '' ? JSON.parse(goal.departments) : [];
+            const employees = goal.employees != '' ? JSON.parse(goal.employees) : [];
+            // Visibility
+            let hasAccess = false;
+            //
             if (goal.employee_sid != pm.employerId) {
+                //
+                if (pm.employee.level != 1) {
+                    //
+                    let cem = getEmployee(pm.employerId, 'userId');
+                    //
+                    if ($.inArray(cem.access_level.toLowerCase(), roles) !== -1) {
+                        hasAccess = true;
+                    } else if ($.inArray(cem.teamIds, teams) !== -1) {
+                        hasAccess = true;
+                    } else if ($.inArray(cem.departmentIds, departments) !== -1) {
+                        hasAccess = true;
+                    } else if ($.inArray(cem.userId, employees) !== -1) {
+                        hasAccess = true;
+                    }
+                } else hasAccess = true;
+            }
+            //
+            if (goal.employee_sid != pm.employerId && !hasAccess) {
 
                 if (filter.type == 1) {
                     //
@@ -516,26 +542,7 @@ $(function() {
                     }
                 }
             }
-            // Visibility
-            let hasAccess = false;
-            //
-            if (pm.employee.level != 1) {
-                //
-                let cem = getEmployee(pm.employerId, 'userId');
-                //
-                const roles = goal.roles != '' ? JSON.parse(goal.roles) : [];
-                const teams = goal.teams != '' ? JSON.parse(goal.teams) : [];
-                const departments = goal.departments != '' ? JSON.parse(goal.departments) : [];
-                const employees = goal.employees != '' ? JSON.parse(goal.employees) : [];
-                //
-                if ($.inArray(cem.access_level.toLowerCase(), roles) !== -1) {
-                    hasAccess = true;
-                } else if ($.inArray(cem.teamIds, teams) !== -1) {
-                    hasAccess = true;
-                } else if ($.inArray(cem.departmentIds, departments) !== -1) {
-                    hasAccess = true;
-                }
-            } else hasAccess = true;
+
             //
             goalsOBJ[goal.sid] = goal;
             //

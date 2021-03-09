@@ -37,10 +37,13 @@
                             <option value="">Jan 01 - Jan 15</option>
                         </select>
                     </span>
+                    <?php if(in_array($employerId, array_column($review['Reviewer']['reviewer_sid']))){ ?>
+
                     <span class="csBTNBox">
                         <a href="javascript:void(0);" class="btn btn-orange btn-lg jsQuestionSaveBtn"><i class="fa fa-save"></i> Save</a>
                         <a href="javascript:void(0)" class="btn btn-black btn-lg jsQuestionFLBtn"><i class="fa fa-pencil-square-o"></i> Finish Later</a>
                     </span>
+                    <?php } ?>
                     <div class="clearfix"></div>
                 </div>
             </div>
@@ -71,8 +74,8 @@
                         <?php if(!empty($ques['description'])): ?>
                         <p><?=$ques['description'];?></p>
                         <?php endif;?>
-                        <?php if(!empty($ques['video_link'])): ?>
-                            <video src="<?=getVideoURL($ques['video_link'], $pid);?>" controls="true" style="width: 100%;"></video>
+                        <?php if(!empty($ques['video_help'])): ?>
+                            <video src="<?=getVideoURL($pid, $key);?>" controls="true" style="width: 100%;"></video>
                         <?php endif;?>
                         <div class="jsQuestionBox" data-id="<?=$question['sid'];?>">
                             <?php echo getQuestionBody($ques, $answ); ?>
@@ -82,6 +85,7 @@
                     </div>
                     <?php endforeach; ?>
                 </div>
+                <?php if(in_array($employerId, array_column($review['Reviewer']['reviewer_sid']))){ ?>
                 <!-- Footer -->
                 <div class="csPageBoxFooter p10">
                     <div class="row">
@@ -93,6 +97,7 @@
                         </div>
                     </div>
                 </div>
+                <?php } ?>
             </div>
         </div>
     </div>

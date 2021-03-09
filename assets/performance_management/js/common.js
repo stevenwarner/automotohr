@@ -269,6 +269,7 @@ function getError(errorCode, isError) {
         visibility_updated: "You have successfully updated the visibility.",
         comment_missing: "Please, write a comment beforing saving it.",
         goal_update_success: "You have successfully updated the goal.",
+        answer_save_success: "You have successfully updated the answers.",
     };
     //
     if (isError === true)
@@ -527,10 +528,30 @@ function getCompanyEmployees() {
     });
 }
 
+/**
+ * Get employees list with dnt
+ * 
+ * @return {Promise}
+ */
+function getCompanyAllEmployees() {
+    return new Promise(function(res) {
+        $.get(`${pm.urls.handler}get/get_all_company_employees`)
+            .done(function(resp) { res(resp); })
+            .fail(function(resp) {
+                res(getMessage(resp.status, true));
+            });
+    });
+}
+
 
 getCompanyEmployees()
     .then((resp) => {
         pm.cemployees = resp.Data;
+    });
+
+getCompanyAllEmployees()
+    .then((resp) => {
+        pm.allEmployees = resp.Data;
     });
 
 
@@ -545,13 +566,17 @@ function getMeasureSymbol(unit) {
  * 
  */
 function getEmployee(employeeId, index) {
-    if (pm.cemployees === undefined || pm.cemployees.length === 0) return {};
+    if (pm.allEmployees === undefined || pm.allEmployees.length === 0) return {};
     //
     let i = 0,
-        il = pm.cemployees.length;
+        il = pm.allEmployees.length;
     //
     for (i; i < il; i++) {
-        if (pm.cemployees[i][index] == employeeId) return pm.cemployees[i];
+        if (pm.allEmployees[i][index] == employeeId) {
+            pm.allEmployees[i]['image'] = pm.allEmployees[i]['image'] === undefined ? pm.allEmployees[i]['profile_picture'] : pm.allEmployees[i]['image'];
+
+            return pm.allEmployees[i];
+        }
     }
     //
     return {};

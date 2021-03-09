@@ -59,17 +59,19 @@
                                 Actions <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu csUL" aria-labelledby="dropdownMenu1" style="left: -80%">
-                                <li><a href="#"><i class="fa fa-plus-circle"></i> Add Reviewee</a></li>
-                                <li><a href="#"><i class="fa fa-download"></i> Download Report</a></li>
-                                <li><a href="#"><i class="fa fa-print"></i> Print</a></li>
-                                <li><a href="#"><i class="fa fa-clock-o"></i> Change Due Date</a></li>
-                                <li><a href="#"><i class="fa fa-pencil-square-o"></i> Edit Review Name</a></li>
+                                <li><a href="#" class="jsAddReviewers" data-id="<?=$review['sid'];?>"><i class="fa fa-plus-circle"></i> Add Reviewee</a></li>
+                                <!-- <li><a href="#"><i class="fa fa-download"></i> Download Report</a></li> -->
+                                <!-- <li><a href="#"><i class="fa fa-print"></i> Print</a></li> -->
+                                <!-- <li><a href="#"><i class="fa fa-clock-o"></i> Change Due Date</a></li> -->
+                                <!-- <li><a href="#"><i class="fa fa-pencil-square-o"></i> Edit Review Name</a></li> -->
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"><i class="fa fa-stop"></i> End Review</a></li>
                             </ul>
                         </div>
                     </span>
-                    <strong><?=$review['review_title'];?> <span class="btn alert-success"><?=$review['status'] == 'pending' ? 'Pending' : ( $review['status'] == 'started' ? 'Running' : 'Ended');?></span></strong> <br />
+                    <strong><?=$review['review_title'];?> 
+                    <!-- <span class="btn alert-success"><?=$review['status'] == 'pending' ? 'Pending' : ( $review['status'] == 'started' ? 'Running' : 'Ended');?></span> -->
+                    </strong> <br />
                     <!-- <p>Last Run by Mubashir Ahmed on Jan 01 2021, Sunday</p> -->
                 </h1>
             </div>
@@ -89,7 +91,7 @@
                         <div class="col-sm-6">
                             <ul>
                                 <li><a href="javascript:void(0)" class="active">Reviewees (<span><?=count($review['Reviewees']);?></span>)</a></li>
-                                <li><a href="javascript:void(0)">Reviewers (<span><?=count($review['Reviewers']);?></span>)</a></li>
+                                <!-- <li><a href="javascript:void(0)">Reviewers (<span><?=count($review['Reviewers']);?></span>)</a></li> -->
                             </ul>
                         </div>
                         <div class="col-sm-3">

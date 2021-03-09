@@ -222,8 +222,6 @@ class Performance_management extends Public_Controller{
         $this->pargs['pid'] = $reviewId;
         $this->pargs['pem'] = $employeeId;
 
-        _e($this->pargs['review'], true, true);
-
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
         $this->load->view("{$this->pp}reviews/{$this->mp}feedback", $this->pargs);
@@ -267,12 +265,7 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
         $this->pargs['pid'] = $reviewId;
-        $this->pargs['pem'] = $employeeId;
-        
-        // _e(
-        //     $this->pargs['review'],
-        //     true, true
-        // );
+        $this->pargs['pem'] = $employeeId;        
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -1200,6 +1193,19 @@ class Performance_management extends Public_Controller{
                         );
                     }
                 endforeach;
+                //
+                $this->pmm->_update(
+                    'performance_management_reviewers',
+                    [
+                        'is_completed' => 1
+                    ],
+                    [
+                        'review_sid' => $params['reviewId'],
+                        'reviewee_sid' => $params['revieweeId'],
+                        'reviewer_sid' => $pargs['employerId']
+                    ]
+                );
+                //
                 $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed';
                 //

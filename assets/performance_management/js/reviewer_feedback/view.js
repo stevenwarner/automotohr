@@ -151,7 +151,8 @@ $(function() {
             pm.urls.handler, {
                 action: "save_bulk_answer",
                 questions: questions,
-                revieweeId: pm.Pem
+                revieweeId: pm.Pem,
+                reviewId: pm.Id
             }, (resp) => {
                 ml(false, loaderName);
                 if (resp.Redirect === true) {

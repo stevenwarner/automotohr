@@ -649,7 +649,7 @@ async function saveReview(step, doRedirect){
             let questions = [];
             $.each(reviewOBJ.questions, (i, question) => {
                 questions[i] = question;
-                questions[i]['video_help'] = undefined;
+                questions[i]['video_help'] = question['video_help'] === undefined ? 0 : 1;
             });
             //
             await updateReview({
