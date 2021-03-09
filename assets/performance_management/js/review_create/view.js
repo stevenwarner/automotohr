@@ -834,6 +834,7 @@ $(function() {
      * @return {VOID}
      */
     function showTemplateQuestion(id, type, title) {
+        $('.csModal').remove();
         Modal({
             Id: 'jsTemplateQuestionsPreview',
             Title: `${title} (${ucwords(type)} Template)`,

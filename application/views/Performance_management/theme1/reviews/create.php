@@ -248,7 +248,7 @@
                                                 </select>
                                             </div>
                                             <div class="mb10">
-                                                <label>Individuals</label>
+                                                <label>Employees</label>
                                                 <select id="jsReviewVisibilityIndividuals" multiple></select>
                                             </div>
                                         </div>

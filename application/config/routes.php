@@ -1257,6 +1257,7 @@ $route['performance-management/review/(:num)'] = 'Performance_management/review/
 $route['performance-management/feedback/(:num)/(:num)'] = 'Performance_management/feedback/$1/$2';
 $route['performance-management/reviewer_feedback/(:num)/(:num)'] = 'Performance_management/reviewer_feedback/$1/$2';
 $route['performance-management/review/create'] = 'Performance_management/create_review';
+$route['performance-management/review/create/(:num)'] = 'Performance_management/create_review/$1';
 // Goals
 $route['performance-management/goal/create'] = 'Performance_management/create_goal';
 $route['performance-management/goals'] = 'Performance_management/goals';

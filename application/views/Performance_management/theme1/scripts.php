@@ -45,6 +45,9 @@
     <?php if(isset($permission)): ?>
         window.pm.permission = <?=json_encode($permission);?>;
     <?php endif; ?>
+    <?php if(isset($review)): ?>
+        window.pm.review = <?=json_encode($review);?>;
+    <?php endif; ?>
 </script>
 
 <script type="text/javascript" src="<?=base_url('assets/select2/select2.min.js');?>"></script>

@@ -106,6 +106,7 @@ $(function() {
             }
             //
             if (pm.permission.isSuperAdmin === undefined) {
+                console.log(1)
                 if (
                     pm.permission.teamIds.length === 0 &&
                     pm.permission.departmentIds.length === 0 &&
@@ -117,26 +118,28 @@ $(function() {
                     $('.jsCGBoxIndividual').hide();
                     $('#jsCGEmployee').select2('val', pm.employerId);
                     $('#jsCGType').select2('val', 1);
-                }
-                //
-                let typeOptions = ' <option value="0">[Select a type]</option>';
-                if (
-                    pm.permission.departmentIds.length > 0
-                ) {
-                    typeOptions += '<option value="3">Departments</option>';
-                }
-                if (
-                    pm.permission.employeeIds.length > 0
-                ) {
-                    typeOptions += '<option value="1">Individual</option>';
-                }
-                if (
-                    pm.permission.teamIds.length > 0
-                ) {
-                    typeOptions += '<option value="2">Team</option>';
-                }
+                    goal.employeeId = pm.employerId;
+                } else {
+                    //
+                    let typeOptions = ' <option value="0">[Select a type]</option>';
+                    if (
+                        pm.permission.departmentIds.length > 0
+                    ) {
+                        typeOptions += '<option value="3">Departments</option>';
+                    }
+                    if (
+                        pm.permission.employeeIds.length > 0
+                    ) {
+                        typeOptions += '<option value="1">Individual</option>';
+                    }
+                    if (
+                        pm.permission.teamIds.length > 0
+                    ) {
+                        typeOptions += '<option value="2">Team</option>';
+                    }
 
-                $('#jsCGType').html(typeOptions).select2();
+                    $('#jsCGType').html(typeOptions).select2();
+                }
             }
             //
             options = '<option value="0">[Select a role]</option>';
@@ -209,6 +212,9 @@ $(function() {
             rows += `</div>`;
             //
             $('#jsCreateGoalModal .jsAlignBox').html(rows);
+
+            //
+            $('#jsCGMeasure').trigger('change');
         });
     });
 

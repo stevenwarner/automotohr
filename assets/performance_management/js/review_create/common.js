@@ -175,6 +175,7 @@ const
     };
 
 
+
 /**
  * Click
  * 
@@ -396,6 +397,7 @@ function makeEmployeeView(byPass) {
             excludedIndividuals: $('#jsFilterExcludeEmployees').val() || [],
             excludedNewHires: $('#jsFilterExcludeNewHires').val() || 0
         };
+        console.log(filter);
         //
         allEmployees.map(function(em) {
             // Excluded employee
@@ -436,9 +438,6 @@ function makeEmployeeView(byPass) {
                 inc.push(em);
                 return;
             }
-
-            //
-            inc.push(em);
         });
     }
     //
@@ -803,3 +802,53 @@ getEmployeeListWithDnT()
             }, 1000);
         });
     }
+
+    /**
+     * 
+     */
+    function checkAndSetObj(){
+        //
+        if(pm.review === undefined) return;
+        //
+        reviewOBJ.id = pm.review.sid;
+        //
+        reviewOBJ.setTitle(pm.review.review_title);
+        reviewOBJ.setIndexValue('description', pm.review.description);
+        reviewOBJ.setIndexValue('roles', pm.review.visibility_roles || [], 'visibility');
+        reviewOBJ.setIndexValue('teams', pm.review.visibility_teams || [], 'visibility');
+        reviewOBJ.setIndexValue('departments', pm.review.visibility_departments || [], 'visibility');
+        reviewOBJ.setIndexValue('individuals', pm.review.visibility_employees || [], 'visibility');
+        // Schedule
+        reviewOBJ.setIndexValue('frequency', pm.review.frequency, 'schedule');
+        reviewOBJ.setIndexValue('reviewStartDate', moment( pm.review.review_start_date, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.ymdf), 'schedule');
+        reviewOBJ.setIndexValue('reviewEndDate', moment( pm.review.review_end_date, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.ymdf), 'schedule');
+        reviewOBJ.setIndexValue('repeatVal', pm.review.repeat_val, 'schedule');
+        reviewOBJ.setIndexValue('repeatType', pm.review.repeat_type, 'schedule');
+        reviewOBJ.setIndexValue('continueReview', pm.review.repeat_review, 'schedule');
+        reviewOBJ.setIndexValue('reviewDue', pm.review.review_due, 'schedule');
+        reviewOBJ.setIndexValue('reviewDueType', 'days', 'schedule');
+        reviewOBJ.setIndexValue('customRuns', pm.review.review_runs == '[]' ? [] : pm.review.review_runs, 'schedule');
+        //
+        reviewOBJ.setIndexValue('included', pm.review.included_employees != '[]' ? JSON.parse(pm.review.included_employees) : [], 'reviewees');
+        reviewOBJ.setIndexValue('excluded', pm.review.excluded_employees != '[]' ? JSON.parse(pm.review.excluded_employees) : [] || [], 'reviewees');
+        //
+        reviewOBJ.setIndexValue('type', pm.review.reviewers_types, 'reviewers');
+        reviewOBJ.setIndexValue('employees', pm.review.reviewers || [], 'reviewers');
+        //
+        reviewOBJ.setQuestions(pm.review.questions || []);
+        reviewOBJ.setIndexValue('feedback', pm.review.share_feedback);
+        //
+        $('#jsReviewStartDate').val(reviewOBJ.schedule.reviewStartDate);
+        $('#jsReviewEndDate').val(reviewOBJ.schedule.reviewEndDate);
+        //
+        $('#jsReviewVisibilityRoles').select2().select2('val', reviewOBJ.visibility.roles);
+        $('#jsReviewVisibilityDepartments').select2().select2('val', reviewOBJ.visibility.departments);
+        $('#jsReviewVisibilityTeams').select2().select2('val', reviewOBJ.visibility.teams);
+        //
+        // $('#jsReviewRepeatType').select2('val', reviewOBJ.visibility.teams);
+    }
+
+
+    
+//
+checkAndSetObj();

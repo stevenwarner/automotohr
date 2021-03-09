@@ -289,7 +289,7 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function create_review(){
+    function create_review($id = 0){
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -306,6 +306,10 @@ class Performance_management extends Public_Controller{
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         // Get job titles
         $this->pargs['jobTitles'] = $this->pmm->getCompanyJobTitles($this->pargs['companyId']);
+        //
+        if($id != 0){
+            $this->pargs['review'] = $this->pmm->getReviewById($id, '*', 0, ['is_draft' => 1]);
+        }
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);

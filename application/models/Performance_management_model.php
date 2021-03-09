@@ -187,7 +187,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select('questions')
         ->where('sid', $templateId)
-        ->get($this->tables['PMCT'])
+        ->get($this->tables['PMT'])
         ->row_array()['questions'];
     }
     
@@ -540,14 +540,16 @@ class Performance_management_model extends CI_Model{
     function getReviewById(
         $id,
         $columns = '*', 
-        $archived = 0
+        $archived = 0,
+        $where = []
     ){
         $this->db
         ->select(is_array($columns) ? implode(',', $columns) : $columns)
         ->where('sid', $id)
         ->where('is_archived', $archived)
         ->limit(1);
-        // 
+        //
+        if(!empty($where)) $this->db->where($where);
         //
         $a = $this->db->get($this->tables['PM']);
         $b = $a->row_array();

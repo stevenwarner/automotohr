@@ -102,7 +102,9 @@ $(document).on('click', '.jsAddRevieweeSave', function(event) {
     //
     saveReviewers($('#jsAddReviewReviewId').val(), revieweeId, reviewerIds)
         .then((resp) => {
-
+            handleSuccess(getError('Reviewee added.'), () => {
+                window.location.reload();
+            });
         });
     //
     ml(true, 'jsAddRevieweeLoader');

@@ -8,20 +8,20 @@
             'icon' => 'dashboard',
             'segment' => 'dashboard'
         ],
-        // [
-        //     'title' => 'Create a Review',
-        //     'url' => '/review/create',
-        //     'slug' => 'create',
-        //     'icon' => 'plus-square',
-        //     'segment' => 'review/create'
-        // ],
-        // [
-        //     'title' => 'Reviews',
-        //     'url' => '/reviews',
-        //     'slug' => 'reviews',
-        //     'icon' => 'th-list',
-        //     'segment' => 'reviews'
-        // ],
+        [
+            'title' => 'Create a Review',
+            'url' => '/review/create',
+            'slug' => 'create',
+            'icon' => 'plus-square',
+            'segment' => 'review/create'
+        ],
+        [
+            'title' => 'Reviews',
+            'url' => '/reviews',
+            'slug' => 'reviews',
+            'icon' => 'th-list',
+            'segment' => 'reviews'
+        ],
         // [
         //     'title' => 'One-on-One',
         //     'url' => '/meeting',

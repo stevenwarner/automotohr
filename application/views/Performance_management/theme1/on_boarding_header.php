@@ -21,7 +21,7 @@
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/responsive.css') ?>">
 
     <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
-    <?php $this->load->view('performance_management/theme1/styles'); ?>
+    <?php $this->load->view('Performance_management/theme1/styles'); ?>
     <?php }?>
 
     <script src="<?php echo base_url('assets/employee_panel/js/jquery-1.11.3.min.js') ?>"></script>

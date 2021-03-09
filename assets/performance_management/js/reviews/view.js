@@ -308,33 +308,41 @@ $(function() {
             rows += `   </td>`;
             rows += `   <td>`;
             rows += `       <div class="csBTNBox">`;
-            rows += `           <a href="${pm.urls.pbase}review/${review.sid}" class="btn btn-black"><i class="fa fa-eye"></i> View</a>`;
-            rows += `           <div class="dropdown">`;
-            rows += `               <button class="btn dropdown-toggle" type="button" id="dropdownMenu${review.sid}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">`;
-            rows += `                   <i class="fa fa-ellipsis-v"></i>`;
-            rows += `               </button>`;
-            rows += `               <ul class="dropdown-menu ulToLeft" aria-labelledby="dropdownMenu${review.sid}">`;
-            rows += `                   <li><a href="${pm.urls.pbase}download/review/${review.sid}"><i class="fa fa-download"></i> Download Report</a></li>`;
-            rows += `                   <li><a href="${pm.urls.pbase}print/review/${review.sid}"><i class="fa fa-print"></i> Print</a></li>`;
-            if (review.is_template == 0) {
-                rows += `                   <li><a href="javascript:void(0)" class="jsSaveReviewAsTemplate"><i class="fa fa-save"></i> Save As Template</a></li>`;
+            if (filter.reviewStatus == 'active') {
+                rows += `           <a href="${pm.urls.pbase}review/${review.sid}" class="btn btn-black"><i class="fa fa-eye"></i> View</a>`;
+            } else if (filter.reviewStatus == 'draft') {
+                rows += `           <a href="${pm.urls.pbase}review/create/${review.sid}" class="btn btn-black"><i class="fa fa-eye"></i> Complete Review</a>`;
             }
-            rows += `                   <li role="separator" class="divider"></li>`;
-            rows += `                   <li><a href="javascript:void(0)" class="jsAddReviewers"><i class="fa fa-plus-circle"></i> Add Reviewers</a></li>`;
-            if (review.status == 'started') {
-                rows += `                   <li><a href="javascript:void(0)" class="jsEndReview"><i class="fa fa-stop-circle"></i> End Review</a></li>`;
+            if (filter.reviewStatus != 'draft') {
+
+
+                rows += `           <div class="dropdown">`;
+                rows += `               <button class="btn dropdown-toggle" type="button" id="dropdownMenu${review.sid}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">`;
+                rows += `                   <i class="fa fa-ellipsis-v"></i>`;
+                rows += `               </button>`;
+                rows += `               <ul class="dropdown-menu ulToLeft" aria-labelledby="dropdownMenu${review.sid}">`;
+                // rows += `                   <li><a href="${pm.urls.pbase}download/review/${review.sid}"><i class="fa fa-download"></i> Download Report</a></li>`;
+                // rows += `                   <li><a href="${pm.urls.pbase}print/review/${review.sid}"><i class="fa fa-print"></i> Print</a></li>`;
+                if (review.is_template == 0) {
+                    rows += `                   <li><a href="javascript:void(0)" class="jsSaveReviewAsTemplate"><i class="fa fa-save"></i> Save As Template</a></li>`;
+                }
+                rows += `                   <li role="separator" class="divider"></li>`;
+                rows += `                   <li><a href="javascript:void(0)" class="jsAddReviewers"><i class="fa fa-plus-circle"></i> Add Reviewers</a></li>`;
+                if (review.status == 'started') {
+                    rows += `                   <li><a href="javascript:void(0)" class="jsEndReview"><i class="fa fa-stop-circle"></i> End Review</a></li>`;
+                }
+                if (review.status == 'ended') {
+                    rows += `                   <li><a href="javascript:void(0)" class="jsReopenReview"><i class="fa fa-stop-circle"></i> Re-open Review</a></li>`;
+                }
+                if (review.is_archived == 0) {
+                    rows += `                   <li><a href="javascript:void(0)" class="jsReviewStatus" data-type="1"><i class="fa fa-archive"></i> Archive Review</a></li>`;
+                } else {
+                    rows += `                   <li><a href="javascript:void(0)" class="jsReviewStatus" data-type="0"><i class="fa fa-check"></i> Activate Review</a></li>`;
+                }
+                rows += `               </ul>`;
+                rows += `           </div>`;
+                rows += `       </div>`;
             }
-            if (review.status == 'ended') {
-                rows += `                   <li><a href="javascript:void(0)" class="jsReopenReview"><i class="fa fa-stop-circle"></i> Re-open Review</a></li>`;
-            }
-            if (review.is_archived == 0) {
-                rows += `                   <li><a href="javascript:void(0)" class="jsReviewStatus" data-type="1"><i class="fa fa-archive"></i> Archive Review</a></li>`;
-            } else {
-                rows += `                   <li><a href="javascript:void(0)" class="jsReviewStatus" data-type="0"><i class="fa fa-check"></i> Activate Review</a></li>`;
-            }
-            rows += `               </ul>`;
-            rows += `           </div>`;
-            rows += `       </div>`;
             rows += `   </td>`;
             rows += `</tr>`;
         });
