@@ -519,7 +519,7 @@ $(function() {
                         hasAccess = true;
                     }
                 } else hasAccess = true;
-            }
+            } else hasAccess = true;
             //
             if (goal.employee_sid != pm.employerId && !hasAccess) {
 
@@ -625,7 +625,7 @@ $(function() {
             rows += `                    <!-- Track Row -->`;
             rows += `                    <div class="col-sm-4 col-xs-12">`;
             rows += `                        <div class="text-right">`;
-            rows += `                            <h4 class="mb0"><strong>${goal.on_track == 1 ? "On" : "Off"} Track</strong></h4>`;
+            rows += `                            <h4 class="mb0"><strong style="color: ${goal.on_track == 1 ? "#81b431" : "#cc1100;"}; font-weight: 900;">${goal.on_track == 1 ? "On" : "Off"} Track</strong></h4>`;
             rows += `                            <p class="ma0">As Of ${todayDate.format(pm.dateTimeFormats.mdy)}</p>`;
             rows += `                        </div>`;
             rows += `                    </div>`;

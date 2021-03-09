@@ -645,7 +645,7 @@ class Performance_management_model extends CI_Model{
             $c = $a->result_array();
             $a->free_result();
             //
-            if(empty($c)) return [];
+            if(empty($c)) return $b;
             //
             $newReviewers = [];
             //

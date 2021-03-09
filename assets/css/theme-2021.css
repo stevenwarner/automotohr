@@ -1061,7 +1061,7 @@
 .csPageWrap img {
     width: 100%;
     height: 100%;
-    border-radius: 50% !important;
+    border-radius: 5px !important;
 }
 
 

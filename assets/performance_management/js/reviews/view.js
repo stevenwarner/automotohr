@@ -280,31 +280,36 @@ $(function() {
         //
         reviews.map((review) => {
             //
-            const reviewerProgress = getProgress(review.reviewers, 'review');
-            const feedbackProgress = getProgress(review.reviewers, 'review');
-            //
             let status = '';
-            //
-            if (review.status == 'started') {
-                status = '<strong class="btn btn-xs alert-success">Running</strong>';
-            } else if (review.status == 'ended') {
-                status = '<strong class="btn btn-xs alert-danger">Ended</strong>';
+            if (filter.reviewStatus != 'draft') {
+                var reviewerProgress = getProgress(review.reviewers, 'review');
+                var feedbackProgress = getProgress(review.reviewers, 'review');
+                //
+                if (review.status == 'started') {
+                    status = '<strong class="btn btn-xs alert-success">Running</strong>';
+                } else if (review.status == 'ended') {
+                    status = '<strong class="btn btn-xs alert-danger">Ended</strong>';
+                }
             }
             //
             rows += `<tr data-id="${review.sid}">`;
             rows += `   <td><p>${review.review_title} ${status}</p></td>`;
             rows += `   <td>${convertDate(review.review_start_date)}</td>`;
             rows += `   <td>`;
-            rows += `        <div class="progress csRadius100">`;
-            rows += `           <div class="progress-bar" role="progressbar" aria-valuenow="${reviewerProgress.completed}" aria-valuemin="0" aria-valuemax="${reviewerProgress.total}" style="width: ${reviewerProgress.completed}%;"></div>`;
-            rows += `        </div>`;
-            rows += `        <small>${reviewerProgress.completed}% Not Completed</small>`;
+            if (filter.reviewStatus != 'draft') {
+                rows += `        <div class="progress csRadius100">`;
+                rows += `           <div class="progress-bar" role="progressbar" aria-valuenow="${reviewerProgress.completed}" aria-valuemin="0" aria-valuemax="${reviewerProgress.total}" style="width: ${reviewerProgress.completed}%;"></div>`;
+                rows += `        </div>`;
+                rows += `        <small>${reviewerProgress.completed}% Not Completed</small>`;
+            }
             rows += `   </td>`;
             rows += `   <td>`;
-            rows += `        <div class="progress csRadius100">`;
-            rows += `           <div class="progress-bar" role="progressbar" aria-valuenow="${feedbackProgress.completed}" aria-valuemin="0" aria-valuemax="${feedbackProgress.total}" style="width: ${feedbackProgress.completed}%;"></div>`;
-            rows += `        </div>`;
-            rows += `        <small>${feedbackProgress.completed}% Not Completed</small>`;
+            if (filter.reviewStatus != 'draft') {
+                rows += `        <div class="progress csRadius100">`;
+                rows += `           <div class="progress-bar" role="progressbar" aria-valuenow="${feedbackProgress.completed}" aria-valuemin="0" aria-valuemax="${feedbackProgress.total}" style="width: ${feedbackProgress.completed}%;"></div>`;
+                rows += `        </div>`;
+                rows += `        <small>${feedbackProgress.completed}% Not Completed</small>`;
+            }
             rows += `   </td>`;
             rows += `   <td>`;
             rows += `       <div class="csBTNBox">`;
