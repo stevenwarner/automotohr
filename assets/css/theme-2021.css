@@ -1249,6 +1249,10 @@ nav.navigation ul li a {
     position: relative;
 }
 
+.jsGoalBox:hover {
+    background-color: #f2f2f2;
+}
+
 
 /***/
 

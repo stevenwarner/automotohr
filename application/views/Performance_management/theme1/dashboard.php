@@ -32,6 +32,15 @@
                     </div>
                 <?php else: 
                         foreach($goals as $goal): ?>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3><?=$goal['title'];?></h3>
+                                <h4>
+                                    <strong><?=$goal['on_track'] == 1 ? "On" : "Off"; ?> Track</strong>
+                                    <strong class="pull-right"><?= $goal['measure_tyh3e'] == 1 ? '%' : ($goal['measure_type'] == 2 ? '$' : '');?> <?=$goal['completed_target'];?> / <?=$goal['target'];?></strong>
+                                </h4>
+                            </div>
+                        </div>
                         
                 <?php endforeach; 
                 endif; ?>

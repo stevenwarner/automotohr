@@ -107,9 +107,6 @@ class Performance_management extends Public_Controller{
         // Get department & teams list
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         // My goals
-        $this->pargs['my_goals'] = $this->pmm->getMyGoals($this->pargs['employerId']);
-
-        // _e($this->pargs['my_goals']);
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
