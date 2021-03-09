@@ -1,7 +1,8 @@
 #!/usr/bin/php -q
 <?php error_reporting(E_ALL);
 //$devEmail = 'ahassan.egenie@gmail.com';
-//$devEmail = 'dev@automotohr.com';
+// $devEmail = 'dev@automotohr.com';
+$devEmail = 'mubashir.saleemi123@gmail.com';
 /* Read the message from STDIN */
 $fd = fopen("php://stdin", "r");
 $email = ""; // This will be the variable holding the data.
@@ -12,10 +13,10 @@ while (!feof($fd)) {
 
 fclose($fd);
 $email = str_replace("'", '"', $email);
-//mail($devEmail, 'PipeScript: ' . date('Y-m-d H:i:s'), $email);
-$hostname = "localhost";
-$username = "automoto_super";
-$password = '6Q?lgxvOo9u_EZpgVM';
+mail($devEmail, 'PipeScript: ' . date('Y-m-d H:i:s'), $email);
+$hostname = "172.31.18.37";
+$username = "ahrdbadmin";
+$password = '8E*QrG)M5nw6g';
 $dbhandle = mysqli_connect($hostname, $username, $password, 'automoto_hr') or die('Unable to Connect to MySql');
 $currentDate = date('Y-m-d H:i:s');
 $query_string = "insert into incoming_mails (`full_info`,`date_received`) VALUES ('" . $email . "','" . $currentDate . "')";
