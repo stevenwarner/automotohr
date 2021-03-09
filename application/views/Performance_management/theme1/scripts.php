@@ -48,7 +48,11 @@
     <?php if(isset($review)): ?>
         window.pm.review = <?=json_encode($review);?>;
     <?php endif; ?>
+    <?php if(isset($employeeId)): ?>
+        window.pm.employeeId = <?=json_encode($employeeId);?>;
+    <?php endif; ?>
 </script>
+
 
 <script type="text/javascript" src="<?=base_url('assets/select2/select2.min.js');?>"></script>
 <script type="text/javascript" src="<?=base_url('assets/js/pagination.min.js');?>"></script>

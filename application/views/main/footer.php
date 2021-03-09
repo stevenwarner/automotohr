@@ -348,7 +348,7 @@ if ($class != 'dashboard' &&
 </footer>
 <?php if($class == 'time_off'){ ?>
     <?php $this->load->view('timeoff/scripts'); ?>
-<?php } ?>
+<?php }?>
 <?php if($class == 'performance_management'){ ?>
     <?php $this->load->view("{$pp}scripts"); ?>
 <?php } ?>

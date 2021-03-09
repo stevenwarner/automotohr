@@ -258,8 +258,8 @@
                                 <span class="left-addon">
                                     <i class="fa fa-pencil-square-o"></i>
                                 </span>
-                                <h4>Performance Review</h4>
-                                <a href="<?php echo base_url('performance_review') . '/' . $employer["sid"]; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                <h4>Performance Management</h4>
+                                <a href="<?php echo base_url('performance-management') . 'employee/' . $employer["sid"]; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
                             </li>
                         <?php } ?>
                         <?php if(checkIfAppIsEnabled('performance_review')) { ?>
@@ -268,7 +268,7 @@
                                     <i class="fa fa-bullseye"></i>
                                 </span>
                                 <h4>Goals</h4>
-                                <a href="<?php echo base_url('performance_management/goals/'.($employer["sid"]).''); ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                <a href="<?php echo base_url('performance-management/employee/goals/'.($employer["sid"]).''); ?>">View<i class="fa fa-chevron-circle-right"></i></a>
                             </li>
                         <?php } ?>
                     </ul>

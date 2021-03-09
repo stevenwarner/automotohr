@@ -834,7 +834,7 @@ class Performance_management_model extends CI_Model{
         //
         if($filter['status'] != -1) $this->db->where('status', $filter['status']);
         if($filter['type'] != -1) $this->db->where('goal_type', $filter['type']);
-        if($filter['type'] == 1) $this->db->where('employee_sid', $employeeId);
+        // if($filter['type'] == 1) $this->db->where('employee_sid', $employeeId);
         if($filter['employeeId'] != -1 && $filter['employeeId'] != 0) $this->db->where('employee_sid', $filter['employeeId']);
         //
         $a = $this->db->get('goals');
@@ -1125,5 +1125,17 @@ class Performance_management_model extends CI_Model{
             'departmentIds' => array_column($d, 'department_sid'),
             'employeeIds' => array_unique(array_merge(array_column($d, 'employee_sid'), array_column($t, 'employee_sid')), SORT_STRING)
         ];
+    }
+
+    /**
+     * 
+     */
+    function getMyGoals($employeeId){
+        return $this->db
+        ->where('status', 1)
+        ->where('employee_sid', $employeeId)
+        ->order_by('sid', 'desc')
+        ->get('goals')
+        ->result_array();
     }
 }

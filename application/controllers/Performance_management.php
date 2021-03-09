@@ -106,6 +106,10 @@ class Performance_management extends Public_Controller{
         $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
         // Get department & teams list
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // My goals
+        $this->pargs['my_goals'] = $this->pmm->getMyGoals($this->pargs['employerId']);
+
+        _e($this->pargs['my_goals']);
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -387,10 +391,68 @@ class Performance_management extends Public_Controller{
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         // Get employer role
         $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        $this->pargs['gp'] = true;
         //
         $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
         $this->load->view("{$this->pp}lms/goals/{$this->mp}view", $this->pargs);
+        $this->load->view("{$this->pp}footer", $this->pargs);
+        $this->load->view("main/footer");
+    }
+    
+    /**
+     * Goals - List Goal
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/08/2021
+     * 
+     * @return Void
+     */
+    function gp_goals($sid){
+        // 
+        $this->checkLogin($this->pargs);
+        // // Set title
+        $this->pargs['title'] = 'Performance Management - List Goals';
+        $this->pargs['employee'] = $this->pargs['employerDetails'];
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+
+        $this->pargs['right_bar'] = employee_right_nav($sid);
+        //
+        $this->load->model('dashboard_model');
+        $this->load->model('application_tracking_system_model');
+        //
+        $this->pargs['sid'] = $sid;
+        //
+        $this->pargs['employer'] = $this->pargs['employer'] = $this->dashboard_model->get_company_detail($sid);
+        
+        // Added on: 04-07-2019
+        if (empty($this->pargs['employer']['resume'])) { // check if reseme is uploaded
+            $this->pargs['employer']['resume_link'] = "javascript:void(0);";
+            $this->pargs['resume_link_title'] = "No Resume found!";
+        } else {
+            $this->pargs['employer']['resume_link'] = AWS_S3_BUCKET_URL . $this->pargs['employer']['resume'];
+            $this->pargs['resume_link_title'] = $this->pargs['employer']['resume'];
+        }
+        
+        if (empty($this->pargs['employer']['cover_letter'])) { // check if cover letter is uploaded
+            $this->pargs['employer']["cover_link"] = "javascript:void(0)";
+            $this->pargs['cover_letter_title'] = "No Cover Letter found!";
+        } else {
+            $this->pargs['employer']["cover_link"] = AWS_S3_BUCKET_URL . $this->pargs['employer']['cover_letter'];
+            $this->pargs['cover_letter_title'] = $this->pargs['employer']['cover_letter'];
+        }
+        //
+        $this->pargs['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
+        $this->pargs['pp'] = $this->pp;
+        $this->pargs['gp'] = true;
+        $this->pargs['employeeId'] = $sid;
+        //
+        $this->load->view("main/header", $this->pargs);
+        $this->load->view("{$this->pp}header", $this->pargs);
+        $this->load->view("{$this->pp}gp/goals/{$this->mp}index", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
     }

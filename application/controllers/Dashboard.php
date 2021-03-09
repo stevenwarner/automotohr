@@ -765,6 +765,10 @@ class Dashboard extends Public_Controller {
 
             $this->session->set_userdata('time_off_theme', $data['theme']);
 
+            //
+            $this->load->model('performance_management_model', 'pmm');
+            $data['goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
+
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');
             $this->load->view('main/footer');

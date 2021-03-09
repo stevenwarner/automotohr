@@ -152,7 +152,7 @@
         <?php }?>
         <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
         <!-- Performance Management  -->
-            <?php $this->load->view("{$pp}styles"); ?>
+            <?php  $this->load->view("{$pp}styles"); ?>
         <?php }?>
     </head>
 

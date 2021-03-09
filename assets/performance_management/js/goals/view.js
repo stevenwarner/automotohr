@@ -1,9 +1,13 @@
 $(function() {
 
-    const filter = {
+    var filter = {
         status: -1,
         type: 1,
         employeeId: 0
+    };
+    if (window.location.pathname.match(/employee/ig) !== null) {
+        filter.employeeId = pm.employeeId;
+        alert(filter.employeeId);
     };
     let XHR = null;
     //
@@ -543,9 +547,12 @@ $(function() {
             let completed = goal.completed_target * 100 / goal.target;
             let pp = totalDays2 * 100 / totalDays;
             pp = pp >= 99 ? 99 : pp
-                // 
+            let cc = 'col-sm-3';
+            //
+            if (window.location.pathname.match(/employee/ig) !== null) cc = 'col-sm-4';
+            // 
             rows += ` <!-- Box -->`;
-            rows += `<div class="col-sm-3 col-xs-12">`;
+            rows += `<div class="${cc} col-xs-12">`;
             rows += `    <div class="csPageBox csRadius5 jsGoalBox" data-id="${goal.sid}">`;
             rows += `       <div class="csIPLoader jsIPLoader" data-page="goal_box"><i class="fa fa-circle-o-notch fa-spin"></i></div>`;
             rows += `        <!-- HEADER -->`;

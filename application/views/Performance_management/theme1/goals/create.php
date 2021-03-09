@@ -96,7 +96,7 @@
                         <select id="jsCGMeasure">
                             <option value="1">Percentage (%)</option>
                             <option value="2">Volume (Numeric)</option>
-                            <option value="3">Dollers ($)</option>
+                            <option value="3">Dollars ($)</option>
                         </select>
                     </div>
                 </div>

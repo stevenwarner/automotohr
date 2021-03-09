@@ -58,6 +58,7 @@
 ?>
 <div class="clearfix"></div>
 <div class="csPageWrap">
+<?php if(!isset($gp)): ?>
     <div class="csPageNav csSticky">
         <nav class="csNavBar ">
             <div class="container-fluid">
@@ -84,3 +85,4 @@
             </div>
         </nav>
     </div>
+    <?php endif;?>
