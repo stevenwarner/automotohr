@@ -51,6 +51,9 @@
     <?php if(isset($employeeId)): ?>
         window.pm.employeeId = <?=json_encode($employeeId);?>;
     <?php endif; ?>
+    <?php if(isset($isAllowed)): ?>
+        window.pm.isAllowed = <?=$isAllowed?>;
+    <?php endif; ?>
 </script>
 
 

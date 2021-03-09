@@ -37,13 +37,14 @@
                             <option value="">Jan 01 - Jan 15</option>
                         </select>
                     </span>
+                    <span class="csBTNBox">
+                        <a href="<?=purl('download/reviewer_feedback/'.($pid).'/'.($review['Reviewee'][0]['reviewee_sid']).''.'/'.($employerId).'');?>" class="btn btn-orange btn-lg"><i class="fa fa-download"></i> Download As PDF</a>
                     <?php if(in_array($employerId, array_column($review['Reviewer']['reviewer_sid']))){ ?>
 
-                    <span class="csBTNBox">
                         <a href="javascript:void(0);" class="btn btn-orange btn-lg jsQuestionSaveBtn"><i class="fa fa-save"></i> Save</a>
                         <a href="javascript:void(0)" class="btn btn-black btn-lg jsQuestionFLBtn"><i class="fa fa-pencil-square-o"></i> Finish Later</a>
-                    </span>
                     <?php } ?>
+                    </span>
                     <div class="clearfix"></div>
                 </div>
             </div>

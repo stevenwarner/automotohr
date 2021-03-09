@@ -13,9 +13,9 @@
     //
     $progress = [];
     $progress['reviewers']['total']
-     = array_filter($review['Reviewers'], function($reviewer){
+     = array_values(array_filter($review['Reviewers'], function($reviewer){
         return $reviewer['is_manager'] == 0;
-    });
+    }));
     //
     $progress['reviewers']['completed'] = array_filter($review['Reviewers'], function($reviewer){
         return $reviewer['is_manager'] == 0 && $reviewer['is_completed'] == 1;
@@ -26,9 +26,9 @@
     $progress['reviewers']['pending_per'] = 100  - $progress['reviewers']['completed_per'];
     //
     $progress['managers']['total']
-     = array_filter($review['Reviewers'], function($reviewer){
+     = array_values(array_filter($review['Reviewers'], function($reviewer){
         return $reviewer['is_manager'] == 1;
-    });
+    }));
     //
     $progress['managers']['completed'] = array_filter($review['Reviewers'], function($reviewer){
         return $reviewer['is_manager'] == 1 && $reviewer['is_completed'] == 1;
@@ -37,7 +37,6 @@
     $progress['managers']['total_per'] = 100;
     $progress['managers']['completed_per'] = ceil((count($progress['managers']['completed']) * 100 )/ count($progress['managers']['total']));
     $progress['managers']['pending_per'] = 100  - $progress['managers']['completed_per'];
-
 ?>
 
 <div class="container-fluid">
@@ -86,7 +85,7 @@
                 <!-- Loader -->
                 <div class="csIPLoader jsIPLoader dn" data-page="review_listing"><i class="fa fa-circle-o-notch fa-spin"></i></div>
                 <!-- Heading -->
-                <div class="csPageBoxHeader pa10 pl10 pr10">
+                <div class="csPageBoxHeader pa10 pl10 pr10 dn">
                     <div class="row">
                         <div class="col-sm-6">
                             <ul>
@@ -118,11 +117,11 @@
                                         aria-valuemax="100" style="width: <?=$progress['reviewers']['completed_per'];?>%;"></div>
                                 </div>
                                 <ul>
-                                    <li>
+                                    <li class="jsPopoverLiReviewer" title="Reviewers Progress">
                                         <span class="csRadius50 active"></span>
                                         <?=$progress['reviewers']['completed_per'];?>% Completed
                                     </li>
-                                    <li>
+                                    <li class="jsPopoverLiReviewer" title="Reviewers Progress">
                                         <span class="csRadius50"></span>
                                         <?=$progress['reviewers']['pending_per'];?>% Not Completed
                                     </li>
@@ -136,11 +135,11 @@
                                         aria-valuemax="100" style="width: <?=$progress['managers']['completed_per'];?>%;"></div>
                                 </div>
                                 <ul>
-                                    <li>
+                                    <li class="jsPopoverLiManager"  title="Managers Progress">
                                         <span class="csRadius50 active"></span>
                                         <?=$progress['managers']['completed_per'];?>% Completed
                                     </li>
-                                    <li>
+                                    <li class="jsPopoverLiManager"  title="Managers Progress">
                                         <span class="csRadius50"></span>
                                         <?=$progress['managers']['pending_per'];?>% Not Completed
                                     </li>
@@ -166,7 +165,12 @@
                                     <tbody>
                                     <?php if(!empty($review['Reviewees'])):
                                         foreach($review['Reviewees'] as $reviewee):?>
-                                        <tr>
+                                        <tr 
+                                            data-id="<?=$reviewee['reviewee_sid'];?>" 
+                                            data-name="<?=$employees[$reviewee['reviewee_sid']]['name'];?>"
+                                            data-sd ="<?=formatDate($reviewee['start_date'], 'Y-m-d', 'm/d/Y');?>"
+                                            data-ed ="<?=formatDate($reviewee['end_date'], 'Y-m-d', 'm/d/Y');?>"
+                                        >
                                             <td>
                                                 <div class="csEBox">
                                                     <figure>
@@ -239,10 +243,9 @@
                                                             aria-expanded="true">
                                                             <i class="fa fa-ellipsis-v"></i>
                                                         </button>
-                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                                            <li><a href="#">Remove Revieww</a></li>
-                                                            <li role="separator" class="divider"></li>
-                                                            <li><a href="#">Settings</a></li>
+                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="left: auto; right: 100%;">
+                                                            <li><a href="javascript:void(0)" class="jsRemoveReviewee">Remove Reviewee</a></li>
+                                                            <li><a href="javascript:void(0)" class="jsReviewPeriodReviewee">Change Review Period</a></li>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -266,3 +269,59 @@
         </div>
     </div>
 </div>
+
+<?php
+    $reviewListing = [];
+    foreach($progress['reviewers']['total'] as $e){
+        $reviewListing[] = [
+            'name' => $employees[$e['reviewer_sid']]['name'],
+            'completed' => $e['is_completed']
+        ];
+    }
+    $managerListing = [];
+    foreach($progress['managers']['total'] as $e){
+        $managerListing[] = [
+            'name' => $employees[$e['reviewer_sid']]['name'],
+            'completed' => $e['is_completed']
+        ];
+    }
+?>
+
+<script>
+
+let reviewerListing = <?=json_encode($reviewListing);?>;
+let managerListing = <?=json_encode($managerListing);?>;
+
+
+$('.jsPopoverLiReviewer').popover({
+    placement: "bottom auto",
+    trigger: 'hover',
+    html: true,
+}).on('inserted.bs.popover', function(){
+    let html = `<ul class="csPopoverLi">`;
+    reviewerListing.map(function(l){
+        html += `<li><strong>${l.name}</strong><i class="fa fa-circle ${l.completed == 1 ? "active" : ""}"></i></li>`;
+    });
+    html += `</ul>`;
+    $(this).parent().find('.popover-content').html(html)
+});
+
+$('.jsPopoverLiManager').popover({
+    placement: "bottom auto",
+    trigger: 'hover',
+    html: true,
+}).on('inserted.bs.popover', function(){
+    let html = `<ul class="csPopoverLi">`;
+    managerListing.map(function(l){
+        html += `<li><strong>${l.name}</strong><i class="fa fa-circle ${l.completed == 1 ? "active" : ""}"></i></li>`;
+    });
+    html += `</ul>`;
+    $(this).parent().find('.popover-content').html(html)
+});
+
+setTimeout(() => {
+    $('.jsPopoverLiReviewer').tooltip('destroy')
+    $('.jsPopoverLiManager').tooltip('destroy')
+}, 1000);
+</script>
+

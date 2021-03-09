@@ -266,6 +266,7 @@ class Performance_management extends Public_Controller{
         $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
         $this->pargs['pid'] = $reviewId;
         $this->pargs['pem'] = $employeeId;        
+        $this->pargs['isAllowed'] = in_array($this->pargs['employerId'], array_column($this->pargs['review']['reviewer_sid']));
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -310,6 +311,40 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}reviews/{$this->mp}create", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
+    }
+    
+    /**
+     * Goals - Create Goal
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/04/2021
+     * 
+     * @return Void
+     */
+    function download(
+        $type,
+        $reviewId = 0,
+        $revieweeId = 0,
+        $reviewerId = 0
+    ){
+        // 
+        $this->checkLogin($this->pargs);
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['userId']] = [
+                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
+                    'role' => remakeEmployeeName($employee, false),
+                    'img' => getImageURL($employee['image']),
+                    'joined' => formatDate($employee['joined_at'], 'Y-m-d', 'M d D, Y')
+                ];
+            }
+        }
+        //
+        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $revieweeId, $reviewerId);
+        $this->load->view("{$this->pp}reviews/download_q", $this->pargs);
     }
     
     /**
@@ -1120,6 +1155,38 @@ class Performance_management extends Public_Controller{
                 $ins['note'] = json_encode($upd);
                 //
                 $this->pmm->_insert($this->tables['GH'], $ins);
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
+                //
+                res($this->resp);
+            break;
+           
+            //
+            case "remove_reviewee":
+                //
+                $this->pmm->removeReviewee(
+                    $params['reviewId'],
+                    $params['id']
+                );
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
+                //
+                res($this->resp);
+            break;
+            
+            case "update_review_period":
+                //
+                $this->pmm->_update(
+                    'performance_management_reviewees', [
+                        'start_date' => DateTime::createfromformat('m/d/Y', $params['startDate'])->format('Y-m-d'),
+                        'end_date' => DateTime::createfromformat('m/d/Y', $params['endDate'])->format('Y-m-d')
+                    ], [
+                        'review_sid' => $params['reviewId'],
+                        'reviewee_sid' => $params['revieweeId']
+                    ]
+                );
                 //
                 $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed';

@@ -1268,3 +1268,4 @@ $route['performance-management/handler/post'] = 'Performance_management/post_han
 // LMS
 $route['performance-management/lms/goals'] = 'Performance_management/lms_goals';
 $route['performance-management/employee/goals/(:num)'] = 'Performance_management/gp_goals/$1';
+$route['performance-management/download/(:any)/(:num)/(:num)/(:num)'] = 'Performance_management/download/$1/$2/$3/$4';

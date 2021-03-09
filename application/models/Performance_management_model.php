@@ -1138,4 +1138,22 @@ class Performance_management_model extends CI_Model{
         ->get('goals')
         ->result_array();
     }
+
+    /**
+     * 
+     */
+    function removeReviewee(
+        $reviewId,
+        $revieweeId
+    ){
+        $this->db
+        ->where('review_sid',$reviewId)
+        ->where('reviewee_sid',$revieweeId)
+        ->delete('performance_management_reviewees');
+        //
+        $this->db
+        ->where('review_sid',$reviewId)
+        ->where('reviewee_sid',$revieweeId)
+        ->delete('performance_management_reviewers');
+    }
 }

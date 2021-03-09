@@ -123,6 +123,7 @@ $(function() {
      * 
      */
     function saveAnswer(question, questionId) {
+        if (!pm.isAllowed) return false;
         //
         $.post(
             pm.urls.handler, {
