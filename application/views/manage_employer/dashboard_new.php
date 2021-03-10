@@ -770,8 +770,8 @@
 
                                 <!-- Performance Review -->
                                 <?php
-                                // if (checkIfAppIsEnabled('performance_review') ) { 
-                                     if ($company_sid == 8578 ) {
+                                if (checkIfAppIsEnabled('performance_review') ) { 
+                                    //  if ($company_sid == 8578 ) {
                                          ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">

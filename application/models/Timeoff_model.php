@@ -9642,6 +9642,9 @@ class Timeoff_model extends CI_Model
         if($post['level'] == 0 && empty($notIds)) return [];
         //
         if(!empty($notIds)) $this->db->where_in('timeoff_requests.employee_sid', $notIds);
+        else if($post['filter']['employees'] != 'all'){
+            $this->db->where('timeoff_requests.employee_sid', $post['filter']['employees']);
+        }
         //
         if($post['filter']['order'] == 'created_start_desc'){
             $this->db->order_by('timeoff_requests.request_from_date', 'DESC', false);

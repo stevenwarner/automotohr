@@ -458,6 +458,8 @@ class Dashboard extends Public_Controller {
             $data['review'] = $this->prm->getPendingReviewCount(
                 $data['session']['employer_detail']['sid'], true
             );
+            
+            $data['theme'] = 2;
 
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');

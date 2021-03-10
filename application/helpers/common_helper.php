@@ -12131,7 +12131,9 @@ if(!function_exists('formatDate')){
         if(empty($date) || preg_match('/0000/', $date)) return $date;
         //
         $t = explode(' ', $date);
-        $date = $t[0];
+        //
+        if(count(explode(' ', $fromFormat)) == 1) $date = $t[0];
+        //
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
 }
