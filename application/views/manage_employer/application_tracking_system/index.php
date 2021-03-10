@@ -2634,7 +2634,8 @@
             $(this).find('.check').css("visibility", "visible");
             $(this).parent().prev().css("background-color", $(this).css("background-color"));
             var status = $(this).find('#status').html();
-            var id = $(this).parent().find('#id').html();
+            // var id = $(this).parent().find('#id').html();
+            var id = $(this).parent().find('#id').text();
 
             url = "<?= base_url() ?>application_tracking_system/update_status";
             $.post(url, {"id": id, "status": status, "action": "ajax_update_status_candidate"})
@@ -2665,11 +2666,13 @@
             $(this).parent().prev().prev().html($(this).find('#status').html());
             $(this).parent().prev().prev().css("background-color", $(this).css("background-color"));
             //var status = $(this).find('#status').html();
-            var id = $(this).parent().find('#id').html();
+            // var id = $(this).parent().find('#id').html();
+            var id = $(this).parent().find('#id').text();
             var status_name = $(this).attr('data-status_name');
             var status_sid = $(this).attr('data-status_sid');
             var my_url = "<?= base_url() ?>application_tracking_system/update_status";
             var my_request;
+            alertify.success(id);
 
             my_request = $.ajax({
                 url: my_url,
