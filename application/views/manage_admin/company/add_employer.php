@@ -41,7 +41,8 @@
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
-                                                            <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?> <br />Username should consist of a minimum of 5 characters.
+                                                            <p>Username should consist of a minimum of 5 characters.</p>
+                                                            <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?> 
                                                             <?php echo form_input('username', set_value('username'), 'class="hr-form-fileds"'); ?>
                                                             <?php echo form_error('username'); ?>
                                                         </div>
@@ -189,7 +190,8 @@
                     required: true
                 },
                 username: {
-                    required: true
+                    required: true,
+                    minlength: 5
                 },
                 email: {
                     required: true,
@@ -210,7 +212,8 @@
                     required: 'Last Name is Required'
                 },
                 username: {
-                    required: 'Username is Required'
+                    required: 'Username is Required',
+                    minlength: 'The User Name field must be at least 5 characters in length.'
                 },
                 email: {
                     required: 'Email is Required',
