@@ -95,7 +95,7 @@ else $sideBar = onboardingHelpWidget($company_info['sid']);
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group autoheight">
                                     <?php $field_name = 'username'; ?>
-                                    <?php echo form_label('Username <span class="required">*</span>', $field_name); ?>
+                                    <?php echo form_label('Username <span class="required">*</span>', $field_name); ?> <br /> Username should consist of a minimum of 5 characters.
                                     <?php echo form_input($field_name, '', 'class="form-control" id="' . $field_name . '"'); ?>
                                     <?php echo form_error($field_name); ?>
                                 </div>
@@ -105,7 +105,7 @@ else $sideBar = onboardingHelpWidget($company_info['sid']);
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group autoheight">
                                     <?php $field_name = 'password'; ?>
-                                    <?php echo form_label('Password <span class="required">*</span>', $field_name); ?>
+                                    <?php echo form_label('Password <span class="required">*</span>', $field_name); ?> <br /> Password should consist of a minimum of 6 characters.
                                     <input type="password"
                                            class="form-control"
                                            id="<?php echo $field_name; ?>"
@@ -120,7 +120,7 @@ else $sideBar = onboardingHelpWidget($company_info['sid']);
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group autoheight">
                                     <?php $field_name = 'repeat_password'; ?>
-                                    <?php echo form_label('Repeat Password <span class="required">*</span>', $field_name); ?>
+                                    <?php echo form_label('Repeat Password <span class="required">*</span>', $field_name); ?> <br /> Password should consist of a minimum of 6 characters.
                                     <input type="password"
                                            class="form-control"
                                            id="<?php echo $field_name; ?>"

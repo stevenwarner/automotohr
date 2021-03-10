@@ -41,7 +41,7 @@
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
-                                                            <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?>
+                                                            <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?> <br />Username should consist of a minimum of 5 characters.
                                                             <?php echo form_input('username', set_value('username'), 'class="hr-form-fileds"'); ?>
                                                             <?php echo form_error('username'); ?>
                                                         </div>

@@ -41,7 +41,8 @@
                                                 <li>
                                                     <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?>
                                                     <div class="hr-fields-wrap">
-<?php                                                   echo form_input('username', set_value('username', $data['username']), 'class="hr-form-fileds"');
+                                                    <p>Username should consist of a minimum of 5 characters.</p>
+<?php                                                   echo form_input('username', set_value('username', $data['username']), 'class="hr-form-fileds"'); 
                                                         echo form_error('username'); ?>
                                                     </div>
                                                 </li>

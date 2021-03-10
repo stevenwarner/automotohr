@@ -27,7 +27,7 @@
                                                 <?php echo form_error('email'); ?>
                                             </li>
                                             <li class="form-col-100">
-                                                <?php echo form_label('USERNAME <span class="hr-required">*</span>', 'username'); ?>
+                                                <?php echo form_label('USERNAME <span class="hr-required">*</span>', 'username'); ?> Username should consist of a minimum of 5 characters.
                                                 <?php echo form_input('username', set_value('username', $employer['username']), 'class="invoice-fields"'); ?>
                                                 <?php echo form_error('username'); ?>
                                             </li>
