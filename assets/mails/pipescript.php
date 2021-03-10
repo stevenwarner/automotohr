@@ -2,6 +2,7 @@
 <?php error_reporting(E_ALL);
 
 function getActualBody($emailData){
+    $headers = iconv_mime_decode_headers($emailData, 0, "ISO-8859-1");
     // Get incoming types
     $content_types = explode('Content-Type:', $emailData);
     // Set default body
@@ -14,7 +15,7 @@ function getActualBody($emailData){
     //
     if(preg_match('/Content-Transfer-Encoding: quoted-printable/i', $emailBody))
     $emailBody = quoted_printable_decode($emailBody);
-    // Remove all headers from body
+    //
     end ($headers);
     $key = key($headers);
     $kv = $key.': '.$headers[$key];
@@ -35,7 +36,7 @@ function getActualBody($emailData){
     foreach($lines as $line){
         // Eliminate the type
         if(preg_match('/text\/plain/i', $line)) continue;
-        // if(preg_match('/message..\s+On/i', $line)) continue;
+        if(preg_match('/message..\s+On/i', $line)) continue;
         // If old reply is attached then remove it
         if(
             !preg_match('/On\s[a-zA-Z]{3}/i', $line) &&
@@ -50,6 +51,7 @@ function getActualBody($emailData){
     //
     return trim(strip_tags($reply));
 }    
+    
 //$devEmail = 'ahassan.egenie@gmail.com';
 // $devEmail = 'dev@automotohr.com';
 $devEmail = 'mubashir.saleemi123@gmail.com';
