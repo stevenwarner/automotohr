@@ -11,8 +11,15 @@ function getActualBody($emailData){
     // If body not found get the body 
     // returned from library
     if(empty($emailBody)) $emailBody = $emailParser->getPlainBody();
+    //
+    if(preg_match('/Content-Transfer-Encoding: quoted-printable/i', $emailBody))
+    $emailBody = quoted_printable_decode($emailBody);
     // Remove all headers from body
+    if(preg_match('/X-Spam/i', $emailBody))
     $emailBody = preg_replace('/([^:]+):\s+?(.*)$/im', '', $emailBody);
+    //
+    $emailBody = preg_replace('/Content-Transfer-Encoding: quoted-printable/i', '', $emailBody);
+    $emailBody = preg_replace('/charset=(.*)/i', '', $emailBody);
     // Convert string to array to eliminate
     // extra lines
     $lines = preg_split("/(\r?\n|\r)/", $emailBody);
@@ -30,12 +37,12 @@ function getActualBody($emailData){
             !preg_match('/________________________________/i', $line)  &&
             !preg_match('/From:\s[a-zA-Z]/i', $line)
         ) {
-            $reply .= $line.'<br />';
-        } else return trim(strip_tags($reply, '<br><br /><br/>'));
+            $reply .= strip_tags($line)."\n";
+        } else return trim(strip_tags($reply));
     }
     //
-    return trim(strip_tags($reply, '<br><br /><br/>'));
-} 
+    return trim(strip_tags($reply));
+}    
 //$devEmail = 'ahassan.egenie@gmail.com';
 // $devEmail = 'dev@automotohr.com';
 $devEmail = 'mubashir.saleemi123@gmail.com';
@@ -50,6 +57,13 @@ while (!feof($fd)) {
 fclose($fd);
 $email = str_replace("'", '"', $email);
 mail($devEmail, 'PipeScript: ' . date('Y-m-d H:i:s'), $email);
+
+/* Saves the data into a file */
+$fdw = fopen("/home/automotohr/public_html/assets/mails/pipemail2.txt", "w+");
+fwrite($fdw, $email);
+fclose($fdw);
+///* Script End */
+
 $hostname = "172.31.18.37";
 $username = "ahrdbadmin";
 $password = '8E*QrG)M5nw6g';
@@ -136,7 +150,7 @@ if (strpos($emailData, 'message_id:')) {
          * @employee Mubashir Ahmed
          * @date 03/10/2021
          */ 
-        $newBody = getActualBody($emailData);
+        $newBody = nl2br(getActualBody($emailData));
 
         if($newBody == '' || $newBody == NULL) {
             $condition_executed = 'I am inside 104';
