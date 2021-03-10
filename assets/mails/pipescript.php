@@ -15,8 +15,14 @@ function getActualBody($emailData){
     if(preg_match('/Content-Transfer-Encoding: quoted-printable/i', $emailBody))
     $emailBody = quoted_printable_decode($emailBody);
     // Remove all headers from body
-    if(preg_match('/X-Spam/i', $emailBody))
-    $emailBody = preg_replace('/([^:]+):+?(.*)$/m', '', $emailBody);
+    end ($headers);
+    $key = key($headers);
+    $kv = $key.': '.$headers[$key];
+    // Remove all headers from body
+    if(preg_match('/'.($key).'/i', $emailBody)){
+        $emailBody = substr($emailBody, strpos($emailBody, $kv)+  strlen($kv));
+        // $emailBody = preg_replace('/([^:]+):\s+?(.*)$/m', '', $emailBody);
+    }
     //
     $emailBody = preg_replace('/Content-Transfer-Encoding: quoted-printable/i', '', $emailBody);
     $emailBody = preg_replace('/charset=(.*)/i', '', $emailBody);
