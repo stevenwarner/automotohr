@@ -29,6 +29,7 @@ function getActualBody($emailData){
     foreach($lines as $line){
         // Eliminate the type
         if(preg_match('/text\/plain/i', $line)) continue;
+        if(preg_match('/message..\s+On/i', $line)) continue;
         // If old reply is attached then remove it
         if(
             !preg_match('/On\s[a-zA-Z]{3}/i', $line) &&
