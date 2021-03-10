@@ -16,7 +16,7 @@ function getActualBody($emailData){
     $emailBody = quoted_printable_decode($emailBody);
     // Remove all headers from body
     if(preg_match('/X-Spam/i', $emailBody))
-    $emailBody = preg_replace('/([^:]+):\s+?(.*)$/im', '', $emailBody);
+    $emailBody = preg_replace('/([^:]+):+?(.*)$/m', '', $emailBody);
     //
     $emailBody = preg_replace('/Content-Transfer-Encoding: quoted-printable/i', '', $emailBody);
     $emailBody = preg_replace('/charset=(.*)/i', '', $emailBody);
@@ -29,7 +29,7 @@ function getActualBody($emailData){
     foreach($lines as $line){
         // Eliminate the type
         if(preg_match('/text\/plain/i', $line)) continue;
-        if(preg_match('/message..\s+On/i', $line)) continue;
+        // if(preg_match('/message..\s+On/i', $line)) continue;
         // If old reply is attached then remove it
         if(
             !preg_match('/On\s[a-zA-Z]{3}/i', $line) &&
