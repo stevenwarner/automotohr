@@ -16,7 +16,7 @@ class Hire_onboarding_applicant extends CI_Controller
     function index($unique_sid)
     {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
-        $this->form_validation->set_rules('username', 'User Name', 'required|trim|is_unique[users.username]');
+        $this->form_validation->set_rules('username', 'User Name', 'required|trim|min_length[5]|is_unique[users.username]');
         if ($this->form_validation->run() == false) {
 
             $this->session->set_flashdata('message', '<strong>Error</strong> This username already exists, please choose a different one!');

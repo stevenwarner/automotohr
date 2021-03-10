@@ -277,7 +277,7 @@ class Employee_management extends Public_Controller {
             }
 
             if ($this->input->post('employeeType') == 'direct_hiring') {
-                $this->form_validation->set_rules('username', 'Username', 'trim|xss_clean|required|is_unique[users.username]');
+                $this->form_validation->set_rules('username', 'Username', 'trim|xss_clean|min_length[5]|required|is_unique[users.username]');
 //                $this->form_validation->set_rules('password', 'Password', 'trim|xss_clean|required');
             }
 

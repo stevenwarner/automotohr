@@ -393,7 +393,7 @@ class employers extends Admin_Controller {
             $this->data['security_access_levels'] = $security_access_levels;
             $this->form_validation->set_rules('first_name', 'First Name', 'required|trim');
             $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim');
-            $this->form_validation->set_rules('username', 'Username', 'required|trim|is_unique[users.username]');
+            $this->form_validation->set_rules('username', 'Username', 'required|trim|min_length[5]|is_unique[users.username]');
             $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
             $this->form_validation->set_rules('alternative_email', 'Alternative Email', 'trim|valid_email');
             $this->form_validation->set_rules('job_title', 'Job Title', 'trim');

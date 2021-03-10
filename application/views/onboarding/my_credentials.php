@@ -159,6 +159,7 @@ else $sideBar = onboardingHelpWidget($company_info['sid']);
             rules: {
                 username: {
                     required: true,
+                    minlength: 5,
                     pattern: /^[a-zA-Z0-9\-]+$/
                 },
                 password: {
@@ -174,7 +175,8 @@ else $sideBar = onboardingHelpWidget($company_info['sid']);
             messages: {
                 username: {
                     required: 'Username is required',
-                    pattern: 'Please provide valid username'
+                    pattern: 'Please provide valid username',
+                    minlength: 'The User Name field must be at least 5 characters in length.',
                 },
                 password: {
                     required: 'Password is required',
