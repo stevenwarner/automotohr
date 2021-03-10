@@ -810,12 +810,261 @@ On Tue, Mar 9, 2021 at 10:30 AM Dev AutomotoHR
 > =C2=A9 2021 devsupport3.automotohr.com. All Rights Reserved.
 >
 > message_id:vAkSR28erj9QKi0c9j5uArfbiS0Y81fEBAwtCFI3YRUIaUVj__';
+
+$messageArray['outlook_client'] = 'From mubashar.ahmed@egenienext.com Wed Mar 10 01:11:15 2021
+Received: from mx1.egenienext.com ([34.194.249.63]:51300)
+        by smg222.automotohr.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94)
+        (envelope-from <mubashar.ahmed@egenienext.com>)
+        id 1lJus6-000682-IM
+        for notifications@automotohr.com; Wed, 10 Mar 2021 01:11:15 -0800
+Received: from mx1.egenienext.com (mx1.egenienext.com [127.0.0.1])
+        by mx1.egenienext.com (Postfix) with ESMTP id BE7E0C10B1
+        for <notifications@automotohr.com>; Wed, 10 Mar 2021 09:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=egenienext.com;
+        s=mail; t=1615367433;
+        bh=/S0OvMqOH/PKW1rp+RA5UnfvWaeo58jm6sWpXxAPL00=;
+        h=From:To:References:In-Reply-To:Subject:Date:From;
+        b=lVA5hEGqxfYCIuCS8gAsnN1Z2X/AQBjpLR9pYG+P8QFcYieETgEUtuADNPjKxBkSO
+         bYFUDAb7rUGfEzs7rSrNTd2Z+MZ5qf9UOmP0TB/ysEENq6yoowppH9iecN4azgzj4e
+         QZnKEY6YMNkuBMJaG3VvSVOaOzwNHhMF2QqbDOnY=
+Authentication-Results: mx1.egenienext.com (amavisd-new);
+        dkim=fail (1024-bit key) reason="fail (bad RSA signature)"
+        header.d=egenienext.com
+Received: from mx1.egenienext.com ([127.0.0.1])
+        by mx1.egenienext.com (mx1.egenienext.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 86AeqH2O9Fut for <notifications@automotohr.com>;
+        Wed, 10 Mar 2021 09:10:33 +0000 (UTC)
+Received: from DESKTOPVM9EE2C (unknown [72.255.38.246])
+        by mx1.egenienext.com (Postfix) with ESMTPA id 90A11C106A
+        for <notifications@automotohr.com>; Wed, 10 Mar 2021 09:10:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=egenienext.com;
+        s=mail; t=1615367433;
+        bh=/S0OvMqOH/PKW1rp+RA5UnfvWaeo58jm6sWpXxAPL00=;
+        h=From:To:References:In-Reply-To:Subject:Date:From;
+        b=lVA5hEGqxfYCIuCS8gAsnN1Z2X/AQBjpLR9pYG+P8QFcYieETgEUtuADNPjKxBkSO
+         bYFUDAb7rUGfEzs7rSrNTd2Z+MZ5qf9UOmP0TB/ysEENq6yoowppH9iecN4azgzj4e
+         QZnKEY6YMNkuBMJaG3VvSVOaOzwNHhMF2QqbDOnY=
+From: "Mubashir Ahmed" <mubashar.ahmed@egenienext.com>
+To: <notifications@automotohr.com>
+References: <011101781b56688a-3feea8fe-3c57-4248-917c-fe4fc11d59e8-000000@us-west-1.amazonses.com>
+In-Reply-To: <011101781b56688a-3feea8fe-3c57-4248-917c-fe4fc11d59e8-000000@us-west-1.amazonses.com>
+Subject: RE: As of 03/10/2021 - AHR
+Date: Wed, 10 Mar 2021 01:10:29 -0800
+Message-ID: <004f01d7158d$38c38a30$aa4a9e90$@egenienext.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+        boundary="----=_NextPart_000_0050_01D7154A.2AA10D80"
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGgVMdDtu/RqN3PrUT0OjA02NzvB6rqcMuw
+Content-Language: en-us
+X-Spam-Status: No, score=1.0
+X-Spam-Score: 10
+X-Spam-Bar: +
+X-Ham-Report: Spam detection software, running on the system "smg222.automotohr.com",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ root\@localhost for details.
+ Content preview:  Hey replying from outlook client Testing 123 As
+ Content analysis details:   (1.0 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+  0.8 BAYES_50               BODY: Bayes spam probability is 40 to 60%
+                             [score: 0.5000]
+ -0.0 SPF_PASS               SPF: sender matches SPF record
+  0.0 HTML_FONT_LOW_CONTRAST BODY: HTML font color similar or
+                             identical to background
+  0.0 HTML_MESSAGE           BODY: HTML included in message
+  0.1 DKIM_SIGNED            Message has a DKIM or DK signature, not necessarily
+                             valid
+  0.1 DKIM_INVALID           DKIM or DK signature exists, but is not valid
+X-Spam-Flag: NO
+
+This is a multipart message in MIME format.
+
+------=_NextPart_000_0050_01D7154A.2AA10D80
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hey replying from outlook client
+
+=20
+
+Testing 123
+
+As
+
+D
+
+Asd
+
+Asd
+
+As
+
+d
+
+=20
+
+Regards,
+
+Mubashir Ahmed
+
+=20
+
+From: Dev AutomotoHR <notifications@automotohr.com>=20
+Sent: Wednesday, March 10, 2021 12:53 AM
+To: mubashar.ahmed@egenienext.com
+Subject: As of 03/10/2021 - AHR
+
+=20
+
+
+Dev AutomotoHR
+
+
+Dear Development Team,
+
+
+
+
+devteam has sent you a private message.
+
+Date: 2021-03-10 00:52:24
+
+Subject: As of 03/10/2021 - AHR
+
+  _____ =20
+
+Please, reply to this message.
+
+=20
+
+ <http://devsupport3.automotohr.com> =C2=A9 2021 =
+devsupport3.automotohr.com. All Rights Reserved.
+
+message_id:KelG4imMrkT86RxZCOgCep138WDJC1qmgM2l5p7wJ0EQSbPu06__
+
+
+------=_NextPart_000_0050_01D7154A.2AA10D80
+Content-Type: text/html;
+        charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" =
+xmlns:o=3D"urn:schemas-microsoft-com:office:office" =
+xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" =
+xmlns=3D"http://www.w3.org/TR/REC-html40"><head><meta =
+http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8"><meta =
+name=3DGenerator content=3D"Microsoft Word 15 (filtered medium)"><!--[if =
+!mso]><style>v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style><![endif]--><style><!--
+/* Font Definitions */
+@font-face
+        {font-family:"Cambria Math";
+        panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+        {font-family:Calibri;
+        panose-1:2 15 5 2 2 2 4 3 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+        {margin:0in;
+        font-size:11.0pt;
+        font-family:"Calibri",sans-serif;}
+h2
+        {mso-style-priority:9;
+        mso-style-link:"Heading 2 Char";
+        mso-margin-top-alt:auto;
+        margin-right:0in;
+        mso-margin-bottom-alt:auto;
+        margin-left:0in;
+        font-size:18.0pt;
+        font-family:"Calibri",sans-serif;
+        font-weight:bold;}
+a:link, span.MsoHyperlink
+        {mso-style-priority:99;
+        color:blue;
+        text-decoration:underline;}
+span.Heading2Char
+        {mso-style-name:"Heading 2 Char";
+        mso-style-priority:9;
+        mso-style-link:"Heading 2";
+        font-family:"Calibri Light",sans-serif;
+        color:#2F5496;}
+span.EmailStyle20
+        {mso-style-type:personal-reply;
+        font-family:"Calibri",sans-serif;
+        color:windowtext;}
+.MsoChpDefault
+        {mso-style-type:export-only;
+        font-family:"Calibri",sans-serif;}
+@page WordSection1
+        {size:8.5in 11.0in;
+        margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+        {page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]--></head><body lang=3DEN-US link=3Dblue =
+vlink=3Dpurple style=3D"word-wrap:break-word"><div =
+class=3DWordSection1><p class=3DMsoNormal>Hey replying from outlook =
+client<o:p></o:p></p><p class=3DMsoNormal><o:p>&nbsp;</o:p></p><p =
+class=3DMsoNormal>Testing 123<o:p></o:p></p><p =
+class=3DMsoNormal>As<o:p></o:p></p><p =
+class=3DMsoNormal>D<o:p></o:p></p><p =
+class=3DMsoNormal>Asd<o:p></o:p></p><p =
+class=3DMsoNormal>Asd<o:p></o:p></p><p =
+class=3DMsoNormal>As<o:p></o:p></p><p =
+class=3DMsoNormal>d<o:p></o:p></p><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><p =
+class=3DMsoNormal>Regards,<o:p></o:p></p><p class=3DMsoNormal>Mubashir =
+Ahmed<o:p></o:p></p><p class=3DMsoNormal><o:p>&nbsp;</o:p></p><div =
+style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
+0in 0in"><p class=3DMsoNormal><b>From:</b> Dev AutomotoHR =
+&lt;notifications@automotohr.com&gt; <br><b>Sent:</b> Wednesday, March =
+10, 2021 12:53 AM<br><b>To:</b> =
+mubashar.ahmed@egenienext.com<br><b>Subject:</b> As of 03/10/2021 - =
+AHR<o:p></o:p></p></div><p =
+class=3DMsoNormal><o:p>&nbsp;</o:p></p><div><h2 align=3Dcenter =
+style=3D"text-align:center;line-height:19.2pt;background:black"><span =
+style=3D"color:white">Dev AutomotoHR<o:p></o:p></span></h2><div><h2 =
+style=3D"mso-margin-top-alt:0in;margin-right:0in;margin-bottom:15.0pt;mar=
+gin-left:0in;line-height:19.2pt">Dear Development =
+Team,<o:p></o:p></h2><p class=3DMsoNormal =
+style=3D"line-height:19.2pt"><br><br>devteam has sent you a private =
+message.<br><br><b>Date:</b> 2021-03-10 00:52:24<br><br><b>Subject:</b> =
+As of 03/10/2021 - AHR<o:p></o:p></p><div class=3DMsoNormal =
+align=3Dcenter style=3D"text-align:center;line-height:19.2pt"><hr =
+size=3D2 width=3D"100%" align=3Dcenter></div><p =
+style=3D"line-height:19.2pt">Please, reply to this =
+message.<o:p></o:p></p><p class=3DMsoNormal =
+style=3D"margin-bottom:12.0pt;line-height:19.2pt"><o:p>&nbsp;</o:p></p></=
+div><div><div><p style=3D"line-height:19.2pt;background:black"><span =
+style=3D"color:white"><a =
+href=3D"http://devsupport3.automotohr.com"><span =
+style=3D"color:white;text-decoration:none">=C2=A9 2021 =
+devsupport3.automotohr.com. All Rights =
+Reserved.</span></a></span><o:p></o:p></p></div></div></div><div><p =
+class=3DMsoNormal style=3D"background:black"><span =
+style=3D"color:black">message_id:KelG4imMrkT86RxZCOgCep138WDJC1qmgM2l5p7w=
+J0EQSbPu06__<o:p></o:p></span></p></div></div></body></html>
+------=_NextPart_000_0050_01D7154A.2AA10D80--';
 fclose($fd);
 $email = $messageArray['gmaildesktop'];
 $email = $messageArray['gmail'];
 $email = $messageArray['outlook'];
 $email = $messageArray['iphonegmail'];
 $email = $messageArray['mail'];
+$email = $messageArray['outlook_client'];
 $email = str_replace("'", '"', $email);
 // mail($devEmail, 'PipeScript: ' . date('Y-m-d H:i:s'), $email);
 // $hostname = "172.31.18.37";
@@ -841,8 +1090,15 @@ function getActualBody($emailData){
     // If body not found get the body 
     // returned from library
     if(empty($emailBody)) $emailBody = $emailParser->getPlainBody();
+    //
+    if(preg_match('/Content-Transfer-Encoding: quoted-printable/i', $emailBody))
+    $emailBody = quoted_printable_decode($emailBody);
     // Remove all headers from body
+    if(preg_match('/X-Spam/i', $emailBody))
     $emailBody = preg_replace('/([^:]+):\s+?(.*)$/im', '', $emailBody);
+    //
+    $emailBody = preg_replace('/Content-Transfer-Encoding: quoted-printable/i', '', $emailBody);
+    $emailBody = preg_replace('/charset=(.*)/i', '', $emailBody);
     // Convert string to array to eliminate
     // extra lines
     $lines = preg_split("/(\r?\n|\r)/", $emailBody);
@@ -860,14 +1116,14 @@ function getActualBody($emailData){
             !preg_match('/________________________________/i', $line)  &&
             !preg_match('/From:\s[a-zA-Z]/i', $line)
         ) {
-            $reply .= $line.'<br />';
-        } else return trim(strip_tags($reply, '<br><br /><br/>'));
+            $reply .= strip_tags($line)."\n";
+        } else return trim(strip_tags($reply));
     }
     //
-    return trim(strip_tags($reply, '<br><br /><br/>'));
+    return trim(strip_tags($reply));
 }    
 
-echo getActualBody($emailData);
+echo (getActualBody($emailData));
 
 
 die;

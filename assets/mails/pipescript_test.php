@@ -13,6 +13,8 @@ while (!feof($fd)) {
 
 fclose($fd);
 $email = str_replace("'", '"', $email);
+
+
 mail($devEmail, 'PipeScript: ' . date('Y-m-d H:i:s'), $email);
 $hostname = "172.31.18.37";
 $username = "ahrdbadmin";
