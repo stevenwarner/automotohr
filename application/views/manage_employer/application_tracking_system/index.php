@@ -2672,7 +2672,6 @@
             var status_sid = $(this).attr('data-status_sid');
             var my_url = "<?= base_url() ?>application_tracking_system/update_status";
             var my_request;
-            alertify.success(id);
 
             my_request = $.ajax({
                 url: my_url,
