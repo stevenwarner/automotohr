@@ -1,41 +1,5 @@
 #!/usr/bin/php -q
 <?php error_reporting(E_ALL);
-
-function getActualBody($emailData){
-    // Get incoming types
-    $content_types = explode('Content-Type:', $emailData);
-    // Set default body
-    $emailBody = '';
-    // Loop and get body
-    foreach($content_types as $type) if(preg_match('/text\/plain/i', $type)) $emailBody = $type;
-    // If body not found get the body 
-    // returned from library
-    if(empty($emailBody)) $emailBody = $emailParser->getPlainBody();
-    // Remove all headers from body
-    $emailBody = preg_replace('/([^:]+):\s+?(.*)$/im', '', $emailBody);
-    // Convert string to array to eliminate
-    // extra lines
-    $lines = preg_split("/(\r?\n|\r)/", $emailBody);
-    // Set default reply
-    $reply = '';
-    // Loop and set the reply
-    foreach($lines as $line){
-        // Eliminate the type
-        if(preg_match('/text\/plain/i', $line)) continue;
-        // If old reply is attached then remove it
-        if(
-            !preg_match('/On\s[a-zA-Z]{3}/i', $line) &&
-            !preg_match('/(>)\s+On/i', $line) &&
-            !preg_match('/>\s+/i', $line) &&
-            !preg_match('/________________________________/i', $line)  &&
-            !preg_match('/From:\s[a-zA-Z]/i', $line)
-        ) {
-            $reply .= $line.'<br />';
-        } else return trim(strip_tags($reply, '<br><br /><br/>'));
-    }
-    //
-    return trim(strip_tags($reply, '<br><br /><br/>'));
-} 
 //$devEmail = 'ahassan.egenie@gmail.com';
 // $devEmail = 'dev@automotohr.com';
 $devEmail = 'mubashir.saleemi123@gmail.com';
@@ -129,14 +93,6 @@ if (strpos($emailData, 'message_id:')) {
 
         $getbody = $emailParser->getBody();           
         $getplainbody = $emailParser->getPlainBody();
-        
-        /**
-         * New email body logic
-         * 
-         * @employee Mubashir Ahmed
-         * @date 03/10/2021
-         */ 
-        $newBody = getActualBody($emailData);
 
         if($newBody == '' || $newBody == NULL) {
             $condition_executed = 'I am inside 104';
@@ -163,8 +119,6 @@ if (strpos($emailData, 'message_id:')) {
             }
             
         }
-
-    
 
     $email_parser_query = "insert into email_parser_tracking (getbody,getplainbody,gethtmlbody,newbody,secret_key,condition_executed,range_var,messageData) VALUES ('" . $getbody . "','" . $getplainbody . "','" . $body . "','" . $newBody . "','" . $secret_key . "','" . $condition_executed . "','" . $range . "','" . $messageData . "')";
     mysqli_query($dbhandle, $email_parser_query);
