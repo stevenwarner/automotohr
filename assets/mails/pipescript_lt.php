@@ -1058,48 +1058,48 @@ class=3DMsoNormal style=3D"background:black"><span =
 style=3D"color:black">message_id:KelG4imMrkT86RxZCOgCep138WDJC1qmgM2l5p7w=
 J0EQSbPu06__<o:p></o:p></span></p></div></div></body></html>
 ------=_NextPart_000_0050_01D7154A.2AA10D80--';
-$email = $messageArray['gmaildesktop'] = 'From mubashir.saleemi123@gmail.com Wed Mar 10 01:59:24 2021
-Received: from mail-lj1-f182.google.com ([209.85.208.182]:43563)
+$email = $messageArray['gmaildesktop'] = 'From mubashir.saleemi123@gmail.com Wed Mar 10 02:26:57 2021
+Received: from mail-lf1-f42.google.com ([209.85.167.42]:45343)
         by smg222.automotohr.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.94)
         (envelope-from <mubashir.saleemi123@gmail.com>)
-        id 1lJvci-0007hA-5N
-        for notifications@automotohr.com; Wed, 10 Mar 2021 01:59:24 -0800
-Received: by mail-lj1-f182.google.com with SMTP id m11so24743039lji.10
-        for <notifications@automotohr.com>; Wed, 10 Mar 2021 01:59:04 -0800 (PST)
+        id 1lJw3M-0000J7-KI
+        for notifications@automotohr.com; Wed, 10 Mar 2021 02:26:57 -0800
+Received: by mail-lf1-f42.google.com with SMTP id k9so32528952lfo.12
+        for <notifications@automotohr.com>; Wed, 10 Mar 2021 02:26:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :content-transfer-encoding;
-        bh=6zYjxANRRwKV6dSkvlyfYhdLrkjywfw/xYY8RU2on5A=;
-        b=qEjBqESlXStFJL/wnPunF4TK+1uALQPDI17Rt4FUL2gIMGWQ28MqZRiSwStmsbwIpI
-         VaZR3iiMigKLDwhG260TWz3ZLZcsh3s9dmHrSGN6SeQ/BynEpEvoYwezb+ZRp1QmqaWp
-         mnGAxDg9IQ66mDcu97ICeNSUW3O9QWrwAAE2jWReKgWC3sG8ildTNJngGO5EBye5ydx5
-         vFQZHTGknI9y3psjRuC9f0uC8Yg8hAjlcAZrqCG5JtKnYgFBp3Oygx4LsK4Se70fYZtD
-         ZXmDo5quSXSrUia9TyB9+L9xWIZTy/TRWxbdnK5KI1ejHheREVY8pPrqzPU0rypOAnzb
-         RG2Q==
+        bh=FxiUQmHuEAB4MjTL93u1ObeNU1fJOoYvZXeTL13eES8=;
+        b=B0knDvgyGS8wOWwxTPaPEyow+j6tADvE/O6y7C+IoxXG8kHtzTj7RCVUVxnXALZ9QA
+         v4NMucH1/bGEQz7Bc3+mL3UsbI34UxU8x6+3dwVoiSKPdBTZdE+BR9EqBWuo+3U3lc+1
+         ir3RoNrNqJkhtYqKGXYoiDs/uFspR1wFjhx5S3Qi+XubX0eBOLN1/kfuXnJmNujnRTu2
+         lvoOLSAu0oNCQThbSni5OuVGJNfVNgOuA7E34hFwPxoYATAeli6NCGcf5ziz6Zz1YTqP
+         7Zble2P/tUPw/eYgNBi9Ic9sXWNTLSKwMg6BAbOaVH1luFglzNA3rqoJtQI+kg4OPhgq
+         v4Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:content-transfer-encoding;
-        bh=6zYjxANRRwKV6dSkvlyfYhdLrkjywfw/xYY8RU2on5A=;
-        b=V3liwi7kxN06dzv5BCHCnqKqvFfKAAC3niAsByN2X/aCTY4sJC0k6XGCo2xb9xHsDP
-         4dZ8s86B//PnHUARi5HW9mnvoFHkq2uw2r692/eYB/tL5UXw10G8ynSMm4as1g719lgR
-         9FSdasr9IWMoaZnOVq7HTbR1AY+LpTLjsNFWG8dThu6PQaFBEOWxeEKpJPMT1Qm4pecf
-         pvnLyUfvEviEXq6RPQrca73jKNSGBY70G+chUQ39ao02nLbcj6v2pWxrOZglc9wuCnCk
-         zzPILUthisKnghBjOnJU6U4XEA97K/L0EF9UXviFGv7MoUEue5R1iCoesqU00H3zAOBh
-         WvYQ==
-X-Gm-Message-State: AOAM532+8RafSnNLJP+QkQdlOs0PPwBaPnrXSm5HTgcSyRHkiNKKx5zc
-        YYEoIECUaNshuCBuZ9DW9U2NXmwzVNjSKOAixdCvuFaA
-X-Google-Smtp-Source: ABdhPJxDCT/viWOpVFmp18BSFnxDezrUW9xHlbAPR1uBzKJGvB2EoiXH4oPDnHA5guBzKPXo7uBnTJ/+5pq+M5KW71U=
-X-Received: by 2002:a05:651c:32e:: with SMTP id b14mr1354699ljp.277.1615370321664;
- Wed, 10 Mar 2021 01:58:41 -0800 (PST)
+        bh=FxiUQmHuEAB4MjTL93u1ObeNU1fJOoYvZXeTL13eES8=;
+        b=kcXDl/a10S/tdaRDFY2R9MCLJh9mRQR9sKZcgbV/QVEbhmBUCiMhTZ3etv1sPQeXha
+         QXR2jUv1beIjaV4Qd2CwhKC637CNRUc0pg8zL3Yj9p3bwOtFb+z/WHJNC6VWRNrMGUMp
+         i+kHEw44vDh4kwDM7AI2h6BMz36yyiAAwJESBCqgFfsJc1BLbMaaABZF/7tTQyQ31N05
+         Dhq1pMi95lJvx6CwzlO99vTkVZdoL6qqvLxOp4nJ0sX2Hx00zjt2P/qZuW+3joQhrxr6
+         XUo/amCCpeMAudu30WSxq/YFXymw3WCiTRocAsWqyiq638aNnLrwDPPRbpvozaMEJ3Un
+         KqMA==
+X-Gm-Message-State: AOAM532ablN7jfaVBPEh0kSyCfRSi3o30bY7GufklFpca3uuyog1Vjr8
+        o8uxZhnr5VcBW9EqXHnARFagSXsaCyVOLWH1FOQjnguP
+X-Google-Smtp-Source: ABdhPJxomId5RGWpGxnG84ltdqLOQsOkzQnLZlkudQtvjLWW5TBhy7BhWeFwL0QC74jOykleSobRyPEpXaQFu2UFNME=
+X-Received: by 2002:a05:6512:991:: with SMTP id w17mr1655505lft.85.1615371974308;
+ Wed, 10 Mar 2021 02:26:14 -0800 (PST)
 MIME-Version: 1.0
 References: <011101781b924554-02112b26-5c4c-49f2-8da1-e77acaf04545-000000@us-west-1.amazonses.com>
 In-Reply-To: <011101781b924554-02112b26-5c4c-49f2-8da1-e77acaf04545-000000@us-west-1.amazonses.com>
 From: Mubashir Ahmed <mubashir.saleemi123@gmail.com>
-Date: Wed, 10 Mar 2021 01:58:28 -0800
-Message-ID: <CAHvz9cPis2ddy0Dn3uK2pkJEtGcstvLfVODOdVtgdnQZQPp1GQ@mail.gmail.com>
+Date: Wed, 10 Mar 2021 02:26:01 -0800
+Message-ID: <CAHvz9cMCbx9h6k-rTNyXSoS-H0Z8MwgwsaesW0tedOhMwnX=cA@mail.gmail.com>
 Subject: Re: reply
 To: notifications@automotohr.com
 Content-Type: text/plain; charset="UTF-8"
@@ -1112,9 +1112,9 @@ X-Ham-Report: Spam detection software, running on the system "smg222.automotohr.
  message has been attached to this so you can view it or label
  similar future email.  If you have any questions, see
  root\@localhost for details.
- Content preview:  Replying from gmail desktop Let me know when you get this
-   message.. On Wed, Mar 10, 2021 at 1:57 AM Dev AutomotoHR wrote: > > Dev AutomotoHR
-    > > Dear Mubashir Ahmed, > > > Development Team has sent you a private message.
+ Content preview:  Replying again from gmail desktop Okay Should work nopw On
+    Wed, Mar 10, 2021 at 1:57 AM Dev AutomotoHR wrote: > > Dev AutomotoHR > >
+    Dear Mubashir Ahmed, > > > Development Team has sent you a private message.
     > > Date: Mar 10 2021, Wed 02:57:53 > > Subje [...]
  Content analysis details:   (0.8 points, 5.0 required)
   pts rule name              description
@@ -1137,9 +1137,9 @@ X-Ham-Report: Spam detection software, running on the system "smg222.automotohr.
  -0.1 DKIM_VALID             Message has at least one valid DKIM or DK signature
 X-Spam-Flag: NO
 
-Replying from gmail desktop
-
-Let me know when you get this message..
+Replying again from gmail desktop
+Okay
+Should work nopw
 
 On Wed, Mar 10, 2021 at 1:57 AM Dev AutomotoHR
 <notifications@automotohr.com> wrote:
@@ -1164,7 +1164,7 @@ On Wed, Mar 10, 2021 at 1:57 AM Dev AutomotoHR
 >
 > message_id:fws8U0Swd99Dc22glNrA72rW8nmMTFA8c3g648DhiMUvPXLa__';
 fclose($fd);
-// $email = $messageArray['gmaildesktop'];
+$email = $messageArray['gmaildesktop'];
 // $email = $messageArray['gmail'];
 // $email = $messageArray['outlook'];
 // $email = $messageArray['iphonegmail'];
@@ -1186,6 +1186,7 @@ $emailParser = new PlancakeEmailParser($emailData);
 echo '<pre>';
 
 function getActualBody($emailData){
+    $headers = iconv_mime_decode_headers($emailData, 0, "ISO-8859-1");
     // Get incoming types
     $content_types = explode('Content-Type:', $emailData);
     // Set default body
@@ -1198,9 +1199,15 @@ function getActualBody($emailData){
     //
     if(preg_match('/Content-Transfer-Encoding: quoted-printable/i', $emailBody))
     $emailBody = quoted_printable_decode($emailBody);
+    //
+    end ($headers);
+    $key = key($headers);
+    $kv = $key.': '.$headers[$key];
     // Remove all headers from body
-    if(preg_match('/X-Spam/i', $emailBody))
-    $emailBody = preg_replace('/([^:]+):\s+?(.*)$/im', '', $emailBody);
+    if(preg_match('/'.($key).'/i', $emailBody)){
+        $emailBody = substr($emailBody, strpos($emailBody, $kv)+  strlen($kv));
+        // $emailBody = preg_replace('/([^:]+):\s+?(.*)$/m', '', $emailBody);
+    }
     //
     $emailBody = preg_replace('/Content-Transfer-Encoding: quoted-printable/i', '', $emailBody);
     $emailBody = preg_replace('/charset=(.*)/i', '', $emailBody);
