@@ -36,6 +36,10 @@
     
     <script src="<?php echo base_url('assets/bootstrap-filestyle/js/bootstrap-filestyle.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/js/select2.js') ?>"></script>
+
+    <!-- Bable -->
+    <script src="https://unpkg.com/@babel/standalone@7.13.10/babel.min.js"></script>
+    <!-- Bable -->
 </head>
 <body>
     <div class="wrapper-outer">

@@ -249,6 +249,7 @@
                                                                 'new_zone' => 'EST'
                                                             )
                                                         );
+                                                        // echo formatDate($employee['joined_at'], DB_DATE, DATE);
                                                     } else if(!empty($employee['registration_date']) && $employee['registration_date'] != '0000-00-00 00:00:00'){
                                                         echo reset_datetime(
                                                             array(
@@ -260,6 +261,7 @@
                                                                 'new_zone' => 'EST'
                                                             )
                                                         );
+                                                        // echo formatDate($employee['registration_date'], DB_DATE, DATE);
                                                     } else {
                                                         echo 'N/A';
                                                     }?>

@@ -53,13 +53,11 @@
                                                                     $title .= ' ['.( $job['active'] == 1 ? 'Active' : 'Inactive').']';
                                                                     if($job['active'] == 1) {
                                                                         if($job['activation_date'] != NULL || $job['activation_date'] != ''){
-                                                                            $title .= ' - ('.( reset_datetime(array( 'datetime' => $job['activation_date'], '_this' => $this)) ).')';
-                                                                            // $title .= ' - ('.DateTime::createFromFormat('Y-m-d H:i:s', $job['activation_date'])->format('m-d-y h:i a') .')';
+                                                                            $title .= ' - ('.( formatDate($job['activation_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME) ).')';
                                                                         }
                                                                     } else {
                                                                         if($job['deactivation_date'] != NULL || $job['deactivation_date'] != ''){
-                                                                            $title .= ' - ('.( reset_datetime(array( 'datetime' => $job['deactivation_date'], '_this' => $this)) ).')';
-                                                                            // $title .= ' - ('.DateTime::createFromFormat('Y-m-d H:i:s', $job['deactivation_date'])->format('m-d-y h:i a') .')';
+                                                                            $title .= ' - ('.( formatDate($job['deactivation_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME) ).')';
                                                                         }
                                                                     }
                                                                     $title .= ' ('.common_get_job_applicants_count($job['sid'], $archived).')';
@@ -480,7 +478,7 @@
                                                     </label>
                                                 </div>
                                                 <div class="col-lg-7 col-md-7 col-xs-7 col-sm-7">
-                                                    <time class="date-applied"><?=reset_datetime(array( 'datetime' => $employer_job["date_applied"], '_this' => $this, 'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR, 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR));?></time> 
+                                                    <time class="date-applied"><?=formatDate($employer_job["date_applied"], DB_DATE_WITH_TIME, DATE_WITH_TIME);?></time> 
                                                 </div>
                                                 <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                                                     <?php if ($archive == 'archive') { ?>

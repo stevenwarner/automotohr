@@ -59,6 +59,10 @@
         }
     }
 </style>
+
+<!-- Bable -->
+<script src="https://unpkg.com/@babel/standalone@7.13.10/babel.min.js"></script>
+<!-- Bable -->
   
 </head>
 

@@ -150,10 +150,15 @@
         <?php if (in_array('timeoff', $this->uri->segment_array())) { ?>
             <?php $this->load->view('timeoff/style'); ?>
         <?php }?>
+
         <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
         <!-- Performance Management  -->
             <?php $this->load->view("{$pp}styles"); ?>
         <?php }?>
+
+        <!-- Bable -->
+            <script src="https://unpkg.com/@babel/standalone@7.13.10/babel.min.js"></script>
+        <!-- Bable -->
     </head>
 
     <body>

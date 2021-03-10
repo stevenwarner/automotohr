@@ -3,7 +3,7 @@
     .loader i{ text-align: center; top: 50%; left: 50%; font-size: 40px; position: relative; }
 </style>
 
-<script>
+<script type="text/babel" >
 	function loadIframe(
         url, 
         target, 
