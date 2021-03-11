@@ -45,8 +45,10 @@ class Form_full_employment_application extends CI_Controller {
                 //
                 $birthDate = date('Y-m-d', strtotime('now'));
                 //
+                $data['birthDate'] = '';
                 if(!empty($user_info['dob']) && $user_info['dob'] != '0000-00-00'){
                     $birthDate = $user_info['dob'];
+                    $data['birthDate'] = DateTime::createfromformat('Y-m-d', $birthDate)->format('m-d-Y');
                 }
                 //
                 $birthDate = DateTime::createfromformat('Y-m-d', $birthDate);

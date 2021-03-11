@@ -89,7 +89,7 @@
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'TextBoxDOB'; ?>
-                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : (empty($birthDate) ? '' : $birthDate) ); ?>
                                                         <label>Date of Birth <span class="staric">*</span></label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields startdate" required="required" readonly="" name="TextBoxDOB" value="<?php echo set_value($key, $def_value); ?>" id="TextBoxDOB" type="text">
                                                         <?php echo form_error($key); ?>
