@@ -10,6 +10,8 @@ class Facebook_feed extends CI_Controller
     private $accessTokenType;
     private $feedId;
 
+    private $table = 'facebook_jobs_status';
+
     public function __construct()
     {
         parent::__construct();
@@ -759,6 +761,8 @@ class Facebook_feed extends CI_Controller
         //
         $this->accessToken = $this->curl['access_token'];
         $this->accessTokenType = $this->curl['access_type'];
+
+        return $this->curl;
     }
 
     //
@@ -797,6 +801,7 @@ class Facebook_feed extends CI_Controller
     ) {
         //
         $this->parseURL($url);
+
         //
         $curl = curl_init();
         //
@@ -807,6 +812,8 @@ class Facebook_feed extends CI_Controller
         $options[CURLOPT_MAXREDIRS] = 10;
         $options[CURLOPT_TIMEOUT] = 0;
         $options[CURLOPT_FOLLOWLOCATION] = true;
+        $options[CURLOPT_SSL_VERIFYPEER] = FALSE;
+        $options[CURLOPT_SSL_VERIFYHOST] = FALSE;
         $options[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
         //
         curl_setopt_array(
@@ -855,5 +862,42 @@ class Facebook_feed extends CI_Controller
             die();
         }
         return $validSlug;
+    }
+
+
+    /**
+     * 
+     */
+    function jobsStatus(){
+        $this->getAccessToken();
+        //
+        $this->makeCall('https://graph.facebook.com/v7.0/1923839514417430?access_token={{accessToken}}&fields=job_feeds{jobs.limit(50000){errors,wage,review_rejection_reasons,offsite_application_url,page,job_status,external_id,id}},id');
+        //
+        $ins = [];
+        //
+        foreach($this->curl['job_feeds']['data'][0]['jobs']['data'] as $job){
+            $t = [];
+            $t['job_id'] = $job['external_id'];
+            $t['external_id'] = $job['id'];
+            $t['status'] = $job['job_status'];
+            $t['reason'] = isset($job['errors']) ? implode('<br />', $job['errors']) : '';
+            //
+            $this->checkAndInsert($t, $t['job_id']);
+            //
+            $ins[] = $t;
+        }
+    }
+
+
+    /**
+     * 
+     */
+    private function checkAndInsert($a,$id){
+        if($this->db->where('job_id', $id)->count_all_results($this->table)){
+            $this->db->where('job_id', $id)
+            ->set($a)->update($this->table);
+        } else{
+            $this->db->where('job_id', $id)->insert($this->table, $a);
+        }
     }
 }
