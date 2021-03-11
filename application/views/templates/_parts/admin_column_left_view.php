@@ -178,6 +178,8 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
 ) {
     $ticket_support = true;
 } else if (
+    $this->uri->segment(3) == 'facebook_job_report' ||
+    $this->uri->segment(3) == 'blacklist_email' ||
     $this->uri->segment(3) == 'job_products_report' ||
     $this->uri->segment(3) == 'applicants_report' ||
     $this->uri->segment(3) == 'copy_applicants_report' ||
@@ -836,6 +838,16 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                     <a class="<?php echo $reports_menu ? 'hr-opened-menu' : 'hr-closed-menu'; ?>" href="javascript:;">Advanced Reports</a>
                     <div class="submenu" <?php echo $reports_menu ? 'style="display:block;"' : ''; ?>>
 
+                        <div class="menu-item">
+                            <a <?php if(strpos(base_url(uri_string()), site_url('manage_admin/reports/main/facebook_job_report')) !== false || ($this->uri->segment(3) == 'main/facebook_job_report')) {
+                                echo 'class="active"';
+                            } ?> href="<?php echo site_url('manage_admin/reports/main/facebook_job_report'); ?>">Facebook Jobs Report</a>
+                        </div>
+                        <div class="menu-item">
+                            <a <?php if(strpos(base_url(uri_string()), site_url('manage_admin/reports/main/blacklist_email')) !== false || ($this->uri->segment(3) == 'main/blacklist_email')) {
+                                echo 'class="active"';
+                            } ?> href="<?php echo site_url('manage_admin/reports/main/blacklist_email'); ?>">Blacklist emails</a>
+                        </div>
                         <div class="menu-item">
                             <a <?php if(strpos(base_url(uri_string()), site_url('manage_admin/reports/job_status_report')) !== false || ($this->uri->segment(3) == 'job_status_report')) {
                                 echo 'class="active"';

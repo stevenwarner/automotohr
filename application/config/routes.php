@@ -826,6 +826,8 @@ $route['job_products_report/(:any)'] = 'order_history/job_products_report/index/
 $route['order_history/(:any)'] = 'order_history/index/$1';
 $route['manage_admin/reports/job_products_report/(:any)'] = 'manage_admin/reports/job_products_report/index/$1';
 $route['manage_admin/reports/applicant_source_report_daily/(:any)'] = 'manage_admin/reports/applicant_source_report_daily/index/$1';
+$route['manage_admin/reports/main/facebook_job_report'] = 'manage_admin/reports/Main/facebook_job_report';
+$route['manage_admin/reports/main/blacklist_email'] = 'manage_admin/reports/Main/blacklist_email';
 //Resumes Module
 $route['resume_database'] = 'resume_database/index';
 $route['resume_database/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'resume_database/index/$1/$2/$3/$4/$5/$6';
