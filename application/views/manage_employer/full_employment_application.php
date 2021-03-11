@@ -148,7 +148,7 @@
                                                 </div>
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
-                                                        <label>Social Security Number </label>
+                                                        <label>Social Security Number <span class="staric">*</span></label>
                                                         <input class="invoice-fields" type="text" name="TextBoxSSN" required="true" value="<?php
                                                         if (isset($formpost['TextBoxSSN'])) {
                                                             echo $formpost['TextBoxSSN'];
@@ -161,7 +161,7 @@
                                                 </div>
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
-                                                        <label>Date of Birth </label>
+                                                        <label>Date of Birth <span class="staric">*</span></label>
                                                         <input class="invoice-fields" id="dob"  readonly="" type="text" name="TextBoxDOB" required="true" value="<?php
                                                         if (isset($formpost['TextBoxDOB'])) {
                                                             echo $formpost['TextBoxDOB'];
@@ -780,8 +780,8 @@
                                                             <div class="hr-radio-btns">
                                                                 <input type="radio" value="Yes" id="RadioButtonListWorkOver18_0" name="RadioButtonListWorkOver18"
                                                                 <?php
-                                                                if (isset($formpost['RadioButtonListWorkOver18']) && $formpost['RadioButtonListWorkOver18'] == 'Yes') {
-                                                                    echo " checked";
+                                                                if (isset($formpost['RadioButtonListWorkOver18'])) {
+                                                                    if($formpost['RadioButtonListWorkOver18'] == 'Yes') echo " checked";
                                                                 }elseif(isset($above18) && $above18 >= 18){
                                                                     echo " checked";
                                                                 }
@@ -791,8 +791,8 @@
                                                             <div class="hr-radio-btns">
                                                                 <input type="radio" value="No" id="RadioButtonListWorkOver18_1" name="RadioButtonListWorkOver18"
                                                                 <?php
-                                                                if (isset($formpost['RadioButtonListWorkOver18']) && $formpost['RadioButtonListWorkOver18'] == 'No') {
-                                                                    echo " checked";
+                                                                if (isset($formpost['RadioButtonListWorkOver18'])) {
+                                                                    if($formpost['RadioButtonListWorkOver18'] == 'No') echo " checked";
                                                                 }elseif(isset($above18) && $above18 < 18){
                                                                     echo " checked";
                                                                 }

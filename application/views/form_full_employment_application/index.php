@@ -604,9 +604,15 @@
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
 <?php $key = 'RadioButtonListWorkOver18'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( ($def_value == 'Yes') || (isset($above18) && $above18) >= 18 ? true : false ); ?>
-<?php $no_selected = ( ($def_value == 'No') || (isset($above18) && $above18 < 18) ? true : false ); ?>
+<?php 
+    if(isset($user_info[$key])){
+        if($user_info[$key] == 'Yes') $yes_selected = true;
+        else $no_selected = true;
+    } else{
+        if($above18 >= 18) $yes_selected = true;
+        else $no_selected = true;
+    }
+?>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListWorkOver18_0" name="RadioButtonListWorkOver18" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListWorkOver18_0">Yes</label>
