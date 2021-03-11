@@ -42,8 +42,17 @@ class Form_full_employment_application extends CI_Controller {
                     $field_names[] = 'job_title';
                 }
 
-                $data['above18'] = $user_info['dob'] != NULL && $user_info['dob'] != '0000-00-00' && !empty($user_info['dob']) ? date('Y') - date('Y',strtotime($user_info['dob'])) : 0;
-
+                //
+                $birthDate = date('Y-m-d', strtotime('now'));
+                //
+                if(!empty($user_info['dob']) && $user_info['dob'] != '0000-00-00'){
+                    $birthDate = $user_info['dob'];
+                }
+                //
+                $birthDate = DateTime::createfromformat('Y-m-d', $birthDate);
+                $todayDate = DateTime::createfromformat('Y-m-d', date('Y-m-d', strtotime('now')));
+                //
+                $data['above18'] = $todayDate->diff($birthDate)->y;
 
                 $drivers_license = $this->dashboard_model->get_license_details($user_type, $user_sid, 'drivers');
                 if (!empty($drivers_license)) {
@@ -313,6 +322,7 @@ class Form_full_employment_application extends CI_Controller {
                     $data['ip_track'] = $ip_track;
                     $data['readonly_check'] = $readonly_check;
                     $data['disabled_check'] = $disabled_check;
+
                     $this->load->view('form_full_employment_application/index', $data);
                 } else {
                     $field_names = array();
@@ -826,7 +836,18 @@ class Form_full_employment_application extends CI_Controller {
                                 'extra_info' => $extras
                             );
                             $data['employer'] = $data_employer;
-                            $data['above18'] = $data["employer"]['dob'] != NULL && $data["employer"]['dob'] != '0000-00-00' && !empty($data["employer"]['dob']) ? date('Y') - date('Y',strtotime($data["employer"]['dob'])) : 0;
+                            //
+                            $birthDate = date('Y-m-d', strtotime('now'));
+                            //
+                            if(!empty($data["employer"]['dob']) && $data["employer"]['dob'] != '0000-00-00'){
+                                $birthDate = $data["employer"]['dob'];
+                            }
+                            //
+                            $birthDate = DateTime::createfromformat('Y-m-d', $birthDate);
+                            $todayDate = DateTime::createfromformat('Y-m-d', date('Y-m-d', strtotime('now')));
+                            //
+                            $data['above18'] = $todayDate->diff($birthDate)->y;
+                            //
                             $data['applicant_average_rating'] = $this->form_full_employment_application_model->getApplicantAverageRating($applicant_info['sid'], 'applicant'); //getting average rating of applicant
                             //Get Countries and States - Start
                             $data_countries = db_get_active_countries();
@@ -958,7 +979,7 @@ class Form_full_employment_application extends CI_Controller {
                     );
 
                     //
-                    if(!$_ssv) $data['dob'] = DateTime::createFromFormat('m-d-Y', $formpost['TextBoxDOB'])->format('Y-d-m');
+                    if(!$_ssv && !empty($formpost['TextBoxDOB'])) $data['dob'] = DateTime::createFromFormat('m-d-Y', $formpost['TextBoxDOB'])->format('Y-d-m');
 
                     $this->form_full_employment_application_model->update_applicant($id, $data);
                     $this->form_full_employment_application_model->update_applicant_form_status($sid, $company_sid, 'applicant', 'signed');
