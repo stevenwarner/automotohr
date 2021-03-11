@@ -1,4 +1,25 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+
+<?php 
+
+$tr = '';
+$complaint = 0;
+$bounced = 0;
+foreach($jobs as $job){
+    //
+    if($job['is_complaint']){
+        $complaint++;
+    }
+    if($job['is_bounced']){
+        $bounced++;
+    }
+    $tr .= '<tr>';
+    $tr .= '    <td>'.$job['email'].'</td>';
+    $tr .= '    <td class="text-'.($job['is_bounced'] == 1 ? "success" : "danger" ).'"><strong>'.($job['is_bounced'] == 1 ? "YES" : "NO" ).'<strong></td>';
+    $tr .= '    <td class="text-'.($job['is_complaint'] == 1 ? "success" : "danger") .'"><strong>'.($job['is_complaint'] == 1 ? "YES" : "NO") .'<strong></td>';
+    $tr .= '    <td>'.DateTime::createfromformat('Y-m-d H:i:s', $job['created_at'])->format('M d, D Y H:i').'</td>';
+    $tr .= '</tr>';
+} ?>
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -20,7 +41,13 @@
                                         </span>
                                     </div>
                                     <div class="hr-innerpadding">
-
+                                    <div class="row">
+                                            <div class="col-sm-12">
+                                                <p><strong>Complaints: </strong><?=$complaint;?></p>
+                                                <p><strong>Bounced: </strong><?=$bounced;?></p>
+                                                <hr />
+                                            </div>
+                                        </div>
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
@@ -34,14 +61,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <?php foreach($jobs as $job){?>
-                                                                <tr>
-                                                                    <td><?=$job['email'];?></td>
-                                                                    <td class="text-<?=$job['is_bounced'] == 1 ? "success" : "danger" ;?>"><strong><?=$job['is_bounced'] == 1 ? "YES" : "NO" ;?><strong></td>
-                                                                    <td class="text-<?=$job['is_complaint'] == 1 ? "success" : "danger" ;?>"><strong><?=$job['is_complaint'] == 1 ? "YES" : "NO" ;?><strong></td>
-                                                                    <td><?=DateTime::createfromformat('Y-m-d H:i:s', $job['created_at'])->format('M d, D Y H:i');?></td>
-                                                                </tr>
-                                                            <?php } ?>
+                                                            <?php echo $tr; ?>
                                                         </tbody>
                                                     </table>
                                                 </div>

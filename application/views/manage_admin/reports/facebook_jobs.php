@@ -1,4 +1,28 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php 
+$tr = '';
+$inDraft =0;
+$inOpen =0;
+
+foreach($jobs as $job){
+    if($job['status'] == 'OPEN'){
+        $inOpen++;
+    }
+    if($job['status'] == 'DRAFT'){
+        $inDraft++;
+    }
+    $tr .= '<tr>';
+    $tr .= ' <td>';
+    $tr .= '       <a href="https://www.automotosocial.com/display-job/'.$job['job_id'].'" target="_blank">'.$job['Title'].'</a>';
+    $tr .= '   </td>';
+    $tr .= '   <td>';
+    $tr .= '       <a href="https://www.facebook.com/'.$job['external_id'].'" target="_blank">'.$job['external_id'].'</a>';
+    $tr .= '   </td>';
+    $tr .= '   <td>'.$job['status'].'</td>';
+    $tr .= '   <td>'.$job['reason'].'</td>';
+    $tr .= '   <td>'.DateTime::createfromformat('Y-m-d H:i:s', $job['created_at'])->format('M d, D Y H:i').'</td>';
+    $tr .= '</tr>';
+} ?>
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -20,7 +44,13 @@
                                         </span>
                                     </div>
                                     <div class="hr-innerpadding">
-
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <p><strong>Jobs marked as Draft: </strong><?=$inDraft;?></p>
+                                                <p><strong>Jobs marked as Open: </strong><?=$inOpen;?></p>
+                                                <hr />
+                                            </div>
+                                        </div>
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
@@ -35,19 +65,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <?php foreach($jobs as $job){?>
-                                                                <tr>
-                                                                    <td>
-                                                                        <a href="https://www.automotosocial.com/display-job/<?=$job['job_id'];?>" target="_blank"><?=$job['Title'];?></a>
-                                                                    </td>
-                                                                    <td>
-                                                                        <a href="https://www.facebook.com/<?=$job['external_id'];?>" target="_blank"><?=$job['external_id'];?></a>
-                                                                    </td>
-                                                                    <td><?=$job['status'];?></td>
-                                                                    <td><?=$job['reason'];?></td>
-                                                                    <td><?=DateTime::createfromformat('Y-m-d H:i:s', $job['created_at'])->format('M d, D Y H:i');?></td>
-                                                                </tr>
-                                                            <?php } ?>
+                                                           <?php echo $tr; ?>
                                                         </tbody>
                                                     </table>
                                                 </div>
