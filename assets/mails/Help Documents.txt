@@ -1,5 +1,0 @@
-https://forums.cpanel.net/threads/piping-mail-to-php-scripts-howto-and-checklist.50985/
-
-https://forums.cpanel.net/threads/email-forward-to-php-script.39083/
-
-https://documentation.cpanel.net/display/ALD/Forwarders#Forwarders-PipetoaProgram

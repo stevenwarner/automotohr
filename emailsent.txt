@@ -1,7 +1,0 @@
-Array
-(
-    [id] => 58
-    [email] => ahassan@egenienext.com
-    [full_name] => Admin Hassan Bokhary
-    [type] => approver
-)
