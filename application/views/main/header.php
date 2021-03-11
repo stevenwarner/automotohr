@@ -147,7 +147,7 @@
         <!--  -->
         <link rel="stylesheet" href="<?=base_url('assets/css/theme-2021.css?v='.time());?>">
         <!--  -->
-        <?php if (in_array('timeoff', $this->uri->segment_array())) { ?>
+        <?php if (in_array('timeoff', $this->uri->segment_array()) || in_array('dashboard', $this->uri->segment_array())) { ?>
             <?php $this->load->view('timeoff/style'); ?>
         <?php }?>
 

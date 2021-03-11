@@ -766,6 +766,38 @@
                                         </div>
                                     </div>
                                 <?php } ?>
+                                
+                                <?php if (checkIfAppIsEnabled('timeoff')) { ?>
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure><i class="fa fa-calendar-check-o"></i></figure>
+                                                <h2 class="post-title">
+                                                    <a href="javascript:void(0)">My Time Off</a>
+                                                </h2>
+                                                <div class="count-box" style="font-size: 12px">
+                                                    <span class="green" id="jsRemainingTime">0 hour(s)</span>
+                                                    <span class="green">remaining</span><br>
+                                                    <small id="jsConsumedTime" style="font-size: 12px">0 hour(s)</small>
+                                                    <small style="font-size: 12px">consumed</small> <br/>
+                                                    <small id="jsTotalTimeoffs" style="font-size: 12px">0 Time-offs approved</small>
+                                                </div>
+                                                <div class="button-panel">
+                                                    <div class="col-lg-6 col-xs-12">
+                                                        <a href="#" data-id="<?=$employee_sid;?>"
+                                                        class="btn btn-success form-control jsBreakdownRequest"
+                                                        >View Details</a>
+                                                    </div>
+                                                    <div class="col-lg-6 col-xs-12 pl0">
+                                                        <a href="#" data-id="<?=$employee_sid;?>"
+                                                        class="btn btn-success form-control jsCreateRequest"
+                                                        >Create Request</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
 
 
                                 <!-- Performance Review -->

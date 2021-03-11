@@ -346,7 +346,7 @@ if ($class != 'dashboard' &&
         </div>
     </div>
 </footer>
-<?php if($class == 'time_off'){ ?>
+<?php if($class == 'time_off'|| in_array('dashboard', $this->uri->segment_array())){ ?>
     <?php $this->load->view('timeoff/scripts'); ?>
 <?php } ?>
 <?php if($class == 'performance_management'){ ?>

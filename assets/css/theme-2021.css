@@ -1261,3 +1261,7 @@ nav.navigation ul li a {
 .csStickyTop {
     top: 50px;
 }
+
+.dashboard-menu {
+    background-color: #ffffff;
+}
