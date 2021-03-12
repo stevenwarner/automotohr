@@ -85,10 +85,10 @@
                                                                                 <td><?= $feed['title'] ?></td>
                                                                                 <td><?= $feed['type'] ?></td>
                                                                                 <td>
-                                                                                    <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
+                                                                                    <a href="<?php echo $feed['url'] ?>" target="_blank"><?php echo $feed['url'] ?></a>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <a href="<?php echo $feed['url'] ?>" target="_blank"><?php echo $feed['url'] ?></a>
+                                                                                    <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
                                                                                 </td>
                                                                                 <td></td>
                                                                                 <td></td>
@@ -162,7 +162,7 @@
                                                                     }
                                                                     if (sizeof($custom_feed_accept_url)) { ?>
                                                                         <tr class="bg-success">
-                                                                            <td colspan="4">Applicant Accept URLs</td>
+                                                                            <td colspan="7">Applicant Accept URLs</td>
                                                                         </tr>
                                                                         <?php foreach ($custom_feed_accept_url as $feed) { ?>
                                                                             <tr>
@@ -172,6 +172,7 @@
                                                                                 <td>
                                                                                     <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
                                                                                 </td>
+                                                                                <td></td>
                                                                                 <td>
                                                                                     <a href="<?php echo base_url('manage_admin/custom_job_feeds_management/edit_job_feed') . '/' . $feed['sid'] ?>"
                                                                                        class="btn btn-success btn-block">Edit </a>
