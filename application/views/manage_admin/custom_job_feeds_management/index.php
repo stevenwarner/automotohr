@@ -41,8 +41,8 @@
                                                                     <th>Site</th>
                                                                     <th>Title</th>
                                                                     <th>Type</th>
-                                                                    <th>Last Read</th>
                                                                     <th>URL</th>
+                                                                    <th>Last Hit On</th>
                                                                     <th colspan="2" class="text-center" >Action</th>
                                                                 </tr>
                                                                 </thead>
