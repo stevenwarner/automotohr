@@ -17,7 +17,7 @@ foreach($jobs as $job){
     $tr .= '    <td>'.$job['email'].'</td>';
     $tr .= '    <td class="text-'.($job['is_bounced'] == 1 ? "success" : "danger" ).'"><strong>'.($job['is_bounced'] == 1 ? "YES" : "NO" ).'<strong></td>';
     $tr .= '    <td class="text-'.($job['is_complaint'] == 1 ? "success" : "danger") .'"><strong>'.($job['is_complaint'] == 1 ? "YES" : "NO") .'<strong></td>';
-    $tr .= '    <td>'.DateTime::createfromformat('Y-m-d\TH:i:s.uP', $job['note'])->format('M d, D Y H:i').'</td>';
+    $tr .= '    <td>'.DateTime::createfromformat((strpos($job['note'], '.') === false ? 'Y-m-d\TH:i:sP' : 'Y-m-d\TH:i:s.uP'), $job['note'])->format('M d, D Y H:i').'</td>';
     $tr .= '</tr>';
 } ?>
 <div class="main">
