@@ -2607,6 +2607,7 @@ class Home extends CI_Controller {
         if(isset($_REQUEST['feedId']) && $_REQUEST['feedId'] == 6) {
             $list                                                               = $this->job_details->get_all_company_jobs_ams(array(), NULL, NULL, NULL, NULL, NULL, $career_site_company_sid = array());
             $sid = $this->isActiveFeed();
+            $this->addLastRead(1);
             // Filter jobs
             $activeCompanies = $this->job_details->get_all_active_companies($sid);
             header('Content-type: text/xml');
