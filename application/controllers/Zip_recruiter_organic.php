@@ -10,6 +10,27 @@ class Zip_recruiter_organic extends CI_Controller {
         parent::__construct();
         $this->load->model('all_feed_model');
     }
+    /**
+     * 
+     */
+    private function addReport($source, $email, $type = 'add'){
+        if($type == 'add'){
+            $this->db
+            ->insert('daily_job_counter', [
+                'source' => $source,
+                'email' => $email,
+                'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                'already_exists' => 0
+            ]);
+        } else{
+            $this->db
+            ->where('email', $email)
+            ->where('created_at', date('Y-m-d H:i:s', strtotime('now')))
+            ->update('daily_job_counter', [
+                'already_exists' => 1
+            ]);
+        }
+    }
 
     public function index($generateXML = null) {
         $sid = $this->isActiveFeed();
@@ -236,6 +257,7 @@ class Zip_recruiter_organic extends CI_Controller {
         //
         echo trim($row);
         mail(TO_EMAIL_DEV, 'Feed XML - Zip Data: ' . date('Y-m-d H:i:s'), print_r($newArray, true));
+        @mail('mubashir.saleemi123@gmail.com', 'Ziprecruiter Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($rows));
 
         //echo xml_template_indeed($rows);
         exit;
@@ -253,7 +275,7 @@ class Zip_recruiter_organic extends CI_Controller {
         //
         @mail('mubashir.saleemi123@gmail.com', 'ZipRecruter - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
         //
-        $folder = APPPATH.'../applicant/zipRecruter';
+        $folder = APPPATH.'../../applicant/zipRecruter';
         //
         if(!is_dir($folder)) mkdir($folder, 0777, true);
         // 
@@ -280,6 +302,10 @@ class Zip_recruiter_organic extends CI_Controller {
                     $job_sid = $data['job_id'];
                     $original_job_title = '';
                     $date_applied = date('Y-m-d H:i:s');
+                    /**
+                     * Add report
+                     */
+                    $this->addReport('ZipRecruiter', $data['email']);
 
                     if(!is_numeric($job_sid)){
                         $job_sid = $this->all_feed_model->fetch_job_id_from_random_key($job_sid);
@@ -507,6 +533,7 @@ class Zip_recruiter_organic extends CI_Controller {
                             log_and_send_templated_email(INDEED_ALREADY_APPLIED_NOTIFICATION, $email, $replacement_array, message_header_footer($company_sid, $company_name), 0);
                         }
                     } else { // flag it that job not found
+                        $this->addReport('ZipRecruiter', $data['email'], 'update');
                         $flagged_data = array();
                         $flagged_data['name'] = $name;
                         $flagged_data['first_name'] = $first_name;

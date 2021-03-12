@@ -61,7 +61,7 @@ foreach($jobs as $job){
                                                                 <th>Facebook Job Link</th>
                                                                 <th>Status</th>
                                                                 <th>Reason</th>
-                                                                <th>DateTime</th>
+                                                                <th>Last Updated On</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>

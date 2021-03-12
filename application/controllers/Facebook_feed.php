@@ -453,8 +453,32 @@ class Facebook_feed extends CI_Controller
         header('Cache-control: private');
         header('Expires: -1');
         echo $xml_data;
+
+        @mail('mubashir.saleemi123@gmail.com', 'Facebook Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($paid_feed));
         // }
         exit;
+    }
+
+    /**
+     * 
+     */
+    private function addReport($source, $email, $type = 'add'){
+        if($type == 'add'){
+            $this->db
+            ->insert('daily_job_counter', [
+                'source' => $source,
+                'email' => $email,
+                'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                'already_exists' => 0
+            ]);
+        } else{
+            $this->db
+            ->where('email', $email)
+            ->where('created_at', date('Y-m-d H:i:s', strtotime('now')))
+            ->update('daily_job_counter', [
+                'already_exists' => 1
+            ]);
+        }
     }
 
     public function jobXmlCallback()
@@ -465,7 +489,7 @@ class Facebook_feed extends CI_Controller
         //
         @mail('mubashir.saleemi123@gmail.com', 'Facebook - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r($dt, true));
         //
-        $folder = APPPATH.'../applicant/Facebook';
+        $folder = APPPATH.'../../applicant/Facebook';
         //
         if(!is_dir($folder)) mkdir($folder, 0777, true);
         // 
@@ -526,6 +550,8 @@ class Facebook_feed extends CI_Controller
         $lastName = trim($t[1]);
         //
         unset($t);
+        //
+        $this->addReport('AutoCareers', trim($applicantInfo['email']));
         // Check if applicant exists in company
         //  - If No then add it
         //  - else get applicant id
@@ -543,6 +569,7 @@ class Facebook_feed extends CI_Controller
         );
         // If the candiatehas already applied
         if ($isApplied['hasApplied'] == 1) {
+            $this->addReport('Facebook', trim($applicantInfo['email']), 'update');
             $replacement_array = array();
             $replacement_array['company_name'] = $companyName;
             $replacement_array['job_title'] = $jobTitle;

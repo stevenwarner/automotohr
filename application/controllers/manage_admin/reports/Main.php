@@ -21,6 +21,7 @@ class Main extends Admin_Controller {
             facebook_jobs_status.status,
             facebook_jobs_status.reason,
             facebook_jobs_status.created_at,
+            facebook_jobs_status.updated_at,
             portal_job_listings.Title
         ')
         ->join('portal_job_listings', 'portal_job_listings.sid = facebook_jobs_status.job_id')

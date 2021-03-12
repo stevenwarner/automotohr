@@ -12,15 +12,37 @@ class Auto_careers extends CI_Controller
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
 
+    /**
+     * 
+     */
+    private function addReport($source, $email, $type = 'add'){
+        if($type == 'add'){
+            $this->db
+            ->insert('daily_job_counter', [
+                'source' => $source,
+                'email' => $email,
+                'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                'already_exists' => 0
+            ]);
+        } else{
+            $this->db
+            ->where('email', $email)
+            ->where('created_at', date('Y-m-d H:i:s', strtotime('now')))
+            ->update('daily_job_counter', [
+                'already_exists' => 1
+            ]);
+        }
+    }
+
     public function index()
     {
-        $f = fopen('dummp.json', 'w');
-        fwrite($f, json_encode(file_get_contents('php://input')));
-        fclose($f);
+        // $f = fopen('dummp.json', 'w');
+        // fwrite($f, json_encode(file_get_contents('php://input')));
+        // fclose($f);
         //
         @mail('mubashir.saleemi123@gmail.com', 'Auto Careers - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
         //
-        $folder = APPPATH.'../applicant/autocareers';
+        $folder = APPPATH.'../../applicant/autocareers';
         //
         if(!is_dir($folder)) mkdir($folder, 0777, true);
         // Create json file for all filters job categories
@@ -71,6 +93,11 @@ class Auto_careers extends CI_Controller
             $state_sid              = $applicant_data['state'];
             $country_sid            = $applicant_data['country'];
             $eeo_form               = $applicant_data['EEO'];
+
+            /**
+             * Add report
+             */
+            $this->addReport('AutoCareers', $applicant_data['email']);
             //
             if(strpos($email, '@devnull.facebook.com') !== false) return;
             if(preg_match('/@(.*).ru/i', $email)) return;
@@ -602,6 +629,10 @@ class Auto_careers extends CI_Controller
                     $this->auto_careers_model->save_eeo_form($eeo_data_to_insert);
                 }
             } else {
+                /**
+                 * Add report
+                 */
+                $this->addReport('AutoCareers', $applicant_data['email'], 'update');
                 $resume_to_update = array();
                 $resume_to_update['resume'] = $resume_aws_path;
 
