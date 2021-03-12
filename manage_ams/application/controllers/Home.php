@@ -2763,7 +2763,7 @@ class Home extends CI_Controller {
         ->where('sid', $sid)
         ->set([
             'last_read' => date('Y-m-d H:i:s', strtotime('now'))
-        ])->update('job_feeds_management;');
+        ])->update('job_feeds_management');
     }
 
     function date_with_time($date) {
