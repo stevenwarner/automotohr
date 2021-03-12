@@ -2450,6 +2450,7 @@ class Home extends CI_Controller {
             $list                                                               = $this->job_details->get_all_company_jobs_ams(
                 array(), NULL, NULL, NULL, NULL, NULL, array()
             );
+            $this->addLastRead(1);
             // Filter jobs
             $activeCompanies = $this->job_details->get_all_active_companies($sid);
 
@@ -2752,6 +2753,17 @@ class Home extends CI_Controller {
             echo '</source>';
             exit;
         }
+    }
+
+    /**
+     * 
+     */
+    private function addLastRead($sid){
+        $this->db
+        ->where('sid', $sid)
+        ->set([
+            'last_read' => date('Y-m-d H:i:s', strtotime('now'))
+        ])->update('job_feeds_management;');
     }
 
     function date_with_time($date) {

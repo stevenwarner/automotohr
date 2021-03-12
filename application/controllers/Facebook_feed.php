@@ -23,10 +23,21 @@ class Facebook_feed extends CI_Controller
         $this->accessToken = '2211285445561045|CDxZYxcSQcx6mJFHiH1RRHbtyOk';
         $this->accessTokenType = 'bearer';
     }
+    /**
+ * 
+ */
+private function addLastRead($sid){
+    $this->db
+    ->where('sid', $sid)
+    ->set([
+        'last_read' => date('Y-m-d H:i:s', strtotime('now'))
+    ])->update('job_feeds_management');
+}
 
     public function index($generate_file = 0)
     {
         $sid = $this->isActiveFeed();
+        $this->addLastRead(17);
         $featuredJobs                                                           = $this->all_feed_model->get_all_company_jobs_ams();
         $jobData                                                                = $this->all_feed_model->get_all_company_jobs();
         $activeCompaniesArray                                                   = $this->all_feed_model->get_all_active_companies($sid);
@@ -486,6 +497,7 @@ class Facebook_feed extends CI_Controller
 
         // $dt = file_get_contents(APPPATH.'../assets/fba/20200612004053.json');
         $dt = file_get_contents('php://input');
+        $this->addLastRead(18);
         //
         @mail('mubashir.saleemi123@gmail.com', 'Facebook - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r($dt, true));
         //

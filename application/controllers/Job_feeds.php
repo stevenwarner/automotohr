@@ -7,6 +7,16 @@ class Job_feeds extends CI_Controller {
         $this->load->model('all_job_feed_model');
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
+    /**
+ * 
+ */
+private function addLastRead($sid){
+    $this->db
+    ->where('sid', $sid)
+    ->set([
+        'last_read' => date('Y-m-d H:i:s', strtotime('now'))
+    ])->update('job_feeds_management');
+}
 
     public function index($slug) {
         $validSlug = $this->all_job_feed_model->check_for_slug($slug);
@@ -14,6 +24,7 @@ class Job_feeds extends CI_Controller {
             echo '<h1>404. Feed Not Found!</h1>';
             die();
         }
+        $this->addLastRead($validSlug);
         $jobData = $this->all_job_feed_model->get_all_company_jobs_organic();
         $activeCompaniesArray = $this->all_job_feed_model->get_all_active_companies($validSlug);
 

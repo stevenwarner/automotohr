@@ -6,10 +6,20 @@ class Career_feed_organic extends CI_Controller {
         $this->load->model('all_feed_model');
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
-
+/**
+ * 
+ */
+private function addLastRead($sid){
+    $this->db
+    ->where('sid', $sid)
+    ->set([
+        'last_read' => date('Y-m-d H:i:s', strtotime('now'))
+    ])->update('job_feeds_management');
+}
     public function index() {
 
         $sid = $this->isActiveFeed();
+        $this->addLastRead(6);
         $rows = '';
         $purchasedJobs = $this->all_feed_model->get_all_company_jobs_career_builder();
         $i = 0;

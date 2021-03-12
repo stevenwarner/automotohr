@@ -9,9 +9,21 @@ class Indeed_feed extends CI_Controller {
         $this->load->model('all_feed_model');
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
+    
+/**
+ * 
+ */
+private function addLastRead($sid){
+    $this->db
+    ->where('sid', $sid)
+    ->set([
+        'last_read' => date('Y-m-d H:i:s', strtotime('now'))
+    ])->update('job_feeds_management');
+}
 
     public function index() {
         $sid = $this->isActiveFeed();
+        $this->addLastRead(8);
         $jobData = $this->all_feed_model->get_all_company_jobs_indeed();
         $activeCompaniesArray = $this->all_feed_model->get_all_active_companies($sid);
         $rows = '';
@@ -164,6 +176,7 @@ class Indeed_feed extends CI_Controller {
     public function indeedPostUrl() {
         // error_reporting(E_ALL);
         //
+        $this->addLastRead(9);
         @mail('mubashir.saleemi123@gmail.com', 'Indeed - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
         //
         $folder = APPPATH.'../../applicant/indeed';

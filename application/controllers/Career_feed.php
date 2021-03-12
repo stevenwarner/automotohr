@@ -6,8 +6,21 @@ class Career_feed extends CI_Controller {
         $this->load->model('all_feed_model');
     }
 
+    
+/**
+ * 
+ */
+private function addLastRead($sid){
+    $this->db
+    ->where('sid', $sid)
+    ->set([
+        'last_read' => date('Y-m-d H:i:s', strtotime('now'))
+    ])->update('job_feeds_management');
+}
+
     public function index() {
         $sid = $this->isActiveFeed();
+        $this->addLastRead(5);
         $jobData = $this->all_feed_model->get_all_company_jobs_career_builder();
         $activeCompaniesArray = $this->all_feed_model->get_all_active_companies($sid);
 

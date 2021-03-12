@@ -11,6 +11,16 @@ class Zip_recruiter_organic extends CI_Controller {
         $this->load->model('all_feed_model');
     }
     /**
+ * 
+ */
+private function addLastRead($sid){
+    $this->db
+    ->where('sid', $sid)
+    ->set([
+        'last_read' => date('Y-m-d H:i:s', strtotime('now'))
+    ])->update('job_feeds_management');
+}
+    /**
      * 
      */
     private function addReport($source, $email, $type = 'add'){
@@ -34,6 +44,7 @@ class Zip_recruiter_organic extends CI_Controller {
 
     public function index($generateXML = null) {
         $sid = $this->isActiveFeed();
+        $this->addLastRead(4);
         $isOld = TRUE;
         // Added on: 05-08-2019
         // Load the XML file ifgenerate check is false
@@ -264,6 +275,7 @@ class Zip_recruiter_organic extends CI_Controller {
     }
 
     public function zipPostUrl() {
+        $this->addLastRead(10);
         $this->output->set_content_type('application/json');
         $this->output->set_header('Accept: */*');
         //$dummy_email = 'j.taylor.title@gmail.com';

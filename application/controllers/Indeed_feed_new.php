@@ -7,7 +7,16 @@ class Indeed_feed_new extends CI_Controller {
         $this->load->model('indeed_model');
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
-
+/**
+ * 
+ */
+private function addLastRead($sid){
+    $this->db
+    ->where('sid', $sid)
+    ->set([
+        'last_read' => date('Y-m-d H:i:s', strtotime('now'))
+    ])->update('job_feeds_management');
+}
     public function index($type = 'old') {
         $sid = $this->isActiveFeed();
         switch ($type) {
@@ -183,6 +192,7 @@ class Indeed_feed_new extends CI_Controller {
      */
     private function newIndex(){
         $sid = $this->isActiveFeed();
+        $this->addLastRead(7);
         // Get Indeed Paid Job Ids
         $indeedPaidJobIds = $this->indeed_model->getIndeedPaidJobIds();
         $indeedPaidJobs = array();

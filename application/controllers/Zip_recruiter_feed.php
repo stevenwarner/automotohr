@@ -5,11 +5,22 @@ class Zip_recruiter_feed extends CI_Controller {
         parent::__construct();
         $this->load->model('all_feed_model');
     }
+    /**
+ * 
+ */
+private function addLastRead($sid){
+    $this->db
+    ->where('sid', $sid)
+    ->set([
+        'last_read' => date('Y-m-d H:i:s', strtotime('now'))
+    ])->update('job_feeds_management');
+}
 
     public function index() {
         $sid = $this->isActiveFeed();
         $jobData = $this->all_feed_model->get_all_company_jobs_zipRec();
         $activeCompaniesArray = $this->all_feed_model->get_all_active_companies($sid);
+        $this->addLastRead(2);
 
 		mail(TO_EMAIL_DEV, 'Feed XML - Zip: ' . date('Y-m-d H:i:s'), 'Pinged');
        
