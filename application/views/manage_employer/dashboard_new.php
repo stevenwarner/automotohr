@@ -666,45 +666,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                    <div class="dash-box activity-box-wrp">
-                                        <div class="activity-box">
-                                            <h2>Account Activity</h2>
-                                            <article class="activity-count">
-                                                <label>Jobs Active</label>
-                                                <div class="progress v3">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                        <span class="number-of-count"><?php echo $jobCountActive; ?></span>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                            <article class="activity-count">
-                                                <label>Jobs posted</label>
-                                                <div class="progress v1">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                        <span class="number-of-count"><?php echo $jobCount; ?></span>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                            <article class="activity-count">
-                                                <label>Job page visitors</label>
-                                                <div class="progress v2">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                        <span class="number-of-count"><?php echo $visitors; ?></span>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                            <article class="activity-count">
-                                                <label>Applications received</label>
-                                                <div class="progress v3">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                        <span class="number-of-count"><?php echo $applicants; ?></span>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        </div>
-                                    </div>
-                                </div>
+                                
 
                                 <?php $comply_status = $data["session"]["company_detail"]["complynet_status"];
                                 $employee_comply_status = $data["session"]["employer_detail"]["complynet_status"];
@@ -823,6 +785,47 @@
                                         </div>
                                     </div>
                                 <?php } ?>
+
+                                <!-- Account Activity -->
+                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                    <div class="dash-box activity-box-wrp">
+                                        <div class="activity-box">
+                                            <h2>Account Activity</h2>
+                                            <article class="activity-count">
+                                                <label>Jobs Active</label>
+                                                <div class="progress v3">
+                                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                        <span class="number-of-count"><?php echo $jobCountActive; ?></span>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                            <article class="activity-count">
+                                                <label>Jobs posted</label>
+                                                <div class="progress v1">
+                                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                        <span class="number-of-count"><?php echo $jobCount; ?></span>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                            <article class="activity-count">
+                                                <label>Job page visitors</label>
+                                                <div class="progress v2">
+                                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                        <span class="number-of-count"><?php echo $visitors; ?></span>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                            <article class="activity-count">
+                                                <label>Applications received</label>
+                                                <div class="progress v3">
+                                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                        <span class="number-of-count"><?php echo $applicants; ?></span>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
