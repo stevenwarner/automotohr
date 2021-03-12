@@ -25,7 +25,7 @@ class Main extends Admin_Controller {
             portal_job_listings.Title
         ')
         ->join('portal_job_listings', 'portal_job_listings.sid = facebook_jobs_status.job_id')
-        ->order_by('facebook_jobs_status.sid', 'DESC')
+        ->order_by('portal_job_listings.activation_date', 'DESC')
         ->get('facebook_jobs_status')
         ->result_array();
 
@@ -38,7 +38,7 @@ class Main extends Admin_Controller {
     function blacklist_email(){
         //
         $this->data['jobs'] = $this->db
-        ->order_by('blacklist_emails.sid', 'DESC')
+        ->order_by('blacklist_emails.note', 'DESC')
         ->get('blacklist_emails')
         ->result_array();
 
