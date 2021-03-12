@@ -41,6 +41,7 @@
                                                                     <th>Site</th>
                                                                     <th>Title</th>
                                                                     <th>Type</th>
+                                                                    <th>Last Read</th>
                                                                     <th>URL</th>
                                                                     <th colspan="2" class="text-center" >Action</th>
                                                                 </tr>
@@ -55,6 +56,9 @@
                                                                                 <td><?= $feed['type'] ?></td>
                                                                                 <td>
                                                                                     <a href="<?php echo $feed['url'] ?>"><?php echo $feed['url'] ?></a>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
                                                                                 </td>
                                                                                 <td>
                                                                                     <?php if(sizeof($feed['url'])) { ?>
@@ -80,6 +84,9 @@
                                                                                 <td><?= $feed['site'] ?></td>
                                                                                 <td><?= $feed['title'] ?></td>
                                                                                 <td><?= $feed['type'] ?></td>
+                                                                                <td>
+                                                                                    <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
+                                                                                </td>
                                                                                 <td>
                                                                                     <a href="<?php echo $feed['url'] ?>" target="_blank"><?php echo $feed['url'] ?></a>
                                                                                 </td>
@@ -118,6 +125,7 @@
                                                                     <th>Title</th>
                                                                     <th>Type</th>
                                                                     <th>URL</th>
+                                                                    <th>Last Hit On</th>
                                                                     <th class="text-center" colspan="3">Actions</th>
                                                                 </tr>
                                                                 </thead>
@@ -130,6 +138,9 @@
                                                                                 <td><?= $feed['title'] ?></td>
                                                                                 <td><?= $feed['type'] ?></td>
                                                                                 <td><a href="<?= $feed['url'] ?>" target="_blank"><?= $feed['url'] ?></a></td>
+                                                                                <td>
+                                                                                    <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
+                                                                                </td>
                                                                                 <td>
                                                                                    <?php if(sizeof($feed['url'])) { ?>
                                                                                         <a class="btn btn-default btn-block" href="<?php echo base_url("manage_admin/custom_job_feeds_management/companies_listing/".$feed['sid']); ?>">Companies</a>
@@ -158,6 +169,9 @@
                                                                                 <td><?= $feed['title'] ?></td>
                                                                                 <td><?= $feed['type'] ?></td>
                                                                                 <td><?= $feed['url'] ?></td>
+                                                                                <td>
+                                                                                    <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
+                                                                                </td>
                                                                                 <td>
                                                                                     <a href="<?php echo base_url('manage_admin/custom_job_feeds_management/edit_job_feed') . '/' . $feed['sid'] ?>"
                                                                                        class="btn btn-success btn-block">Edit </a>

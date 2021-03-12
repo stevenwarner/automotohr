@@ -10,14 +10,14 @@ class Custom_job_feeds_management_model extends CI_Model
         return $this->db->insert_id();
     }
     function fetch_feeds_list($is_default, $accept_url){
-        $this->db->select('sid,title,status,is_default,accept_url_flag,site,type,url');
+        $this->db->select('sid,title,status,is_default,accept_url_flag,site,type,url, last_read');
         $this->db->where('is_default',$is_default);
         $this->db->where('accept_url_flag',$accept_url);
         $feed_list = $this->db->get('job_feeds_management')->result_array();
         return $feed_list;
     }
     function fetch_feed_by_id($feed_id){
-        $this->db->select('title,status,description,is_default,accept_url_flag,site,type,url');
+        $this->db->select('title,status,description,is_default,accept_url_flag,site,type,url,last_read');
         $this->db->where('sid',$feed_id);
         $feed = $this->db->get('job_feeds_management')->result_array();
         return $feed;

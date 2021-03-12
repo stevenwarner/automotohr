@@ -207,12 +207,6 @@
                                                                         <td>Organic</td>
                                                                         <td><a href="https://www.automotohr.com/Zip_recruiter_organic" target="_blank">https://www.automotohr.com/Zip_recruiter_organic</a></td>
                                                                     </tr>
-                                                                    <tr>
-                                                                        <td>AutomotoHR</td>
-                                                                        <td>ZipRecruiter</td>
-                                                                        <td>Organic</td>
-                                                                        <td><a href="https://www.automotohr.com/Zip_recruiter_organic" target="_blank">https://www.automotohr.com/Zip_recruiter_organic</a></td>
-                                                                    </tr>
 																	<tr>
                                                                         <td>AutomotoHR</td>
                                                                         <td>Career Builder</td>
