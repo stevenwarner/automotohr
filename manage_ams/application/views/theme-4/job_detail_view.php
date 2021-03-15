@@ -34,7 +34,7 @@ $googleJobOBJ['jobLocation']['address']['@type'] = 'PostalAddress';
 $googleJobOBJ['jobLocation']['address']['streetAddress'] = $job_details['Location'] != '' ? $job_details['Location'] : $job_details['Location_City'];
 // $googleJobOBJ['jobLocation']['addressLocality'] = '';
 // $googleJobOBJ['jobLocation']['addressRegion'] = '';
-$googleJobOBJ['jobLocation']['address']['postalCode'] = $job_details['Location_ZipCode'];
+$googleJobOBJ['jobLocation']['address']['postalCode'] = !empty($job_details['Location_ZipCode']) ? $job_details['Location_ZipCode'] : 'N/A';
 $googleJobOBJ['jobLocation']['address']['addressCountry'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CA" : "US";
 // Applicant location details
 $googleJobOBJ['applicantLocationRequirements']['@type'] = 'Country';
@@ -42,6 +42,15 @@ $googleJobOBJ['applicantLocationRequirements']['name'] = preg_match('/canada/', 
 $googleJobOBJ['jobLocationType']['@type'] = 'JobPosting';
 $googleJobOBJ['jobLocationType']['name'] = 'TELECOMMUTE';
 // Salary
+$googleJobOBJ['baseSalary'] = [];
+$googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
+$googleJobOBJ['baseSalary']['currency'] = 'USD';
+$googleJobOBJ['baseSalary']['value'] = [];
+$googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
+$googleJobOBJ['baseSalary']['value']['currency'] = 'USD';
+$googleJobOBJ['baseSalary']['value']['value'] = '20';
+$googleJobOBJ['baseSalary']['value']['unitText'] = 'HOUR';
+
 if($job_details['Salary'] != ''){
     $googleJobOBJ['baseSalary'] = [];
     $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';

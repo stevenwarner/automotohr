@@ -1,16 +1,27 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <?php
-if((preg_replace('/[^A-z]/', $job_details['activation_date']) == '' || $company_details['has_job_approval_rights'] == 1) && $job_details['approval_status_change_datetime'] != '0000-00-00 00:00:00'){
-    $job_details['activation_date'] = DateTime::createFromFormat('Y-m-d H:i:s', $job_details['approval_status_change_datetime'])->format('m-d-Y');
+
+$acDate = $job_details['activation_date'];
+
+//echo $acDate;
+if(!preg_match('/[0-9]/',$acDate)) $acDate = date('m-d-Y');
+
+if(preg_replace('/[^0-9]/', '', $job_details['activation_date']) == '' && $job_details['approval_status_change_datetime'] != ''){
+    $acDate = DateTime::createFromFormat(
+        'Y-m-d H:i:s',
+        $job_details['approval_status_change_datetime']
+    )->format('m-d-Y');
 }
+
 $googleJobOBJ = [];
 // Basic job details
 $googleJobOBJ['@type'] = 'JobPosting';
 $googleJobOBJ['title'] = $job_details['Title'];
 $googleJobOBJ['employmentType'] = strtoupper(str_replace(' ', '_', $job_details['JobType'])); // FULL_TIME, PART_TIME, CONTRACTOR, TEMPORARY, INTERN, VOLUNTEER, PER_DIEM, OTHER [FULL_TIME,PART_TIME]
-$googleJobOBJ['datePosted'] = DateTime::createFromFormat('m-d-Y', $job_details['activation_date'])->format('Y-m-d');
-$googleJobOBJ['validThrough'] = DateTime::createFromFormat('m-d-Y', $job_details['activation_date'])->add(new DateInterval('P15D'))->format('Y-m-dT00:00'); // Add interval of one month
+$googleJobOBJ['datePosted'] = DateTime::createFromFormat('m-d-Y', $acDate)->format('Y-m-d');
+$googleJobOBJ['validThrough'] = DateTime::createFromFormat('m-d-Y', $acDate)->add(new DateInterval('P15D'))->format('Y-m-dT00:00'); // Add interval of one month
 $googleJobOBJ['description'] = $job_details['JobDescription'].' '.$job_details['JobRequirements'];
+// $googleJobOBJ['logo'] = $job_details['JobDescription'].' '.$job_details['JobRequirements'];
 // Organization details
 $googleJobOBJ['hiringOrganization'] = [];
 $googleJobOBJ['hiringOrganization']['@type'] = 'Organization';
@@ -24,7 +35,7 @@ $googleJobOBJ['jobLocation']['address']['@type'] = 'PostalAddress';
 $googleJobOBJ['jobLocation']['address']['streetAddress'] = $job_details['Location'] != '' ? $job_details['Location'] : $job_details['Location_City'];
 // $googleJobOBJ['jobLocation']['addressLocality'] = '';
 // $googleJobOBJ['jobLocation']['addressRegion'] = '';
-$googleJobOBJ['jobLocation']['address']['postalCode'] = $job_details['Location_ZipCode'];
+$googleJobOBJ['jobLocation']['address']['postalCode'] = !empty($job_details['Location_ZipCode']) ? $job_details['Location_ZipCode'] : 'N/A';
 $googleJobOBJ['jobLocation']['address']['addressCountry'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CA" : "US";
 // Applicant location details
 $googleJobOBJ['applicantLocationRequirements']['@type'] = 'Country';
@@ -32,6 +43,15 @@ $googleJobOBJ['applicantLocationRequirements']['name'] = preg_match('/canada/', 
 $googleJobOBJ['jobLocationType']['@type'] = 'JobPosting';
 $googleJobOBJ['jobLocationType']['name'] = 'TELECOMMUTE';
 // Salary
+$googleJobOBJ['baseSalary'] = [];
+$googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
+$googleJobOBJ['baseSalary']['currency'] = 'USD';
+$googleJobOBJ['baseSalary']['value'] = [];
+$googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
+$googleJobOBJ['baseSalary']['value']['currency'] = 'USD';
+$googleJobOBJ['baseSalary']['value']['value'] = '20';
+$googleJobOBJ['baseSalary']['value']['unitText'] = 'HOUR';
+
 if($job_details['Salary'] != ''){
     $googleJobOBJ['baseSalary'] = [];
     $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';

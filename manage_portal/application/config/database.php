@@ -72,7 +72,30 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $active_group = 'default';
 $query_builder = TRUE;
-if($_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='intranet.dev' || $_SERVER['HTTP_HOST']=='corp.dev'){
+if($_SERVER['HTTP_HOST']=='devsupport.local'){
+	$db['default'] = array(
+		'dsn'	=> '',
+		'hostname' => 'localhost',
+		'username' => 'root',
+		'password' => '1122',
+		'database' => 'automotohr',
+		'dbdriver' => 'mysqli',
+		'dbprefix' => '',
+		'pconnect' => FALSE,
+		'db_debug' => TRUE,
+		'cache_on' => TRUE,
+		'cachedir' => '',
+		'char_set' => 'utf8',
+		'dbcollat' => 'utf8_general_ci',
+		'swap_pre' => '',
+		'encrypt' => FALSE,
+		'compress' => TRUE,
+		'stricton' => TRUE,
+		'failover' => array(),
+		'save_queries' => FALSE
+	);
+	} 
+else if($_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='intranet.dev' || $_SERVER['HTTP_HOST']=='corp.dev'){
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
