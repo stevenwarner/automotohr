@@ -68,7 +68,6 @@ class Twilioapp{
 		$this->setPhone('secondary_one', array('sid' => 'PNcd41479c6145ecb0eab1dcdcf608360e', 'number' => '+19097570288'));
 		// Set mode type
 		$this->setMode('sandbox');
-		// $this->setMode('production');
 		$this->error = false;
 		$this->error_array = array(
 			'Error' => 'Oops! Something went wrong',

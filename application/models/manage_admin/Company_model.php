@@ -2098,4 +2098,12 @@ class Company_model extends CI_Model {
         //
         return $this->db->insert_id();
     }
+
+    //
+    function getPhoneNumber($companyId){
+        return $this->db
+        ->where('company_sid', $companyId)
+        ->get('portal_company_sms_module')
+        ->row_array();
+    }
 }

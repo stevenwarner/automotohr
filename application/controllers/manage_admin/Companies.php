@@ -1450,8 +1450,8 @@ class Companies extends Admin_Controller {
                         $company_sid = $this->input->post('company_sid');
                         $this->company_model->set_sms_module_status($company_sid, $this->input->post('sms_module_status', TRUE));
                         if($this->input->post('sms_module_status', TRUE) == 1){
-                            $response = $this->sms_buy_process($company_sid);
-                            $this->session->set_flashdata('message', $response == 1 ? "You have successfully activated the SMS module." : "Something went wrong");
+                            // $response = $this->sms_buy_process($company_sid);
+                            $this->session->set_flashdata('message', "You have successfully activated the SMS module.");
                         }
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
 
@@ -2506,95 +2506,31 @@ class Companies extends Admin_Controller {
         $this->job_listings_visibility_model->updateXmlJob( array( 'company_sid' => $companySid, 'job_content' => $job, 'is_ziprecruiter_job' => 1, 'is_indeed_job' => 0  ), array( 'sid' => $xmlJobId ) );
         return 1;
     }
-     public function manage_sms($sid = NULL) {
-        $redirect_url = 'manage_admin';
-        $function_name = 'edit_employers';
+    
+    /**
+     * 
+     */
+    public function manage_sms($sid) {
+        //
         $admin_id = $this->ion_auth->user()->row()->id;
-        $security_details = db_get_admin_access_level_details($admin_id);
-        $this->data['security_details'] = $security_details;
-
-        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
-        $employer_detail = $this->company_model->get_details($sid, 'employer');
-        //$company_detail = $this->company_model->get_details($employer_detail[0]['parent_sid'], 'company');
-        $this->data['show_timezone'] = isset($company_detail[0], $company_detail[0]['timezone']) ? $company_detail[0]['timezone'] : '';
-        $this->data['page_title'] = 'Edit Employer';
-        $security_access_levels = $this->company_model->get_security_access_levels();
-        $this->data['security_access_levels'] = $security_access_levels;
-        $this->load->library('form_validation');
-
-        // if ($employer_detail[0]['username'] != $this->input->post('username')) {
-        //     $this->form_validation->set_rules('username', 'User Name', 'required|min_length[5]|trim|xss_clean|is_unique[users.username]');
-        // } else {
-        //     $this->form_validation->set_rules('username', 'User Name', 'required|min_length[5]|trim|xss_clean');
-        // }
-
-        // if ($employer_detail[0]['email'] != $this->input->post('email')) {
-        //     $this->form_validation->set_rules('email', 'E-Mail Address', 'trim|xss_clean|valid_email|is_unique[users.email]');
-        // } else {
-        //     $this->form_validation->set_rules('email', 'E-Mail Address', 'trim|xss_clean|valid_email');
-        // }
-
-        $this->form_validation->set_rules('alternative_email', 'Alternative Email Address', 'trim|xss_clean|valid_email');
-        $this->form_validation->set_rules('direct_business_number', 'Direct Business Number', 'trim|xss_clean');
-        $this->form_validation->set_rules('cell_number', 'Cell Number', 'trim|xss_clean');
-        $this->form_validation->set_rules('job_title', 'Job Title', 'trim|xss_clean|alpha_numeric_spaces');
-
+        //
+        $this->data['security_details'] = db_get_admin_access_level_details($admin_id);
+        //
+        check_access_permissions($this->data['security_details'], 'manage_admin', 'edit_employers'); // Param2: Redirect URL, Param3: Function Name
+        //
+        $this->data['security_access_levels'] =$this->company_model->get_security_access_levels();
+        //
+        $this->data['sid'] = $sid;
+        //
+        $this->data['companyInfo'] = $this->company_model->get_company_details($sid);
+        //
+        $this->data['phoneNumber'] = $this->company_model->getPhoneNumber($sid);
+        //
         if ($this->form_validation->run() === FALSE) {
-            // if ($employer_detail) {
-            //     $this->data['data'] = $employer_detail[0];
-            // } else {
-            //     $this->session->set_flashdata('message', 'Employer does not exists!');
-            //     redirect('manage_admin/employers', 'refresh');
-            // }
-
+          
             $this->load->helper('form');
             $this->render('manage_admin/company/manage_sms');
 
-        } else {
-            $sid = $this->input->post('sid');
-            $action = $this->input->post('submit');
-            $data = array('username' => $this->input->post('username'),
-                            'email' => $this->input->post('email'));
-
-            $data['first_name'] = $this->input->post('first_name');
-            $data['last_name'] = $this->input->post('last_name');
-            $data['job_title'] = $this->input->post('job_title');
-            $data['direct_business_number'] = $this->input->post('direct_business_number');
-            $data['cell_number'] = $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('cell_number');
-            $data['alternative_email'] = $this->input->post('alternative_email');
-            $registration_date = $this->input->post('registration_date');
-            $data['access_level'] = $this->input->post('security_access_level');
-            $data['access_level_plus'] = $this->input->post('access_level_plus');
-            $data['complynet_status'] = $this->input->post('complynet_status');
-
-            if ($registration_date != NULL) {
-                $data['registration_date'] = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
-            } else {
-                $data['registration_date'] = NULL;
-            }
-
-            $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture'); // Picture Upload and Update
-
-            if ($profile_picture != 'error') {
-                $data['profile_picture'] = $profile_picture;
-            } else {
-                $pictures = NULL;
-            }
-
-            if(IS_TIMEZONE_ACTIVE){
-                //Added on: 25-06-2019
-                $timezone = $this->input->post('timezone', true);
-                if($timezone != '') $data['timezone'] = $timezone;
-            }
-
-            $this->company_model->update_user($sid, $data, 'Employer');
-
-            if ($action == 'Save') {
-                redirect('manage_admin/employers/', 'refresh');
-            } else {
-                redirect('manage_admin/employers/edit_employer/' . $sid, 'refresh');
-            }
-            //redirect('manage_admin/companies','refresh');
         }
     }
 
