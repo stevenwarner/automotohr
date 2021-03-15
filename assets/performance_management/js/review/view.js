@@ -111,7 +111,6 @@ $(function() {
         });
     });
 
-
     $(document).on('click', '#jsChangeReviewDateModalSaveBTN', function(event) {
         ///
         event.preventDefault();

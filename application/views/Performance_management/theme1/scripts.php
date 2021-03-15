@@ -40,7 +40,7 @@
         labels: <?=json_encode(getDefaultLabel());?>
     };
     <?php if(isset($dnt)): ?>
-        const dnt = <?=json_encode($dnt);?>;
+        var dnt = <?=json_encode($dnt);?>;
     <?php endif; ?>
     <?php if(isset($permission)): ?>
         window.pm.permission = <?=json_encode($permission);?>;
@@ -56,10 +56,10 @@
     <?php endif; ?>
 </script>
 
-
 <script type="text/javascript" src="<?=base_url('assets/select2/select2.min.js');?>"></script>
 <script type="text/javascript" src="<?=base_url('assets/js/pagination.min.js');?>"></script>
 <script type="text/javascript" src="<?=base_url('assets/js/moment.min.js');?>"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 <script type="text/javascript" src="<?=base_url('assets/lodash/loadash.min.js');?>"></script>
 
 <!-- Common functions -->
@@ -94,8 +94,8 @@
 
 <?php if(in_array('feedback', $this->uri->segment_array())): ?>
     <!-- -->
-    <script src="<?=base_url('assets/performance_management/js/feedback/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
-    <script src="<?=base_url('assets/performance_management/js/feedback/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+    <script src="<?=base_url('assets/performance_management/js/reviewer_feedback/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+    <script src="<?=base_url('assets/performance_management/js/reviewer_feedback/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
 <?php endif; ?>
 
 <?php if(in_array('goals', $this->uri->segment_array())): ?>

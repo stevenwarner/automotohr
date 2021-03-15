@@ -51,6 +51,13 @@
             'icon' => 'calendar',
             'segment' => 'calendar',
             'class' => 'jsCalendarView'
+        ],
+        [
+            'title' => 'Report',
+            'url' => '/report',
+            'slug' => 'report',
+            'icon' => 'pie-chart',
+            'segment' => 'report'
         ]
     ];
     //

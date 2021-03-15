@@ -83,10 +83,7 @@
                                 <div class="csPageBoxHeader">
                                     <h4 class="pl10  pb10">
                                         Templates
-                                        <span class="csBTNBox">
-                                            <a href="<?=purl('settings/templates');?>" class="btn btn-black mt0">Manage
-                                                Templates</a>
-                                        </span>
+                                       
                                     </h4>
                                 </div>
                                 <!-- Box Body -->

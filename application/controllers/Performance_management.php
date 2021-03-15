@@ -201,6 +201,7 @@ class Performance_management extends Public_Controller{
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         //
         $this->pargs['review'] = $this->pmm->getReview($reviewId);
+        $this->pargs['review']['sid'] = $reviewId;
         //
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -273,6 +274,8 @@ class Performance_management extends Public_Controller{
         $this->pargs['pid'] = $reviewId;
         $this->pargs['pem'] = $employeeId;
 
+        $this->pargs['isAllowed'] = in_array($this->pargs['employerId'], array_column($this->pargs['review']['Reviewer'], 'reviewer_sid'));
+
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
         $this->load->view("{$this->pp}reviews/{$this->mp}feedback", $this->pargs);
@@ -317,7 +320,7 @@ class Performance_management extends Public_Controller{
         $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
         $this->pargs['pid'] = $reviewId;
         $this->pargs['pem'] = $employeeId;        
-        $this->pargs['isAllowed'] = in_array($this->pargs['employerId'], array_column($this->pargs['review']['reviewer_sid']));
+        $this->pargs['isAllowed'] = in_array($this->pargs['employerId'], array_column($this->pargs['review']['Reviewer'], 'reviewer_sid'));
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);

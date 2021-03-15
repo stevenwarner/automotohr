@@ -15,7 +15,8 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
-                <div class="csPageBox csRadius5">
+            <div class="csPageWrap">
+                <div class=" csPageBox csRadius5">
                     <!-- Header -->
                     <div class="csPageBoxHeader pl10">
                         <h4><strong>Review Title: <?=$review['review_title'];?></strong></h4>
@@ -43,9 +44,6 @@
                             <?php if(!empty($ques['description'])): ?>
                             <p><?=$ques['description'];?></p>
                             <?php endif;?>
-                            <?php if(!empty($ques['video_help'])): ?>
-                                <video src="<?=getVideoURL($pid, $key);?>" controls="true" style="width: 100%;"></video>
-                            <?php endif;?>
                             <div class="jsQuestionBox" data-id="<?=$question['sid'];?>">
                                 <?php echo getQuestionBody($ques, $answ); ?>
                             </div>
@@ -55,6 +53,7 @@
                         <?php endforeach; ?>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </div>
@@ -69,7 +68,7 @@
         draw.drawDOM(target, {
             avoidLinks: true,
             paperSize: "A4",
-            margin: { bottom: "1cm" },
+            margin: { bottom: "1cm", right: "1cm" },
             scale: 0.6
         })
         .then(function(root) {
@@ -85,8 +84,8 @@
                     // window.close();
         });
     }
-    
-    // generatePDF($('.container'));
+    // window.print();
+    generatePDF($('.container'));
     </script>
 </body>
 </html>

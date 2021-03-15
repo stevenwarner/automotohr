@@ -16,6 +16,7 @@ $(function() {
      * 
      */
     $('.jsQuestionNA').click(function() {
+        alert('sadas');
         //
         saveQuestion(
             $(this).closest('.jsQuestionBox').data('id'),
@@ -40,6 +41,7 @@ $(function() {
      * 
      */
     $('.jsQuestionBox li').click(function() {
+
         //
         $(this).closest('.jsQuestionBox').find('li').removeClass('active');
         $(this).addClass('active');
@@ -116,6 +118,7 @@ $(function() {
         //
         if (oldQuestion !== JSON.stringify(questions[questionId]))
             saveAnswer(questions[questionId], questionId);
+
     }
 
 

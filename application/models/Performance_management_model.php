@@ -977,13 +977,13 @@ class Performance_management_model extends CI_Model{
     /**
      * 
      */
-    function getReviewWithQuestionsForManager($reviewId, $employerId){
+    function getReviewWithQuestionsForManager($reviewId, $employerId, $revieweeId){
         //
-        $review = $this->getReviewWithQuestions($reviewId, $employerId);
+        $review = $this->getReviewWithQuestions($reviewId, $employerId, $revieweeId);
         //
         foreach($review['Questions'] as $k => $v){
-            $reviewersAnswer = $this->getReviewQuestions($reviewId, $employerId);
-            // _e($v, true, true);
+            $reviewersAnswer = $this->getReviewQuestions($reviewId, $employerId, $revieweeId);
+            // _e($reviewersAnswer, true, true);
         }
         //
         return $review;

@@ -63,8 +63,8 @@
                                 <!-- <li><a href="#"><i class="fa fa-print"></i> Print</a></li> -->
                                 <!-- <li><a href="#"><i class="fa fa-clock-o"></i> Change Due Date</a></li> -->
                                 <!-- <li><a href="#"><i class="fa fa-pencil-square-o"></i> Edit Review Name</a></li> -->
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#"><i class="fa fa-stop"></i> End Review</a></li>
+                                <!-- <li role="separator" class="divider"></li> -->
+                                <!-- <li><a href="#"><i class="fa fa-stop"></i> End Review</a></li> -->
                             </ul>
                         </div>
                     </span>
@@ -230,6 +230,12 @@
                                             </td>
                                             <td>
                                                 <div class="csBTNBox">
+                                                <?php   
+                                                    if(
+                                                        in_array($employerId, array_column($reviewerOBJ[$reviewee['reviewee_sid']]['Managers'], 'reviewer_sid')) ||
+                                                        in_array($employerId, array_column($reviewerOBJ[$reviewee['reviewee_sid']]['Reviewers'], 'reviewer_sid'))
+                                                    ){
+                                                ?>
                                                     <?php if($review['status'] != 'pending'):?>
                                                     <?php  if(in_array($employerId, array_column($reviewerOBJ[$reviewee['reviewee_sid']]['Managers'], 'reviewer_sid'))): ?>
                                                     <a href="<?=purl('feedback/'.($pid).'/'.($reviewee['reviewee_sid']).'');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
@@ -237,6 +243,7 @@
                                                     <a href="<?=purl('reviewer_feedback/'.($pid).'/'.($reviewee['reviewee_sid']).'');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
                                                     <?php endif; ?>
                                                     <?php endif; ?>
+                                                    <?php }?>
                                                     <div class="dropdown dn">
                                                         <button class="btn dropdown-toggle" type="button" id="dropdownMenu1"
                                                             data-toggle="dropdown" aria-haspopup="true"

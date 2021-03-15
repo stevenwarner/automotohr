@@ -130,7 +130,7 @@ if(!function_exists('getQuestionBody')){
                 $html .= '  <div class="csFeedbackViewBoxTab">';
                 $html .= '      <p class="mb0 jsQuestionRating" data-id="'.($i).'">'.($i).'</p>';
                 if($question['labels_flag'] == 1):
-                    $html .= '  <p>'.(getLabel($i, json_decode($question['label_question'], true))).'</p>';
+                    $html .= '  <p>'.(getLabel($i, ($question['label_question']))).'</p>';
                 endif;
                 $html .= '  </div>';
                 $html .= '</li>';
@@ -173,7 +173,9 @@ if(!function_exists('getLabel')){
     function getLabel($scale, $labels){
         //
         if(!count($labels) || $labels == '[]') $labels = getDefaultLabel();
-        foreach($labels as $k => $label) if($label['id']+1 == $scale) return $label['text'];
+        foreach($labels as $k => $label) {
+            if($k == $scale) return $label;
+        }
         return '';
     }
 }

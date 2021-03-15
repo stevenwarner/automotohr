@@ -1257,12 +1257,21 @@
                                                             </a>
                                                         </li>
                                                     <?php  } ?>
-                                                    <?php if (checkIfAppIsEnabled('performancereview') ) { ?>
+                                                    <?php if (checkIfAppIsEnabled('performance_review') ) { ?>
                                                         <li>
                                                             <?php $get_data = $this->session->userdata('logged_in'); ?>
-                                                            <a href="<?php echo base_url('performance/review/view'); ?>">
+                                                            <a href="<?php echo base_url('performance-management/dashboard'); ?>">
                                                                 <figure><i class="fa fa-pencil-square-o"></i></figure>
-                                                                Performance Review
+                                                                Performance Management
+                                                            </a>
+                                                        </li>
+                                                    <?php  } ?>
+                                                    <?php if (checkIfAppIsEnabled('goals') ) { ?>
+                                                        <li>
+                                                            <?php $get_data = $this->session->userdata('logged_in'); ?>
+                                                            <a href="<?php echo base_url('performance-management/goals'); ?>">
+                                                                <figure><i class="fa fa-pencil-square-o"></i></figure>
+                                                                Goals
                                                             </a>
                                                         </li>
                                                     <?php  } ?>

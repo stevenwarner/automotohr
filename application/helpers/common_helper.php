@@ -12585,7 +12585,10 @@ if(!function_exists('getVideoURL')){
     function getVideoURL($id, $qid, $module = 'performance_management') {
         switch($module):
             case "performance_management":
-                return base_url("assets/performance_management/videos/{$id}/video_".($qid).".webm");
+                if(file_exists(APPPATH."../assets/performance_management/videos/{$id}/video_".($qid).".webm"))
+                    return base_url("assets/performance_management/videos/{$id}/video_".($qid).".webm");
+                else
+                    return FALSE;
             break;
         endswitch;
     }

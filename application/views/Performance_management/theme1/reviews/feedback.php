@@ -51,6 +51,7 @@
                     <h5 style="color: #cc1100;"><strong><i class="fa fa-eye"></i> Your feedback will be visible to <?=$employees[$pem]['name'];?> once submitted.</strong></h5>
                 </div>
                 <?php endif; ?>
+                <div class="jsPic">
                 <!-- Body -->
                 <div class="csPageBoxBody p10">
                 <?php 
@@ -70,58 +71,10 @@
                         <?php if(!empty($ques['description'])): ?>
                         <p><?=$ques['description'];?></p>
                         <?php endif;?>
-                        <?php if(!empty($ques['video_link'])): ?>
+                        <?php if(!empty($ques['video_link']) && getVideoURL($ques['video_link'], $pid)): ?>
                             <video src="<?=getVideoURL($ques['video_link'], $pid);?>" controls="true" style="width: 100%;"></video>
                         <?php endif;?>
-                        <div class="csFeedbackViewBoxPreview">
-                            <div class="csFeedbackViewBoxPreviewRow">
-                                <div class="row">
-                                    <div class="col-sm-4 col-xs-12">
-                                        <div class="csEBox">
-                                            <figure>
-                                                <img src="<?=randomData('img');?>" class="csRadius50" />
-                                            </figure>
-                                            <div class="csEBoxText">
-                                                <h4 class="mb0"><strong><?=randomData('name');?></strong></h4>
-                                                <p class="mb5">(QA) [Admin Plus]</p>
-                                                <a href="" class="btn btn-orange btn-xs cdRadius5">View Profile</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-8 col-xs-12">
-                                        <div class="ma10">
-                                            <ul>
-                                                <li style="height: auto;" class="active">1</li>
-                                                <li style="height: auto;">2</li>
-                                                <li style="height: auto;">3</li>
-                                                <li style="height: auto;">4</li>
-                                                <li style="height: auto;">5</li>
-                                            </ul>
-                                            <p>Some remarks will appear here.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="csFeedbackViewBoxPreviewRow bbn">
-                                <div class="row">
-                                    <div class="col-sm-4 col-xs-12">
-                                        <div class="csEBox">
-                                            <figure>
-                                                <img src="<?=randomData('img');?>" class="csRadius50" />
-                                            </figure>
-                                            <div class="csEBoxText">
-                                                <h4 class="mb0"><strong>Ahmed Saleemi</strong></h4>
-                                                <p class="mb0">(HR) [Manager]</p>
-                                                <a href="" class="btn btn-orange btn-xs cdRadius5">View Profile</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-8 col-xs-12">
-                                        <div class="ma10">Some remarks will appear here.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div class="jsQuestionBox" data-id="<?=$question['sid'];?>">
                             <?php echo getQuestionBody($ques, $answ); ?>
                         </div>
@@ -130,26 +83,14 @@
                     </div>
                     <?php endforeach; ?>
                 </div>
+                </div>
                 <!-- Footer -->
                 <div class="csPageBoxFooter p10">
                     <div class="row">
-                        <div class="col-sm-4 col-xs-12">
+                        <div class="col-sm-12 col-xs-12">
                             <h5><strong>Overall Feedback</strong></h5>
-                            
-                            <div class="csShareBox">
-                                <div class="csEBox">
-                                    <figure>
-                                        <img src="<?=randomData('img');?>" class="csRadius50" />
-                                    </figure>
-                                    <div class="csEBoxText">
-                                        <h4><strong><?=randomData('name');?></strong></h4>
-                                        <p>(QA) [Admin Plus]</p>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
-                        <div class="col-sm-8 col-xs-12 ma10">
+                        <div class="col-sm-12 col-xs-12 ma10">
                             <div class="csFeedbackViewBox bbn">
                                 <ul>
                                     <li>
@@ -190,12 +131,14 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="csBtnRow ma10">
+                                <?php if($review['share_feedback'] == 1){ ?>
                                 <span class="csBTNBoxLeft ma10">
-                                    <a href="" class="btn btn-link">Preview what Mubashir will see if you share</a>
+                                    <a href="javascript:void(0);" class="btn btn-link jsDisplay" data-name="<?=$employees[$review['Reviewee'][0]['reviewee_sid']]['name'];?>">Preview what <?=$employees[$review['Reviewee'][0]['reviewee_sid']]['name'];?> will see if you share</a>
                                 </span>
+                                <?php } ?>
                                 <span class="csBTNBox ma10">
-                                    <a href="" class="btn btn-black">Cancel</a>
-                                    <a href="" class="btn btn-orange">Share Feedback</a>
+                                    <a href="javascript:void(0)" class="btn btn-black jsQuestionFLBtn">Cancel</a>
+                                    <a href="javascript:void(0)" class="btn btn-orange jsQuestionSaveBtn">Share Feedback</a>
                                 </span>
                             </div>
                         </div>
@@ -206,7 +149,7 @@
         <!-- Right Side Bar -->
         <div class="col-sm-3 col-xs-12">
             <div class="csPageBoxHeader bbn">
-                <h4 class="pa10"><strong>MUBASHIR'S GOALS</strong></h4>
+                <h4 class="pa10"><strong><?=$employees[$review['Reviewee'][0]['reviewee_sid']]['name'];?>'S GOALS</strong></h4>
             </div>
             <div class="csPageBoxBody">
                 <!--  -->
@@ -235,3 +178,21 @@
         </div>
     </div>
 </div>
+
+<script>
+    answers = <?=json_encode($answers);?>;
+
+    $(function(){
+        $('.jsDisplay').click(function(event){  
+            event.preventDefault();
+            Modal({
+                Id: "jsOverview",
+                Title: `What ${$(this).data().name} will see`,
+                Body: `<div class="container">${$('.jsPic').html()}</div>`,
+                Loader: 'jsOverviewLoader'
+            }, function(){
+                ml(false, 'jsOverviewLoader');
+            });
+        });
+    })
+</script>
