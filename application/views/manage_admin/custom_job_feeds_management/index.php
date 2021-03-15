@@ -43,6 +43,7 @@
                                                                     <th>Type</th>
                                                                     <th>URL</th>
                                                                     <th>Last Hit On</th>
+                                                                    <th>Source</th>
                                                                     <th colspan="2" class="text-center" >Action</th>
                                                                 </tr>
                                                                 </thead>
@@ -61,6 +62,9 @@
                                                                                     <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
                                                                                 </td>
                                                                                 <td>
+                                                                                    <?=!empty($feed['referral']) ? $feed['referral'] : '-';?>
+                                                                                </td>
+                                                                                <td>
                                                                                     <?php if(sizeof($feed['url'])) { ?>
                                                                                        <a class="btn btn-default btn-block" href="<?php echo base_url("manage_admin/custom_job_feeds_management/companies_listing/".$feed['sid']); ?>">Companies</a>
                                                                                     <?php } ?>
@@ -77,7 +81,7 @@
                                                                     }
                                                                     if (sizeof($default_feed_accept_url)) { ?>
                                                                         <tr class="bg-success">
-                                                                            <td colspan="6">Applicant Accept URLs</td>
+                                                                            <td colspan="8">Applicant Accept URLs</td>
                                                                         </tr>
                                                                         <?php foreach ($default_feed_accept_url as $feed) { ?>
                                                                             <tr>
@@ -90,6 +94,7 @@
                                                                                 <td>
                                                                                     <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
                                                                                 </td>
+                                                                                <td></td>
                                                                                 <td></td>
                                                                                 <td></td>
                                                                             </tr>
@@ -126,6 +131,7 @@
                                                                     <th>Type</th>
                                                                     <th>URL</th>
                                                                     <th>Last Hit On</th>
+                                                                    <th>Source</th>
                                                                     <th class="text-center" colspan="3">Actions</th>
                                                                 </tr>
                                                                 </thead>
@@ -140,6 +146,9 @@
                                                                                 <td><a href="<?= $feed['url'] ?>" target="_blank"><?= $feed['url'] ?></a></td>
                                                                                 <td>
                                                                                     <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?=!empty($feed['referral']) ? $feed['referral'] : '-';?>
                                                                                 </td>
                                                                                 <td>
                                                                                    <?php if(sizeof($feed['url'])) { ?>
@@ -162,7 +171,7 @@
                                                                     }
                                                                     if (sizeof($custom_feed_accept_url)) { ?>
                                                                         <tr class="bg-success">
-                                                                            <td colspan="7">Applicant Accept URLs</td>
+                                                                            <td colspan="8">Applicant Accept URLs</td>
                                                                         </tr>
                                                                         <?php foreach ($custom_feed_accept_url as $feed) { ?>
                                                                             <tr>
@@ -172,6 +181,7 @@
                                                                                 <td>
                                                                                     <?=empty($feed['last_read']) ? '-' : DateTime::createfromformat('Y-m-d H:i:s', $feed['last_read'])->format('M d Y, D H:i');?>
                                                                                 </td>
+                                                                                <td></td>
                                                                                 <td></td>
                                                                                 <td>
                                                                                     <a href="<?php echo base_url('manage_admin/custom_job_feeds_management/edit_job_feed') . '/' . $feed['sid'] ?>"
