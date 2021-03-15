@@ -972,6 +972,34 @@ class Performance_management_model extends CI_Model{
         //
         return $b;
     }
+    
+    /**
+     * 
+     */
+    function getReviewQuestion($questionId, $revieweeId, $reviewerId){
+        //
+        $this->db
+        ->select('
+            pmrq.sid,
+            pmrq.question,
+            pmra.answer
+        ')
+        ->from('performance_management_review_questions pmrq')
+        ->join('performance_management_review_answers pmra', "
+            pmra.review_question_sid = pmrq.sid AND
+            pmra.review_reviewer_sid = {$reviewerId} AND
+            pmra.reviewee_sid = {$revieweeId}
+        ", 'left')
+        ->where('pmrq.sid', $questionId);
+        $a = $this->db
+        ->order_by('pmrq.sid', 'ASC')
+        ->get();
+        //
+        $b = $a->row_array();
+        $a->free_result();
+        //
+        return $b;
+    }
 
 
     /**
@@ -980,10 +1008,16 @@ class Performance_management_model extends CI_Model{
     function getReviewWithQuestionsForManager($reviewId, $employerId, $revieweeId){
         //
         $review = $this->getReviewWithQuestions($reviewId, $employerId, $revieweeId);
+
         //
         foreach($review['Questions'] as $k => $v){
-            $reviewersAnswer = $this->getReviewQuestions($reviewId, $employerId, $revieweeId);
-            // _e($reviewersAnswer, true, true);
+            foreach($review['Reviewer'] as $reviewer){
+                $reviewersAnswer = $this->getReviewQuestion(
+                    $v['sid'], $revieweeId, $reviewer['reviewer_sid']
+                );
+                //
+                $review['Questions'][$k]['Reviewers'][$reviewer['reviewer_sid']] = $reviewersAnswer['answer'];
+            }
         }
         //
         return $review;

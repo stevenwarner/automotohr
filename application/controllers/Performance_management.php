@@ -136,7 +136,6 @@ class Performance_management extends Public_Controller{
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
-        // $this->load->view("{$this->pp}add_reviewee", $this->pargs);
         $this->load->view("{$this->pp}reviews/{$this->mp}index", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
@@ -230,6 +229,7 @@ class Performance_management extends Public_Controller{
         $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
         $this->pargs['gp'] = true;
 
+
         $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
         $this->load->view("{$this->pp}lms/reviews/{$this->mp}index", $this->pargs);
@@ -320,11 +320,13 @@ class Performance_management extends Public_Controller{
         $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
         $this->pargs['pid'] = $reviewId;
         $this->pargs['pem'] = $employeeId;        
-        $this->pargs['isAllowed'] = in_array($this->pargs['employerId'], array_column($this->pargs['review']['Reviewer'], 'reviewer_sid'));
+        $this->pargs['isAllowed'] = false;
+        foreach($this->pargs['review']['Reviewer'] as $ft){
+            if($ft['reviewer_sid'] == $this->pargs['employerId'] && $employeeId == $ft['reviewee_sid']){$this->pargs['isAllowed'] = true;}
+        }
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
-        // $this->load->view("{$this->pp}reviews/{$this->mp}preview", $this->pargs);
         $this->load->view("{$this->pp}reviews/{$this->mp}reviewer_feedback", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
@@ -591,6 +593,33 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}gp/reviews/{$this->mp}index", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
+    }
+    
+    /**
+     * Goals - List Goal
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/08/2021
+     * 
+     * @return Void
+     */
+    function gp_review($reviewId, $reviewerId){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Reviews';
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        $this->pargs['employee'] = $this->pargs['employerDetails'];
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        $this->pargs['gp'] = true;
+        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $this->pargs['employerId'], $reviewerId);
+
+        $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
+        $this->load->view("{$this->pp}header", $this->pargs);
+        $this->load->view("{$this->pp}lms/reviews/{$this->mp}single", $this->pargs);
+        $this->load->view("main/footer", $this->pargs);
     }
 
     /**

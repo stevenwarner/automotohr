@@ -3,7 +3,7 @@
     <div class="csPageHeading">
         <h2>
             <span class="csBTNBox">
-                <a href="<?=purl('review/create');?>" class="btn btn-orange"><i class="fa fa-plus-circle"></i> Create
+                <a href="<?=purl('review/create');?>" class="btn btn-orange"><i class="fa fa-plus-circle"></i> Create a
                     Review</a>
             </span>
             <strong>Custom reviews tailored to your needs.</strong><br />
@@ -72,7 +72,7 @@
                             <div class="col-sm-4">
                                 <div class="csEBox">
                                     <figure>
-                                        <img src="<?=getImageURL($em['img']);?>"
+                                        <img src="<?=getImageURL($em['image']);?>"
                                             class="csRadius50" />
                                     </figure>
                                     <div class="csEBoxText">
@@ -118,7 +118,7 @@
                             <div class="col-sm-4">
                                 <div class="csEBox">
                                     <figure>
-                                        <img src="<?=getImageURL($em['img']);?>"
+                                        <img src="<?=getImageURL($em['image']);?>"
                                             class="csRadius50" />
                                     </figure>
                                     <div class="csEBoxText">

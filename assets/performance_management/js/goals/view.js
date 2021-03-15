@@ -7,7 +7,6 @@ $(function() {
     };
     if (window.location.pathname.match(/employee/ig) !== null) {
         filter.employeeId = pm.employeeId;
-        alert(filter.employeeId);
     };
     let XHR = null;
     //

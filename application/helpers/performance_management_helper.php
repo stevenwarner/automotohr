@@ -84,7 +84,7 @@ if(!function_exists('res')){
  * @return String
  */
 if(!function_exists('getQuestionBody')){
-    function getQuestionBody($question, $answer = [], $reviewId){
+    function getQuestionBody($question, $answer = [], $showTitle= true){
         //
         $id = rand(1, 22222);
         //
@@ -144,10 +144,13 @@ if(!function_exists('getQuestionBody')){
             $question['question_type'] == 'text-rating' || 
             $question['question_type'] == 'multiple-choice-with-text'
         ){
-            $html .= '<div class="csFeedbackViewBoxComment">';
+            $html .= '<div class="csFeedbackViewBoxComment ">';
             $html .= '  <div class="row">';
             $html .= '    <div class="col-sm-12 col-xs-12 ma10">';
-            $html .= '      <h5><strong>Feedback (Elaborate)</strong></h5>';
+            if($showTitle){
+
+                $html .= '      <h5><strong>Feedback (Elaborate)</strong></h5>';
+            }
             $html .= '        <textarea class="form-control jsQuestionText">'.( !empty($answer) ? $answer['text'] : '' ).'</textarea>';
             $html .= '    </div>';
             $html .= '  </div>';

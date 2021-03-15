@@ -66,6 +66,8 @@
                     ?>
                     <div class="csFeedbackViewBox">
                         <h4 class="pa10 pb10"><strong>Question <?=$key +1;?></strong></h4>
+
+                        
                         
                         <h4><strong><?=$ques['title'];?></strong></h4>
                         <?php if(!empty($ques['description'])): ?>
@@ -74,14 +76,41 @@
                         <?php if(!empty($ques['video_link']) && getVideoURL($ques['video_link'], $pid)): ?>
                             <video src="<?=getVideoURL($ques['video_link'], $pid);?>" controls="true" style="width: 100%;"></video>
                         <?php endif;?>
+
+                        <div class="csFeedbackViewBoxPreview">
+                            <div class="csFeedbackViewBoxPreviewRow">
+                            <?php foreach($question['Reviewers'] as $em => $v):
+                                $emd = $employees[$em]; ?>
+                                <div class="row">
+                                    <div class="col-sm-4 col-xs-12">
+                                        <div class="csEBox">
+                                            <figure>
+                                                <img src="<?=$emd['img'];?>" class="csRadius50" />
+                                            </figure>
+                                            <div class="csEBoxText">
+                                                <h4 class="mb0"><strong><?=$emd['name'];?></strong></h4>
+                                                <p class="mb5"><?=$emd['role'];?></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8 col-xs-12">
+                                        <div class="ma10">
+                                        <?php echo getQuestionBody($ques, $answ, false); ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
                         
                         <div class="jsQuestionBox" data-id="<?=$question['sid'];?>">
                             <?php echo getQuestionBody($ques, $answ); ?>
                         </div>
                         <!--  -->
-                        <!-- <div class="clearfix"></div> -->
+                        
                     </div>
                     <?php endforeach; ?>
+                        <div class="clearfix"></div>
                 </div>
                 </div>
                 <!-- Footer -->

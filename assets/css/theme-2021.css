@@ -720,7 +720,7 @@
 .csPageWrap a.btn-black:focus,
 .csPageWrap button.btn-black:focus {
     background-color: #ffffff;
-    color: #444444;
+    color: #444444 !important;
     border: 1px solid #444444;
 }
 
