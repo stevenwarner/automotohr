@@ -259,7 +259,7 @@
                                     <i class="fa fa-pencil-square-o"></i>
                                 </span>
                                 <h4>Performance Management</h4>
-                                <a href="<?php echo base_url('performance-management') . 'employee/' . $employer["sid"]; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                <a href="<?php echo base_url('performance-management/employee/reviews/'.($employer["sid"]).''); ?>">View<i class="fa fa-chevron-circle-right"></i></a>
                             </li>
                         <?php } ?>
                         <?php if(checkIfAppIsEnabled('performance_review')) { ?>

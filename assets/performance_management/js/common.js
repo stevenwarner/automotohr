@@ -581,3 +581,18 @@ function getEmployee(employeeId, index) {
     //
     return {};
 }
+
+//
+$('.jsCalendarView').click(function(e) {
+    //
+    e.preventDefault();
+    // 
+    Modal({
+        Id: 'calendarModal',
+        Title: 'Calendar',
+        Body: `<div class="container"><iframe src="${pm.urls.base}calendar/my_events/iframe" width="100%" height="${$(window).height() - 90}"></iframe></div>`,
+        Loader: 'jsCalendarLoader'
+    }, () => {
+        ml(false, 'jsCalendarLoader')
+    });
+});

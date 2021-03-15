@@ -43,6 +43,14 @@
             'slug' => 'goals',
             'icon' => 'bullseye',
             'segment' => 'goals'
+        ],
+        [
+            'title' => 'Calendar',
+            'url' => 'javascript:void(0)',
+            'slug' => 'calendar',
+            'icon' => 'calendar',
+            'segment' => 'calendar',
+            'class' => 'jsCalendarView'
         ]
     ];
     //

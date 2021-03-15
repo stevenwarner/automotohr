@@ -1156,4 +1156,24 @@ class Performance_management_model extends CI_Model{
         ->where('reviewee_sid',$revieweeId)
         ->delete('performance_management_reviewers');
     }
+
+
+    // function checkAndGetRole($id){
+    //     //
+    //     $dm = $this->db->table('departments_management');
+    //     // $dtm = $this->db->table('departments_team_management');
+    //     // $d2e = $this->db->table('departments_employee_2_team');
+
+    //     // Fetch all department SP
+    //     $a = $dm
+    //     ->select('supervisors')
+    //     ->where('is_deleted', 0)
+    //     ->where('status', 1)
+    //     ->get();
+    //     //
+    //     $b = $a->result_array();
+    //     $a->free_result();
+
+    //     _e($b, true);
+    // }
 }
