@@ -6,15 +6,23 @@ class Zip_recruiter_feed extends CI_Controller {
         $this->load->model('all_feed_model');
     }
     /**
- * 
- */
-private function addLastRead($sid){
-    $this->db
-    ->where('sid', $sid)
-    ->set([
-        'last_read' => date('Y-m-d H:i:s', strtotime('now'))
-    ])->update('job_feeds_management');
-}
+     * 
+     */
+    private function addLastRead($sid){
+        $this->db
+        ->where('sid', $sid)
+        ->set([
+            'last_read' => date('Y-m-d H:i:s', strtotime('now')),
+            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
+        ])->update('job_feeds_management');
+        //
+        $this->db
+        ->insert('job_feeds_management_history', [
+            'feed_id' => $sid,
+            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
+            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+        ]);
+    }
 
     public function index() {
         $sid = $this->isActiveFeed();
