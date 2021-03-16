@@ -527,21 +527,21 @@ function loadReviewerStep(){
                         </figure>
                         <div class="csEBoxText">
                             <h4 class="mb0"><strong>${em.first_name} ${em.last_name}</strong></h4>
-                            <p class="mb0">${remakeEmployeeName(em, false)}</p>
-                            <p>${moment(em.joined_at, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.mdy)}</p>
+                            <p class="mb0 csSpan">${remakeEmployeeName(em, false)}</p>
+                            <p class="csSpan">${moment(em.joined_at, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.mdy)}</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-9 col-xs-12">
                     <div class="row">
                         <div class="col-sm-3 col-xs-12">
-                            <p>Included Reviewers (<span class="jsIncludedCount">0</span>)</p>
+                            <p class="csSpan">Included Reviewers (<span class="jsIncludedCount">0</span>)</p>
                             <button  class="btn btn-black btn-xs jsIncludeReviewer">
                                 <i class="fa fa-plus-circle"></i> Include Reviewer
                             </button>
                         </div>
                         <div class="col-sm-3 col-xs-12">
-                            <p>Excluded Reviewers (<span class="jsExcludedCount">0</span>)</p>
+                            <p class="csSpan">Excluded Reviewers (<span class="jsExcludedCount">0</span>)</p>
                             <button  class="btn btn-black btn-xs jsExcludedReviewer">
                                 <i class="fa fa-plus-circle"></i> Exclude Reviewer
                             </button>

@@ -46,7 +46,7 @@
             <div class="col-sm-12">
                 <a href="<?=purl('reviews');?>" class="btn btn-black"><i class="fa fa-long-arrow-left"></i> All
                     Reviews</a>
-            </div>
+                </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
@@ -58,7 +58,7 @@
                                 Actions <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu csUL" aria-labelledby="dropdownMenu1" style="left: -80%">
-                                <li><a href="#" class="jsAddReviewers" data-id="<?=$review['sid'];?>"><i class="fa fa-plus-circle"></i> Add Reviewee</a></li>
+                                <li><a href="#" class="jsAddReviewers" data-id="<?=$review['sid'];?>"><i class="fa fa-plus-circle"></i> Add a Reviewee</a></li>
                                 <!-- <li><a href="#"><i class="fa fa-download"></i> Download Report</a></li> -->
                                 <!-- <li><a href="#"><i class="fa fa-print"></i> Print</a></li> -->
                                 <!-- <li><a href="#"><i class="fa fa-clock-o"></i> Change Due Date</a></li> -->
@@ -68,10 +68,10 @@
                             </ul>
                         </div>
                     </span>
+                    <h1>
                     <strong><?=$review['review_title'];?> 
-                    <!-- <span class="btn alert-success"><?=$review['status'] == 'pending' ? 'Pending' : ( $review['status'] == 'started' ? 'Running' : 'Ended');?></span> -->
-                    </strong> <br />
-                    <!-- <p>Last Run by Mubashir Ahmed on Jan 01 2021, Sunday</p> -->
+                    <span class="btn alert-success"><?=$review['status'] == 'pending' ? 'Pending' : ( $review['status'] == 'started' ? 'Running' : 'Ended');?></span>
+                    </strong> </h1>
                 </h1>
             </div>
         </div>
@@ -84,64 +84,35 @@
             <div class="csPageBox csRadius5">
                 <!-- Loader -->
                 <div class="csIPLoader jsIPLoader dn" data-page="review_listing"><i class="fa fa-circle-o-notch fa-spin"></i></div>
-                <!-- Heading -->
-                <div class="csPageBoxHeader pa10 pl10 pr10 dn">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <ul>
-                                <li><a href="javascript:void(0)" class="active">Reviewees (<span><?=count($review['Reviewees']);?></span>)</a></li>
-                                <!-- <li><a href="javascript:void(0)">Reviewers (<span><?=count($review['Reviewers']);?></span>)</a></li> -->
-                            </ul>
-                        </div>
-                        <div class="col-sm-3">
-                            <select id="jsFilterDepartments">
-                                <?php echo getSelect($dnt['departments'], [-1 => 'All Departments']); ?>
-                            </select>
-                        </div>
-                        <div class="col-sm-3">
-                            <select id="jsFilterTeams">
-                                <?php echo getSelect($dnt['teams'], [-1 => 'All Teams']); ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
                 <!-- Body  -->
                 <div class="csPageBoxBody p10">
                     <!-- Data -->
                     <div class="csPageBodyProgress pt10">
                         <div class="row">
                             <div class="col-sm-6">
-                                <h3><strong>Reviewers Progress</strong></h3>
+                                <h1><strong>Reviewers Progress</strong></h1>
                                 <div class="progress csRadius100">
                                     <div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0"
                                         aria-valuemax="100" style="width: <?=$progress['reviewers']['completed_per'];?>%;"></div>
                                 </div>
-                                <ul>
+                                <ul class="csSpan">
                                     <li class="jsPopoverLiReviewer" title="Reviewers Progress">
                                         <span class="csRadius50 active"></span>
                                         <?=$progress['reviewers']['completed_per'];?>% Completed
-                                    </li>
-                                    <li class="jsPopoverLiReviewer" title="Reviewers Progress">
-                                        <span class="csRadius50"></span>
-                                        <?=$progress['reviewers']['pending_per'];?>% Not Completed
                                     </li>
                                 </ul>
                             </div>
                             <?php if($review['share_feedback'] == 1):?>
                             <div class="col-sm-6">
-                                <h3><strong>Manager Feedback Progress</strong></h3>
+                                <h1><strong>Manager Feedback Progress</strong></h1>
                                 <div class="progress csRadius100">
                                     <div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0"
                                         aria-valuemax="100" style="width: <?=$progress['managers']['completed_per'];?>%;"></div>
                                 </div>
-                                <ul>
-                                    <li class="jsPopoverLiManager"  title="Managers Progress">
+                                <ul class="csSpan">
+                                    <li class="jsPopoverLiManager"  title="Manager Feedback Progress">
                                         <span class="csRadius50 active"></span>
                                         <?=$progress['managers']['completed_per'];?>% Completed
-                                    </li>
-                                    <li class="jsPopoverLiManager"  title="Managers Progress">
-                                        <span class="csRadius50"></span>
-                                        <?=$progress['managers']['pending_per'];?>% Not Completed
                                     </li>
                                 </ul>
                             </div>
@@ -188,7 +159,7 @@
                                             </td>
                                             <td>
                                                 <?php if(empty($reviewerOBJ[$reviewee['reviewee_sid']]['Reviewers'])): ?>
-                                                <p>no reviewers</p>
+                                                <p>No Reviewers</p>
                                                 <?php else:?>
                                                     <div class="csPBox">
                                                         <ul class="mb0">
@@ -209,7 +180,7 @@
                                             </td>
                                             <td>
                                                 <?php if(empty($reviewerOBJ[$reviewee['reviewee_sid']]['Managers'])): ?>
-                                                <p>no managers</p>
+                                                <p>No Managers</p>
                                                 <?php else:?>
                                                     <div class="csPBox">
                                                         <ul class="mb0">
@@ -251,8 +222,8 @@
                                                             <i class="fa fa-ellipsis-v"></i>
                                                         </button>
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="left: auto; right: 100%;">
-                                                            <li><a href="javascript:void(0)" class="jsRemoveReviewee">Remove Reviewee</a></li>
-                                                            <li><a href="javascript:void(0)" class="jsReviewPeriodReviewee">Change Review Period</a></li>
+                                                            <li><a href="javascript:void(0)" class="jsRemoveReviewee"><em class="fa fa-times-circle"></em> Remove Reviewee</a></li>
+                                                            <li><a href="javascript:void(0)" class="jsReviewPeriodReviewee"><em class="fa fa-edit"></em> Change Review Period</a></li>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -302,7 +273,7 @@ let managerListing = <?=json_encode($managerListing);?>;
 
 $('.jsPopoverLiReviewer').popover({
     placement: "bottom auto",
-    trigger: 'hover',
+    trigger: 'click',
     html: true,
 }).on('inserted.bs.popover', function(){
     let html = `<ul class="csPopoverLi">`;
@@ -315,7 +286,7 @@ $('.jsPopoverLiReviewer').popover({
 
 $('.jsPopoverLiManager').popover({
     placement: "bottom auto",
-    trigger: 'hover',
+    trigger: 'click',
     html: true,
 }).on('inserted.bs.popover', function(){
     let html = `<ul class="csPopoverLi">`;

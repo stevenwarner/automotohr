@@ -3,7 +3,7 @@
         <!-- Body -->
         <div class="csPageBoxBody p10">
             <div class="csForm">
-                <h6 class="mb10">GENERAL DETAILS</h6>
+                <h3 class="mb10"><strong>GENERAL DETAILS</strong></h3>
                 <!--  -->
                 <div class="row mb10">
                     <div class="col-sm-3 col-xs-12">
@@ -25,7 +25,7 @@
                 <!--  -->
                 <div class="row mb10">
                     <div class="col-sm-3 col-xs-12">
-                        <label class="pa10">Start Date - Due Date</label>
+                        <label class="pa10">Start Date - Due Date <span class="csRequired"></span></label>
                     </div>
                     <div class="col-sm-3 col-xs-12 pr0">
                         <input type="text" readonly class="form-control csRadius100" id="jsCGStartDate" placeholder="MM/DD/YYYY"  />
@@ -85,7 +85,7 @@
                 <!--  -->
                 <div class="bbb mt10 mb10"></div>
 
-                <h5 class="mb10">MEASUREMENT AND ALIGNMENT</h5>
+                <h3 class="mb10"><strong>MEASUREMENT AND ALIGNMENT</strong></h3>
 
                 <!--  -->
                 <div class="row mb10">
@@ -126,7 +126,7 @@
                 <!--  -->
                 <div class="bbb mt10 mb10"></div>
 
-                <h5 class="mb10">VISIBILITY</h5>
+                <h3 class="mb10"><strong>VISIBILITY</strong></h3>
 
                 <div class="row mb10 jsCGBoxVisibilty">
                     <div class="col-sm-3 col-xs-12">

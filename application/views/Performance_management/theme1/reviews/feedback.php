@@ -16,12 +16,12 @@
                         <div class="csEVBox">
                             <figure>
                                 <img src="<?=$employees[$pem]['img'];?>"
-                                    class="csRadius50" />
+                                    class="csRadius50" alt="" />
                             </figure>
                             <div class="csEBoxText">
-                                <h4 class="mb0"><strong><?=$employees[$pem]['name'];?></strong></h4>
-                                <p class="mb0"><?=$employees[$pem]['role'];?></p>
-                                <p><?=$employees[$pem]['joined'];?></p>
+                                <h3 class="mb0"><strong><?=$employees[$pem]['name'];?></strong></h3>
+                                <p class="mb0 csSpan"><?=$employees[$pem]['role'];?></p>
+                                <p class="csSpan"><?=$employees[$pem]['joined'];?></p>
                             </div>
                         </div>
                     </div>
@@ -43,17 +43,17 @@
             <div class="csPageBox csRadius5">
                 <!-- Header -->
                 <div class="csPageBoxHeader pl10">
-                    <h3><strong><?=$review['review_title'];?></strong></h3>
+                    <h1><strong><?=$review['review_title'];?></strong></h1>
                 </div>
                 <?php if($review['share_feedback'] == 1): ?>
                 <!-- Header -->
                 <div class="csPageBoxHeader p10">
-                    <h5 style="color: #cc1100;"><strong><i class="fa fa-eye"></i> Your feedback will be visible to <?=$employees[$pem]['name'];?> once submitted.</strong></h5>
+                    <h4 style="color: #cc1100;"><strong><i class="fa fa-eye"></i> Your feedback will be visible to <?=$employees[$pem]['name'];?> once submitted.</strong></h4>
                 </div>
                 <?php endif; ?>
                 <div class="jsPic">
                 <!-- Body -->
-                <div class="csPageBoxBody p10">
+                <div class="csPageBoxBody">
                 <?php 
                         $answers = [];
                         foreach($review['Questions'] as $key => $question):
@@ -64,14 +64,11 @@
                             $answers[$question['sid']] = $answ;
                         }
                     ?>
-                    <div class="csFeedbackViewBox">
-                        <h4 class="pa10 pb10"><strong>Question <?=$key +1;?></strong></h4>
-
-                        
-                        
-                        <h4><strong><?=$ques['title'];?></strong></h4>
+                    <div class="csFeedbackViewBox  p10">
+                        <h2 class="pa10"><strong>Question <?=$key +1;?></strong></h2>
+                        <h3 class="pt0 mt0"><strong><?=$ques['title'];?></strong></h3>
                         <?php if(!empty($ques['description'])): ?>
-                        <p><?=$ques['description'];?></p>
+                        <p class="csSpan"><?=$ques['description'];?></p>
                         <?php endif;?>
                         <?php if(!empty($ques['video_link']) && getVideoURL($ques['video_link'], $pid)): ?>
                             <video src="<?=getVideoURL($ques['video_link'], $pid);?>" controls="true" style="width: 100%;"></video>
@@ -117,7 +114,7 @@
                 <div class="csPageBoxFooter p10">
                     <div class="row">
                         <div class="col-sm-12 col-xs-12">
-                            <h5><strong>Overall Feedback</strong></h5>
+                            <h3><strong>Overall Feedback</strong></h3>
                         </div>
                         <div class="col-sm-12 col-xs-12 ma10">
                             <div class="csFeedbackViewBox bbn">
@@ -162,12 +159,12 @@
                             <div class="csBtnRow ma10">
                                 <?php if($review['share_feedback'] == 1){ ?>
                                 <span class="csBTNBoxLeft ma10">
-                                    <a href="javascript:void(0);" class="btn btn-link jsDisplay" data-name="<?=$employees[$review['Reviewee'][0]['reviewee_sid']]['name'];?>">Preview what <?=$employees[$review['Reviewee'][0]['reviewee_sid']]['name'];?> will see if you share</a>
+                                    <a href="javascript:void(0);" class="btn btn-link jsDisplay" data-name="<?=$employees[$review['Reviewee'][0]['reviewee_sid']]['name'];?>"><strong>Preview what <?=$employees[$review['Reviewee'][0]['reviewee_sid']]['name'];?> will see if you share.</strong></a>
                                 </span>
                                 <?php } ?>
                                 <span class="csBTNBox ma10">
-                                    <a href="javascript:void(0)" class="btn btn-black jsQuestionFLBtn">Cancel</a>
-                                    <a href="javascript:void(0)" class="btn btn-orange jsQuestionSaveBtn">Share Feedback</a>
+                                    <a href="javascript:void(0)" class="btn btn-black jsQuestionFLBtn"><em class="fa fa-times-circle"></em> Cancel</a>
+                                    <a href="javascript:void(0)" class="btn btn-orange jsQuestionSaveBtn"><em class="fa fa-save"></em> Share Feedback</a>
                                 </span>
                             </div>
                         </div>
@@ -199,7 +196,7 @@
                         <!-- Error Box -->
                         <div class="csErrorBox">
                             <i class="fa fa-info-circle"></i>
-                            <p> Mubashir doesn't have any goals</p>
+                            <p> <?=$employees[$review['Reviewee'][0]['reviewee_sid']]['name'];?> doesn't have any goals</p>
                         </div>
                     </div>
                 </div>

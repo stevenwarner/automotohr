@@ -1,5 +1,6 @@
 .csPageWrap {
     /* font-family: sans-serif; */
+    min-height: 600px;
 }
 
 .csPageWrap button,
@@ -96,11 +97,11 @@
 }
 
 .csPageWrap .csErrorBox i {
-    font-size: 30px;
+    font-size: 40px !important;
 }
 
 .csPageWrap .csErrorBox p {
-    font-size: 16px;
+    font-size: 20px !important;
 }
 
 
@@ -470,6 +471,10 @@
     font-size: 16px;
 }
 
+.csFeedbackViewBox:nth-child(even) {
+    background-color: #eee;
+}
+
 
 /* Create page */
 
@@ -482,6 +487,7 @@
     margin-bottom: 15px;
     color: #999;
     cursor: pointer;
+    font-size: 18px !important;
 }
 
 .csPageWrap .csPageLeftMenu li i {
@@ -494,7 +500,7 @@
 .csPageWrap .csPageLeftMenu li.active,
 .csPageWrap .csPageLeftMenu li:hover {
     color: #444444;
-    font-weight: 800;
+    font-weight: 800 !important;
 }
 
 .csPageWrap .csPageLeftMenu li.active i {
@@ -1269,19 +1275,23 @@ nav.navigation ul li a {
 ul.csPopoverLi {
     list-style: none;
     width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 ul.csPopoverLi li {
     display: block;
     width: 100%;
     padding: 10px auto;
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 10px;
 }
 
 ul.csPopoverLi li i {
     float: right;
     color: #f2f2f2;
+    border: 1px solid #f2f2f2;
     font-size: 16px;
 }
 
@@ -1289,6 +1299,114 @@ ul.csPopoverLi li i.active {
     color: #fd7a2a;
 }
 
+.popover-title {
+    font-size: 20px !important;
+    font-weight: bold;
+}
+
 .popover {
     width: 100%
+}
+
+
+/* Font sizes */
+
+
+/* TRs */
+
+.csPageWrap thead tr {
+    background-color: #444444;
+    color: #ffffff;
+}
+
+
+/* TR hover */
+
+.csPageWrap tbody tr:hover {
+    background-color: #eeeeee;
+}
+
+
+/* THs */
+
+.csPageWrap tr th {
+    font-size: 20px !important;
+    text-transform: capitalize !important;
+}
+
+
+/* TDs */
+
+.csPageWrap tr td,
+.csPageWrap tr td p,
+.csPageWrap tr td span {
+    font-size: 18px !important;
+    font-weight: normal !important;
+}
+
+
+/* ULs */
+
+.csPageWrap ul li a,
+.csPageWrap ul li {
+    font-size: 20px !important;
+    font-weight: normal !important;
+    text-transform: capitalize !important;
+}
+
+
+/* Buttons */
+
+.csPageWrap button,
+.csPageWrap a {
+    font-size: 18px !important;
+    font-weight: normal !important;
+    text-transform: uppercase !important;
+}
+
+
+/* Labels */
+
+.csPageWrap label {
+    font-size: 18px !important;
+    font-weight: normal !important;
+    text-transform: capitalize !important;
+    font-weight: bold !important;
+}
+
+
+/* SPAN */
+
+.csSpan {
+    font-size: 18px !important;
+}
+
+
+/* Body Data */
+
+.csPageBodyData {
+    min-height: 500px;
+}
+
+
+/* Input, Select */
+
+.csPageWrap input,
+.csPageWrap select {
+    font-size: 18px !important;
+}
+
+
+/* fonts */
+
+.csPageWrap i,
+.csPageWrap em {
+    font-size: 18px !important;
+}
+
+
+/* Employee box */
+
+.csEBoxText h4 strong {
+    font-size: 18px !important;
 }

@@ -487,7 +487,7 @@ $(function() {
     function setView(goals) {
         goalsOBJ = {};
         if (goals.length === 0) {
-            $('.jsGoalWrap').html('<p class="alert alert-info text-center">No records found.</p>');
+            $('.jsGoalWrap').html(getNoShow('goal_' + filter.type));
             return;
         }
         //
@@ -580,9 +580,9 @@ $(function() {
             rows += `                <div class="clearfix"></div>`;
             rows += `        </div>`;
             rows += `        <div class="csPageHeader bbb pl10 pr10">`;
-            rows += `            <h4>`;
+            rows += `            <h3>`;
             rows += `                <strong>${goal.title}</strong>`;
-            rows += `            </h4>`;
+            rows += `            </h3>`;
             rows += `        </div>`;
             rows += `        <!-- Main screen -->`;
             rows += `        <div class="csPageSection jsBoxSection" data-key="main">`;
@@ -600,8 +600,8 @@ $(function() {
                 rows += `                            </figure>`;
                 rows += `                            <div class="csEBoxText">`;
                 rows += `                                <h4 class="mb0 ma10"><strong>${em.first_name} ${em.last_name}</strong></h4>`;
-                rows += `                                <p class="mb0"><strong>${remakeEmployeeName(em, false)}</strong></p>`;
-                rows += `                                <p><strong>#${getEmployeeId(em.userId, em.employee_number)}</strong></p>`;
+                rows += `                                <p class="mb0 csSpan"><strong>${remakeEmployeeName(em, false)}</strong></p>`;
+                rows += `                                <p class="csSpan"><strong>#${getEmployeeId(em.userId, em.employee_number)}</strong></p>`;
                 rows += `                            </div>`;
                 rows += `                        </div>`;
             } else {
@@ -625,13 +625,13 @@ $(function() {
             rows += `                    <div class="col-sm-4 col-xs-12">`;
             rows += `                        <div class="text-right">`;
             rows += `                            <h4 class="mb0"><strong style="color: ${goal.on_track == 1 ? "#81b431" : "#cc1100;"}; font-weight: 900;">${goal.on_track == 1 ? "On" : "Off"} Track</strong></h4>`;
-            rows += `                            <p class="ma0">As Of ${todayDate.format(pm.dateTimeFormats.mdy)}</p>`;
+            rows += `                            <p class="ma0 csSpan">As Of ${todayDate.format(pm.dateTimeFormats.mdy)}</p>`;
             rows += `                        </div>`;
             rows += `                    </div>`;
             rows += `                </div>`;
             rows += `                <div class="row">`;
             rows += `                    <div class="col-sm-12">`;
-            rows += `                        <p class="text-right">`;
+            rows += `                        <p class="text-right csSpan">`;
             rows += `                            <strong>${getMeasureSymbol(goal.measure_type)} ${goal.completed_target} / ${goal.target}</strong>`;
             rows += `                        </p>`;
             rows += `                    </div>`;
@@ -641,17 +641,17 @@ $(function() {
             rows += `                        </div>`;
             rows += `                        <div class="row ma10">`;
             rows += `                            <div class="col-sm-6">`;
-            rows += `                                <p><strong>${startDate.format(pm.dateTimeFormats.mdy)}<br /> Start Date</strong></p>`;
+            rows += `                                <p class="csSpan"><strong>${startDate.format(pm.dateTimeFormats.mdy)}<br /> Start Date</strong></p>`;
             rows += `                            </div>`;
             rows += `                            <div class="col-sm-6">`;
-            rows += `                                <p class="text-right"><strong>${endDate.format(pm.dateTimeFormats.mdy)}<br /> Due Date</strong></p>`;
+            rows += `                                <p class="text-right csSpan"><strong>${endDate.format(pm.dateTimeFormats.mdy)}<br /> Due Date</strong></p>`;
             rows += `                            </div>`;
             rows += `                        </div>`;
             rows += `                    </div>`;
             rows += `                </div>`;
             rows += `                <div class="row">`;
             rows += `                    <div class="col-sm-12 col-xs-12">`;
-            rows += `                        <h5${goal.description}</h5>`;
+            rows += `                        <h5>${goal.description}</h5>`;
             rows += `                    </div>`;
             rows += `                </div>`;
             rows += `                `;
@@ -801,8 +801,8 @@ $(function() {
             //
             let dataRow = '';
             dataRow += `        <div class="col-sm-10 col-xs-10 ${pm.employerId === parseInt(em.userId) ? 'pr0' : 'pl0'}">`;
-            dataRow += `            <span><strong>${em.first_name} ${em.last_name}</strong> ${remakeEmployeeName(em, false)}</span>`;
-            dataRow += `            <p>${comment.message}`;
+            dataRow += `            <span class="csSpan"><strong>${em.first_name} ${em.last_name}</strong> ${remakeEmployeeName(em, false)}</span>`;
+            dataRow += `            <p class="csSpan">${comment.message}`;
             dataRow += `                <span>${moment(comment.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</span>`;
             dataRow += `            </p>`;
             dataRow += `        </div>`;

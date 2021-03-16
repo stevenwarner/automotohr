@@ -270,12 +270,50 @@ function getError(errorCode, isError) {
         comment_missing: "Please, write a comment beforing saving it.",
         goal_update_success: "You have successfully updated the goal.",
         answer_save_success: "You have successfully updated the answers.",
+        review_archived: "Looks like, you haven't marked any review as archived.",
+        review_draft: "Looks like, you don't have any reviews in draft.",
+        review_active: "Looks like, you haven't created any reviews.",
+        goal_1: "Looks like, you haven't created any goals for employees.",
+        goal_2: "Looks like, you haven't created any goals for company.",
+        goal_3: "Looks like, you haven't created any goals for departments.",
+        goal_4: "Looks like, you haven't created any goals for teams.",
     };
     //
     if (isError === true)
         return { 'Status': false, 'Response': errorCodes[errorCode] === undefined ? 'We are unable to process your request at this moment. Please, try again in a few moments.' : errorCodes[errorCode], Redirect: false };
     else
         return errorCodes[errorCode] === undefined ? 'We are unable to process your request at this moment. Please, try again in a few moments.' : errorCodes[errorCode];
+}
+
+/**
+ * 
+ */
+function getNoShow(type) {
+    let html = '';
+    let buttons = '';
+    let message;
+    html += '<h1 class="alert text-center">{{message}}<br /><br />';
+    html += '{{buttons}}';
+    html += '</h1>';
+    //
+    message = getError(type);
+    //
+    if (
+        type == 'review_archived' ||
+        type == 'review_draft' ||
+        type == 'review_active'
+    ) {
+        buttons = '<a href="' + (pm.urls.base) + 'performance-management/review/create" class="btn btn-orange"><em class="fa fa-plus-circle"></em> CREATE A REVIEW</a>';
+    } else if (
+        type == 'goal_1' ||
+        type == 'goal_2' ||
+        type == 'goal_3' ||
+        type == 'goal_4'
+    ) {
+        buttons = '<button class="btn btn-orange jsCreateGoal"><em class="fa fa-plus-circle"></em> CREATE A GOAL</button>';
+    }
+    //
+    return html.replace(/{{message}}/i, message).replace(/{{.*}}/ig, buttons);
 }
 
 /**

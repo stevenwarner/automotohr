@@ -914,10 +914,10 @@ $(function() {
                                 </select>
                             </div>
                             <div class="col-sm-6 col-xs-12">
-                                <h5>After Reviewee's Hire Date</h5>
+                                <p class="csSpan">After Reviewee's Hire Date.</p>
                             </div>
                             <div class="col-sm-1 col-xs-12 pa10 jsRunRemove" title="Delete this row" placement="top">
-                                <i class="fa fa-trash text-danger"></i>
+                                <i class="fa fa-trash text-danger csSpan"></i>
                             </div>
                         </div>
                     </div>
@@ -943,10 +943,10 @@ $(function() {
                             </select>
                         </div>
                         <div class="col-sm-6 col-xs-12">
-                            <h5>After Reviewee's Hire Date</h5>
+                            <p class="csSpan">After Reviewee's Hire Date.</p>
                         </div>
                         <div class="col-sm-1 col-xs-12 pa10 jsRunRemove" title="Delete this row" placement="top">
-                            <i class="fa fa-trash text-danger"></i>
+                            <i class="fa fa-trash text-danger csSpan"></i>
                         </div>
                     </div>
                 </div>

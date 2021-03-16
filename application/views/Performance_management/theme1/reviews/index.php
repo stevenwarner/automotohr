@@ -26,18 +26,20 @@
                 <!-- Heading -->
                 <div class="csPageBoxHeader pa10 pl10 pr10">
                     <div class="row">
-                        <div class="col-sm-8">
+                        <div class="col-sm-7">
                             <ul>
                                 <li><a href="javascript:void(0)" data-id="active" class="jsTabShifter active">Active</a></li>
                                 <li><a href="javascript:void(0)" data-id="draft" class="jsTabShifter ">Draft</a></li>
                                 <li><a href="javascript:void(0)" data-id="archived" class="jsTabShifter ">Archived</a></li>
                             </ul>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <select id="jsFilterReviewName"></select>
                         </div>
                         <div class="col-sm-1">
-                            <button class="btn btn-black jsFilterBTN" data-target="jsFilterBox"><i class="fa fa-filter"></i> Filter</button>
+                            <span class="pull-right">
+                                <button class="btn btn-black jsFilterBTN" data-target="jsFilterBox"><em class="fa fa-filter"></em> Filter</button>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -59,12 +61,12 @@
                             <!--  -->
                             <div class="col-sm-3">
                                 <label>Start Date</label>
-                                <input type="text" class="form-control" readonly id="jsFilterStartDate" />
+                                <input type="text" class="form-control" placeholder="M/D/Y" readonly id="jsFilterStartDate" />
                             </div>
                             <!--  -->
                             <div class="col-sm-3">
                                 <label>End Date</label>
-                                <input type="text" class="form-control" readonly id="jsFilterEndDate" />
+                                <input type="text" class="form-control" placeholder="M/D/Y" readonly id="jsFilterEndDate" />
                             </div>
                             <!--  -->
                             <div class="col-sm-3">
@@ -81,14 +83,15 @@
                         <!-- Loader -->
                         <div class="csIPLoader jsIPLoader" data-page="review_listing"><i class="fa fa-circle-o-notch fa-spin"></i></div>
                         <div class="table-sreponsive">
-                            <table class="table table-striped">
+                            <table class="table table-striped table-condensed">
+                                <caption></caption>
                                 <thead>
                                     <tr>
-                                        <th class="col-sm-4">Review</th>
-                                        <th class="col-sm-2">Start Date</th>
-                                        <th class="col-sm-2">Reviewer progress</th>
-                                        <th class="col-sm-2">Manager Feedback progress</th>
-                                        <th class="col-sm-2"></th>
+                                        <th scope="column" class="col-sm-4 csTableTH">Review</th>
+                                        <th scope="column" class="col-sm-2 csTableTH">Start Date</th>
+                                        <th scope="column" class="col-sm-2 csTableTH">Reviewer progress</th>
+                                        <th scope="column" class="col-sm-2 csTableTH">Manager Feedback progress</th>
+                                        <th scope="column" class="col-sm-2 csTableTH"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="jsReviewWrap"></tbody>

@@ -2,7 +2,7 @@
     <div class="csPageBox csRadius5">
         <!-- Page Header -->
         <div class="csPageBoxHeader p10">
-            <h4>
+            <h1>
                 <span class="csBTNBox">
                     <button class="btn btn-black btn-lg mtn8 dn jsFinishLater"><i class="fa fa-edit"></i> Finish
                         Later</button>
@@ -10,7 +10,7 @@
                             class="fa fa-long-arrow-left"></i> All Reviews</a>
                 </span>
                 <strong>Create a Review </strong><span id="jsReviewTitleHeader"></span>
-            </h4>
+            </h1>
         </div>
 
         <!-- Page Body -->
@@ -50,8 +50,8 @@
                         <div class="csPageSection jsPageSection" data-key="templates">
                             <!-- Box Header -->
                             <div class="csPageBoxHeader p10">
-                                <h3>Craft a new review from the ground up or pick a template with insightful questions.
-                                </h3>
+                                <h2>Craft a new review from the ground up or pick a template with insightful questions.
+                                </h2>
                             </div>
                             <!-- Box Body -->
                             <div class="csPageBoxBody p10">
@@ -256,7 +256,7 @@
                                     <!--  -->
                                     <div class="row mb10">
                                         <div class="col-sm-12">
-                                            <h4>Schedule</h4>
+                                            <h3><strong>Schedule</strong></h3>
                                         </div>
                                     </div>
 
@@ -331,7 +331,7 @@
                                         <!-- Info -->
                                         <div class="row mb10">
                                             <div class="col-sm-12">
-                                                <p class="pa10 text-justify" style="font-size: 16px;">You can create
+                                                <p class="pa10 text-justify csSpan">You can create
                                                     custom occurrences for this review based on
                                                     reviewees' start date, and continuing on a regular schedule. For
                                                     instance, you may wish to run a performance review for new employees
@@ -376,7 +376,7 @@
                                                     id="jsReviewDue" />
                                             </div>
                                             <div class="col-sm-7 col-xs-12">
-                                                <h5>days after they start</h5>
+                                                <p class="csSpan">days after they start.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -399,25 +399,25 @@
                         <!-- Reviewees -->
                         <div class="csPageSection jsPageSection dn" data-key="reviewees">
                             <div class="csPageBoxHeader pl10">
-                                <h4><strong>Select Reviewees</strong></h4>
+                                <h2><strong>Select Reviewees</strong></h2>
                             </div>
                             <div class="csPageBoxHeader pl10 pa10 pb10">
-                                <h5>Use the Rule Settings to define which workers are included (or excluded) from this
-                                    review.</h5>
-                                <h5>Note: The preview shows the selected workers as of today and may differ from when
-                                    the review starts.</h5>
+                                <p class="csSpan">Use the Rule Settings to define which workers are included (or excluded) from this
+                                    review.</p>
+                                <p class="csSpan">Note: The preview shows the selected workers as of today and may differ from when
+                                    the review starts.</p>
                             </div>
                             <div class="csPageBoxBody">
                                 <div class="row">
                                     <!-- Filter Bar -->
                                     <div class="col-sm-4 col-xs-12">
                                         <div class="csFilterBox p10">
-                                            <h4>
-                                                Rule Settings
+                                            <p class="csSpan">
+                                                <strong>Rule Settings</strong>
                                                 <span class="csBTNBox">
                                                     <button class="btn btn-black btn-xs jsResetFilter">Reset</button>
                                                 </span>
-                                            </h4>
+                                            </p>
                                             <!-- Individual Row -->
                                             <div class="row pa10 pb10">
                                                 <div class="col-sm-12">
@@ -562,7 +562,7 @@
                         <!-- Reviewers -->
                         <div class="csPageSection jsPageSection dn" data-key="reviewers">
                             <div class="csPageBoxHeader p10">
-                                <h5>All reviews are submitted to the reporting manager</h5>
+                                <h2 style="color: #cc1100;">All reviews are submitted to the reporting manager</h2>
                             </div>
                             <div class="csPageBoxBody p10">
                                 <div class="csForm">
@@ -602,10 +602,10 @@
                                     <!-- Row 2 -->
                                     <div class="row">
                                         <div class="col-sm-3 col-xs-12">
-                                            <h5>Reviewees <span id="jsReviewTotalRevieweeCount"></span></h5>
+                                            <h4 class="csSpan"><strong>Reviewees</strong> <span id="jsReviewTotalRevieweeCount"></span></h4>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
-                                            <h5>Assigned Reviewers</h5>
+                                            <h4 class="csSpan"><strong>Assigned Reviewers</strong></h4>
                                         </div>
                                     </div>
                                     <div class="bbt"></div>
@@ -629,14 +629,14 @@
                         <div class="csPageSection jsPageSection  dn" data-key="questions">
                             <!-- Header -->
                             <div class="csPageBoxHeader csSticky csStickyTop p10" style="background-color: #fff;">
-                                <h4>
+                                <h2>
                                     <strong>Questions</strong>
                                     <span class="csBTNBox">
                                         <button class="btn btn-orange mtn8 jsReviewBackStep" data-to="add_question">
                                             <i class="fa fa-plus-circle"></i> Add A Question
                                         </button>
                                     </span>
-                                </h4>
+                                </h2>
                             </div>
                             <!-- Body -->
                             <div class="csPageBoxBody jsQuestionViewWrap bbb p10">
@@ -661,19 +661,19 @@
                         <div class="csPageSection jsPageSection dn" data-key="feedback">
                             <!-- Header -->
                             <div class="csPageBoxHeader p10">
-                                <h4><strong>Sharing Feedback</strong></h4>
+                                <h2><strong>Sharing Feedback</strong></h2>
                             </div>
                             <!-- Body -->
                             <div class="csPageBoxBody p10">
                                 <div class="csSharingFeedbackBox">
-                                    <h5>Tell us how you want managers to share feedback with their reports.</h5>
+                                    <p class="csSpan">Tell us how you want managers to share feedback with their reports.</p>
                                     <br />
                                     <ul>
-                                        <li class="csRadius5 jsReviewFeedback" data-share="1">
+                                        <li class="csRadius5 jsReviewFeedback csCursorSelect" data-share="1">
                                             <i class="fa fa-eye"></i> The manager summarizes all reviews and shares the
                                             summary with their report
                                         </li>
-                                        <li class="csRadius5 jsReviewFeedback" data-share="0">
+                                        <li class="csRadius5 jsReviewFeedback csCursorSelect" data-share="0">
                                             <i class="fa fa-eye-slash"></i> Nothing is shared with their report
                                         </li>
                                     </ul>
@@ -694,13 +694,13 @@
                         <!-- Add Question -->
                         <div class="csPageSection jsPageSection dn" data-key="add_question">
                             <div class="csPageBoxHeader p10">
-                                <h4>
+                                <h2>
                                     <strong>Add a Question</strong>
                                     <span class="csBTNBox">
                                         <button class="btn btn-black btn-lg mtn8 jsReviewBackStep" data-to="questions"><i class="fa fa-times-circle"></i> Cancel</button>
                                         <button class="btn btn-orange btn-lg mtn8 jsSaveQuestion"><i class="fa fa-save"></i> Save Question</button>
                                     </span>
-                                </h4>
+                                </h2>
                             </div>
                             <!-- Body2 -->
                             <div class="csPageBoxBody p10">
@@ -860,7 +860,7 @@
                                             </div>
 
                                             <!-- Assigned to  -->
-                                            <div class="row mb10 dn">
+                                            <div class="row mb10 ">
                                                 <div class="col-sm-3 col-xs-12">
                                                     <label>Assigned to <span class="csRequired"></span></label>
                                                 </div>
@@ -880,6 +880,9 @@
                                                     </label>
                                                 </div>
                                             </div>
+
+                                            <!-- Preview Box -->
+                                            <div class="jsPreviewQuestionBox"></div>
                                         </div>
                                     </div>
                                     <!-- Question Footer -->

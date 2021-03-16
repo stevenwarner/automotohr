@@ -259,7 +259,7 @@ $(function() {
         //
         if (reviews.length === 0) {
             //
-            $('#jsReviewWrap').html(`<tr><td colspan="5"><p class="alert alert-info text-center">No Reviews found.</p></td></tr>`);
+            $('#jsReviewWrap').html(`<tr><td colspan="5">${getNoShow('review_'+filter.reviewStatus)}</td></tr>`);
             $('.jsPageBoxFooter').html('');
             return;
         }
@@ -300,7 +300,7 @@ $(function() {
                 rows += `        <div class="progress csRadius100">`;
                 rows += `           <div class="progress-bar" role="progressbar" aria-valuenow="${reviewerProgress.completed}" aria-valuemin="0" aria-valuemax="${reviewerProgress.total}" style="width: ${reviewerProgress.completed}%;"></div>`;
                 rows += `        </div>`;
-                rows += `        <small>${reviewerProgress.completed}% Not Completed</small>`;
+                rows += `        <small>${reviewerProgress.completed}% Completed</small>`;
             }
             rows += `   </td>`;
             rows += `   <td>`;
@@ -308,7 +308,7 @@ $(function() {
                 rows += `        <div class="progress csRadius100">`;
                 rows += `           <div class="progress-bar" role="progressbar" aria-valuenow="${feedbackProgress.completed}" aria-valuemin="0" aria-valuemax="${feedbackProgress.total}" style="width: ${feedbackProgress.completed}%;"></div>`;
                 rows += `        </div>`;
-                rows += `        <small>${feedbackProgress.completed}% Not Completed</small>`;
+                rows += `        <small>${feedbackProgress.completed}% Completed</small>`;
             }
             rows += `   </td>`;
             rows += `   <td>`;

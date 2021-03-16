@@ -16,12 +16,12 @@
                         <div class="csEVBox">
                             <figure>
                                 <img src="<?=$employees[$pem]['img'];?>"
-                                    class="csRadius50" />
+                                    class="csRadius50" alt=""/>
                             </figure>
                             <div class="csEBoxText">
-                                <h4 class="mb0"><strong><?=$employees[$pem]['name'];?></strong></h4>
-                                <p class="mb0"><?=$employees[$pem]['role'];?></p>
-                                <p><?=$employees[$pem]['joined'];?></p>
+                                <h3 class="mb0"><strong><?=$employees[$pem]['name'];?></strong></h3>
+                                <p class="mb0 csSpan"><?=$employees[$pem]['role'];?></p>
+                                <p class="csSpan"><?=$employees[$pem]['joined'];?></p>
                             </div>
                         </div>
                     </div>
@@ -52,10 +52,10 @@
             <div class="csPageBox csRadius5">
                 <!-- Header -->
                 <div class="csPageBoxHeader pl10">
-                    <h3><strong><?=$review['review_title'];?></strong></h3>
+                    <h1><strong><?=$review['review_title'];?></strong></h1>
                 </div>
                 <!-- Body -->
-                <div class="csPageBoxBody p10">
+                <div class="csPageBoxBody">
                     <!-- Loader -->
                     <div class="csIPLoader jsIPLoader dn" data-page="review_listing"><i class="fa fa-circle-o-notch fa-spin"></i></div>
                     <?php 
@@ -68,12 +68,12 @@
                             $answers[$question['sid']] = $answ;
                         }
                     ?>
-                    <div class="csFeedbackViewBox">
-                        <h4 class="pa10 pb10"><strong>Question <?=$key +1;?></strong></h4>
+                    <div class="csFeedbackViewBox p10">
+                        <h2 class="pa10 pb10"><strong>Question <?=$key +1;?></strong></h2>
                         
-                        <h4><strong><?=$ques['title'];?></strong></h4>
+                        <h3><strong><?=$ques['title'];?></strong></h3>
                         <?php if(!empty($ques['description'])): ?>
-                        <p><?=$ques['description'];?></p>
+                        <p class="csSpan"><?=$ques['description'];?></p>
                         <?php endif;?>
                         <?php if(!empty($ques['video_help']) && $ques['video_help'] == 1 && getVideoURL($pid, $key) !== FALSE): ?>
                             <video src="<?=getVideoURL($pid, $key);?>" controls="true" style="width: 100%;"></video>
