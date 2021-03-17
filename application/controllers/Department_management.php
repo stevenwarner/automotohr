@@ -77,9 +77,13 @@ class Department_management extends Public_Controller {
                         $department_name = $this->input->post('name');
                         $department_description = $this->input->post('description');
                         $department_supervisor = $this->input->post('supervisor');
+                        $department_rm = $this->input->post('reporting_manager');
+                        $approvers = $this->input->post('approvers');
                         $department_sort_order = $this->input->post('sort_order');
-                        
 
+                        // TODO
+                        // link approvers with time off table
+                        
                         $data_to_insert = array();
                         $department_description = htmlentities($department_description);
                         
@@ -89,7 +93,9 @@ class Department_management extends Public_Controller {
 
                         $data_to_insert['name'] = $department_name;
                         $data_to_insert['description'] = $department_description;
-                        $data_to_insert['supervisor'] = implode(',', $department_supervisor);;
+                        $data_to_insert['supervisor'] = implode(',', $department_supervisor);
+                        $data_to_insert['reporting_managers'] = implode(',', $department_rm);
+                        $data_to_insert['approvers'] = implode(',', $approvers);
                         $data_to_insert['status'] = 1;
                         $data_to_insert['sort_order'] = $department_sort_order;
                         $data_to_insert['company_sid'] = $company_sid;
@@ -99,27 +105,31 @@ class Department_management extends Public_Controller {
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Department Created Successfully!');
                         redirect('department_management', 'refresh');
                         break;
-                    case 'edit_document_group':
+                        case 'edit_document_group':
                         $department_name = $this->input->post('name');
                         $department_description = $this->input->post('description');
                         $department_supervisor = $this->input->post('supervisor');
                         $department_sort_order = $this->input->post('sort_order');
+                        $department_rm = $this->input->post('reporting_manager');
+                        $approvers = $this->input->post('approvers');
                         
-
+                        
                         $data_to_update = array();
                         $department_description = htmlentities($department_description);
                         
                         if (empty($department_sort_order)) {
                             $department_sort_order = 0;
                         }
-
+                        
                         $data_to_update['name'] = $department_name;
                         $data_to_update['description'] = $department_description;
                         $data_to_update['supervisor'] = implode(',', $department_supervisor);
+                        $data_to_update['reporting_managers'] = implode(',', $department_rm);
+                        $data_to_update['approvers'] = implode(',', $approvers);
                         $data_to_update['sort_order'] = $department_sort_order;
                         $data_to_update['modified_by_sid'] = $employer_sid;
                         $data_to_update['modified_date'] = date('Y-m-d H:i:s');
-
+                        
                         $this->department_management_model->update_department($department_sid, $data_to_update);
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Department Updated Successfully!');
                         redirect('department_management', 'refresh');
@@ -206,6 +216,8 @@ class Department_management extends Public_Controller {
                         $team_description = $this->input->post('description');
                         $team_lead_name = $this->input->post('teamlead_name');
                         $team_sort_order = $this->input->post('sort_order');
+                        $department_rm = $this->input->post('reporting_manager');
+                        $approvers = $this->input->post('approvers');
 
                         $data_to_insert = array();
                         $team_description = htmlentities($team_description);
@@ -217,6 +229,8 @@ class Department_management extends Public_Controller {
                         $data_to_insert['name'] = $team_name;
                         $data_to_insert['description'] = $team_description;
                         $data_to_insert['team_lead'] = implode(',', $team_lead_name);
+                        $data_to_insert['reporting_managers'] = implode(',', $department_rm);
+                        $data_to_insert['approvers'] = implode(',', $approvers);
                         $data_to_insert['status'] = 1;
                         $data_to_insert['sort_order'] = $team_sort_order;
                         $data_to_insert['company_sid'] = $company_sid;
@@ -231,6 +245,8 @@ class Department_management extends Public_Controller {
                         $team_description = $this->input->post('description');
                         $team_lead_name = $this->input->post('teamlead_name');
                         $team_sort_order = $this->input->post('sort_order');
+                        $department_rm = $this->input->post('reporting_manager');
+                        $approvers = $this->input->post('approvers');
                         
                         $data_to_update = array();
                         $team_description = htmlentities($team_description);
@@ -245,6 +261,8 @@ class Department_management extends Public_Controller {
                         $data_to_update['sort_order'] = $team_sort_order;
                         $data_to_update['modified_by_sid'] = $employer_sid;
                         $data_to_update['modified_date'] = date('Y-m-d H:i:s');
+                        $data_to_update['reporting_managers'] = implode(',', $department_rm);
+                        $data_to_update['approvers'] = implode(',', $approvers);
                         $this->department_management_model->update_team($team_sid, $data_to_update);
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Team Updated Successfully!');
                         redirect('department_management/manage_department/'.$department_sid, 'refresh');

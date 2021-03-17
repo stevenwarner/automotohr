@@ -566,22 +566,23 @@ $(function() {
             rows += `                <span class="pull-right">`;
             if (hasAccess) {
                 if (goal.status == 1)
-                    rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose jsPopover" title="Close this goal"><i class="fa fa-times-circle mr0"></i></button>`;
+                    rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose jsPopover" title="Close this goal"><i class="fa csF18 fa-times-circle mr0"></i></button>`;
                 else
-                    rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen jsPopover" title="Open this goal"><i class="fa fa-check-circle  mr0"></i></button>`;
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalUpdateBTN jsPopover" title="Update Goal"><i class="fa fa-pencil mr0"></i></button>`;
+                    rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen jsPopover" title="Open this goal"><i class="fa csF18 fa-check-circle  mr0"></i></button>`;
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalUpdateBTN jsPopover" title="Update Goal"><i class="fa csF18 fa-pencil mr0"></i></button>`;
             }
-            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalHistory jsPopover" title="Show history"><i class="fa fa-history mr0"></i></button>`;
-            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalCommentBtn jsPopover" title="Comments"><i class="fa fa-comment mr0"></i></button>`;
+            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalHistory jsPopover" title="Show history"><i class="fa csF18 fa-history mr0"></i></button>`;
+            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalCommentBtn jsPopover" title="Comments"><i class="fa csF18 fa-comment mr0"></i></button>`;
             if (pm.employee.level == 1) {
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsEditVisibility jsPopover" title="Edit Visibility"><i class="fa fa-users mr0"></i></button>`;
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsEditVisibility jsPopover" title="Edit Visibility"><i class="fa csF18 fa-users mr0"></i></button>`;
             }
+            rows += `                   <button class="btn btn-xs btn-black mt0 jsExpandGoal jsPopover" title="Expand Goal" placement="auto"><i class="fa fa-expand csF18" area-hidden="true"></i></button>`;
             rows += `                </span>`;
             rows += `                <div class="clearfix"></div>`;
             rows += `        </div>`;
             rows += `        <div class="csPageHeader bbb pl10 pr10">`;
-            rows += `            <h3>`;
-            rows += `                <strong>${goal.title}</strong>`;
+            rows += `            <h3 class="csF18 csB7">`;
+            rows += `                ${goal.title}`;
             rows += `            </h3>`;
             rows += `        </div>`;
             rows += `        <!-- Main screen -->`;
@@ -591,7 +592,7 @@ $(function() {
             rows += `                <!--  -->`;
             rows += `                <div class="row">`;
             rows += `                    <!-- Employee -->`;
-            rows += `                    <div class="col-sm-8 col-xs-12">`;
+            rows += `                    <div class="col-sm-12 col-xs-12">`;
             if (filter.type == 1) {
                 let em = getEmployee(goal.employee_sid, 'userId');
                 rows += `                        <div class="csEBox">`;
@@ -599,9 +600,9 @@ $(function() {
                 rows += `                                <img src="${getImageURL(em.image)}" />`;
                 rows += `                            </figure>`;
                 rows += `                            <div class="csEBoxText">`;
-                rows += `                                <h4 class="mb0 ma10"><strong>${em.first_name} ${em.last_name}</strong></h4>`;
-                rows += `                                <p class="mb0 csSpan"><strong>${remakeEmployeeName(em, false)}</strong></p>`;
-                rows += `                                <p class="csSpan"><strong>#${getEmployeeId(em.userId, em.employee_number)}</strong></p>`;
+                rows += `                                <h4 class="mb0 ma10 csF16 csB7">${em.first_name} ${em.last_name}</h4>`;
+                rows += `                                <p class="mb0 csF16">${remakeEmployeeName(em, false)}</p>`;
+                rows += `                                <p class="csF16">#${getEmployeeId(em.userId, em.employee_number)}</p>`;
                 rows += `                            </div>`;
                 rows += `                        </div>`;
             } else {
@@ -611,28 +612,28 @@ $(function() {
                 rows += `                            </figure>`;
                 rows += `                            <div class="csEBoxText">`;
                 if (filter.type == 2) {
-                    rows += `                                <h4 class="mb0 ma10"><strong>${getTeamName(goal.employee_sid)}</strong></h4>`;
+                    rows += `                                <h4 class="mb0 ma10  csF16 csB7">${getTeamName(goal.employee_sid)}</h4>`;
                 } else if (filter.type == 3) {
-                    rows += `                                <h4 class="mb0 ma10"><strong>${getDepartmentName(goal.employee_sid)}</strong></h4>`;
+                    rows += `                                <h4 class="mb0 ma10  csF16 csB7">${getDepartmentName(goal.employee_sid)}</h4>`;
                 } else {
-                    rows += `                                <h4 class="mb0 ma10"><strong>${pm.companyName}</strong></h4>`;
+                    rows += `                                <h4 class="mb0 ma10  csF16 csB7">${pm.companyName}</h4>`;
                 }
                 rows += `                            </div>`;
                 rows += `                        </div>`;
             }
             rows += `                    </div>`;
             rows += `                    <!-- Track Row -->`;
-            rows += `                    <div class="col-sm-4 col-xs-12">`;
-            rows += `                        <div class="text-right">`;
-            rows += `                            <h4 class="mb0"><strong style="color: ${goal.on_track == 1 ? "#81b431" : "#cc1100;"}; font-weight: 900;">${goal.on_track == 1 ? "On" : "Off"} Track</strong></h4>`;
-            rows += `                            <p class="ma0 csSpan">As Of ${todayDate.format(pm.dateTimeFormats.mdy)}</p>`;
+            rows += `                    <div class="col-sm-12 col-xs-12">`;
+            rows += `                        <div>`;
+            rows += `                            <h4 class="mb0 csF16 csB7 ${goal.on_track == 1 ? "csYes" : "csNo"}">${goal.on_track == 1 ? "On" : "Off"} Track</h4>`;
+            rows += `                            <p class="ma0 csF16">As Of ${todayDate.format(pm.dateTimeFormats.mdy)}</p>`;
             rows += `                        </div>`;
             rows += `                    </div>`;
             rows += `                </div>`;
             rows += `                <div class="row">`;
             rows += `                    <div class="col-sm-12">`;
-            rows += `                        <p class="text-right csSpan">`;
-            rows += `                            <strong>${getMeasureSymbol(goal.measure_type)} ${goal.completed_target} / ${goal.target}</strong>`;
+            rows += `                        <p class=" csF16 csB7">`;
+            rows += `                            ${getMeasureSymbol(goal.measure_type)} ${goal.completed_target} / ${goal.target}`;
             rows += `                        </p>`;
             rows += `                    </div>`;
             rows += `                    <div class="col-sm-12 col-xs-12">`;
@@ -641,35 +642,22 @@ $(function() {
             rows += `                        </div>`;
             rows += `                        <div class="row ma10">`;
             rows += `                            <div class="col-sm-6">`;
-            rows += `                                <p class="csSpan"><strong>${startDate.format(pm.dateTimeFormats.mdy)}<br /> Start Date</strong></p>`;
+            rows += `                                <p class="csF14">${startDate.format(pm.dateTimeFormats.mdy)}<br /> Start Date ${goal.description}</p>`;
             rows += `                            </div>`;
             rows += `                            <div class="col-sm-6">`;
-            rows += `                                <p class="text-right csSpan"><strong>${endDate.format(pm.dateTimeFormats.mdy)}<br /> Due Date</strong></p>`;
+            rows += `                                <p class="text-right csF14">${endDate.format(pm.dateTimeFormats.mdy)}<br /> Due Date</p>`;
             rows += `                            </div>`;
             rows += `                        </div>`;
             rows += `                    </div>`;
             rows += `                </div>`;
             rows += `                <div class="row">`;
             rows += `                    <div class="col-sm-12 col-xs-12">`;
-            rows += `                        <h5>${goal.description}</h5>`;
+            rows += `                        <h5 class="csF16">${goal.description}</h5>`;
             rows += `                    </div>`;
             rows += `                </div>`;
             rows += `                `;
             rows += `            </div>`;
             rows += `            <!-- FOOTER -->`;
-            // rows += `            <div class="csPageFooter bbt p10">`;
-            // rows += `                <div class="row">`;
-            // rows += `                    <div class="col-sm-6 col-xs-12">`;
-
-            // if (hasAccess) {
-            //     rows += `                        <button class="btn btn-orange form-control jsGoalUpdateBTN"><i class="fa fa-pencil"></i> Update</button>`;
-            // }
-            // rows += `                    </div>`;
-            // rows += `                    <div class="col-sm-6 col-xs-12">`;
-            // rows += `                        <button class="btn btn-black form-control jsGoalCommentBtn"><i class="fa fa-comment"></i> Comment</button>`;
-            // rows += `                    </div>`;
-            // rows += `                </div>`;
-            // rows += `            </div>`;
             rows += `        </div>`;
             rows += `        <!-- Comment screen -->`;
             rows += `        <div class="csPageSection jsBoxSection dn" data-key="comment">`;
@@ -766,6 +754,8 @@ $(function() {
             rows += `        </div>`;
             rows += `    </div>`;
             rows += `</div>`;
+
+
         });
         //
         rows += '</div>';
@@ -795,20 +785,20 @@ $(function() {
             let em = getEmployee(comment.sender_sid, 'userId');
             //
             let imgRow = '';
-            imgRow += `        <div class="col-sm-2 col-xs-2">`;
-            imgRow += `            <img src="${getImageURL(em.image)}" />`;
+            imgRow += `        <div class="csChatImageBox">`;
+            imgRow += `            <img src="${getImageURL(em.image)}" style="width: 50px;" />`;
             imgRow += `        </div>`;
             //
             let dataRow = '';
-            dataRow += `        <div class="col-sm-10 col-xs-10 ${pm.employerId === parseInt(em.userId) ? 'pr0' : 'pl0'}">`;
-            dataRow += `            <span class="csSpan"><strong>${em.first_name} ${em.last_name}</strong> ${remakeEmployeeName(em, false)}</span>`;
-            dataRow += `            <p class="csSpan">${comment.message}`;
-            dataRow += `                <span>${moment(comment.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</span>`;
+            dataRow += `        <div class="csChatContentBox">`;
+            dataRow += `            <span class="csF14 csB7 ${pm.employerId === parseInt(em.userId) ? 'text-right' : ''}">${em.first_name} ${em.last_name}</span>`;
+            dataRow += `            <p class="csF18">${comment.message}`;
+            dataRow += `                <br /><span class="csF14 ma10 text-right">${moment(comment.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</span>`;
             dataRow += `            </p>`;
             dataRow += `        </div>`;
             //
             rows += `<li>`;
-            rows += `    <div class="row">`;
+            rows += `    <div class="">`;
             rows += pm.employerId === parseInt(em.userId) ? dataRow + imgRow : imgRow + dataRow;
             rows += `    </div>`;
             rows += `</li>`;
@@ -924,4 +914,27 @@ $(function() {
     loadGoals();
     //
     loadEmployeesInFilter();
+});
+
+
+
+/**
+ * 
+ */
+$(document).on('click', '.jsExpandGoal', function(event) {
+    //
+    event.preventDefault();
+    //
+    $(this).closest('.jsGoalBox').parent('div').toggleClass('col-sm-3 col-sm-12');
+    $(this).find('i').toggleClass('fa-expand fa-compress');
+    $(this).attr('title', $(this).data('original-title') == 'Expand Goal' ? 'Compress Goal' : 'Expand Goal');
+    $(this).attr('data-original-title', $(this).attr('data-original-title') == 'Expand Goal' ? 'Compress Goal' : 'Expand Goal');
+    //
+    $('html, body').animate({
+        scrollTop: $(this).closest('.jsGoalBox').offset().top - 100
+    });
+    //
+    $('.jsPopover').tooltip({
+        placement: 'top auto'
+    });
 });

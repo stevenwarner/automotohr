@@ -41,6 +41,8 @@
                                         <th class="col-lg-3">Department Name</th>
                                         <th class="col-lg-3">Department Description</th> 
                                         <th class="col-lg-3">Supervisor(s)</th>
+                                        <th class="col-lg-3">Approver(s)</th>
+                                        <th class="col-lg-3">Reporting Manager(s)</th>
                                         <th class="col-lg-3 text-center">Actions</th>
                                     </tr> 
                                 </thead>
@@ -56,11 +58,37 @@
                                                 <td><?php echo html_entity_decode($department['description']); ?></td>
                                                 <?php 
                                                     $spName = '<ul style="padding-left: 15px;">';
-                                                    $t = explode(',', $department['supervisor']);
-                                                    foreach($t as $f) $spName .= '<li><a href="'.(base_url('employee_profile/'.($f).'')).'" target="_blank" style="color: #000;">'.remakeEmployeeName(db_get_employee_profile($f)[0]). '</a> </li>';
+                                                    if(!empty($department['supervisor'])) {
+                                                        $t = explode(',', $department['supervisor']);
+                                                        foreach($t as $f) $spName .= '<li><a href="'.(base_url('employee_profile/'.($f).'')).'" target="_blank" style="color: #000;">'.remakeEmployeeName(db_get_employee_profile($f)[0]). '</a> </li>';
+                                                    } else{
+                                                        $spName .= '-';
+                                                    }
                                                     $spName .= '</ul>';
+                                                   
+                                                    //
+                                                    $reportingManagers = '<ul style="padding-left: 15px;">';
+                                                    if(!empty($department['reporting_managers'])) {
+                                                        $t = explode(',', $department['reporting_managers']);
+                                                        foreach($t as $f) $reportingManagers .= '<li><a href="'.(base_url('employee_profile/'.($f).'')).'" target="_blank" style="color: #000;">'.remakeEmployeeName(db_get_employee_profile($f)[0]). '</a> </li>';
+                                                    } else{
+                                                        $reportingManagers .= '-';
+                                                    }
+                                                    $reportingManagers .= '</ul>';
+                                                    
+                                                    //
+                                                    $approvers = '<ul style="padding-left: 15px;">';
+                                                    if(!empty($department['approvers'])) {
+                                                        $t = explode(',', $department['approvers']);
+                                                        foreach($t as $f) $approvers .= '<li><a href="'.(base_url('employee_profile/'.($f).'')).'" target="_blank" style="color: #000;">'.remakeEmployeeName(db_get_employee_profile($f)[0]). '</a> </li>';
+                                                    } else{
+                                                        $approvers .= '-';
+                                                    }
+                                                    $approvers .= '</ul>';
                                                 ?>
                                                 <td><?php echo $spName; ?></td>
+                                                <td><?php echo $approvers; ?></td>
+                                                <td><?php echo $reportingManagers; ?></td>
                                                 <td class="text-center">
                                                     <a href="<?php echo base_url('department_management/add_edit_department').'/'.$department['sid']; ?>" class="btn btn-primary btn-sm" >
                                                         <i class="fa fa-pencil"></i>

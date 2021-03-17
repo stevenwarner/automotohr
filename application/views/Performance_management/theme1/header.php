@@ -66,9 +66,8 @@
     $baseURL = purl();
     //
     foreach($tabs as $tab){
-    
             //
-            $lis .= '<li><a '.( isset($tab['props']) ? $tab['props'] : "").' class="'.(isset($tab['class']) ? $tab['class'] : '').' '.( $tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '' ).'" href="'.( $tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL.$tab['url'] ).'" ><i class="fa fa-'.( $tab['icon'] ).'"></i> '.( $tab['title'] ).'</a></li>';
+            $lis .= '<li><a '.( isset($tab['props']) ? $tab['props'] : "").' class="csF18 '.(isset($tab['class']) ? $tab['class'] : '').' '.( $tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '' ).'" href="'.( $tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL.$tab['url'] ).'" ><i class="fa fa-'.( $tab['icon'] ).'"></i> '.( $tab['title'] ).'</a></li>';
     }
 ?>
 <div class="clearfix"></div>
@@ -82,17 +81,17 @@
                         <!-- Web -->
                         <ul class="csWeb">
                             <li class="pull-left">
-                                <a href="<?=base_url('dashboard');?>" class="csBackButton csRadius100"><i
-                                        class="fa fa-th"></i>Go To Dashboard</a>
+                                <a href="<?=base_url('dashboard');?>" class="csBackButton csRadius100 csF16"><i
+                                        class="fa fa-th" aria-hidden="true"></i>Go To Dashboard</a>
                             </li>
-                            <li><a href="javascript:void(0)">|</a></li>
+                            <li><a href="javascript:void(0)" class="csF16">|</a></li>
                             <?= $lis; ?>
                         </ul>
                         <!-- Mobile -->
                         <div class="csMobile">
-                            <a href="<?=base_url('dashboard');?>" class="csBack"><i class="fa fa-th"></i>Go To
+                            <a href="<?=base_url('dashboard');?>" class="csBack"><i class="fa fa-th" aria-hidden="true"></i>Go To
                                 Dashboard</a>
-                            <span class="pull-right"><i class="fa fa-bars"></i></span>
+                            <span class="pull-right"><i class="fa fa-bars" aria-hidden="true"></i></span>
                             <ul class="csVertical"><?= $lis; ?></ul>
                         </div>
                     </div>

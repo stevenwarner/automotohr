@@ -99,8 +99,8 @@ if(!function_exists('getQuestionBody')){
             $html .= '<div class="csFeedbackViewBoxComment">';
             $html .= '  <div class="row">';
             $html .= '    <div class="col-sm-12 col-xs-12 ma10">';
-            $html .= '        <label class="control control--checkbox">';
-            $html .= '          Not Applicable <input type="checkbox" name="na'.($id).'" '.( !empty($answer) && $answer['not_applicable'] == 1 ? 'checked="true"' : '' ).' class="'.($naClass).'" value="yes" /><div class="control__indicator"></div>';
+            $html .= '        <label class="control control--checkbox csF16">';
+            $html .= '          Not Applicable <input type="checkbox" name="na'.($id).'" '.( !empty($answer) && $answer['not_applicable'] == 1 ? 'checked="true"' : '' ).' class="'.($naClass).' csF16" value="yes" /><div class="control__indicator"></div>';
             $html .= '        </label><br /><br />';
             $html .= '    </div>';
             $html .= '  </div>';
@@ -114,11 +114,11 @@ if(!function_exists('getQuestionBody')){
             $html .= '<div class="csFeedbackViewBoxComment">';
             $html .= '  <div class="row">';
             $html .= '    <div class="col-sm-12 col-xs-12 ma10">';
-            $html .= '        <label class="control control--radio">';
-            $html .= '          Yes <input type="radio" name="qyn'.($id).'"'.( !empty($answer) && $answer['radio'] == 'yes' ? 'checked="true"' : '' ).' class="'.($mlClass).'" value="yes" /><div class="control__indicator"></div>';
+            $html .= '        <label class="control control--radio csF16">';
+            $html .= '          Yes <input type="radio" name="qyn'.($id).'"'.( !empty($answer) && $answer['radio'] == 'yes' ? 'checked="true"' : '' ).' class="'.($mlClass).' csF16" value="yes" /><div class="control__indicator"></div>';
             $html .= '        </label><br />';
             $html .= '        <label class="control control--radio">';
-            $html .= '          No <input type="radio" name="qyn'.($id).'"'.( !empty($answer) && $answer['radio'] == 'no' ? 'checked="true"' : '' ).' class="'.($mlClass).'" value="no" /><div class="control__indicator"></div>';
+            $html .= '          No <input type="radio" name="qyn'.($id).'"'.( !empty($answer) && $answer['radio'] == 'no' ? 'checked="true"' : '' ).' class="'.($mlClass).' csF16" value="no" /><div class="control__indicator"></div>';
             $html .= '        </label>';
             $html .= '    </div>';
             $html .= '  </div>';
@@ -133,9 +133,9 @@ if(!function_exists('getQuestionBody')){
             for($i = 1; $i <= $question['scale']; $i++){
                 $html .= '<li '.( !empty($answer) && $answer['rating'] == $i ? 'class="active"' : '' ).'>';
                 $html .= '  <div class="csFeedbackViewBoxTab">';
-                $html .= '      <p class="mb0 '.($rClass).'" data-id="'.($i).'">'.($i).'</p>';
+                $html .= '      <p class="mb0 csF16 fa-tint'.($rClass).'" data-id="'.($i).'">'.($i).'</p>';
                 if($question['labels_flag'] == 1):
-                    $html .= '  <p>'.(getLabel($i, ($question['label_question']))).'</p>';
+                    $html .= '  <p class="csF16">'.(getLabel($i, ($question['label_question']))).'</p>';
                 endif;
                 $html .= '  </div>';
                 $html .= '</li>';
@@ -154,9 +154,9 @@ if(!function_exists('getQuestionBody')){
             $html .= '    <div class="col-sm-12 col-xs-12 ma10">';
             if($showTitle){
 
-                $html .= '      <p class="csSpan"><strong>Feedback (Elaborate)</strong></p>';
+                $html .= '      <p class="csF14 csB7">Feedback (Elaborate)</p>';
             }
-            $html .= '        <textarea class="form-control '.($tClass).'">'.( !empty($answer) ? $answer['text'] : '' ).'</textarea>';
+            $html .= '        <textarea class="form-control csF16 '.($tClass).'">'.( !empty($answer) ? $answer['text'] : '' ).'</textarea>';
             $html .= '    </div>';
             $html .= '  </div>';
             $html .= '</div><br />';

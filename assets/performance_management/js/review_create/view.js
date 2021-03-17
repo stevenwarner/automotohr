@@ -860,6 +860,8 @@ $(function() {
             $('#jsTemplateQuestionsPreviewBody').html(resp.Data);
             //
             ml(false, 'jsTemplateQuestionsPreviewLoader');
+            //
+            loadFonts();
         });
     }
 
@@ -903,8 +905,8 @@ $(function() {
                     <div class="row">
                         <div class="csRunBox1">
                             <div class="col-sm-2 col-xs-12">
-                                <input type="text" class="form-control csRadius100 jsRunVal"
-                                    placeholder="0" class="jsRunVal" value="${d.val}" />
+                                <input type="text" class="form-control csRadius100 jsRunVal csF16"
+                                    placeholder="0" value="${d.val}" />
                             </div>
                             <div class="col-sm-2 col-xs-12">
                                 <select class="jsRunType">
@@ -914,10 +916,10 @@ $(function() {
                                 </select>
                             </div>
                             <div class="col-sm-6 col-xs-12">
-                                <p class="csSpan">After Reviewee's Hire Date.</p>
+                                <p class="csF16 csB1">After Reviewee's Hire Date.</p>
                             </div>
                             <div class="col-sm-1 col-xs-12 pa10 jsRunRemove" title="Delete this row" placement="top">
-                                <i class="fa fa-trash text-danger csSpan"></i>
+                                <i class="fa fa-trash text-danger csF16 csB1"></i>
                             </div>
                         </div>
                     </div>
@@ -932,8 +934,8 @@ $(function() {
                 <div class="row">
                     <div class="csRunBox1">
                         <div class="col-sm-2 col-xs-12">
-                            <input type="text" class="form-control csRadius100 jsRunVal"
-                                placeholder="0" class="jsRunVal" />
+                            <input type="text" class="form-control csRadius100 jsRunVal csF16"
+                                placeholder="0" />
                         </div>
                         <div class="col-sm-2 col-xs-12">
                             <select class="jsRunType">
@@ -943,10 +945,10 @@ $(function() {
                             </select>
                         </div>
                         <div class="col-sm-6 col-xs-12">
-                            <p class="csSpan">After Reviewee's Hire Date.</p>
+                            <p class="csF16 csB1">After Reviewee's Hire Date.</p>
                         </div>
                         <div class="col-sm-1 col-xs-12 pa10 jsRunRemove" title="Delete this row" placement="top">
-                            <i class="fa fa-trash text-danger csSpan"></i>
+                            <i class="fa fa-trash text-danger csF16 csB1"></i>
                         </div>
                     </div>
                 </div>

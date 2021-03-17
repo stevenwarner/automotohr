@@ -35,6 +35,8 @@
                                         <th class="col-lg-3">Team Name</th>
                                         <th class="col-lg-3">Team Description</th> 
                                         <th class="col-lg-3">Team Lead(s)</th>
+                                        <th class="col-lg-3">Approver(s)</th>
+                                        <th class="col-lg-3">Reporting Manager(s)</th>
                                         <th class="col-lg-3 text-center">Actions</th>
                                     </tr> 
                                 </thead>
@@ -50,11 +52,36 @@
                                                 <td><?php echo html_entity_decode($team['description']); ?></td>
                                                 <?php 
                                                     $spName = '<ul style="padding-left: 15px;">';
-                                                    $t = explode(',', $team['team_lead']);
-                                                    foreach($t as $f) $spName .= '<li><a href="'.(base_url('employee_profile/'.($f).'')).'" target="_blank" style="color: #000;">'.remakeEmployeeName(db_get_employee_profile($f)[0]). '</a> </li>';
+                                                    if(!empty($team['team_lead'])){
+                                                        $t = explode(',', $team['team_lead']);
+                                                        foreach($t as $f) $spName .= '<li><a href="'.(base_url('employee_profile/'.($f).'')).'" target="_blank" style="color: #000;">'.remakeEmployeeName(db_get_employee_profile($f)[0]). '</a> </li>';
+                                                    } else{
+                                                        $spName .= '-';
+                                                    }
                                                     $spName .= '</ul>';
+                                                    //
+                                                    $approvers = '<ul style="padding-left: 15px;">';
+                                                    if(!empty($team['approvers'])){
+                                                        $t = explode(',', $team['approvers']);
+                                                        foreach($t as $f) $approvers .= '<li><a href="'.(base_url('employee_profile/'.($f).'')).'" target="_blank" style="color: #000;">'.remakeEmployeeName(db_get_employee_profile($f)[0]). '</a> </li>';
+                                                    } else{
+                                                        $approvers .= '-';
+                                                    }
+                                                    $approvers .= '</ul>';
+
+                                                    //
+                                                    $rm = '<ul style="padding-left: 15px;">';
+                                                    if(!empty($team['reporting_managers'])){
+                                                        $t = explode(',', $team['reporting_managers']);
+                                                        foreach($t as $f) $rm .= '<li><a href="'.(base_url('employee_profile/'.($f).'')).'" target="_blank" style="color: #000;">'.remakeEmployeeName(db_get_employee_profile($f)[0]). '</a> </li>';
+                                                    } else{
+                                                        $rm .= '-';
+                                                    }
+                                                    $rm .= '</ul>';
                                                 ?>
                                                 <td><?php echo $spName; ?></td>
+                                                <td><?php echo $approvers; ?></td>
+                                                <td><?php echo $rm; ?></td>
                                                 <td class="text-center">
                                                     <a href="<?php echo base_url('department_management/add_edit_team').'/'.$department_sid.'/'.$team['sid']; ?>" class="btn btn-primary btn-sm" >
                                                         <i class="fa fa-pencil"></i>

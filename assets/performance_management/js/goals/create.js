@@ -192,13 +192,13 @@ $(function() {
                 rows += `    <div class="col-sm-4 col-xs-12">`;
                 rows += `            <div class="csPageBox csRadius5 csGoalCard jsGoalCard csCursorSelect" data-id="${go.sid}">`;
                 rows += `                <div class="csPageBoxHeader p10">`;
-                rows += `                    <h4>`;
-                rows += `                        <strong>${go.title}</strong>`;
+                rows += `                    <h4 class="csF18 csB7">`;
+                rows += `                        ${go.title}`;
                 rows += `                    </h4>`;
                 rows += `                </div>`;
                 rows += `                <div class="csPageBoxBody">`;
                 rows += `                    <div class="csGoalCardProgress p10">`;
-                rows += `                        <h4>`;
+                rows += `                        <h4 class="csF16">`;
                 rows += `                            <span class="csBTNBox">`;
                 rows += `                                ${getMeasureSymbol(go.measure_type)} ${go.target}`;
                 rows += `                            </span>`;
@@ -212,9 +212,10 @@ $(function() {
             rows += `</div>`;
             //
             $('#jsCreateGoalModal .jsAlignBox').html(rows);
-
             //
             $('#jsCGMeasure').trigger('change');
+            //
+            loadFonts();
         });
     });
 

@@ -2,43 +2,51 @@
     <div class="csPageBox csRadius5">
         <!-- Page Header -->
         <div class="csPageBoxHeader p10">
-            <h1>
-                <span class="csBTNBox">
-                    <button class="btn btn-black btn-lg mtn8 dn jsFinishLater"><i class="fa fa-edit"></i> Finish
-                        Later</button>
-                    <a href="<?=purl('reviews');?>" class="btn btn-black btn-lg mtn8"><i
-                            class="fa fa-long-arrow-left"></i> All Reviews</a>
-                </span>
-                <strong>Create a Review </strong><span id="jsReviewTitleHeader"></span>
-            </h1>
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <h1 class="csF18">
+                        <span class="csF18 csB7">Create a Review</span>
+                        <span id="jsReviewTitleHeader"></span>
+                    </h1>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <span class="csBTNBox">
+                        <button class="btn btn-black btn-lg dn  csF16 jsFinishLater"><i aria-hidden="true" class="fa fa-edit csF16"></i> Finish
+                            Later</button>
+                        <a href="<?=purl('reviews');?>" class="btn btn-black btn-lg csF16"><i
+                        aria-hidden="true"   class="fa fa-long-arrow-left csF16"></i> All Reviews</a>
+                    </span>
+
+                </div>
+            </div>
         </div>
 
         <!-- Page Body -->
         <div class="csPageBoxBody p10">
             <!-- Loader -->
-            <div class="csIPLoader jsIPLoader" data-page="create_review"><i class="fa fa-circle-o-notch fa-spin"></i>
+            <div class="csIPLoader jsIPLoader" data-page="create_review"><i aria-hidden="true" class="fa fa-circle-o-notch fa-spin"></i>
             </div>
             <div class="row">
                 <!-- Left menu -->
                 <div class="col-sm-2 col-xs-12 csSticky csStickyTop">
                     <ul class="csPageLeftMenu ma10">
-                        <li class="jsReviewStep active" data-to="templates">
-                            <span>Templates</span> <i class="fa fa-long-arrow-right"></i>
+                        <li class="jsReviewStep active csF16" data-to="templates">
+                            <span class="csF16">Templates</span> <i aria-hidden="true" class="fa fa-long-arrow-right"></i>
                         </li>
-                        <li class="jsReviewStep" data-to="schedule">
-                            <span>Name & Schedule</span>
+                        <li class="jsReviewStep csF16" data-to="schedule">
+                            <span class="csF16">Name & Schedule</span>
                         </li>
-                        <li class="jsReviewStep" data-to="reviewees">
-                            <span>Reviewees</span>
+                        <li class="jsReviewStep csF16" data-to="reviewees">
+                            <span class="csF16">Reviewees</span>
                         </li>
-                        <li class="jsReviewStep" data-to="reviewers">
-                            <span>Reviewers</span>
+                        <li class="jsReviewStep csF16" data-to="reviewers">
+                            <span class="csF16">Reviewers</span>
                         </li>
-                        <li class="jsReviewStep" data-to="questions">
-                            <span>Questions</span>
+                        <li class="jsReviewStep csF16" data-to="questions">
+                            <span class="csF16">Questions</span>
                         </li>
-                        <li class="jsReviewStep" data-to="feedback">
-                            <span>Sharing Feedback</span>
+                        <li class="jsReviewStep csF16" data-to="feedback">
+                            <span class="csF16">Sharing Feedback</span>
                         </li>
                     </ul>
                 </div>
@@ -50,7 +58,8 @@
                         <div class="csPageSection jsPageSection" data-key="templates">
                             <!-- Box Header -->
                             <div class="csPageBoxHeader p10">
-                                <h2>Craft a new review from the ground up or pick a template with insightful questions.
+                                <h2 class="csF16">
+                                    <em>Craft a new review from the ground up or pick a template with insightful questions.</em>
                                 </h2>
                             </div>
                             <!-- Box Body -->
@@ -58,16 +67,16 @@
                                 <div class="csForm pa10 pb10">
                                     <div class="row">
                                         <div class="col-sm-3 col-xs-12">
-                                            <label>Options <span class="csRequired"></span></label> <br />
+                                            <label class="csF16 csB7">Options <span class="csRequired"></span></label> <br />
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
-                                            <label class="control control--radio">
+                                            <label class="control csB1 csF16 control--radio csF16 csB1">
                                                 New Review
                                                 <input type="radio" name="templateType" class="jsReviewType" value="new"
                                                     checked />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control control--radio">
+                                            <label class="control csB1 csF16 control--radio csF16 csB1">
                                                 Use Template
                                                 <input type="radio" name="templateType" class="jsReviewType"
                                                     value="template" />
@@ -81,10 +90,9 @@
                             <div class="csPageBoxBody jsTemplateWrap bbt dn">
                                 <!-- Box Header -->
                                 <div class="csPageBoxHeader">
-                                    <h4 class="pl10  pb10">
+                                    <h3 class="pl10 pb10 csF18 csB7">
                                         Templates
-                                       
-                                    </h4>
+                                    </h3>
                                 </div>
                                 <!-- Box Body -->
                                 <div class="csPageBoxBody p10">
@@ -93,7 +101,7 @@
                                         <!--  -->
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <h5>Personal Templates (<?=count($templates['personal']);?>)</h5>
+                                                <h3 class="csF18 csB7">Personal Templates (<?=count($templates['personal']);?>)</h3>
                                             </div>
                                         </div>
                                         <?php if(!empty($templates['personal'])): ?>
@@ -108,7 +116,7 @@
                                                         <span class="csBTNBox ">
                                                             <button
                                                                 class="btn btn-orange btn-xs jsTemplateQuestionsView"><strong><i
-                                                                        class="fa fa-eye"></i> View
+                                                                        aria-hidden="true" class="fa fa-eye"></i> View
                                                                     Questions</strong></button>
                                                         </span>
                                                         <div class="clearfix"></div>
@@ -123,7 +131,7 @@
                                         <?php else: ?>
                                         <!-- Error Box -->
                                         <div class="csErrorBox">
-                                            <i class="fa fa-info-circle"></i>
+                                            <i aria-hidden="true" class="fa fa-info-circle"></i>
                                             <p>There are currently no custom templates.</p>
                                         </div>
                                         <?php endif; ?>
@@ -133,28 +141,28 @@
                                         <!--  -->
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <h5>Company Templates (<?=count($templates['company']);?>)</h5>
+                                                <h3 class=" csF18 csB7">Company Templates (<?=count($templates['company']);?>)</h3>
                                             </div>
                                         </div>
                                         <?php if(!empty($templates['company'])): ?>
                                         <div class="row">
                                             <?php   foreach($templates['company'] as $template): ?>
                                             <!-- Template row -->
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3 col-xs-12">
                                                 <div class="csPageBox csRadius5 jsTemplateBox"
                                                     data-id="<?=$template['sid'];?>" data-type="company"
                                                     data-name="<?=$template['name'];?>">
                                                     <div class="csPageBoxHeader p10">
                                                         <span class="csBTNBox ">
                                                             <button
-                                                                class="btn btn-orange btn-xs jsTemplateQuestionsView"><strong><i
-                                                                        class="fa fa-eye"></i> View
+                                                                class="btn btn-orange btn-xs jsTemplateQuestionsView csF16"><strong><i
+                                                                        aria-hidden="true" class="fa fa-eye csF16"></i> View
                                                                     Questions</strong></button>
                                                         </span>
                                                         <div class="clearfix"></div>
                                                     </div>
                                                     <div class="csPageBoxBody p10">
-                                                        <h4><strong><?=$template['name'];?></strong></h4>
+                                                        <h4 class="csF16 csB7"><?=$template['name'];?></h4>
                                                     </div>
                                                 </div>
                                             </div>
@@ -163,7 +171,7 @@
                                         <?php else: ?>
                                         <!-- Error Box -->
                                         <div class="csErrorBox">
-                                            <i class="fa fa-info-circle"></i>
+                                            <i aria-hidden="true" class="fa fa-info-circle"></i>
                                             <p>There are currently no custom templates.</p>
                                         </div>
                                         <?php endif; ?>
@@ -175,8 +183,8 @@
                             <div class="csPageBoxFooter pa10">
                                 <!--  -->
                                 <span class="csBTNBox">
-                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="schedule"><i
-                                            class="fa fa-arrow-circle-right"></i> Next</button>
+                                    <button class="btn btn-orange btn-lg jsReviewStep csF16 csF16" data-to="schedule"><i aria-hidden="true"
+                                            class="fa fa-arrow-circle-right csF16"></i> Next</button>
                                 </span>
                                 <!--  -->
                                 <div class="clearfix"></div>
@@ -190,20 +198,20 @@
                                     <!-- Name -->
                                     <div class="row mb10">
                                         <div class="col-sm-3 col-xs-12">
-                                            <label class="pa10">Name <span class="csRequired"></span></label>
+                                            <label class="pa10 csF16 csB7">Name <span class="csRequired"></span></label>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
-                                            <input type="text" class="form-control csRadius100" id="jsReviewTitle" />
+                                            <input type="text" class="form-control csF16 csRadius100" id="jsReviewTitle" />
                                         </div>
                                     </div>
 
                                     <!-- Description -->
                                     <div class="row mb10">
                                         <div class="col-sm-3 col-xs-12">
-                                            <label>Description</label>
+                                            <label class="csF16 csB7">Description</label>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
-                                            <textarea class="form-control csRadius5" rows="3"
+                                            <textarea class="form-control csF16 csRadius5" rows="3"
                                                 id="jsReviewDescription"></textarea>
                                         </div>
                                     </div>
@@ -211,11 +219,11 @@
                                     <!--  -->
                                     <div class="row mb10">
                                         <div class="col-sm-3 col-xs-12">
-                                            <label>Visibility</label>
+                                            <label class="csF16 csB7">Visibility</label>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
                                             <div class="mb10">
-                                                <label>Roles</label>
+                                                <label class="csF16 csB7">Roles</label>
                                                 <select id="jsReviewVisibilityRoles" multiple>
                                                     <option value="admin">Admin</option>
                                                     <option value="hiring_manager">Hiring Manager</option>
@@ -224,7 +232,7 @@
                                                 </select>
                                             </div>
                                             <div class="mb10">
-                                                <label>Departments</label>
+                                                <label class="csF16 csB7">Departments</label>
                                                 <select id="jsReviewVisibilityDepartments" multiple>
                                                     <?php if(!empty($dnt['departments'])): ?>
                                                     <?php   foreach($dnt['departments'] as $department): ?>
@@ -235,7 +243,7 @@
                                                 </select>
                                             </div>
                                             <div class="mb10">
-                                                <label>Teams</label>
+                                                <label class="csF16 csB7">Teams</label>
                                                 <select id="jsReviewVisibilityTeams" multiple>
                                                     <?php if(!empty($dnt['teams'])): ?>
                                                     <?php   foreach($dnt['teams'] as $team): ?>
@@ -245,7 +253,7 @@
                                                 </select>
                                             </div>
                                             <div class="mb10">
-                                                <label>Employees</label>
+                                                <label class="csF16 csB7">Employees</label>
                                                 <select id="jsReviewVisibilityIndividuals" multiple></select>
                                             </div>
                                         </div>
@@ -264,22 +272,22 @@
                                     <!-- Schedule -->
                                     <div class="row mb10">
                                         <div class="col-sm-3 col-xs-12">
-                                            <label>Frequency <span class="csRequired"></span></label>
+                                            <label class="csF16 csB7">Frequency <span class="csRequired"></span></label>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
-                                            <label class="control control--radio">
+                                            <label class="control csB1 csF16 control--radio">
                                                 One-time only
                                                 <input type="radio" name="frequency" class="jsReviewFrequency"
                                                     value="onetime" checked />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control control--radio">
+                                            <label class="control csB1 csF16 control--radio">
                                                 Recurring
                                                 <input type="radio" name="frequency" class="jsReviewFrequency"
                                                     value="repeat" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control control--radio">
+                                            <label class="control csB1 csF16 control--radio">
                                                 Custom Schedule
                                                 <input type="radio" name="frequency" class="jsReviewFrequency"
                                                     value="custom" />
@@ -295,15 +303,15 @@
                                                 <label class="pa10">Review Period <span class="csRequired"></span></label>
                                             </div>
                                             <div class="col-sm-3 col-xs-12 pr0">
-                                                <input type="text" class="form-control csRadius100"
+                                                <input type="text" class="form-control csF16 csRadius100"
                                                     id="jsReviewStartDate" readonly placeholder="MM/DD/YYYY" />
                                             </div>
                                             <div class="col-sm-1 col-xs-12 pl0 pr0">
-                                                <p class="text-center ma10"><i class="fa fa-minus"
+                                                <p class="text-center ma10"><i aria-hidden="true" class="fa fa-minus"
                                                         style="font-size: 22px;"></i></p>
                                             </div>
                                             <div class="col-sm-3 col-xs-12 pl0">
-                                                <input type="text" class="form-control csRadius100" id="jsReviewEndDate"
+                                                <input type="text" class="form-control csF16 csRadius100" id="jsReviewEndDate"
                                                     readonly placeholder="MM/DD/YYYY" />
                                             </div>
                                         </div>
@@ -314,7 +322,7 @@
                                                 <label class="pa10">Recur Every <span class="csRequired"></span></label>
                                             </div>
                                             <div class="col-sm-2 col-xs-12">
-                                                <input type="text" class="form-control csRadius100" placeholder="0"
+                                                <input type="text" class="form-control csF16 csRadius100" placeholder="0"
                                                     id="jsReviewRepeatVal" />
                                             </div>
                                             <div class="col-sm-2 col-xs-12">
@@ -331,7 +339,7 @@
                                         <!-- Info -->
                                         <div class="row mb10">
                                             <div class="col-sm-12">
-                                                <p class="pa10 text-justify csSpan">You can create
+                                                <p class="pa10 text-justify csF16">You can create
                                                     custom occurrences for this review based on
                                                     reviewees' start date, and continuing on a regular schedule. For
                                                     instance, you may wish to run a performance review for new employees
@@ -348,17 +356,17 @@
                                                 <div id="jsReviewCustomRunWrap"></div>
                                                 <!-- Add button -->
                                                 <button class="btn btn-link pl0 jsReviewCustomRunAdd">
-                                                    <i class="fa fa-plus-circle"></i> Add another run
+                                                    <i aria-hidden="true" class="fa fa-plus-circle"></i> Add another run
                                                 </button>
                                             </div>
                                         </div>
                                         <!-- Continue -->
                                         <div class="row mb10">
                                             <div class="col-sm-3 col-xs-12">
-                                                <label>Continue Review</label>
+                                                <label class="csF16 csB7">Continue Review</label>
                                             </div>
                                             <div class="col-sm-9 col-xs-12">
-                                                <label class="control control--checkbox">
+                                                <label class="control csB1 csF16 control--checkbox">
                                                     Yes, after the last custom run, recur the review on a regular
                                                     schedule
                                                     <input type="checkbox" id="jsReviewContinue" />
@@ -372,11 +380,11 @@
                                                 <label class="pa10">When are reviews due? <span class="csRequired"></span></label>
                                             </div>
                                             <div class="col-sm-2 col-xs-12">
-                                                <input type="text" class="form-control csRadius100" placeholder="0"
+                                                <input type="text" class="form-control csF16 csRadius100" placeholder="0"
                                                     id="jsReviewDue" />
                                             </div>
                                             <div class="col-sm-7 col-xs-12">
-                                                <p class="csSpan">days after they start.</p>
+                                                <p class="csF16">days after they start.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -385,11 +393,11 @@
                             <!-- Footer -->
                             <div class="csPageBoxFooter p10">
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="templates"><i
-                                            class="fa fa-long-arrow-left"></i> Back To Templates</button>
-                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="reviewees"><i
-                                            class="fa fa-arrow-circle-right"></i>Save & Next</button>
-                                    <button class="btn btn-black btn-lg dn jsFinishLater"><i class="fa fa-edit"></i>
+                                    <button class="btn btn-black btn-lg jsReviewBackStep csF16" data-to="templates"><i
+                                            class="fa fa-long-arrow-left csF16"></i> Back To Templates</button>
+                                    <button class="btn btn-orange btn-lg jsReviewStep csF16" data-to="reviewees"><i
+                                            class="fa fa-arrow-circle-right csF16"></i>Save & Next</button>
+                                    <button class="btn btn-black btn-lg dn  csF16 jsFinishLater"><i aria-hidden="true" class="fa fa-edit csF16"></i>
                                         Finish Later</button>
                                 </span>
                                 <!--  -->
@@ -399,12 +407,12 @@
                         <!-- Reviewees -->
                         <div class="csPageSection jsPageSection dn" data-key="reviewees">
                             <div class="csPageBoxHeader pl10">
-                                <h2><strong>Select Reviewees</strong></h2>
+                                <h2 class="csF16 csB7">Select Reviewees</h2>
                             </div>
                             <div class="csPageBoxHeader pl10 pa10 pb10">
-                                <p class="csSpan">Use the Rule Settings to define which workers are included (or excluded) from this
+                                <p class="csF16">Use the Rule Settings to define which workers are included (or excluded) from this
                                     review.</p>
-                                <p class="csSpan">Note: The preview shows the selected workers as of today and may differ from when
+                                <p class="csF16">Note: The preview shows the selected workers as of today and may differ from when
                                     the review starts.</p>
                             </div>
                             <div class="csPageBoxBody">
@@ -412,8 +420,8 @@
                                     <!-- Filter Bar -->
                                     <div class="col-sm-4 col-xs-12">
                                         <div class="csFilterBox p10">
-                                            <p class="csSpan">
-                                                <strong>Rule Settings</strong>
+                                            <p class="csF16">
+                                                <span class="csF16 csB7">Rule Settings</span>
                                                 <span class="csBTNBox">
                                                     <button class="btn btn-black btn-xs jsResetFilter">Reset</button>
                                                 </span>
@@ -421,16 +429,16 @@
                                             <!-- Individual Row -->
                                             <div class="row pa10 pb10">
                                                 <div class="col-sm-12">
-                                                    <label>Individuals</label>
+                                                    <label class="csF16 csB7">Individuals</label>
                                                     <select id="jsFilterIndividuals" multiple="true"></select>
                                                 </div>
                                             </div>
                                             <!-- Include -->
-                                            <h5 class="pa10 bbt">INCLUDE</h5>
+                                            <h5 class="pa10 bbt  csF16 csB7">Include Employees</h5>
                                             <!-- Departments Row -->
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
-                                                    <label>Departments</label>
+                                                    <label class="csF16 csB7">Departments</label>
                                                     <select id="jsFilterDepartments" multiple>
                                                         <?php if(!empty($dnt['departments'])): ?>
                                                         <?php   foreach($dnt['departments'] as $department): ?>
@@ -444,7 +452,7 @@
                                             <!-- Teams Row -->
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
-                                                    <label>Teams</label>
+                                                    <label class="csF16 csB7">Teams</label>
                                                     <select id="jsFilterTeams" multiple>
                                                         <?php if(!empty($dnt['teams'])): ?>
                                                         <?php   foreach($dnt['teams'] as $team): ?>
@@ -457,7 +465,7 @@
                                             <!-- Employment Type Row -->
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
-                                                    <label>Employment Type</label>
+                                                    <label class="csF16 csB7">Employment Type</label>
                                                     <select id="jsFilterEmploymentType" multiple>
                                                         <option value="fulltime">Full-time</option>
                                                         <option value="parttime">Part-time</option>
@@ -467,7 +475,7 @@
                                             <!-- Job Titles Row -->
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
-                                                    <label>Job Titles</label>
+                                                    <label class="csF16 csB7">Job Titles</label>
                                                     <select id="jsFilterJobTitles" multiple>
                                                         <?php if(!empty($jobTitles)): ?>
                                                         <?php   foreach($jobTitles as $jobTitle):?>
@@ -479,18 +487,18 @@
                                                 </div>
                                             </div>
                                             <!-- Exclude -->
-                                            <h5 class="pa10 bbt">EXCLUDE</h5>
+                                            <h5 class="pa10 bbt  csF16 csB7">Exclude Employees</h5>
                                             <!-- Departments Row -->
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
-                                                    <label>Exclude Individuals</label>
+                                                    <label class="csF16 csB7">Exclude Individuals</label>
                                                     <select id="jsFilterExcludeEmployees" multiple></select>
                                                 </div>
                                             </div>
                                             <!-- Teams Row -->
                                             <div class="row pa10">
                                                 <div class="col-sm-12">
-                                                    <label>Exclude New Hires</label>
+                                                    <label class="csF16 csB7">Exclude New Hires</label>
                                                     <select id="jsFilterExcludeNewHires">
                                                         <option value="0">None</option>
                                                         <option value="30">up to 30 days from hire date</option>
@@ -506,10 +514,10 @@
                                         <div class="csContentArea">
                                             <div class="csPageBoxHeader pa10">
                                                 <ul>
-                                                    <li><a href="javascript:void(0)" class="active jsShiftTab"
+                                                    <li><a href="javascript:void(0)" class="active jsShiftTab csF18 csB7"
                                                             data-target="included">Included <span
                                                                 id="jsIncudedEmployeeCount">(0)</span></a></li>
-                                                    <li><a href="javascript:void(0)" class="jsShiftTab"
+                                                    <li><a href="javascript:void(0)" class="jsShiftTab csF18 csB7"
                                                             data-target="excluded">Excluded <span
                                                                 id="jsExcludedEmployeeCount">(0)</span></a></li>
                                                 </ul>
@@ -549,11 +557,11 @@
 
                             <div class="csPageBoxFooter p10">
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="schedule"><i
-                                            class="fa fa-long-arrow-left"></i> Back To Schedule</button>
-                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="reviewers"><i
-                                            class="fa fa-arrow-circle-right"></i>Save & Next</button>
-                                    <button class="btn btn-black btn-lg jsFinishLater dn"><i class="fa fa-edit"></i>
+                                    <button class="btn btn-black btn-lg jsReviewBackStep csF16" data-to="schedule"><i
+                                            class="fa fa-long-arrow-left csF16"></i> Back To Schedule</button>
+                                    <button class="btn btn-orange btn-lg jsReviewStep csF16" data-to="reviewers"><i
+                                            class="fa fa-arrow-circle-right csF16"></i>Save & Next</button>
+                                    <button class="btn btn-black btn-lg  csF16 jsFinishLater dn"><i aria-hidden="true" class="fa fa-edit csF16"></i>
                                         Finish Later</button>
                                 </span>
                                 <div class="clearfix"></div>
@@ -562,32 +570,32 @@
                         <!-- Reviewers -->
                         <div class="csPageSection jsPageSection dn" data-key="reviewers">
                             <div class="csPageBoxHeader p10">
-                                <h2 style="color: #cc1100;">All reviews are submitted to the reporting manager</h2>
+                                <h2 class="csF16"><em>All reviews will be submitted to respective reporting managers.</em></h2>
                             </div>
                             <div class="csPageBoxBody p10">
                                 <div class="csForm">
                                     <!-- Row 1 -->
                                     <div class="row">
                                         <div class="col-sm-3 col-xs-12">
-                                            <label>Reviewers <span class="csRequired"></span></label>
+                                            <label class="csF16 csB7">Reviewers <span class="csRequired"></span></label>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
-                                            <label class="control control--checkbox">
+                                            <label class="control csB1 csF16 control--checkbox">
                                                 Reporting Manager
                                                 <input type="checkbox" name="reviewerTypeRM" class="jsReviewerType" value="reporting_manager" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control control--checkbox">
+                                            <label class="control csB1 csF16 control--checkbox">
                                                 Self-Review
                                                 <input type="checkbox" name="reviewerTypeSR" class="jsReviewerType" value="self_review" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control control--checkbox">
+                                            <label class="control csB1 csF16 control--checkbox">
                                                 Peers (Colleagues)
                                                 <input type="checkbox" name="reviewerTypeP" class="jsReviewerType" value="peer" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control control--checkbox">
+                                            <label class="control csB1 csF16 control--checkbox">
                                                 Specific Reviewers
                                                 <input type="checkbox" name="reviewerTypeSR" class="jsReviewerType" value="specific" />
                                                 <div class="control__indicator"></div>
@@ -602,10 +610,10 @@
                                     <!-- Row 2 -->
                                     <div class="row">
                                         <div class="col-sm-3 col-xs-12">
-                                            <h4 class="csSpan"><strong>Reviewees</strong> <span id="jsReviewTotalRevieweeCount"></span></h4>
+                                            <h4 class="csF16"><strong>Reviewees</strong> <span id="jsReviewTotalRevieweeCount"></span></h4>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
-                                            <h4 class="csSpan"><strong>Assigned Reviewers</strong></h4>
+                                            <h4 class="csF16"><strong>Assigned Reviewers</strong></h4>
                                         </div>
                                     </div>
                                     <div class="bbt"></div>
@@ -615,11 +623,11 @@
                             <!--  -->
                             <div class="csPageBoxFooter p10">
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="reviewees"><i class="fa fa-long-arrow-left"></i> Back To
+                                    <button class="btn btn-black btn-lg jsReviewBackStep csF16" data-to="reviewees"><i aria-hidden="true" class="fa fa-long-arrow-left csF16"></i> Back To
                                         Reviewees</button>
-                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="questions"><i class="fa fa-arrow-circle-right"></i>Save &
+                                    <button class="btn btn-orange btn-lg jsReviewStep csF16" data-to="questions"><i aria-hidden="true" class="fa fa-arrow-circle-right csF16"></i>Save &
                                         Next</button>
-                                    <button class="btn btn-black btn-lg jsFinishLater"><i class="fa fa-edit"></i> Finish
+                                    <button class="btn btn-black btn-lg  csF16 jsFinishLater"><i aria-hidden="true" class="fa fa-edit csF16"></i> Finish
                                         Later</button>
                                 </span>
                                 <div class="clearfix"></div>
@@ -630,10 +638,10 @@
                             <!-- Header -->
                             <div class="csPageBoxHeader csSticky csStickyTop p10" style="background-color: #fff;">
                                 <h2>
-                                    <strong>Questions</strong>
+                                    <span class="csF18 csB7">Questions</span>
                                     <span class="csBTNBox">
-                                        <button class="btn btn-orange mtn8 jsReviewBackStep" data-to="add_question">
-                                            <i class="fa fa-plus-circle"></i> Add A Question
+                                        <button class="btn btn-orange mtn8 jsReviewBackStep csF16" data-to="add_question">
+                                            <i aria-hidden="true" class="fa fa-plus-circle"></i> Add A Question
                                         </button>
                                     </span>
                                 </h2>
@@ -647,11 +655,11 @@
                             <!--  -->
                             <div class="csPageBoxFooter p10">
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="reviewers"><i class="fa fa-long-arrow-left"></i> Back To
+                                    <button class="btn btn-black btn-lg jsReviewBackStep csF16" data-to="reviewers"><i aria-hidden="true" class="fa fa-long-arrow-left csF16"></i> Back To
                                         Reviewers</button>
-                                    <button class="btn btn-orange btn-lg jsReviewStep" data-to="feedback"><i class="fa fa-arrow-circle-right"></i>Save &
+                                    <button class="btn btn-orange btn-lg jsReviewStep csF16" data-to="feedback"><i aria-hidden="true" class="fa fa-arrow-circle-right csF16"></i>Save &
                                         Next</button>
-                                    <button class="btn btn-black btn-lg jsFinishLater"><i class="fa fa-edit"></i> Finish
+                                    <button class="btn btn-black btn-lg  csF16 jsFinishLater"><i aria-hidden="true" class="fa fa-edit csF16"></i> Finish
                                         Later</button>
                                 </span>
                                 <div class="clearfix"></div>
@@ -661,20 +669,20 @@
                         <div class="csPageSection jsPageSection dn" data-key="feedback">
                             <!-- Header -->
                             <div class="csPageBoxHeader p10">
-                                <h2><strong>Sharing Feedback</strong></h2>
+                                <h2 class="csF18 csB7">Sharing Feedback</h2>
                             </div>
                             <!-- Body -->
                             <div class="csPageBoxBody p10">
                                 <div class="csSharingFeedbackBox">
-                                    <p class="csSpan">Tell us how you want managers to share feedback with their reports.</p>
+                                    <p class="csF16">Tell us how you want managers to share feedback with their reports.</p>
                                     <br />
                                     <ul>
-                                        <li class="csRadius5 jsReviewFeedback csCursorSelect" data-share="1">
-                                            <i class="fa fa-eye"></i> The manager summarizes all reviews and shares the
+                                        <li class="csRadius5 jsReviewFeedback csCursorSelect csF16" data-share="1">
+                                            <i aria-hidden="true" class="fa fa-eye csF16"></i> The manager summarizes all reviews and shares the
                                             summary with their report
                                         </li>
-                                        <li class="csRadius5 jsReviewFeedback csCursorSelect" data-share="0">
-                                            <i class="fa fa-eye-slash"></i> Nothing is shared with their report
+                                        <li class="csRadius5 jsReviewFeedback csCursorSelect csF16" data-share="0">
+                                            <i aria-hidden="true" class="fa fa-eye-slash csF16"></i> Nothing is shared with their report
                                         </li>
                                     </ul>
                                 </div>
@@ -682,11 +690,11 @@
                             <!-- Footer -->
                             <div class="csPageBoxFooter pa10">
                                 <span class="csBTNBox">
-                                    <button class="btn btn-black btn-lg jsReviewBackStep" data-to="questions"><i class="fa fa-long-arrow-left"></i>
+                                    <button class="btn btn-black btn-lg jsReviewBackStep csF16" data-to="questions"><i aria-hidden="true" class="fa fa-long-arrow-left csF16"></i>
                                         Back To Questions</button>
-                                    <button class="btn btn-orange btn-lg jsReviewStep" ><i class="fa fa-arrow-circle-right"></i>Save &
+                                    <button class="btn btn-orange btn-lg jsReviewStep csF16" ><i aria-hidden="true" class="fa fa-arrow-circle-right csF16"></i>Save &
                                         Finish</button>
-                                    <button class="btn btn-black btn-lg jsFinishLater"><i class="fa fa-edit"></i> Finish
+                                    <button class="btn btn-black btn-lg  csF16 jsFinishLater"><i aria-hidden="true" class="fa fa-edit csF16"></i> Finish
                                         Later</button>
                                 </span>
                             </div>
@@ -695,10 +703,10 @@
                         <div class="csPageSection jsPageSection dn" data-key="add_question">
                             <div class="csPageBoxHeader p10">
                                 <h2>
-                                    <strong>Add a Question</strong>
+                                    <span class="csF18 csB7">Add a Question</span>
                                     <span class="csBTNBox">
-                                        <button class="btn btn-black btn-lg mtn8 jsReviewBackStep" data-to="questions"><i class="fa fa-times-circle"></i> Cancel</button>
-                                        <button class="btn btn-orange btn-lg mtn8 jsSaveQuestion"><i class="fa fa-save"></i> Save Question</button>
+                                        <button class="btn btn-black btn-lg mtn8 jsReviewBackStep csF16" data-to="questions"><i aria-hidden="true" class="fa fa-times-circle csF16"></i> Cancel</button>
+                                        <button class="btn btn-orange btn-lg mtn8 jsSaveQuestion csF16"><i aria-hidden="true" class="fa fa-save csF16"></i> Save Question</button>
                                     </span>
                                 </h2>
                             </div>
@@ -713,10 +721,10 @@
                                             <!-- Question  -->
                                             <div class="row mb10">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Question <span class="csRequired"></span></label>
+                                                    <label class="csF16 csB7">Question <span class="csRequired"></span></label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
-                                                    <input class="form-control"
+                                                    <input class="form-control csF16"
                                                         placeholder="e.g. What would you do differently next quarter?"
                                                         id="jsQuestionVal" />
                                                 </div>
@@ -725,10 +733,10 @@
                                             <!-- Description  -->
                                             <div class="row mb10">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Description</label>
+                                                    <label class="csF16 csB7">Description</label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
-                                                    <textarea class="form-control"
+                                                    <textarea class="form-control csF16"
                                                         id="jsQuestionDescription"></textarea>
                                                 </div>
                                             </div>
@@ -736,18 +744,18 @@
                                             <!-- Options  -->
                                             <div class="row mb10">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Options</label>
+                                                    <label class="csF16 csB7">Options</label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsQuestionUseLabels" /> Use Labels
                                                         <div class="control__indicator"></div>
                                                     </label> <br />
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsQuestionIncludeNA" /> Include N/A
                                                         <div class="control__indicator"></div>
                                                     </label> <br />
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsStartVideoRecord" /> Include a Video
                                                         <div class="control__indicator"></div>
                                                     </label>
@@ -756,7 +764,7 @@
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="jsVideoRecorderBox dn">
-                                                                    <p class="alert alert-danger"><strong>To use this
+                                                                    <p class="alert alert-danger csF16"><strong>To use this
                                                                             feature, please, make sure you have allowed
                                                                             microphone and camera access.</strong></p>
                                                                 </div>
@@ -765,25 +773,25 @@
                                                                 <div class="jsVideoRecorderBox dn">
                                                                     <video id="jsVideoRecorder" width="100%"></video>
                                                                     <!--  -->
-                                                                    <button class="btn btn-orange btn-lg dn"
+                                                                    <button class="btn btn-orange btn-lg csF16 dn"
                                                                         id="jsVideoRecordButton">Start Recording</button>
                                                                     <!--  -->
-                                                                    <button class="btn btn-black btn-lg dn"
-                                                                        id="jsVideoPauseButton"><i class="fa fa-pause-circle"></i> Pause Recording</button>
+                                                                    <button class="btn btn-black btn-lg  csF16 dn"
+                                                                        id="jsVideoPauseButton"><i aria-hidden="true" class="fa fa-pause-circle csF16"></i> Pause Recording</button>
                                                                     <!--  -->
-                                                                    <button class="btn btn-black btn-lg dn"
-                                                                        id="jsVideoResumeButton"><i class="fa fa-play-circle"></i> Resume Recording</button>
+                                                                    <button class="btn btn-black btn-lg csF16 dn"
+                                                                        id="jsVideoResumeButton"><i aria-hidden="true" class="fa fa-play-circle csF16"></i> Resume Recording</button>
                                                                 </div>
                                                             </div>
                                                             <div class="col-sm-6 col-xs-12">
                                                                 <div class="jsVideoPreviewBox dn">
                                                                     <video id="jsVideoPreview" width="100%"></video>
-                                                                    <button class="btn btn-orange btn-lg"
-                                                                        id="jsVideoPlayVideo"><i class="fa fa-play"></i>
+                                                                    <button class="btn btn-orange btn-lg csF16"
+                                                                        id="jsVideoPlayVideo"><i aria-hidden="true" class="fa fa-play csF16"></i>
                                                                         Play Video</button>
-                                                                    <button class="btn btn-black btn-lg"
+                                                                    <button class="btn btn-black btn-lg csF16"
                                                                         id="jsVideoRemoveButton"><i
-                                                                            class="fa fa-times-circle"></i> Remove
+                                                                            class="fa fa-times-circle csF16"></i> Remove
                                                                         Video</button>
                                                                 </div>
                                                             </div>
@@ -795,7 +803,7 @@
                                             <!-- Type  -->
                                             <div class="row mb10">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Response Type <span class="csRequired"></span></label>
+                                                    <label class="csF16 csB7">Response Type <span class="csRequired"></span></label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
                                                     <select id="jsQuestionType">
@@ -812,7 +820,7 @@
                                             <!-- Rating Scale  -->
                                             <div class="row mb10 jsQuestionRatingScaleBox dn">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Rating Scale</label>
+                                                    <label class="csF16 csB7">Rating Scale</label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
                                                     <select id="jsQuestionRatingScale">
@@ -828,32 +836,32 @@
                                             <!-- Ratings -->
                                             <div class="row mb10 jsQuestionRatingValBox dn">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Ratings</label>
+                                                    <label class="csF16 csB7">Ratings</label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
                                                     <div class="form-group jsQuestionRatingScaleValBox">
-                                                        <label>Rating 1</label>
-                                                        <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                        <label class="csF16 csB7">Rating 1</label>
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal"
                                                             value="<?=getDefaultLabel()[1];?>" data-id="1" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBox">
-                                                        <label>Rating 2</label>
-                                                        <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                        <label class="csF16 csB7">Rating 2</label>
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal"
                                                             value="<?=getDefaultLabel()[2];?>" data-id="2" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBox">
-                                                        <label>Rating 3</label>
-                                                        <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                        <label class="csF16 csB7">Rating 3</label>
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal"
                                                             value="<?=getDefaultLabel()[3];?>" data-id="3" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBox">
-                                                        <label>Rating 4</label>
-                                                        <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                        <label class="csF16 csB7">Rating 4</label>
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal"
                                                             value="<?=getDefaultLabel()[4];?>" data-id="4" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBox">
-                                                        <label>Rating 5</label>
-                                                        <input type="text" class="form-control jsQuestionRatingScaleVal"
+                                                        <label class="csF16 csB7">Rating 5</label>
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal"
                                                             value="<?=getDefaultLabel()[5];?>" data-id="5" />
                                                     </div>
                                                 </div>
@@ -862,19 +870,19 @@
                                             <!-- Assigned to  -->
                                             <div class="row mb10 ">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Assigned to <span class="csRequired"></span></label>
+                                                    <label class="csF16 csB7">Assigned to <span class="csRequired"></span></label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsQuestionReportingManager" />
                                                         Reporting Manager
                                                         <div class="control__indicator"></div>
                                                     </label> <br />
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsQuestionSelf" /> Self
                                                         <div class="control__indicator"></div>
                                                     </label> <br />
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsQuestionPeer" /> Peers and others
                                                         <div class="control__indicator"></div>
                                                     </label>
@@ -888,10 +896,10 @@
                                     <!-- Question Footer -->
                                     <div class="csPageBoxFooter p10">
                                         <span class="csBTNBox">
-                                            <button class="btn btn-black btn-lg jsReviewBackStep" data-to="questions"><i
-                                                    class="fa fa-times-circle"></i> Cancel</button>
-                                            <button class="btn btn-orange btn-lg jsSaveQuestion"><i
-                                                    class="fa fa-save"></i> Save Question</button>
+                                            <button class="btn btn-black btn-lg jsReviewBackStep csF16" data-to="questions"><i
+                                                    class="fa fa-times-circle csF16"></i> Cancel</button>
+                                            <button class="btn btn-orange btn-lg jsSaveQuestion csF16"><i
+                                                    class="fa fa-save csF16"></i> Save Question</button>
                                         </span>
                                     </div>
                                 </div>
@@ -903,8 +911,8 @@
                                 <h4>
                                     <strong>Edit a Question</strong>
                                     <span class="csBTNBox">
-                                        <button class="btn btn-black btn-lg mtn8 jsReviewBackStep" data-to="questions"><i class="fa fa-times-circle"></i> Cancel</button>
-                                        <button class="btn btn-orange btn-lg mtn8 jsUpdateQuestion"><i class="fa fa-save"></i> Update Question</button>
+                                        <button class="btn btn-black btn-lg mtn8 jsReviewBackStep csF16" data-to="questions"><i aria-hidden="true" class="fa fa-times-circle csF16"></i> Cancel</button>
+                                        <button class="btn btn-orange btn-lg mtn8 jsUpdateQuestion csF16"><i aria-hidden="true" class="fa fa-save csF16"></i> Update Question</button>
                                     </span>
                                 </h4>
                             </div>
@@ -919,10 +927,10 @@
                                             <!-- Question  -->
                                             <div class="row mb10">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Question <span class="csRequired"></span></label>
+                                                    <label class="csF16 csB7">Question <span class="csRequired"></span></label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
-                                                    <input class="form-control"
+                                                    <input class="form-control csF16"
                                                         placeholder="e.g. What would you do differently next quarter?"
                                                         id="jsQuestionValEdit" />
                                                 </div>
@@ -931,10 +939,10 @@
                                             <!-- Description  -->
                                             <div class="row mb10">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Description</label>
+                                                    <label class="csF16 csB7">Description</label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
-                                                    <textarea class="form-control"
+                                                    <textarea class="form-control csF16"
                                                         id="jsQuestionDescriptionEdit"></textarea>
                                                 </div>
                                             </div>
@@ -942,18 +950,18 @@
                                             <!-- Options  -->
                                             <div class="row mb10">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Options</label>
+                                                    <label class="csF16 csB7">Options</label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsQuestionUseLabelsEdit" /> Use Labels
                                                         <div class="control__indicator"></div>
                                                     </label> <br />
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsQuestionIncludeNAEdit" /> Include N/A
                                                         <div class="control__indicator"></div>
                                                     </label> <br />
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsStartVideoRecordEdit" /> Include a Video
                                                         <div class="control__indicator"></div>
                                                     </label>
@@ -962,34 +970,34 @@
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="jsVideoRecorderBoxEdit dn">
-                                                                    <p class="alert alert-danger"><strong>To use this
+                                                                    <p class="alert alert-danger csF16"><i>To use this
                                                                             feature, please, make sure you have allowed
-                                                                            microphone and camera access.</strong></p>
+                                                                            microphone and camera access.</i></p>
                                                                 </div>
                                                             </div>
                                                             <div class="col-sm-6 col-xs-12">
-                                                                <div class="jsVideoRecorderBoxEdit dn">
+                                                                <div class="jsVideoRecorderBoxEdit dn csF16">
                                                                     <video id="jsVideoRecorderEdit" width="100%"></video>
                                                                     <!--  -->
-                                                                    <button class="btn btn-orange btn-lg dn"
-                                                                        id="jsVideoRecordButtonEdit"><i class="fa fa-stop"></i> Start Recording</button>
+                                                                    <button class="btn btn-orange btn-lg dn csF16"
+                                                                        id="jsVideoRecordButtonEdit"><i aria-hidden="true" class="fa fa-stop csF16"></i> Start Recording</button>
                                                                     <!--  -->
-                                                                    <button class="btn btn-orange btn-lg dn"
-                                                                        id="jsVideoPauseButtonEdit"><i class="fa fa-pause-circle"></i> Pause Recording</button>
+                                                                    <button class="btn btn-orange btn-lg dn csF16"
+                                                                        id="jsVideoPauseButtonEdit"><i aria-hidden="true" class="fa fa-pause-circle csF16"></i> Pause Recording</button>
                                                                     <!--  -->
-                                                                    <button class="btn btn-orange btn-lg dn"
-                                                                        id="jsVideoResumeButtonEdit"><i class="fa fa-play-circle"></i> Resume Recording</button>
+                                                                    <button class="btn btn-orange btn-lg dn csF16"
+                                                                        id="jsVideoResumeButtonEdit"><i aria-hidden="true" class="fa fa-play-circle csF16"></i> Resume Recording</button>
                                                                 </div>
                                                             </div>
                                                             <div class="col-sm-6 col-xs-12">
                                                                 <div class="jsVideoPreviewBoxEdit dn">
                                                                     <video id="jsVideoPreviewEdit" width="100%"></video>
-                                                                    <button class="btn btn-orange btn-lg"
-                                                                        id="jsVideoPlayVideoEdit"><i class="fa fa-play"></i>
+                                                                    <button class="btn btn-orange btn-lg csF16"
+                                                                        id="jsVideoPlayVideoEdit"><i aria-hidden="true" class="fa fa-play csF16"></i>
                                                                         Play Video</button>
-                                                                    <button class="btn btn-black btn-lg"
+                                                                    <button class="btn btn-black btn-lg csF16"
                                                                         id="jsVideoRemoveButtonEdit"><i
-                                                                            class="fa fa-times-circle"></i> Remove
+                                                                            class="fa fa-times-circle csF16"></i> Remove
                                                                         Video</button>
                                                                 </div>
                                                                 <div class="jsVideoPreview2BoxEdit dn">
@@ -1004,7 +1012,7 @@
                                             <!-- Type  -->
                                             <div class="row mb10">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Response Type <span class="csRequired"></span></label>
+                                                    <label class="csF16 csB7">Response Type <span class="csRequired"></span></label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
                                                     <select id="jsQuestionTypeEdit">
@@ -1021,7 +1029,7 @@
                                             <!-- Rating Scale  -->
                                             <div class="row mb10 jsQuestionRatingScaleBoxEdit dn">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Rating Scale</label>
+                                                    <label class="csF16 csB7">Rating Scale</label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
                                                     <select id="jsQuestionRatingScaleEdit">
@@ -1037,32 +1045,32 @@
                                             <!-- Ratings -->
                                             <div class="row mb10 jsQuestionRatingValBoxEdit dn">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Ratings</label>
+                                                    <label class="csF16 csB7">Ratings</label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
                                                     <div class="form-group jsQuestionRatingScaleValBoxEdit">
-                                                        <label>Rating 1</label>
-                                                        <input type="text" class="form-control jsQuestionRatingScaleValEdit"
+                                                        <label class="csF16 csB7">Rating 1</label>
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit"
                                                             value="<?=getDefaultLabel()[1];?>" data-id="1" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBoxEdit">
-                                                        <label>Rating 2</label>
-                                                        <input type="text" class="form-control jsQuestionRatingScaleValEdit"
+                                                        <label class="csF16 csB7">Rating 2</label>
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit"
                                                             value="<?=getDefaultLabel()[2];?>" data-id="2" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBoxEdit">
-                                                        <label>Rating 3</label>
-                                                        <input type="text" class="form-control jsQuestionRatingScaleValEdit"
+                                                        <label class="csF16 csB7">Rating 3</label>
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit"
                                                             value="<?=getDefaultLabel()[3];?>" data-id="3" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBoxEdit">
-                                                        <label>Rating 4</label>
-                                                        <input type="text" class="form-control jsQuestionRatingScaleValEdit"
+                                                        <label class="csF16 csB7">Rating 4</label>
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit"
                                                             value="<?=getDefaultLabel()[4];?>" data-id="4" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBoxEdit">
-                                                        <label>Rating 5</label>
-                                                        <input type="text" class="form-control jsQuestionRatingScaleValEdit"
+                                                        <label class="csF16 csB7">Rating 5</label>
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit"
                                                             value="<?=getDefaultLabel()[5];?>" data-id="5" />
                                                     </div>
                                                 </div>
@@ -1071,19 +1079,19 @@
                                             <!-- Assigned to  -->
                                             <div class="row mb10 dn">
                                                 <div class="col-sm-3 col-xs-12">
-                                                    <label>Assigned to <span class="csRequired"></span></label>
+                                                    <label class="csF16 csB7">Assigned to <span class="csRequired"></span></label>
                                                 </div>
                                                 <div class="col-sm-9 col-xs-12">
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsQuestionReportingManagerEdit" />
                                                         Reporting Manager
                                                         <div class="control__indicator"></div>
                                                     </label> <br />
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsQuestionSelfEdit" /> Self
                                                         <div class="control__indicator"></div>
                                                     </label> <br />
-                                                    <label class="control control--checkbox">
+                                                    <label class="control csB1 csF16 control--checkbox">
                                                         <input type="checkbox" id="jsQuestionPeerEdit" /> Peers and others
                                                         <div class="control__indicator"></div>
                                                     </label>
@@ -1095,10 +1103,10 @@
                                     <div class="csPageBoxFooter p10">
                                         <span class="csBTNBox">
                                             <input type="hidden" id="jsQuestionId" />
-                                            <button class="btn btn-black btn-lg jsReviewBackStep" data-to="questions"><i
-                                                    class="fa fa-times-circle"></i> Cancel</button>
-                                            <button class="btn btn-orange btn-lg jsUpdateQuestion"><i
-                                                    class="fa fa-save"></i> Update Question</button>
+                                            <button class="btn btn-black btn-lg jsReviewBackStep csF16" data-to="questions"><i
+                                                    class="fa fa-times-circle csF16"></i> Cancel</button>
+                                            <button class="btn btn-orange btn-lg jsUpdateQuestion csF16"><i
+                                                    class="fa fa-save csF16"></i> Update Question</button>
                                         </span>
                                     </div>
                                 </div>

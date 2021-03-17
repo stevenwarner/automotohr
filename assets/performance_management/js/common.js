@@ -19,8 +19,6 @@ $(document).on('click', '.jsModalCancel', (e) => {
                 $(e.target).closest('.csModal').fadeOut(300);
                 //
                 $('body').css('overflow-y', 'auto');
-                //
-                $('#ui-datepicker-div').remove();
             }
         ).set('labels', {
             ok: 'LEAVE',
@@ -32,9 +30,9 @@ $(document).on('click', '.jsModalCancel', (e) => {
         //
         $(e.target).closest('.csModal').fadeOut(300);
         //
-        $('body').css('overflow-y', 'auto');
+        $('.csModal').remove();
         //
-        $('#ui-datepicker-div').remove();
+        $('body').css('overflow-y', 'auto');
     }
 });
 
@@ -183,11 +181,11 @@ function Modal(options, cb) {
     <div class="csModal" id="${options.Id}">
         <div class="container">
             <div class="csModalHeader">
-                <h3 class="csModalHeaderTitle">
+                <h3 class="csModalHeaderTitle csF20 csB7">
                     ${options.Title}
                     <span class="csModalButtonWrap">
                     ${ options.Buttons !== undefined && options.Buttons.length !== 0 ? options.Buttons.join('') : '' }
-                        <button class="btn btn-black btn-lg jsModalCancel" title="Close this window">Cancel</button>
+                        <button class="btn btn-black btn-lg jsModalCancel csF16" title="Close this window"><em class="fa fa-times-circle csF16"></em> Cancel</button>
                     </span>
                     <div class="clearfix"></div>
                 </h3>
@@ -201,7 +199,7 @@ function Modal(options, cb) {
     </div>
     `;
     //
-    $(`#${options.Id}`).remove();
+    $('.csModal').remove();
     $('.csPageWrap').append(html);
     $(`#${options.Id}`).fadeIn(300);
     //
@@ -292,7 +290,7 @@ function getNoShow(type) {
     let html = '';
     let buttons = '';
     let message;
-    html += '<h1 class="alert text-center">{{message}}<br /><br />';
+    html += '<h1 class="alert text-center csF24 csB7">{{message}}<br /><br />';
     html += '{{buttons}}';
     html += '</h1>';
     //
@@ -303,14 +301,14 @@ function getNoShow(type) {
         type == 'review_draft' ||
         type == 'review_active'
     ) {
-        buttons = '<a href="' + (pm.urls.base) + 'performance-management/review/create" class="btn btn-orange"><em class="fa fa-plus-circle"></em> CREATE A REVIEW</a>';
+        buttons = '<a href="' + (pm.urls.base) + 'performance-management/review/create" class="btn btn-orange csF16"><em class="fa fa-plus-circle csF16"></em> CREATE A REVIEW</a>';
     } else if (
         type == 'goal_1' ||
         type == 'goal_2' ||
         type == 'goal_3' ||
         type == 'goal_4'
     ) {
-        buttons = '<button class="btn btn-orange jsCreateGoal"><em class="fa fa-plus-circle"></em> CREATE A GOAL</button>';
+        buttons = '<button class="btn btn-orange jsCreateGoal csF16"><em class="fa fa-plus-circle csF16"></em> CREATE A GOAL</button>';
     }
     //
     return html.replace(/{{message}}/i, message).replace(/{{.*}}/ig, buttons);
@@ -396,31 +394,31 @@ function getQuestionRow(question, index, questionsLength) {
     rows += `<div class="csQuestionRow" data-id="${index}">`;
     rows += `   <div class="csFeedbackViewBox p10">`;
     rows += `       <h4 class="bbb pb10">`;
-    rows += `           <strong>Question ${index+1}</strong>`;
+    rows += `           <span class="csF16 csB7">Question ${index+1}</span>`;
     rows += `           <span class="csBTNBox">`;
     if (index != questionsLength) {
-        rows += `           <i class="fa fa-long-arrow-down jsQuestionMoveDown" title="Move down" placement="top"></i>`;
+        rows += `           <i class="fa fa-long-arrow-down jsQuestionMoveDown csF16" title="Move down" placement="top"></i>`;
     }
     if (index != 0) {
-        rows += `           <i class="fa fa-long-arrow-up jsQuestionMoveUp" title="Move up" placement="top"></i>`;
+        rows += `           <i class="fa fa-long-arrow-up jsQuestionMoveUp csF16" title="Move up" placement="top"></i>`;
     }
     rows += `           <span>|</span>`;
-    rows += `           <i class="fa fa-clone jsQuestionClone" title="Clone this question" placement="top"></i>`;
-    rows += `           <i class="fa fa-trash jsQuestionDelete"  title="Delete this question" placement="top"></i>`;
-    rows += `           <i class="fa fa-pencil jsQuestionEdit" title="Edit this question" placement="top"></i>`;
+    rows += `           <i class="fa fa-clone jsQuestionClone csF16" title="Clone this question" placement="top"></i>`;
+    rows += `           <i class="fa fa-trash jsQuestionDelete csF16"  title="Delete this question" placement="top"></i>`;
+    rows += `           <i class="fa fa-pencil jsQuestionEdit csF16" title="Edit this question" placement="top"></i>`;
     rows += `           </span>`;
     rows += `       </h4>`;
-    rows += `       <h4><strong>${question.title}</strong></h4>`;
+    rows += `       <h4 class="csF16 csB7">${question.title}</h4>`;
     if (!isEmpty(question.text)) {
-        rows += `       <p>${question.text}</p>`;
+        rows += `       <p class="csF16">${question.text}</p>`;
     }
     if (!isEmpty(question.video_help)) {
         rows += `       <video controls="true" style="width: 250px;"><source src="${question.video_help}" type="video/webm"></source></video><br />`;
     }
     //
     if (question.not_applicable === 1) {
-        rows += '<label class="control control--checkbox">';
-        rows += '   <input type="checkbox" class="jsQuestionNA" /> Not Applicable';
+        rows += '<label class="control control--checkbox csF16 csB1">';
+        rows += '   <input type="checkbox" class="csF16" /> Not Applicable';
         rows += '   <div class="control__indicator"></div>';
         rows += '</label><br />';
     }
@@ -431,9 +429,9 @@ function getQuestionRow(question, index, questionsLength) {
         for (let i = 1; i <= question.scale; i++) {
             rows += '<li>';
             rows += '   <div class="csFeedbackViewBoxTab">';
-            rows += `       <p class="mb0">${i}</p>`;
+            rows += `       <p class="mb0 csF16">${i}</p>`;
             if (question.labels_flag === 1) {
-                rows += `   <p>${question.label_question[i]}</p>`;
+                rows += `   <p class="csF16">${question.label_question[i]}</p>`;
             }
             rows += '   </div>';
             rows += '</li>';
@@ -443,12 +441,12 @@ function getQuestionRow(question, index, questionsLength) {
 
     //
     if ($.inArray(question.question_type, ['multiple-choice-with-text', 'multiple-choice']) !== -1) {
-        rows += '<br /><label class="control control--radio">';
-        rows += `   <input type="radio" class="jsQuestionNA" name="jsQuestionMultipleChoice${index}" /> Yes`;
+        rows += '<br /><label class="control control--radio csB1">';
+        rows += `   <input type="radio" class="csF16" name="jsQuestionMultipleChoice${index}" /> Yes`;
         rows += '   <div class="control__indicator"></div>';
         rows += '</label> &nbsp;&nbsp;';
-        rows += '<label class="control control--radio">';
-        rows += `   <input type="radio" class="jsQuestionNA" name="jsQuestionMultipleChoice${index}" /> No`;
+        rows += '<label class="control control--radio csB1">';
+        rows += `   <input type="radio" class="csF16" name="jsQuestionMultipleChoice${index}" /> No`;
         rows += '   <div class="control__indicator"></div>';
         rows += '</label>';
     }
@@ -458,8 +456,8 @@ function getQuestionRow(question, index, questionsLength) {
         rows += '<div class="csFeedbackViewBoxComment">';
         rows += '    <div class="row">';
         rows += '        <div class="col-sm-12 col-xs-12">';
-        rows += '            <h5><strong>Feedback (Elaborate)</strong></h5>';
-        rows += '            <textarea rows="3" class="form-control"></textarea>';
+        rows += '            <h5 class="csF14 csB7">Feedback (Elaborate)</h5>';
+        rows += '            <textarea rows="3" class="form-control csF16"></textarea>';
         rows += '        </div>';
         rows += '    </div>';
         rows += '</div>';
@@ -634,3 +632,117 @@ $('.jsCalendarView').click(function(e) {
         ml(false, 'jsCalendarLoader')
     });
 });
+
+//
+let fontList = {
+    csF12: 12,
+    csF14: 14,
+    csF16: 16,
+    csF18: 18,
+    csF20: 20,
+    csF22: 22,
+    csF24: 24,
+    csF26: 26,
+    csF28: 28
+};
+
+/**
+ * 
+ */
+$('.jsDecreaseSize').click(function(event) {
+    //
+    event.preventDefault();
+    //
+    let newList = {};
+    //
+    $.each(getFontList(), function(i, v) {
+        //
+        let newSize = v;
+        //
+        newSize--;
+        //
+        if (newSize > 12) {
+            newList[i] = newSize;
+        } else {
+            newList[i] = v;
+        }
+    });
+    //
+    setFontList(newList);
+    //
+    loadFonts();
+});
+
+/**
+ * 
+ */
+$('.jsIncreaseSize').click(function(event) {
+    //
+    event.preventDefault();
+    //
+    let newList = {};
+    //
+    $.each(getFontList(), function(i, v) {
+        //
+        let newSize = v;
+        //
+        newSize++;
+        //
+        if (newSize > 24) {
+            newList[i] = v;
+        } else {
+            newList[i] = newSize;
+        }
+    });
+    //
+    setFontList(newList);
+    //
+    loadFonts();
+});
+
+/**
+ * 
+ */
+$('.jsResetSize').click(function(event) {
+    //
+    event.preventDefault();
+    //
+    //
+    setFontList(fontList);
+    //
+    loadFonts();
+});
+
+
+
+//
+function getFontList() {
+    //
+    if (localStorage.getItem('myFontList') === null) return fontList;
+    //
+    return JSON.parse(localStorage.getItem('myFontList'));
+}
+
+//
+function setFontList(l) {
+    //
+    localStorage.setItem('myFontList', JSON.stringify(l));
+}
+
+//
+function loadFonts() {
+    //
+    let s2 = '16';
+    $.each(getFontList(), function(i, v) {
+        if (i == 'csF16') {
+            s2 = v;
+        }
+        $(`.${i}`).attr('style', 'font-size: ' + v + 'px !important');
+    });
+    //
+    $('.select2-container').attr('style', 'font-size:' + (s2) + 'px !important');
+    $('.select2-container--default .select2-selection--multiple .select2-selection__choice').attr('style', 'font-size:' + (s2) + 'px !important');
+}
+
+//
+loadFonts();

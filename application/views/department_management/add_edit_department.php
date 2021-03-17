@@ -64,7 +64,6 @@
                                                 <label for="name">Select Supervisor(s)<span class="staric">*</span></label>
                                                 <div class="">
                                                     <select name="supervisor[]" class="invoice-fields" id="supervisor_id" multiple="true">
-                                                        <option value="0">Please Select Supervisor</option>
                                                         <?php foreach ($employees as $key => $employee): ?>
                                                             <option value="<?php echo $employee['sid'] ?>" <?php echo isset($department['supervisor']) && in_array($employee['sid'], explode(',', $department['supervisor']))  ? 'selected="selected"' : ''; ?>>
                                                                 <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
@@ -72,6 +71,32 @@
                                                         <?php endforeach ?>
                                                     </select>
                                                     <span id="add_supervisor_error" class="text-danger person_error"></span>
+                                                </div>
+                                            </div>    
+                                            <div class="form-group autoheight">
+                                                <label for="name">Approver(s)<span class="staric">*</span></label>
+                                                <div class="">
+                                                    <select name="approvers[]" class="invoice-fields" id="approvers_ids" multiple="true">
+                                                        <?php foreach ($employees as $key => $employee): ?>
+                                                            <option value="<?php echo $employee['sid'] ?>" <?php echo isset($department['approvers']) && in_array($employee['sid'], explode(',', $department['approvers']))  ? 'selected="selected"' : ''; ?>>
+                                                                <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
+                                                            </option>
+                                                        <?php endforeach ?>
+                                                    </select>
+                                                    <span id="add_approvers_error" class="text-danger person_error"></span>
+                                                </div>
+                                            </div>    
+                                            <div class="form-group autoheight">
+                                                <label for="name">Reporting Manager(s)<span class="staric">*</span></label>
+                                                <div class="">
+                                                    <select name="reporting_manager[]" class="invoice-fields" id="reporting_manager_ids" multiple="true">
+                                                        <?php foreach ($employees as $key => $employee): ?>
+                                                            <option value="<?php echo $employee['sid'] ?>" <?php echo isset($department['reporting_managers']) && in_array($employee['sid'], explode(',', $department['reporting_managers']))  ? 'selected="selected"' : ''; ?>>
+                                                                <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
+                                                            </option>
+                                                        <?php endforeach ?>
+                                                    </select>
+                                                    <span id="add_reporting_manager_error" class="text-danger person_error"></span>
                                                 </div>
                                             </div>    
                                             <div class="form-group autoheight">
@@ -101,6 +126,8 @@
 <script>
     $(function(){
         $('#supervisor_id').select2({ closeOnSelect: false });
+        $('#reporting_manager_ids').select2({ closeOnSelect: false });
+        $('#approvers_ids').select2({ closeOnSelect: false });
     })
 </script>
 
@@ -108,9 +135,18 @@
 <script  language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
     function validate_form() {
+        $('.person_error').text('');
         var supervisor = $('#supervisor_id').val();
-        if(supervisor == 0) {
+        var repoting_manager = $('#reporting_manager_ids').val();
+        var approvers = $('#approvers_ids').val();
+        if(supervisor == null) {
             $('#add_supervisor_error').text('Supervisor name is required');
+        }
+        if(approvers == null) {
+            $('#add_approvers_error').text('Approvers are required');
+        }
+        if(repoting_manager == null) {
+            $('#add_reporting_manager_error').text('Reporting managers are required');
         }
 
         $("#form_add_edit_department_info").validate({
@@ -133,7 +169,9 @@
             },
             submitHandler: function (form) {
                 var supervisor = $('#supervisor_id').val();
-                if(supervisor != 0) {
+                var repoting_manager = $('#reporting_manager_ids').val();
+                var approvers = $('#approvers_ids').val();
+                if(supervisor != null && repoting_manager != null && approvers != null) {
                     form.submit();
                 }    
             }

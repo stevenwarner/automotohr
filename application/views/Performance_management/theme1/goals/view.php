@@ -17,8 +17,8 @@
                 </div>
                 <div class="col-sm-6 col-xs-12">
                     <span class="csBTNBox">
-                        <button class="btn btn-orange btn-lg mt0 jsCreateGoal ">
-                            <i class="fa fa-plus-circle"></i> Create a Goal
+                        <button class="btn btn-orange btn-lg mt0 jsCreateGoal csF16">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i> Create a Goal
                         </button>
                     </span>
                 </div>
@@ -30,34 +30,16 @@
                 <div class="row">
                     <div class="col-sm-12 col-sm-12">
                         <ul>
-                            <li><a href="javascript:void(0)" data-id="1" class="jsVGType active">Individual Goals</a></li>
-                            <li><a href="javascript:void(0)" data-id="4" class="jsVGType">Company Goals</a></li>
-                            <li><a href="javascript:void(0)" data-id="3" class="jsVGType">Department Goals</a></li>
-                            <li><a href="javascript:void(0)" data-id="2" class="jsVGType">Team Goals</a></li>
+                            <li><a href="javascript:void(0)" data-id="1" class="jsVGType csF18 csB7 active">Individual Goals</a></li>
+                            <li><a href="javascript:void(0)" data-id="4" class="jsVGType csF18 csB7">Company Goals</a></li>
+                            <li><a href="javascript:void(0)" data-id="3" class="jsVGType csF18 csB7">Department Goals</a></li>
+                            <li><a href="javascript:void(0)" data-id="2" class="jsVGType csF18 csB7">Team Goals</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             <!--  -->
             <div class="csPageBoxBody p10 jsGoalWrap"></div>
-            <!--  -->
-            <div class="csPageBoxFooter p10 dn">
-                <div class="row">
-                    <div class="col-sm-6"><strong class="mt10">Showing 10 of 100</strong></div>
-                    <div class="col-sm-6">
-                        <ul class="pagination csPagination">
-                            <li class="page-item"><a href="javascript:void(0)">First</a></li>
-                            <li class="page-item"><a href="javascript:void(0)">&laquo;</a></li>
-                            <li class="page-item"><a href="javascript:void(0)">1</a></li>
-                            <li class="page-item"><a href="javascript:void(0)">2</a></li>
-                            <li class="page-item"><a href="javascript:void(0)">3</a></li>
-                            <li class="page-item"><a href="javascript:void(0)">4</a></li>
-                            <li class="page-item"><a href="javascript:void(0)">&raquo;</a></li>
-                            <li class="page-item"><a href="javascript:void(0)">Last</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>

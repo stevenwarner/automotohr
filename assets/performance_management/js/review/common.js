@@ -31,6 +31,8 @@ $(document).on('click', '.jsAddReviewers', function(event) {
         $('#jsAddReviewReviewee').html(options).select2();
         $('#jsAddReviewReviewer').select2();
         //
+        loadFonts();
+        //
         ml(false, 'jsAddRevieweeLoader');
     });
 });
@@ -65,7 +67,7 @@ $(document).on('change', '#jsAddReviewReviewee', function() {
         }
         //
         if (resp.Data.length === 1) {
-            $('.jsAddReviewDateBox').removeClass('dn');
+            // $('.jsAddReviewDateBox').removeClass('dn');
         }
         //
         let options = '';
@@ -121,16 +123,16 @@ function getAddRevieweeBody(reviewId) {
     html += `        <!--  -->`;
     html += `        <div class="csPageBody">`;
     html += `            <div class="form-group">`;
-    html += `                <label>Select Reviewee <span class="csRequired"></span></label>`;
+    html += `                <label class="csF16 csB7">Select Reviewee <span class="csRequired"></span></label>`;
     html += `                <select id="jsAddReviewReviewee"></select>`;
     html += `            </div>`;
     html += `            <div class="form-group jsAddReviewDateBox dn">`;
-    html += `                <label>Select Review Period <span class="csRequired"></span></label>`;
-    html += `                <input type="text" readonly id="jsAddReviewStartDate" />`;
-    html += `                <input type="text" readonly id="jsAddReviewEndDate" />`;
+    html += `                <label class="csF16 csB7">Select Review Period <span class="csRequired"></span></label>`;
+    html += `                <input type="text" class="csF16" readonly id="jsAddReviewStartDate" />`;
+    html += `                <input type="text" class="csF16" readonly id="jsAddReviewEndDate" />`;
     html += `            </div>`;
     html += `            <div class="form-group jsAddReviewerBox dn">`;
-    html += `                <label>Select Reviewers <span class="csRequired"></span></label>`;
+    html += `                <label class="csF16 csB7">Select Reviewers <span class="csRequired"></span></label>`;
     html += `                <select id="jsAddReviewReviewer" multiple></select>`;
     html += `            </div>`;
     html += `        </div>`;
@@ -138,8 +140,8 @@ function getAddRevieweeBody(reviewId) {
     html += `        <div class="csPageFooter bbt pa10">`;
     html += `            <div class="form-group">`;
     html += `                <label></label>`;
-    html += `                <button class="btn btn-orange jsAddRevieweeSave">Save</button>`;
-    html += `                <button class="btn btn-black jsModalCancel">Cancel</button>`;
+    html += `                <button class="btn btn-orange jsAddRevieweeSave csF16"><i class="fa fa-save csF16"></i> Save</button>`;
+    html += `                <button class="btn btn-black jsModalCancel csF16"><i class="fa fa-times-circle csF16"></i> Cancel</button>`;
     html += `                <input type="hidden" value="${reviewId}" id="jsAddReviewReviewId" />`;
     html += `            </div>`;
     html += `        </div>`;
@@ -206,24 +208,3 @@ function getProgress(reviewerArray, reviewerType) {
     //
     return returnOBJ;
 }
-
-/**
- * 
- */
-function getCompanyEmployees() {
-    $.get(
-        `${pm.urls.handler}get/get_all_company_employees`,
-        (resp) => {
-            //
-            if (resp.Redirect === true) {
-                handleRedirect();
-                return;
-            }
-            //
-            pm.cemployees = resp.Data;
-        }
-    );
-}
-
-//
-getCompanyEmployees();

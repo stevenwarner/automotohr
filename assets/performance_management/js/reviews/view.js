@@ -293,14 +293,14 @@ $(function() {
             }
             //
             rows += `<tr data-id="${review.sid}">`;
-            rows += `   <td><p>${review.review_title} ${status}</p></td>`;
-            rows += `   <td>${convertDate(review.review_start_date)}</td>`;
+            rows += `   <td><p class="csF16">${review.review_title} ${status}</p></td>`;
+            rows += `   <td class="csF16">${convertDate(review.review_start_date)}</td>`;
             rows += `   <td>`;
             if (filter.reviewStatus != 'draft') {
                 rows += `        <div class="progress csRadius100">`;
                 rows += `           <div class="progress-bar" role="progressbar" aria-valuenow="${reviewerProgress.completed}" aria-valuemin="0" aria-valuemax="${reviewerProgress.total}" style="width: ${reviewerProgress.completed}%;"></div>`;
                 rows += `        </div>`;
-                rows += `        <small>${reviewerProgress.completed}% Completed</small>`;
+                rows += `        <small class="csF16">${reviewerProgress.completed}% Completed</small>`;
             }
             rows += `   </td>`;
             rows += `   <td>`;
@@ -308,15 +308,15 @@ $(function() {
                 rows += `        <div class="progress csRadius100">`;
                 rows += `           <div class="progress-bar" role="progressbar" aria-valuenow="${feedbackProgress.completed}" aria-valuemin="0" aria-valuemax="${feedbackProgress.total}" style="width: ${feedbackProgress.completed}%;"></div>`;
                 rows += `        </div>`;
-                rows += `        <small>${feedbackProgress.completed}% Completed</small>`;
+                rows += `        <small class="csF16">${feedbackProgress.completed}% Completed</small>`;
             }
             rows += `   </td>`;
             rows += `   <td>`;
             rows += `       <div class="csBTNBox">`;
             if (filter.reviewStatus == 'active') {
-                rows += `           <a href="${pm.urls.pbase}review/${review.sid}" class="btn btn-black"><i class="fa fa-eye"></i> View</a>`;
+                rows += `           <a href="${pm.urls.pbase}review/${review.sid}" class="btn btn-black csF16"><i class="fa fa-eye csF16"></i> View</a>`;
             } else if (filter.reviewStatus == 'draft') {
-                rows += `           <a href="${pm.urls.pbase}review/create/${review.sid}" class="btn btn-black"><i class="fa fa-eye"></i> Complete Review</a>`;
+                rows += `           <a href="${pm.urls.pbase}review/create/${review.sid}" class="btn btn-black csF16"><i class="fa fa-eye csF16"></i> Complete Review</a>`;
             }
             if (filter.reviewStatus != 'draft') {
 
@@ -326,23 +326,21 @@ $(function() {
                 rows += `                   <i class="fa fa-ellipsis-v"></i>`;
                 rows += `               </button>`;
                 rows += `               <ul class="dropdown-menu ulToLeft" aria-labelledby="dropdownMenu${review.sid}">`;
-                // rows += `                   <li><a href="${pm.urls.pbase}download/review/${review.sid}"><i class="fa fa-download"></i> Download Report</a></li>`;
-                // rows += `                   <li><a href="${pm.urls.pbase}print/review/${review.sid}"><i class="fa fa-print"></i> Print</a></li>`;
                 if (review.is_template == 0) {
-                    rows += `                   <li><a href="javascript:void(0)" class="jsSaveReviewAsTemplate"><i class="fa fa-save"></i> Save As Template</a></li>`;
+                    rows += `                   <li><a href="javascript:void(0)" class="jsSaveReviewAsTemplate csF16"><i class="fa csF16 fa-save"></i> Save As Template</a></li>`;
                 }
                 rows += `                   <li role="separator" class="divider"></li>`;
-                rows += `                   <li><a href="javascript:void(0)" class="jsAddReviewers"><i class="fa fa-plus-circle"></i> Add Reviewers</a></li>`;
+                rows += `                   <li><a href="javascript:void(0)" class="jsAddReviewers csF16"><i class="fa csF16 fa-plus-circle"></i> Add Reviewers</a></li>`;
                 if (review.status == 'started') {
-                    rows += `                   <li><a href="javascript:void(0)" class="jsEndReview"><i class="fa fa-stop-circle"></i> End Review</a></li>`;
+                    rows += `                   <li><a href="javascript:void(0)" class="jsEndReview csF16"><i class="fa csF16 fa-stop-circle"></i> End Review</a></li>`;
                 }
                 if (review.status == 'ended') {
-                    rows += `                   <li><a href="javascript:void(0)" class="jsReopenReview"><i class="fa fa-stop-circle"></i> Re-open Review</a></li>`;
+                    rows += `                   <li><a href="javascript:void(0)" class="jsReopenReview csF16"><i class="fa csF16 fa-stop-circle"></i> Re-open Review</a></li>`;
                 }
                 if (review.is_archived == 0) {
-                    rows += `                   <li><a href="javascript:void(0)" class="jsReviewStatus" data-type="1"><i class="fa fa-archive"></i> Archive Review</a></li>`;
+                    rows += `                   <li><a href="javascript:void(0)" class="jsReviewStatus csF16" data-type="1"><i class="fa csF16 fa-archive"></i> Archive Review</a></li>`;
                 } else {
-                    rows += `                   <li><a href="javascript:void(0)" class="jsReviewStatus" data-type="0"><i class="fa fa-check"></i> Activate Review</a></li>`;
+                    rows += `                   <li><a href="javascript:void(0)" class="jsReviewStatus csF16" data-type="0"><i class="fa csF16 fa-check"></i> Activate Review</a></li>`;
                 }
                 rows += `               </ul>`;
                 rows += `           </div>`;

@@ -584,7 +584,73 @@ class Performance_management_model extends CI_Model{
         $b = $a->result_array();
         $a->free_result();
         //
+        if(!empty($b)){
+            //
+            $reportingManagers = $this->getReportingManagerIds($companyId);
+            //
+            foreach($b as $k => $v){
+                if(isset($reportingManagers[$v['userId']])){
+                    $b[$k]['Manager'] = $reportingManagers[$v['userId']];
+                } else{
+                    $b[$k]['Manager'] = ['Department' => [], 'Teams' => []];
+                }
+            }
+        }
+        //
         return $b;
+    }
+
+    /**
+     * 
+     */
+    function getReportingManagerIds($companyId){
+        // Get Team & Department Reporting Managers
+        $a = 
+        $this->db
+        ->select('
+            dm.sid as department_sid,
+            dm.reporting_managers as department_reporting_managers,
+            dtm.sid,
+            dtm.reporting_managers
+        ')
+        ->from('departments_team_management dtm')
+        ->join('departments_management dm', 'dm.sid = dtm.department_sid')
+        ->where('dtm.company_sid', $companyId)
+        ->where('dtm.status', 1)
+        ->where('dtm.is_deleted', 0)
+        ->where('dm.status', 1)
+        ->where('dm.is_deleted', 0)
+        ->get();
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        if(empty($b)) { return []; }
+        //
+        $ra = [];
+        //
+        foreach($b as $record){
+            //
+            if(!empty($record['department_reporting_managers'])){
+                $t = explode(',', $record['department_reporting_managers']);
+                //
+                foreach($t as $emp){
+                    //
+                    if(!isset($ra[$emp])) $ra[$emp] = ['Departments' => [], 'Teams' => []];
+                    $ra[$emp]['Departments'] = $record['department_sid'];
+                }
+            }
+            
+            //
+            if(!empty($record['reporting_managers'])){
+                $t = explode(',', $record['reporting_managers']);
+                //
+                foreach($t as $emp){
+                    if(!isset($ra[$emp])) $ra[$emp] = ['Departments' => [], 'Teams' => []];
+                    $ra[$emp]['Teams'] = $record['sid'];
+                }
+            }
+        }
     }
 
     /**
@@ -1211,3 +1277,5 @@ class Performance_management_model extends CI_Model{
     //     _e($b, true);
     // }
 }
+
+

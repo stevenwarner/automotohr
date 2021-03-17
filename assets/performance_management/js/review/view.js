@@ -68,15 +68,15 @@ $(function() {
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <label>Review Period <span class="csRequired"></span></label>
+                        <label class="csF16 csB7">Review Period <span class="csRequired"></span></label>
                         <div class="row">
                             <div class="col-sm-4">
-                                <label>Start Date</label>
-                                <input type="text" class="form-control" id="jsChangeReviewDateModalStartDate" value="${sd}" readonly placeholder="MM/DD/YYYY" />
+                                <label class="csF16 csB7">Start Date</label>
+                                <input type="text" class="form-control csF16" id="jsChangeReviewDateModalStartDate" value="${sd}" readonly placeholder="MM/DD/YYYY" />
                             </div>
                             <div class="col-sm-4">
-                            <label>Due Date</label>
-                                <input type="text" class="form-control" id="jsChangeReviewDateModalEndDate" value="${ed}" readonly placeholder="MM/DD/YYYY" />
+                            <label class="csF16 csB7">Due Date</label>
+                                <input type="text" class="form-control csF16" id="jsChangeReviewDateModalEndDate" value="${ed}" readonly placeholder="MM/DD/YYYY" />
                             </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@ $(function() {
                 <hr />
                 <div class="row">
                     <div class="col-sm-12">
-                        <button class="btn btn-orange" id="jsChangeReviewDateModalSaveBTN" data-id="${id}">Update</button>
+                        <button class="btn btn-orange csF16" id="jsChangeReviewDateModalSaveBTN" data-id="${id}"><i class="fa fa-save csF16"></i> Update</button>
                     </div>
                 </div>
             </div>
@@ -106,6 +106,8 @@ $(function() {
                 minDate: 0,
                 formatDate: pm.dateTimeFormats.ymdf
             });
+            //
+            loadFonts();
             //
             ml(false, 'jsChangeReviewDateModalLoader');
         });

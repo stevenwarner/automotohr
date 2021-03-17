@@ -44,7 +44,7 @@
     <div class="csPageHeading">
         <div class="row">
             <div class="col-sm-12">
-                <a href="<?=purl('reviews');?>" class="btn btn-black"><i class="fa fa-long-arrow-left"></i> All
+                <a href="<?=purl('reviews');?>" class="btn btn-black csF16"><i class="fa fa-long-arrow-left csF16"></i> All
                     Reviews</a>
                 </div>
         </div>
@@ -53,12 +53,12 @@
                 <h1>
                     <span class="csBTNBox">
                         <div class="dropdown">
-                            <button class="btn btn-orange btn-lg dropdown-toggle" type="button" id="dropdownMenu1"
+                            <button class="btn btn-orange btn-lg dropdown-toggle csF16" type="button" id="dropdownMenu1"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                Actions <span class="caret"></span>
+                                Actions <span class="caret csF16"></span>
                             </button>
                             <ul class="dropdown-menu csUL" aria-labelledby="dropdownMenu1" style="left: -80%">
-                                <li><a href="#" class="jsAddReviewers" data-id="<?=$review['sid'];?>"><i class="fa fa-plus-circle"></i> Add a Reviewee</a></li>
+                                <li><a href="#" class="jsAddReviewers csF16" data-id="<?=$review['sid'];?>"><i class="fa fa-plus-circle csF16"></i> Add a Reviewee</a></li>
                                 <!-- <li><a href="#"><i class="fa fa-download"></i> Download Report</a></li> -->
                                 <!-- <li><a href="#"><i class="fa fa-print"></i> Print</a></li> -->
                                 <!-- <li><a href="#"><i class="fa fa-clock-o"></i> Change Due Date</a></li> -->
@@ -69,9 +69,9 @@
                         </div>
                     </span>
                     <h1>
-                    <strong><?=$review['review_title'];?> 
-                    <span class="btn alert-success"><?=$review['status'] == 'pending' ? 'Pending' : ( $review['status'] == 'started' ? 'Running' : 'Ended');?></span>
-                    </strong> </h1>
+                        <span class="csF18 csB7"><?=$review['review_title'];?> </span>
+                        <span class="btn alert-success csF16"><?=$review['status'] == 'pending' ? 'Pending' : ( $review['status'] == 'started' ? 'Running' : 'Ended');?></span>
+                    </h1>
                 </h1>
             </div>
         </div>
@@ -90,13 +90,13 @@
                     <div class="csPageBodyProgress pt10">
                         <div class="row">
                             <div class="col-sm-6">
-                                <h1><strong>Reviewers Progress</strong></h1>
+                                <h1 class="csF18 csB8">Reviewers Progress</h1>
                                 <div class="progress csRadius100">
                                     <div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0"
                                         aria-valuemax="100" style="width: <?=$progress['reviewers']['completed_per'];?>%;"></div>
                                 </div>
                                 <ul class="csSpan">
-                                    <li class="jsPopoverLiReviewer" title="Reviewers Progress">
+                                    <li class="jsPopoverLiReviewer csF16" title="Reviewers Progress">
                                         <span class="csRadius50 active"></span>
                                         <?=$progress['reviewers']['completed_per'];?>% Completed
                                     </li>
@@ -104,13 +104,13 @@
                             </div>
                             <?php if($review['share_feedback'] == 1):?>
                             <div class="col-sm-6">
-                                <h1><strong>Manager Feedback Progress</strong></h1>
+                                <h1 class="csF18 csB8">Managers Progress</h1>
                                 <div class="progress csRadius100">
                                     <div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0"
                                         aria-valuemax="100" style="width: <?=$progress['managers']['completed_per'];?>%;"></div>
                                 </div>
                                 <ul class="csSpan">
-                                    <li class="jsPopoverLiManager"  title="Manager Feedback Progress">
+                                    <li class="jsPopoverLiManager csF16"  title="Manager Feedback Progress">
                                         <span class="csRadius50 active"></span>
                                         <?=$progress['managers']['completed_per'];?>% Completed
                                     </li>
@@ -124,13 +124,13 @@
                         <div class="csPajeSection jsPageSection" data-id="reviewees">
                             <div class="table-reponsive">
                                 <table class="table table-striped">
+                                    <caption></caption>
                                     <thead>
                                         <tr>
-                                            <th class="col-sm-4">Reviewee</th>
-                                            <th class="col-sm-2">Review Period</th>
-                                            <th class="col-sm-2">Reviewer Progress</th>
-                                            <th class="col-sm-2">Manager Feedback Progress</th>
-                                            <th class="col-sm-2"></th>
+                                            <th scope="column" class="csF18 csB7 ">Reviewee</th>
+                                            <th scope="column" class="csF18 csB7 ">Review Period</th>
+                                            <th scope="column" class="csF18 csB7 ">Reviewer Progress</th>
+                                            <th scope="column" class="csF18 csB7 " colspan="2">Manager Feedback Progress</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -146,20 +146,20 @@
                                                 <div class="csEBox">
                                                     <figure>
                                                         <img src="<?=$employees[$reviewee['reviewee_sid']]['img'];?>"
-                                                            class="csRadius50" />
+                                                            class="csRadius50" alt=""/>
                                                     </figure>
                                                     <div class="csEBoxText">
-                                                        <h4 class="mb0"><strong><?=$employees[$reviewee['reviewee_sid']]['name'];?></strong></h4>
-                                                        <p><?=$employees[$reviewee['reviewee_sid']]['role'];?></p>
+                                                        <h4 class="mb0 csF16 csB7"><?=$employees[$reviewee['reviewee_sid']]['name'];?></h4>
+                                                        <p class="csF16"><?=$employees[$reviewee['reviewee_sid']]['role'];?></p>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <p><?=formatDate($reviewee['start_date'], 'Y-m-d', 'M d, Y');?> - <?=formatDate($reviewee['end_date'], 'Y-m-d', 'M d, Y');?></p>
+                                                <p class="csF16"><?=formatDate($reviewee['start_date'], 'Y-m-d', 'M d, Y');?> - <?=formatDate($reviewee['end_date'], 'Y-m-d', 'M d, Y');?></p>
                                             </td>
                                             <td>
                                                 <?php if(empty($reviewerOBJ[$reviewee['reviewee_sid']]['Reviewers'])): ?>
-                                                <p>No Reviewers</p>
+                                                <p class="csF16">No Reviewers</p>
                                                 <?php else:?>
                                                     <div class="csPBox">
                                                         <ul class="mb0">
@@ -174,13 +174,13 @@
                                                 ?>
                                                 <?php endforeach; ?>
                                                         </ul>
-                                                        <span><?=ceil(($sharedCount * 100) / count($reviewerOBJ[$reviewee['reviewee_sid']]['Reviewers']))?>% Not Completed</span>
+                                                        <span class="csF16"><?=ceil(($sharedCount * 100) / count($reviewerOBJ[$reviewee['reviewee_sid']]['Reviewers']))?>% Not Completed</span>
                                                     </div>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
                                                 <?php if(empty($reviewerOBJ[$reviewee['reviewee_sid']]['Managers'])): ?>
-                                                <p>No Managers</p>
+                                                <p class="csF16">No Managers</p>
                                                 <?php else:?>
                                                     <div class="csPBox">
                                                         <ul class="mb0">
@@ -195,7 +195,7 @@
                                                 ?>
                                                 <?php endforeach; ?>
                                                         </ul>
-                                                        <span><?=ceil(($sharedCount * 100) / count($reviewerOBJ[$reviewee['reviewee_sid']]['Managers']))?>% Not Completed</span>
+                                                        <span class="csF16"><?=ceil(($sharedCount * 100) / count($reviewerOBJ[$reviewee['reviewee_sid']]['Managers']))?>% Not Completed</span>
                                                     </div>
                                                 <?php endif; ?>
                                             </td>
@@ -209,21 +209,21 @@
                                                 ?>
                                                     <?php if($review['status'] != 'pending'):?>
                                                     <?php  if(in_array($employerId, array_column($reviewerOBJ[$reviewee['reviewee_sid']]['Managers'], 'reviewer_sid'))): ?>
-                                                    <a href="<?=purl('feedback/'.($pid).'/'.($reviewee['reviewee_sid']).'');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
+                                                    <a href="<?=purl('feedback/'.($pid).'/'.($reviewee['reviewee_sid']).'');?>" class="btn btn-black"><i class="fa fa-eye csF16"></i> View</a>
                                                     <?php else: ?>
-                                                    <a href="<?=purl('reviewer_feedback/'.($pid).'/'.($reviewee['reviewee_sid']).'');?>" class="btn btn-black"><i class="fa fa-eye"></i> View</a>
+                                                    <a href="<?=purl('reviewer_feedback/'.($pid).'/'.($reviewee['reviewee_sid']).'');?>" class="btn btn-black"><i class="fa fa-eye csF16"></i> View</a>
                                                     <?php endif; ?>
                                                     <?php endif; ?>
                                                     <?php }?>
                                                     <div class="dropdown dn">
-                                                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu1"
+                                                        <button class="btn dropdown-toggle csF16" type="button" id="dropdownMenu1"
                                                             data-toggle="dropdown" aria-haspopup="true"
                                                             aria-expanded="true">
-                                                            <i class="fa fa-ellipsis-v"></i>
+                                                            <i class="fa fa-ellipsis-v csF16" aria-hidden="true"></i>
                                                         </button>
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="left: auto; right: 100%;">
-                                                            <li><a href="javascript:void(0)" class="jsRemoveReviewee"><em class="fa fa-times-circle"></em> Remove Reviewee</a></li>
-                                                            <li><a href="javascript:void(0)" class="jsReviewPeriodReviewee"><em class="fa fa-edit"></em> Change Review Period</a></li>
+                                                            <li><a href="javascript:void(0)" class="jsRemoveReviewee csF16"><em class="fa fa-times-circle csF16"></em> Remove Reviewee</a></li>
+                                                            <li><a href="javascript:void(0)" class="jsReviewPeriodReviewee csF16"><em class="fa fa-edit csF16"></em> Change Review Period</a></li>
                                                         </ul>
                                                     </div>
                                                 </div>

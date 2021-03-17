@@ -434,6 +434,11 @@
                                     <li>
                                         <img src="<?= base_url() ?>assets/images/canada.png">
                                     </li>
+                                    <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
+                                        <li class="mr0 pr0"><a class="csSizeHandler csB7 jsIncreaseSize" title="Increase font size" placement="auto">A</a></li>
+                                        <li class="ml0 pl0"><a class="csSizeHandler csSizeHandler2 jsDecreaseSize" title="Decrease font size" placement="auto">A</a></li>
+                                        <li class="ml0 pl0"><a class="csSizeHandler csSizeHandler2 jsResetSize" title="Reset font size" placement="auto">Reset</a></li>
+                                    <?php } ?>
                                 </ul>
                             </div>
                             <?php if (!$this->session->userdata('logged_in')) { ?>

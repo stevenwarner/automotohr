@@ -122,11 +122,11 @@ const
         //
         remakeQuestionsView: function(doClick) {
             //
-            rows = '';
+            let rows = '';
             if (this.questions.length === 0) {
                 rows += `
             <div class="csQuestionRow">
-                <h4 class="alert alert-info text-center">You haven't added any questions.</h4>
+                <h4 class="alert alert-info text-center csF16">You haven't added any questions.</h4>
             </div>`;
             } else {
                 //
@@ -142,6 +142,8 @@ const
                 //
                 $('.jsReviewStep[data-to="questions"]').click();
             }
+            //
+            loadFonts();
         }
     },
 
@@ -459,21 +461,21 @@ function makeEmployeeView(byPass) {
                                 class="csRadius50" />
                         </figure>
                         <div class="csEBoxText">
-                            <h4 class="mb0"><strong>${ie.first_name} ${ie.last_name}</strong></h4>
-                            <p class="mb0">${remakeEmployeeName(ie, false)}</p>
-                            <p>${moment(ie.joined_at, pm.dateTimeFormats.ymt).format(pm.dateTimeFormats.mdy)}</p>
+                            <h4 class="mb0 csF16 csB7"><strong>${ie.first_name} ${ie.last_name}</strong></h4>
+                            <p class="mb0 csF16">${remakeEmployeeName(ie, false)}</p>
+                            <p class="csF16">${moment(ie.joined_at, pm.dateTimeFormats.ymt).format(pm.dateTimeFormats.mdy)}</p>
                         </div>
                     </div>
                 </td>
                 <td>
-                    <h5>${ie.departmentIds.length > 0 ? $(`#jsFilterDepartments option[value="${ie.departmentIds[0]}"]`).text() : '-'}</h5>
+                    <h5 class="csF16">${ie.departmentIds.length > 0 ? $(`#jsFilterDepartments option[value="${ie.departmentIds[0]}"]`).text() : '-'}</h5>
                 </td>
             </tr>
             `;
         });
         $('#jsReviewIncludedWrap').html(rows);
     } else{
-        $('#jsReviewIncludedWrap').html('<tr><td colspan="2"><p class="alert alert-info text-center">No included employees were found.</p></td></tr>');
+        $('#jsReviewIncludedWrap').html('<tr><td colspan="2"><p class="alert alert-info text-center csF16">No included employees were found.</p></td></tr>');
     }
     //
     if (exc.length > 0) {
@@ -488,21 +490,21 @@ function makeEmployeeView(byPass) {
                                 class="csRadius50" />
                         </figure>
                         <div class="csEBoxText">
-                            <h4 class="mb0"><strong>${ie.first_name} ${ie.last_name}</strong></h4>
-                            <p class="mb0">${remakeEmployeeName(ie, false)}</p>
+                            <h4 class="mb0 csF16 csB7"><strong>${ie.first_name} ${ie.last_name}</strong></h4>
+                            <p class="mb0 csF16">${remakeEmployeeName(ie, false)}</p>
                             <p>${moment(ie.joined_at, pm.dateTimeFormats.ymt).format(pm.dateTimeFormats.mdy)}</p>
                         </div>
                     </div>
                 </td>
                 <td>
-                    <h5>${ie.departmentIds.length > 0 ? $(`#jsFilterDepartments option[value="${ie.departmentIds[0]}"]`).text() : '-'}</h5>
+                    <h5 class="csF16">${ie.departmentIds.length > 0 ? $(`#jsFilterDepartments option[value="${ie.departmentIds[0]}"]`).text() : '-'}</h5>
                 </td>
             </tr>
             `;
         });
         $('#jsReviewExcludedWrap').html(rows);
     } else{
-        $('#jsReviewExcludedWrap').html('<tr><td colspan="2"><p class="alert alert-info text-center">No excluded employees were found.</p></td></tr>');
+        $('#jsReviewExcludedWrap').html('<tr><td colspan="2"><p class="alert alert-info text-center csF16">No excluded employees were found.</p></td></tr>');
     }
     //
     ml(false, 'review_incexc');
@@ -526,22 +528,22 @@ function loadReviewerStep(){
                             <img src="${getImageURL(em.profile_picture)}" class="csRadius50" />
                         </figure>
                         <div class="csEBoxText">
-                            <h4 class="mb0"><strong>${em.first_name} ${em.last_name}</strong></h4>
-                            <p class="mb0 csSpan">${remakeEmployeeName(em, false)}</p>
-                            <p class="csSpan">${moment(em.joined_at, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.mdy)}</p>
+                            <h4 class="mb0 csF16"><strong>${em.first_name} ${em.last_name}</strong></h4>
+                            <p class="mb0  csF16">${remakeEmployeeName(em, false)}</p>
+                            <p class=" csF16">${moment(em.joined_at, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.mdy)}</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-9 col-xs-12">
                     <div class="row">
                         <div class="col-sm-3 col-xs-12">
-                            <p class="csSpan">Included Reviewers (<span class="jsIncludedCount">0</span>)</p>
+                            <p class=" csF16">Included Reviewers (<span class="jsIncludedCount">0</span>)</p>
                             <button  class="btn btn-black btn-xs jsIncludeReviewer">
                                 <i class="fa fa-plus-circle"></i> Include Reviewer
                             </button>
                         </div>
                         <div class="col-sm-3 col-xs-12">
-                            <p class="csSpan">Excluded Reviewers (<span class="jsExcludedCount">0</span>)</p>
+                            <p class=" csF16">Excluded Reviewers (<span class="jsExcludedCount">0</span>)</p>
                             <button  class="btn btn-black btn-xs jsExcludedReviewer">
                                 <i class="fa fa-plus-circle"></i> Exclude Reviewer
                             </button>
@@ -754,8 +756,8 @@ getEmployeeListWithDnT()
                 tmpIds[em.userId] = em;
                 options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
             });
-            $('#jsFilterIndividuals').html(options).select2();
-            $('#jsFilterExcludeEmployees').html(options).select2();
+            $('#jsFilterIndividuals').html(options).select2({closeOnSelect: false});
+            $('#jsFilterExcludeEmployees').html(options).select2({closeOnSelect: false});
             $('#jsReviewSpecificReviewers').html(options).select2({closeOnSelect: false});
             $('#jsReviewVisibilityIndividuals').html(options).select2({closeOnSelect: false});
             //
