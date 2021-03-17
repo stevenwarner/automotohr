@@ -872,6 +872,10 @@
     .ban {
         border-top: none !important;
     }
+    
+    .bn {
+        border: none !important;
+    }
     /*  */
     
     .dn {
@@ -1234,6 +1238,12 @@
     .csPageWrap thead tr {
         background-color: #444444;
         color: #ffffff;
+    }
+    
+    .table-br {
+        border-collapse: collapse !important;
+        overflow: hidden !important;
+        border-radius: 5px !important;
     }
     /* TR hover */
     

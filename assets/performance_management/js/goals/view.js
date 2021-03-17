@@ -488,6 +488,7 @@ $(function() {
         goalsOBJ = {};
         if (goals.length === 0) {
             $('.jsGoalWrap').html(getNoShow('goal_' + filter.type));
+            loadFonts();
             return;
         }
         //
@@ -764,8 +765,11 @@ $(function() {
         $('.jsIPLoader').hide(0);
         //
         $('.jsPopover').tooltip({
-            placement: 'top auto'
+            placement: 'top auto',
+            trigger: 'hover'
         });
+        //
+        loadFonts();
     }
 
     /**
@@ -808,6 +812,8 @@ $(function() {
         goalBox.find('.jsIPLoader').fadeOut(0);
         //
         goalBox.find('.jsGoalCommentWrap').scrollTop(goalBox.find('.jsGoalCommentWrap')[0].scrollHeight);
+        //
+        loadFonts();
     }
 
     /**
@@ -848,20 +854,20 @@ $(function() {
         let rows = '';
         rows += '<div class="container">';
         rows += '<div class="csPageWrap">';
-        rows += '<div class="csPageBox">';
-        rows += '<table class="table table-striped">';
+        rows += '<div class="csPageBox ">';
+        rows += '<table class="table table-striped table-br">';
         rows += '   <thead>';
         rows += '       <tr>';
-        rows += '           <th>Action</th>';
-        rows += '           <th>Action Taken</th>';
+        rows += '           <th class="csF18 cs7">Action</th>';
+        rows += '           <th class="csF18 cs7">Action Taken</th>';
         rows += '       </tr>';
         rows += '   </thead>';
         //
         data.map((history) => {
             let em = getEmployee(history.employee_sid, 'userId');
             rows += `<tr>`;
-            rows += `   <td>${getAction(JSON.parse(history.note), history.action, em)}</td>`;
-            rows += `   <td>${moment(history.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</td>`;
+            rows += `   <td class="csF16">${getAction(JSON.parse(history.note), history.action, em)}</td>`;
+            rows += `   <td class="csF16">${moment(history.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</td>`;
             rows += `</tr>`;
         });
         rows += `</table>`;
@@ -870,6 +876,8 @@ $(function() {
         rows += `</div>`;
         //
         $(`#${modalId} .csModalBody`).html(rows);
+        //
+        loadFonts();
     }
 
     /**
@@ -935,6 +943,7 @@ $(document).on('click', '.jsExpandGoal', function(event) {
     });
     //
     $('.jsPopover').tooltip({
-        placement: 'top auto'
+        placement: 'top auto',
+        trigger: 'hover'
     });
 });

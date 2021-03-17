@@ -18,7 +18,7 @@
                 <div class="col-sm-6 col-xs-12">
                     <span class="csBTNBox">
                         <button class="btn btn-orange btn-lg mt0 jsCreateGoal csF16">
-                            <i class="fa fa-plus-circle" aria-hidden="true"></i> Create a Goal
+                            <i class="fa fa-plus-circle csF16" aria-hidden="true"></i> Create a Goal
                         </button>
                     </span>
                 </div>

@@ -290,7 +290,7 @@ function getNoShow(type) {
     let html = '';
     let buttons = '';
     let message;
-    html += '<h1 class="alert text-center csF24 csB7">{{message}}<br /><br />';
+    html += '<h1 class="alert text-center csF16 csB7">{{message}}<br /><br />';
     html += '{{buttons}}';
     html += '</h1>';
     //

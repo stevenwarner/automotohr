@@ -82,8 +82,8 @@
                     <div class="csPageBodyData">
                         <!-- Loader -->
                         <div class="csIPLoader jsIPLoader" data-page="review_listing"><i class="fa fa-circle-o-notch fa-spin"></i></div>
-                        <div class="table-sreponsive">
-                            <table class="table table-striped table-condensed">
+                        <div class="table-reponsive">
+                            <table class="table table-striped table-condensed table-br">
                                 <caption></caption>
                                 <thead>
                                     <tr>

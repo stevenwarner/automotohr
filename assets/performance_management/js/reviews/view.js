@@ -351,6 +351,8 @@ $(function() {
         });
         //
         $('#jsReviewWrap').html(rows);
+        //
+        loadFonts();
     }
 
 
