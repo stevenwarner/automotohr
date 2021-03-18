@@ -573,6 +573,7 @@ class Performance_management_model extends CI_Model{
             access_level_plus,
             pay_plan_flag,
             is_executive_admin,
+            employee_type,
             job_title,
             IF(joined_at is null, registration_date, joined_at) as joined_at
         ')
@@ -586,15 +587,36 @@ class Performance_management_model extends CI_Model{
         //
         if(!empty($b)){
             //
+            $r = [];
+            //
             $reportingManagers = $this->getReportingManagerIds($companyId);
             //
-            foreach($b as $k => $v){
+            foreach($b as $v){
+                //
+                $t = [];
+                //
+                $t['Id'] = $v['userId'];
+                $t['FirstName'] = $v['first_name'];
+                $t['LastName'] = $v['last_name'];
+                $t['FullRole'] = trim(remakeEmployeeName($v, false));
+                $t['Role'] = $v['access_level'];
+                $t['JobTitle'] = $v['job_title'];
+                $t['JoinedAt'] = $v['joined_at'];
+                $t['Type'] = $v['employee_type'];
+                $t['Image'] = $v['profile_picture'];
+                $t['Level'] = $v['access_level_plus'] == 1 || $v['pay_pan_flag'] == 1 ? 1 : 0;
+                // Get current employee team and department ids
+                $t['DT'] = $this->getEmployeeDTR($v['userId'], $v['access_level']);
+                //
                 if(isset($reportingManagers[$v['userId']])){
-                    $b[$k]['Manager'] = $reportingManagers[$v['userId']];
+                    $t['Manager'] = $reportingManagers[$v['userId']];
                 } else{
-                    $b[$k]['Manager'] = ['Department' => [], 'Teams' => []];
+                    $t['Manager'] = ['Department' => [], 'Teams' => []];
                 }
+                //
+                $r[] = $t;
             }
+            return $r;
         }
         //
         return $b;
@@ -636,8 +658,8 @@ class Performance_management_model extends CI_Model{
                 //
                 foreach($t as $emp){
                     //
-                    if(!isset($ra[$emp])) $ra[$emp] = ['Departments' => [], 'Teams' => []];
-                    $ra[$emp]['Departments'] = $record['department_sid'];
+                    if(!isset($ra[$emp])) {$ra[$emp] = ['Departments' => [], 'Teams' => []];}
+                    $ra[$emp]['Departments'][] = $record['department_sid'];
                 }
             }
             
@@ -646,11 +668,13 @@ class Performance_management_model extends CI_Model{
                 $t = explode(',', $record['reporting_managers']);
                 //
                 foreach($t as $emp){
-                    if(!isset($ra[$emp])) $ra[$emp] = ['Departments' => [], 'Teams' => []];
-                    $ra[$emp]['Teams'] = $record['sid'];
+                    if(!isset($ra[$emp])) {$ra[$emp] = ['Departments' => [], 'Teams' => []];}
+                    $ra[$emp]['Teams'][] = $record['sid'];
                 }
             }
         }
+
+        return $ra;
     }
 
     /**
@@ -769,15 +793,15 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select('
             departments_team_management.sid as team_ids,
-            departments_team_management.sid as department_ids
+            departments_management.sid as department_ids
         ')
         ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
-        ->join('documents_management', 'documents_management.sid = departments_employee_2_team.department_si', 'inner')
+        ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid', 'inner')
         ->from('departments_employee_2_team')
         ->where('departments_team_management.status', 1)
         ->where('departments_team_management.is_deleted', 0)
-        ->where('documents_management.status', 1)
-        ->where('documents_management.is_deleted', 0)
+        ->where('departments_management.status', 1)
+        ->where('departments_management.is_deleted', 0)
         ->where('departments_employee_2_team.employee_sid', $employeeId)
         ->get()
         ->result_array();
@@ -787,7 +811,7 @@ class Performance_management_model extends CI_Model{
             $r['Departments'] = array_column($b, 'department_ids');
         }
         //
-        return $b;
+        return $r;
     }
 
     /**

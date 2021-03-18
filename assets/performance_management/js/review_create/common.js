@@ -125,9 +125,9 @@ const
             let rows = '';
             if (this.questions.length === 0) {
                 rows += `
-            <div class="csQuestionRow">
-                <h4 class="alert alert-info text-center csF16">You haven't added any questions.</h4>
-            </div>`;
+                <div class="csQuestionRow">
+                    <h4 class="alert alert-info text-center csF16">You haven't added any questions.</h4>
+                </div>`;
             } else {
                 //
                 const ql = this.questions.length - 1;
@@ -144,6 +144,26 @@ const
             }
             //
             loadFonts();
+        },
+
+        // Setters
+        setReviewers: function(revieweeId, field, obj) {
+            //
+            if (this.reviewers.employees[revieweeId] === undefined) {
+                this.reviewers.employees[revieweeId] = {
+                    reporting_manager: undefined,
+                    self_review: undefined,
+                    peer: undefined,
+                    specific: undefined,
+                    custom: undefined
+                };
+            } else {
+                this.reviewers.employees[revieweeId]['reporting_manager'] = undefined;
+                this.reviewers.employees[revieweeId]['self_review'] = undefined;
+                this.reviewers.employees[revieweeId]['peer'] = undefined;
+                this.reviewers.employees[revieweeId]['specific'] = undefined;
+            }
+            this.reviewers.employees[revieweeId][field] = obj;
         }
     },
 
@@ -331,6 +351,10 @@ function validateStep(step, cb) {
         case "questions":
             if (!validateStep('reviewees')) return false;
             if (!validateStep('reviewers')) return false;
+            if (reviewOBJ.reviewers.type == '' || reviewOBJ.reviewers.type == null) {
+                alertify.alert('WARNING!', getError('required_review_reviewers_type'), function() {});
+                return false;
+            }
             if (reviewOBJ.reviewees.included.length !== Object.keys(reviewOBJ.reviewers.employees).length) {
                 alertify.alert('WARNING!', getError('required_review_reviewers'), function() {});
                 return false;
@@ -353,19 +377,23 @@ function validateStep(step, cb) {
     else return true;
 }
 
+
 /**
- * Get employees list with dnt
  * 
- * @return {Promise}
+ * @param {*} byPass 
  */
-function getEmployeeListWithDnT() {
-    return new Promise(function(res) {
-        $.get(`${pm.urls.handler}get/employeeListWithDnT`)
-            .done(function(resp) { res(resp); })
-            .fail(function(resp) {
-                res(getMessage(resp.status, true));
-            });
-    });
+function resetEmployeeView() {
+    //
+    $('#jsReviewIncludedWrap').html('');
+    $('#jsReviewExcludedWrap').html('');
+    //
+    $('#jsFilterIndividuals').select2('val', null);
+    $('#jsFilterDepartments').select2('val', null);
+    $('#jsFilterTeams').select2('val', null);
+    $('#jsFilterEmploymentType').select2('val', null);
+    $('#jsFilterJobTitles').select2('val', null);
+    $('#jsFilterExcludeEmployees').select2('val', null);
+    $('#jsFilterExcludeNewHires').select2('val', 0);
 }
 
 /**
@@ -399,46 +427,86 @@ function makeEmployeeView(byPass) {
             excludedIndividuals: $('#jsFilterExcludeEmployees').val() || [],
             excludedNewHires: $('#jsFilterExcludeNewHires').val() || 0
         };
-        console.log(filter);
         //
         allEmployees.map(function(em) {
             // Excluded employee
             //
-            if ($.inArray(em.userId, filter.excludedIndividuals) !== -1) {
+            if ($.inArray(em.Id, filter.excludedIndividuals) !== -1) {
                 exc.push(em);
                 return;
             }
             //
-            if (moment().diff(moment(em.joined_at, pm.dateTimeFormats.ymd), 'days') <= filter.excludedNewHires) {
+            if (moment().diff(moment(em.JoinedAt, pm.dateTimeFormats.ymd), 'days') <= filter.excludedNewHires) {
                 exc.push(em);
                 return;
             }
 
+            if (
+                filter.individuals.length === 0 &&
+                filter.departments.length === 0 &&
+                filter.teams.length === 0 &&
+                filter.employmentTypes.length === 0 &&
+                filter.jobTitles.length === 0
+            ) {
+                inc.push(em);
+                return;
+            }
+
             // Included employee
+            let isFound = true;
             //
-            if ($.inArray(em.userId, filter.individuals) !== -1) {
-                inc.push(em);
-                return;
+            if (filter.individuals.length > 0) {
+                if ($.inArray(em.Id, filter.individuals) !== -1) {
+                    inc.push(em);
+                    return;
+                } else {
+                    isFound = false;
+                }
             }
+
             //
-            if (_.intersection(em.departmentIds, filter.departments).length > 0) {
-                inc.push(em);
-                return;
+            if (filter.departments.length > 0) {
+                if (_.intersection(em.DT.Departments, filter.departments).length > 0) {
+                    inc.push(em);
+                    return;
+                } else {
+                    isFound = false;
+                }
             }
+
             //
-            if (_.intersection(em.teamIds, filter.teams).length > 0) {
-                inc.push(em);
-                return;
+            if (filter.teams.length > 0) {
+                if (_.intersection(em.DT.Teams, filter.teams).length > 0) {
+                    inc.push(em);
+                    return;
+                } else {
+                    isFound = false;
+                }
             }
+
             //
-            if ($.inArray(em.employee_type, filter.employmentTypes) !== -1) {
-                inc.push(em);
-                return;
+            if (filter.employmentTypes.length > 0) {
+                if ($.inArray(em.Type, filter.employmentTypes) !== -1) {
+                    inc.push(em);
+                    return;
+                } else {
+                    isFound = false;
+                }
             }
+
             //
-            if ($.inArray(em.job_title, filter.jobTitles) !== -1) {
-                inc.push(em);
-                return;
+            if (filter.jobTitles.length > 0) {
+                if ($.inArray(em.JobTitle, filter.jobTitles) !== -1) {
+                    inc.push(em);
+                    return;
+                } else {
+                    isFound = false;
+                }
+            }
+
+            //
+            if (isFound === false) {
+                exc.push(em);
             }
         });
     }
@@ -451,61 +519,23 @@ function makeEmployeeView(byPass) {
     //
     if (inc.length > 0) {
         let rows = '';
-        inc.map(function(ie) {
-                    rows += `
-            <tr>
-                <td>
-                    <div class="csEBox">
-                        <figure>
-                            <img src="${getImageURL(ie.profile_picture)}"
-                                class="csRadius50" />
-                        </figure>
-                        <div class="csEBoxText">
-                            <h4 class="mb0 csF16 csB7"><strong>${ie.first_name} ${ie.last_name}</strong></h4>
-                            <p class="mb0 csF16">${remakeEmployeeName(ie, false)}</p>
-                            <p class="csF16">${moment(ie.joined_at, pm.dateTimeFormats.ymt).format(pm.dateTimeFormats.mdy)}</p>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <h5 class="csF16">${ie.departmentIds.length > 0 ? $(`#jsFilterDepartments option[value="${ie.departmentIds[0]}"]`).text() : '-'}</h5>
-                </td>
-            </tr>
-            `;
-        });
+        inc.map(function(ie) { rows += getRevieweeRow(ie) });
         $('#jsReviewIncludedWrap').html(rows);
-    } else{
+    } else {
         $('#jsReviewIncludedWrap').html('<tr><td colspan="2"><p class="alert alert-info text-center csF16">No included employees were found.</p></td></tr>');
     }
     //
     if (exc.length > 0) {
         let rows = '';
         exc.map(function(ie) {
-                    rows += `
-            <tr>
-                <td>
-                    <div class="csEBox">
-                        <figure>
-                            <img src="${getImageURL(ie.profile_picture)}"
-                                class="csRadius50" />
-                        </figure>
-                        <div class="csEBoxText">
-                            <h4 class="mb0 csF16 csB7"><strong>${ie.first_name} ${ie.last_name}</strong></h4>
-                            <p class="mb0 csF16">${remakeEmployeeName(ie, false)}</p>
-                            <p>${moment(ie.joined_at, pm.dateTimeFormats.ymt).format(pm.dateTimeFormats.mdy)}</p>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <h5 class="csF16">${ie.departmentIds.length > 0 ? $(`#jsFilterDepartments option[value="${ie.departmentIds[0]}"]`).text() : '-'}</h5>
-                </td>
-            </tr>
-            `;
+            rows += getRevieweeRow(ie);
         });
         $('#jsReviewExcludedWrap').html(rows);
-    } else{
+    } else {
         $('#jsReviewExcludedWrap').html('<tr><td colspan="2"><p class="alert alert-info text-center csF16">No excluded employees were found.</p></td></tr>');
     }
+    //
+    loadFonts();
     //
     ml(false, 'review_incexc');
 }
@@ -513,56 +543,56 @@ function makeEmployeeView(byPass) {
 /**
  * 
  */
-function loadReviewerStep(){
+function loadReviewerStep() {
     $('#jsReviewTotalRevieweeCount').text(`(${reviewOBJ.reviewees.included.length})`);
     //
     let rows = '';
-    reviewOBJ.reviewees.included.map(function(em){
+    reviewOBJ.reviewees.included.map(function(em) {
         rows += `
-        <!-- Row -->
-        <div class="csAddReviewerSection jsRevieweeRow bbb pb10 pa10" data-id="${em.userId}">
-            <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    <div class="csEBox">
-                        <figure>
-                            <img src="${getImageURL(em.profile_picture)}" class="csRadius50" />
-                        </figure>
-                        <div class="csEBoxText">
-                            <h4 class="mb0 csF16"><strong>${em.first_name} ${em.last_name}</strong></h4>
-                            <p class="mb0  csF16">${remakeEmployeeName(em, false)}</p>
-                            <p class=" csF16">${moment(em.joined_at, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.mdy)}</p>
-                        </div>
+    <!-- Row -->
+    <div class="csAddReviewerSection jsRevieweeRow bbb pb10 pa10" data-id="${em.Id}">
+        <div class="row">
+            <div class="col-sm-3 col-xs-12">
+                <div class="csEBox">
+                    <figure>
+                        <img src="${getImageURL(em.Image)}" class="csRadius50" />
+                    </figure>
+                    <div class="csEBoxText">
+                        <h4 class="mb0 csF16"><strong>${em.FirstName} ${em.LastName}</strong></h4>
+                        <p class="mb0  csF16">${em.FullRole}</p>
+                        <p class=" csF16">${moment(em.JoinedAt, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.mdy)}</p>
                     </div>
                 </div>
-                <div class="col-sm-9 col-xs-12">
-                    <div class="row">
-                        <div class="col-sm-3 col-xs-12">
-                            <p class=" csF16">Included Reviewers (<span class="jsIncludedCount">0</span>)</p>
-                            <button  class="btn btn-black btn-xs jsIncludeReviewer">
-                                <i class="fa fa-plus-circle"></i> Include Reviewer
-                            </button>
-                        </div>
-                        <div class="col-sm-3 col-xs-12">
-                            <p class=" csF16">Excluded Reviewers (<span class="jsExcludedCount">0</span>)</p>
-                            <button  class="btn btn-black btn-xs jsExcludedReviewer">
-                                <i class="fa fa-plus-circle"></i> Exclude Reviewer
-                            </button>
-                        </div>
+            </div>
+            <div class="col-sm-9 col-xs-12">
+                <div class="row">
+                    <div class="col-sm-4 col-xs-12">
+                        <p class=" csF16">Included Reviewers (<span class="jsIncludedCount csF16">0</span>)</p>
+                        <button  class="btn btn-black btn-xs jsIncludeReviewer csF16">
+                            <i class="fa fa-plus-circle csF16"></i> Include Reviewer
+                        </button>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-xs-12">
-                            <div class="dn jsReviewExcludeReviewerBox">
-                                <select class="jsReviewExcludeReviewerSelect" multiple="multiple"></select>
-                            </div>
-                            <div class="dn jsReviewIncludeReviewerBox">
-                                <select class="jsReviewIncludeReviewerSelect" multiple="multiple"></select>
-                            </div>
+                    <div class="col-sm-4 col-xs-12">
+                        <p class=" csF16">Excluded Reviewers (<span class="jsExcludedCount csF16">0</span>)</p>
+                        <button  class="btn btn-black btn-xs jsExcludedReviewer csF16">
+                            <i class="fa fa-plus-circle csF16"></i> Exclude Reviewer
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-xs-12 ma10">
+                        <div class="dn jsReviewExcludeReviewerBox">
+                            <select class="jsReviewExcludeReviewerSelect" multiple="multiple"></select>
+                        </div>
+                        <div class="dn jsReviewIncludeReviewerBox">
+                            <select class="jsReviewIncludeReviewerSelect" multiple="multiple"></select>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        `;
+    </div>
+    `;
     });
     //
     $('#jsReviewRevieweeWrap').html(rows);
@@ -570,14 +600,16 @@ function loadReviewerStep(){
     $('.jsPopoverHover').popover({
         title: 'Included Reviewers',
         placement: "top auto"
-        // template:
+            // template:
     });
+    //
+    loadFonts();
 };
 
 /**
  * Start question
  */
-function loadQuestionStep(){
+function loadQuestionStep() {
     resetQuestionView();
 }
 
@@ -590,9 +622,7 @@ function resetQuestionView() {
     $('#jsQuestionRatingScale').select2({ minimumResultsForSearch: -1 });
     //
     $('#jsQuestionVal').val('');
-    $('#jsQuestionVal').val('Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta excepturi?');
     $('#jsQuestionDescription').val('');
-    $('#jsQuestionDescription').val('veritatis quia alias molestias eveniet necessitatibus hic porro odit saepe similique ipsa nisi quas corrupti accusantium itaque, molestiae harum reiciendis.');
     $('#jsStartVideoRecord').prop('checked', false);
     $('#jsQuestionType').select2('val', 'text');
     $('#jsQuestionRatingScale').select2('val', 1);
@@ -614,38 +644,40 @@ function resetQuestionView() {
  * @param {*} step 
  * @param {*} doRedirect 
  */
-async function saveReview(step, doRedirect){
+async function saveReview(step, doRedirect) {
+
+    return;
     //
-    if(reviewOBJ.id == 0){
+    if (reviewOBJ.id == 0) {
         reviewOBJ.id = await getSavedReviewId();
     }
     //
-    switch(step){
+    switch (step) {
         case "schedule":
             await updateReview({
                 step: step,
-                title: reviewOBJ.title, 
+                title: reviewOBJ.title,
                 description: reviewOBJ.description,
                 schedule: reviewOBJ.schedule,
                 visibility: reviewOBJ.visibility
             });
-        break;
+            break;
         case "reviewees":
             await updateReview({
                 step: step,
                 reviewees: {
-                    included: reviewOBJ.reviewees.included.arrayColumn('userId') || [],
-                    excluded: reviewOBJ.reviewees.excluded.arrayColumn('userId') || []
+                    included: reviewOBJ.reviewees.included.arrayColumn('Id') || [],
+                    excluded: reviewOBJ.reviewees.excluded.arrayColumn('Id') || []
                 }
             });
-        break;
+            break;
         case "reviewers":
             //
             await updateReview({
                 step: step,
                 reviewer: reviewOBJ.reviewers
             });
-        break;
+            break;
         case "questions":
             //
             let questions = [];
@@ -658,12 +690,12 @@ async function saveReview(step, doRedirect){
                 step: step,
                 questions: questions
             });
-        break;
+            break;
     }
     //
-    if(doRedirect !== undefined){
+    if (doRedirect !== undefined) {
         //
-        alertify.alert('SUCCESS!', getError('finish_later_review'), function(){
+        alertify.alert('SUCCESS!', getError('finish_later_review'), function() {
             window.location.href = pm.urls.base + '/performance-management/reviews';
         });
     }
@@ -672,17 +704,17 @@ async function saveReview(step, doRedirect){
 /**
  * 
  */
-function getSavedReviewId(){
+function getSavedReviewId() {
     return new Promise((res) => {
         $.post(
-            pm.urls.handler,{
+            pm.urls.handler, {
                 action: 'save_review',
-                title: reviewOBJ.title, 
+                title: reviewOBJ.title,
                 description: reviewOBJ.description,
                 schedule: reviewOBJ.schedule,
                 visibility: reviewOBJ.visibility
             }, (resp) => {
-                if(resp.Redirect === true){
+                if (resp.Redirect === true) {
                     handleRedirect();
                     return;
                 }
@@ -696,11 +728,11 @@ function getSavedReviewId(){
  * 
  * @param {*} data 
  */
-function updateReview(data){
+function updateReview(data) {
     return new Promise((res) => {
         $.post(
-            pm.urls.handler, Object.assign({action: 'update_review', id: reviewOBJ.id}, data), (resp) => {
-                if(resp.Redirect === true){
+            pm.urls.handler, Object.assign({ action: 'update_review', id: reviewOBJ.id }, data), (resp) => {
+                if (resp.Redirect === true) {
                     handleRedirect();
                     return;
                 }
@@ -713,22 +745,21 @@ function updateReview(data){
 /**
  * 
  */
-function finishReviewSave(){
+function finishReviewSave() {
     $.post(
-        `${pm.urls.base}performance-management/handler`,
-        {
+        `${pm.urls.base}performance-management/handler`, {
             action: 'finish_save_review',
             id: reviewOBJ.id,
             feedback: reviewOBJ.feedback
         },
         (resp) => {
-            if(resp.Redirect === true){
+            if (resp.Redirect === true) {
                 localStorage.setItem(`Review${reviewOBJ.id}`, JSON.stringify(reviewOBJ));
                 handleRedirect();
                 return;
             }
-            
-            if(resp.Status === false){
+
+            if (resp.Status === false) {
                 handleError(resp.Response);
                 return;
             }
@@ -742,115 +773,147 @@ function finishReviewSave(){
     );
 }
 
-// Calls
-// Get employees with D&T
-getEmployeeListWithDnT()
-    .then(function(resp) {
-        if (resp.Data !== undefined && resp.Data.length > 0) {
-            pm.employees = resp.Data;
-            //
-            let options = '';
-            let tmpIds = {};
-            //
-            pm.employees.map(function(em) {
-                tmpIds[em.userId] = em;
-                options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
-            });
-            $('#jsFilterIndividuals').html(options).select2({closeOnSelect: false});
-            $('#jsFilterExcludeEmployees').html(options).select2({closeOnSelect: false});
-            $('#jsReviewSpecificReviewers').html(options).select2({closeOnSelect: false});
-            $('#jsReviewVisibilityIndividuals').html(options).select2({closeOnSelect: false});
-            //
-            makeEmployeeView(true);
-
-            //
-            if (typeof(dnt) !== 'undefined') {
-                pm.departments = {};
-                dnt.departments.map((rec) => {
-                    pm.departments[rec.sid] = [];
-                    //
-                    rec.supervisor.split(',').map((i) => {
-                        pm.departments[rec.sid].push(tmpIds[i]);
-                    });
-                });
-                //
-                pm.teams = {};
-                dnt.teams.map((rec) => {
-                    pm.teams[rec.sid] = [];
-                    //
-                    rec.team_lead.split(',').map((i) => {
-                        pm.teams[rec.sid].push(tmpIds[i]);
-                    });
-                });
-                //
-            }
+/**
+ * 
+ */
+function convertVideoToUrl(base64, questionIndex) {
+    $.post(
+        `${pm.urls.base}performance-management/handler`, {
+            action: 'basetovideo',
+            id: reviewOBJ.id,
+            questionId: questionIndex,
+            data: base64
         }
+    ).fail(function() {
+        setTimeout(() => {
+            convertVideoToUrl(base64, questionIndex);
+        }, 1000);
     });
+}
 
-    /**
-     * 
-     */
-    function convertVideoToUrl(base64, questionIndex){
-        $.post(
-            `${pm.urls.base}performance-management/handler`, {
-                action: 'basetovideo',
-                id: reviewOBJ.id,
-                questionId: questionIndex,
-                data: base64
-            }
-        ).fail(function(){
-            setTimeout(() => {
-                convertVideoToUrl(base64, questionIndex);
-            }, 1000);
+/**
+ * 
+ */
+function checkAndSetObj() {
+    //
+    if (pm.review === undefined) return;
+    //
+    reviewOBJ.id = pm.review.sid;
+    //
+    reviewOBJ.setTitle(pm.review.review_title);
+    reviewOBJ.setIndexValue('description', pm.review.description);
+    reviewOBJ.setIndexValue('roles', pm.review.visibility_roles || [], 'visibility');
+    reviewOBJ.setIndexValue('teams', pm.review.visibility_teams || [], 'visibility');
+    reviewOBJ.setIndexValue('departments', pm.review.visibility_departments || [], 'visibility');
+    reviewOBJ.setIndexValue('individuals', pm.review.visibility_employees || [], 'visibility');
+    // Schedule
+    reviewOBJ.setIndexValue('frequency', pm.review.frequency, 'schedule');
+    reviewOBJ.setIndexValue('reviewStartDate', moment(pm.review.review_start_date, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.ymdf), 'schedule');
+    reviewOBJ.setIndexValue('reviewEndDate', moment(pm.review.review_end_date, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.ymdf), 'schedule');
+    reviewOBJ.setIndexValue('repeatVal', pm.review.repeat_val, 'schedule');
+    reviewOBJ.setIndexValue('repeatType', pm.review.repeat_type, 'schedule');
+    reviewOBJ.setIndexValue('continueReview', pm.review.repeat_review, 'schedule');
+    reviewOBJ.setIndexValue('reviewDue', pm.review.review_due, 'schedule');
+    reviewOBJ.setIndexValue('reviewDueType', 'days', 'schedule');
+    reviewOBJ.setIndexValue('customRuns', pm.review.review_runs == '[]' ? [] : pm.review.review_runs, 'schedule');
+    //
+    reviewOBJ.setIndexValue('included', pm.review.included_employees != '[]' ? JSON.parse(pm.review.included_employees) : [], 'reviewees');
+    reviewOBJ.setIndexValue('excluded', pm.review.excluded_employees != '[]' ? JSON.parse(pm.review.excluded_employees) : [] || [], 'reviewees');
+    //
+    reviewOBJ.setIndexValue('type', pm.review.reviewers_types, 'reviewers');
+    reviewOBJ.setIndexValue('employees', pm.review.reviewers || [], 'reviewers');
+    //
+    reviewOBJ.setQuestions(pm.review.questions || []);
+    reviewOBJ.setIndexValue('feedback', pm.review.share_feedback);
+    //
+    $('#jsReviewStartDate').val(reviewOBJ.schedule.reviewStartDate);
+    $('#jsReviewEndDate').val(reviewOBJ.schedule.reviewEndDate);
+    //
+    $('#jsReviewVisibilityRoles').select2().select2('val', reviewOBJ.visibility.roles);
+    $('#jsReviewVisibilityDepartments').select2().select2('val', reviewOBJ.visibility.departments);
+    $('#jsReviewVisibilityTeams').select2().select2('val', reviewOBJ.visibility.teams);
+    //
+    // $('#jsReviewRepeatType').select2('val', reviewOBJ.visibility.teams);
+}
+
+
+function setEmployees() {
+    if (pm.allEmployees === undefined) {
+        setTimeout(setEmployees, 1000);
+        return;
+    }
+
+    if (pm.allEmployees.length > 0) {
+        pm.employees = pm.allEmployees;
+        //
+        let options = '';
+        let tmpIds = {};
+        //
+        pm.employees.map(function(em) {
+            tmpIds[em.Id] = em;
+            options += `<option value="${em.Id}">${em.FirstName} ${em.LastName} ${em.FullRole}</option>`;
         });
+        $('#jsFilterIndividuals').html(options).select2({ closeOnSelect: false });
+        $('#jsFilterExcludeEmployees').html(options).select2({ closeOnSelect: false });
+        $('#jsReviewSpecificReviewers').html(options).select2({ closeOnSelect: false });
+        $('#jsReviewVisibilityIndividuals').html(options).select2({ closeOnSelect: false });
+        //
+        makeEmployeeView(true);
+
+        //
+        if (typeof(dnt) !== 'undefined') {
+            pm.departments = {};
+            dnt.departments.map((rec) => {
+                pm.departments[rec.sid] = [];
+                //
+                rec.supervisor.split(',').map((i) => {
+                    pm.departments[rec.sid].push(tmpIds[i]);
+                });
+            });
+            //
+            pm.teams = {};
+            dnt.teams.map((rec) => {
+                pm.teams[rec.sid] = [];
+                //
+                rec.team_lead.split(',').map((i) => {
+                    pm.teams[rec.sid].push(tmpIds[i]);
+                });
+            });
+            //
+        }
     }
+}
 
-    /**
-     * 
-     */
-    function checkAndSetObj(){
-        //
-        if(pm.review === undefined) return;
-        //
-        reviewOBJ.id = pm.review.sid;
-        //
-        reviewOBJ.setTitle(pm.review.review_title);
-        reviewOBJ.setIndexValue('description', pm.review.description);
-        reviewOBJ.setIndexValue('roles', pm.review.visibility_roles || [], 'visibility');
-        reviewOBJ.setIndexValue('teams', pm.review.visibility_teams || [], 'visibility');
-        reviewOBJ.setIndexValue('departments', pm.review.visibility_departments || [], 'visibility');
-        reviewOBJ.setIndexValue('individuals', pm.review.visibility_employees || [], 'visibility');
-        // Schedule
-        reviewOBJ.setIndexValue('frequency', pm.review.frequency, 'schedule');
-        reviewOBJ.setIndexValue('reviewStartDate', moment( pm.review.review_start_date, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.ymdf), 'schedule');
-        reviewOBJ.setIndexValue('reviewEndDate', moment( pm.review.review_end_date, pm.dateTimeFormats.ymd).format(pm.dateTimeFormats.ymdf), 'schedule');
-        reviewOBJ.setIndexValue('repeatVal', pm.review.repeat_val, 'schedule');
-        reviewOBJ.setIndexValue('repeatType', pm.review.repeat_type, 'schedule');
-        reviewOBJ.setIndexValue('continueReview', pm.review.repeat_review, 'schedule');
-        reviewOBJ.setIndexValue('reviewDue', pm.review.review_due, 'schedule');
-        reviewOBJ.setIndexValue('reviewDueType', 'days', 'schedule');
-        reviewOBJ.setIndexValue('customRuns', pm.review.review_runs == '[]' ? [] : pm.review.review_runs, 'schedule');
-        //
-        reviewOBJ.setIndexValue('included', pm.review.included_employees != '[]' ? JSON.parse(pm.review.included_employees) : [], 'reviewees');
-        reviewOBJ.setIndexValue('excluded', pm.review.excluded_employees != '[]' ? JSON.parse(pm.review.excluded_employees) : [] || [], 'reviewees');
-        //
-        reviewOBJ.setIndexValue('type', pm.review.reviewers_types, 'reviewers');
-        reviewOBJ.setIndexValue('employees', pm.review.reviewers || [], 'reviewers');
-        //
-        reviewOBJ.setQuestions(pm.review.questions || []);
-        reviewOBJ.setIndexValue('feedback', pm.review.share_feedback);
-        //
-        $('#jsReviewStartDate').val(reviewOBJ.schedule.reviewStartDate);
-        $('#jsReviewEndDate').val(reviewOBJ.schedule.reviewEndDate);
-        //
-        $('#jsReviewVisibilityRoles').select2().select2('val', reviewOBJ.visibility.roles);
-        $('#jsReviewVisibilityDepartments').select2().select2('val', reviewOBJ.visibility.departments);
-        $('#jsReviewVisibilityTeams').select2().select2('val', reviewOBJ.visibility.teams);
-        //
-        // $('#jsReviewRepeatType').select2('val', reviewOBJ.visibility.teams);
-    }
-
-
-    
 //
-checkAndSetObj();
+function getRevieweeRow(em) {
+    return `
+    <tr>
+        <td>
+            <div class="csEBox">
+                <figure>
+                    <img src="${getImageURL(em.Image)}"
+                        class="csRadius50" />
+                </figure>
+                <div class="csEBoxText">
+                    <h4 class="mb0 csF16 csB7"><strong>${em.FirstName} ${em.LastName}</strong></h4>
+                    <p class="mb0 csF16">${em.FullRole}</p>
+                    <p class="csF16">${moment(em.JoinedAt, pm.dateTimeFormats.ymt).format(pm.dateTimeFormats.mdy)}</p>
+                </div>
+            </div>
+        </td>
+        <td>
+            <h5 class="csF16">${em.DT.Departments > 0 ? $(`#jsFilterDepartments option[value="${em.DT.Departments[0]}"]`).text() : '-'}</h5>
+        </td>
+    </tr>`;
+}
+
+function makeQuestionPreview(type){
+    //
+    type = type === undefined ? type : '';
+    //
+    let questionId = reviewOBJ.questions.length + 1;
+    let quesionTitle = $(['.',type].join('')).val();
+}
+
+
+setEmployees();

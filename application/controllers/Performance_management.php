@@ -153,7 +153,7 @@ class Performance_management extends Public_Controller{
         // 
         $this->checkLogin($this->pargs);
         // Set title
-        $this->pargs['title'] = 'Performance Management - Reviews';
+        $this->pargs['title'] = 'Performance Management - Report';
         // Get employer role
         $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
         // Get department & teams list

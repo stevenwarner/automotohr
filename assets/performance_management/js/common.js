@@ -1,3 +1,16 @@
+//
+let fontList = {
+    csF12: 12,
+    csF14: 14,
+    csF16: 16,
+    csF18: 18,
+    csF20: 20,
+    csF22: 22,
+    csF24: 24,
+    csF26: 26,
+    csF28: 28
+};
+
 /**
  * Click
  * 
@@ -238,6 +251,7 @@ function getError(errorCode, isError) {
         required_review_repeat_val: "Review recur value is required.",
         required_review_due_val: "Review due value is required.",
         required_review_reviewees: "Please, at least select one reviewee.",
+        required_review_reviewers_type: "Please, select reviewer type.",
         required_review_reviewers: "Please, select reviewers.",
         required_question: "Question is required.",
         review_saved: "You have successfully created a review.",
@@ -579,18 +593,6 @@ function getCompanyAllEmployees() {
     });
 }
 
-
-getCompanyEmployees()
-    .then((resp) => {
-        pm.cemployees = resp.Data;
-    });
-
-getCompanyAllEmployees()
-    .then((resp) => {
-        pm.allEmployees = resp.Data;
-    });
-
-
 /**
  * 
  */
@@ -633,18 +635,6 @@ $('.jsCalendarView').click(function(e) {
     });
 });
 
-//
-let fontList = {
-    csF12: 12,
-    csF14: 14,
-    csF16: 16,
-    csF18: 18,
-    csF20: 20,
-    csF22: 22,
-    csF24: 24,
-    csF26: 26,
-    csF28: 28
-};
 
 /**
  * 
@@ -661,7 +651,7 @@ $('.jsDecreaseSize').click(function(event) {
         //
         newSize--;
         //
-        if (newSize > 12) {
+        if (newSize >= 11) {
             newList[i] = newSize;
         } else {
             newList[i] = v;
@@ -688,7 +678,7 @@ $('.jsIncreaseSize').click(function(event) {
         //
         newSize++;
         //
-        if (newSize > 24) {
+        if (newSize > 29) {
             newList[i] = v;
         } else {
             newList[i] = newSize;
@@ -712,7 +702,6 @@ $('.jsResetSize').click(function(event) {
     //
     loadFonts();
 });
-
 
 
 //
@@ -742,7 +731,23 @@ function loadFonts() {
     //
     $('.select2-container').attr('style', 'font-size:' + (s2) + 'px !important');
     $('.select2-container--default .select2-selection--multiple .select2-selection__choice').attr('style', 'font-size:' + (s2) + 'px !important');
+    //
+    if (JSON.stringify(getFontList()) === JSON.stringify(fontList)) {
+        $('.jsResetSize').hide(0);
+    } else {
+        $('.jsResetSize').show(0);
+    }
 }
-
-//
+// Load default fonts
 loadFonts();
+// Get all employees of the company
+getCompanyAllEmployees()
+    .then((resp) => {
+        pm.allEmployees = resp.Data;
+        //
+        pm.allEmployeesOBJ = {};
+        //
+        pm.allEmployees.map(function(v) {
+            pm.allEmployeesOBJ[v.Id] = v;
+        });
+    });

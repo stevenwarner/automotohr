@@ -22,13 +22,6 @@
             'icon' => 'th-list',
             'segment' => 'reviews'
         ],
-        // [
-        //     'title' => 'One-on-One',
-        //     'url' => '/meeting',
-        //     'slug' => 'meeting',
-        //     'icon' => 'calendar-plus-o',
-        //     'segment' => 'meeting'
-        // ],
         [
             'title' => 'Create a Goal',
             'url' => 'javascript:void(0)',
@@ -79,7 +72,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <!-- Web -->
-                        <ul class="csWeb">
+                        <ul class="csWeb hidden-xs">
                             <li class="pull-left">
                                 <a href="<?=base_url('dashboard');?>" class="csBackButton csRadius100 csF16"><i
                                         class="fa fa-th" aria-hidden="true"></i>Go To Dashboard</a>
@@ -88,7 +81,7 @@
                             <?= $lis; ?>
                         </ul>
                         <!-- Mobile -->
-                        <div class="csMobile">
+                        <div class="csMobile hidden-sm">
                             <a href="<?=base_url('dashboard');?>" class="csBack"><i class="fa fa-th" aria-hidden="true"></i>Go To
                                 Dashboard</a>
                             <span class="pull-right"><i class="fa fa-bars" aria-hidden="true"></i></span>

@@ -55,7 +55,7 @@
                     <div class="csPageContent">
 
                         <!-- Template Section -->
-                        <div class="csPageSection jsPageSection" data-key="templates">
+                        <div class="csPageSection jsPageSection dn" data-key="templates">
                             <!-- Box Header -->
                             <div class="csPageBoxHeader p10">
                                 <h2 class="csF16">
@@ -580,27 +580,27 @@
                                             <label class="csF16 csB7">Reviewers <span class="csRequired"></span></label>
                                         </div>
                                         <div class="col-sm-9 col-xs-12">
-                                            <label class="control csB1 csF16 control--checkbox">
+                                            <label class="control csB1 csF16 control--radio">
                                                 Reporting Manager
-                                                <input type="checkbox" name="reviewerTypeRM" class="jsReviewerType" value="reporting_manager" />
+                                                <input type="radio" name="reviewerTypeRM" class="jsReviewerType" value="reporting_manager" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control csB1 csF16 control--checkbox">
+                                            <label class="control csB1 csF16 control--radio">
                                                 Self-Review
-                                                <input type="checkbox" name="reviewerTypeSR" class="jsReviewerType" value="self_review" />
+                                                <input type="radio" name="reviewerTypeSR" class="jsReviewerType" value="self_review" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control csB1 csF16 control--checkbox">
+                                            <label class="control csB1 csF16 control--radio">
                                                 Peers (Colleagues)
-                                                <input type="checkbox" name="reviewerTypeP" class="jsReviewerType" value="peer" />
+                                                <input type="radio" name="reviewerTypeP" class="jsReviewerType" value="peer" />
                                                 <div class="control__indicator"></div>
                                             </label> <br />
-                                            <label class="control csB1 csF16 control--checkbox">
+                                            <label class="control csB1 csF16 control--radio">
                                                 Specific Reviewers
-                                                <input type="checkbox" name="reviewerTypeSR" class="jsReviewerType" value="specific" />
+                                                <input type="radio" name="reviewerTypeSR" class="jsReviewerType" value="specific" />
                                                 <div class="control__indicator"></div>
-                                            </label> <br />
-                                            <div class="dn" id="jsReviewSpecificReviewersBox">
+                                            </label>
+                                            <div class="dn ma10" id="jsReviewSpecificReviewersBox">
                                                 <select id="jsReviewSpecificReviewers" multiple="multiple"></select>
                                             </div>
                                         </div>
@@ -634,7 +634,7 @@
                             </div>
                         </div>
                         <!-- Questions -->
-                        <div class="csPageSection jsPageSection  dn" data-key="questions">
+                        <div class="csPageSection jsPageSection dn" data-key="questions">
                             <!-- Header -->
                             <div class="csPageBoxHeader csSticky csStickyTop p10" style="background-color: #fff;">
                                 <h2>
@@ -649,7 +649,7 @@
                             <!-- Body -->
                             <div class="csPageBoxBody jsQuestionViewWrap bbb p10">
                                 <div class="csQuestionRow">
-                                    <h4 class="alert alert-info text-center">You haven't added any questions.</h4>
+                                    <h4 class="alert alert-info text-center csF16">You haven't added any questions.</h4>
                                 </div>
                             </div>
                             <!--  -->
@@ -700,7 +700,7 @@
                             </div>
                         </div>
                         <!-- Add Question -->
-                        <div class="csPageSection jsPageSection dn" data-key="add_question">
+                        <div class="csPageSection jsPageSection" data-key="add_question">
                             <div class="csPageBoxHeader p10">
                                 <h2>
                                     <span class="csF18 csB7">Add a Question</span>
@@ -893,13 +893,69 @@
                                             <div class="jsPreviewQuestionBox"></div>
                                         </div>
                                     </div>
+                                    <!-- Question Preview -->
+                                    <div class="csPageBoxBody p10 bbt">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <p class="csF18 csB7">Question Preview</p>
+                                                <p class="csF18 csB7">Question 1</p>
+                                                <div>
+                                                    <label class="control control--checkbox csF16 csB1 mb10">
+                                                        <input type="checkbox" name="s" value="1"/>
+                                                        Not Applicable
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                                <p class="csF18 csB7">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Distinctio, voluptates dolorem?</p>
+                                                <p class="csF16">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis perspiciatis sit nihil consectetur pariatur, accusamus necessitatibus recusandae assumenda nobis rerum magni expedita tempora nesciunt repellendus saepe libero magnam labore ipsum?</p>
+                                                <video src="http://ss.cm/s.mp4" style="width: 300px" controls class="mb10"></video>
+                                                <div class="mb10">
+                                                    <label class="control control--radio csF16 csB1">
+                                                        <input type="radio" name="2s" value="1"/>Yes
+                                                        <div class="control__indicator"></div>
+                                                    </label><br />
+                                                    <label class="control control--radio csF16 csB1">
+                                                        <input type="radio" name="2s" value="1"/>
+                                                        No
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                                <div>
+                                                    <ul class="csRatingBar mb10">
+                                                        <li>
+                                                            <p class="mb0 csF16 csB7">1</p>
+                                                            <p class="csF16 csB7">Strongly Agree</p>
+                                                        </li>
+                                                        <li class="active">
+                                                            <p class="mb0 csF16 csB7">2</p>
+                                                            <p class="csF16 csB7">Agree</p>
+                                                        </li>
+                                                        <li>
+                                                            <p class="mb0 csF16 csB7">3</p>
+                                                            <p class="csF16 csB7">Neutral</p>
+                                                        </li>
+                                                        <li>
+                                                            <p class="mb0 csF16 csB7">4</p>
+                                                            <p class="csF16 csB7">Disagree</p>
+                                                        </li>
+                                                        <li>
+                                                            <p class="mb0 csF16 csB7">5</p>
+                                                            <p class="csF16 csB7">Strongly Disagree</p>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <p class="csF16 csB7">Feedback (Elaborate)</p>
+                                                <textarea class="form-control csF16"></textarea>
+                                            </div>
+                                            </div>
+                                        </div>
                                     <!-- Question Footer -->
                                     <div class="csPageBoxFooter p10">
                                         <span class="csBTNBox">
                                             <button class="btn btn-black btn-lg jsReviewBackStep csF16" data-to="questions"><i
-                                                    class="fa fa-times-circle csF16"></i> Cancel</button>
+                                                    class="fa fa-times-circle csF16" aria-hidden="true"></i> Cancel</button>
                                             <button class="btn btn-orange btn-lg jsSaveQuestion csF16"><i
-                                                    class="fa fa-save csF16"></i> Save Question</button>
+                                                    class="fa fa-save csF16" aria-hidden="true"></i> Save Question</button>
                                         </span>
                                     </div>
                                 </div>
