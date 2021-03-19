@@ -90,10 +90,10 @@ class Performance_management extends Public_Controller{
         //
         if(!empty($employees)){
             foreach($employees as $employee){
-                $this->pargs['employees'][$employee['userId']] = [
-                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
-                    'role' => remakeEmployeeName($employee, false),
-                    'img' => getImageURL($employee['image'])
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image'])
                 ];
             }
         }
@@ -187,10 +187,10 @@ class Performance_management extends Public_Controller{
         //
         if(!empty($employees)){
             foreach($employees as $employee){
-                $this->pargs['employees'][$employee['userId']] = [
-                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
-                    'role' => remakeEmployeeName($employee, false),
-                    'img' => getImageURL($employee['image'])
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image'])
                 ];
             }
         }
@@ -228,7 +228,19 @@ class Performance_management extends Public_Controller{
         // Get employer role
         $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
         $this->pargs['gp'] = true;
-
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image'])
+                ];
+            }
+        }
+        $this->pargs['Reviews'] = $this->pmm->getLMSReviews($this->pargs['employerId'], $this->pargs['companyId']);
 
         $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -257,11 +269,11 @@ class Performance_management extends Public_Controller{
         //
         if(!empty($employees)){
             foreach($employees as $employee){
-                $this->pargs['employees'][$employee['userId']] = [
-                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
-                    'role' => remakeEmployeeName($employee, false),
-                    'img' => getImageURL($employee['image']),
-                    'joined' => formatDate($employee['joined_at'], 'Y-m-d', 'M d D, Y')
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image']),
+                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
                 ];
             }
         }
@@ -304,11 +316,11 @@ class Performance_management extends Public_Controller{
         //
         if(!empty($employees)){
             foreach($employees as $employee){
-                $this->pargs['employees'][$employee['userId']] = [
-                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
-                    'role' => remakeEmployeeName($employee, false),
-                    'img' => getImageURL($employee['image']),
-                    'joined' => formatDate($employee['joined_at'], 'Y-m-d', 'M d D, Y')
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image']),
+                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
                 ];
             }
         }
@@ -390,11 +402,11 @@ class Performance_management extends Public_Controller{
         //
         if(!empty($employees)){
             foreach($employees as $employee){
-                $this->pargs['employees'][$employee['userId']] = [
-                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
-                    'role' => remakeEmployeeName($employee, false),
-                    'img' => getImageURL($employee['image']),
-                    'joined' => formatDate($employee['joined_at'], 'Y-m-d', 'M d D, Y')
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image']),
+                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
                 ];
             }
         }
@@ -603,7 +615,7 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function gp_review($reviewId, $reviewerId){
+    function gp_review($reviewId, $revieweeId, $reviewerId = 0){
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -614,7 +626,10 @@ class Performance_management extends Public_Controller{
         // Get employer role
         $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
         $this->pargs['gp'] = true;
-        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $this->pargs['employerId'], $reviewerId);
+        $this->pargs['pid'] = $reviewId;
+        $this->pargs['pem'] = $revieweeId;
+        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $revieweeId, $this->pargs['employerId']);
+        $this->pargs['isAllowed'] = in_array($reviewerId, array_column($this->pargs['review']['Reviewer'], 'reviewer_sid'));
 
         $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -978,15 +993,19 @@ class Performance_management extends Public_Controller{
                     //
                     $revieweeId = $k;
                     $reviewers = [];
-                    $reviewers = !empty($reviewer['reporting_manager']) ? array_merge($reviewers, array_keys($reviewer['reporting_manager'])) : $reviewers;
-                    $reviewers = !empty($reviewer['self_review']) ? array_merge($reviewers, array_keys($reviewer['self_review'])) : $reviewers;
-                    $reviewers = !empty($reviewer['peer']) ? array_merge($reviewers, array_keys($reviewer['peer'])) : $reviewers;
-                    $reviewers = !empty($reviewer['specific']) ? array_merge($reviewers, array_keys($reviewer['specific'])) : $reviewers;
+                    $reviewers = !empty($reviewer['reporting_manager']) ? 
+                    array_merge($reviewers, $reviewer['reporting_manager']) : $reviewers;
+                    $reviewers = !empty($reviewer['self_review']) ? 
+                    array_merge($reviewers, $reviewer['self_review']) : $reviewers;
+                    $reviewers = !empty($reviewer['peer']) ? 
+                    array_merge($reviewers, $reviewer['peer']) : $reviewers;
+                    $reviewers = !empty($reviewer['specific']) ? 
+                    array_merge($reviewers, $reviewer['specific']) : $reviewers;
                     if(!empty($reviewer['custom'])){
-                        $reviewers = array_merge($reviewers, array_keys($reviewer['custom']));
+                        $reviewers = array_merge($reviewers, $reviewer['custom']);
                         //
                         if(!empty($reviewer['excluded'])){
-                            $reviewers = array_diff($reviewers, array_keys($reviewer['excluded']));
+                            $reviewers = array_diff($reviewers, $reviewer['excluded']);
                         }
                     }
                     //

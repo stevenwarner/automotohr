@@ -102,3 +102,21 @@
     <script src="<?=base_url('assets/performance_management/js/goals/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
     <script src="<?=base_url('assets/performance_management/js/goals/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
 <?php endif; ?>
+
+<?php if(strpos($this->uri->uri_string(), 'employee/review') !== false): ?>
+    <!-- -->
+    <script src="<?=base_url('assets/performance_management/js/reviewer_feedback/view'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+<?php endif; ?>
+
+
+<?php if(strpos($this->uri->uri_string(), 'lms/reviews') !== false): ?>
+
+    <script>
+        $('.jsTabShifter').click(function(){
+            $('.jsTabShifter').removeClass('active');
+            $(this).addClass('active');
+            $('.jsTabShifterTab').addClass('dn');
+            $('.jsTabShifterTab[id="'+($(this).data('target'))+'"]').removeClass('dn');
+        });
+    </script>
+<?php endif; ?>

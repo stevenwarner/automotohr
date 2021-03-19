@@ -89,8 +89,8 @@
                                     <tr>
                                         <th scope="column" class="csF18 csB7">Review</th>
                                         <th scope="column" class="csF18 csB7">Start Date</th>
-                                        <th scope="column" class="csF18 csB7">Reviewer progress</th>
-                                        <th scope="column" class="csF18 csB7">Manager Feedback progress</th>
+                                        <th scope="column" class="csF18 csB7">Reviewer Progress</th>
+                                        <th scope="column" class="csF18 csB7">Manager Progress</th>
                                         <th scope="column" colspan="2" class="csF18 csB7"></th>
                                     </tr>
                                 </thead>

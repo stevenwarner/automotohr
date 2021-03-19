@@ -59,18 +59,12 @@
                             </button>
                             <ul class="dropdown-menu csUL" aria-labelledby="dropdownMenu1" style="left: -80%">
                                 <li><a href="#" class="jsAddReviewers csF16" data-id="<?=$review['sid'];?>"><i class="fa fa-plus-circle csF16"></i> Add a Reviewee</a></li>
-                                <!-- <li><a href="#"><i class="fa fa-download"></i> Download Report</a></li> -->
-                                <!-- <li><a href="#"><i class="fa fa-print"></i> Print</a></li> -->
-                                <!-- <li><a href="#"><i class="fa fa-clock-o"></i> Change Due Date</a></li> -->
-                                <!-- <li><a href="#"><i class="fa fa-pencil-square-o"></i> Edit Review Name</a></li> -->
-                                <!-- <li role="separator" class="divider"></li> -->
-                                <!-- <li><a href="#"><i class="fa fa-stop"></i> End Review</a></li> -->
                             </ul>
                         </div>
                     </span>
                     <h1>
-                        <span class="csF18 csB7"><?=$review['review_title'];?> </span>
-                        <span class="btn alert-success csF16"><?=$review['status'] == 'pending' ? 'Pending' : ( $review['status'] == 'started' ? 'Running' : 'Ended');?></span>
+                        <span class="csF18 csB7"><?=$review['review_title'];?></span>
+                        <span class="btn alert-<?=$review['status'] == 'pending' || empty($review['status']) ? 'warning' : ( $review['status'] == 'started' ? 'success' : 'danger');?> csF16"><?=$review['status'] == 'pending' || empty($review['status']) ? 'Pending' : ( $review['status'] == 'started' ? 'Running' : 'Ended');?></span>
                     </h1>
                 </h1>
             </div>
@@ -102,7 +96,6 @@
                                     </li>
                                 </ul>
                             </div>
-                            <?php if($review['share_feedback'] == 1):?>
                             <div class="col-sm-6">
                                 <h1 class="csF18 csB8">Managers Progress</h1>
                                 <div class="progress csRadius100">
@@ -116,7 +109,6 @@
                                     </li>
                                 </ul>
                             </div>
-                            <?php endif;?>
                         </div>
                     </div>
                     <div class="csPageBodyData">
@@ -130,7 +122,7 @@
                                             <th scope="column" class="csF18 csB7 ">Reviewee</th>
                                             <th scope="column" class="csF18 csB7 ">Review Period</th>
                                             <th scope="column" class="csF18 csB7 ">Reviewer Progress</th>
-                                            <th scope="column" class="csF18 csB7 " colspan="2">Manager Feedback Progress</th>
+                                            <th scope="column" class="csF18 csB7 " colspan="2">Manager Progress</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -139,7 +131,7 @@
                                         <tr 
                                             data-id="<?=$reviewee['reviewee_sid'];?>" 
                                             data-name="<?=$employees[$reviewee['reviewee_sid']]['name'];?>"
-                                            data-sd ="<?=formatDate($reviewee['start_date'], 'Y-m-d', 'm/d/Y');?>"
+                                            data-sd ="<?=formatDate($reviewee['start_date'], 'Y-m-d', 'm/d/ Y');?>"
                                             data-ed ="<?=formatDate($reviewee['end_date'], 'Y-m-d', 'm/d/Y');?>"
                                         >
                                             <td>
@@ -170,11 +162,11 @@
                                                         if($k <= $i):
                                                             echo '<li><img src="'.($employees[$reviewer['reviewer_sid']]['img']).'" class="csRadius50"></li>';
                                                         endif;
-                                                        if($reviewer['is_completed'] == 1 ) $sharedCount ++;
+                                                        if($reviewer['is_completed'] == 1 ) {$sharedCount ++;}
                                                 ?>
                                                 <?php endforeach; ?>
                                                         </ul>
-                                                        <span class="csF16"><?=ceil(($sharedCount * 100) / count($reviewerOBJ[$reviewee['reviewee_sid']]['Reviewers']))?>% Not Completed</span>
+                                                        <span class="csF16"><?=ceil(($sharedCount * 100) / count($reviewerOBJ[$reviewee['reviewee_sid']]['Reviewers']))?>% Completed</span>
                                                     </div>
                                                 <?php endif; ?>
                                             </td>
@@ -195,7 +187,7 @@
                                                 ?>
                                                 <?php endforeach; ?>
                                                         </ul>
-                                                        <span class="csF16"><?=ceil(($sharedCount * 100) / count($reviewerOBJ[$reviewee['reviewee_sid']]['Managers']))?>% Not Completed</span>
+                                                        <span class="csF16"><?=ceil(($sharedCount * 100) / count($reviewerOBJ[$reviewee['reviewee_sid']]['Managers']))?>% Completed</span>
                                                     </div>
                                                 <?php endif; ?>
                                             </td>

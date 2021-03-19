@@ -1303,6 +1303,121 @@ class Performance_management_model extends CI_Model{
 
     //     _e($b, true);
     // }
+
+    /**
+     * 
+     */
+    function getLMSReviews($employeeId, $companyId){
+        
+        // Get assigned reviews
+        //
+        $assignedReviews = 
+        $this->db
+        ->select('
+            pm.review_title,
+            pmr.review_sid, 
+            pmr.reviewee_sid, 
+            pmrv.reviewer_sid, 
+            pmr.is_started,
+            pmrv.is_manager
+            ')
+            ->from('performance_management_reviewers pmrv')
+        ->join('performance_management_reviewees pmr', 'pmrv.review_sid = pmr.review_sid and pmrv.reviewee_sid = pmr.reviewee_sid')
+        ->join('performance_management pm', 'pmrv.review_sid = pm.sid')
+        ->where('pmrv.reviewer_sid', $employeeId)
+        // ->where('pmr.is_started', 1)
+        ->where('pm.company_sid', $companyId)
+        ->get()
+        ->result_array();
+        // Get my reviews
+        $myReviews = 
+        $this->db
+        ->select('
+            pm.review_title,
+            pmr.review_sid, 
+            pmr.reviewee_sid, 
+            pmrv.reviewer_sid, 
+            pmr.is_started,
+            pmrv.is_manager
+        ')
+        ->from('performance_management_reviewers pmrv')
+        ->join('performance_management_reviewees pmr', 'pmrv.review_sid = pmr.review_sid and pmrv.reviewee_sid = pmr.reviewee_sid')
+        ->join('performance_management pm', 'pmrv.review_sid = pm.sid')
+        ->where('pmr.reviewee_sid', $employeeId)
+        // ->where('pm.share_feedback', 1)
+        ->where('pm.company_sid', $companyId)
+        ->get()
+        ->result_array();
+        //
+        return ['MyReviews' => $myReviews, 'AssignedReviews' => $assignedReviews];
+    }
+
+    function getGoalsByPerm(
+        $type,
+        $year,
+        $month,
+        $day,
+        $week_start,
+        $week_end,
+        $company_id,
+        $employer_id,
+        $event_type,
+        $access_level,
+        $employer_detail
+    ) {
+        // check for type
+        if ($type == 'day') {
+            $startDate = $year . '-' . $month . '-' . $day;
+            $endDate = $year . '-' . $month . '-' . $day;
+        } else { // month, week
+            $startDate = $year . '-' . $week_start;
+            $endDate   = $year . '-' . $week_end;
+            if(substr($week_start, 0, 2) == '11' && substr($week_start, 3, 4) == '29'){
+                $startDate = $year.'-'.$week_start;
+                $endDate = date('Y', strtotime(''.($year).'+1 year')).'-'.$week_end;
+            }
+            if (substr($week_start, 0, 2) == '12' && substr($week_start, 3, 4) == '27') {
+                $startDate = date('Y', strtotime("$year -1 year")).'-'.$week_start;
+                $endDate   = $year. '-' . $week_end;
+            }
+        }
+        //
+        $this->db
+            ->from('goals');
+        //
+        if ($startDate != '' && $startDate != 'all' ){ $this->db->where('goals.start_date >= "' . ($startDate) . '"', null);}
+        if ($endDate != '' && $endDate != 'all' ) {$this->db->where('goals.end_date  <= "' . ($endDate) . '"', null);}
+        $this->db->where('goals.company_sid', $company_id);
+        //
+        $a = $this->db->get();
+        //
+        $b =  $a->result_array();
+        //
+        $goals = [];
+        //
+        if(empty($b)) {
+            return [];
+        }
+        foreach($b as $v){
+            $start_datetime = $v['start_date'] . "T08:00" ;
+            $end_datetime = $v['end_date'] . "T08:00";
+            $goals[] = [
+                'title' =>  $v['title'],
+                'start' =>  $start_datetime,
+                'end' =>  $end_datetime,
+                'color' => "#5cb85c",
+                'date' => $v['start_date'],
+                'status' => "confirmed",
+                'type' => 'goals',
+                'requests' => 0,
+                'from_date' => $v['start_date'],
+                'to_date' => $v['end_date'],
+                'request_id' => $v['sid']
+            ];
+        }
+        //
+        return $goals;
+    }
 }
 
 

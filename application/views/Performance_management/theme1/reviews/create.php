@@ -55,7 +55,7 @@
                     <div class="csPageContent">
 
                         <!-- Template Section -->
-                        <div class="csPageSection jsPageSection dn" data-key="templates">
+                        <div class="csPageSection jsPageSection" data-key="templates">
                             <!-- Box Header -->
                             <div class="csPageBoxHeader p10">
                                 <h2 class="csF16">
@@ -700,7 +700,7 @@
                             </div>
                         </div>
                         <!-- Add Question -->
-                        <div class="csPageSection jsPageSection" data-key="add_question">
+                        <div class="csPageSection jsPageSection dn" data-key="add_question">
                             <div class="csPageBoxHeader p10">
                                 <h2>
                                     <span class="csF18 csB7">Add a Question</span>
@@ -868,7 +868,7 @@
                                             </div>
 
                                             <!-- Assigned to  -->
-                                            <div class="row mb10 ">
+                                            <div class="row mb10 dn">
                                                 <div class="col-sm-3 col-xs-12">
                                                     <label class="csF16 csB7">Assigned to <span class="csRequired"></span></label>
                                                 </div>
@@ -894,7 +894,7 @@
                                         </div>
                                     </div>
                                     <!-- Question Preview -->
-                                    <div class="csPageBoxBody p10 bbt">
+                                    <div class="csPageBoxBody p10 bbt dn">
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <p class="csF18 csB7">Question Preview</p>

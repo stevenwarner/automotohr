@@ -1208,7 +1208,7 @@ nav.navigation ul li a {
 .csChatMenu {
     list-style: none;
     padding: 10px;
-    height: inherit;
+    height: 350px;
     overflow-y: auto;
     overflow-x: hidden;
 }

@@ -124,8 +124,6 @@ $(function() {
         //
         const goalId = goalBox.data('id');
         //
-        const goal = goalsOBJ[goalId];
-        //
         goalBox.find('.jsBoxSection').fadeOut(0);
         goalBox.find(`.jsBoxSection[data-key="comment"]`).fadeIn(0);
         //
@@ -393,8 +391,8 @@ $(function() {
             //
             options = '<option value="0">[Select an employee]</option>';
             //
-            pm.cemployees.map((em) => {
-                options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
+            pm.allEmployees.map((em) => {
+                options += `<option value="${em.Id}">${remakeEmployeeName(em)}</option>`;
             });
             $('#jsEGVisibilityEmployees').html(options).select2();
             //
@@ -456,6 +454,8 @@ $(function() {
      */
     function loadGoals() {
         //
+        ml(true, 'goal_view');
+        //
         if (XHR !== null) XHR.abort();
         //
         XHR = $.post(
@@ -489,6 +489,8 @@ $(function() {
         if (goals.length === 0) {
             $('.jsGoalWrap').html(getNoShow('goal_' + filter.type));
             loadFonts();
+            //
+            ml(false, 'goal_view');
             return;
         }
         //
@@ -496,6 +498,7 @@ $(function() {
             setTimeout(function() {
                 setView(goals);
             }, 1000);
+            return;
         }
         //
         let rows = '<div class="row">';
@@ -775,6 +778,8 @@ $(function() {
         });
         //
         loadFonts();
+        //
+        ml(false, 'goal_view');
     }
 
     /**
@@ -791,16 +796,16 @@ $(function() {
         //
         comments.map((comment) => {
             //
-            let em = getEmployee(comment.sender_sid, 'userId');
+            let em = getEmployee(comment.sender_sid, 'Id');
             //
             let imgRow = '';
             imgRow += `        <div class="csChatImageBox">`;
-            imgRow += `            <img src="${getImageURL(em.image)}" style="width: 50px;" />`;
+            imgRow += `            <img src="${getImageURL(em.Image)}" style="width: 50px;" />`;
             imgRow += `        </div>`;
             //
             let dataRow = '';
             dataRow += `        <div class="csChatContentBox">`;
-            dataRow += `            <span class="csF14 csB7 ${pm.employerId === parseInt(em.userId) ? 'text-right' : ''}">${em.first_name} ${em.last_name}</span>`;
+            dataRow += `            <span class="csF14 csB7 ${pm.employerId === parseInt(em.Id) ? 'text-right' : ''}">${em.FirstName} ${em.LastName}</span>`;
             dataRow += `            <p class="csF18">${comment.message}`;
             dataRow += `                <br /><span class="csF14 ma10 text-right">${moment(comment.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</span>`;
             dataRow += `            </p>`;
@@ -808,7 +813,7 @@ $(function() {
             //
             rows += `<li>`;
             rows += `    <div class="">`;
-            rows += pm.employerId === parseInt(em.userId) ? dataRow + imgRow : imgRow + dataRow;
+            rows += pm.employerId === parseInt(em.Id) ? dataRow + imgRow : imgRow + dataRow;
             rows += `    </div>`;
             rows += `</li>`;
         });
@@ -826,20 +831,20 @@ $(function() {
      */
     function loadEmployeesInFilter() {
         //
-        if (pm.cemployees === undefined) {
+        if (pm.allEmployees === undefined) {
             setTimeout(loadEmployeesInFilter, 1000);
             return;
         }
         //
-        if (pm.cemployees.length === 0) return;
+        if (pm.allEmployees.length === 0) return;
         //
         let options = '<option value="-1">All</option>';
         //
-        pm.cemployees.map((em) => {
+        pm.allEmployees.map((em) => {
             if (pm.permission.employeeIds !== undefined) {
-                if ($.inArray(em.userId, pm.permission.employeeIds) === -1) { return; }
+                if ($.inArray(em.Id, pm.permission.employeeIds) === -1) { return; }
             }
-            options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
+            options += `<option value="${em.Id}">${em.FirstName} ${em.LastName} ${em.FullRole}</option>`;
         });
         //
         $('#jsVGEmployee').html(options).select2();;

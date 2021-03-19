@@ -6,12 +6,8 @@
         <!-- Content Area -->
         <div class="col-sm-12 col-xs-12">
             <div class="csPageBoxHeader bbn">
-                <div class="csPageBoxReviewPeriod">
-                    <span class="csBTNBoxLeft">
-                        <select id="jsFilterReviewPeriod" class="dn">
-                        </select>
-                    </span>
-                    <div class="clearfix"></div>
+                <div class="">
+                    <a href="<?=base_url('performance-management/lms/reviews');?>" class="btn btn-black csF16 csB7 ma10"><i class="fa fa-long-arrow-left"></i> Back To Reviews</a>
                 </div>
             </div>
             <!-- Main Content Area -->
@@ -21,9 +17,9 @@
                     <h3><strong><?=$review['review_title'];?></strong></h3>
                 </div>
                 <!-- Body -->
-                <div class="csPageBoxBody p10">
+                <div class="csPageBoxBody">
                     <!-- Loader -->
-                    <div class="csIPLoader jsIPLoader dn" data-page="review_listing"><i class="fa fa-circle-o-notch fa-spin"></i></div>
+                    <div class="csIPLoader jsIPLoader dn" data-page="review_listing"><i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i></div>
                     <?php 
                         $answers = [];
                         foreach($review['Questions'] as $key => $question):
@@ -34,8 +30,8 @@
                             $answers[$question['sid']] = $answ;
                         }
                     ?>
-                    <div class="csFeedbackViewBox">
-                        <h4 class="pa10 pb10"><strong>Question <?=$key +1;?></strong></h4>
+                    <div class="csFeedbackViewBox p10">
+                        <h4 class="pa10 pb10 csF16 csB7">Question <?=$key +1;?></h4>
                         
                         <h4><strong><?=$ques['title'];?></strong></h4>
                         <?php if(!empty($ques['description'])): ?>
@@ -48,10 +44,25 @@
                             <?php echo getQuestionBody($ques, $answ); ?>
                         </div>
                         <!--  -->
-                        <!-- <div class="clearfix"></div> -->
                     </div>
                     <?php endforeach; ?>
                 </div>
+                <?php if($isAllowed){ ?>
+                <!-- Footer -->
+                <div class="csPageBoxFooter p10">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <span class="csBTNBoxLeft ma10">
+                                <button class="btn btn-orange csF16 dn" data-review-id="<?=$pid?>"><em class="fa fa-plus-circle csF16"></em> Add</button>
+                            </span>
+                            <span class="csBTNBox ma10">
+                                <a href="javascript:void(0);" class="btn btn-orange btn-lg jsQuestionSaveBtn csF16"><i class="fa fa-save csF16"></i> Save</a>
+                                <a href="<?=base_url('performance-management/lms/reviews');?>" class="btn btn-black btn-lg csF16"><i class="fa fa-pencil-square-o csF16"></i> Finish Later</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
               
             </div>
         </div>

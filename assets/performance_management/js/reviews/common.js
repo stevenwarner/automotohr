@@ -27,7 +27,7 @@ function getCompanyEmployees() {
 function getProgress(reviewerArray, reviewerType) {
     //
     const returnOBJ = {
-        total: reviewerArray.length,
+        total: 0,
         completed: 0,
         pending: 0
     };
@@ -36,13 +36,21 @@ function getProgress(reviewerArray, reviewerType) {
     //
     reviewerArray.map((record) => {
         if (reviewerType == 'review') {
-            if (record.completetion_status == 1 && record.reviewer_type == 'Review') returnOBJ.completed++;
-            else returnOBJ.pending++;
-        } else {
-            if (record.completetion_status == 1 && record.reviewer_type == 'Feedback') returnOBJ.completed++;
-            else returnOBJ.pending++;
+            if (record.completion_status == 1 && record.reviewer_type == 'Review') returnOBJ.completed++;
+            else if (record.completion_status == 0 && record.reviewer_type == 'Review') returnOBJ.pending++;
+        } else if (reviewerType == 'feedback') {
+            if (record.completion_status == 1 && record.reviewer_type == 'Feedback') returnOBJ.completed++;
+            else if (record.completion_status == 0 && record.reviewer_type == 'Feedback') returnOBJ.pending++;
         }
     });
+    //
+    returnOBJ.total = returnOBJ.completed + returnOBJ.pending;
+    //
+    returnOBJ.completed = (returnOBJ.completed * 100) / returnOBJ.total;
+    returnOBJ.completed = isNaN(returnOBJ.completed) ? 0 : returnOBJ.completed;
+    returnOBJ.pending = (returnOBJ.pending * 100) / returnOBJ.total;
+    //
+    returnOBJ.total = 100;
     //
     return returnOBJ;
 }

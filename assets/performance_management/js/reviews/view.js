@@ -283,12 +283,14 @@ $(function() {
             let status = '';
             if (filter.reviewStatus != 'draft') {
                 var reviewerProgress = getProgress(review.reviewers, 'review');
-                var feedbackProgress = getProgress(review.reviewers, 'review');
+                var feedbackProgress = getProgress(review.reviewers, 'feedback');
                 //
                 if (review.status == 'started') {
                     status = '<strong class="btn btn-xs alert-success">Running</strong>';
                 } else if (review.status == 'ended') {
                     status = '<strong class="btn btn-xs alert-danger">Ended</strong>';
+                } else {
+                    status = '<strong class="btn btn-xs alert-warning">Pending</strong>';
                 }
             }
             //

@@ -901,6 +901,23 @@ class Calendar extends Public_Controller {
             );
             $events = array_merge(!is_array($events) ? array() : $events ,$timeoffs);
         }
+        if(checkIfAppIsEnabled('performance_review')) { 
+            $this->load->modal('performance_management', 'pmm');
+            $reviews = $this->pmm->getGoalsByPerm(
+                $this->input->post('type'),
+                $this->input->post('year'),
+                $this->input->post('month'),
+                $this->input->post('day'),
+                $this->input->post('week_start'),
+                $this->input->post('week_end'),
+                $company_id,
+                $employer_id,
+                $event_type,
+                $access_level,
+                $data['session']['employer_detail']
+            );
+            $events = array_merge(!is_array($events) ? array() : $events ,$reviews);
+        }
         // Get companys public holidays
         $publicHolidays = $this->timeoff_model->getCompanyPublicHolidays(
             $this->input->post('type'),

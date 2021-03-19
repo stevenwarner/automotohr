@@ -645,8 +645,6 @@ function resetQuestionView() {
  * @param {*} doRedirect 
  */
 async function saveReview(step, doRedirect) {
-
-    return;
     //
     if (reviewOBJ.id == 0) {
         reviewOBJ.id = await getSavedReviewId();
@@ -912,7 +910,11 @@ function makeQuestionPreview(type){
     type = type === undefined ? type : '';
     //
     let questionId = reviewOBJ.questions.length + 1;
-    let quesionTitle = $(['.',type].join('')).val();
+    let quesionTitle = $('#jsQuestionVal'+type).val();
+
+    //
+    console.log(questionId);
+    console.log(quesionTitle);
 }
 
 

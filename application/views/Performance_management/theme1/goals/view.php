@@ -39,7 +39,11 @@
                 </div>
             </div>
             <!--  -->
-            <div class="csPageBoxBody p10 jsGoalWrap"></div>
+            <div class="csPageBoxBody p10">
+                
+                <div class="csIPLoader jsIPLoader" data-page="goal_view"><i aria-hidden="true" class="fa fa-circle-o-notch fa-spin"></i></div>
+                <div class="jsGoalWrap"></div>
+            </div>
         </div>
     </div>
 </div>

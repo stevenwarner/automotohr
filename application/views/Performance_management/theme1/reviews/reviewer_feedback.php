@@ -90,7 +90,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <span class="csBTNBoxLeft ma10">
-                                <button class="btn btn-orange csF16" data-review-id="<?=$pid?>"><em class="fa fa-plus-circle csF16"></em> Add</button>
+                                <button class="btn btn-orange csF16 dn" data-review-id="<?=$pid?>"><em class="fa fa-plus-circle csF16"></em> Add</button>
                             </span>
                             <span class="csBTNBox ma10">
                                 <a href="javascript:void(0);" class="btn btn-orange btn-lg jsQuestionSaveBtn csF16"><i class="fa fa-save csF16"></i> Save</a>

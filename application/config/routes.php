@@ -1274,3 +1274,4 @@ $route['performance-management/employee/reviews/(:num)'] = 'Performance_manageme
 $route['performance-management/download/(:any)/(:num)/(:num)/(:num)'] = 'Performance_management/download/$1/$2/$3/$4';
 //
 $route['performance-management/employee/review/(:num)/(:num)'] = 'Performance_management/gp_review/$1/$2';
+$route['performance-management/employee/review/(:num)/(:num)/(:num)'] = 'Performance_management/gp_review/$1/$2/$3';
