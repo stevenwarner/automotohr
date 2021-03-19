@@ -463,5 +463,41 @@ class Financial_reports_model extends CI_Model
         return $this->db->get('background_check_orders')->result_array();
     }
 
+    function get_sms_data ($company_sid, $start_date, $end_date) {
+        $this->db->select('*');
+
+        //Exclude Test Companies
+        if ($company_sid != 'all') {
+            $this->db->where('company_id', $company_sid);
+        }
+
+        $this->db->where('sender_user_id <>', 1);
+
+        $this->db->where("created_at BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+
+        $this->db->order_by('sid', 'ASC');
+
+        $sms_data = $this->db->get('portal_sms')->result_array();
+
+
+        if (!empty($sms_data)) {
+            return $sms_data;
+        } else {
+            return array();
+        }
+
+    }
+
+    function get_all_companies()
+    {
+        $this->db->select('sid, CompanyName');
+        $this->db->where('parent_sid', 0);
+        $this->db->where('active', 1);
+        $this->db->where('is_paid', 1);
+        $this->db->where('career_page_type', 'standard_career_site');
+        $this->db->order_by('sid', 'DESC');
+        return $this->db->get('users')->result_array();
+    }
+
 
 }

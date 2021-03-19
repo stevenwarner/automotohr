@@ -2826,4 +2826,95 @@ class Reports extends Public_Controller {
         exit(0);
     }
 
+    function company_sms_report ($start_date = null, $end_date = null) {
+        if (!$this->session->userdata('logged_in')) redirect('login', "refresh");
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
+        check_access_permissions($data['security_details'], 'my_settings', 'reports');
+        //
+        $company_sid   = $data['session']['company_detail']['sid'];
+        //
+        if($this->form_validation->run() == false){
+            $from_date = '';
+            $to_date = '';
+            $grand_total = '';
+            //
+            $current_date = date('Y-m-d H:i:s');
+            //
+            if ((empty($start_date) && empty($end_date)) || ($start_date == 'all' && $end_date == 'all')) {
+                // First day of the current month.
+                $from_date = date('Y-m-01', strtotime($current_date));
+                // Last day of the current month.
+                $to_date = date('Y-m-t', strtotime($current_date));
+            } else if ($start_date == 'all' && ($end_date != 'all' || !empty($end_date))) {
+                $from_date = date('Y-m-01', strtotime($end_date));
+                //
+                $to_date = date('Y-m-d', strtotime($end_date));
+
+            } else if (($start_date != 'all' || !empty($start_date)) && $end_date == 'all') {
+                // 
+                $from_date = date('Y-m-d', strtotime($start_date));
+                //
+                $to_date = date('Y-m-t', strtotime($current_date));
+            } else {
+                // 
+                $from_date = date('Y-m-d', strtotime($start_date));
+                //
+                $to_date = date('Y-m-d', strtotime($end_date));
+            }
+            
+            $sms_data = $this->reports_model->get_sms_data($company_sid, $from_date, $to_date);
+
+            $data_to_show = array();
+
+            if(!empty($sms_data)) {
+                $total_amount = 0;
+                foreach ($sms_data as $key => $sms) {
+                    //
+                    $receiver_name = '';
+                    $user_type = '';
+                    //
+                    if ($sms['module_slug'] == 'ats') {
+                        $receiver_name = get_applicant_name($sms['receiver_user_id']);
+                        $user_type = 'Applicant';
+                    } else {
+                        $receiver_name = getUserNameBySID($sms['receiver_user_id']);
+                        $user_type = 'Employee';
+                    }
+                    //
+                    $sender_name = getUserNameBySID($sms['sender_user_id']);
+                    //
+                    $data_to_show[$key]['receiver_name'] = $receiver_name;
+                    $data_to_show[$key]['sender_name'] = $sender_name;
+                    $data_to_show[$key]['message'] = $sms['message_body'];
+                    $data_to_show[$key]['sender_phone_number'] = $sms['sender_phone_number'];
+                    $data_to_show[$key]['receiver_phone_number'] = $sms['receiver_phone_number'];
+                    $data_to_show[$key]['user_type'] = $sms['receiver_phone_number'];
+
+                    $data_to_show[$key]['sent'] = $sms['is_sent'] == 1 ? 'Sent' : 'Not Sent';
+                    $data_to_show[$key]['read'] = $sms['is_read'] == 1 ? 'Yes' : 'No';
+                    $data_to_show[$key]['date'] = date_format(new DateTime($sms['created_at']), 'M d Y h:m a');
+                    $data_to_show[$key]['amount'] = number_format($sms['charged_amount'], 2, '.', '');
+
+                    $total_amount = $total_amount + $sms['charged_amount'];
+                }
+
+                $grand_total = number_format($total_amount, 2, '.', '');
+            }
+
+            $data['sms_data'] = $data_to_show;
+            $data['grand_total'] = $grand_total;
+            $data['company_name'] = getCompanyNameBySid($company_sid);
+            $data['title'] = 'SMS Service Reports';
+
+            $this->load->view('main/header', $data);
+            $this->load->view('reports/sms_company_report');
+            $this->load->view('main/footer');
+
+        } else {
+
+        }
+    }
+
 }

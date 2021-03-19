@@ -1766,7 +1766,7 @@ class Companies extends Admin_Controller {
         }
     }
 
-     function footer_logo ($company_sid = null) {
+    function footer_logo ($company_sid = null) {
         if ($company_sid == NULL || $company_sid == '' || $company_sid == 0) {
             $this->session->set_flashdata('message', 'Company not found!');
             redirect('manage_admin/companies/', 'refresh');
@@ -2192,6 +2192,177 @@ class Companies extends Admin_Controller {
         } else{
             echo 'Not Authentic';
         }
+    }
+
+    /**
+     * Get phone number from twilio
+     * Created on: 16-03-2021
+     *
+     * @param $zip Integer
+     *
+     * @return VOID
+     */
+    public function get_Phone_number_list ($zip = null) {
+        // Load twilio library
+        $this->load->library('twilio/Twilioapp', null, 'twilio');
+        //
+        $send_array = array();
+        if (!empty($zip) || $zip != '') {
+            $send_array['areacode'] = $zip;
+        } else {
+            $send_array['areacode'] = 951;
+        }
+        // Fetch numbers list
+        $number_list = $this
+            ->twilio
+            ->setMode('production')
+            ->setCountryISO('US')
+            ->availableLocalPhoneNumbers($send_array, 20);
+
+
+        $res['Status'] = empty($number_list['Error']) ? true : false;
+        $res['Response'] = empty($number_list['Error']) ? 'Number List Found.' : $number_list['Error'];
+        $res['list'] = $number_list;
+        //
+        header('Content-Type: application/json');
+        echo json_encode($res);
+        exit(0);     
+    }
+
+    /**
+     * Purchase phone number from twilio
+     * Created on: 17-03-2021
+     *
+     * @param $Phone_num Integer
+     * @param $company_sid Integer
+     *
+     * @return VOID
+     */
+    public function purchase_phone_number () {
+
+        // Load twilio library
+        $this->load->library('twilio/Twilioapp', null, 'twilio');
+        //
+        $actual_phone_number = $_POST['actual_phone_number'];
+        //
+        $number_to_buy = $_POST['phone_number'];
+        //
+        $company_sid = $_POST['company_sid'];
+        // Purchase phone number
+        // $resp = $this
+        //     ->twilio
+        //     ->setReservePhone($number_to_buy)
+        //     ->incomingPhoneNumbers();
+
+        $response = array();    
+
+        if(!isset($resp['Error'])) {
+            // $MessageServiceCode = $resp['Sid'];    
+            $MessageServiceCode = 'MG2798b7fc2bce2a1c7121f5aaf809c298';  
+
+            $check_row = $this->company_model->check_company_row_exist($company_sid);
+
+            if(!$check_row){
+                $this
+                ->company_model
+                ->save_company_phone_number(array(
+                    'company_sid' => $company_sid,
+                    'phone_sid' => $MessageServiceCode,
+                    'phone_number' => $actual_phone_number,
+                    'purchaser_type' => 'admin',
+                    'purchaser_id' => $this->ion_auth->user()->row()->id
+                ));
+            } else {
+                $data_to_update = array();
+                $data_to_update['phone_sid'] = $MessageServiceCode;
+                $data_to_update['phone_number'] = $actual_phone_number;
+                $data_to_update['purchaser_type'] = 'admin';
+                $data_to_update['purchaser_id'] = $this->ion_auth->user()->row()->id;
+                //
+                $this
+                ->company_model
+                ->update_company_phone_number($company_sid, $data_to_update);
+            }
+
+            
+
+            $response['Status'] = true;
+            $response['Response'] = 'You have successfully purchased this number ('.$number_to_buy.').';
+        } else {
+            $response['Status'] = false;
+            $response['Response'] = $resp['Error'];
+        } 
+        //
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit(0);     
+    }
+
+    /**
+     * Create meassage service for company
+     * Created on: 17-03-2021
+     *
+     * @param $service_name String
+     * @param $company_sid Integer
+     *
+     * @return VOID
+     */
+    public function create_message_service () {
+        $response = array();
+        // Load twilio library
+        $this->load->library('twilio/Twilioapp', null, 'twilio');
+        //
+        $service_name = $_POST['service_name'];
+        //
+        if (strlen($service_name) > 11) {
+            $response['Status'] = false;
+            $response['Response'] = "Maximum 11 characters allowed.";
+        } else {
+            //
+            $company_sid = $_POST['company_sid'];
+            //
+            $service_code = $_POST['service_code'];
+            //
+            $service_sid = $_POST['service_sid'];            
+            //
+            if ($service_sid != 'no') {
+                $this->twilio->deleteMessageService($service_sid);
+            }
+            //
+            $resp = $this
+                ->twilio
+                ->setMode('production')
+                ->setAlfaSenderName($service_name)
+                ->setMessageServiceCode(
+                    array(
+                        'company_id' => $company_sid
+                    )
+                )
+                ->setMessageServicePhoneSid($service_code)
+                ->createMessageService();
+
+            if(!isset($resp['Error'])) {
+                $data_to_update = array();
+                $data_to_update['alfa_sender_sid'] = $resp['AlfaSid'];
+                $data_to_update['phone_number'] = $resp['AlfaName'];
+                $data_to_update['message_service_sid'] = $resp['Sid'];
+                $data_to_update['message_service_name'] = $resp['MessageServiceCode'];
+                //
+                $this
+                ->company_model
+                ->update_company_phone_number($company_sid, $data_to_update);
+
+                $response['Status'] = true;
+                $response['Response'] = 'You have successfully created message service.';
+            } else {
+                $response['Status'] = false;
+                $response['Response'] = $resp['Error'];
+            }
+        }
+        //
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit(0);     
     }
 
 

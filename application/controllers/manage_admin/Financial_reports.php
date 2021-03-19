@@ -1028,4 +1028,100 @@ class Financial_reports extends Admin_Controller
 
         }
     }
+
+    public function sms_service_report($company = 'all', $start_date = null, $end_date = null){
+        // ** Check Security Permissions Checks - Start ** //
+        $redirect_url = 'manage_admin/financial_reports';
+        $function_name = 'sms_service_report';
+
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        // ** Check Security Permissions Checks - End ** //
+
+        if($this->form_validation->run() == false){
+            $from_date = '';
+            $to_date = '';
+            $grand_total = '';
+            //
+            $current_date = date('Y-m-d H:i:s');
+            //
+            if ((empty($start_date) && empty($end_date)) || ($start_date == 'all' && $end_date == 'all')) {
+                // First day of the current month.
+                $from_date = date('Y-m-01', strtotime($current_date));
+                // Last day of the current month.
+                $to_date = date('Y-m-t', strtotime($current_date));
+            } else if ($start_date == 'all' && ($end_date != 'all' || !empty($end_date))) {
+                $from_date = date('Y-m-01', strtotime($end_date));
+                //
+                $to_date = date('Y-m-d', strtotime($end_date));
+
+            } else if (($start_date != 'all' || !empty($start_date)) && $end_date == 'all') {
+                // 
+                $from_date = date('Y-m-d', strtotime($start_date));
+                //
+                $to_date = date('Y-m-t', strtotime($current_date));
+            } else {
+                // 
+                $from_date = date('Y-m-d', strtotime($start_date));
+                //
+                $to_date = date('Y-m-d', strtotime($end_date));
+            }
+            
+            $sms_data = $this->financial_reports_model->get_sms_data($company, $from_date, $to_date);
+
+            $data_to_show = array();
+
+            if(!empty($sms_data)) {
+                $total_amount = 0;
+                foreach ($sms_data as $key => $sms) {
+                    $company_name = getCompanyNameBySid($sms['company_id']);
+                    //
+                    $receiver_name = '';
+                    $user_type = '';
+                    //
+                    if ($sms['module_slug'] == 'ats') {
+                        $receiver_name = get_applicant_name($sms['receiver_user_id']);
+                        $user_type = 'Applicant';
+                    } else {
+                        $receiver_name = getUserNameBySID($sms['receiver_user_id']);
+                        $user_type = 'Employee';
+                    }
+                    //
+                    $sender_name = getUserNameBySID($sms['sender_user_id']);
+                    //
+                    $data_to_show[$key]['company_name'] = $company_name;
+                    $data_to_show[$key]['receiver_name'] = $receiver_name;
+                    $data_to_show[$key]['sender_name'] = $sender_name;
+                    $data_to_show[$key]['message'] = $sms['message_body'];
+                    $data_to_show[$key]['sender_phone_number'] = $sms['sender_phone_number'];
+                    $data_to_show[$key]['receiver_phone_number'] = $sms['receiver_phone_number'];
+                    $data_to_show[$key]['user_type'] = $sms['receiver_phone_number'];
+
+                    $data_to_show[$key]['sent'] = $sms['is_sent'] == 1 ? 'Sent' : 'Not Sent';
+                    $data_to_show[$key]['read'] = $sms['is_read'] == 1 ? 'Yes' : 'No';
+                    $data_to_show[$key]['date'] = date_format(new DateTime($sms['created_at']), 'M d Y h:m a');
+                    $data_to_show[$key]['amount'] = number_format($sms['charged_amount'], 2, '.', '');
+
+                    $total_amount = $total_amount + $sms['charged_amount'];
+                }
+
+                $grand_total = number_format($total_amount, 2, '.', '');
+            }
+            //
+            $companies = $this->financial_reports_model->get_all_companies();
+
+            $this->data['sms_data'] = $data_to_show;
+            $this->data['grand_total'] = $grand_total;
+            $this->data['companies'] = $companies;
+
+
+            $this->data['page_title'] = 'SMS Service Reports';
+            $this->render('manage_admin/financial_reports/sms_service_report', 'admin_master');
+
+        } else {
+
+        }
+    }
 }
