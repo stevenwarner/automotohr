@@ -492,6 +492,12 @@ $(function() {
             return;
         }
         //
+        if (pm.allEmployees === undefined) {
+            setTimeout(function() {
+                setView(goals);
+            }, 1000);
+        }
+        //
         let rows = '<div class="row">';
         //
         goals.map((goal) => {
@@ -507,19 +513,18 @@ $(function() {
                 //
                 if (pm.employee.level != 1) {
                     //
-                    let cem = getEmployee(pm.employerId, 'userId');
+                    let cem = getEmployee(pm.employerId, 'Id');
                     //
-                    if ($.inArray(cem.access_level.toLowerCase(), roles) !== -1) {
-                        hasAccess = true;
-                    } else if ($.inArray(cem.teamIds, teams) !== -1) {
-                        hasAccess = true;
-                    } else if ($.inArray(cem.departmentIds, departments) !== -1) {
-                        hasAccess = true;
-                    } else if ($.inArray(cem.userId, employees) !== -1) {
+                    if (
+                        $.inArray(cem.Role.toLowerCase(), roles) !== -1 ||
+                        $.inArray(cem.DT.Teams, teams) !== -1 ||
+                        $.inArray(cem.DT.Departments, departments) !== -1 ||
+                        $.inArray(cem.Id, employees) !== -1
+                    ) {
                         hasAccess = true;
                     }
-                } else hasAccess = true;
-            } else hasAccess = true;
+                } else { hasAccess = true; }
+            } else { hasAccess = true; }
             //
             if (goal.employee_sid != pm.employerId && !hasAccess) {
 
@@ -595,15 +600,15 @@ $(function() {
             rows += `                    <!-- Employee -->`;
             rows += `                    <div class="col-sm-12 col-xs-12">`;
             if (filter.type == 1) {
-                let em = getEmployee(goal.employee_sid, 'userId');
+                let em = getEmployee(goal.employee_sid, 'Id');
                 rows += `                        <div class="csEBox">`;
                 rows += `                            <figure>`;
-                rows += `                                <img src="${getImageURL(em.image)}" />`;
+                rows += `                                <img src="${getImageURL(em.Image)}" />`;
                 rows += `                            </figure>`;
                 rows += `                            <div class="csEBoxText">`;
-                rows += `                                <h4 class="mb0 ma10 csF16 csB7">${em.first_name} ${em.last_name}</h4>`;
-                rows += `                                <p class="mb0 csF16">${remakeEmployeeName(em, false)}</p>`;
-                rows += `                                <p class="csF16">#${getEmployeeId(em.userId, em.employee_number)}</p>`;
+                rows += `                                <h4 class="mb0 ma10 csF16 csB7">${em.FirstName} ${em.LastName}</h4>`;
+                rows += `                                <p class="mb0 csF16">${em.FullRole}</p>`;
+                rows += `                                <p class="csF16">#${em.EmployeeNumber}</p>`;
                 rows += `                            </div>`;
                 rows += `                        </div>`;
             } else {
@@ -846,7 +851,7 @@ $(function() {
     function setHistoryView(data, modalId, loader) {
         //
         if (data.length === 0) {
-            $(`#${modalId} .csModalBody`).html('<p class="alert alert-info text">No history found.</p>');
+            $(`#${modalId} .csModalBody`).html('<p class="alert alert-info text csF24 csB7">No history found.</p>');
             ml(false, loader);
             return;
         }
@@ -863,10 +868,13 @@ $(function() {
         rows += '       </tr>';
         rows += '   </thead>';
         //
-        data.map((history) => {
-            let em = getEmployee(history.employee_sid, 'userId');
+        data.map((history, i) => {
+            let em = getEmployee(history.employee_sid, 'Id');
             rows += `<tr>`;
-            rows += `   <td class="csF16">${getAction(JSON.parse(history.note), history.action, em)}</td>`;
+            rows += `   <td class="csF16">${getAction(
+                JSON.parse(history.note), 
+                history.action, em
+            )}</td>`;
             rows += `   <td class="csF16">${moment(history.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</td>`;
             rows += `</tr>`;
         });
@@ -883,18 +891,33 @@ $(function() {
     /**
      * 
      */
-    function getAction(o, action, em) {
+    function getAction(current, action, em) {
         //
         let row = '-';
+        //
         if (action == 'created') {
-            row = `<strong>${remakeEmployeeName(em)}</strong> created the goal.`;
+            row = `<p class="csF16"><h6 class="csF16 csB7">${em.FirstName} ${em.LastName} ${em.FullRole}</h6> Created the goal.</p>`;
         } else if (action == 'updated') {
-            row = `<strong>${remakeEmployeeName(em)}</strong> updated the goal.`;
+            row = `<p class="csF16"><h6 class="csF16 csB7">${em.FirstName} ${em.LastName} ${em.FullRole}</h6> Updated the goal.</p>`;
         } else if (action == 'commented') {
-            row = `<strong>${remakeEmployeeName(em)}</strong> commented on the goal.`;
+            row = `<p class="csF16"><h6 class="csF16 csB7">${em.FirstName} ${em.LastName} ${em.FullRole}</h6> Commented on the goal.</p>`;
         }
         //
-        return row;
+        let cRow = '';
+        //
+        if (current.target !== undefined) {
+            cRow += '<p class="csF16">Changed target to ' + current.target + '</p>';
+        }
+        //
+        if (current.completed_target !== undefined) {
+            cRow += '<p class="csF16">Changed completed target to ' + current.completed_target + '</p>';
+        }
+        //
+        if (current.on_track !== undefined) {
+            cRow += '<p class="csF16">Changed completed track to ' + (current.on_track == 1 ? "On Track" : "Off Track") + '</p>';
+        }
+        //
+        return row + cRow;
     }
     //
     function getTeamName(teamId) {

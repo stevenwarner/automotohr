@@ -304,7 +304,7 @@ function getNoShow(type) {
     let html = '';
     let buttons = '';
     let message;
-    html += '<h1 class="alert text-center csF16 csB7">{{message}}<br /><br />';
+    html += '<h1 class="alert text-center csF24 csB7">{{message}}<br /><br />';
     html += '{{buttons}}';
     html += '</h1>';
     //
@@ -315,14 +315,14 @@ function getNoShow(type) {
         type == 'review_draft' ||
         type == 'review_active'
     ) {
-        buttons = '<a href="' + (pm.urls.base) + 'performance-management/review/create" class="btn btn-orange csF16"><em class="fa fa-plus-circle csF16"></em> CREATE A REVIEW</a>';
+        buttons = '<a href="' + (pm.urls.base) + 'performance-management/review/create" class="btn btn-orange csF16"><em class="fa fa-plus-circle csF16"></em> Crate A Review</a>';
     } else if (
         type == 'goal_1' ||
         type == 'goal_2' ||
         type == 'goal_3' ||
         type == 'goal_4'
     ) {
-        buttons = '<button class="btn btn-orange jsCreateGoal csF16"><em class="fa fa-plus-circle csF16"></em> CREATE A GOAL</button>';
+        buttons = '<button class="btn btn-orange jsCreateGoal csF16"><em class="fa fa-plus-circle csF16"></em> Create A Goal</button>';
     }
     //
     return html.replace(/{{message}}/i, message).replace(/{{.*}}/ig, buttons);
@@ -611,8 +611,6 @@ function getEmployee(employeeId, index) {
     //
     for (i; i < il; i++) {
         if (pm.allEmployees[i][index] == employeeId) {
-            pm.allEmployees[i]['image'] = pm.allEmployees[i]['image'] === undefined ? pm.allEmployees[i]['profile_picture'] : pm.allEmployees[i]['image'];
-
             return pm.allEmployees[i];
         }
     }

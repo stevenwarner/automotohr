@@ -568,12 +568,13 @@ class Performance_management_model extends CI_Model{
             first_name,
             last_name,
             profile_picture,
-            sid as userId,
+            sid,
             access_level,
             access_level_plus,
             pay_plan_flag,
             is_executive_admin,
             employee_type,
+            employee_number,
             job_title,
             IF(joined_at is null, registration_date, joined_at) as joined_at
         ')
@@ -595,7 +596,7 @@ class Performance_management_model extends CI_Model{
                 //
                 $t = [];
                 //
-                $t['Id'] = $v['userId'];
+                $t['Id'] = $v['sid'];
                 $t['FirstName'] = $v['first_name'];
                 $t['LastName'] = $v['last_name'];
                 $t['FullRole'] = trim(remakeEmployeeName($v, false));
@@ -604,12 +605,14 @@ class Performance_management_model extends CI_Model{
                 $t['JoinedAt'] = $v['joined_at'];
                 $t['Type'] = $v['employee_type'];
                 $t['Image'] = $v['profile_picture'];
+                $t['EmployeeNumber'] = empty($v['employee_number']) ? 
+                $v['sid'] : $v['employee_number'];
                 $t['Level'] = $v['access_level_plus'] == 1 || $v['pay_pan_flag'] == 1 ? 1 : 0;
                 // Get current employee team and department ids
-                $t['DT'] = $this->getEmployeeDTR($v['userId'], $v['access_level']);
+                $t['DT'] = $this->getEmployeeDTR($v['sid'], $v['access_level']);
                 //
-                if(isset($reportingManagers[$v['userId']])){
-                    $t['Manager'] = $reportingManagers[$v['userId']];
+                if(isset($reportingManagers[$v['sid']])){
+                    $t['Manager'] = $reportingManagers[$v['sid']];
                 } else{
                     $t['Manager'] = ['Department' => [], 'Teams' => []];
                 }

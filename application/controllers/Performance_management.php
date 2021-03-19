@@ -1189,7 +1189,7 @@ class Performance_management extends Public_Controller{
                 $ins['goal_sid'] = $insertId;
                 $ins['employee_sid'] = $pargs['employerId'];
                 $ins['action'] = 'created';
-                $ins['note'] = '[]';
+                $ins['note'] = json_encode(['target'=> $goal['target']]);
                 //
                 $this->pmm->_insert($this->tables['GH'], $ins);
                 //
