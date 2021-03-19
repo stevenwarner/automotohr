@@ -16,6 +16,7 @@ $(function() {
      * 
      */
     $('.jsQuestionNA').click(function() {
+        alert('sadas');
         //
         saveQuestion(
             $(this).closest('.jsQuestionBox').data('id'),
@@ -40,6 +41,7 @@ $(function() {
      * 
      */
     $('.jsQuestionBox li').click(function() {
+
         //
         $(this).closest('.jsQuestionBox').find('li').removeClass('active');
         $(this).addClass('active');
@@ -116,6 +118,7 @@ $(function() {
         //
         if (oldQuestion !== JSON.stringify(questions[questionId]))
             saveAnswer(questions[questionId], questionId);
+
     }
 
 
@@ -123,6 +126,7 @@ $(function() {
      * 
      */
     function saveAnswer(question, questionId) {
+        if (!pm.isAllowed) return false;
         //
         $.post(
             pm.urls.handler, {
@@ -151,7 +155,8 @@ $(function() {
             pm.urls.handler, {
                 action: "save_bulk_answer",
                 questions: questions,
-                revieweeId: pm.Pem
+                revieweeId: pm.Pem,
+                reviewId: pm.Id
             }, (resp) => {
                 ml(false, loaderName);
                 if (resp.Redirect === true) {

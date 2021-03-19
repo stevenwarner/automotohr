@@ -460,6 +460,11 @@ class Dashboard extends Public_Controller {
             );
             
             $data['theme'] = 2;
+           
+            //
+            $this->load->model('performance_management_model', 'pmm');
+            // $data['review'] = $this->pmm->getMyGoals($data['employee']['sid']);
+            $data['total_goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
 
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
@@ -766,6 +771,10 @@ class Dashboard extends Public_Controller {
             $data['theme'] = 2;
 
             $this->session->set_userdata('time_off_theme', $data['theme']);
+
+            //
+            $this->load->model('performance_management_model', 'pmm');
+            $data['goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
 
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');

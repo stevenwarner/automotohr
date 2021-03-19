@@ -90,10 +90,10 @@ class Performance_management extends Public_Controller{
         //
         if(!empty($employees)){
             foreach($employees as $employee){
-                $this->pargs['employees'][$employee['userId']] = [
-                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
-                    'role' => remakeEmployeeName($employee, false),
-                    'img' => getImageURL($employee['image'])
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image'])
                 ];
             }
         }
@@ -106,6 +106,7 @@ class Performance_management extends Public_Controller{
         $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
         // Get department & teams list
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // My goals
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -135,8 +136,32 @@ class Performance_management extends Public_Controller{
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
-        // $this->load->view("{$this->pp}add_reviewee", $this->pargs);
         $this->load->view("{$this->pp}reviews/{$this->mp}index", $this->pargs);
+        $this->load->view("{$this->pp}footer", $this->pargs);
+        $this->load->view("main/footer");
+    }
+
+    /**
+     * Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function report(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Report';
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+
+        $this->load->view("main/header", $this->pargs);
+        $this->load->view("{$this->pp}header", $this->pargs);
+        $this->load->view("{$this->pp}report", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
     }
@@ -162,10 +187,10 @@ class Performance_management extends Public_Controller{
         //
         if(!empty($employees)){
             foreach($employees as $employee){
-                $this->pargs['employees'][$employee['userId']] = [
-                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
-                    'role' => remakeEmployeeName($employee, false),
-                    'img' => getImageURL($employee['image'])
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image'])
                 ];
             }
         }
@@ -175,12 +200,52 @@ class Performance_management extends Public_Controller{
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         //
         $this->pargs['review'] = $this->pmm->getReview($reviewId);
+        $this->pargs['review']['sid'] = $reviewId;
         //
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
         $this->load->view("{$this->pp}reviews/{$this->mp}review", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
+    }
+
+    /**
+     * Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function lms_reviews(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Reviews';
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        $this->pargs['employee'] = $this->pargs['employerDetails'];
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        $this->pargs['gp'] = true;
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image'])
+                ];
+            }
+        }
+        $this->pargs['Reviews'] = $this->pmm->getLMSReviews($this->pargs['employerId'], $this->pargs['companyId']);
+
+        $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
+        $this->load->view("{$this->pp}header", $this->pargs);
+        $this->load->view("{$this->pp}lms/reviews/{$this->mp}index", $this->pargs);
+        $this->load->view("main/footer", $this->pargs);
     }
     
     /**
@@ -204,11 +269,11 @@ class Performance_management extends Public_Controller{
         //
         if(!empty($employees)){
             foreach($employees as $employee){
-                $this->pargs['employees'][$employee['userId']] = [
-                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
-                    'role' => remakeEmployeeName($employee, false),
-                    'img' => getImageURL($employee['image']),
-                    'joined' => formatDate($employee['joined_at'], 'Y-m-d', 'M d D, Y')
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image']),
+                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
                 ];
             }
         }
@@ -221,7 +286,7 @@ class Performance_management extends Public_Controller{
         $this->pargs['pid'] = $reviewId;
         $this->pargs['pem'] = $employeeId;
 
-        _e($this->pargs['review'], true, true);
+        $this->pargs['isAllowed'] = in_array($this->pargs['employerId'], array_column($this->pargs['review']['Reviewer'], 'reviewer_sid'));
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
@@ -251,11 +316,11 @@ class Performance_management extends Public_Controller{
         //
         if(!empty($employees)){
             foreach($employees as $employee){
-                $this->pargs['employees'][$employee['userId']] = [
-                    'name' => ucwords($employee['first_name'].' '.$employee['last_name']),
-                    'role' => remakeEmployeeName($employee, false),
-                    'img' => getImageURL($employee['image']),
-                    'joined' => formatDate($employee['joined_at'], 'Y-m-d', 'M d D, Y')
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image']),
+                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
                 ];
             }
         }
@@ -266,16 +331,14 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
         $this->pargs['pid'] = $reviewId;
-        $this->pargs['pem'] = $employeeId;
-        
-        // _e(
-        //     $this->pargs['review'],
-        //     true, true
-        // );
+        $this->pargs['pem'] = $employeeId;        
+        $this->pargs['isAllowed'] = false;
+        foreach($this->pargs['review']['Reviewer'] as $ft){
+            if($ft['reviewer_sid'] == $this->pargs['employerId'] && $employeeId == $ft['reviewee_sid']){$this->pargs['isAllowed'] = true;}
+        }
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
-        // $this->load->view("{$this->pp}reviews/{$this->mp}preview", $this->pargs);
         $this->load->view("{$this->pp}reviews/{$this->mp}reviewer_feedback", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
@@ -289,7 +352,7 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function create_review(){
+    function create_review($id = 0){
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -306,12 +369,50 @@ class Performance_management extends Public_Controller{
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         // Get job titles
         $this->pargs['jobTitles'] = $this->pmm->getCompanyJobTitles($this->pargs['companyId']);
+        //
+        if($id != 0){
+            $this->pargs['review'] = $this->pmm->getReviewById($id, '*', 0, ['is_draft' => 1]);
+        }
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
         $this->load->view("{$this->pp}reviews/{$this->mp}create", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
+    }
+    
+    /**
+     * Goals - Create Goal
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/04/2021
+     * 
+     * @return Void
+     */
+    function download(
+        $type,
+        $reviewId = 0,
+        $revieweeId = 0,
+        $reviewerId = 0
+    ){
+        // 
+        $this->checkLogin($this->pargs);
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image']),
+                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
+                ];
+            }
+        }
+        //
+        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $revieweeId, $reviewerId);
+        $this->load->view("{$this->pp}reviews/download_q", $this->pargs);
     }
     
     /**
@@ -383,12 +484,157 @@ class Performance_management extends Public_Controller{
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
         // Get employer role
         $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        $this->pargs['gp'] = true;
         //
         $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
         $this->load->view("{$this->pp}lms/goals/{$this->mp}view", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
+    }
+    
+    /**
+     * Goals - List Goal
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/08/2021
+     * 
+     * @return Void
+     */
+    function gp_goals($sid){
+        // 
+        $this->checkLogin($this->pargs);
+        // // Set title
+        $this->pargs['title'] = 'Performance Management - List Goals';
+        $this->pargs['employee'] = $this->pargs['employerDetails'];
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+
+        $this->pargs['right_bar'] = employee_right_nav($sid);
+        //
+        $this->load->model('dashboard_model');
+        $this->load->model('application_tracking_system_model');
+        //
+        $this->pargs['sid'] = $sid;
+        //
+        $this->pargs['employer'] = $this->pargs['employer'] = $this->dashboard_model->get_company_detail($sid);
+        
+        // Added on: 04-07-2019
+        if (empty($this->pargs['employer']['resume'])) { // check if reseme is uploaded
+            $this->pargs['employer']['resume_link'] = "javascript:void(0);";
+            $this->pargs['resume_link_title'] = "No Resume found!";
+        } else {
+            $this->pargs['employer']['resume_link'] = AWS_S3_BUCKET_URL . $this->pargs['employer']['resume'];
+            $this->pargs['resume_link_title'] = $this->pargs['employer']['resume'];
+        }
+        
+        if (empty($this->pargs['employer']['cover_letter'])) { // check if cover letter is uploaded
+            $this->pargs['employer']["cover_link"] = "javascript:void(0)";
+            $this->pargs['cover_letter_title'] = "No Cover Letter found!";
+        } else {
+            $this->pargs['employer']["cover_link"] = AWS_S3_BUCKET_URL . $this->pargs['employer']['cover_letter'];
+            $this->pargs['cover_letter_title'] = $this->pargs['employer']['cover_letter'];
+        }
+        //
+        $this->pargs['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
+        $this->pargs['pp'] = $this->pp;
+        $this->pargs['gp'] = true;
+        $this->pargs['employeeId'] = $sid;
+        //
+        $this->load->view("main/header", $this->pargs);
+        $this->load->view("{$this->pp}header", $this->pargs);
+        $this->load->view("{$this->pp}gp/goals/{$this->mp}index", $this->pargs);
+        $this->load->view("{$this->pp}footer", $this->pargs);
+        $this->load->view("main/footer");
+    }
+    
+    /**
+     * Goals - List Goal
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/08/2021
+     * 
+     * @return Void
+     */
+    function gp_reviews($sid){
+        // 
+        $this->checkLogin($this->pargs);
+        // // Set title
+        $this->pargs['title'] = 'Performance Management - List Reviews';
+        $this->pargs['employee'] = $this->pargs['employerDetails'];
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+
+        $this->pargs['right_bar'] = employee_right_nav($sid);
+        //
+        $this->load->model('dashboard_model');
+        $this->load->model('application_tracking_system_model');
+        //
+        $this->pargs['sid'] = $sid;
+        //
+        $this->pargs['employer'] = $this->pargs['employer'] = $this->dashboard_model->get_company_detail($sid);
+        
+        // Added on: 04-07-2019
+        if (empty($this->pargs['employer']['resume'])) { // check if reseme is uploaded
+            $this->pargs['employer']['resume_link'] = "javascript:void(0);";
+            $this->pargs['resume_link_title'] = "No Resume found!";
+        } else {
+            $this->pargs['employer']['resume_link'] = AWS_S3_BUCKET_URL . $this->pargs['employer']['resume'];
+            $this->pargs['resume_link_title'] = $this->pargs['employer']['resume'];
+        }
+        
+        if (empty($this->pargs['employer']['cover_letter'])) { // check if cover letter is uploaded
+            $this->pargs['employer']["cover_link"] = "javascript:void(0)";
+            $this->pargs['cover_letter_title'] = "No Cover Letter found!";
+        } else {
+            $this->pargs['employer']["cover_link"] = AWS_S3_BUCKET_URL . $this->pargs['employer']['cover_letter'];
+            $this->pargs['cover_letter_title'] = $this->pargs['employer']['cover_letter'];
+        }
+        //
+        $this->pargs['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
+        $this->pargs['pp'] = $this->pp;
+        $this->pargs['gp'] = true;
+        $this->pargs['employeeId'] = $sid;
+        //
+        $this->load->view("main/header", $this->pargs);
+        $this->load->view("{$this->pp}header", $this->pargs);
+        $this->load->view("{$this->pp}gp/reviews/{$this->mp}index", $this->pargs);
+        $this->load->view("{$this->pp}footer", $this->pargs);
+        $this->load->view("main/footer");
+    }
+    
+    /**
+     * Goals - List Goal
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/08/2021
+     * 
+     * @return Void
+     */
+    function gp_review($reviewId, $revieweeId, $reviewerId = 0){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Reviews';
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        $this->pargs['employee'] = $this->pargs['employerDetails'];
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        $this->pargs['gp'] = true;
+        $this->pargs['pid'] = $reviewId;
+        $this->pargs['pem'] = $revieweeId;
+        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $revieweeId, $this->pargs['employerId']);
+        $this->pargs['isAllowed'] = in_array($reviewerId, array_column($this->pargs['review']['Reviewer'], 'reviewer_sid'));
+
+        $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
+        $this->load->view("{$this->pp}header", $this->pargs);
+        $this->load->view("{$this->pp}lms/reviews/{$this->mp}single", $this->pargs);
+        $this->load->view("main/footer", $this->pargs);
     }
 
     /**
@@ -747,15 +993,19 @@ class Performance_management extends Public_Controller{
                     //
                     $revieweeId = $k;
                     $reviewers = [];
-                    $reviewers = !empty($reviewer['reporting_manager']) ? array_merge($reviewers, array_keys($reviewer['reporting_manager'])) : $reviewers;
-                    $reviewers = !empty($reviewer['self_review']) ? array_merge($reviewers, array_keys($reviewer['self_review'])) : $reviewers;
-                    $reviewers = !empty($reviewer['peer']) ? array_merge($reviewers, array_keys($reviewer['peer'])) : $reviewers;
-                    $reviewers = !empty($reviewer['specific']) ? array_merge($reviewers, array_keys($reviewer['specific'])) : $reviewers;
+                    $reviewers = !empty($reviewer['reporting_manager']) ? 
+                    array_merge($reviewers, $reviewer['reporting_manager']) : $reviewers;
+                    $reviewers = !empty($reviewer['self_review']) ? 
+                    array_merge($reviewers, $reviewer['self_review']) : $reviewers;
+                    $reviewers = !empty($reviewer['peer']) ? 
+                    array_merge($reviewers, $reviewer['peer']) : $reviewers;
+                    $reviewers = !empty($reviewer['specific']) ? 
+                    array_merge($reviewers, $reviewer['specific']) : $reviewers;
                     if(!empty($reviewer['custom'])){
-                        $reviewers = array_merge($reviewers, array_keys($reviewer['custom']));
+                        $reviewers = array_merge($reviewers, $reviewer['custom']);
                         //
                         if(!empty($reviewer['excluded'])){
-                            $reviewers = array_diff($reviewers, array_keys($reviewer['excluded']));
+                            $reviewers = array_diff($reviewers, $reviewer['excluded']);
                         }
                     }
                     //
@@ -958,7 +1208,7 @@ class Performance_management extends Public_Controller{
                 $ins['goal_sid'] = $insertId;
                 $ins['employee_sid'] = $pargs['employerId'];
                 $ins['action'] = 'created';
-                $ins['note'] = '[]';
+                $ins['note'] = json_encode(['target'=> $goal['target']]);
                 //
                 $this->pmm->_insert($this->tables['GH'], $ins);
                 //
@@ -1070,6 +1320,38 @@ class Performance_management extends Public_Controller{
                 //
                 res($this->resp);
             break;
+           
+            //
+            case "remove_reviewee":
+                //
+                $this->pmm->removeReviewee(
+                    $params['reviewId'],
+                    $params['id']
+                );
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
+                //
+                res($this->resp);
+            break;
+            
+            case "update_review_period":
+                //
+                $this->pmm->_update(
+                    'performance_management_reviewees', [
+                        'start_date' => DateTime::createfromformat('m/d/Y', $params['startDate'])->format('Y-m-d'),
+                        'end_date' => DateTime::createfromformat('m/d/Y', $params['endDate'])->format('Y-m-d')
+                    ], [
+                        'review_sid' => $params['reviewId'],
+                        'reviewee_sid' => $params['revieweeId']
+                    ]
+                );
+                //
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed';
+                //
+                res($this->resp);
+            break;
 
             //
             case "save_answer":
@@ -1137,6 +1419,19 @@ class Performance_management extends Public_Controller{
                         );
                     }
                 endforeach;
+                //
+                $this->pmm->_update(
+                    'performance_management_reviewers',
+                    [
+                        'is_completed' => 1
+                    ],
+                    [
+                        'review_sid' => $params['reviewId'],
+                        'reviewee_sid' => $params['revieweeId'],
+                        'reviewer_sid' => $pargs['employerId']
+                    ]
+                );
+                //
                 $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed';
                 //
@@ -1214,4 +1509,13 @@ class Performance_management extends Public_Controller{
         // Get template
         $template =  $this->pmm->getEmailTemplate(REVIEW_ADDED);
     }
+
+
+
+    // function test($id){
+    //     //
+    //     $record = $this->pmm->checkAndGetRole($id);
+
+    //     _e($record);
+    // }
 }

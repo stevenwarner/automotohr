@@ -153,7 +153,7 @@
 
         <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
         <!-- Performance Management  -->
-            <?php $this->load->view("{$pp}styles"); ?>
+            <?php  $this->load->view("{$pp}styles"); ?>
         <?php }?>
 
         <!-- Bable -->
@@ -439,6 +439,11 @@
                                     <li>
                                         <img src="<?= base_url() ?>assets/images/canada.png">
                                     </li>
+                                    <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
+                                        <li class="mr0 pr0"><a class="csSizeHandler csB7 jsIncreaseSize" title="Increase font size" placement="auto">A</a></li>
+                                        <li class="ml0 pl0"><a class="csSizeHandler csSizeHandler2 jsDecreaseSize" title="Decrease font size" placement="auto">A</a></li>
+                                        <li class="ml0 pl0"><a class="csSizeHandler csSizeHandler2 jsResetSize" title="Reset font size" placement="auto">Reset</a></li>
+                                    <?php } ?>
                                 </ul>
                             </div>
                             <?php if (!$this->session->userdata('logged_in')) { ?>
@@ -1262,12 +1267,21 @@
                                                             </a>
                                                         </li>
                                                     <?php  } ?>
-                                                    <?php if (checkIfAppIsEnabled('performancereview') ) { ?>
+                                                    <?php if (checkIfAppIsEnabled('performance_review') ) { ?>
                                                         <li>
                                                             <?php $get_data = $this->session->userdata('logged_in'); ?>
-                                                            <a href="<?php echo base_url('performance/review/view'); ?>">
+                                                            <a href="<?php echo base_url('performance-management/dashboard'); ?>">
                                                                 <figure><i class="fa fa-pencil-square-o"></i></figure>
-                                                                Performance Review
+                                                                Performance Management
+                                                            </a>
+                                                        </li>
+                                                    <?php  } ?>
+                                                    <?php if (checkIfAppIsEnabled('goals') ) { ?>
+                                                        <li>
+                                                            <?php $get_data = $this->session->userdata('logged_in'); ?>
+                                                            <a href="<?php echo base_url('performance-management/goals'); ?>">
+                                                                <figure><i class="fa fa-pencil-square-o"></i></figure>
+                                                                Goals
                                                             </a>
                                                         </li>
                                                     <?php  } ?>

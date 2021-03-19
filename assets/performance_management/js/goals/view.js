@@ -1,9 +1,12 @@
 $(function() {
 
-    const filter = {
+    var filter = {
         status: -1,
         type: 1,
         employeeId: 0
+    };
+    if (window.location.pathname.match(/employee/ig) !== null) {
+        filter.employeeId = pm.employeeId;
     };
     let XHR = null;
     //
@@ -120,8 +123,6 @@ $(function() {
         const goalBox = $(this).closest('.jsGoalBox');
         //
         const goalId = goalBox.data('id');
-        //
-        const goal = goalsOBJ[goalId];
         //
         goalBox.find('.jsBoxSection').fadeOut(0);
         goalBox.find(`.jsBoxSection[data-key="comment"]`).fadeIn(0);
@@ -390,8 +391,8 @@ $(function() {
             //
             options = '<option value="0">[Select an employee]</option>';
             //
-            pm.cemployees.map((em) => {
-                options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
+            pm.allEmployees.map((em) => {
+                options += `<option value="${em.Id}">${remakeEmployeeName(em)}</option>`;
             });
             $('#jsEGVisibilityEmployees').html(options).select2();
             //
@@ -419,7 +420,7 @@ $(function() {
             teams: $('#jsEGVisibilityTeams').val() || [],
             departments: $('#jsEGVisibilityDepartments').val() || [],
             employees: $('#jsEGVisibilityEmployees').val() || []
-        }, () => {
+        }, (resp) => {
             //
             if (resp.Redirect === true) {
                 handleRedirect();
@@ -453,6 +454,8 @@ $(function() {
      */
     function loadGoals() {
         //
+        ml(true, 'goal_view');
+        //
         if (XHR !== null) XHR.abort();
         //
         XHR = $.post(
@@ -484,51 +487,70 @@ $(function() {
     function setView(goals) {
         goalsOBJ = {};
         if (goals.length === 0) {
-            $('.jsGoalWrap').html('<p class="alert alert-info text-center">No records found.</p>');
+            $('.jsGoalWrap').html(getNoShow('goal_' + filter.type));
+            loadFonts();
+            //
+            ml(false, 'goal_view');
+            return;
+        }
+        //
+        if (pm.allEmployees === undefined) {
+            setTimeout(function() {
+                setView(goals);
+            }, 1000);
             return;
         }
         //
         let rows = '<div class="row">';
         //
         goals.map((goal) => {
-            if (filter.type == 1) {
-                //
-                if (pm.permission.employeeIds !== undefined) {
-                    if ($.inArray(goal.employee_sid, pm.permission.employeeIds) === -1) { return; }
-                }
-            }
-            if (filter.type == 2) {
-                //
-                if (pm.permission.teamIds !== undefined) {
-                    if ($.inArray(goal.employee_sid, pm.permission.teamIds) === -1) { return; }
-                }
-            }
-            if (filter.type == 3) {
-                //
-                if (pm.permission.departmentIds !== undefined) {
-                    if ($.inArray(goal.employee_sid, pm.permission.departmentIds) === -1) { return; }
-                }
-            }
+            //
+            const roles = goal.roles != '' ? JSON.parse(goal.roles) : [];
+            const teams = goal.teams != '' ? JSON.parse(goal.teams) : [];
+            const departments = goal.departments != '' ? JSON.parse(goal.departments) : [];
+            const employees = goal.employees != '' ? JSON.parse(goal.employees) : [];
             // Visibility
             let hasAccess = false;
             //
-            if (pm.employee.level != 1) {
+            if (goal.employee_sid != pm.employerId) {
                 //
-                let cem = getEmployee(pm.employerId, 'userId');
-                //
-                const roles = goal.roles != '' ? JSON.parse(goal.roles) : [];
-                const teams = goal.teams != '' ? JSON.parse(goal.teams) : [];
-                const departments = goal.departments != '' ? JSON.parse(goal.departments) : [];
-                const employees = goal.employees != '' ? JSON.parse(goal.employees) : [];
-                //
-                if ($.inArray(cem.access_level.toLowerCase(), roles) !== -1) {
-                    hasAccess = true;
-                } else if ($.inArray(cem.teamIds, teams) !== -1) {
-                    hasAccess = true;
-                } else if ($.inArray(cem.departmentIds, departments) !== -1) {
-                    hasAccess = true;
+                if (pm.employee.level != 1) {
+                    //
+                    let cem = getEmployee(pm.employerId, 'Id');
+                    //
+                    if (
+                        $.inArray(cem.Role.toLowerCase(), roles) !== -1 ||
+                        $.inArray(cem.DT.Teams, teams) !== -1 ||
+                        $.inArray(cem.DT.Departments, departments) !== -1 ||
+                        $.inArray(cem.Id, employees) !== -1
+                    ) {
+                        hasAccess = true;
+                    }
+                } else { hasAccess = true; }
+            } else { hasAccess = true; }
+            //
+            if (goal.employee_sid != pm.employerId && !hasAccess) {
+
+                if (filter.type == 1) {
+                    //
+                    if (pm.permission.employeeIds !== undefined) {
+                        if ($.inArray(goal.employee_sid, pm.permission.employeeIds) === -1) { return; }
+                    }
                 }
-            } else hasAccess = true;
+                if (filter.type == 2) {
+                    //
+                    if (pm.permission.teamIds !== undefined) {
+                        if ($.inArray(goal.employee_sid, pm.permission.teamIds) === -1) { return; }
+                    }
+                }
+                if (filter.type == 3) {
+                    //
+                    if (pm.permission.departmentIds !== undefined) {
+                        if ($.inArray(goal.employee_sid, pm.permission.departmentIds) === -1) { return; }
+                    }
+                }
+            }
+
             //
             goalsOBJ[goal.sid] = goal;
             //
@@ -540,9 +562,12 @@ $(function() {
             let completed = goal.completed_target * 100 / goal.target;
             let pp = totalDays2 * 100 / totalDays;
             pp = pp >= 99 ? 99 : pp
-                // 
+            let cc = 'col-sm-3';
+            //
+            if (window.location.pathname.match(/employee/ig) !== null) cc = 'col-sm-4';
+            // 
             rows += ` <!-- Box -->`;
-            rows += `<div class="col-sm-3 col-xs-12">`;
+            rows += `<div class="${cc} col-xs-12">`;
             rows += `    <div class="csPageBox csRadius5 jsGoalBox" data-id="${goal.sid}">`;
             rows += `       <div class="csIPLoader jsIPLoader" data-page="goal_box"><i class="fa fa-circle-o-notch fa-spin"></i></div>`;
             rows += `        <!-- HEADER -->`;
@@ -550,23 +575,24 @@ $(function() {
             rows += `                <span class="pull-right">`;
             if (hasAccess) {
                 if (goal.status == 1)
-                    rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose jsPopover" title="Close this goal"><i class="fa fa-times-circle mr0"></i></button>`;
+                    rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusClose jsPopover" title="Close this goal"><i class="fa csF18 fa-times-circle mr0"></i></button>`;
                 else
-                    rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen jsPopover" title="Open this goal"><i class="fa fa-check-circle  mr0"></i></button>`;
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalUpdateBTN jsPopover" title="Show history"><i class="fa fa-pencil mr0"></i></button>`;
+                    rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalStatusOpen jsPopover" title="Open this goal"><i class="fa csF18 fa-check-circle  mr0"></i></button>`;
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalUpdateBTN jsPopover" title="Update Goal"><i class="fa csF18 fa-pencil mr0"></i></button>`;
             }
-            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalHistory jsPopover" title="Update Goal"><i class="fa fa-history mr0"></i></button>`;
-            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalCommentBtn jsPopover" title="Comments"><i class="fa fa-comment mr0"></i></button>`;
+            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalHistory jsPopover" title="Show history"><i class="fa csF18 fa-history mr0"></i></button>`;
+            rows += `                    <button class="btn btn-black btn-xs mt0 jsGoalCommentBtn jsPopover" title="Comments"><i class="fa csF18 fa-comment mr0"></i></button>`;
             if (pm.employee.level == 1) {
-                rows += `                    <button class="btn btn-black btn-xs mt0 jsEditVisibility jsPopover" title="Edit Visibility"><i class="fa fa-users mr0"></i></button>`;
+                rows += `                    <button class="btn btn-black btn-xs mt0 jsEditVisibility jsPopover" title="Edit Visibility"><i class="fa csF18 fa-users mr0"></i></button>`;
             }
+            rows += `                   <button class="btn btn-xs btn-black mt0 jsExpandGoal jsPopover" title="Expand Goal" placement="auto"><i class="fa fa-expand csF18" area-hidden="true"></i></button>`;
             rows += `                </span>`;
             rows += `                <div class="clearfix"></div>`;
             rows += `        </div>`;
             rows += `        <div class="csPageHeader bbb pl10 pr10">`;
-            rows += `            <h4>`;
-            rows += `                <strong>${goal.title}</strong>`;
-            rows += `            </h4>`;
+            rows += `            <h3 class="csF18 csB7">`;
+            rows += `                ${goal.title}`;
+            rows += `            </h3>`;
             rows += `        </div>`;
             rows += `        <!-- Main screen -->`;
             rows += `        <div class="csPageSection jsBoxSection" data-key="main">`;
@@ -575,17 +601,17 @@ $(function() {
             rows += `                <!--  -->`;
             rows += `                <div class="row">`;
             rows += `                    <!-- Employee -->`;
-            rows += `                    <div class="col-sm-8 col-xs-12">`;
+            rows += `                    <div class="col-sm-12 col-xs-12">`;
             if (filter.type == 1) {
-                let em = getEmployee(goal.employee_sid, 'userId');
+                let em = getEmployee(goal.employee_sid, 'Id');
                 rows += `                        <div class="csEBox">`;
                 rows += `                            <figure>`;
-                rows += `                                <img src="${getImageURL(em.image)}" />`;
+                rows += `                                <img src="${getImageURL(em.Image)}" />`;
                 rows += `                            </figure>`;
                 rows += `                            <div class="csEBoxText">`;
-                rows += `                                <h4 class="mb0 ma10"><strong>${em.first_name} ${em.last_name}</strong></h4>`;
-                rows += `                                <p class="mb0"><strong>${remakeEmployeeName(em, false)}</strong></p>`;
-                rows += `                                <p><strong>#${getEmployeeId(em.userId, em.employee_number)}</strong></p>`;
+                rows += `                                <h4 class="mb0 ma10 csF16 csB7">${em.FirstName} ${em.LastName}</h4>`;
+                rows += `                                <p class="mb0 csF16">${em.FullRole}</p>`;
+                rows += `                                <p class="csF16">#${em.EmployeeNumber}</p>`;
                 rows += `                            </div>`;
                 rows += `                        </div>`;
             } else {
@@ -595,28 +621,28 @@ $(function() {
                 rows += `                            </figure>`;
                 rows += `                            <div class="csEBoxText">`;
                 if (filter.type == 2) {
-                    rows += `                                <h4 class="mb0 ma10"><strong>${getTeamName(goal.employee_sid)}</strong></h4>`;
+                    rows += `                                <h4 class="mb0 ma10  csF16 csB7">${getTeamName(goal.employee_sid)}</h4>`;
                 } else if (filter.type == 3) {
-                    rows += `                                <h4 class="mb0 ma10"><strong>${getDepartmentName(goal.employee_sid)}</strong></h4>`;
+                    rows += `                                <h4 class="mb0 ma10  csF16 csB7">${getDepartmentName(goal.employee_sid)}</h4>`;
                 } else {
-                    rows += `                                <h4 class="mb0 ma10"><strong>${pm.companyName}</strong></h4>`;
+                    rows += `                                <h4 class="mb0 ma10  csF16 csB7">${pm.companyName}</h4>`;
                 }
                 rows += `                            </div>`;
                 rows += `                        </div>`;
             }
             rows += `                    </div>`;
             rows += `                    <!-- Track Row -->`;
-            rows += `                    <div class="col-sm-4 col-xs-12">`;
-            rows += `                        <div class="text-right">`;
-            rows += `                            <h4 class="mb0"><strong>${goal.on_track == 1 ? "On" : "Off"} Track</strong></h4>`;
-            rows += `                            <p class="ma0">As Of ${todayDate.format(pm.dateTimeFormats.mdy)}</p>`;
+            rows += `                    <div class="col-sm-12 col-xs-12">`;
+            rows += `                        <div>`;
+            rows += `                            <h4 class="mb0 csF16 csB7 ${goal.on_track == 1 ? "csYes" : "csNo"}">${goal.on_track == 1 ? "On" : "Off"} Track</h4>`;
+            rows += `                            <p class="ma0 csF16">As Of ${todayDate.format(pm.dateTimeFormats.mdy)}</p>`;
             rows += `                        </div>`;
             rows += `                    </div>`;
             rows += `                </div>`;
             rows += `                <div class="row">`;
             rows += `                    <div class="col-sm-12">`;
-            rows += `                        <p class="text-right">`;
-            rows += `                            <strong>${getMeasureSymbol(goal.measure_type)} ${goal.completed_target} / ${goal.target}</strong>`;
+            rows += `                        <p class=" csF16 csB7">`;
+            rows += `                            ${getMeasureSymbol(goal.measure_type)} ${goal.completed_target} / ${goal.target}`;
             rows += `                        </p>`;
             rows += `                    </div>`;
             rows += `                    <div class="col-sm-12 col-xs-12">`;
@@ -625,35 +651,22 @@ $(function() {
             rows += `                        </div>`;
             rows += `                        <div class="row ma10">`;
             rows += `                            <div class="col-sm-6">`;
-            rows += `                                <p><strong>${startDate.format(pm.dateTimeFormats.mdy)}</strong></p>`;
+            rows += `                                <p class="csF14">${startDate.format(pm.dateTimeFormats.mdy)}<br /> Start Date ${goal.description}</p>`;
             rows += `                            </div>`;
             rows += `                            <div class="col-sm-6">`;
-            rows += `                                <p class="text-right"><strong>${endDate.format(pm.dateTimeFormats.mdy)}</strong></p>`;
+            rows += `                                <p class="text-right csF14">${endDate.format(pm.dateTimeFormats.mdy)}<br /> Due Date</p>`;
             rows += `                            </div>`;
             rows += `                        </div>`;
             rows += `                    </div>`;
             rows += `                </div>`;
             rows += `                <div class="row">`;
             rows += `                    <div class="col-sm-12 col-xs-12">`;
-            rows += `                        <h5${goal.description}</h5>`;
+            rows += `                        <h5 class="csF16">${goal.description}</h5>`;
             rows += `                    </div>`;
             rows += `                </div>`;
             rows += `                `;
             rows += `            </div>`;
             rows += `            <!-- FOOTER -->`;
-            // rows += `            <div class="csPageFooter bbt p10">`;
-            // rows += `                <div class="row">`;
-            // rows += `                    <div class="col-sm-6 col-xs-12">`;
-
-            // if (hasAccess) {
-            //     rows += `                        <button class="btn btn-orange form-control jsGoalUpdateBTN"><i class="fa fa-pencil"></i> Update</button>`;
-            // }
-            // rows += `                    </div>`;
-            // rows += `                    <div class="col-sm-6 col-xs-12">`;
-            // rows += `                        <button class="btn btn-black form-control jsGoalCommentBtn"><i class="fa fa-comment"></i> Comment</button>`;
-            // rows += `                    </div>`;
-            // rows += `                </div>`;
-            // rows += `            </div>`;
             rows += `        </div>`;
             rows += `        <!-- Comment screen -->`;
             rows += `        <div class="csPageSection jsBoxSection dn" data-key="comment">`;
@@ -750,6 +763,8 @@ $(function() {
             rows += `        </div>`;
             rows += `    </div>`;
             rows += `</div>`;
+
+
         });
         //
         rows += '</div>';
@@ -758,8 +773,13 @@ $(function() {
         $('.jsIPLoader').hide(0);
         //
         $('.jsPopover').tooltip({
-            placement: 'top auto'
+            placement: 'top auto',
+            trigger: 'hover'
         });
+        //
+        loadFonts();
+        //
+        ml(false, 'goal_view');
     }
 
     /**
@@ -776,24 +796,24 @@ $(function() {
         //
         comments.map((comment) => {
             //
-            let em = getEmployee(comment.sender_sid, 'userId');
+            let em = getEmployee(comment.sender_sid, 'Id');
             //
             let imgRow = '';
-            imgRow += `        <div class="col-sm-2 col-xs-2">`;
-            imgRow += `            <img src="${getImageURL(em.image)}" />`;
+            imgRow += `        <div class="csChatImageBox">`;
+            imgRow += `            <img src="${getImageURL(em.Image)}" style="width: 50px;" />`;
             imgRow += `        </div>`;
             //
             let dataRow = '';
-            dataRow += `        <div class="col-sm-10 col-xs-10 ${pm.employerId === parseInt(em.userId) ? 'pr0' : 'pl0'}">`;
-            dataRow += `            <span><strong>${em.first_name} ${em.last_name}</strong> ${remakeEmployeeName(em, false)}</span>`;
-            dataRow += `            <p>${comment.message}`;
-            dataRow += `                <span>${moment(comment.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</span>`;
+            dataRow += `        <div class="csChatContentBox">`;
+            dataRow += `            <span class="csF14 csB7 ${pm.employerId === parseInt(em.Id) ? 'text-right' : ''}">${em.FirstName} ${em.LastName}</span>`;
+            dataRow += `            <p class="csF18">${comment.message}`;
+            dataRow += `                <br /><span class="csF14 ma10 text-right">${moment(comment.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</span>`;
             dataRow += `            </p>`;
             dataRow += `        </div>`;
             //
             rows += `<li>`;
-            rows += `    <div class="row">`;
-            rows += pm.employerId === parseInt(em.userId) ? dataRow + imgRow : imgRow + dataRow;
+            rows += `    <div class="">`;
+            rows += pm.employerId === parseInt(em.Id) ? dataRow + imgRow : imgRow + dataRow;
             rows += `    </div>`;
             rows += `</li>`;
         });
@@ -802,6 +822,8 @@ $(function() {
         goalBox.find('.jsIPLoader').fadeOut(0);
         //
         goalBox.find('.jsGoalCommentWrap').scrollTop(goalBox.find('.jsGoalCommentWrap')[0].scrollHeight);
+        //
+        loadFonts();
     }
 
     /**
@@ -809,20 +831,20 @@ $(function() {
      */
     function loadEmployeesInFilter() {
         //
-        if (pm.cemployees === undefined) {
+        if (pm.allEmployees === undefined) {
             setTimeout(loadEmployeesInFilter, 1000);
             return;
         }
         //
-        if (pm.cemployees.length === 0) return;
+        if (pm.allEmployees.length === 0) return;
         //
         let options = '<option value="-1">All</option>';
         //
-        pm.cemployees.map((em) => {
+        pm.allEmployees.map((em) => {
             if (pm.permission.employeeIds !== undefined) {
-                if ($.inArray(em.userId, pm.permission.employeeIds) === -1) { return; }
+                if ($.inArray(em.Id, pm.permission.employeeIds) === -1) { return; }
             }
-            options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
+            options += `<option value="${em.Id}">${em.FirstName} ${em.LastName} ${em.FullRole}</option>`;
         });
         //
         $('#jsVGEmployee').html(options).select2();;
@@ -834,7 +856,7 @@ $(function() {
     function setHistoryView(data, modalId, loader) {
         //
         if (data.length === 0) {
-            $(`#${modalId} .csModalBody`).html('<p class="alert alert-info text">No history found.</p>');
+            $(`#${modalId} .csModalBody`).html('<p class="alert alert-info text csF24 csB7">No history found.</p>');
             ml(false, loader);
             return;
         }
@@ -842,20 +864,23 @@ $(function() {
         let rows = '';
         rows += '<div class="container">';
         rows += '<div class="csPageWrap">';
-        rows += '<div class="csPageBox">';
-        rows += '<table class="table table-striped">';
+        rows += '<div class="csPageBox ">';
+        rows += '<table class="table table-striped table-br">';
         rows += '   <thead>';
         rows += '       <tr>';
-        rows += '           <th>Action</th>';
-        rows += '           <th>Action Taken</th>';
+        rows += '           <th class="csF18 cs7">Action</th>';
+        rows += '           <th class="csF18 cs7">Action Taken</th>';
         rows += '       </tr>';
         rows += '   </thead>';
         //
-        data.map((history) => {
-            let em = getEmployee(history.employee_sid, 'userId');
+        data.map((history, i) => {
+            let em = getEmployee(history.employee_sid, 'Id');
             rows += `<tr>`;
-            rows += `   <td>${getAction(JSON.parse(history.note), history.action, em)}</td>`;
-            rows += `   <td>${moment(history.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</td>`;
+            rows += `   <td class="csF16">${getAction(
+                JSON.parse(history.note), 
+                history.action, em
+            )}</td>`;
+            rows += `   <td class="csF16">${moment(history.created_at, pm.dateTimeFormats.ymdt).format(pm.dateTimeFormats.mdyt)}</td>`;
             rows += `</tr>`;
         });
         rows += `</table>`;
@@ -864,23 +889,40 @@ $(function() {
         rows += `</div>`;
         //
         $(`#${modalId} .csModalBody`).html(rows);
+        //
+        loadFonts();
     }
 
     /**
      * 
      */
-    function getAction(o, action, em) {
+    function getAction(current, action, em) {
         //
         let row = '-';
+        //
         if (action == 'created') {
-            row = `<strong>${remakeEmployeeName(em)}</strong> created the goal.`;
+            row = `<p class="csF16"><h6 class="csF16 csB7">${em.FirstName} ${em.LastName} ${em.FullRole}</h6> Created the goal.</p>`;
         } else if (action == 'updated') {
-            row = `<strong>${remakeEmployeeName(em)}</strong> updated the goal.`;
+            row = `<p class="csF16"><h6 class="csF16 csB7">${em.FirstName} ${em.LastName} ${em.FullRole}</h6> Updated the goal.</p>`;
         } else if (action == 'commented') {
-            row = `<strong>${remakeEmployeeName(em)}</strong> commented on the goal.`;
+            row = `<p class="csF16"><h6 class="csF16 csB7">${em.FirstName} ${em.LastName} ${em.FullRole}</h6> Commented on the goal.</p>`;
         }
         //
-        return row;
+        let cRow = '';
+        //
+        if (current.target !== undefined) {
+            cRow += '<p class="csF16">Changed target to ' + current.target + '</p>';
+        }
+        //
+        if (current.completed_target !== undefined) {
+            cRow += '<p class="csF16">Changed completed target to ' + current.completed_target + '</p>';
+        }
+        //
+        if (current.on_track !== undefined) {
+            cRow += '<p class="csF16">Changed completed track to ' + (current.on_track == 1 ? "On Track" : "Off Track") + '</p>';
+        }
+        //
+        return row + cRow;
     }
     //
     function getTeamName(teamId) {
@@ -908,4 +950,28 @@ $(function() {
     loadGoals();
     //
     loadEmployeesInFilter();
+});
+
+
+
+/**
+ * 
+ */
+$(document).on('click', '.jsExpandGoal', function(event) {
+    //
+    event.preventDefault();
+    //
+    $(this).closest('.jsGoalBox').parent('div').toggleClass('col-sm-3 col-sm-12');
+    $(this).find('i').toggleClass('fa-expand fa-compress');
+    $(this).attr('title', $(this).data('original-title') == 'Expand Goal' ? 'Compress Goal' : 'Expand Goal');
+    $(this).attr('data-original-title', $(this).attr('data-original-title') == 'Expand Goal' ? 'Compress Goal' : 'Expand Goal');
+    //
+    $('html, body').animate({
+        scrollTop: $(this).closest('.jsGoalBox').offset().top - 100
+    });
+    //
+    $('.jsPopover').tooltip({
+        placement: 'top auto',
+        trigger: 'hover'
+    });
 });

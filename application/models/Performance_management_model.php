@@ -187,7 +187,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select('questions')
         ->where('sid', $templateId)
-        ->get($this->tables['PMCT'])
+        ->get($this->tables['PMT'])
         ->row_array()['questions'];
     }
     
@@ -540,14 +540,16 @@ class Performance_management_model extends CI_Model{
     function getReviewById(
         $id,
         $columns = '*', 
-        $archived = 0
+        $archived = 0,
+        $where = []
     ){
         $this->db
         ->select(is_array($columns) ? implode(',', $columns) : $columns)
         ->where('sid', $id)
         ->where('is_archived', $archived)
         ->limit(1);
-        // 
+        //
+        if(!empty($where)) $this->db->where($where);
         //
         $a = $this->db->get($this->tables['PM']);
         $b = $a->row_array();
@@ -566,11 +568,13 @@ class Performance_management_model extends CI_Model{
             first_name,
             last_name,
             profile_picture,
-            sid as userId,
+            sid,
             access_level,
             access_level_plus,
             pay_plan_flag,
             is_executive_admin,
+            employee_type,
+            employee_number,
             job_title,
             IF(joined_at is null, registration_date, joined_at) as joined_at
         ')
@@ -582,7 +586,98 @@ class Performance_management_model extends CI_Model{
         $b = $a->result_array();
         $a->free_result();
         //
+        if(!empty($b)){
+            //
+            $r = [];
+            //
+            $reportingManagers = $this->getReportingManagerIds($companyId);
+            //
+            foreach($b as $v){
+                //
+                $t = [];
+                //
+                $t['Id'] = $v['sid'];
+                $t['FirstName'] = $v['first_name'];
+                $t['LastName'] = $v['last_name'];
+                $t['FullRole'] = trim(remakeEmployeeName($v, false));
+                $t['Role'] = $v['access_level'];
+                $t['JobTitle'] = $v['job_title'];
+                $t['JoinedAt'] = $v['joined_at'];
+                $t['Type'] = $v['employee_type'];
+                $t['Image'] = $v['profile_picture'];
+                $t['EmployeeNumber'] = empty($v['employee_number']) ? 
+                $v['sid'] : $v['employee_number'];
+                $t['Level'] = $v['access_level_plus'] == 1 || $v['pay_pan_flag'] == 1 ? 1 : 0;
+                // Get current employee team and department ids
+                $t['DT'] = $this->getEmployeeDTR($v['sid'], $v['access_level']);
+                //
+                if(isset($reportingManagers[$v['sid']])){
+                    $t['Manager'] = $reportingManagers[$v['sid']];
+                } else{
+                    $t['Manager'] = ['Department' => [], 'Teams' => []];
+                }
+                //
+                $r[] = $t;
+            }
+            return $r;
+        }
+        //
         return $b;
+    }
+
+    /**
+     * 
+     */
+    function getReportingManagerIds($companyId){
+        // Get Team & Department Reporting Managers
+        $a = 
+        $this->db
+        ->select('
+            dm.sid as department_sid,
+            dm.reporting_managers as department_reporting_managers,
+            dtm.sid,
+            dtm.reporting_managers
+        ')
+        ->from('departments_team_management dtm')
+        ->join('departments_management dm', 'dm.sid = dtm.department_sid')
+        ->where('dtm.company_sid', $companyId)
+        ->where('dtm.status', 1)
+        ->where('dtm.is_deleted', 0)
+        ->where('dm.status', 1)
+        ->where('dm.is_deleted', 0)
+        ->get();
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        if(empty($b)) { return []; }
+        //
+        $ra = [];
+        //
+        foreach($b as $record){
+            //
+            if(!empty($record['department_reporting_managers'])){
+                $t = explode(',', $record['department_reporting_managers']);
+                //
+                foreach($t as $emp){
+                    //
+                    if(!isset($ra[$emp])) {$ra[$emp] = ['Departments' => [], 'Teams' => []];}
+                    $ra[$emp]['Departments'][] = $record['department_sid'];
+                }
+            }
+            
+            //
+            if(!empty($record['reporting_managers'])){
+                $t = explode(',', $record['reporting_managers']);
+                //
+                foreach($t as $emp){
+                    if(!isset($ra[$emp])) {$ra[$emp] = ['Departments' => [], 'Teams' => []];}
+                    $ra[$emp]['Teams'][] = $record['sid'];
+                }
+            }
+        }
+
+        return $ra;
     }
 
     /**
@@ -643,7 +738,7 @@ class Performance_management_model extends CI_Model{
             $c = $a->result_array();
             $a->free_result();
             //
-            if(empty($c)) return [];
+            if(empty($c)) return $b;
             //
             $newReviewers = [];
             //
@@ -701,15 +796,15 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select('
             departments_team_management.sid as team_ids,
-            departments_team_management.sid as department_ids
+            departments_management.sid as department_ids
         ')
         ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
-        ->join('documents_management', 'documents_management.sid = departments_employee_2_team.department_si', 'inner')
+        ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid', 'inner')
         ->from('departments_employee_2_team')
         ->where('departments_team_management.status', 1)
         ->where('departments_team_management.is_deleted', 0)
-        ->where('documents_management.status', 1)
-        ->where('documents_management.is_deleted', 0)
+        ->where('departments_management.status', 1)
+        ->where('departments_management.is_deleted', 0)
         ->where('departments_employee_2_team.employee_sid', $employeeId)
         ->get()
         ->result_array();
@@ -719,7 +814,7 @@ class Performance_management_model extends CI_Model{
             $r['Departments'] = array_column($b, 'department_ids');
         }
         //
-        return $b;
+        return $r;
     }
 
     /**
@@ -832,7 +927,7 @@ class Performance_management_model extends CI_Model{
         //
         if($filter['status'] != -1) $this->db->where('status', $filter['status']);
         if($filter['type'] != -1) $this->db->where('goal_type', $filter['type']);
-        if($filter['type'] == 1) $this->db->where('employee_sid', $employeeId);
+        // if($filter['type'] == 1) $this->db->where('employee_sid', $employeeId);
         if($filter['employeeId'] != -1 && $filter['employeeId'] != 0) $this->db->where('employee_sid', $filter['employeeId']);
         //
         $a = $this->db->get('goals');
@@ -970,18 +1065,52 @@ class Performance_management_model extends CI_Model{
         //
         return $b;
     }
+    
+    /**
+     * 
+     */
+    function getReviewQuestion($questionId, $revieweeId, $reviewerId){
+        //
+        $this->db
+        ->select('
+            pmrq.sid,
+            pmrq.question,
+            pmra.answer
+        ')
+        ->from('performance_management_review_questions pmrq')
+        ->join('performance_management_review_answers pmra', "
+            pmra.review_question_sid = pmrq.sid AND
+            pmra.review_reviewer_sid = {$reviewerId} AND
+            pmra.reviewee_sid = {$revieweeId}
+        ", 'left')
+        ->where('pmrq.sid', $questionId);
+        $a = $this->db
+        ->order_by('pmrq.sid', 'ASC')
+        ->get();
+        //
+        $b = $a->row_array();
+        $a->free_result();
+        //
+        return $b;
+    }
 
 
     /**
      * 
      */
-    function getReviewWithQuestionsForManager($reviewId, $employerId){
+    function getReviewWithQuestionsForManager($reviewId, $employerId, $revieweeId){
         //
-        $review = $this->getReviewWithQuestions($reviewId, $employerId);
+        $review = $this->getReviewWithQuestions($reviewId, $employerId, $revieweeId);
+
         //
         foreach($review['Questions'] as $k => $v){
-            $reviewersAnswer = $this->getReviewQuestions($reviewId, $employerId);
-            // _e($v, true, true);
+            foreach($review['Reviewer'] as $reviewer){
+                $reviewersAnswer = $this->getReviewQuestion(
+                    $v['sid'], $revieweeId, $reviewer['reviewer_sid']
+                );
+                //
+                $review['Questions'][$k]['Reviewers'][$reviewer['reviewer_sid']] = $reviewersAnswer['answer'];
+            }
         }
         //
         return $review;
@@ -1124,4 +1253,171 @@ class Performance_management_model extends CI_Model{
             'employeeIds' => array_unique(array_merge(array_column($d, 'employee_sid'), array_column($t, 'employee_sid')), SORT_STRING)
         ];
     }
+
+    /**
+     * 
+     */
+    function getMyGoals($employeeId){
+        return $this->db
+        ->where('status', 1)
+        ->where('employee_sid', $employeeId)
+        ->order_by('sid', 'desc')
+        ->get('goals')
+        ->result_array();
+    }
+
+    /**
+     * 
+     */
+    function removeReviewee(
+        $reviewId,
+        $revieweeId
+    ){
+        $this->db
+        ->where('review_sid',$reviewId)
+        ->where('reviewee_sid',$revieweeId)
+        ->delete('performance_management_reviewees');
+        //
+        $this->db
+        ->where('review_sid',$reviewId)
+        ->where('reviewee_sid',$revieweeId)
+        ->delete('performance_management_reviewers');
+    }
+
+
+    // function checkAndGetRole($id){
+    //     //
+    //     $dm = $this->db->table('departments_management');
+    //     // $dtm = $this->db->table('departments_team_management');
+    //     // $d2e = $this->db->table('departments_employee_2_team');
+
+    //     // Fetch all department SP
+    //     $a = $dm
+    //     ->select('supervisors')
+    //     ->where('is_deleted', 0)
+    //     ->where('status', 1)
+    //     ->get();
+    //     //
+    //     $b = $a->result_array();
+    //     $a->free_result();
+
+    //     _e($b, true);
+    // }
+
+    /**
+     * 
+     */
+    function getLMSReviews($employeeId, $companyId){
+        
+        // Get assigned reviews
+        //
+        $assignedReviews = 
+        $this->db
+        ->select('
+            pm.review_title,
+            pmr.review_sid, 
+            pmr.reviewee_sid, 
+            pmrv.reviewer_sid, 
+            pmr.is_started,
+            pmrv.is_manager
+            ')
+            ->from('performance_management_reviewers pmrv')
+        ->join('performance_management_reviewees pmr', 'pmrv.review_sid = pmr.review_sid and pmrv.reviewee_sid = pmr.reviewee_sid')
+        ->join('performance_management pm', 'pmrv.review_sid = pm.sid')
+        ->where('pmrv.reviewer_sid', $employeeId)
+        // ->where('pmr.is_started', 1)
+        ->where('pm.company_sid', $companyId)
+        ->get()
+        ->result_array();
+        // Get my reviews
+        $myReviews = 
+        $this->db
+        ->select('
+            pm.review_title,
+            pmr.review_sid, 
+            pmr.reviewee_sid, 
+            pmrv.reviewer_sid, 
+            pmr.is_started,
+            pmrv.is_manager
+        ')
+        ->from('performance_management_reviewers pmrv')
+        ->join('performance_management_reviewees pmr', 'pmrv.review_sid = pmr.review_sid and pmrv.reviewee_sid = pmr.reviewee_sid')
+        ->join('performance_management pm', 'pmrv.review_sid = pm.sid')
+        ->where('pmr.reviewee_sid', $employeeId)
+        // ->where('pm.share_feedback', 1)
+        ->where('pm.company_sid', $companyId)
+        ->get()
+        ->result_array();
+        //
+        return ['MyReviews' => $myReviews, 'AssignedReviews' => $assignedReviews];
+    }
+
+    function getGoalsByPerm(
+        $type,
+        $year,
+        $month,
+        $day,
+        $week_start,
+        $week_end,
+        $company_id,
+        $employer_id,
+        $event_type,
+        $access_level,
+        $employer_detail
+    ) {
+        // check for type
+        if ($type == 'day') {
+            $startDate = $year . '-' . $month . '-' . $day;
+            $endDate = $year . '-' . $month . '-' . $day;
+        } else { // month, week
+            $startDate = $year . '-' . $week_start;
+            $endDate   = $year . '-' . $week_end;
+            if(substr($week_start, 0, 2) == '11' && substr($week_start, 3, 4) == '29'){
+                $startDate = $year.'-'.$week_start;
+                $endDate = date('Y', strtotime(''.($year).'+1 year')).'-'.$week_end;
+            }
+            if (substr($week_start, 0, 2) == '12' && substr($week_start, 3, 4) == '27') {
+                $startDate = date('Y', strtotime("$year -1 year")).'-'.$week_start;
+                $endDate   = $year. '-' . $week_end;
+            }
+        }
+        //
+        $this->db
+            ->from('goals');
+        //
+        if ($startDate != '' && $startDate != 'all' ){ $this->db->where('goals.start_date >= "' . ($startDate) . '"', null);}
+        if ($endDate != '' && $endDate != 'all' ) {$this->db->where('goals.end_date  <= "' . ($endDate) . '"', null);}
+        $this->db->where('goals.company_sid', $company_id);
+        //
+        $a = $this->db->get();
+        //
+        $b =  $a->result_array();
+        //
+        $goals = [];
+        //
+        if(empty($b)) {
+            return [];
+        }
+        foreach($b as $v){
+            $start_datetime = $v['start_date'] . "T08:00" ;
+            $end_datetime = $v['end_date'] . "T08:00";
+            $goals[] = [
+                'title' =>  $v['title'],
+                'start' =>  $start_datetime,
+                'end' =>  $end_datetime,
+                'color' => "#5cb85c",
+                'date' => $v['start_date'],
+                'status' => "confirmed",
+                'type' => 'goals',
+                'requests' => 0,
+                'from_date' => $v['start_date'],
+                'to_date' => $v['end_date'],
+                'request_id' => $v['sid']
+            ];
+        }
+        //
+        return $goals;
+    }
 }
+
+

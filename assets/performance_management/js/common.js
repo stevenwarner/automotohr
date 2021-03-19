@@ -1,3 +1,16 @@
+//
+let fontList = {
+    csF12: 12,
+    csF14: 14,
+    csF16: 16,
+    csF18: 18,
+    csF20: 20,
+    csF22: 22,
+    csF24: 24,
+    csF26: 26,
+    csF28: 28
+};
+
 /**
  * Click
  * 
@@ -19,8 +32,6 @@ $(document).on('click', '.jsModalCancel', (e) => {
                 $(e.target).closest('.csModal').fadeOut(300);
                 //
                 $('body').css('overflow-y', 'auto');
-                //
-                $('#ui-datepicker-div').remove();
             }
         ).set('labels', {
             ok: 'LEAVE',
@@ -32,9 +43,9 @@ $(document).on('click', '.jsModalCancel', (e) => {
         //
         $(e.target).closest('.csModal').fadeOut(300);
         //
-        $('body').css('overflow-y', 'auto');
+        $('.csModal').remove();
         //
-        $('#ui-datepicker-div').remove();
+        $('body').css('overflow-y', 'auto');
     }
 });
 
@@ -183,11 +194,11 @@ function Modal(options, cb) {
     <div class="csModal" id="${options.Id}">
         <div class="container">
             <div class="csModalHeader">
-                <h3 class="csModalHeaderTitle">
+                <h3 class="csModalHeaderTitle csF20 csB7">
                     ${options.Title}
                     <span class="csModalButtonWrap">
                     ${ options.Buttons !== undefined && options.Buttons.length !== 0 ? options.Buttons.join('') : '' }
-                        <button class="btn btn-black btn-lg jsModalCancel" title="Close this window">Cancel</button>
+                        <button class="btn btn-black btn-lg jsModalCancel csF16" title="Close this window"><em class="fa fa-times-circle csF16"></em> Cancel</button>
                     </span>
                     <div class="clearfix"></div>
                 </h3>
@@ -201,7 +212,7 @@ function Modal(options, cb) {
     </div>
     `;
     //
-    $(`#${options.Id}`).remove();
+    $('.csModal').remove();
     $('.csPageWrap').append(html);
     $(`#${options.Id}`).fadeIn(300);
     //
@@ -240,6 +251,7 @@ function getError(errorCode, isError) {
         required_review_repeat_val: "Review recur value is required.",
         required_review_due_val: "Review due value is required.",
         required_review_reviewees: "Please, at least select one reviewee.",
+        required_review_reviewers_type: "Please, select reviewer type.",
         required_review_reviewers: "Please, select reviewers.",
         required_question: "Question is required.",
         review_saved: "You have successfully created a review.",
@@ -266,12 +278,54 @@ function getError(errorCode, isError) {
         save_goal_success: "You have successfully added a new goal.",
         goal_closed_success: "You have successfully closed the goal.",
         goal_open_success: "You have successfully opened the goal.",
+        visibility_updated: "You have successfully updated the visibility.",
+        comment_missing: "Please, write a comment beforing saving it.",
+        goal_update_success: "You have successfully updated the goal.",
+        answer_save_success: "You have successfully updated the answers.",
+        review_archived: "Looks like, you haven't marked any review as archived.",
+        review_draft: "Looks like, you don't have any reviews in draft.",
+        review_active: "Looks like, you haven't created any reviews.",
+        goal_1: "Looks like, you haven't created any goals for employees.",
+        goal_2: "Looks like, you haven't created any goals for company.",
+        goal_3: "Looks like, you haven't created any goals for departments.",
+        goal_4: "Looks like, you haven't created any goals for teams.",
     };
     //
     if (isError === true)
         return { 'Status': false, 'Response': errorCodes[errorCode] === undefined ? 'We are unable to process your request at this moment. Please, try again in a few moments.' : errorCodes[errorCode], Redirect: false };
     else
         return errorCodes[errorCode] === undefined ? 'We are unable to process your request at this moment. Please, try again in a few moments.' : errorCodes[errorCode];
+}
+
+/**
+ * 
+ */
+function getNoShow(type) {
+    let html = '';
+    let buttons = '';
+    let message;
+    html += '<h1 class="alert text-center csF24 csB7">{{message}}<br /><br />';
+    html += '{{buttons}}';
+    html += '</h1>';
+    //
+    message = getError(type);
+    //
+    if (
+        type == 'review_archived' ||
+        type == 'review_draft' ||
+        type == 'review_active'
+    ) {
+        buttons = '<a href="' + (pm.urls.base) + 'performance-management/review/create" class="btn btn-orange csF16"><em class="fa fa-plus-circle csF16"></em> Crate A Review</a>';
+    } else if (
+        type == 'goal_1' ||
+        type == 'goal_2' ||
+        type == 'goal_3' ||
+        type == 'goal_4'
+    ) {
+        buttons = '<button class="btn btn-orange jsCreateGoal csF16"><em class="fa fa-plus-circle csF16"></em> Create A Goal</button>';
+    }
+    //
+    return html.replace(/{{message}}/i, message).replace(/{{.*}}/ig, buttons);
 }
 
 /**
@@ -354,31 +408,31 @@ function getQuestionRow(question, index, questionsLength) {
     rows += `<div class="csQuestionRow" data-id="${index}">`;
     rows += `   <div class="csFeedbackViewBox p10">`;
     rows += `       <h4 class="bbb pb10">`;
-    rows += `           <strong>Question ${index+1}</strong>`;
+    rows += `           <span class="csF16 csB7">Question ${index+1}</span>`;
     rows += `           <span class="csBTNBox">`;
     if (index != questionsLength) {
-        rows += `           <i class="fa fa-long-arrow-down jsQuestionMoveDown" title="Move down" placement="top"></i>`;
+        rows += `           <i class="fa fa-long-arrow-down jsQuestionMoveDown csF16" title="Move down" placement="top"></i>`;
     }
     if (index != 0) {
-        rows += `           <i class="fa fa-long-arrow-up jsQuestionMoveUp" title="Move up" placement="top"></i>`;
+        rows += `           <i class="fa fa-long-arrow-up jsQuestionMoveUp csF16" title="Move up" placement="top"></i>`;
     }
     rows += `           <span>|</span>`;
-    rows += `           <i class="fa fa-clone jsQuestionClone" title="Clone this question" placement="top"></i>`;
-    rows += `           <i class="fa fa-trash jsQuestionDelete"  title="Delete this question" placement="top"></i>`;
-    rows += `           <i class="fa fa-pencil jsQuestionEdit" title="Edit this question" placement="top"></i>`;
+    rows += `           <i class="fa fa-clone jsQuestionClone csF16" title="Clone this question" placement="top"></i>`;
+    rows += `           <i class="fa fa-trash jsQuestionDelete csF16"  title="Delete this question" placement="top"></i>`;
+    rows += `           <i class="fa fa-pencil jsQuestionEdit csF16" title="Edit this question" placement="top"></i>`;
     rows += `           </span>`;
     rows += `       </h4>`;
-    rows += `       <h4><strong>${question.title}</strong></h4>`;
+    rows += `       <h4 class="csF16 csB7">${question.title}</h4>`;
     if (!isEmpty(question.text)) {
-        rows += `       <p>${question.text}</p>`;
+        rows += `       <p class="csF16">${question.text}</p>`;
     }
     if (!isEmpty(question.video_help)) {
         rows += `       <video controls="true" style="width: 250px;"><source src="${question.video_help}" type="video/webm"></source></video><br />`;
     }
     //
     if (question.not_applicable === 1) {
-        rows += '<label class="control control--checkbox">';
-        rows += '   <input type="checkbox" class="jsQuestionNA" /> Not Applicable';
+        rows += '<label class="control control--checkbox csF16 csB1">';
+        rows += '   <input type="checkbox" class="csF16" /> Not Applicable';
         rows += '   <div class="control__indicator"></div>';
         rows += '</label><br />';
     }
@@ -389,9 +443,9 @@ function getQuestionRow(question, index, questionsLength) {
         for (let i = 1; i <= question.scale; i++) {
             rows += '<li>';
             rows += '   <div class="csFeedbackViewBoxTab">';
-            rows += `       <p class="mb0">${i}</p>`;
+            rows += `       <p class="mb0 csF16">${i}</p>`;
             if (question.labels_flag === 1) {
-                rows += `   <p>${question.label_question[i]}</p>`;
+                rows += `   <p class="csF16">${question.label_question[i]}</p>`;
             }
             rows += '   </div>';
             rows += '</li>';
@@ -401,12 +455,12 @@ function getQuestionRow(question, index, questionsLength) {
 
     //
     if ($.inArray(question.question_type, ['multiple-choice-with-text', 'multiple-choice']) !== -1) {
-        rows += '<br /><label class="control control--radio">';
-        rows += `   <input type="radio" class="jsQuestionNA" name="jsQuestionMultipleChoice${index}" /> Yes`;
+        rows += '<br /><label class="control control--radio csB1">';
+        rows += `   <input type="radio" class="csF16" name="jsQuestionMultipleChoice${index}" /> Yes`;
         rows += '   <div class="control__indicator"></div>';
         rows += '</label> &nbsp;&nbsp;';
-        rows += '<label class="control control--radio">';
-        rows += `   <input type="radio" class="jsQuestionNA" name="jsQuestionMultipleChoice${index}" /> No`;
+        rows += '<label class="control control--radio csB1">';
+        rows += `   <input type="radio" class="csF16" name="jsQuestionMultipleChoice${index}" /> No`;
         rows += '   <div class="control__indicator"></div>';
         rows += '</label>';
     }
@@ -416,8 +470,8 @@ function getQuestionRow(question, index, questionsLength) {
         rows += '<div class="csFeedbackViewBoxComment">';
         rows += '    <div class="row">';
         rows += '        <div class="col-sm-12 col-xs-12">';
-        rows += '            <h5><strong>Feedback (Elaborate)</strong></h5>';
-        rows += '            <textarea rows="3" class="form-control"></textarea>';
+        rows += '            <h5 class="csF14 csB7">Feedback (Elaborate)</h5>';
+        rows += '            <textarea rows="3" class="form-control csF16"></textarea>';
         rows += '        </div>';
         rows += '    </div>';
         rows += '</div>';
@@ -524,12 +578,20 @@ function getCompanyEmployees() {
     });
 }
 
-
-getCompanyEmployees()
-    .then((resp) => {
-        pm.cemployees = resp.Data;
+/**
+ * Get employees list with dnt
+ * 
+ * @return {Promise}
+ */
+function getCompanyAllEmployees() {
+    return new Promise(function(res) {
+        $.get(`${pm.urls.handler}get/get_all_company_employees`)
+            .done(function(resp) { res(resp); })
+            .fail(function(resp) {
+                res(getMessage(resp.status, true));
+            });
     });
-
+}
 
 /**
  * 
@@ -542,14 +604,148 @@ function getMeasureSymbol(unit) {
  * 
  */
 function getEmployee(employeeId, index) {
-    if (pm.cemployees === undefined || pm.cemployees.length === 0) return {};
+    if (pm.allEmployees === undefined || pm.allEmployees.length === 0) return {};
     //
     let i = 0,
-        il = pm.cemployees.length;
+        il = pm.allEmployees.length;
     //
     for (i; i < il; i++) {
-        if (pm.cemployees[i][index] == employeeId) return pm.cemployees[i];
+        if (pm.allEmployees[i][index] == employeeId) {
+            return pm.allEmployees[i];
+        }
     }
     //
     return {};
 }
+
+//
+$('.jsCalendarView').click(function(e) {
+    //
+    e.preventDefault();
+    // 
+    Modal({
+        Id: 'calendarModal',
+        Title: 'Calendar',
+        Body: `<div class="container"><iframe src="${pm.urls.base}calendar/my_events/iframe" width="100%" height="${$(window).height() - 90}"></iframe></div>`,
+        Loader: 'jsCalendarLoader'
+    }, () => {
+        ml(false, 'jsCalendarLoader')
+    });
+});
+
+
+/**
+ * 
+ */
+$('.jsDecreaseSize').click(function(event) {
+    //
+    event.preventDefault();
+    //
+    let newList = {};
+    //
+    $.each(getFontList(), function(i, v) {
+        //
+        let newSize = v;
+        //
+        newSize--;
+        //
+        if (newSize >= 11) {
+            newList[i] = newSize;
+        } else {
+            newList[i] = v;
+        }
+    });
+    //
+    setFontList(newList);
+    //
+    loadFonts();
+});
+
+/**
+ * 
+ */
+$('.jsIncreaseSize').click(function(event) {
+    //
+    event.preventDefault();
+    //
+    let newList = {};
+    //
+    $.each(getFontList(), function(i, v) {
+        //
+        let newSize = v;
+        //
+        newSize++;
+        //
+        if (newSize > 29) {
+            newList[i] = v;
+        } else {
+            newList[i] = newSize;
+        }
+    });
+    //
+    setFontList(newList);
+    //
+    loadFonts();
+});
+
+/**
+ * 
+ */
+$('.jsResetSize').click(function(event) {
+    //
+    event.preventDefault();
+    //
+    //
+    setFontList(fontList);
+    //
+    loadFonts();
+});
+
+
+//
+function getFontList() {
+    //
+    if (localStorage.getItem('myFontList') === null) return fontList;
+    //
+    return JSON.parse(localStorage.getItem('myFontList'));
+}
+
+//
+function setFontList(l) {
+    //
+    localStorage.setItem('myFontList', JSON.stringify(l));
+}
+
+//
+function loadFonts() {
+    //
+    let s2 = '16';
+    $.each(getFontList(), function(i, v) {
+        if (i == 'csF16') {
+            s2 = v;
+        }
+        $(`.${i}`).attr('style', 'font-size: ' + v + 'px !important');
+    });
+    //
+    $('.select2-container').attr('style', 'font-size:' + (s2) + 'px !important');
+    $('.select2-container--default .select2-selection--multiple .select2-selection__choice').attr('style', 'font-size:' + (s2) + 'px !important');
+    //
+    if (JSON.stringify(getFontList()) === JSON.stringify(fontList)) {
+        $('.jsResetSize').hide(0);
+    } else {
+        $('.jsResetSize').show(0);
+    }
+}
+// Load default fonts
+loadFonts();
+// Get all employees of the company
+getCompanyAllEmployees()
+    .then((resp) => {
+        pm.allEmployees = resp.Data;
+        //
+        pm.allEmployeesOBJ = {};
+        //
+        pm.allEmployees.map(function(v) {
+            pm.allEmployeesOBJ[v.Id] = v;
+        });
+    });

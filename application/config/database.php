@@ -74,27 +74,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 if($_SERVER['HTTP_HOST']=='automotohr.local'){
-$db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '1122',
-	'database' => 'automotohr',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => TRUE,
-	'cache_on' => TRUE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => TRUE,
-	'stricton' => TRUE,
-	'failover' => array(),
-	'save_queries' => FALSE
-);
+	$db['default'] = array(
+		'dsn'	=> '',
+		'hostname' => 'localhost',
+		'username' => 'root',
+		'password' => '1122',
+		'database' => 'automotohr',
+		'dbdriver' => 'mysqli',
+		'dbprefix' => '',
+		'pconnect' => FALSE,
+		'db_debug' => TRUE,
+		'cache_on' => TRUE,
+		'cachedir' => '',
+		'char_set' => 'utf8',
+		'dbcollat' => 'utf8_general_ci',
+		'swap_pre' => '',
+		'encrypt' => FALSE,
+		'compress' => TRUE,
+		'stricton' => TRUE,
+		'failover' => array(),
+		'save_queries' => FALSE
+	);
 } else if($_SERVER['HTTP_HOST']=='localhost'){
 	$db['default'] = array(
 		'dsn'	=> '',
@@ -161,25 +161,4 @@ $db['default'] = array(
 		'failover' => array(),
 		'save_queries' => FALSE
 	);
-	// $db['default'] = array(
-	// 	'dsn'	=> '',
-	// 	'hostname' => 'localhost',
-	// 	'username' => 'automoto_super',
-	// 	'password' => '6Q?lgxvOo9u_EZpgVM',
-	// 	'database' => 'automoto_hr',
-	// 	'dbdriver' => 'mysqli',
-	// 	'dbprefix' => '',
-	// 	'pconnect' => FALSE,
-	// 	'db_debug' => (ENVIRONMENT !== 'production'),
-	// 	'cache_on' => TRUE,
-	// 	'cachedir' => '',
-	// 	'char_set' => 'utf8',
-	// 	'dbcollat' => 'utf8_general_ci',
-	// 	'swap_pre' => '',
-	// 	'encrypt' => FALSE,
-	// 	'compress' => TRUE,
-	// 	'stricton' => FALSE,
-	// 	'failover' => array(),
-	// 	'save_queries' => TRUE
-	// );  
 }

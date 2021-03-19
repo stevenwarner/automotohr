@@ -1259,6 +1259,8 @@ $route['performance-management/review/(:num)'] = 'Performance_management/review/
 $route['performance-management/feedback/(:num)/(:num)'] = 'Performance_management/feedback/$1/$2';
 $route['performance-management/reviewer_feedback/(:num)/(:num)'] = 'Performance_management/reviewer_feedback/$1/$2';
 $route['performance-management/review/create'] = 'Performance_management/create_review';
+$route['performance-management/review/create/(:num)'] = 'Performance_management/create_review/$1';
+$route['performance-management/report'] = 'Performance_management/report';
 // Goals
 $route['performance-management/goal/create'] = 'Performance_management/create_goal';
 $route['performance-management/goals'] = 'Performance_management/goals';
@@ -1268,3 +1270,10 @@ $route['performance-management/handler/get/(.+)'] = 'Performance_management/get_
 $route['performance-management/handler/post'] = 'Performance_management/post_handler';
 // LMS
 $route['performance-management/lms/goals'] = 'Performance_management/lms_goals';
+$route['performance-management/lms/reviews'] = 'Performance_management/lms_reviews';
+$route['performance-management/employee/goals/(:num)'] = 'Performance_management/gp_goals/$1';
+$route['performance-management/employee/reviews/(:num)'] = 'Performance_management/gp_reviews/$1';
+$route['performance-management/download/(:any)/(:num)/(:num)/(:num)'] = 'Performance_management/download/$1/$2/$3/$4';
+//
+$route['performance-management/employee/review/(:num)/(:num)'] = 'Performance_management/gp_review/$1/$2';
+$route['performance-management/employee/review/(:num)/(:num)/(:num)'] = 'Performance_management/gp_review/$1/$2/$3';

@@ -84,7 +84,12 @@ if(!function_exists('res')){
  * @return String
  */
 if(!function_exists('getQuestionBody')){
-    function getQuestionBody($question, $answer = []){
+    function getQuestionBody($question, $answer = [], $showTitle= true){
+        //
+        $naClass = $showTitle ? 'jsQuestionNA' : '';
+        $mlClass = $showTitle ? 'jsQuestionMultiple' : '';
+        $rClass = $showTitle ? 'jsQuestionRating' : '';
+        $tClass = $showTitle ? 'jsQuestionText' : '';
         //
         $id = rand(1, 22222);
         //
@@ -94,8 +99,8 @@ if(!function_exists('getQuestionBody')){
             $html .= '<div class="csFeedbackViewBoxComment">';
             $html .= '  <div class="row">';
             $html .= '    <div class="col-sm-12 col-xs-12 ma10">';
-            $html .= '        <label class="control control--checkbox">';
-            $html .= '          Not Applicable <input type="checkbox" name="na'.($id).'" '.( !empty($answer) && $answer['not_applicable'] == 1 ? 'checked="true"' : '' ).' class="jsQuestionNA" value="yes" /><div class="control__indicator"></div>';
+            $html .= '        <label class="control control--checkbox csF16">';
+            $html .= '          Not Applicable <input type="checkbox" name="na'.($id).'" '.( !empty($answer) && $answer['not_applicable'] == 1 ? 'checked="true"' : '' ).' class="'.($naClass).' csF16" value="yes" /><div class="control__indicator"></div>';
             $html .= '        </label><br /><br />';
             $html .= '    </div>';
             $html .= '  </div>';
@@ -109,11 +114,11 @@ if(!function_exists('getQuestionBody')){
             $html .= '<div class="csFeedbackViewBoxComment">';
             $html .= '  <div class="row">';
             $html .= '    <div class="col-sm-12 col-xs-12 ma10">';
-            $html .= '        <label class="control control--radio">';
-            $html .= '          Yes <input type="radio" name="qyn'.($id).'"'.( !empty($answer) && $answer['radio'] == 'yes' ? 'checked="true"' : '' ).' class="jsQuestionMultiple" value="yes" /><div class="control__indicator"></div>';
+            $html .= '        <label class="control control--radio csF16">';
+            $html .= '          Yes <input type="radio" name="qyn'.($id).'"'.( !empty($answer) && $answer['radio'] == 'yes' ? 'checked="true"' : '' ).' class="'.($mlClass).' csF16" value="yes" /><div class="control__indicator"></div>';
             $html .= '        </label><br />';
             $html .= '        <label class="control control--radio">';
-            $html .= '          No <input type="radio" name="qyn'.($id).'"'.( !empty($answer) && $answer['radio'] == 'no' ? 'checked="true"' : '' ).' class="jsQuestionMultiple" value="no" /><div class="control__indicator"></div>';
+            $html .= '          No <input type="radio" name="qyn'.($id).'"'.( !empty($answer) && $answer['radio'] == 'no' ? 'checked="true"' : '' ).' class="'.($mlClass).' csF16" value="no" /><div class="control__indicator"></div>';
             $html .= '        </label>';
             $html .= '    </div>';
             $html .= '  </div>';
@@ -128,9 +133,9 @@ if(!function_exists('getQuestionBody')){
             for($i = 1; $i <= $question['scale']; $i++){
                 $html .= '<li '.( !empty($answer) && $answer['rating'] == $i ? 'class="active"' : '' ).'>';
                 $html .= '  <div class="csFeedbackViewBoxTab">';
-                $html .= '      <p class="mb0 jsQuestionRating" data-id="'.($i).'">'.($i).'</p>';
+                $html .= '      <p class="mb0 csF16 fa-tint'.($rClass).'" data-id="'.($i).'">'.($i).'</p>';
                 if($question['labels_flag'] == 1):
-                    $html .= '  <p>'.(getLabel($i, json_decode($question['label_question'], true))).'</p>';
+                    $html .= '  <p class="csF16">'.(getLabel($i, ($question['label_question']))).'</p>';
                 endif;
                 $html .= '  </div>';
                 $html .= '</li>';
@@ -144,14 +149,17 @@ if(!function_exists('getQuestionBody')){
             $question['question_type'] == 'text-rating' || 
             $question['question_type'] == 'multiple-choice-with-text'
         ){
-            $html .= '<div class="csFeedbackViewBoxComment">';
+            $html .= '<div class="csFeedbackViewBoxComment ">';
             $html .= '  <div class="row">';
             $html .= '    <div class="col-sm-12 col-xs-12 ma10">';
-            $html .= '      <h5><strong>Feedback (Elaborate)</strong></h5>';
-            $html .= '        <textarea class="form-control jsQuestionText">'.( !empty($answer) ? $answer['text'] : '' ).'</textarea>';
+            if($showTitle){
+
+                $html .= '      <p class="csF14 csB7">Feedback (Elaborate)</p>';
+            }
+            $html .= '        <textarea class="form-control csF16 '.($tClass).'">'.( !empty($answer) ? $answer['text'] : '' ).'</textarea>';
             $html .= '    </div>';
             $html .= '  </div>';
-            $html .= '</div>';
+            $html .= '</div><br />';
         }
         //
         return $html;
@@ -173,7 +181,9 @@ if(!function_exists('getLabel')){
     function getLabel($scale, $labels){
         //
         if(!count($labels) || $labels == '[]') $labels = getDefaultLabel();
-        foreach($labels as $k => $label) if($label['id']+1 == $scale) return $label['text'];
+        foreach($labels as $k => $label) {
+            if($k == $scale) return $label;
+        }
         return '';
     }
 }

@@ -27,7 +27,7 @@ function getCompanyEmployees() {
 function getProgress(reviewerArray, reviewerType) {
     //
     const returnOBJ = {
-        total: reviewerArray.length,
+        total: 0,
         completed: 0,
         pending: 0
     };
@@ -36,13 +36,21 @@ function getProgress(reviewerArray, reviewerType) {
     //
     reviewerArray.map((record) => {
         if (reviewerType == 'review') {
-            if (record.completetion_status == 1 && record.reviewer_type == 'Review') returnOBJ.completed++;
-            else returnOBJ.pending++;
-        } else {
-            if (record.completetion_status == 1 && record.reviewer_type == 'Feedback') returnOBJ.completed++;
-            else returnOBJ.pending++;
+            if (record.completion_status == 1 && record.reviewer_type == 'Review') returnOBJ.completed++;
+            else if (record.completion_status == 0 && record.reviewer_type == 'Review') returnOBJ.pending++;
+        } else if (reviewerType == 'feedback') {
+            if (record.completion_status == 1 && record.reviewer_type == 'Feedback') returnOBJ.completed++;
+            else if (record.completion_status == 0 && record.reviewer_type == 'Feedback') returnOBJ.pending++;
         }
     });
+    //
+    returnOBJ.total = returnOBJ.completed + returnOBJ.pending;
+    //
+    returnOBJ.completed = (returnOBJ.completed * 100) / returnOBJ.total;
+    returnOBJ.completed = isNaN(returnOBJ.completed) ? 0 : returnOBJ.completed;
+    returnOBJ.pending = (returnOBJ.pending * 100) / returnOBJ.total;
+    //
+    returnOBJ.total = 100;
     //
     return returnOBJ;
 }
@@ -105,6 +113,8 @@ $(document).on('click', '.jsAddReviewers', function(event) {
         //
         $('#jsAddReviewReviewee').html(options).select2();
         $('#jsAddReviewReviewer').select2();
+        //
+        loadFonts();
         //
         ml(false, 'jsAddRevieweeLoader');
     });
@@ -192,16 +202,16 @@ function getAddRevieweeBody(reviewId) {
     html += `        <!--  -->`;
     html += `        <div class="csPageBody">`;
     html += `            <div class="form-group">`;
-    html += `                <label>Select Reviewee <span class="csRequired"></span></label>`;
+    html += `                <label class="csF16 csB7">Select Reviewee <span class="csRequired"></span></label>`;
     html += `                <select id="jsAddReviewReviewee"></select>`;
     html += `            </div>`;
     html += `            <div class="form-group jsAddReviewDateBox dn">`;
-    html += `                <label>Select Review Period <span class="csRequired"></span></label>`;
-    html += `                <input type="text" readonly id="jsAddReviewStartDate" />`;
-    html += `                <input type="text" readonly id="jsAddReviewEndDate" />`;
+    html += `                <label class="csF16 csB7">Select Review Period <span class="csRequired"></span></label>`;
+    html += `                <input type="text" class="csF16" readonly id="jsAddReviewStartDate" />`;
+    html += `                <input type="text" class="csF16" readonly id="jsAddReviewEndDate" />`;
     html += `            </div>`;
     html += `            <div class="form-group jsAddReviewerBox dn">`;
-    html += `                <label>Select Reviewers <span class="csRequired"></span></label>`;
+    html += `                <label class="csF16 csB7">Select Reviewers <span class="csRequired"></span></label>`;
     html += `                <select id="jsAddReviewReviewer" multiple></select>`;
     html += `            </div>`;
     html += `        </div>`;
@@ -209,8 +219,8 @@ function getAddRevieweeBody(reviewId) {
     html += `        <div class="csPageFooter bbt pa10">`;
     html += `            <div class="form-group">`;
     html += `                <label></label>`;
-    html += `                <button class="btn btn-orange jsAddRevieweeSave">Save</button>`;
-    html += `                <button class="btn btn-black jsModalCancel">Cancel</button>`;
+    html += `                <button class="btn btn-orange jsAddRevieweeSave csF16"><i class="fa fa-save csF16"></i> Save</button>`;
+    html += `                <button class="btn btn-black jsModalCancel csF16"><i class="fa fa-times-circle csF16"></i> Cancel</button>`;
     html += `                <input type="hidden" value="${reviewId}" id="jsAddReviewReviewId" />`;
     html += `            </div>`;
     html += `        </div>`;

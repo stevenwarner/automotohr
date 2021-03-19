@@ -1,14 +1,14 @@
 <div class="container-fluid">
     <!-- Heading -->
     <div class="csPageHeading">
-        <h2>
+        <h1 class="csF26 csB9">
             <span class="csBTNBox">
-                <a href="<?=purl('review/create');?>" class="btn btn-orange"><i class="fa fa-plus-circle"></i> Create
+                <a href="<?=purl('review/create');?>" class="btn btn-lg btn-orange csF16"><i class="fa fa-plus-circle csF16" aria-hidden="true"></i> Create a
                     Review</a>
             </span>
             <strong>Custom reviews tailored to your needs.</strong><br />
-            <p style="font-size: 14px;">Create reviews that fit your team and collect feedback in one location.</p>
-        </h2>
+        </h1>
+        <p class="csF16">Create reviews that fit your team and collect feedback in one location.</p>
     </div>
     <!--  -->
     <div class="row">
@@ -16,12 +16,18 @@
         <div class="col-sm-4 col-xs-12">
             <div class="csPageBox csRadius5">
                 <div class="csPageBoxHeader p10">
-                    <h4>
-                        <strong class="csHeading">My Goals</strong>
-                        <span class="csBTNBox">
-                            <a href="javascript:void(0)" class="btn btn-orange mt0 jsCreateGoal"><i class="fa fa-plus-circle"></i> Add a Goal</a>
-                        </span>
-                    </h4>
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-12">
+                            <h4 class="csF18 csB7">
+                                My Goals
+                            </h4>
+                        </div>
+                        <div class="col-sm-6 col-xs-12">
+                            <span class="csBTNBox">
+                                <a href="javascript:void(0)" class="btn btn-orange jsCreateGoal csF16"><em class="fa fa-plus-circle csF16"></em> Add a Goal</a>
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div class="csPageBoxBody p10">
                 <?php if(empty($goals)): ?>
@@ -32,6 +38,15 @@
                     </div>
                 <?php else: 
                         foreach($goals as $goal): ?>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3 class="csF18 csB7"><?=$goal['title'];?></h3>
+                                <h4 class="csF16">
+                                    <span class="<?=$goal['on_track'] == 1 ? 'text-success' : 'text-danger';?> csB8"><?=$goal['on_track'] == 1 ? "On" : "Off"; ?> Track</span>
+                                    <span class="pull-right"><?= $goal['measure_tyh3e'] == 1 ? '%' : ($goal['measure_type'] == 2 ? '$' : '');?> <?=$goal['completed_target'];?> / <?=$goal['target'];?></span>
+                                </h4>
+                            </div>
+                        </div>
                         
                 <?php endforeach; 
                 endif; ?>
@@ -45,14 +60,20 @@
             <!-- Content Area -->
             <div class="csPageBox csRadius5">
                 <div class="csPageBoxHeader p10">
-                    <h4>
-                        <strong class="csHeading">Assigned Reviews (<?=count($assignedReviews);?>)</strong>
-                        <span class="csBTNBox">
-                            <a href="<?=purl('reviews');?>" class="btn btn-orange mt0"><i
-                                    class="fa fa-eye"></i>
-                                View All</a>
-                        </span>
-                    </h4>
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-12">
+                            <h4 class="csF18 csB7">
+                                Assigned Reviews (<?=count($assignedReviews);?>)
+                            </h4>
+                        </div>
+                        <div class="col-sm-6 col-xs-12">
+                            <span class="csBTNBox">
+                                <a href="<?=purl('reviews');?>" class="btn btn-orange csF16"><em
+                                        class="fa fa-eye csF16"></em>
+                                    View All</a>
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div class="csPageBoxBody p10">
                     <div id="jsAssignedReviewContainer">
@@ -63,14 +84,14 @@
                             <div class="col-sm-4">
                                 <div class="csEBox">
                                     <figure>
-                                        <img src="<?=getImageURL($em['img']);?>"
+                                        <img src="<?=getImageURL($em['image']);?>"
                                             class="csRadius50" />
                                     </figure>
                                     <div class="csEBoxText">
-                                        <h4 class="mb0"><strong><?=$em['name'];?></strong></h4>
-                                        <p class="mb0"><?=$em['role'];?></p>
-                                        <p><?=getDueText($row['end_date']);?></p>
-                                        <a href="<?=base_url('performance-management/reviewer_feedback/'.($row['review_sid']).'/'.($row['reviewee_sid']));?>" target="blank" class="btn btn-xs alert-black csRadius100">Start Review</a>
+                                        <h4 class="mb0 csF16 csB7"><?=$em['name'];?></h4>
+                                        <p class="mb0 csF16"><?=$em['role'];?></p>
+                                        <p class="csF16"><?=getDueText($row['end_date']);?></p>
+                                        <a href="<?=base_url('performance-management/reviewer_feedback/'.($row['review_sid']).'/'.($row['reviewee_sid']));?>" target="blank" class="btn btn-black csRadius100 csF16"><em class="fa fa-play-circle csF16"></em> &nbsp;Start Review</a>
                                     </div>
                                 </div>
                             </div>
@@ -91,14 +112,20 @@
             <!-- Content Area -->
             <div class="csPageBox csRadius5">
                 <div class="csPageBoxHeader p10">
-                    <h4>
-                        <strong class="csHeading">Feedback For You (<?=count($feedbackReviews);?>)</strong>
-                        <span class="csBTNBox dn">
-                            <a href="<?=purl('reviews');?>" class="btn btn-orange"><i
-                                    class="fa fa-eye"></i>
-                                View All</a>
-                        </span>
-                    </h4>
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-12">
+                            <h4 class="csF18 csB7">
+                                Feedback For You (<?=count($feedbackReviews);?>)
+                            </h4>
+                        </div>
+                        <div class="col-sm-6 col-xs-12">
+                            <span class="csBTNBox">
+                                <a href="<?=purl('reviews');?>" class="btn btn-orange csF16"><i
+                                        class="fa fa-eye csF16"></i>
+                                    View All</a>
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div class="csPageBoxBody p10">
                 <div id="jsAssignedReviewContainer">
@@ -109,14 +136,14 @@
                             <div class="col-sm-4">
                                 <div class="csEBox">
                                     <figure>
-                                        <img src="<?=getImageURL($em['img']);?>"
+                                        <img src="<?=getImageURL($em['image']);?>"
                                             class="csRadius50" />
                                     </figure>
                                     <div class="csEBoxText">
-                                        <h4 class="mb0"><strong><?=$em['name'];?></strong></h4>
-                                        <p class="mb0"><?=$em['role'];?></p>
-                                        <p><?=getDueText($row['end_date']);?></p>
-                                        <a href="<?=base_url('performance-management/reviewer_feedback/'.($row['review_sid']).'/'.($row['reviewee_sid']));?>" target="blank" class="btn btn-xs alert-black csRadius100">Start Review</a>
+                                        <h4 class="mb0 csF16 csB7"><?=$em['name'];?></h4>
+                                        <p class="mb0 csF16"><?=$em['role'];?></p>
+                                        <p class="csF16"><?=getDueText($row['end_date']);?></p>
+                                        <a href="<?=base_url('performance-management/reviewer_feedback/'.($row['review_sid']).'/'.($row['reviewee_sid']));?>" target="blank" class="btn btn-black csRadius100 csF16"><em class="fa fa-play-circle csF16"></em> &nbsp;Start Review</a>
                                     </div>
                                 </div>
                             </div>

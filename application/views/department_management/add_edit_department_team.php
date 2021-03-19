@@ -75,6 +75,33 @@
                                                 </div>
                                             </div> 
                                             <div class="form-group autoheight">
+                                                <label for="name">Approvers<span class="staric">*</span></label>
+                                                <div class="">
+                                                    <select name="approvers[]" class="invoice-fields" id="approvers_id" multiple="true">
+                                                        <?php foreach ($employees as $key => $employee): ?>
+                                                            <option value="<?php echo $employee['sid'] ?>" <?php echo isset($team['approvers']) && in_array($employee['sid'], explode(',', $team['approvers']))  ? 'selected="selected"' : ''; ?>>
+                                                                <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
+                                                            </option>
+                                                        <?php endforeach ?>
+                                                    </select>
+                                                    <span id="add_approvers_error" class="text-danger person_error"></span>
+                                                </div>
+                                            </div> 
+                                            <div class="form-group autoheight">
+                                                <label for="name">Reporting Managers <span class="staric">*</span></label>
+                                                <div class="">
+                                                    <select name="reporting_manager[]" class="invoice-fields" id="reporting_manager_id" multiple="true">
+                                                        <option value="0">Please Select Team Lead</option>
+                                                        <?php foreach ($employees as $key => $employee): ?>
+                                                            <option value="<?php echo $employee['sid'] ?>" <?php echo isset($team['reporting_managers']) && in_array($employee['sid'], explode(',', $team['reporting_managers']))  ? 'selected="selected"' : ''; ?>>
+                                                                <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
+                                                            </option>
+                                                        <?php endforeach ?>
+                                                    </select>
+                                                    <span id="add_reporting_manager_error" class="text-danger person_error"></span>
+                                                </div>
+                                            </div> 
+                                            <div class="form-group autoheight">
                                                 <label>Sort Order</label>
                                                 <input type="number" name="sort_order" class="form-control" value="<?php echo isset($team['sort_order']) ? $team['sort_order'] : ''; ?>">
                                             </div>
@@ -101,6 +128,8 @@
 <script>
     $(function(){
         $('#teamlead_id').select2({ closeOnSelect: false });
+        $('#reporting_manager_id').select2({ closeOnSelect: false });
+        $('#approvers_id').select2({ closeOnSelect: false });
     })
 </script>
 
@@ -108,9 +137,18 @@
 <script  language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
     function validate_form() {
+        $('.person_error').text('');
     	var teamlead = $('#teamlead_id').val();
         if(teamlead == 0) {
             $('#add_teamlead_error').text('Team Lead name is required');
+        }
+        var repoting_manager = $('#reporting_manager_id').val();
+        var approvers = $('#approvers_id').val();
+        if(approvers == null) {
+            $('#add_approvers_error').text('Approvers are required');
+        }
+        if(repoting_manager == null) {
+            $('#add_reporting_manager_error').text('Reporting managers are required');
         }
 
         $("#form_add_edit_team_info").validate({
@@ -133,7 +171,9 @@
             },
             submitHandler: function (form) {
                 var teamlead = $('#teamlead_id').val();
-                if(teamlead != 0) {
+                var repoting_manager = $('#reporting_manager_id').val();
+                var approvers = $('#approvers_id').val();
+                if(teamlead != null && repoting_manager != null && approvers != null) {
                     form.submit();
                 }   
             }
