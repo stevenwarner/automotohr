@@ -13,6 +13,7 @@ $config['calendar_opt']['event_types'] = array(
 	'interview-voip'=>'VOIP interview',
 	'timeoff'=>'Time-off Approved',
 	'timeoff_pending'=>'Time-off Pending',
+	'goals'=>'Goals',
 	'holiday'=>'Holidays'
 );
 //

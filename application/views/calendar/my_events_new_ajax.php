@@ -1,3 +1,14 @@
+<style>
+.csCalendarTypes{
+    margin-top: 30px;
+    list-style: none;
+}
+.csCalendarTypes li{
+    display: inline-block;
+    margin-right: 20px;
+}
+</style>
+
 <?php if (!$load_view) { ?>
 <?php 
     $is_regex = 0;
@@ -12,10 +23,6 @@
     <div class="dashboard-wrp">
         <div class="container-fluid">
             <div class="row">
-              <!--   <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
-                    <?php //$this->load->view('main/employer_column_left_view'); ?>
-                </div> -->
-                <!-- <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8"> -->
                 <div class="col-sm-12">
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
@@ -23,7 +30,6 @@
                                 <a href="<?=base_url('dashboard');?>" class="dashboard-link-btn"><i class="fa fa-long-arrow-left"></i>&nbsp;Dashboard</a>
                                 <p style="margin-top: 5px;">Calendar / Events</p>
                             </div>
-                            <!-- <span class="page-heading down-arrow">  <p>/p></span> -->
                         </div><?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                         <div class="job-feature-main m_job">
                             <div class="portalmid">
@@ -41,7 +47,26 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8"> -->
+
+                <div class="col-sm-12">
+                    <!--  -->
+                    <div class="ma10">
+                        <ul class="text-center csCalendarTypes">
+                            <li>
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" name="goals" class="jsCalendarTypes" checked="true" /> Goals
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </li>
+                            <li>
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" name="timeoff" class="jsCalendarTypes" checked="true" /> Time Off
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
                 <div class="col-sm-12">
                     <br />
                     <br />

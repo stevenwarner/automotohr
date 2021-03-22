@@ -5424,6 +5424,7 @@ if (!function_exists('get_calendar_event_color')) {
             'gotomeeting' => '#fd7a2a',
             'timeoff' => '#5cb85c',
             'timeoff_pending' => '#7e7b7b',
+            'goals' => '#fd7a2a',
             'holiday' => '#111111',
 
             'interview-voip' => '#FF0FFF',

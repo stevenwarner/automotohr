@@ -203,6 +203,40 @@
         //     container:'body'
         // }).popover('show');
     }
+    // jQuery IFFY
+    // updated on: 03-04-2019
+    function goalsView(_this, event){
+        //
+        if(event.type != 'goals') return;
+        //
+        $(_this).popover({
+            title: `<strong>${event.title}</strong>`,
+            placement:'top',
+            trigger : 'hover',
+            html: true,
+            content: `
+                <div class="row">
+                    <div class="col-sm-4">
+                        <img src="${event.profile_picture == '' || event.profile_picture == null ? 'https://www.automotohr.com/assets/images/img-applicant.jpg' : `<?=AWS_S3_BUCKET_URL;?>${event.profile_picture}`}" style="max-width: 100%;" />
+                    </div>
+                    <div class="col-sm-8">
+                        <p>${event.first_name} ${event.last_name}</p>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-sm-12">
+                    <p><strong>Start Date:</strong> ${event.start.format('MMM DD YYYY, ddd')}</p>
+                    <p><strong>End Date:</strong> ${event.end.format('MMM DD YYYY, ddd')}</p>
+                    <p><strong>Target:</strong> ${event.target}</p>
+                    <p><strong>Completed Target:</strong> ${event.completed_target}</p>
+                </div>
+            `,
+            container:'body'
+        }).popover('show');
+    }
+
+
     $(function () {
 
         var calendar_ref = $('#calendar');
@@ -611,12 +645,17 @@
             viewRender: function(e){ drag_event = {}; event_process(e); },
             // Triggers when an event is clicked
             eventClick: function (event) { 
-                if(event.type != 'timeoff' && event.type != 'holidays')
+                if(event.type != 'timeoff' && event.type != 'holidays' && event.type != 'goals')
                     edit_event(event); 
                 else if(event.type == 'timeoff') timeoffview($(this), event);
+                else if(event.type == 'goals') goalsView($(this), event);
             },
             eventMouseover: function(event, jsEvent, view) {
-                timeoffview($(this), event);
+                if(event.type == 'goals'){
+                    goalsView($(this), event);
+                } else{
+                    timeoffview($(this), event);
+                }
             },
             //
             eventDragStart: function (event) {
@@ -635,6 +674,9 @@
                 add_event(date, js_event);
             },
             eventRender: function(event, el){
+                //
+                if(event.type == 'goals' && ob['goals'] == 0) return false;
+                if(event.type == 'timeoff' && ob['timeoff'] == 0) return false;
                 if(event.requests != 0) { 
                     el.addClass("fc-event-blink"); 
                     if(blink_interval == null)
@@ -653,6 +695,10 @@
                 if(event.type == 'timeoff' && event.timeoff_status.toLowerCase() == 'pending'){
                     el.addClass("fc-event-cc-timeoff_pending"); 
                     el.addClass("cs-event-btn-timeoff_pending"); 
+                }
+                if(event.type == 'goals'){
+                    el.addClass("fc-event-cc-goals"); 
+                    el.addClass("cs-event-btn-goals"); 
                 }
                 // Category effect
                 el.addClass("fc-event-cc-"+ event.category +""); 
@@ -2262,7 +2308,6 @@
                 case 'agendaDay': calendar_OBJ.current.type = 'day'; break;
                 default: calendar_OBJ.current.type = 'month';
             }
-            console.log(moment(e.start)) ;
             // for start day to end day
             calendar_OBJ.current.week_start = moment(e.start).format('MM-DD'); 
             calendar_OBJ.current.week_end = moment(e.end).format('MM-DD'); 
@@ -2294,6 +2339,19 @@
                 func_hide_loader();
             });
         }
+
+        var ob = {};
+        ob['goals'] = 1;
+        ob['timeoff'] = 1;
+
+        $('.jsCalendarTypes').click(function(){
+            if($(this).prop('checked') === true){
+                ob[$(this).attr('name')] = 1;
+            } else{
+                ob[$(this).attr('name')] = 0;
+            }
+            calendar_ref.fullCalendar('rerenderEvents');
+        });
 
         // Fetch events according to modes
         // @param date_array

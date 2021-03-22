@@ -1383,10 +1383,12 @@ class Performance_management_model extends CI_Model{
         }
         //
         $this->db
-            ->from('goals');
+        ->select('goals.*, users.first_name, users.last_name, users.profile_picture')
+            ->from('goals')
+            ->join('users', 'users.sid = goals.employee_sid');
         //
         if ($startDate != '' && $startDate != 'all' ){ $this->db->where('goals.start_date >= "' . ($startDate) . '"', null);}
-        if ($endDate != '' && $endDate != 'all' ) {$this->db->where('goals.end_date  <= "' . ($endDate) . '"', null);}
+        if ($endDate != '' && $endDate != 'all' ) {$this->db->or_where('goals.end_date  >= "' . ($endDate) . '"', null);}
         $this->db->where('goals.company_sid', $company_id);
         //
         $a = $this->db->get();
@@ -1394,6 +1396,7 @@ class Performance_management_model extends CI_Model{
         $b =  $a->result_array();
         //
         $goals = [];
+
         //
         if(empty($b)) {
             return [];
@@ -1403,6 +1406,9 @@ class Performance_management_model extends CI_Model{
             $end_datetime = $v['end_date'] . "T08:00";
             $goals[] = [
                 'title' =>  $v['title'],
+                'target' =>  $v['target'],
+                'completed_target' =>  $v['completed_target'],
+                'measure_type' =>  $v['measure_type'],
                 'start' =>  $start_datetime,
                 'end' =>  $end_datetime,
                 'color' => "#5cb85c",
@@ -1412,7 +1418,10 @@ class Performance_management_model extends CI_Model{
                 'requests' => 0,
                 'from_date' => $v['start_date'],
                 'to_date' => $v['end_date'],
-                'request_id' => $v['sid']
+                'request_id' => $v['sid'],
+                'first_name' => $v['first_name'],
+                'last_name' => $v['last_name'],
+                'profile_picture' => $v['profile_picture']
             ];
         }
         //
