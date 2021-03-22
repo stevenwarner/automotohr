@@ -3,3 +3,7 @@
 ALTER TABLE `departments_team_management` ADD `approvers` TEXT NOT NULL AFTER `deleted_date`, ADD `reporting_managers` TEXT NOT NULL AFTER `approvers`;
 ALTER TABLE `departments_management` ADD `approvers` TEXT NOT NULL AFTER `deleted_date`, ADD `reporting_managers` TEXT NOT NULL AFTER `approvers`;
 
+-- Added employee visibility to job fair
+-- 03/22/2021
+ALTER TABLE `job_fairs_recruitment` ADD `visibility_employees` LONGTEXT NOT NULL AFTER `page_url`;
+ALTER TABLE `job_fairs_forms` ADD `visibility_employees` LONGTEXT NOT NULL AFTER `page_url`;
