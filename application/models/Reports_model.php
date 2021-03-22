@@ -2005,7 +2005,7 @@ class Reports_model extends CI_Model {
         $this->db->where("created_at BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
         $this->db->where("created_at BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
 
-        $this->db->order_by('sid', 'ASC');
+        $this->db->order_by('sid', 'DESC');
 
         $sms_data = $this->db->get('portal_sms')->result_array();
 

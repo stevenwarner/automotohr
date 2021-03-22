@@ -1100,14 +1100,14 @@ class Financial_reports extends Admin_Controller
                     $data_to_show[$key]['user_type'] = $sms['receiver_phone_number'];
 
                     $data_to_show[$key]['sent'] = $sms['is_sent'] == 1 ? 'Sent' : 'Not Sent';
-                    $data_to_show[$key]['read'] = $sms['is_read'] == 1 ? 'Yes' : 'No';
+                    $data_to_show[$key]['read'] = $sms['is_read'] == 1 ? 'Delivered' : 'Sent';
                     $data_to_show[$key]['date'] = date_format(new DateTime($sms['created_at']), 'M d Y h:m a');
-                    $data_to_show[$key]['amount'] = number_format($sms['charged_amount'], 2, '.', '');
+                    $data_to_show[$key]['amount'] = $sms['charged_amount'];
 
                     $total_amount = $total_amount + $sms['charged_amount'];
                 }
 
-                $grand_total = number_format($total_amount, 2, '.', '');
+                $grand_total =$total_amount;
             }
             //
             $companies = $this->financial_reports_model->get_all_companies();

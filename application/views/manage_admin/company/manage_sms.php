@@ -12,9 +12,9 @@
                                 <!-- Heading -->
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title">
-                                        <h1 class="page-title"><em class="fa fa-phone"></em> Manage SMS</h1>
+                                        <h1 class="page-title"><em class="fa fa-commenting-o"></em> Manage SMS</h1>
                                         <a class="black-btn pull-right"
-                                            href="<?php echo base_url('manage_admin/manage_company/'.($sid).''); ?>"><em
+                                            href="<?php echo base_url('manage_admin/companies/manage_company/'.($sid).''); ?>"><em
                                                 class="fa fa-long-arrow-left"></em> Back to Company</a>
                                     </div>
                                 </div>
@@ -50,7 +50,7 @@
                                         <br>
                                         <div class="row">
                                             <div class="col-sm-3 col-xs-12">
-                                                <label>Message Service <br><small style="color: #cc1100;">(Maximum 11 characters allowed)</small></label>
+                                                <label>Service Name <br><small style="color: #cc1100;">(Maximum 11 characters allowed)</small></label>
                                             </div>
                                             <div class="col-sm-9 col-xs-12">
                                                 <input type="text" class="form-control" id="service_name" value="<?=!empty($phoneNumber['message_service_name']) ? $phoneNumber['message_service_name'] : '';?>"/>
@@ -58,7 +58,9 @@
                                                 <input type="hidden" id="message_service_sid" value="<?=!empty($phoneNumber['message_service_sid']) ? $phoneNumber['message_service_sid'] : 'no';?>"/>
                                                 <input type="text" class="form-control" readonly style="margin-top: 3px;" value="<?=!empty($phoneNumber['message_service_sid']) ? $phoneNumber['message_service_sid'] : '';?>"/>
                                                 <br />
-                                                <button type="button" class="btn btn-success" id="jsMessageService">Update Message Service</button>
+                                                <?php if (!isset($phoneNumber['message_service_sid']) || empty($phoneNumber['message_service_sid'])) { ?>
+                                                <button type="button" class="btn btn-success" id="jsMessageService">Add Service</button>
+                                                <?php } ?>
                                             </div>
                                         </div>
                                     </form>
@@ -242,7 +244,7 @@
         row += '        </div>';
         row += '    </div>';
         row += '    <div class="col-sm-4" style="padding: 28px 0px;">';
-        row += '        <button type="button" class="btn btn-success" id="jsFetchNumber">Fetch Number</button>';
+        row += '        <button type="button" class="btn btn-success" id="jsFetchNumber">Fetch Phone Numbers</button>';
         row += '    </div>';
         row += '</div>';
         row += '<div id="listing_section" class="col-sm-12" style="display: none;">';
@@ -265,7 +267,7 @@
             Title: 'Phone number list',
             Body: row,
             Loader: 'jsSMSNumberModalLoader'
-        },create_number_list);
+        }, create_number_list);
 
 
     });
@@ -281,7 +283,7 @@
         $.ajax({
             type: "GET",
             url: myurl,
-            async : false,
+            async : true,
             success: function (resp) {
                 if(resp.Status === true){
                     var rows = '';
@@ -372,7 +374,7 @@
         if (service_name == '' || service_name == undefined) {
             alertify.alert("WARNING!", "Please enter message service name.", function(){ return; });
             return;
-        } else if (service_name.length < 11) {
+        } else if (service_name.length > 11) {
             alertify.alert("WARNING!", "Maximum 11 characters allowed.", function(){ return; });
             return;
         } else {

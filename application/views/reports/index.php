@@ -379,6 +379,8 @@
                                             </div>
                                         </div>
 
+                                        <?php if(!empty($companyDetailsForSMS)) { ?>
+
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
@@ -396,6 +398,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php } ?>
                                         <!--
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">

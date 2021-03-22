@@ -62,14 +62,11 @@
                                                 <table class="table table-bordered table-striped table-hover">
                                                     <thead>
                                                         <tr>
-                                                            <th class="col-xs-2 text-left">Receiver Name</th>
-                                                            <th class="col-xs-2 text-left">Sender Name</th>
-                                                            <th class="col-xs-2 text-center">Receiver Number</th>
-                                                            <th class="col-xs-2 text-center">Sender Number</th>
-                                                            <th class="col-xs-1 text-center">Message</th>
-                                                            <th class="col-xs-1 text-center">Status</th>
-                                                            <th class="col-xs-1 text-center">Read</th>
-                                                            <th class="col-xs-1 text-center">Amount</th>
+                                                            <th class="text-left">Receiver Name</th>
+                                                            <th class="text-left">Sender Name</th>
+                                                            <th class="text-center">Message</th>
+                                                            <th class="text-center">Status</th>
+                                                            <th class="text-center">Amount</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -77,22 +74,15 @@
                                                             <?php foreach($sms_data as $sms) { ?>
                                                                 <tr>
                                                                     <td class="text-left">
-                                                                        <?php echo $sms['receiver_name']; ?>
-                                                                    </td>
-                                                                    <td class="text-left">
-                                                                        <?php echo $sms['sender_name']; ?>
-                                                                    </td>
-                                                                    <td class="text-right">
+                                                                        <?php echo $sms['receiver_name']; ?> <br />
                                                                         <?php echo $sms['receiver_phone_number']; ?>
                                                                     </td>
-                                                                    <td class="text-right">
+                                                                    <td class="text-left">
+                                                                        <?php echo $sms['sender_name']; ?> <br />
                                                                         <?php echo $sms['sender_phone_number']; ?>
                                                                     </td>
                                                                     <td class="text-right">
                                                                         <?php echo $sms['message']; ?>
-                                                                    </td>
-                                                                    <td class="text-right">
-                                                                        <?php echo $sms['sent']; ?>
                                                                     </td>
                                                                     <td class="text-right">
                                                                         <?php echo $sms['read']; ?>
@@ -104,7 +94,7 @@
                                                             <?php } ?>
                                                         <?php } else { ?>
                                                             <tr>
-                                                                <td colspan="8" class="text-center">
+                                                                <td colspan="5" class="text-center">
                                                                     <span class="no-data">No SMS Record Found</span>
                                                                 </td>
                                                             </tr>
@@ -112,7 +102,7 @@
                                                     </tbody>
                                                     <tfoot>
                                                         <tr>
-                                                            <td class="text-left" colspan="7">
+                                                            <td class="text-left" colspan="4">
                                                                 <strong>Total</strong>
                                                             </td>
                                                             <td class="text-right">

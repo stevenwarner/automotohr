@@ -2249,16 +2249,16 @@ class Companies extends Admin_Controller {
         //
         $company_sid = $_POST['company_sid'];
         // Purchase phone number
-        // $resp = $this
-        //     ->twilio
-        //     ->setReservePhone($number_to_buy)
-        //     ->incomingPhoneNumbers();
+        $resp = $this
+            ->twilio
+            ->setMode('production')
+            ->setReservePhone($actual_phone_number)
+            ->incomingPhoneNumbers();
 
         $response = array();    
 
         if(!isset($resp['Error'])) {
-            // $MessageServiceCode = $resp['Sid'];    
-            $MessageServiceCode = 'MG2798b7fc2bce2a1c7121f5aaf809c298';  
+            $PhoneSid = $resp['Sid'];    
 
             $check_row = $this->company_model->check_company_row_exist($company_sid);
 
@@ -2267,14 +2267,14 @@ class Companies extends Admin_Controller {
                 ->company_model
                 ->save_company_phone_number(array(
                     'company_sid' => $company_sid,
-                    'phone_sid' => $MessageServiceCode,
+                    'phone_sid' => $PhoneSid,
                     'phone_number' => $actual_phone_number,
                     'purchaser_type' => 'admin',
                     'purchaser_id' => $this->ion_auth->user()->row()->id
                 ));
             } else {
                 $data_to_update = array();
-                $data_to_update['phone_sid'] = $MessageServiceCode;
+                $data_to_update['phone_sid'] = $PhoneSid;
                 $data_to_update['phone_number'] = $actual_phone_number;
                 $data_to_update['purchaser_type'] = 'admin';
                 $data_to_update['purchaser_id'] = $this->ion_auth->user()->row()->id;
@@ -2326,7 +2326,7 @@ class Companies extends Admin_Controller {
             $service_sid = $_POST['service_sid'];            
             //
             if ($service_sid != 'no') {
-                $this->twilio->deleteMessageService($service_sid);
+                // $this->twilio->deleteMessageService($service_sid);
             }
             //
             $resp = $this
@@ -2340,13 +2340,13 @@ class Companies extends Admin_Controller {
                 )
                 ->setMessageServicePhoneSid($service_code)
                 ->createMessageService();
-
+                        
             if(!isset($resp['Error'])) {
                 $data_to_update = array();
                 $data_to_update['alfa_sender_sid'] = $resp['AlfaSid'];
-                $data_to_update['phone_number'] = $resp['AlfaName'];
                 $data_to_update['message_service_sid'] = $resp['Sid'];
-                $data_to_update['message_service_name'] = $resp['MessageServiceCode'];
+                $data_to_update['message_service_name'] = $resp['AlfaName'];
+                $data_to_update['alfa_sender_name'] = $resp['AlfaName'];
                 //
                 $this
                 ->company_model

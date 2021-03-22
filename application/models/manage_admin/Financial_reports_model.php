@@ -475,7 +475,7 @@ class Financial_reports_model extends CI_Model
 
         $this->db->where("created_at BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
 
-        $this->db->order_by('sid', 'ASC');
+        $this->db->order_by('sid', 'DESC');
 
         $sms_data = $this->db->get('portal_sms')->result_array();
 
@@ -495,7 +495,7 @@ class Financial_reports_model extends CI_Model
         $this->db->where('active', 1);
         $this->db->where('is_paid', 1);
         $this->db->where('career_page_type', 'standard_career_site');
-        $this->db->order_by('sid', 'DESC');
+        $this->db->order_by('CompanyName', 'ASC');
         return $this->db->get('users')->result_array();
     }
 

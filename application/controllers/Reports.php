@@ -27,6 +27,9 @@ class Reports extends Public_Controller {
             $job_fair_configuration = $this->settings_model->job_fair_configuration($company_sid);
             $data['job_fair_configuration'] = $job_fair_configuration;
             $data['title'] = 'Advanced Hr Reports';
+
+            $data['companyDetailsForSMS'] = get_company_sms_phonenumber($company_sid, $this);
+
             $this->load->view('main/header', $data);
             $this->load->view('reports/index');
             $this->load->view('main/footer');
@@ -2893,14 +2896,14 @@ class Reports extends Public_Controller {
                     $data_to_show[$key]['user_type'] = $sms['receiver_phone_number'];
 
                     $data_to_show[$key]['sent'] = $sms['is_sent'] == 1 ? 'Sent' : 'Not Sent';
-                    $data_to_show[$key]['read'] = $sms['is_read'] == 1 ? 'Yes' : 'No';
+                    $data_to_show[$key]['read'] = $sms['is_read'] == 1 ? 'Delivered' : 'Sent';
                     $data_to_show[$key]['date'] = date_format(new DateTime($sms['created_at']), 'M d Y h:m a');
-                    $data_to_show[$key]['amount'] = number_format($sms['charged_amount'], 2, '.', '');
+                    $data_to_show[$key]['amount'] = $sms['charged_amount'];
 
                     $total_amount = $total_amount + $sms['charged_amount'];
                 }
 
-                $grand_total = number_format($total_amount, 2, '.', '');
+                $grand_total = $total_amount;
             }
 
             $data['sms_data'] = $data_to_show;

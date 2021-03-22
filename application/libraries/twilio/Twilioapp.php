@@ -377,12 +377,14 @@ class Twilioapp{
         //
         if($this->message_sid != '') $data["messagingServiceSid"] = $this->message_sid;
         //
-		try {
+		// try {
 			$return_obj = 
 			$this
 			->twilio
 			->messages
 	        ->create($this->receiver_phone, $data);
+
+			_e($return_obj, true);
         	return array(
         		'MessageSID' => $return_obj->sid, 
         		'DataArray'  => array(
@@ -394,7 +396,7 @@ class Twilioapp{
         		)
         	);
 		 	
-		 } catch(Exception $e) { return $this->resetException($e); }
+		//  } catch(Exception $e) { return $this->resetException($e); }
 	}
 
 	/**
@@ -469,7 +471,7 @@ class Twilioapp{
 	 */
 	function createMessageService(){
 		// Set the callback url
-		$callback_url = base_url('twilio/callback/'.($this->message_service_name_code).'');
+		$callback_url = 'https://www.automotohr.com/twilio/callback/'.($this->message_service_name_code);
 		// Create connection
 		$this->connect();
 		// Create the message service

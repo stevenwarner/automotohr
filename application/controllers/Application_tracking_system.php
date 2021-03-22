@@ -2522,16 +2522,12 @@ class Application_tracking_system extends Public_Controller {
                 // Set & Send Request
                 $this
                 ->twilio
-                ->setMode(IS_SANDBOX == 1 ? 'sandbox' : 'production')
+                ->setMode('production')
                 ->setMessage($message_body);
                 $companyDetails = get_company_sms_phonenumber($company_sid, $this);
-                if(IS_SANDBOX != 1){
                     $this->twilio->setReceiverPhone($form_data['phone_e16']);
                     $this->twilio->setSenderPhone($companyDetails['phone_number']);
                     $this->twilio->setMessageServiceSID($companyDetails['message_service_sid']);
-                }
-                // _e($this->twilio->debug(), true, true);
-                //
                 $resp2 = $this->twilio->sendMessage();
                 // Check & Handling Errors
                 if(!is_array($resp2)){
@@ -2552,9 +2548,7 @@ class Application_tracking_system extends Public_Controller {
                 $insert_array['receiver_user_id'] = isset($form_data['applicant_id']) ? $form_data['applicant_id'] : $form_data['id'];
                 $insert_array['receiver_user_type'] = $form_data['type'];
                 //
-                if(IS_SANDBOX == 1){
-                    $insert_array['receiver_phone_number'] = $form_data['phone_e16'];
-                }
+                $insert_array['receiver_phone_number'] = $form_data['phone_e16'];
                 // Add data in database
                 $insert_id = $this
                 ->application_tracking_system_model

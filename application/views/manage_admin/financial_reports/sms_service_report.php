@@ -73,15 +73,12 @@
                                                         <table class="table table-bordered table-striped table-hover">
                                                             <thead>
                                                                 <tr>
-                                                                    <th class="col-xs-2 text-left">Company</th>
-                                                                    <th class="col-xs-3 text-left">Receiver Name</th>
-                                                                    <th class="col-xs-1 text-left">Sender Name</th>
-                                                                    <th class="col-xs-2 text-center">Receiver Number</th>
-                                                                    <th class="col-xs-2 text-center">Sender Number</th>
-                                                                    <th class="col-xs-2 text-center">Message</th>
-                                                                    <th class="col-xs-2 text-center">Status</th>
-                                                                    <th class="col-xs-2 text-center">Read</th>
-                                                                    <th class="col-xs-2 text-center">Amount</th>
+                                                                    <th class="text-left">Company</th>
+                                                                    <th class="text-left">Receiver Name</th>
+                                                                    <th class="text-left">Sender Name</th>
+                                                                    <th class="text-center">Message</th>
+                                                                    <th class="text-center">Status</th>
+                                                                    <th class="text-center">Amount</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -92,22 +89,15 @@
                                                                                 <?php echo $sms['company_name']; ?>
                                                                             </td>
                                                                             <td class="text-left">
-                                                                                <?php echo $sms['receiver_name']; ?>
-                                                                            </td>
-                                                                            <td class="text-left">
-                                                                                <?php echo $sms['sender_name']; ?>
-                                                                            </td>
-                                                                            <td class="text-right">
+                                                                                <?php echo ucwords($sms['receiver_name']); ?> <br />
                                                                                 <?php echo $sms['receiver_phone_number']; ?>
                                                                             </td>
-                                                                            <td class="text-right">
+                                                                            <td class="text-left">
+                                                                                <?php echo ucwords($sms['sender_name']); ?> <br />
                                                                                 <?php echo $sms['sender_phone_number']; ?>
                                                                             </td>
                                                                             <td class="text-right">
                                                                                 <?php echo $sms['message']; ?>
-                                                                            </td>
-                                                                            <td class="text-right">
-                                                                                <?php echo $sms['sent']; ?>
                                                                             </td>
                                                                             <td class="text-right">
                                                                                 <?php echo $sms['read']; ?>
@@ -119,7 +109,7 @@
                                                                     <?php } ?>
                                                                 <?php } else { ?>
                                                                     <tr>
-                                                                        <td colspan="9" class="text-center">
+                                                                        <td colspan="6" class="text-center">
                                                                             <span class="no-data">No SMS Record Found</span>
                                                                         </td>
                                                                     </tr>
@@ -127,7 +117,7 @@
                                                             </tbody>
                                                             <tfoot>
                                                                 <tr>
-                                                                    <td class="text-left" colspan="8">
+                                                                    <td class="text-left" colspan="5">
                                                                         <strong>Total</strong>
                                                                     </td>
                                                                     <td class="text-right">
