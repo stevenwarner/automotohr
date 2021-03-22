@@ -25,6 +25,28 @@ if(!function_exists('getUserNameBySID')){
     }
 }
 
+if (!function_exists('getCompanyNameBySid')) {
+    function getCompanyNameBySid($company_sid)
+    {
+        $company_name = '';
+        if (!empty($company_sid)) {
+            
+            $CI = &get_instance();
+            $CI->db->select('CompanyName');
+            $CI->db->where('sid', $company_sid);
+            //
+            $company_info = $CI->db->get('users')->row_array();
+
+            if (!empty($company_info)) {
+                $company_name = $company_info['CompanyName'];
+            }   
+
+        } 
+
+        return $company_name;
+    }
+}
+
 if (!function_exists('getCompanyName')) {
     function getCompanyName($user_sid, $user_type)
     {

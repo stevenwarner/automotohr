@@ -25,10 +25,13 @@ class Portal_sms_templates extends Public_Controller {
             // Push new default emails 
             // for employees
 //            $this->portal_sms_templates_model->check_default_tables($company_id, $data['session']['employer_detail']['email'], $company_name);
+            $sma_info = $this->portal_sms_templates_model->getSMSInfo($company_id);
+            //
             $data['all_templates'] = $this->portal_sms_templates_model->getallsmstemplates($company_id);
             $data['employer_id'] = $employer_id;
             $data['company_id'] = $company_id;
             $data['company_name'] = $company_name;
+            $data['sma_info'] = $sma_info;
 
             $this->load->view('main/header', $data);
             $this->load->view('sms_templates/portal_sms_templates');

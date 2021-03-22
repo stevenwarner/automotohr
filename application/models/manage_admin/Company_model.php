@@ -1827,6 +1827,37 @@ class Company_model extends CI_Model {
     }
 
 
+     /**
+     * Check company phone record already exist
+     * Created on: 17-03-2021
+     *
+     * @param $company_sid Integer
+     *
+     * @return Integer|Bool
+     */
+    function check_company_row_exist($company_sid){
+        $result =
+        $this->db
+        ->select('phone_number')
+        ->from('portal_company_sms_module')
+        ->where('company_sid', $company_sid)
+        ->limit(1)
+        ->order_by('sid', 'DESC')
+        ->get();
+        //
+        $result_arr = $result->row_array();
+        $result     = $result->free_result();
+        //
+        return !sizeof($result_arr) ? false : true;
+
+    }
+
+    function update_company_phone_number($company_sid, $dataToUpdate) {
+        $this->db->where('company_sid',$company_sid);
+        $this->db->update('portal_company_sms_module',$dataToUpdate);
+    }
+
+
     /**
      * Save company phone number
      * Created on: 18-07-2019
@@ -2097,5 +2128,13 @@ class Company_model extends CI_Model {
         ));
         //
         return $this->db->insert_id();
+    }
+
+    //
+    function getPhoneNumber($companyId){
+        return $this->db
+        ->where('company_sid', $companyId)
+        ->get('portal_company_sms_module')
+        ->row_array();
     }
 }

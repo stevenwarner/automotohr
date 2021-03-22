@@ -11,6 +11,12 @@ class portal_sms_templates_model extends CI_Model {
         return $this->db->get('portal_sms_templates')->result_array();
     }
 
+    function getSMSInfo($company_sid) {
+        $this->db->select('phone_number, message_service_name');
+        $this->db->where('company_sid', $company_sid);
+        return $this->db->get('portal_company_sms_module')->row_array();
+    }
+
     function getTemplateDetails($sid, $company_sid) {
         $this->db->where('sid', $sid);
         $this->db->where('company_sid', $company_sid);

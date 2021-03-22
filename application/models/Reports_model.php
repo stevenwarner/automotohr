@@ -1995,4 +1995,26 @@ class Reports_model extends CI_Model {
 
         return $t;
     }
+
+    function get_sms_data ($company_sid, $start_date, $end_date) {
+        $this->db->select('*');
+
+        $this->db->where('company_id', $company_sid);
+        $this->db->where('sender_user_id <>', 1);
+
+        $this->db->where("created_at BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+        $this->db->where("created_at BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+
+        $this->db->order_by('sid', 'DESC');
+
+        $sms_data = $this->db->get('portal_sms')->result_array();
+
+
+        if (!empty($sms_data)) {
+            return $sms_data;
+        } else {
+            return array();
+        }
+
+    }
 }

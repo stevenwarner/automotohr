@@ -12,6 +12,7 @@
                             <span class="page-heading down-arrow"><?php echo $title; ?></span>
                         </div>
                         <div class="info-text">
+
                             The SMS Templates module enables you to create and customize messages for your outgoing SMS.<br>
                             We have created default templates to get you going, and get your creative juices flowing.<br>
                             You can use these or create your own.<br>
@@ -21,10 +22,21 @@
                     <div class="dashboard-conetnt-wrp">
                         <div class="hr-innerpadding">
                             <div class="row">
-                                <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3"></div>
-                                <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3"></div>
+                                <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3">
+                                    <div class="field-row">
+                                        <label for="">Phone Nummber</label>
+                                        <input type="text" value="<?php echo $sma_info['phone_number']; ?>" class="invoice-fields" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3">
+                                    <div class="field-row">
+                                        <label for="">Service Name</label>
+                                        <input type="text" value="<?php echo $sma_info['message_service_name']; ?>" class="invoice-fields" readonly>
+                                    </div>
+                                </div>
                                 <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3"></div>
                                 <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3">
+                                    <label for="">&nbsp;</label>
                                     <a href="<?php echo base_url('portal_sms_templates/add_sms_template'); ?>" class="btn btn-success btn-block">Add Custom Template</a>
                                 </div>
                             </div>

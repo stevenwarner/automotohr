@@ -229,7 +229,8 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
     $this->uri->segment(3) == 'yearly_sales' ||
     $this->uri->segment(3) == 'yearly_sales_comparison' ||
     $this->uri->segment(3) == 'monthly_sales' ||
-    $this->uri->segment(3) == 'yearly_sales_comparison'
+    $this->uri->segment(3) == 'yearly_sales_comparison' ||
+    $this->uri->segment(3) == 'sms_service_report' 
 ) {
     $financial_reports_menu = true;
 } else if ($this->uri->segment(3) == 'incident_reporting'){
@@ -825,6 +826,13 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                                 <a <?php if(strpos(current_url(), site_url('manage_admin/financial_reports/monthly_unpaid_invoices')) !== false){
                                     echo 'class="active"';
                                 } ?> href="<?php echo site_url('manage_admin/financial_reports/monthly_unpaid_invoices'); ?>">Monthly Unpaid Invoices</a>
+                            </div>
+                        <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'sms_service_report')) { ?>
+                            <div class="menu-item">
+                                <a <?php if(strpos(current_url(), site_url('manage_admin/financial_reports/sms_service_report')) !== false){
+                                    echo 'class="active"';
+                                } ?> href="<?php echo site_url('manage_admin/financial_reports/sms_service_report'); ?>">SMS Service Report</a>
                             </div>
                         <?php } ?>
                     </div>
