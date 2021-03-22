@@ -21,6 +21,7 @@ class Job_fair_configuration extends Public_Controller {
                 redirect("my_settings", "location");
             }
             
+            $data['employees'] = $this->job_fair_model->getAllEmployees($company_sid);
             $data['job_fair_data'] = $job_fair_data[0];
             $this->form_validation->set_rules('title', 'Title', 'required|trim|xss_clean');
             $this->form_validation->set_rules('content', 'Content', 'required|trim');
@@ -39,6 +40,7 @@ class Job_fair_configuration extends Public_Controller {
                 $button_background_color = $formpost['button_background_color'];
                 $button_text_color = $formpost['button_text_color'];
                 $video_source = $formpost['video_source'];
+                $visibility = $formpost['visibility'];
 
                 if (isset($_FILES['banner_image']) && $_FILES['banner_image']['name'] != '') {
                     $result = put_file_on_aws('banner_image');
@@ -99,6 +101,7 @@ class Job_fair_configuration extends Public_Controller {
                 $insert_array['picture_or_video'] = $picture_or_video;
                 $insert_array['button_background_color'] = $button_background_color;
                 $insert_array['button_text_color'] = $button_text_color;
+                $insert_array['visibility_employees'] = implode(',', $visibility);
 
                 if (isset($result) && $result != 'error' && $result != '') {
                     $insert_array['banner_image'] = $result;
@@ -201,6 +204,7 @@ class Job_fair_configuration extends Public_Controller {
             $this->form_validation->set_rules('perform_action', 'action', 'required|trim|xss_clean');
             
             if ($this->form_validation->run() === FALSE) {
+                $data['employees'] = $this->job_fair_model->getAllEmployees($company_sid);
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/job_fair_add_new');
                 $this->load->view('main/footer');
@@ -219,6 +223,7 @@ class Job_fair_configuration extends Public_Controller {
                 $button_text_color                                              = $formpost['button_text_color'];
                 $temp_status                                                    = $formpost['template-status'];
                 $video_source                                                   = $formpost['video_source'];
+                $visibility                                                   = $formpost['visibility'];
                 $temp_id                                                        = isset($formpost['template-id']) ? $formpost['template-id'] : $form_data[0]['template_sid'];
 
                 if (isset($_FILES['banner_image']) && $_FILES['banner_image']['name'] != '') {
@@ -286,6 +291,7 @@ class Job_fair_configuration extends Public_Controller {
                                 'button_background_color'                       => $button_background_color,
                                 'button_text_color'                             => $button_text_color,
                                 'template_sid'                                  => $temp_id,
+                                'visibility_employees'                                  => implode(',', $visibility),
                                 'template_status'                               => $temp_status);
                 
                 if (isset($result) && $result != 'error' && $result != '') {
@@ -358,6 +364,7 @@ class Job_fair_configuration extends Public_Controller {
 
             
             if ($this->form_validation->run() === FALSE) {
+                $data['employees'] = $this->job_fair_model->getAllEmployees($company_sid);
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/job_fair_add_new');
                 $this->load->view('main/footer');
@@ -374,6 +381,7 @@ class Job_fair_configuration extends Public_Controller {
                 $button_background_color                                        = $formpost['button_background_color'];
                 $button_text_color                                              = $formpost['button_text_color'];
                 $temp_status                                                    = $formpost['template-status'];
+                $visibility                                                     = $formpost['visibility'];
                 $temp_id                                                        = isset($formpost['template-id']) ? $formpost['template-id'] : 0;
 
                 if (isset($_FILES['banner_image']) && $_FILES['banner_image']['name'] != '') {
@@ -396,6 +404,7 @@ class Job_fair_configuration extends Public_Controller {
                                    'button_background_color'                    => $button_background_color,
                                    'button_text_color'                          => $button_text_color,
                                    'template_sid'                               => $temp_id,
+                                   'visibility_employees'                       => implode(',', $visibility),
                                    'template_status'                            => $temp_status);
 
                 if (isset($result) && $result != 'error' && $result != '') {

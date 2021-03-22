@@ -251,6 +251,23 @@
                         </div>
 
                         <div class="box-view">
+                            <h4 class="section-title">Make Applicant For This Job Fair Only Visible To Following Employees:</h4>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="form-group autoheight">
+                                        <select class="select2" name="visibility[]" multiple>
+                                        <?php 
+                                        $preSelected = isset($job_fair_data['visibility_employees']) ? explode(',', $job_fair_data['visibility_employees']) : [];
+                                        foreach($employees as $emp) { ?>
+                                            <option value="<?=$emp['sid'];?>" <?php echo in_array($emp['sid'], $preSelected) ? 'selected="true"' : ''; ?>><?=remakeEmployeeName($emp, true);?></option>
+                                        <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="box-view">
                             <h4 class="section-title">Mandatory Fields <span class="required">*</span></h4>
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
@@ -534,6 +551,8 @@
     }
 
     $(document).ready(function () {
+        //
+        $('.select2').select2({ closeOnSelect: false});
         var value = $("input[name='picture_or_video']:checked").val();
         display(value);
 

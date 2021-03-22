@@ -217,8 +217,7 @@ $route['manage_admin/blocked_ips'] = 'manage_admin/Blocked_ips';
 $route['manage_admin/blocked_ips/handler'] = 'manage_admin/Blocked_ips/handler';
 // Added on: 24-07-2019
 // $route['test'] = 'Twilio/test';
-// Added on: 23-07-2019
-$route['sms/callback/(:any)'] = 'Twilio/receive_request';
+// Added on: 23-07-2019Twilio/receive_request';
 $route['twilio/callback/(:any)'] = 'Twilio/receive_request';
 $route['twilio/(:any)/(:any)'] = 'Twilio/receive_request';
 $route['sms_cron'] = 'Twilio/sms_cron';
