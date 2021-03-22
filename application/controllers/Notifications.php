@@ -27,14 +27,14 @@ class Notifications extends Public_Controller {
             $ses,
             strtolower($ses['employer_detail']['access_level']) != 'employee' ? false : true
         );
-        $this->load->model('Performance_review_model', 'prm');
-        $reviewCount = $this->prm->getPendingReviewCount($ses['employer_detail']['sid']);
-        if($reviewCount != 0){
+        $this->load->model('Performance_management_model', 'pmm');
+        $goalsCount = $this->pmm->getMyGoals($ses['employer_detail']['sid']);
+        if($goalsCount != 0){
 
             $data[] = [
-                'count' => $reviewCount,
-                'link' => base_url('performance/assigned/view'),
-                'title' => 'Performance Reviews'
+                'count' => count($goalsCount),
+                'link' => base_url('performance-management/lms/goals'),
+                'title' => 'Goals'
             ];
         }
         if(!sizeof($data)){
