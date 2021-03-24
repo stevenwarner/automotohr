@@ -5645,7 +5645,7 @@ class Hr_documents_management_model extends CI_Model {
         if(empty($documents)) {return $r;}
         //
         foreach($documents as $document){
-            $chek = 56($document, true);
+            $chek = isDocumentCompletedCheck($document, true);
             if(!$chek) $r[] = $document['document_title'];
         }
         //
