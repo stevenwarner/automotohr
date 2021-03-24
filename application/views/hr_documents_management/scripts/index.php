@@ -1574,7 +1574,7 @@
 			//
 			event.preventDefault();
 			//
-			var i9 = <?php echo !empty($i9_form) ? json_encode($i9_form) : json_encode($i9_form_data); ?>;
+			var i9 = <?php echo !empty($i9_form) ? json_encode($i9_form) : ( !empty($i9_form_data) ? json_encode($i9_form_data) : json_encode([ 'is_required' => 0, 'is_signature_required' => 0])) ;?>;
 			//
 			Modal(
 				'Manage I9 document',
@@ -1598,7 +1598,7 @@
 			//
 			event.preventDefault();
 			//
-			var i9 = (<?php echo !empty($i9_form) ? json_encode($i9_form) : json_encode($i9_form_data); ?>);
+			var i9 = (<?php echo !empty($i9_form) ? json_encode($i9_form) :  : ( !empty($i9_form_data) ? json_encode($i9_form_data) : json_encode([ 'is_required' => 0, 'is_signature_required' => 0])) ; ?>);
 			//
 			var o = {};
 			o.id = i9.sid;
@@ -1627,7 +1627,7 @@
 			//
 			event.preventDefault();
 			//
-			var w9 = <?php echo !empty($w9_form) ? json_encode($w9_form) : json_encode($w9_form_data); ?>;
+			var w9 = <?php echo !empty($w9_form) ? json_encode($w9_form) :  : ( !empty($w9_form) ? json_encode($w9_form) : json_encode([ 'is_required' => 0, 'is_signature_required' => 0])) ; ?>;
 			//
 			Modal(
 				'Manage W9 document',
@@ -1651,7 +1651,7 @@
 			//
 			event.preventDefault();
 			//
-			var w9 = <?php echo !empty($w9_form) ? json_encode($w9_form) : json_encode($w9_form_data); ?>;
+			var w9 = <?php echo !empty($w9_form) ? json_encode($w9_form) :  : ( !empty($w9_form) ? json_encode($w9_form) : json_encode([ 'is_required' => 0, 'is_signature_required' => 0])) ; ?>;
 			//
 			var o = {};
 			o.id = w9.sid;
@@ -1680,7 +1680,7 @@
 			//
 			event.preventDefault();
 			//
-			var w4 = <?php echo !empty($w4_form) ? json_encode($w4_form) : json_encode($w4_form_data); ?>;
+			var w4 = <?php echo !empty($w4_form) ? json_encode($w4_form) :  : ( !empty($w4_form) ? json_encode($w4_form) : json_encode([ 'is_required' => 0, 'is_signature_required' => 0])) ; ?>;
 			//
 			Modal(
 				'Manage W4 document',
@@ -1704,7 +1704,7 @@
 			//
 			event.preventDefault();
 			//
-			var w4 = <?php echo !empty($w4_form) ? json_encode($w4_form) : json_encode($w4_form_data); ?>;
+			var w4 = <?php echo !empty($w4_form) ? json_encode($w4_form) :  : ( !empty($w4_form) ? json_encode($w4_form) : json_encode([ 'is_required' => 0, 'is_signature_required' => 0])) ; ?>;
 			//
 			var o = {};
 			o.id = w4.sid;
