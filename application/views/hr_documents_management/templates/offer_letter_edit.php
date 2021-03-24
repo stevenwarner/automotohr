@@ -120,7 +120,7 @@
 			<!-- 10 -->
 			<div class="form-group hidden">
 				<label>Is signature required?</label>
-				<p class="help-text"><p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p></p>
+				<p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p>
 				<label class="control control--radio">
 					<input type="radio" class="js-template-signature-required-edit" name="js-template-signature-required-edit" value="0" /> No &nbsp;
 					<div class="control__indicator"></div>

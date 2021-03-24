@@ -257,9 +257,9 @@
 			if( $(this).data('type').toLowerCase().match(/notcompleted/ig) === null ){
 				rows += getResetBox();
 			}
-			if(do_descpt) rows += getTags();
 			rows += getRequiredRow();
 			rows += getSignatureRequiredRow();
+			if(do_descpt) rows += getTags();
 			//
 			let select2s = ['#js-modify-roles', '#js-modify-selected-employees', '#js-modify-selected-departments', '#js-modify-selected-teams'];
 			//
@@ -349,9 +349,9 @@
 			<?php } ?>
 			if(do_descpt) rows += getSigners();
 			rows+= getEmailContent();
-			if(do_descpt) rows += getTags();
 			rows += getRequiredRow();
 			rows += getSignatureRequiredRow();
+			if(do_descpt) rows += getTags();
 			//
 			Modal(
 				'Modify & Assign This Document',

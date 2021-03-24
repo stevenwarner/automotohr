@@ -811,6 +811,7 @@ message: ""
             portal_job_listings.organic_feed,
             portal_job_listings.activation_date,
             portal_job_listings.deactivation_date,
+            portal_job_listings.published_on_career_page,
             portal_job_listings.expiration_date,
             users.sid as company_id,
             users.active as company_active,
