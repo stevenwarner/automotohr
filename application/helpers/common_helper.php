@@ -12923,3 +12923,143 @@ if(!function_exists('getDocumentBody')){
         return $my_return;
     }
 }
+
+if(!function_exists('getCompanyInfo')){
+    function getCompanyInfo ($company_sid) {
+        //
+        $ra = [
+            'company_name' => '[Company Name]',
+            'company_address' => '[Company Address]',
+            'company_phone' => '[Company Phone]',
+            'career_site_url' => '[Career Site Url]'
+        ];
+        //
+        $CI = &get_instance();
+
+        //Get Company Info
+        $CI->db->select('users.CompanyName');
+        $CI->db->select('users.Location_Address');
+        $CI->db->select('users.Location_Country');
+        $CI->db->select('users.Location_State');
+        $CI->db->select('users.Location_City');
+        $CI->db->select('users.CompanyDescription');
+        $CI->db->select('users.Location_ZipCode');
+        $CI->db->select('users.PhoneNumber');
+
+        $CI->db->select('states.state_name as state');
+
+        $CI->db->select('portal_employer.sub_domain');
+        $CI->db->select('portal_employer.domain_type');
+
+        $CI->db->where('users.sid', $company_sid);
+        $CI->db->join('portal_employer', 'users.sid = portal_employer.user_sid', 'left');
+        $CI->db->join('states', 'users.Location_State = states.sid', 'left');
+
+        $record_obj = $CI->db->get('users');
+        $company_info = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($company_info)) {
+            $company_info = $company_info[0];
+
+            $address = $company_info['Location_Address'];
+            $city = $company_info['Location_City'];
+            $state = $company_info['state'];
+            $zipcode = $company_info['Location_ZipCode'];
+            $country = $company_info['Location_Country'] == 227 ? 'United States' : 'Canada';
+
+            $full_address = '';
+            $full_address .= !empty($address) ? $address : '';
+            $full_address .= !empty($city) ? ', ' . $city : '';
+            $full_address .= !empty($state) ? ', ' . $state : '';
+            $full_address .= !empty($zipcode) ? ', ' . $zipcode : '';
+            $full_address .= !empty($country) ? ', ' . $country : '';
+
+            $domain = $company_info['sub_domain'];
+            $domain_type = $company_info['domain_type'];
+
+            $career_site_url = '';
+            if ($domain_type == 'addondomain') {
+                $career_site_url = $domain;
+            } else {
+                $career_site_url = STORE_PROTOCOL . $domain;
+            }
+
+            $ra['company_name'] = $company_info['CompanyName'];
+            $ra['company_address'] = $full_address;
+            $ra['company_phone'] = $company_info['PhoneNumber'];
+            $ra['career_site_url'] = $career_site_url;
+        }
+        //
+        return $ra;
+    }
+}
+
+if(!function_exists('getUserInfo')){
+    function getUserInfo ($user_type, $user_sid) {
+        //
+        $ra = [
+            'first_name' => '[' . $user_type . ' First Name]',
+            'last_name' => '[' . $user_type . ' Last Name]',
+            'email' => '[' . $user_type . ' Email]',
+            'job_title' => 'No Job Title Found'
+        ];
+        //
+        $CI = &get_instance();
+        //
+        if ($user_type == 'applicant') {
+
+            $CI->db->select('portal_job_applications.first_name');
+            $CI->db->select('portal_job_applications.last_name');
+            $CI->db->select('portal_job_applications.email');
+
+            $CI->db->select('portal_applicant_jobs_list.job_sid');
+            $CI->db->select('portal_applicant_jobs_list.date_applied as application_date');
+            $CI->db->select('portal_applicant_jobs_list.desired_job_title');
+            $CI->db->select('portal_job_listings.Title as job_title');
+
+            $CI->db->where('portal_job_applications.sid', $user_sid);
+
+            $CI->db->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left');
+            $CI->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
+
+            $record_obj = $CI->db->get('portal_applicant_jobs_list');
+            $record_arr = $record_obj->result_array();
+            $record_obj->free_result();
+
+            if (!empty($record_arr)) {
+                $user_info = $record_arr[0];
+
+                $ra['first_name']   = $user_info['first_name'];
+                $ra['last_name']    = $user_info['last_name'];
+                $ra['email']        = $user_info['email'];
+                $ra['job_title']    = $user_info['job_title'];
+            } 
+        } else if ($user_type == 'employee') {
+            $CI->db->select('username');
+            $CI->db->select('first_name');
+            $CI->db->select('last_name');
+            $CI->db->select('job_title');
+            $CI->db->select('email');
+            $CI->db->select('job_title');
+            $CI->db->select('registration_date');
+
+            $CI->db->where('sid', $user_sid);
+
+            $record_obj = $CI->db->get('users');
+            $record_arr = $record_obj->result_array();
+            $record_obj->free_result();
+
+            if (!empty($record_arr)) {
+                $user_info = $record_arr[0];
+
+                $ra['first_name']   = $user_info['first_name'];
+                $ra['last_name']    = $user_info['last_name'];
+                $ra['email']        = $user_info['email'];
+                $ra['job_title']    = $user_info['job_title'];
+            } 
+        } 
+        //
+        return $ra;
+    }
+}

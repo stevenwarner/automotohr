@@ -304,9 +304,13 @@ switch (ENVIRONMENT)
  * And away we go...
  */
 
-
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+if($_SERVER['HTTP_HOST'] == 'staging.automotohr.com'){
+	error_reporting(E_ALL);
+	ini_set('display_errors', 1);
+} else{
+	error_reporting(0);
+	ini_set('display_errors', 0);
+}
 
 
 //echo '<!-- **********************'.( microtime(true) - $GLOBALS['BENCHMARKSTARTTIME'] ).'****************** --> <br />';
