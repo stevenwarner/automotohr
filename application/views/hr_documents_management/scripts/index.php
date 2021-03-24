@@ -1598,7 +1598,7 @@
 			//
 			event.preventDefault();
 			//
-			var i9 = <?php echo !empty($i9_form) ? json_encode($i9_form) : ( !empty($i9_form_data) ? json_encode($i9_form_data) : json_encode([ 'is_required' => 0, 'is_signature_required' => 0])) ; ?>);
+			var i9 = <?php echo !empty($i9_form) ? json_encode($i9_form) : ( !empty($i9_form_data) ? json_encode($i9_form_data) : json_encode([ 'is_required' => 0, 'is_signature_required' => 0])) ; ?>;
 			//
 			var o = {};
 			o.id = i9.sid;
