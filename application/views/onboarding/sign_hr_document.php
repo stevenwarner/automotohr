@@ -26,7 +26,7 @@
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div id="jstopdf" class="hr-box" style="background: #fff;">
                             <div class="alert alert-info">
-                                <strong><?php echo ucwords($document['document_title']); ?></strong>
+                                <strong><?php echo ucwords($document['document_title']); ?> <?php echo $document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="You must complete this document to finish the onboarding process."></i>' : '' ;?></strong>
                             </div>
                             <div class="hr-innerpadding">
                                 <div class="row">
@@ -858,4 +858,12 @@
         true,
         false
     );
+
+    $(document).ready(function(){
+        $('.jsTooltip').tooltip({
+            placement: "top auto",
+            trigger: "hover"
+        });
+    });
+
 </script>

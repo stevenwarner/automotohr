@@ -1,4 +1,5 @@
 <?php
+    $requiredMessage = 'You must complete this document to finish the onboarding process.';
     $ncd = $cd = 0;
     if (isset($applicant)) {
         $i9_url = base_url('onboarding/form_i9/'.$unique_sid);
@@ -73,7 +74,7 @@
                                                 <tr>
                                                     <td class="">
                                                         <?php
-                                                            echo $document['document_title'] . '&nbsp;';
+                                                            echo $document['document_title'].( $document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="'.($requiredMessage).'"></i>' : '' ).'';
                                                             echo $document['user_consent'] == 1 ? '<b> (Waiting Authorize Signature)</b>' : '';
                                                             echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                             echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
@@ -136,7 +137,7 @@
                                                         <tr>
                                                             <td class="">
                                                                 <?php
-                                                                    echo $uncompleted_offer_letter['document_title'] . '&nbsp;';
+                                                                    echo $uncompleted_offer_letter['document_title'].( $uncompleted_offer_letter['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="'.($requiredMessage).'"></i>' : '' ).'';
                                                                     echo $uncompleted_offer_letter['status'] ? '' : '<b>(revoked)</b>';
 
                                                                     if (isset($uncompleted_offer_letter['assigned_date']) && $uncompleted_offer_letter['assigned_date'] != '0000-00-00 00:00:00') {
@@ -230,7 +231,7 @@
                                                         <tr>
                                                             <td class="">
                                                                 <?php
-                                                                    echo $document['document_title'] . '&nbsp;';
+                                                                    echo $document['document_title'].( $document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="'.($requiredMessage).'"></i>' : '' ).'';
                                                                     echo $document['status'] ? '' : '<b>(revoked)</b>';
 
                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
@@ -325,7 +326,7 @@
                                             <tr>
                                                 <td class="col-lg-10">
                                                     <?php
-                                                    echo 'W4 Fillable';
+                                                    echo 'W4 Fillable'.( $w4_form['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="'.($requiredMessage).'"></i>' : '' ).'';
                                                     echo $w4_form['status'] ? '' : '<b>(revoked)</b>';
 
                                                     if (isset($w4_form['sent_date']) && $w4_form['sent_date'] != '0000-00-00 00:00:00') {
@@ -345,7 +346,7 @@
                                             <tr>
                                                 <td class="col-lg-10">
                                                     <?php
-                                                    echo 'W9 Fillable';
+                                                    echo 'W9 Fillable'.( $w9_form['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="'.($requiredMessage).'"></i>' : '' ).'';
                                                     echo $w9_form['status'] ? '' : '<b>(revoked)</b>';
 
                                                     if (isset($w9_form['sent_date']) && $w9_form['sent_date'] != '0000-00-00 00:00:00') {
@@ -365,7 +366,7 @@
                                             <tr>
                                                 <td class="col-lg-10">
                                                     <?php
-                                                    echo 'I9 Fillable';
+                                                    echo 'I9 Fillable'.( $i9_form['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="'.($requiredMessage).'"></i>' : '' ).'';
                                                     echo $i9_form['status'] ? '' : '<b>(revoked)</b>';
                                                     if (isset($i9_form['sent_date']) && $i9_form['sent_date'] != '0000-00-00 00:00:00') {
                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $i9_form['sent_date'], '_this' => $this));
@@ -470,7 +471,7 @@
                                             <tr>
                                                 <td class="col-sm-12 col-xs-12">
                                                     <?php
-                                                        echo $document['document_title']. '&nbsp;';
+                                                        echo $document['document_title']. ( $document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="'.($requiredMessage).'"></i>' : '' ).'';
                                                         echo $document['status'] ? '' : '<b>(revoked)</b>';
 
                                                         if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
@@ -1157,3 +1158,4 @@
         
      }
 </style>
+

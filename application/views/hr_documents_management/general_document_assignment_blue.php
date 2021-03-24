@@ -411,7 +411,7 @@
                     completedDocs += `
                         <tr class="jsGeneralRowCompleted${v.document_type}">
                             <td class="">
-                                ${v.document_type.fix()} <br />
+                                ${v.document_type.fix()} ${v.is_required == 1 ? ' <i class="fa fa-asterisk jsTooltip" title="You must complete this document to finish the onboarding process." style="color: #cc1100;" aria-hidden="true"></i>' : ''} <br />
                                 <strong>Assigned on: </strong> ${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')} <br />
                                 <strong>Completed on: </strong> ${moment(v.updated_at).format('MMM Do YYYY, ddd H:m:s')}
                             </td>
@@ -427,7 +427,7 @@
                     notCompletedDocs += `
                         <tr class="jsGeneralRowNotCompleted${v.document_type}">
                             <td class="">
-                                ${v.document_type.replace(/_/, ' ').ucwords()} <br />
+                                ${v.document_type.replace(/_/, ' ').ucwords()} ${v.is_required == 1 ? ' <i class="fa fa-asterisk jsTooltip" title="You must complete this document to finish the onboarding process." style="color: #cc1100;" aria-hidden="true"></i>' : ''} <br />
                                 <strong>Assigned on: </strong> ${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')}
                             </td>
                             <td class="">
@@ -449,6 +449,8 @@
             $('#jsGeneralDocumentBody').html(rows);
             //
             nl(false);
+            //
+            loadTT();
         }
 
         //

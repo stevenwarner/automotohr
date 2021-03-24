@@ -164,16 +164,7 @@ class Onboarding extends CI_Controller {
                             $is_magic_tag_exist = 1;
                         }
 
-                        // if (str_replace('{{authorized_signature}}', '', $document_body) != $document_body) {
-                        //     $is_document_authorized = 1;
-                        // }
                     }
-
-                    // if ($assigned_document['document_sid'] == 0) {
-                    //     $doc_visible_check = $this->hr_documents_management_model->get_manual_doc_visible_payroll_check($assigned_document['sid']);
-                    //     $assigned_document['visible_to_payroll'] = $doc_visible_check;
-                        
-                    // }
 
                     $payroll_sids = $this->hr_documents_management_model->get_payroll_documents_sids();
                     $documents_management_sids = $payroll_sids['documents_management_sids'];
@@ -191,14 +182,6 @@ class Onboarding extends CI_Controller {
                         if ($assigned_document['status'] == 1) {
                             if ($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) { 
                                 
-                                // if ($is_document_authorized) {
-                                //     if ($assigned_document['user_consent'] == 1 && !empty($assigned_document['authorized_signature'])) {
-                                //         $is_document_completed = 1;
-                                //     } else {
-                                //         $is_document_completed = 0;
-                                //     }
-                                // } else 
-
                                 if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
                                     if ($assigned_document['uploaded'] == 1) {
                                         $is_document_completed = 1;

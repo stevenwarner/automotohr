@@ -8744,14 +8744,20 @@ ini_set('memory_limit', -1);
                 //
                 $user_type = $post['user_type'];
                 //
-                $is_completed = $this->hr_documents_management_model->getUncompletedGeneralAssignedDocuments(
+                $generalDocuments = $this->hr_documents_management_model->getUncompletedGeneralAssignedDocuments(
+                    $company_sid,
+                    $user_sid,
+                    $user_type
+                ); 
+                //
+                $documents = $this->hr_documents_management_model->getUncompletedAssignedDocuments(
                     $company_sid,
                     $user_sid,
                     $user_type
                 ); 
                 //
                 $this->res['Status'] = TRUE;
-                $this->res['Response'] = $is_completed;
+                $this->res['Response'] = array_merge( $generalDocuments, $documents );
                 $this->resp();
                 //
             break;

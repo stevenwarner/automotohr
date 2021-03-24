@@ -100,6 +100,7 @@ $tab_data['document_offer_letter_base'] = $document_offer_letter_base;
                         <p class="text-blue"><b>Please review these company documents and take appropriate action. Many
                                 of these documents are extremely time sensitive and need to be completed as soon as
                                 possible.</b></p>
+                        <p class="text-blue"><b><i class="fa fa-asterisk" style="color: #cc1100;" aria-hidden="true"></i> means the document is required and needs to be signed to complete the onboarding process.</b></p>
                         <?php if($this->uri->segment(2) == 'my_documents'){ ?>
                         <p class="text-blue red-paragragh "><b>We suggest that you only use Google Chrome to access your
                                 account and
@@ -274,3 +275,14 @@ $tab_data['document_offer_letter_base'] = $document_offer_letter_base;
     'GID' => true
 ]); ?>
 <?php } ?>
+
+<script>
+    function loadTT(){
+       $('.jsTooltip').tooltip({
+           placement: "top auto",
+           trigger: "hover"
+       });
+    };
+
+    loadTT();
+</script>

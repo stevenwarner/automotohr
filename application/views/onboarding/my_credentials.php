@@ -202,7 +202,7 @@ else $sideBar = onboardingHelpWidget($company_info['sid']);
                     form_data.append('company_sid', <?php echo $onboarding_details['company_sid']; ?>);
                     form_data.append('user_sid', <?php echo $onboarding_details['applicant_sid']; ?>);
                     form_data.append('user_type', 'applicant');
-                    form_data.append('action', 'check_user_complete_general_document');
+                form_data.append('action', 'check_user_complete_general_document');
 
                     $.ajax({
                         url: '<?= base_url('hr_documents_management/handler') ?>',
@@ -216,10 +216,7 @@ else $sideBar = onboardingHelpWidget($company_info['sid']);
                                 var applicant_id = '<?php echo $this->uri->segment(3); ?>';
                                 alertify.alert(
                                     'WARNING!', 
-                                    `The following general documents are required. Please, complete them in order to proceed. <br /> <strong>${resp.Response.join(',<br />')}</strong>`,
-                                    () => {
-                                        window.location = "<?=base_url('onboarding/general_information')?>/"+applicant_id;
-                                    }
+                                    `Please, complete the following documents to finish the onboarding process.  <br /> <strong>${resp.Response.join(',<br />')}</strong>`
                                 );
                                 
                                 return;

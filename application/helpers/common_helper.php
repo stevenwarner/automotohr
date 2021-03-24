@@ -11692,158 +11692,6 @@ if(!function_exists('')){
 }
 
 
-/**
- * @employee:    Mubashir Ahmed
- * @date:        10/23/2020
- * @description: Checks if document is completed or not
- * @param         Array $document
- *                      Pass document/offer letter/pay plan array
- * @param         Bool  $check
- *                      Either to return complted check or not
- *                      default is set to false
- * @param         Bool  $doConvertImages
- *                      Wither to convert images to base 64 or not
- *                      default is set to false
- * 
- * @return        Array|String
- *                [
- *                   isCompleted => false,
- *                   isAuthorized => false,
- *                   hasMagicCodes => false,
- *                   buttonType => '',
- *                   completedAt => [],
- *                   assignedAt => []
- *                ] - true / false
- */
-function isDocumentCompletedCheck(
-    &$document,
-    $check = false,
-    $doConvertImages = false
-){
-    //
-    $ra = [
-        'isCompleted' => false,
-        'isNoAction' => false,
-        'isAuthorized' => false,
-        'isManualDocument' => false,
-        'hasMagicCodes' => false,
-        'buttonType' => '',
-        'completedAt' => [],
-        'assignedAt' => []
-    ];
-    //
-    $ra['assignedAt'] = [
-        'db_format' => $document['assigned_date'],
-        // 'fe_format' => DateTime::createFromFormat('Y-m-d H:i:s', $document['assigned_date'])->format('m/d/Y H:i'),
-        // 'ff_format' => DateTime::createFromFormat('Y-m-d H:i:s', $document['assigned_date'])->format('M d Y, D H:i:s')
-    ];
-    // For manual & bulk upload ones
-    if($document['document_sid'] === 0){
-        $ra['isCompleted'] = $ra['isManualDocument'] = true;
-    } else{
-        // Set document type
-        $type = $document['document_type'];
-        $isDocument = true;
-        $body = $document['document_description'];
-        //
-        if(!empty($document['manual_document_type'])) $type = $document['manual_document_type'];
-        if(!empty($document['offer_letter_type'])) { $isDocument = false; $type = $document['offer_letter_type']; }
-        
-        // Check document Type
-        if($type == 'generated'){
-            // 
-            $authorizedCodes = array('{{authorized_signature}}', '{{authorized_signature_date}}');
-            $magicCodes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
-            $magicSignatureCodes = array('{{signature}}', '{{inital}}');
-            //
-            $withoutSignMC = str_replace($magicSignatureCodes, '', $body); 
-            $withoutMC = str_replace($magicCodes, '', $body); 
-            //
-            if ($withoutSignMC != $body) $ra['buttonType'] = 'consent_only';
-            else if ($withoutMC != $body) $ra['buttonType'] = 'save_only';
-            //
-            $ra['isAuthorized'] = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
-            //
-            $ra['hasMagicCodes'] = $hasAnyMC = preg_match('/{{(.*?)}}/i', $body);
-            //
-            $hasSignMagicCode = preg_match('/{{signature}}|{{inital}}/i', $body);
-            // When nothing is set
-            if(
-                $document['signature_required'] == 0 &&
-                $document['download_required'] == 0 &&
-                $document['acknowledgment_required'] == 0 &&
-                !$hasAnyMC
-            ){
-                $ra['isNoAction'] = $ra['isCompleted'] = true;
-            } else if(
-                $document['signature_required'] == 1 ||
-                $hasAnyMC                                   // When signature is required or any magic code is found
-            ){
-                // Check if it's signed
-                if($document['user_consent'] == 1) $ra['isCompleted'] = true;
-            } else if(
-                $document['download_required'] == 1 &&
-                $document['acknowledgment_required'] == 1    // When download & acknowledged is required
-            ){
-                // 
-                if(
-                    $document['acknowledged'] == 1 &&
-                    $document['downloaded'] == 1
-                ) $ra['isCompleted'] = true;
-            } else if(
-                $document['acknowledgment_required'] == 1    // When acknowledged is required
-            ){ 
-                // 
-                if($document['acknowledged'] == 1) $ra['isCompleted'] = true;
-            } else if(
-                $document['download_required'] == 1          // When download is required
-            ){
-                // 
-                if($document['downloaded'] == 1) $ra['isCompleted'] = true;
-            }
-    
-        } else if($type == 'uploaded'){
-            // When nothing is set
-            if(
-                $document['signature_required'] == 0 &&
-                $document['download_required'] == 0 &&
-                $document['acknowledgment_required'] == 0
-            ){
-                $ra['isNoAction'] = $ra['isCompleted'] = true;
-            } else if(
-                $document['signature_required'] == 1         // When signature (Reupload) is required or any magic code is found
-            ){
-                // Check if it's signed
-                if($document['user_consent'] == 1 || $document['uploaded'] == 1) $ra['isCompleted'] = true;
-            } else if(
-                $document['download_required'] == 1 &&
-                $document['acknowledgment_required'] == 1    // When download & acknowledged is required
-            ){
-                // 
-                if(
-                    $document['acknowledged'] == 1 &&
-                    $document['downloaded'] == 1
-                ) $ra['isCompleted'] = true;
-            } else if(
-                $document['acknowledgment_required'] == 1    // When acknowledged is required
-            ){ 
-                // 
-                if($document['acknowledged'] == 1) $ra['isCompleted'] = true;
-            } else if(
-                $document['download_required'] == 1          // When download is required
-            ){
-                // 
-                if($document['downloaded'] == 1) $ra['isCompleted'] = true;
-            }
-        }
-    }
-    //
-    $document['ra'] = $ra;
-    //
-    if($check) return $ra['isCompleted'];
-    //
-    return $ra;
-}
 
 
 /**
@@ -12656,3 +12504,422 @@ if(!function_exists('getDueText')){
     }
 }
 
+if (!function_exists('concertBase64ToPDF')) {
+    function concertBase64ToPDF(
+        $base64_string, $file_name
+    ) {
+        //
+        // if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName( $fileName, false );
+        //
+        $CI = &get_instance();
+        // Set local path
+        $path = APPPATH . '../assets/tmp/';
+        //
+        $file_parts = explode(";base64,", $base64_string);
+        //
+        $image_base64 = base64_decode($file_parts[1]);
+        //
+        $new_file_name = strtolower(str_replace(" ", "_", $file_name)).'.pdf';
+        //
+        $target_file = $path . $new_file_name;
+        //
+        file_put_contents($target_file, $image_base64);
+        //
+        $CI->load->library('aws_lib');
+        //
+        $options = [
+            'Bucket' => AWS_S3_BUCKET_NAME,
+            'Key' => $new_file_name,
+            'Body' => file_get_contents($target_file),
+            'ACL' => 'public-read',
+            'ContentType' => getMimeType($new_file_name)
+        ];
+        //
+        $CI->aws_lib->put_object($options);
+        //
+        unlink($target_file);
+        //
+        return $new_file_name;
+    }
+}
+
+if(!function_exists('isDocumentCompletedCheck')){
+    function isDocumentCompletedCheck(
+        &$document,
+        $check = false,
+        $doConvertImages = false
+    ){
+        //
+        $ra = [
+            'isCompleted' => false,
+            'isNoAction' => false,
+            'isAuthorized' => false,
+            'isManualDocument' => false,
+            'hasMagicCodes' => false,
+            'buttonType' => '',
+            'completedAt' => [],
+            'assignedAt' => [],
+            'assigned_print_url' => '',
+            'assigned_download_url' => '',
+            'submitted_print_url' => '',
+            'submitted_download_url' => '',
+            'ifram_url' => '',
+            'image_path' => '',
+            'html_body' => ''
+        ];
+        //
+        $ra['assignedAt'] = [
+            'db_format' => $document['assigned_date'],
+            // 'fe_format' => DateTime::createFromFormat('Y-m-d H:i:s', $document['assigned_date'])->format('m/d/Y H:i'),
+            // 'ff_format' => DateTime::createFromFormat('Y-m-d H:i:s', $document['assigned_date'])->format('M d Y, D H:i:s')
+        ];
+        // For manual & bulk upload ones
+        if($document['document_sid'] === 0){
+            $ra['isCompleted'] = $ra['isManualDocument'] = true;
+        } else{
+            // Set document type
+            $type = $document['document_type'];
+            $isDocument = true;
+            $body = $document['document_description'];
+            //
+            if(!empty($document['manual_document_type'])) $type = $document['manual_document_type'];
+            if(!empty($document['offer_letter_type'])) { $isDocument = false; $type = $document['offer_letter_type']; }
+            
+            // Check document Type
+            if($type == 'generated'){
+                // 
+                $authorizedCodes = array('{{authorized_signature}}', '{{authorized_signature_date}}');
+                $magicCodes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                $magicSignatureCodes = array('{{signature}}', '{{inital}}');
+                //
+                $withoutSignMC = str_replace($magicSignatureCodes, '', $body); 
+                $withoutMC = str_replace($magicCodes, '', $body); 
+                //
+                if ($withoutSignMC != $body) $ra['buttonType'] = 'consent_only';
+                else if ($withoutMC != $body) $ra['buttonType'] = 'save_only';
+                //
+                $ra['isAuthorized'] = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
+                //
+                $ra['hasMagicCodes'] = $hasAnyMC = preg_match('/{{(.*?)}}/i', $body);
+                //
+                $hasSignMagicCode = preg_match('/{{signature}}|{{inital}}/i', $body);
+                // When nothing is set
+                if(
+                    $document['signature_required'] == 0 &&
+                    $document['download_required'] == 0 &&
+                    $document['acknowledgment_required'] == 0 &&
+                    !$hasAnyMC
+                ){
+                    $ra['isNoAction'] = $ra['isCompleted'] = true;
+                } else if(
+                    $document['signature_required'] == 1 ||
+                    $hasAnyMC                                   // When signature is required or any magic code is found
+                ){
+                    // Check if it's signed
+                    if($document['user_consent'] == 1) $ra['isCompleted'] = true;
+                } else if(
+                    $document['download_required'] == 1 &&
+                    $document['acknowledgment_required'] == 1    // When download & acknowledged is required
+                ){
+                    // 
+                    if(
+                        $document['acknowledged'] == 1 &&
+                        $document['downloaded'] == 1
+                    ) $ra['isCompleted'] = true;
+                } else if(
+                    $document['acknowledgment_required'] == 1    // When acknowledged is required
+                ){ 
+                    // 
+                    if($document['acknowledged'] == 1) $ra['isCompleted'] = true;
+                } else if(
+                    $document['download_required'] == 1          // When download is required
+                ){
+                    // 
+                    if($document['downloaded'] == 1) $ra['isCompleted'] = true;
+                }
+
+                if ($ra['isCompleted'] == true) {
+                    if (empty($document['form_input_data'])) {
+                        $listaction = getGeneratedDocumentURL($document, 'uncompleted', $ra['isAuthorized']);
+                        $ra['assigned_print_url'] = $listaction['print_url'];
+                        $ra['assigned_download_url'] = $listaction['download_url'];
+
+                        $listaction = getUploadedDocumentURL($document['submitted_description']);
+                        $ra['submitted_print_url'] = $listaction['print_url'];
+                        $ra['submitted_download_url'] = $listaction['download_url'];
+                        $ra['ifram_url'] = $listaction['ifram_url'];
+                        $ra['image_path'] = $listaction['image_path'];
+                    } else {
+                        $listaction = getGeneratedDocumentURL($document, 'uncompleted', $ra['isAuthorized']);
+                        $ra['assigned_print_url'] = $listaction['print_url'];
+                        $ra['assigned_download_url'] = $listaction['download_url'];
+
+                        $listaction = getGeneratedDocumentURL($document, 'completed', $ra['isAuthorized']);
+                        $ra['submitted_print_url'] = $listaction['print_url'];
+                        $ra['submitted_download_url'] = $listaction['download_url'];
+                        $ra['html_body'] = $listaction['html_body'];
+                    }
+                } else {
+                    $listaction = getGeneratedDocumentURL($document, 'uncompleted', $ra['isAuthorized']);
+                    $ra['assigned_print_url'] = $listaction['print_url'];
+                    $ra['assigned_download_url'] = $listaction['download_url'];
+                    $ra['html_body'] = $listaction['html_body'];
+                }
+        
+            } else if($type == 'uploaded'){
+                // When nothing is set
+                if(
+                    $document['signature_required'] == 0 &&
+                    $document['download_required'] == 0 &&
+                    $document['acknowledgment_required'] == 0
+                ){
+                    $ra['isNoAction'] = $ra['isCompleted'] = true;
+                } else if(
+                    $document['signature_required'] == 1         // When signature (Reupload) is required or any magic code is found
+                ){
+                    // Check if it's signed
+                    if($document['user_consent'] == 1 || $document['uploaded'] == 1) $ra['isCompleted'] = true;
+                } else if(
+                    $document['download_required'] == 1 &&
+                    $document['acknowledgment_required'] == 1    // When download & acknowledged is required
+                ){
+                    // 
+                    if(
+                        $document['acknowledged'] == 1 &&
+                        $document['downloaded'] == 1
+                    ) $ra['isCompleted'] = true;
+                } else if(
+                    $document['acknowledgment_required'] == 1    // When acknowledged is required
+                ){ 
+                    // 
+                    if($document['acknowledged'] == 1) $ra['isCompleted'] = true;
+                } else if(
+                    $document['download_required'] == 1          // When download is required
+                ){
+                    // 
+                    if($document['downloaded'] == 1) $ra['isCompleted'] = true;
+                }
+
+                if ($ra['isCompleted'] == true) {
+
+                    $listaction = getUploadedDocumentURL($document['document_s3_name']);
+                    $ra['assigned_print_url'] = $listaction['print_url'];
+                    $ra['assigned_download_url'] = $listaction['download_url'];
+                    
+                    //
+                    $listaction = getUploadedDocumentURL($document['uploaded_file']);
+                    $ra['submitted_print_url'] = $listaction['print_url'];
+                    $ra['submitted_download_url'] = $listaction['download_url'];
+                    $ra['ifram_url'] = $listaction['ifram_url'];
+                    $ra['image_path'] = $listaction['image_path'];
+                } else {
+                    $listaction = getUploadedDocumentURL($document['document_s3_name']);
+                    $ra['assigned_print_url'] = $listaction['print_url'];
+                    $ra['assigned_download_url'] = $listaction['download_url'];
+                    $ra['ifram_url'] = $listaction['ifram_url'];
+                    $ra['image_path'] = $listaction['image_path'];
+                }
+            }
+        }
+        //
+        $document['ra'] = $ra;
+        //
+        if($check) return $ra['isCompleted'];
+        //
+        return $ra;
+    }
+}
+
+if(!function_exists('getUploadedDocumentURL')){
+    function getUploadedDocumentURL ($document_path) {
+        $extension  = strtolower(pathinfo($document_path)['extension']);
+
+        $ra = [
+            'print_url' => '',
+            'download_url' => '',
+            'ifram_url' => '',
+            'image_path' => ''
+        ];
+
+        if (in_array($extension, ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'])) { 
+            $ra['print_url'] = "https://view.officeapps.live.com/op/view.aspx?src=". AWS_S3_BUCKET_URL .$document_path;
+            $ra['ifram_url'] = "https://view.officeapps.live.com/op/embed.aspx?src=" . AWS_S3_BUCKET_URL . $document_path;
+        } else if (in_array($extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
+            $$ra['image_path'] = AWS_S3_BUCKET_URL . $document_s3_url;
+            $ra['print_url'] = base_url('hr_documents_management/print_s3_image/'.$document_path);
+        } else {
+            $ra['print_url'] = "https://docs.google.com/viewerng/viewer?url=". AWS_S3_BUCKET_URL .$document_path; 
+            $ra['ifram_url'] ='https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_path . '&embedded=true';
+        } 
+
+        $ra['download_url'] = base_url('hr_documents_management/download_upload_document/'.$document_path);
+
+        return $ra;
+    }
+}
+
+if(!function_exists('getGeneratedDocumentURL')){
+    function getGeneratedDocumentURL ($document, $type, $isAuthorized) {
+        $ra = [
+            'print_url' => '',
+            'download_url' => '',
+            'html_body' => ''
+        ];
+
+        if ($type == 'uncompleted') {
+            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/print';
+            $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/download';
+            $ra['html_body'] = getDocumentBody($document, $type, $isAuthorized);
+        } else {
+            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/print';
+            $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/download';
+            $ra['html_body'] = getDocumentBody($document, $type, $isAuthorized);
+        }    
+
+        return $ra;
+
+    }
+}
+
+if(!function_exists('getDocumentBody')){
+    function getDocumentBody ($document, $document_type, $isAuthorized) {
+        $companyInfo = getCompanyInfo ($document['company_sid']);
+        $userInfo = getUserInfo ($document['user_type'], $document['user_sid']);
+    
+        $my_return = $document['document_description'];
+    
+        $value = date('M d Y');
+        $my_return = str_replace('{{date}}', $value, $my_return);
+    
+        $value = $userInfo['first_name'];
+        $my_return = str_replace('{{first_name}}', $value, $my_return);
+    
+        $value = $userInfo['last_name'];
+        $my_return = str_replace('{{last_name}}', $value, $my_return);
+    
+        $value = $userInfo['email'];
+        $my_return = str_replace('{{email}}', $value, $my_return);
+    
+        $value = $userInfo['job_title'];
+        $my_return = str_replace('{{job_title}}', $value, $my_return);
+    
+        $value = $companyInfo['company_name'];
+        $my_return = str_replace('{{company_name}}', $value, $my_return);
+    
+        $value = $companyInfo['company_address'];
+        $my_return = str_replace('{{company_address}}', $value, $my_return);
+    
+        $value = $companyInfo['company_phone'];
+        $my_return = str_replace('{{company_phone}}', $value, $my_return);
+    
+        $value = $companyInfo['career_site_url'];
+        $my_return = str_replace('{{career_site_url}}', $value, $my_return);
+    
+        $short_textboxes = substr_count($my_return, '{{short_text}}');
+        $long_textboxes = substr_count($my_return, '{{text}}');
+        $checkboxes = substr_count($my_return, '{{checkbox}}');
+        $textareas = substr_count($my_return, '{{text_area}}');
+    
+        //
+        $CI = &get_instance();
+        //
+        $CI->db->select('form_input_data');
+        $CI->db->where('sid', $document['sid']);
+    
+        $record_obj = $CI->db->get('documents_assigned');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+    
+        $form_input_data = '';
+    
+        if (!empty($record_arr)) {
+            $form_input_data = unserialize($record_arr[0]['form_input_data']);
+            $form_input_data = (array) json_decode($form_input_data);
+        }
+    
+        for ($stb = 0; $stb < $short_textboxes; $stb++) {
+            $short_textbox_name = 'short_textbox_'.$stb;
+            $short_textbox_value = !empty($form_input_data[$short_textbox_name]) ? $form_input_data[$short_textbox_name] : '';
+            $short_textbox_id = 'short_textbox_'.$stb.'_id';
+            $short_textbox = '<input type="text" data-type="text" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="'.$short_textbox_name.'" id="'.$short_textbox_id.'" value="'.$short_textbox_value.'" />';
+            $my_return = preg_replace('/{{short_text}}/', $short_textbox , $my_return, 1 );
+        }      
+    
+        for ($ltb = 0; $ltb < $long_textboxes; $ltb++) {
+            $long_textbox_name = 'long_textbox_'.$ltb;
+            $long_textbox_value = !empty($form_input_data[$long_textbox_name]) ? $form_input_data[$long_textbox_name] : '';
+            $long_textbox_id = 'long_textbox_'.$ltb.'_id';
+            $long_textbox = '<input type="text" data-type="text" class="form-control input-grey long_textbox" name="'.$long_textbox_name.'" id="'.$long_textbox_id.'" value="'.$long_textbox_value.'"/>';
+            $my_return = preg_replace('/{{text}}/', $long_textbox , $my_return, 1 );
+        }
+    
+        for ($cb = 0; $cb < $checkboxes; $cb++) {
+            $checkbox_name = 'checkbox_'.$cb;
+            $checkbox_value = !empty($form_input_data[$checkbox_name]) && $form_input_data[$checkbox_name] == 'yes' ? 'checked="checked"' : '';
+            $checkbox_id = 'checkbox_'.$cb.'_id';
+            $checkbox = '<br><input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="'.$checkbox_name.'" id="'.$checkbox_id.'" '.$checkbox_value.'/>';
+            $my_return = preg_replace('/{{checkbox}}/', $checkbox , $my_return, 1 );
+        }
+    
+        for ($ta = 0; $ta < $textareas; $ta++) {
+            $textarea_name = 'textarea_'.$ta;
+            $textarea_value = !empty($form_input_data[$textarea_name]) ? $form_input_data[$textarea_name] : '';
+            $textarea_id = 'textarea_'.$ta.'_id';
+            $div_id = 'textarea_'.$ta.'_id_sec';
+            $textarea = '<textarea data-type="textarea" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="'.$textarea_name.'" id="'.$textarea_id.'">'.$textarea_value.'</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="'.$div_id.'"  contenteditable="false"></div>';
+            $my_return = preg_replace('/{{text_area}}/', $textarea , $my_return, 1 );
+        }
+        //
+        $signature = '';
+        $signature_initial = '';
+        $signature_date = '';
+        $signature_by = '';
+        //
+        if ($document_type == 'uncompleted') {
+            $signature = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="draw_upload_img" />';
+            $signature_initial = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="target_signature_init" />';
+            $signature_date = '<a class="btn btn-sm blue-button get_signature_date" href="javascript:;">Sign Date</a><p id="target_signature_timestamp"></p>';
+            $signature_by = '<input type="text" id="signature_person_name" class="form-control input-grey" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="">';
+        } else {
+            $signature = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_base64'].'">';
+            $signature_initial = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_initial'].'">';
+            $signature_date = '<p><strong>'.date_with_time($document['signature_timestamp']).'</strong></p>';
+            $signature_person_name = !empty($form_input_data['signature_person_name']) ? $form_input_data['signature_person_name'] : '';
+            $signature_by = '<p><strong>'.$signature_person_name.'</strong></p>';
+        }
+        //
+        $my_return = str_replace('{{signature}}', $signature, $my_return);
+        $my_return = str_replace('{{inital}}', $signature_initial, $my_return);
+        $my_return = str_replace('{{sign_date}}', $signature_date , $my_return);
+        $my_return = str_replace('{{signature_print_name}}', $signature_by, $my_return);
+        //
+        $authorized_signature = '';
+        $authorized_signature_date = '';
+        //
+        if ($isAuthorized == 1) {
+            if ($document['authorized_signature_by'] != 0) {
+                $authorized_signature_date = '<p><strong>'.date_with_time($document['authorized_signature_date']).'</strong></p>';
+    
+                $CI->db->select('assigned_to_signature');
+                $CI->db->where('document_assigned_sid', $document['sid']);
+                $CI->db->where('assigned_to_signature <>', NULL);
+    
+                $record_obj = $CI->db->get('authorized_document_assigned_manager');
+                $record_arr = $record_obj->row_array();
+                $record_obj->free_result();
+    
+                if (!empty($record_arr)) {
+                    $authorized_signature = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$record_arr['assigned_to_signature'].'">';
+                }
+            } else {
+                $authorized_signature = '<p>Authorized Signature (<b>Not Signed</b>)</p>';
+                $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';
+            }
+    
+            $my_return = str_replace('{{authorized_signature}}', $authorized_signature , $my_return);
+            $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $my_return);
+        }
+    
+        return $my_return;
+    }
+}
