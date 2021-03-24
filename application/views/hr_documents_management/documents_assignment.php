@@ -9,7 +9,7 @@
 
 <?php 
     $action_btn_flag = false;
-    if($session['employer_detail']['access_level_plus'] == 1) $action_btn_flag = true;
+    if($session['employer_detail']['access_level_plus'] == 1) {$action_btn_flag = true;}
     //
     $GLOBALS['ad'] = $assigned_documents;
 ?>
@@ -26,9 +26,9 @@
                             <div class="page-header-area margin-top">
                                 <span class="page-heading down-arrow">
                                     <?php if($user_type == 'applicant'){ ?>
-                                        <a class="dashboard-link-btn" href="<?php echo base_url('applicant_profile/'.$user_sid.'/'.$job_list_sid); ?>"><i class="fa fa-chevron-left"></i>Applicant Profile</a>
+                                        <a class="dashboard-link-btn" href="<?php echo base_url('applicant_profile/'.$user_sid.'/'.$job_list_sid); ?>"><i aria-hidden="true" class="fa fa-chevron-left"></i>Applicant Profile</a>
                                     <?php } else { ?>
-                                        <a class="dashboard-link-btn" href="<?php echo base_url('employee_profile/'.$user_sid); ?>"><i class="fa fa-chevron-left"></i>Employee Profile</a>
+                                        <a class="dashboard-link-btn" href="<?php echo base_url('employee_profile/'.$user_sid); ?>"><i aria-hidden="true" class="fa fa-chevron-left"></i>Employee Profile</a>
                                     <?php }
                                     echo $title; ?>
                                 </span>
@@ -46,42 +46,43 @@
                                         <div class="hr-innerpadding">
                                             <div class="table-responsive">
                                                 <table class="table table-bordered table-hover table-stripped js-verification-table">
+                                                    <caption></caption>
                                                     <thead>
                                                         <tr>
-                                                            <th class="col-lg-2">Document Name</th>
-                                                            <th class="col-lg-1 text-center">Type</th>
-                                                            <th class="col-lg-2 text-center">Assigned On</th>
-                                                            <th class="col-lg-6 text-center">Actions</th>
+                                                            <th scope="column" class="col-lg-2">Document Name</th>
+                                                            <th scope="column" class="col-lg-1 text-center">Type</th>
+                                                            <th scope="column" class="col-lg-2 text-center">Assigned On</th>
+                                                            <th scope="column" class="col-lg-6 text-center">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr>
                                                             <td class="col-lg-2">
-                                                                W4 Fillable <?php echo sizeof($w4_form) > 0 && !$w4_form['status'] && !isset($w4_form_uploaded) ? '<b>(revoked)</b>':'' ;?>
-                                                                <?php if((sizeof($w4_form) > 0 && $w4_form['status'])) {
+                                                                W4 Fillable <?php echo !empty($w4_form) && !$w4_form['status'] && !isset($w4_form_uploaded) ? '<b>(revoked)</b>': '' ;?>
+                                                                <?php if(!empty($w4_form) && $w4_form['status']) {
                                                                     if($w4_form['user_consent']) { ?>
-                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>" alt="" />
                                                                     <?php } else { ?>
-                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>" alt="" />
                                                                     <?php }
                                                                 }?>
                                                             </td>
                                                             <td class="col-lg-1 text-center">
-                                                                <i class="fa fa-2x fa-file-text"></i>
+                                                                <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
                                                             </td>
                                                             <td class="col-lg-2 text-center">
-                                                                <?php if (sizeof($w4_form) > 0 && $w4_form['status']){?>
-                                                                    <i class="fa fa-check fa-2x text-success"></i>
+                                                                <?php if (!empty($w4_form) && $w4_form['status']){?>
+                                                                    <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                     <div class="text-center">
                                                                         <?=reset_datetime(array( 'datetime' => $w4_form['sent_date'], '_this' => $this));?>
                                                                     </div>
                                                                 <?php } else { ?>
-                                                                    <i class="fa fa-times fa-2x text-danger"></i>
+                                                                    <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                 <?php } ?>
                                                             </td>
                                                             <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_fillable')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_fillable')) || $pp_flag == 1){ ?>
                                                                 <td class="col-lg-6 text-center">
-                                                                    <?php if (sizeof($w4_form) > 0) { ?>
+                                                                    <?php if (!empty($w4_form)) { ?>
                                                                         <?php if ($w4_form['status']) { ?>
                                                                             <form id="form_remove_w4" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                                                                 <input type="hidden" id="perform_action" name="perform_action" value="remove_w4" />
@@ -123,6 +124,7 @@
                                                                                             >Upload</button>
                                                                             <?php } ?>
                                                                     <?php }
+                                                                    echo '<button class="btn btn-success jsManageW4" title="Manage W4">Manage W4</button>';
                                                                         }else { ?>
                                                                             <form id="form_assign_w4" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                                                                 <input type="hidden" id="perform_action" name="perform_action" value="assign_w4"/>
@@ -135,37 +137,36 @@
                                                                                     >Upload</button>
                                                                             <?php }
                                                                         } ?>
-                                                                    <!--                                                                <a href="--><?php ////echo $w4_url; ?><!--" class="btn btn-success">View Sign</a>-->
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>
                                                         <tr>
                                                             <td class="col-lg-2">
-                                                                W9 Fillable <?php echo sizeof($w9_form) > 0 && !$w9_form['status'] && !isset($w9_form_uploaded) ? '<b>(revoked)</b>':'' ;?>
-                                                                <?php if(sizeof($w9_form) > 0 && $w9_form['status']) {
+                                                                W9 Fillable <?php echo !empty($w9_form) && !$w9_form['status'] && !isset($w9_form_uploaded) ? '<b>(revoked)</b>':'' ;?>
+                                                                <?php if(!empty($w9_form) && $w9_form['status']) {
                                                                     if($w9_form['user_consent']) { ?>
-                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>" alt="">
                                                                     <?php } else { ?>
-                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>" alt="">
                                                                     <?php }
                                                                 } ?>
                                                             </td>
                                                             <td class="col-lg-1 text-center">
-                                                                <i class="fa fa-2x fa-file-text"></i>
+                                                                <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
                                                             </td>
                                                             <td class="col-lg-2 text-center">
-                                                                <?php if (sizeof($w9_form) > 0 && $w9_form['status']) { ?>
-                                                                    <i class="fa fa-check fa-2x text-success"></i>
+                                                                <?php if (!empty($w9_form) && $w9_form['status']) { ?>
+                                                                    <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                     <div class="text-center">
                                                                         <?=reset_datetime(array( 'datetime' => $w9_form['sent_date'], '_this' => $this));?>
                                                                     </div>
                                                                     <?php } else { ?>
-                                                                    <i class="fa fa-times fa-2x text-danger"></i>
+                                                                    <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                 <?php } ?>
                                                             </td>
                                                             <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_fillable')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_fillable')) || $pp_flag == 1){ ?>
                                                                 <td class="col-lg-6 text-center">
-                                                                    <?php if (sizeof($w9_form) > 0) { ?>
+                                                                    <?php if (!empty($w9_form) ) { ?>
                                                                         <?php if ($w9_form['status']) { ?>
                                                                             <form id="form_remove_w9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                                                                 <input type="hidden" id="perform_action" name="perform_action" value="remove_w9" />
@@ -205,6 +206,7 @@
                                                                                             >Upload</button>
                                                                             <?php } ?>
                                                                         <?php }
+                                                                            echo '<button class="btn btn-success jsManageW9" title="Manage W9">Manage W9</button>';
                                                                     }else { ?>
                                                                             <?php if(!empty($w9_form['uploaded_file']) && $user_type == 'employee'){ ?>
                                                                                 <button class="btn btn-success"
@@ -245,16 +247,16 @@
                                                                 }?>
                                                             </td>
                                                             <td class="col-lg-1 text-center">
-                                                                <i class="fa fa-2x fa-file-text"></i>
+                                                                <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
                                                             </td>
                                                             <td class="col-lg-2 text-center">
                                                                 <?php if (sizeof($i9_form) > 0 && $i9_form['status']) { ?>
-                                                                    <i class="fa fa-check fa-2x text-success"></i>
+                                                                    <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                     <div class="text-center">
                                                                     <?=reset_datetime(array( 'datetime' => $i9_form['sent_date'], '_this' => $this));?>
                                                                     </div>
                                                                     <?php } else { ?>
-                                                                        <i class="fa fa-times fa-2x text-danger"></i>
+                                                                        <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                     <?php } ?>
                                                             </td>
                                                             <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_fillable')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_fillable')) || $pp_flag == 1 ){ ?>
@@ -301,6 +303,8 @@
                                                                                     <a class="btn blue-button i9_edit_employer_section" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Not Completed</a>
                                                                                 <?php }
                                                                             } ?>
+
+                                                                            <button class="btn btn-success jsManageI9" title="Manage I9">Manage I9</button>
 
                                                                         <?php }else{ ?>
 
@@ -352,16 +356,16 @@
                                                                         <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                                                     </td>
                                                                     <td class="col-lg-1 text-center">
-                                                                        <i class="fa fa-2x fa-file-text"></i>
+                                                                        <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
                                                                     </td>
                                                                     <td class="col-lg-2 text-center">
                                                                         <?php if (sizeof($i9_form) > 0 && $i9_form['status']) { ?>
-                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                             <div class="text-center">
                                                                             <?=reset_datetime(array( 'datetime' => $i9_form['sent_date'], '_this' => $this));?>
                                                                             </div>
                                                                             <?php } else { ?>
-                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                         <?php } ?>
                                                                     </td>
                                                                     <td class="col-lg-6 text-center">
@@ -381,16 +385,16 @@
                                                                         <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                                                     </td>
                                                                     <td class="col-lg-1 text-center">
-                                                                        <i class="fa fa-2x fa-file-text"></i>
+                                                                        <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
                                                                     </td>
                                                                     <td class="col-lg-2 text-center">
                                                                         <?php if (sizeof($i9_form) > 0 && $i9_form['status']) { ?>
-                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                             <div class="text-center">
                                                                             <?=reset_datetime(array( 'datetime' => $i9_form['sent_date'], '_this' => $this));?>
                                                                             </div>
                                                                             <?php } else { ?>
-                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                         <?php } ?>
                                                                     </td>
                                                                     <td class="col-lg-6 text-center">
@@ -467,9 +471,9 @@
                                                                             <table class="table table-plane">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <th class="col-xs-8">Document Name</th>
-                                                                                        <th class="col-xs-2">Document Type</th>
-                                                                                        <th class="col-xs-2 text-center" colspan="2">Actions</th>
+                                                                                        <th scope="column" class="col-xs-8">Document Name</th>
+                                                                                        <th scope="column" class="col-xs-2">Document Type</th>
+                                                                                        <th scope="column" class="col-xs-2 text-center" colspan="2">Actions</th>
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
@@ -634,9 +638,9 @@
                                                                             <table class="table table-plane">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <th class="col-xs-8">Document Name</th>
-                                                                                        <th class="col-xs-2">Document Type</th>
-                                                                                        <th class="col-xs-2 text-center" colspan="2">Actions</th>
+                                                                                        <th scope="column" class="col-xs-8">Document Name</th>
+                                                                                        <th scope="column" class="col-xs-2">Document Type</th>
+                                                                                        <th scope="column" class="col-xs-2 text-center" colspan="2">Actions</th>
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
@@ -778,9 +782,9 @@
                                                                     <table class="table table-plane">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th class="col-xs-8">Document Name</th>
-                                                                                <th class="col-xs-2">Document Type</th>
-                                                                                <th class="col-xs-2 text-center" colspan="2">Actions</th>
+                                                                                <th scope="column" class="col-xs-8">Document Name</th>
+                                                                                <th scope="column" class="col-xs-2">Document Type</th>
+                                                                                <th scope="column" class="col-xs-2 text-center" colspan="2">Actions</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -935,9 +939,9 @@
                                                                         <table class="table table-plane">
                                                                             <thead>
                                                                                 <tr>
-                                                                                    <th class="col-xs-8">Document Name</th>
-                                                                                    <th class="col-xs-2">Document Type</th>
-                                                                                    <th class="col-xs-2 text-center" colspan="2">Actions</th>
+                                                                                    <th scope="column" class="col-xs-8">Document Name</th>
+                                                                                    <th scope="column" class="col-xs-2">Document Type</th>
+                                                                                    <th scope="column" class="col-xs-2 text-center" colspan="2">Actions</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
@@ -1009,9 +1013,9 @@
                                                                     <table class="table table-plane">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th class="col-lg-5">Document Name</th>
-                                                                                <th class="col-lg-2">Document Type</th>
-                                                                                <th class="col-lg-5 text-center" colspan="5">Actions</th>
+                                                                                <th scope="column" class="col-lg-5">Document Name</th>
+                                                                                <th scope="column" class="col-lg-2">Document Type</th>
+                                                                                <th scope="column" class="col-lg-5 text-center" colspan="5">Actions</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -1139,8 +1143,8 @@
                                                                     <table class="table table-plane">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th class="col-lg-7">Document Name</th>
-                                                                                <th class="col-lg-5 text-center" colspan="5">Actions</th>
+                                                                                <th scope="column" class="col-lg-7">Document Name</th>
+                                                                                <th scope="column" class="col-lg-5 text-center" colspan="5">Actions</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -1238,8 +1242,8 @@
                                                                     <table class="table table-plane">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th class="col-lg-10">Document Name</th>
-                                                                                <th class="col-lg-2 text-center">Actions</th>
+                                                                                <th scope="column" class="col-lg-10">Document Name</th>
+                                                                                <th scope="column" class="col-lg-2 text-center">Actions</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -1380,10 +1384,10 @@
                                                                    <table class="table table-plane">
                                                                        <thead>
                                                                            <tr>
-                                                                               <th class="col-xs-6">Offer Letter / Pay Plan Name</th>
-                                                                               <th class="col-xs-2">Offer Letter / Pay Plan Type</th>
+                                                                               <th scope="column" class="col-xs-6">Offer Letter / Pay Plan Name</th>
+                                                                               <th scope="column" class="col-xs-2">Offer Letter / Pay Plan Type</th>
 
-                                                                               <th class="col-xs-4 text-center" colspan="5">Actions</th>
+                                                                               <th scope="column" class="col-xs-4 text-center" colspan="5">Actions</th>
                                                                            </tr>
                                                                        </thead>
                                                                        <tbody>
@@ -1544,9 +1548,9 @@
                                                                    <table class="table table-plane">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th class="col-xs-6">Document Name</th>
-                                                                                <th class="col-xs-2">Document Type</th>
-                                                                                <th class="col-xs-4 text-center" colspan="4">Actions</th>
+                                                                                <th scope="column" class="col-xs-6">Document Name</th>
+                                                                                <th scope="column" class="col-xs-2">Document Type</th>
+                                                                                <th scope="column" class="col-xs-4 text-center" colspan="4">Actions</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -1712,13 +1716,13 @@
                                                         <table class="table table-plane">
                                                             <thead>
                                                                 <tr>
-                                                                    <th class="col-lg-3">Document Name</th>
-                                                                    <th class="col-lg-1 text-center">Type</th>
-                                                                    <th class="col-lg-2 text-center">Sent On</th>
-                                                                    <th class="col-lg-2 text-center">Acknowledged</th>
-                                                                    <th class="col-lg-2 text-center">Downloaded</th>
-                                                                    <th class="col-lg-1 text-center">Uploaded</th>
-                                                                    <th class="col-lg-1 text-center">Actions</th>
+                                                                    <th scope="column" class="col-lg-3">Document Name</th>
+                                                                    <th scope="column" class="col-lg-1 text-center">Type</th>
+                                                                    <th scope="column" class="col-lg-2 text-center">Sent On</th>
+                                                                    <th scope="column" class="col-lg-2 text-center">Acknowledged</th>
+                                                                    <th scope="column" class="col-lg-2 text-center">Downloaded</th>
+                                                                    <th scope="column" class="col-lg-1 text-center">Uploaded</th>
+                                                                    <th scope="column" class="col-lg-1 text-center">Actions</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -1734,13 +1738,13 @@
                                                         <table class="table table-plane">
                                                             <thead>
                                                                 <tr>
-                                                                    <th class="col-lg-3">Document Name</th>
-                                                                    <th class="col-lg-1 text-center">Type</th>
-                                                                    <th class="col-lg-2 text-center">Sent On</th>
-                                                                    <th class="col-lg-2 text-center">Acknowledged</th>
-                                                                    <th class="col-lg-2 text-center">Downloaded</th>
-                                                                    <th class="col-lg-1 text-center">Uploaded</th>
-                                                                    <th class="col-lg-1 text-center">Actions</th>
+                                                                    <th scope="column" class="col-lg-3">Document Name</th>
+                                                                    <th scope="column" class="col-lg-1 text-center">Type</th>
+                                                                    <th scope="column" class="col-lg-2 text-center">Sent On</th>
+                                                                    <th scope="column" class="col-lg-2 text-center">Acknowledged</th>
+                                                                    <th scope="column" class="col-lg-2 text-center">Downloaded</th>
+                                                                    <th scope="column" class="col-lg-1 text-center">Uploaded</th>
+                                                                    <th scope="column" class="col-lg-1 text-center">Actions</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -1775,13 +1779,13 @@
                                                 <table class="table table-plane">
                                                     <thead>
                                                         <tr>
-                                                            <th class="col-lg-3">Document Name</th>
-                                                            <th class="col-lg-1 text-center">Type</th>
-                                                            <th class="col-lg-2 text-center">Sent On</th>
-                                                            <th class="col-lg-2 text-center">Acknowledged</th>
-                                                            <th class="col-lg-2 text-center">Downloaded</th>
-                                                            <th class="col-lg-1 text-center">Uploaded</th>
-                                                            <th class="col-lg-1 text-center">Actions</th>
+                                                            <th scope="column" class="col-lg-3">Document Name</th>
+                                                            <th scope="column" class="col-lg-1 text-center">Type</th>
+                                                            <th scope="column" class="col-lg-2 text-center">Sent On</th>
+                                                            <th scope="column" class="col-lg-2 text-center">Acknowledged</th>
+                                                            <th scope="column" class="col-lg-2 text-center">Downloaded</th>
+                                                            <th scope="column" class="col-lg-1 text-center">Uploaded</th>
+                                                            <th scope="column" class="col-lg-1 text-center">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1798,27 +1802,27 @@
                                                                             $doc_type = strtolower($document['document_extension']);
                                                                         } ?>
                                                                         <?php if ($doc_type == 'pdf') { ?>
-                                                                            <i class="fa fa-2x fa-file-pdf-o"></i>
+                                                                            <i aria-hidden="true" class="fa fa-2x fa-file-pdf-o"></i>
                                                                         <?php } else if (in_array($doc_type, ['ppt', 'pptx'])) { ?>
-                                                                            <i class="fa fa-2x fa-file-powerpoint-o"></i>
+                                                                            <i aria-hidden="true" class="fa fa-2x fa-file-powerpoint-o"></i>
                                                                         <?php } else if (in_array($doc_type, ['doc', 'docx'])) { ?>
-                                                                            <i class="fa fa-2x fa-file-o"></i>
+                                                                            <i aria-hidden="true" class="fa fa-2x fa-file-o"></i>
                                                                         <?php } else if (in_array($doc_type, ['xlsx'])) { ?>
-                                                                            <i class="fa fa-2x fa-file-excel-o"></i>
+                                                                            <i aria-hidden="true" class="fa fa-2x fa-file-excel-o"></i>
                                                                         <?php } else if ($doc_type == '') { ?>
-                                                                            <i class="fa fa-2x fa-file-text"></i>
+                                                                            <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
                                                                         <?php } ?>
                                                                     </td>
                                                                     <td class="col-lg-2 text-center">
                                                                         <?php if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') { ?>
-                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                             <div class="text-center">
                                                                                 <?php // echo date_format(new DateTime($document['assigned_date']), 'M d Y h:m a'); ?>
                                                                                 <?=reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this)); ?>
 
                                                                             </div>
                                                                         <?php } else { ?>
-                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                         <?php } ?>
                                                                     </td>
                                                                     <td class="col-lg-2 text-center">
@@ -1826,9 +1830,9 @@
                                                                             echo '<b>N/A</b>';
                                                                         } elseif (isset($document['acknowledged_date']) && $document['acknowledged_date'] != '0000-00-00 00:00:00') { ?>
                                                                             <?php if ($document['acknowledged'] == 0) { ?>
-                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                                <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                             <?php } else { ?>
-                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                                <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                             <?php } ?>
                                                                             <div class="text-center">
                                                                                 <?php // echo date_format(new DateTime($document['acknowledged_date']), 'M d Y h:m a'); ?>
@@ -1836,14 +1840,14 @@
 
                                                                             </div>
                                                                         <?php } elseif ($document['user_consent'] == 1) { ?>
-                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                             <div class="text-center">
                                                                                 <?php // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a'); ?>
                                                                                 <?=reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this)); ?>
 
                                                                             </div>
                                                                         <?php } else { ?>
-                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                         <?php } ?>
                                                                     </td>
                                                                     <td class="col-lg-2 text-center">
@@ -1851,9 +1855,9 @@
                                                                             echo '<b>N/A</b>';
                                                                         } elseif (isset($document['downloaded_date']) && $document['downloaded_date'] != '0000-00-00 00:00:00') { ?>
                                                                             <?php if ($document['downloaded'] == 0) { ?>
-                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                                <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                             <?php } else { ?>
-                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                                <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                             <?php } ?>
                                                                             <div class="text-center">
                                                                                 <?php // echo date_format(new DateTime($document['downloaded_date']), 'M d Y h:m a'); ?>
@@ -1861,14 +1865,14 @@
 
                                                                             </div>
                                                                         <?php } elseif ($document['user_consent'] == 1) { ?>
-                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                             <div class="text-center">
                                                                                 <?php // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a'); ?>
                                                                                 <?=reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this)); ?>
 
                                                                             </div>
                                                                         <?php } else { ?>
-                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                         <?php } ?>
                                                                     </td>
                                                                     <td class="col-lg-2 text-center">
@@ -1876,9 +1880,9 @@
                                                                             echo '<b>N/A</b>';
                                                                         } elseif (isset($document['uploaded_date']) && $document['uploaded_date'] != '0000-00-00 00:00:00') { ?>
                                                                             <?php if ($document['uploaded'] == 0) { ?>
-                                                                                <i class="fa fa-times fa-2x text-danger"></i>
+                                                                                <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                             <?php } else { ?>
-                                                                                <i class="fa fa-check fa-2x text-success"></i>
+                                                                                <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                             <?php } ?>
                                                                             <div class="text-center">
                                                                                 <?php // echo date_format(new DateTime($document['uploaded_date']), 'M d Y h:m a'); ?>
@@ -1886,14 +1890,14 @@
 
                                                                             </div>
                                                                         <?php } elseif ($document['user_consent'] == 1) { ?>
-                                                                            <i class="fa fa-check fa-2x text-success"></i>
+                                                                            <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                             <div class="text-center">
                                                                                 <?php // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a'); ?>
                                                                                 <?=reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this)); ?>
 
                                                                             </div>
                                                                         <?php } else { ?>
-                                                                            <i class="fa fa-times fa-2x text-danger"></i>
+                                                                            <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                         <?php } ?>
                                                                     </td>
                                                                     <td class="col-lg-1 text-center">
@@ -2004,7 +2008,7 @@
             </div>
             <div id="uploaded_document_modal_body" class="modal-body">
                 <div class="loader" id="add_form_upload_document_loader" style="display: none;">
-                    <i class="fa fa-spinner fa-spin"></i>
+                    <i aria-hidden="true" class="fa fa-spinner fa-spin"></i>
                 </div>
                 <form id="add_form_upload_document" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                     <div class="row">
@@ -2118,7 +2122,7 @@
             </div>
             <div class="modal-body">
                 <div class="loader" id="update_form_upload_document_loader" style="display: none;">
-                    <i class="fa fa-spinner fa-spin"></i>
+                    <i aria-hidden="true" class="fa fa-spinner fa-spin"></i>
                 </div>
                 <div id="document_modal_upload">
                     <form id="update_form_upload_document" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
@@ -2589,13 +2593,13 @@
                                             <div class="col-lg-12">
                                                 <div class="form-group autoheight">
                                                     <label>Employee Info from Section 1 <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_4_employee_info_from"></i></label>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_4_employee_info_from"></i></label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Last Name (Family Name) <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_4_last_name"></i></label>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_4_last_name"></i></label>
                                                     <input type="text"
                                                            value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_last_name'] : '' ?>"
                                                            name="section2_last_name" class="form-control" <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'readonly';}?>/>
@@ -2604,7 +2608,7 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>First Name (Given Name) <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_4_first_name"></i></label>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_4_first_name"></i></label>
                                                     <input type="text"
                                                            value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_first_name'] : '' ?>"
                                                            name="section2_first_name" class="form-control" <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'readonly';}?>/>
@@ -2612,7 +2616,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>M.I. <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_4_mi"></i></label>
+                                                    <label>M.I. <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_4_mi"></i></label>
                                                     <input type="text" name="section2_middle_initial"
                                                            value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_middle_initial'] : '' ?>"
                                                            class="form-control" <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'readonly';}?>/>
@@ -2627,7 +2631,7 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Citizenship/Immigration Status <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_4_citizenship"></i></label>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_4_citizenship"></i></label>
                                                     <input type="text" name="section2_citizenship"
                                                            value="<?php echo $citizen ?>" class="form-control"
                                                         <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'readonly';}?>/>
@@ -2647,7 +2651,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_5_document_title"></i></label>
+                                                    <label>Document Title <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_5_document_title"></i></label>
                                                     <div class="lista_part1_doc">
                                                         <label>
                                                             <input type="radio" name="lista_part1_doc_select_input" value="select" <?= $pre_form['lista_part1_doc_select_input'] == 'select' ? 'checked' : ''?>> Select from List
@@ -2671,7 +2675,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_5_issuing_authority"></i></label>
+                                                    <label>Issuing Authority <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_5_issuing_authority"></i></label>
                                                     <div class="lista_part1_issuing">
                                                         <label>
                                                             <input type="radio" name="lista_part1_issuing_select_input" value="select" <?= $pre_form['lista_part1_issuing_select_input'] == 'select' ? 'checked' : ''?>> Select from List
@@ -2694,7 +2698,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_5_document_number"></i></label>
+                                                    <label>Document Number <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_5_document_number"></i></label>
                                                     <input type="text" name="section2_lista_part1_document_number"
                                                            id="section2_lista_part1_document_number"
                                                            value="<?= isset($pre_form['section2_lista_part1_document_number']) && !empty($pre_form['section2_lista_part1_document_number']) ? $pre_form['section2_lista_part1_document_number'] : "";?>"
@@ -2703,7 +2707,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_5_expiration_date"></i></label>
+                                                    <label>Expiration Date <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_5_expiration_date"></i></label>
                                                     <input type="text" name="section2_lista_part1_expiration_date"
                                                            id="section2_lista_part1_expiration_date"
                                                            value="<?= isset($pre_form['section2_lista_part1_expiration_date']) && !empty($pre_form['section2_lista_part1_expiration_date']) && $pre_form['section2_lista_part1_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_lista_part1_expiration_date'])) : "";?>"
@@ -2714,7 +2718,7 @@
                                         <div class="row bg-gray list-a-fields">
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_51_document_title"></i></label>
+                                                    <label>Document Title <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_51_document_title"></i></label>
                                                     <!--                                                    <input type="text"  class="form-control">-->
                                                     <div class="lista_part2_doc">
                                                         <label>
@@ -2738,7 +2742,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_51_issuing_authority"></i></label>
+                                                    <label>Issuing Authority <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_51_issuing_authority"></i></label>
                                                     <!--                                                    <input type="text"  class="form-control">-->
                                                     <div class="lista_part2_issuing">
                                                         <label>
@@ -2762,7 +2766,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_51_document_number"></i></label>
+                                                    <label>Document Number <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_51_document_number"></i></label>
                                                     <input type="text" name="section2_lista_part2_document_number"
                                                            value="<?= isset($pre_form['section2_lista_part2_document_number']) && !empty($pre_form['section2_lista_part2_document_number']) ? $pre_form['section2_lista_part2_document_number'] : "";?>"
                                                            id="section2_lista_part2_document_number"
@@ -2771,7 +2775,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_51_expiration_date"></i></label>
+                                                    <label>Expiration Date <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_51_expiration_date"></i></label>
                                                     <input type="text" name="section2_lista_part2_expiration_date"
                                                            id="section2_lista_part2_expiration_date"
                                                            value="<?= isset($pre_form['section2_lista_part2_expiration_date']) && !empty($pre_form['section2_lista_part2_expiration_date']) && $pre_form['section2_lista_part2_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_lista_part2_expiration_date'])) : "";?>"
@@ -2782,7 +2786,7 @@
                                         <div class="row list-a-fields">
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_52_document_title"></i></label>
+                                                    <label>Document Title <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_52_document_title"></i></label>
                                                     <!--                                                    <input type="text"  class="form-control">-->
                                                     <div class="lista_part3_doc">
                                                         <label>
@@ -2807,7 +2811,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_52_issuing_authority"></i></label>
+                                                    <label>Issuing Authority <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_52_issuing_authority"></i></label>
                                                     <!--                                                    <input type="text" class="form-control">-->
                                                     <div class="lista_part3_issuing">
                                                         <label>
@@ -2831,7 +2835,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_52_document_number"></i></label>
+                                                    <label>Document Number <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_52_document_number"></i></label>
                                                     <input type="text" name="section2_lista_part3_document_number"
                                                            id="section2_lista_part3_document_number"
                                                            value="<?= isset($pre_form['section2_lista_part3_document_number']) && !empty($pre_form['section2_lista_part3_document_number']) ? $pre_form['section2_lista_part3_document_number'] : "";?>"
@@ -2840,7 +2844,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_52_expiration_date"></i></label>
+                                                    <label>Expiration Date <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_52_expiration_date"></i></label>
                                                     <input type="text" name="section2_lista_part3_expiration_date"
                                                            id="section2_lista_part3_expiration_date"
                                                            value="<?= isset($pre_form['section2_lista_part3_expiration_date']) && !empty($pre_form['section2_lista_part3_expiration_date']) && $pre_form['section2_lista_part3_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_lista_part3_expiration_date'])) : "";?>"
@@ -2849,7 +2853,7 @@
                                             </div>
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                 <div class="form-group autoheight">
-                                                    <label>Additional Information <i class="fa fa-question-circle-o modalShow" src="section_52_additional_information"></i></label>
+                                                    <label>Additional Information <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_52_additional_information"></i></label>
                                                     <textarea class="form-control textarea"
                                                               name="section2_additional_information"
                                                               id="section2_additional_information"><?= isset($pre_form['section2_additional_information']) && !empty($pre_form['section2_additional_information']) && $pre_form['section2_additional_information'] != null ? $pre_form['section2_additional_information'] : "";?></textarea>
@@ -2862,7 +2866,7 @@
                                                     <strong>List B <br> Identity</strong>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_53_document_title"></i></label>
+                                                    <label>Document Title <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_53_document_title"></i></label>
 
                                                     <div class="select">
                                                         <select class="form-control"
@@ -2871,7 +2875,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_53_issuing_authority"></i></label>
+                                                    <label>Issuing Authority <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_53_issuing_authority"></i></label>
                                                     <!--                                                    <input type="text"class="form-control">-->
                                                     <div class="list_b_auth">
                                                         <label>
@@ -2893,13 +2897,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_53_document_number"></i></label>
+                                                    <label>Document Number <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_53_document_number"></i></label>
                                                     <input type="text" name="section2_listb_document_number"
                                                            value="<?= isset($pre_form['section2_listb_document_number']) && !empty($pre_form['section2_listb_document_number']) ? $pre_form['section2_listb_document_number'] : "";?>"
                                                            id="section2_listb_document_number" class="form-control">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_53_expiration_date"></i></label>
+                                                    <label>Expiration Date <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_53_expiration_date"></i></label>
                                                     <input type="text" name="section2_listb_expiration_date"
                                                            value="<?= isset($pre_form['section2_listb_expiration_date']) && !empty($pre_form['section2_listb_expiration_date']) && $pre_form['section2_listb_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_listb_expiration_date'])) : "";?>"
                                                            id="section2_listb_expiration_date"
@@ -2911,7 +2915,7 @@
                                                     <strong>List C <br> Employment Authorization</strong>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_54_document_title"></i></label>
+                                                    <label>Document Title <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_54_document_title"></i></label>
 
                                                     <div class="select">
                                                         <select class="form-control"
@@ -2926,7 +2930,7 @@
                                                            id="section2_listc_extra_field" class="form-control">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_54_issuing_authority"></i></label>
+                                                    <label>Issuing Authority <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_54_issuing_authority"></i></label>
                                                     <div class="list_c_auth">
                                                         <label>
                                                             <input type="radio" name="listc-auth-select-input" value="select" <?= $pre_form['listc_auth_select_input'] == 'select' ? 'checked' : ''?>> Select from List
@@ -2948,13 +2952,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_54_document_number"></i></label>
+                                                    <label>Document Number <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_54_document_number"></i></label>
                                                     <input type="text" name="section2_listc_document_number"
                                                            value="<?= isset($pre_form['section2_listc_document_number']) && !empty($pre_form['section2_listc_document_number']) ? $pre_form['section2_listc_document_number'] : "";?>"
                                                            id="section2_listc_document_number" class="form-control">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_54_expiration_date"></i></label>
+                                                    <label>Expiration Date <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_54_expiration_date"></i></label>
                                                     <input type="text" name="section2_listc_expiration_date"
                                                            id="section2_listc_expiration_date"
                                                            value="<?= isset($pre_form['section2_listc_expiration_date']) && !empty($pre_form['section2_listc_expiration_date']) && $pre_form['section2_listc_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_listc_expiration_date'])) : "";?>"
@@ -2975,7 +2979,7 @@
                                 <div class="form-group autoheight">
                                     <div class="row">
                                         <div class="col-lg-9">
-                                            <p><strong>The employee's first day of employment (mm/dd/yyyy):<i class="fa fa-question-circle-o modalShow" src="section_6_employee_1st_day_of_employment "></i> (See
+                                            <p><strong>The employee's first day of employment (mm/dd/yyyy):<i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_employee_1st_day_of_employment "></i> (See
                                                     instructions for exemptions) <span class="staric">*</span> </strong></p>
                                         </div>
                                         <div class="col-lg-3">
@@ -2990,7 +2994,7 @@
                                         <div class="row">
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Signature of Employer or Authorized Representative <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_signature"></i></label>
+                                                    <label>Signature of Employer or Authorized Representative <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_signature"></i></label>
                                                     <?php if(isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
                                                         <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>"  />
                                                     <?php } else { ?>
@@ -3006,7 +3010,7 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Today's Date (mm/dd/yyyy) <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_today_date"></i></label>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_today_date"></i></label>
                                                     <input name="section2_today_date" id="section2_today_date"
                                                            class="form-control date_picker" type="text" autocomplete="off" value="<?= date('m-d-Y');?>">
                                                 </div>
@@ -3014,7 +3018,7 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Title of Employer or Authorized Representative <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_title"></i></label>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_title"></i></label>
                                                     <input name="section2_title_of_emp" id="section2_title_of_emp"
                                                            class="form-control" type="text" value="<?= isset($pre_form['section2_title_of_emp']) && !empty($pre_form['section2_title_of_emp']) ? $pre_form['section2_title_of_emp'] : "";?>" autocomplete="nope">
                                                 </div>
@@ -3022,7 +3026,7 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Last Name of Employer or Authorized Representative <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_last_name"></i></label>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_last_name"></i></label>
                                                     <input name="section2_last_name_of_emp"
                                                            id="section2_last_name_of_emp" class="form-control"
                                                            type="text" value="<?= $last_name;?>">
@@ -3031,7 +3035,7 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>First Name of Employer or Authorized Representative <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_first_name"></i>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_first_name"></i>
                                                     </label>
                                                     <input name="section2_first_name_of_emp"
                                                            id="section2_first_name_of_emp" class="form-control"
@@ -3041,7 +3045,7 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Employer's Business or Organization Name <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_organization_name"></i></label>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_organization_name"></i></label>
                                                     <input name="section2_emp_business_name"
                                                            id="section2_emp_business_name" class="form-control"
                                                            type="text" value="<?= isset($pre_form['section2_emp_business_name']) && !empty($pre_form['section2_emp_business_name']) ? $pre_form['section2_emp_business_name'] : "";?>">
@@ -3050,7 +3054,7 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Employer's Business or Organization Address <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_organization_address"></i></label>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_organization_address"></i></label>
                                                     <input name="section2_emp_business_address" disableautocomplete
                                                            id="section2_emp_business_address" class="form-control"
                                                            type="text" autocomplete="nope" value="<?= isset($pre_form['section2_emp_business_address']) && !empty($pre_form['section2_emp_business_address']) ? $pre_form['section2_emp_business_address'] : "";?>">
@@ -3058,14 +3062,14 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>City or Town <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_city_or_town"></i></label>
+                                                    <label>City or Town <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_city_or_town"></i></label>
                                                     <input name="section2_city_town" id="section2_city_town"
                                                            class="form-control" value="<?= isset($pre_form['section2_city_town']) && !empty($pre_form['section2_city_town']) ? $pre_form['section2_city_town'] : "";?>" type="text" autocomplete="nope">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>State <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_state"></i></label>
+                                                    <label>State <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_state"></i></label>
 
                                                     <div class="select">
                                                         <select class="form-control" name="section2_state"
@@ -3080,7 +3084,7 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>ZIP Code <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_zip_code"></i></label>
+                                                    <label>ZIP Code <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_zip_code"></i></label>
                                                     <input name="section2_zip_code" id="section2_zip_code"
                                                            value="<?= isset($pre_form['section2_zip_code']) && !empty($pre_form['section2_zip_code']) ? $pre_form['section2_zip_code'] : "";?>" class="form-control" type="text" autocomplete="nope">
                                                 </div>
@@ -3097,7 +3101,7 @@
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Last Name (Family Name) <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_7_last_name"></i>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_7_last_name"></i>
                                                     </label>
                                                     <input type="text"
                                                            value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_last_name'] : '' ?>"
@@ -3107,7 +3111,7 @@
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>First Name (Given Name) <span class="staric">*</span> <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_7_first_name"></i></label>
+                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_7_first_name"></i></label>
                                                     <input type="text"
                                                            value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_first_name'] : '' ?>"
                                                            class="form-control" name="section3_pre_first_name" <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'readonly';}?>>
@@ -3115,7 +3119,7 @@
                                             </div>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
                                                 <div class="form-group">
-                                                    <label>Middle Initial <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_7_middle_initial"></i></label>
+                                                    <label>Middle Initial <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_7_middle_initial"></i></label>
                                                     <input type="text"
                                                            value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_middle_initial'] : '' ?>"
                                                            class="form-control" name="section3_pre_middle_initial" <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'readonly';}?>>
@@ -3135,25 +3139,25 @@
                                             <div class="col-lg-9 col-md-12 col-xs-12 col-sm-12">
                                                 <div class="row">
                                                     <div class="col-lg-12 form-group autoheight">
-                                                        <strong>A. </strong><em>New Name (if applicable) <i class="fa fa-question-circle-o modalShow" src="section_8_new_name"></i></em>
+                                                        <strong>A. </strong><em>New Name (if applicable) <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_new_name"></i></em>
                                                     </div>
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                         <div class="form-group">
-                                                            <label>Last Name <i class="fa fa-question-circle-o modalShow" src="section_8_last_name"></i></label>
+                                                            <label>Last Name <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_last_name"></i></label>
                                                             <input type="text" class="form-control"
                                                                    value="<?= isset($pre_form['section3_last_name']) && !empty($pre_form['section3_last_name']) ? $pre_form['section3_last_name'] : "";?>" name="section3_last_name" autocomplete="nope">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                         <div class="form-group">
-                                                            <label>First Name <i class="fa fa-question-circle-o modalShow" src="section_8_first_name"></i></label>
+                                                            <label>First Name <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_first_name"></i></label>
                                                             <input type="text" class="form-control"
                                                                    value="<?= isset($pre_form['section3_first_name']) && !empty($pre_form['section3_first_name']) ? $pre_form['section3_first_name'] : "";?>"name="section3_first_name" autocomplete="nope">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                         <div class="form-group">
-                                                            <label>Middle Initial <i class="fa fa-question-circle-o modalShow" src="section_8_middle_initial"></i></label>
+                                                            <label>Middle Initial <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_middle_initial"></i></label>
                                                             <input type="text" class="form-control"
                                                                    value="<?= isset($pre_form['section3_middle_initial']) && !empty($pre_form['section3_middle_initial']) ? $pre_form['section3_middle_initial'] : "";?>"      name="section3_middle_initial" autocomplete="nope">
                                                         </div>
@@ -3165,7 +3169,7 @@
                                                     <strong>B. </strong><em>Date of Rehire (if applicable)</em>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Date (mm/dd/yyyy) <i class="fa fa-question-circle-o modalShow" src="section_8_date"></i></label>
+                                                    <label>Date (mm/dd/yyyy) <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_date"></i></label>
                                                     <input type="text" class="form-control date_picker2"
                                                            value="<?= isset($pre_form['section3_rehire_date']) && !empty($pre_form['section3_rehire_date']) ? date('m-d-Y',strtotime($pre_form['section3_rehire_date'])) : "";?>"      name="section3_rehire_date" value="N/A" autocomplete="off">
                                                 </div>
@@ -3184,7 +3188,7 @@
                                                             <div class="col-lg-4 col-md-6 col-xs-12 col-sm-6">
                                                                 <div class="form-group">
                                                                     <label>Document Title <i
-                                                                            class="fa fa-question-circle-o modalShow" src="section_8_document_title"></i></label>
+                                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_document_title"></i></label>
                                                                     <?php $selected = isset($pre_form['section3_document_title']) && !empty($pre_form['section3_document_title']) ? $pre_form['section3_document_title'] : "";?>
                                                                     <div class="select">
                                                                         <select class="form-control" name="section3_document_title">
@@ -3321,7 +3325,7 @@
                                                             <div class="col-lg-4 col-md-6 col-xs-12 col-sm-6">
                                                                 <div class="form-group">
                                                                     <label>Document Number <i
-                                                                            class="fa fa-question-circle-o modalShow" src="section_8_document_number"></i></label>
+                                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_document_number"></i></label>
                                                                     <input type="text" class="form-control"
                                                                            value="<?= isset($pre_form['section3_document_number']) && !empty($pre_form['section3_document_number']) ? $pre_form['section3_document_number'] : "";?>" name="section3_document_number">
                                                                 </div>
@@ -3329,7 +3333,7 @@
                                                             <div class="col-lg-4 col-md-12 col-xs-12 col-sm-12">
                                                                 <div class="form-group">
                                                                     <label>Expiration Date (if any) (mm/dd/yyyy) <i
-                                                                            class="fa fa-question-circle-o modalShow" src="section_8_expiration"></i></label>
+                                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_expiration"></i></label>
                                                                     <input type="text" value="<?= isset($pre_form['section3_expiration_date']) && !empty($pre_form['section3_expiration_date']) ? date('m-d-Y',strtotime($pre_form['section3_expiration_date'])) : "";?>"
                                                                            class="form-control date_picker2"
                                                                            name="section3_expiration_date" autocomplete="off">
@@ -3351,7 +3355,7 @@
                                                         <div class="row">
                                                             <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
                                                                 <div class="form-group">
-                                                                    <label>Signature of Authorized Representative <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_8_signature"></i></label>
+                                                                    <label>Signature of Authorized Representative <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_signature"></i></label>
                                                                     <?php if(isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
                                                                         <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>"  />
                                                                     <?php } else { ?>
@@ -3367,7 +3371,7 @@
                                                             <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
                                                                 <div class="form-group">
                                                                     <label>Today's Date (mm/dd/yyyy) <span class="staric">*</span> <i
-                                                                            class="fa fa-question-circle-o modalShow" src="section_8_today_date"></i></label>
+                                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_today_date"></i></label>
                                                                     <input type="text" value="<?= date('m-d-Y');?>"
                                                                            class="form-control date_picker"
                                                                            name="section3_today_date" autocomplete="off">
@@ -3376,7 +3380,7 @@
                                                             <div class="col-lg-4 col-md-12 col-xs-12 col-sm-12">
                                                                 <div class="form-group">
                                                                     <label>Name of Authorized Representative <span class="staric">*</span> <i
-                                                                            class="fa fa-question-circle-o modalShow" src="section_8_authorized"></i></label>
+                                                                            aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_authorized"></i></label>
                                                                     <input type="text" class="form-control"
                                                                            name="section3_name_of_emp" value="<?= $first_name.' '.$last_name?>">
                                                                 </div>
@@ -3698,7 +3702,7 @@
 <div id="document_loader" class="text-center my_loader" style="display: none; z-index: 1234;" >
     <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
     <div class="loader-icon-box">
-        <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
+        <i aria-hidden="true" class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
         <div class="loader-text" id="loader_text_div" style="display:block; margin-top: 35px;">
         </div>
     </div>
@@ -4792,7 +4796,10 @@
             $('#form_assign_i9').submit();
         },
         function () {
-            alertify.error('Cancelled!');
+            alertify.error('Canceled!');
+        }).set('labels', {
+            ok: "Yes",
+            cancel: "No"
         });
     }
 
@@ -5462,7 +5469,7 @@
 
     $("#btn_eev_document").click(function(){
         $("#form_upload_eev_document").submit();
-        $(this).html('<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>');
+        $(this).html('<i aria-hidden="true" class="fa fa-refresh fa-spin fa-3x fa-fw"></i>');
         $(this).attr("disabled", true);
     });
 
@@ -5699,7 +5706,7 @@
                     // Completed document
                     if($('#signed_doc_details #collapse_completed-1').length == 0) {
                         $('.panel-body').find('b.js-error').remove();
-                        $('#signed_doc_details .panel-body').append(`<div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-cdi">0</span> </b></div></a></h4></div><div id="collapse_completed-1" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th class="col-lg-8">Document Name</th><th class="col-lg-2 text-right">Actions</th><th class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
+                        $('#signed_doc_details .panel-body').append(`<div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-cdi">0</span> </b></div></a></h4></div><div id="collapse_completed-1" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th scope="column" class="col-lg-8">Document Name</th><th scope="column" class="col-lg-2 text-right">Actions</th><th scope="column" class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
                     }
                     $('#signed_doc_details #collapse_completed-1 tbody').prepend(`<tr><td class="col-lg-8">${dn}<br /><strong>Assigned on: </strong>${aon}</td><td class="col-lg-2 clv-${i}"></td><td class="col-lg-2"></td></tr>`);
                     $('.js-cd').text(
@@ -5713,7 +5720,7 @@
                     // Uncompleted Document
                     if($('#in_complete_doc_details #collapse_ncompleted-1').length == 0) {
                         $('.panel-body').find('b.js-error').remove();
-                        $('#in_complete_doc_details .panel-body').append(`<br /><div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_ncompleted-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-ncdi">0</span> </b></div></a></h4></div><div id="collapse_ncompleted-1" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th class="col-lg-8">Document Name</th><th class="col-lg-2 text-right">Actions</th><th class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
+                        $('#in_complete_doc_details .panel-body').append(`<br /><div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_ncompleted-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-ncdi">0</span> </b></div></a></h4></div><div id="collapse_ncompleted-1" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th scope="column" class="col-lg-8">Document Name</th><th scope="column" class="col-lg-2 text-right">Actions</th><th scope="column" class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
                     }
                     $('#in_complete_doc_details  #collapse_ncompleted-1 tbody').prepend(`<tr><td class="col-lg-8">${dn}<br /><strong>Assigned on: </strong>${aon}</td><td class="col-lg-2 clv-${i}"></td><td class="col-lg-2 blv-${i}"></td></tr>`);
                     $('.js-ncd').text(
@@ -5872,26 +5879,26 @@
                         $doc_type = strtolower($document['document_extension']);
                     }
                     if ($doc_type == 'pdf') {
-                        $row .= '<i class="fa fa-2x fa-file-pdf-o"></i>';
+                        $row .= '<i aria-hidden="true" class="fa fa-2x fa-file-pdf-o"></i>';
                     } else if (in_array($doc_type, ['ppt', 'pptx'])) {
-                        $row .= '<i class="fa fa-2x fa-file-powerpoint-o"></i>';
+                        $row .= '<i aria-hidden="true" class="fa fa-2x fa-file-powerpoint-o"></i>';
                     } else if (in_array($doc_type, ['doc', 'docx'])) {
-                        $row .= ' <i class="fa fa-2x fa-file-o"></i>';
+                        $row .= ' <i aria-hidden="true" class="fa fa-2x fa-file-o"></i>';
                     } else if (in_array($doc_type, ['xlsx'])) {
-                        $row .= ' <i class="fa fa-2x fa-file-excel-o"></i>';
+                        $row .= ' <i aria-hidden="true" class="fa fa-2x fa-file-excel-o"></i>';
                     } else if ($doc_type == '') {
-                        $row .= ' <i class="fa fa-2x fa-file-text"></i>';
+                        $row .= ' <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>';
                     }
                     $row .= '
                 </td>
                 <td class="col-lg-2 text-center">';
                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                        $row .= '<i class="fa fa-check fa-2x text-success"></i>
+                        $row .= '<i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                         <div class="text-center">';
                             $row .= reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
                             $row .= '</div>';
                     } else {
-                        $row .= '    <i class="fa fa-times fa-2x text-danger"></i>';
+                        $row .= '    <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>';
                     }
                     $row .= '</td>
                 <td class="col-lg-2 text-center">';
@@ -5899,9 +5906,9 @@
                         $row .= '<b>N/A</b>';
                     } elseif (isset($document['acknowledged_date']) && $document['acknowledged_date'] != '0000-00-00 00:00:00') {
                         if ($document['acknowledged'] == 0) {
-                            $row .= '<i class="fa fa-times fa-2x text-danger"></i>';
+                            $row .= '<i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>';
                         } else {
-                            $row .= '<i class="fa fa-check fa-2x text-success"></i>';
+                            $row .= '<i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>';
                         }
                         $row .= '<div class="text-center">';
                             // echo date_format(new DateTime($document['acknowledged_date']), 'M d Y h:m a').'
@@ -5909,14 +5916,14 @@
 
                             $row .= '</div>';
                     } elseif ($document['user_consent'] == 1) {
-                        $row .= '<i class="fa fa-check fa-2x text-success"></i>
+                        $row .= '<i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                         <div class="text-center">';
                             // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a').'
                             $row .= reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this));
 
                             $row .= '</div>';
                     } else {
-                        $row .= '<i class="fa fa-times fa-2x text-danger"></i>';
+                        $row .= '<i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>';
                     }
                     $row .= '</td>
                 <td class="col-lg-2 text-center">';
@@ -5924,9 +5931,9 @@
                         $row .= '<b>N/A</b>';
                     } elseif (isset($document['downloaded_date']) && $document['downloaded_date'] != '0000-00-00 00:00:00') {
                         if ($document['downloaded'] == 0) {
-                            $row .= '<i class="fa fa-times fa-2x text-danger"></i>';
+                            $row .= '<i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>';
                         } else {
-                            $row .= '<i class="fa fa-check fa-2x text-success"></i>';
+                            $row .= '<i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>';
                         }
                         $row .= '<div class="text-center">';
                             // echo date_format(new DateTime($document['downloaded_date']), 'M d Y h:m a').'
@@ -5934,14 +5941,14 @@
 
                             $row .= '</div>';
                     } elseif ($document['user_consent'] == 1) {
-                        $row .= '<i class="fa fa-check fa-2x text-success"></i>
+                        $row .= '<i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                         <div class="text-center">';
                             // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a').'
                             $row .= reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this));
 
                             $row .= '</div>';
                     } else {
-                        $row .= '<i class="fa fa-times fa-2x text-danger"></i>';
+                        $row .= '<i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>';
                     }
                     $row .= '</td>
                 <td class="col-lg-2 text-center">';
@@ -5949,9 +5956,9 @@
                         $row .=  '<b>N/A</b>';
                     } elseif (isset($document['uploaded_date']) && $document['uploaded_date'] != '0000-00-00 00:00:00') {
                         if ($document['uploaded'] == 0) {
-                            $row .= '<i class="fa fa-times fa-2x text-danger"></i>';
+                            $row .= '<i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>';
                         } else {
-                            $row .= '<i class="fa fa-check fa-2x text-success"></i>';
+                            $row .= '<i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>';
                         }
                         $row .= '<div class="text-center">';
                             // echo date_format(new DateTime($document['uploaded_date']), 'M d Y h:m a').'
@@ -5959,14 +5966,14 @@
 
                             $row .= '</div>';
                     } elseif ($document['user_consent'] == 1) {
-                        $row .= '<i class="fa fa-check fa-2x text-success"></i>
+                        $row .= '<i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                         <div class="text-center">';
                             // echo date_format(new DateTime($document['signature_timestamp']), 'M d Y h:m a').'
                             $row .= reset_datetime(array('datetime' => $document['signature_timestamp'], '_this' => $this));
 
                             $row .= '</div>';
                     } else {
-                        $row .= '<i class="fa fa-times fa-2x text-danger"></i>';
+                        $row .= '<i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>';
                     }
                     $row .= '</td>
                 <td class="col-lg-1 text-center">';
@@ -6075,8 +6082,18 @@
 
 <?php $this->load->view('iframeLoader'); ?>
 <?php $this->load->view('hr_documents_management/hybrid/scripts'); ?>
-<?php if ($action_btn_flag == true || $session['employer_detail']['pay_plan_flag'] == 0) $this->load->view('hr_documents_management/scripts/index', [
-    'offerLetters' => $company_offer_letters
-]); ?> 
+<?php 
+    if ($action_btn_flag || $session['employer_detail']['pay_plan_flag'] == 0){ 
+        $this->load->view('hr_documents_management/scripts/index', [
+            'offerLetters' => $company_offer_letters
+        ]); 
+    }
+?> 
 
 <?php $this->load->view('hr_documents_management/category_manager'); ?>
+
+<script>
+    $('[data-toggle="tooltip"]').tooltip({
+        trigger: "hover"
+    });
+</script>

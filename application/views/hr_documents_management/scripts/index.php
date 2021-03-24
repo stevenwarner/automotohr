@@ -233,6 +233,7 @@
 			 	do_descpt;
 			//
 			selectedTemplate = d;
+			console.log(d);
 			//
 			do_upload = d.document_type == 'uploaded' || d.document_type == 'hybrid_document' || d.offer_letter_type == 'uploaded' || d.offer_letter_type == 'hybrid_document' ? true : false;
 			do_descpt = d.document_type == 'generated' || d.document_type == 'hybrid_document' || d.offer_letter_type == 'generated' || d.offer_letter_type == 'hybrid_document' ? true : false;
@@ -257,6 +258,8 @@
 				rows += getResetBox();
 			}
 			if(do_descpt) rows += getTags();
+			rows += getRequiredRow();
+			rows += getSignatureRequiredRow();
 			//
 			let select2s = ['#js-modify-roles', '#js-modify-selected-employees', '#js-modify-selected-departments', '#js-modify-selected-teams'];
 			//
@@ -280,6 +283,8 @@
 					do_descpt ? $('#js-modify-assigned-document-signers').select2('val', d.signers != null && d.signers != ''  ? d.signers.split(',') : null) : '';
 					$('#js-modify-roles').select2('val', []);
 					$('#js-modify-visible-to-payroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
+					$('.js-modify-assign-document-required[value="'+( selectedTemplate.is_required)+'"]').prop('checked', true);
+					$('.js-modify-assign-document-signature-required[value="'+( selectedTemplate.is_signature_required )+'"]').prop('checked', true);
 					$('#js-modify-selected-employees').select2('val', []);
 					$('#js-modify-selected-departments').select2('val', []);
 					$('#js-modify-selected-teams').select2('val', []);
@@ -345,6 +350,8 @@
 			if(do_descpt) rows += getSigners();
 			rows+= getEmailContent();
 			if(do_descpt) rows += getTags();
+			rows += getRequiredRow();
+			rows += getSignatureRequiredRow();
 			//
 			Modal(
 				'Modify & Assign This Document',
@@ -560,6 +567,8 @@
 			obj.selected_roles = $('#js-modify-roles').val();
 			obj.visible_to_payroll = $('#js-modify-visible-to-payroll').prop('checked') ? 1 : 0;
 			obj.mainDocumentId = selectedTemplate.document_sid;
+			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
+			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
 			//
 			var post = new FormData();
 			//
@@ -604,6 +613,8 @@
 			obj.documentSid = selectedTemplate.sid;
 			obj.visibleToPayroll = selectedTemplate.visible_to_payroll;
 			obj.sendEmail = $('.js-modify-assign-document-send-email:checked').val();
+			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
+			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
 			if(selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document')
 			obj.desc = CKEDITOR.instances['js-modify-assign-document-description'].getData();
 			if(selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document'){
@@ -968,7 +979,6 @@
 			Modal(
 				o.title,
 				o.body,
-				// '<button class="btn btn-success js-save-offer-letter" data-value="save">Save Offer Letter</button>'+
 				'<button class="btn btn-success js-save-offer-letter" data-value="save_assign">Save / Assign Offer Letter</button>',
 				'js-popup',
 				['js-template-body', 'js-template-guidence'],
@@ -979,8 +989,6 @@
 			$('.js-template-send-email[value="no"]').click();
 			//
 			iLoader( 'hide', '.js-popup' );
-			console.log('finishs');
-			console.log(megaOBJ);
 		}
 
 		// Offer letter edit steps
@@ -1085,6 +1093,8 @@
 				acknowledgment : $('#js-template-acknowledgment').val(),
 				sortOrder : $('#js-template-sort-order').val().trim(),
 				sendEmail : $('.js-template-send-email:checked').val(),
+				isRequired : $('.js-template-required:checked').val(),
+				isSignatureRequired : $('.js-template-signature-required:checked').val(),
 				assign : $(this).data('value'),
 				fromTemplate: false
 			};
@@ -1175,6 +1185,8 @@
 				signature : $('#js-template-signature-edit').val(),
 				download : $('#js-template-download-edit').val(),
 				acknowledgment : $('#js-template-acknowledgment-edit').val(),
+				isRequired : $('.js-template-required-edit:checked').val(),
+				isSignatureRequired : $('.js-template-signature-required-edit:checked').val(),
 				sortOrder : $('#js-template-sort-order-edit').val().trim()
 			};
 			//
@@ -1513,6 +1525,243 @@
 				default: $(type).fadeIn(300); break;
 			}
 		}	
+
+
+		// 
+		function getRequiredRow(){
+			var rows = '';
+			//
+			rows += '<div class="form-group">';
+			rows += '	<hr />';
+			rows += '	<label>Is the document required?</label>';
+			rows += '	<p class="help-text">If marked yes, then the applicant needs to complete this document to complete the onboarding process.</p>';
+			rows += '	<label class="control control--radio">';
+			rows += '	    <input type="radio" class="js-modify-assign-document-required" name="js-modify-assign-document-required" value="0" checked="true" /> No &nbsp;';
+			rows += '	    <div class="control__indicator"></div>';
+			rows += '	</label>';
+			rows += '	<label class="control control--radio">';
+			rows += '	    <input type="radio"  class="js-modify-assign-document-required" name="js-modify-assign-document-required" value="1" /> Yes &nbsp;';
+			rows += '	    <div class="control__indicator"></div>';
+			rows += '	</label>';
+			rows += '</div>';
+			//
+			return rows;
+		}
+		
+		// 
+		function getSignatureRequiredRow(){
+			var rows = '';
+			//
+			rows += '<div class="form-group hidden">';
+			rows += '	<hr />';
+			rows += '	<label>Is the signature required?</label>';
+			rows += '	<p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p>';
+			rows += '	<label class="control control--radio">';
+			rows += '	    <input type="radio" class="js-modify-assign-document-signature-required" name="js-modify-assign-document-signature-required" value="0" checked="true" /> No &nbsp;';
+			rows += '	    <div class="control__indicator"></div>';
+			rows += '	</label>';
+			rows += '	<label class="control control--radio">';
+			rows += '	    <input type="radio"  class="js-modify-assign-document-signature-required" name="js-modify-assign-document-signature-required" value="1" /> Yes &nbsp;';
+			rows += '	    <div class="control__indicator"></div>';
+			rows += '	</label>';
+			rows += '</div>';
+			//
+			return rows;
+		}
+
+		// I9 manage
+		$('.jsManageI9').click(function(event){
+			//
+			event.preventDefault();
+			//
+			var i9 = <?php echo !empty($i9_form) ? json_encode($i9_form) : json_encode($i9_form_data); ?>;
+			//
+			Modal(
+				'Manage I9 document',
+				getSettingBody('i9', {
+					isRequired: i9.is_required,
+					isSignatureRequired: i9.is_signature_required
+				}),
+				'<button class="btn btn-success" id="js-update-i9-settings">Update</button>',
+				'js-i9-edit',
+				[],
+				[],
+				function(){
+					//
+					iLoader( 'hide', '.js-i9-edit' );
+				}
+			);
+		});
+
+		//
+		$(document).on('click', '#js-update-i9-settings', function(event){
+			//
+			event.preventDefault();
+			//
+			var i9 = (<?php echo !empty($i9_form) ? json_encode($i9_form) : json_encode($i9_form_data); ?>);
+			//
+			var o = {};
+			o.id = i9.sid;
+			o.isRequired = $('.js-i9-required:checked').val();
+			o.isSignatureRequired = $('.js-i9-signature-required:checked').val();
+			o.formType = "i9";
+			//
+			iLoader( 'show', '.js-i9-edit' );
+			//
+			$.post("<?php echo base_url('hr_documents_management/update_form_settings');?>", o)
+			.done(function(resp){
+				//
+				iLoader( 'hide', '.js-i9-edit' );
+				//
+				if(resp == 'success'){
+					alertify.alert('SUCCESS!', 'You have successfully updated the I9 form settings.', function(){
+						window.location.reload();
+					});
+				}
+			});
+		});
+
+
+		// W9 manage
+		$('.jsManageW9').click(function(event){
+			//
+			event.preventDefault();
+			//
+			var w9 = <?php echo !empty($w9_form) ? json_encode($w9_form) : json_encode($w9_form_data); ?>;
+			//
+			Modal(
+				'Manage W9 document',
+				getSettingBody('w9', {
+					isRequired: w9.is_required,
+					isSignatureRequired: w9.is_signature_required
+				}),
+				'<button class="btn btn-success" id="js-update-w9-settings">Update</button>',
+				'js-w9-edit',
+				[],
+				[],
+				function(){
+					//
+					iLoader( 'hide', '.js-w9-edit' );
+				}
+			);
+		});
+
+		//
+		$(document).on('click', '#js-update-w9-settings', function(event){
+			//
+			event.preventDefault();
+			//
+			var w9 = <?php echo !empty($w9_form) ? json_encode($w9_form) : json_encode($w9_form_data); ?>;
+			//
+			var o = {};
+			o.id = w9.sid;
+			o.isRequired = $('.js-w9-required:checked').val();
+			o.isSignatureRequired = $('.js-w9-signature-required:checked').val();
+			o.formType = "w9";
+			//
+			iLoader( 'show', '.js-w9-edit' );
+			//
+			$.post("<?php echo base_url('hr_documents_management/update_form_settings');?>", o)
+			.done(function(resp){
+				//
+				iLoader( 'hide', '.js-w9-edit' );
+				//
+				if(resp == 'success'){
+					alertify.alert('SUCCESS!', 'You have successfully updated the w9 form settings.', function(){
+						window.location.reload();
+					});
+				}
+			});
+		});
+
+
+		// W4 manage
+		$('.jsManageW4').click(function(event){
+			//
+			event.preventDefault();
+			//
+			var w4 = <?php echo !empty($w4_form) ? json_encode($w4_form) : json_encode($w4_form_data); ?>;
+			//
+			Modal(
+				'Manage W4 document',
+				getSettingBody('w4', {
+					isRequired: w4.is_required,
+					isSignatureRequired: w4.is_signature_required
+				}),
+				'<button class="btn btn-success" id="js-update-w4-settings">Update</button>',
+				'js-w4-edit',
+				[],
+				[],
+				function(){
+					//
+					iLoader( 'hide', '.js-w4-edit' );
+				}
+			);
+		});
+
+		//
+		$(document).on('click', '#js-update-w4-settings', function(event){
+			//
+			event.preventDefault();
+			//
+			var w4 = <?php echo !empty($w4_form) ? json_encode($w4_form) : json_encode($w4_form_data); ?>;
+			//
+			var o = {};
+			o.id = w4.sid;
+			o.isRequired = $('.js-w4-required:checked').val();
+			o.isSignatureRequired = $('.js-w4-signature-required:checked').val();
+			o.formType = "w4";
+			//
+			iLoader( 'show', '.js-w4-edit' );
+			//
+			$.post("<?php echo base_url('hr_documents_management/update_form_settings');?>", o)
+			.done(function(resp){
+				//
+				iLoader( 'hide', '.js-w4-edit' );
+				//
+				if(resp == 'success'){
+					alertify.alert('SUCCESS!', 'You have successfully updated the w4 form settings.', function(){
+						window.location.reload();
+					});
+				}
+			});
+		});
+
+		//
+		function getSettingBody(key, o){
+			//
+			html = '';
+			html += '<div class="row">';
+			html += '	<div class="col-sm-12">';
+			html += '		<div class="form-group">';
+			html += '			<label>Is this document required?</label>';
+			html += '			<p class="help-text">If marked yes, then the applicant needs to complete this document to complete the onboarding process.</p>';
+			html += '			<label class="control control--radio">';
+			html += '				<input type="radio" class="js-'+(key)+'-required" name="js-'+(key)+'-required" '+( o.isRequired == 0 ? 'checked' : '' )+' value="0" /> No &nbsp;';
+			html += '				<div class="control__indicator"></div>';
+			html += '			</label>';
+			html += '			<label class="control control--radio">';
+			html += '				<input type="radio"  class="js-'+(key)+'-required" name="js-'+(key)+'-required" '+( o.isRequired == 1 ? 'checked' : '' )+' value="1" /> Yes &nbsp;';
+			html += '				<div class="control__indicator"></div>';
+			html += '			</label>';
+			html += '		</div>';
+			html += '		<div class="form-group hidden">';
+			html += '			<label>Is signature required?</label>';
+			html += '			<p class="help-text"><p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p>';
+			html += '			<label class="control control--radio">';
+			html += '				<input type="radio" class="js-'+(key)+'-signature-required" name="js-'+(key)+'-signature-required" '+( o.isSignatureRequired == 0 ? 'checked' : '' )+' value="0" /> No &nbsp;';
+			html += '				<div class="control__indicator"></div>';
+			html += '			</label>';
+			html += '			<label class="control control--radio">';
+			html += '				<input type="radio"  class="js-'+(key)+'-signature-required" name="js-'+(key)+'-signature-required" '+( o.isSignatureRequired == 1 ? 'checked' : '' )+' value="1" /> Yes &nbsp;';
+			html += '				<div class="control__indicator"></div>';
+			html += '			</label>';
+			html += '		</div>';
+			html += '	</div>';
+			html += '</div>';
+			//
+			return html;
+		}
 	});
 </script>
 

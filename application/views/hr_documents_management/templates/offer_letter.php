@@ -142,6 +142,32 @@
 					<div class="control__indicator"></div>
 				</label>
 			</div>
+			<!-- 9 -->
+			<div class="form-group">
+				<label>Is this document required?</label>
+				<p class="help-text">If marked yes, then the applicant needs to complete this document to complete the onboarding process.</p>
+				<label class="control control--radio">
+					<input type="radio" class="js-template-required" name="js-template-required" value="0" /> No &nbsp;
+					<div class="control__indicator"></div>
+				</label>
+				<label class="control control--radio">
+					<input type="radio"  class="js-template-required" name="js-template-required" value="1" /> Yes &nbsp;
+					<div class="control__indicator"></div>
+				</label>
+			</div>
+			<!-- 10 -->
+			<div class="form-group hidden">
+				<label>Is signature required?</label>
+				<p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p>
+				<label class="control control--radio">
+					<input type="radio" class="js-template-signature-required" name="js-template-signature-required" value="0" /> No &nbsp;
+					<div class="control__indicator"></div>
+				</label>
+				<label class="control control--radio">
+					<input type="radio"  class="js-template-signature-required" name="js-template-signature-required" value="1" /> Yes &nbsp;
+					<div class="control__indicator"></div>
+				</label>
+			</div>
 		</div>
 	</div>
 

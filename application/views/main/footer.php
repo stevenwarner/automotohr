@@ -999,32 +999,7 @@ if ($class != 'dashboard' &&
             }
         })
     </script>
-    <script>
-        $(function(){
-            var shortCut = {
-                't': "<?=base_url('timeoff/requests');?>",
-                'e': "<?=base_url('employee_management');?>",
-                'a': "<?=base_url('application_tracking_system/active/all/all/all/all/all/all/all/all/all');?>",
-                'c': "<?=base_url('calendar/my_events');?>",
-                'd': "<?=base_url('dashboard');?>",
-                's': "<?=base_url('my_settings');?>",
-                'm': "<?=base_url('employee_management_system');?>",
-            };
-            //
-            // $(document).keydown((e) => {
-            //     if(e.shiftKey && e.altKey && shortCut[e.key.toLowerCase()] !== undefined){
-            //         window.location.href = shortCut[e.key.toLowerCase()];
-            //     }
-            // });
-
-            $(document).keydown(function(e){
-                if(e.shiftKey && e.altKey && shortCut[e.key.toLowerCase()] !== undefined){
-                    window.location.href = shortCut[e.key.toLowerCase()];
-                }
-            });
-        });
-    </script>
-    <script src="<?=base_url('assets/js/common.min.js');?>?v=<?=time();?>"></script>
+    <script src="<?=base_url('assets/js/common.min.js');?>?v=1.0.1"></script>
         </body>
 </html>
     <?php } else { ?>

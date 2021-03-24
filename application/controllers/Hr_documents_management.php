@@ -8928,6 +8928,7 @@ ini_set('memory_limit', -1);
                 $a['company_sid'] = $post['CompanySid'];
                 $a['status'] = 1;
                 $a['assigned_by'] = $post['EmployerSid'];
+                $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
                 $a['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
                 $a['user_type'] = $post['Type'];
                 $a['user_sid'] = $post['EmployeeSid'];
@@ -8942,6 +8943,8 @@ ini_set('memory_limit', -1);
                     $t = explode('.', $a['document_s3_name']);
                     $a['document_extension'] = $t[sizeof($t) - 1];
                 }
+                $a['is_required'] = $post['isRequired'];
+                $a['is_signature_required'] = $post['isSignatureRequired'];
                 //
                 $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
                 //
@@ -9322,6 +9325,9 @@ ini_set('memory_limit', -1);
                 $a['download_required'] = $post['download_required'];
                 $a['acknowledgment_required'] = $post['acknowledgment_required'];
                 $a['signature_required'] = $post['signature_required'];
+                $a['is_required'] = $post['isRequired'];
+                $a['is_signature_required'] = $post['isSignatureRequired'];
+                $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
 
                 //
                 $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
@@ -9401,11 +9407,10 @@ ini_set('memory_limit', -1);
                     
                 }
 
-               
                 //
-                 // Check if it's Authorize document
+                // Check if it's Authorize document
                 if ($do_descpt && isset($post['managersList']) && $post['managersList'] != null && str_replace('{{authorized_signature}}', '', $document_description) != $document_description){
-                     // Managers handling
+                        // Managers handling
                     $this->hr_documents_management_model->addManagersToAssignedDocuments(
                         $post['managersList'],
                         $assignInsertId,
@@ -9413,7 +9418,6 @@ ini_set('memory_limit', -1);
                         $employer_sid
                     );
                 }
-
                 
                 //
                 if($user_type == 'employee'){
@@ -9436,13 +9440,13 @@ ini_set('memory_limit', -1);
                             [
                                 'document_title' => $b['document_title'],
                                 'employee_name' => $user_info['first_name'].' '.$user_info['last_name']
-                                ]
-                            );
-                        }
+                            ]
+                        );
                     }
                 }
+            }
 
-            $this->session->set_flashdata('message', '<strong>Success:</strong> HR Document added Successfully!');
+            $this->session->set_flashdata('message', '<strong>Success:</strong>You have successfully added a new document.');
             redirect($redirectURL, 'refresh');
         }
 
@@ -9562,7 +9566,7 @@ ini_set('memory_limit', -1);
         // Set assign array
         $a = array();
         //
-        if(sizeof($assigned)){
+        if(!empty($assigned)){
             $assignInsertId = $assigned['sid'];
             //
             unset($assigned['sid']);
@@ -9595,6 +9599,9 @@ ini_set('memory_limit', -1);
             $a['authorized_signature_date'] = NULL;
         }
         //
+        $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+        $a['is_required'] = $post['isRequired'];
+        $a['is_signature_required'] = $post['isSignatureRequired'];
         $a['company_sid'] = $post['CompanySid'];
         $a['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
         $a['assigned_by'] = $post['EmployerSid'];
@@ -9908,6 +9915,8 @@ ini_set('memory_limit', -1);
         $a['signature_required'] = $post['isSignature'];
         $a['download_required'] = $post['isDownload'];
         $a['acknowledgment_required'] = $post['isAcknowledged'];
+        $a['is_required'] = $post['isRequired'];
+        $a['is_signature_required'] = $post['isSignatureRequired'];
         //
         if(isset($post['file'])){
             $a['document_s3_name'] = $post['file'];
@@ -11224,6 +11233,35 @@ ini_set('memory_limit', -1);
         $this->load->view('hr_documents_management/assign_bulk_document');
         $this->load->view('main/footer');
 
+    }
+
+
+    /**
+     * 
+     */
+    function update_form_settings(){
+        //
+        $data = ['is_required' => $_POST['isRequired'], 'is_signature_required' => $_POST['isSignatureRequired']];
+        //
+        if($_POST['formType'] == 'i9'){
+            //
+            $this->db
+            ->where('sid', $_POST['id'])
+            ->update('applicant_i9form', $data);
+        } else if($_POST['formType'] == 'w9'){
+            //
+            $this->db
+            ->where('sid', $_POST['id'])
+            ->update('applicant_w9form', $data);
+        } else if($_POST['formType'] == 'w4'){
+            //
+            $this->db
+            ->where('sid', $_POST['id'])
+            ->update('form_w4_original', $data);
+        }
+
+        //
+        echo 'success';
     }
 
 }

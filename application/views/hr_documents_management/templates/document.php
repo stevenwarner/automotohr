@@ -437,13 +437,69 @@
                                                                 <div class="row">
                                                                     <div class="col-xs-12">
                                                                         <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="sendEmail" type="radio" value="no" checked="true" />
+                                                                            No &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                        <label class="control control--radio font-normal">
                                                                             <input class="disable_doc_checkbox" name="sendEmail" type="radio" value="yes" checked="true" />
                                                                             Yes &nbsp;
                                                                             <div class="control__indicator"></div>
                                                                         </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Send email -->
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="hr-box">
+                                                            <div class="hr-box-header">
+                                                                <strong>Is this document required?</strong>
+                                                                <p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p>
+                                                            </div>
+                                                            <div class="hr-innerpadding">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12">
                                                                         <label class="control control--radio font-normal">
-                                                                            <input class="disable_doc_checkbox" name="sendEmail" type="radio" value="no" checked="true" />
+                                                                            <input class="disable_doc_checkbox" name="isRequired" type="radio" value="0" checked="true" />
                                                                             No &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="isRequired" type="radio" value="1"  />
+                                                                            Yes &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Send email -->
+                                                <div class="row hidden">
+                                                    <div class="col-xs-12">
+                                                        <div class="hr-box">
+                                                            <div class="hr-box-header">
+                                                                <strong>Is signature required?</strong>
+                                                                <p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p>
+                                                            </div>
+                                                            <div class="hr-innerpadding">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12">
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="isSignatureRequired" type="radio" value="0" checked="true" />
+                                                                            No &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="isSignatureRequired" type="radio" value="1" />
+                                                                            Yes &nbsp;
                                                                             <div class="control__indicator"></div>
                                                                         </label>
                                                                     </div>

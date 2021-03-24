@@ -1109,10 +1109,10 @@ if (isset($applicant)) {
                                                                                         <?php } else{ ?>
                                                                                                 <a href="javascript:;" id="w4" onclick="func_assign_w4();" class="btn btn-warning">Re-Assign</a>
                                                                                             <?php }
+                                                                                            echo '<button class="btn btn-success jsManageW4" title="Manage W4">Manage W4</button>';
                                                                                         } else { ?>
                                                                                             <a href="javascript:;" id="w4" onclick="func_assign_w4();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
-                                                                                        <!--                                                                <a href="--><?php ////echo $w4_url; ?><!--" class="btn btn-success">View Sign</a>-->
                                                                                     </td>
                                                                                 </tr>
                                                                                 <tr>
@@ -1139,6 +1139,7 @@ if (isset($applicant)) {
                                                                                             <?php } else{ ?>
                                                                                                 <a href="javascript:;" id="w9" onclick="func_assign_w9();" class="btn btn-warning">Re-Assign</a>
                                                                                             <?php }
+                                                                                            echo '<button class="btn btn-success jsManageW9" title="Manage W9">Manage W9</button>';
                                                                                         }else { ?>
                                                                                             <a href="javascript:;" id="w9" onclick="func_assign_w9();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
@@ -1168,6 +1169,7 @@ if (isset($applicant)) {
                                                                                             <?php } else{?>
                                                                                                 <a href="javascript:;" id="i9" onclick="func_assign_i9();" class="btn btn-warning">Re-Assign</a>
                                                                                             <?php }
+                                                                                            echo '<button class="btn btn-success jsManageI9" title="Manage I9">Manage I9</button>';
                                                                                         }else { ?>
                                                                                             <a href="javascript:;" id="i9" onclick="func_assign_i9();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
