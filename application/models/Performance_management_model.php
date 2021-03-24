@@ -1387,9 +1387,12 @@ class Performance_management_model extends CI_Model{
             ->from('goals')
             ->join('users', 'users.sid = goals.employee_sid');
         //
+        $this->db->group_start();
         if ($startDate != '' && $startDate != 'all' ){ $this->db->where('goals.start_date >= "' . ($startDate) . '"', null);}
         if ($endDate != '' && $endDate != 'all' ) {$this->db->or_where('goals.end_date  >= "' . ($endDate) . '"', null);}
+        $this->db->group_end();
         $this->db->where('goals.company_sid', $company_id);
+        $this->db->where('goals.employee_sid', $employer_id);
         //
         $a = $this->db->get();
         //
