@@ -238,7 +238,10 @@
                                         <?php } ?>
 
                                         <?php if (checkIfAppIsEnabled('performance_review')) { ?>
-                                            <li><a href="<?php echo base_url('performance/review/view'); ?>">Performance Review</a></li>
+                                            <li><a href="<?php echo base_url('performance-management/dashboard'); ?>">Performance Management</a></li>
+                                        <?php } ?>
+                                        <?php if (checkIfAppIsEnabled('performance_review')) { ?>
+                                            <li><a href="<?php echo base_url('performance-management/goals'); ?>">Goals</a></li>
                                         <?php } ?>
                                         <li><a href="<?php echo base_url('export_documents/employee'); ?>">Bulk Download Documents</a></li>
                                     </ul>

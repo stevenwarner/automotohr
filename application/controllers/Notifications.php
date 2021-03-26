@@ -27,15 +27,17 @@ class Notifications extends Public_Controller {
             $ses,
             strtolower($ses['employer_detail']['access_level']) != 'employee' ? false : true
         );
-        $this->load->model('Performance_management_model', 'pmm');
-        $goalsCount = $this->pmm->getMyGoals($ses['employer_detail']['sid']);
-        if($goalsCount != 0){
+        if (checkIfAppIsEnabled('performance_review')) {
+            $this->load->model('Performance_management_model', 'pmm');
+            $goalsCount = $this->pmm->getMyGoals($ses['employer_detail']['sid']);
+            if($goalsCount != 0){
 
-            $data[] = [
-                'count' => count($goalsCount),
-                'link' => base_url('performance-management/lms/goals'),
-                'title' => 'Goals'
-            ];
+                $data[] = [
+                    'count' => count($goalsCount),
+                    'link' => base_url('performance-management/lms/goals'),
+                    'title' => 'Goals'
+                ];
+            }
         }
         if(!sizeof($data)){
             $this->res['Response'] = 'No notifications found.';
