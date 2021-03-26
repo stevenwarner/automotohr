@@ -80,9 +80,23 @@ class Auto_careers extends CI_Controller
                     $applicant_primary_CV       = $applicant_old_data['cover_letter'];
                 }
             }
-            
-            
-
+            //            
+            function isAllowedDomain($email){
+                $allowedDomains = [
+                    '.com',
+                    '.us',
+                    '.ca',
+                    '.edu',
+                    '.gov',
+                    '.org',
+                    '.net'
+                ];
+                $t = explode('.', $email);
+                return (int)in_array('.'.trim($t[count($t) -1]), $allowedDomains);
+            }
+            //
+            if(!isAllowedDomain($applicant_data['email'])){ exit(0); }
+            //
             $referer_from           = 'https://auto.careers';
             $job_sid                = $applicant_data['job_sid'];
             $first_name             = $applicant_data['first_name'];
