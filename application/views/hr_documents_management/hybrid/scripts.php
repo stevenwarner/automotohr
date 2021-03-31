@@ -368,10 +368,10 @@
 			type = $(this).data('type') == undefined ? 'document' : $(this).data('type') ;
 			//
 			$('#js-preview-hybrid-modal .js-generated-document .js-toggle-modal-btn').removeClass('fa-minus').addClass('fa-plus');
-			$('#js-preview-hybrid-modal .js-generated-document .panel-body').hide(0);
+			// $('#js-preview-hybrid-modal .js-generated-document .panel-body').hide(0);
 			//
 			$('#js-preview-hybrid-modal .js-uploaded-document .js-toggle-modal-btn').removeClass('fa-minus').addClass('fa-plus');
-			$('#js-preview-hybrid-modal .js-uploaded-document .panel-body').hide(0);
+			// $('#js-preview-hybrid-modal .js-uploaded-document .panel-body').hide(0);
 			//
 			var d = getDocument( 
 				$(this).data('id'), 
@@ -405,8 +405,8 @@
 			//
 			$('.js-preview-hyrid-modal-title').html(d.document_title);
 			// File section
-			$('.js-uploaded-document .js-text').html(' <strong>Section 1: </strong> Document '+s3_file);
-			$('.js-uploaded-document .js-button').html( f.getButtonHTML() );
+			$('.js-uploaded-document .js-text').html('Document '+s3_file);
+			// $('.js-uploaded-document .js-button').html( f.getButtonHTML() );
 			$('.js-uploaded-document .panel-body').html( f.getHTML() );
 			// Content section
 			if(status == 'submitted'){
@@ -418,24 +418,33 @@
 				g = '<iframe src="'+( d.submitted_description )+'" frameborder="0" style="width: 100%; height: 500px;"></iframe>';
 				//
 				buttons = '';
-				buttons += '<a href="<?=base_url('hr_documents_management/pd');?>/'+( status )+'/print/description/'+( d.sid )+'" target="_blank" class="btn btn-success btn-sm">Print</a>&nbsp;';
-				buttons += '<a href="<?=base_url('hr_documents_management/pd');?>/'+( status )+'/download/description/'+( d.sid )+'" target="_blank"  class="btn btn-success btn-sm">Download</a>';
-				
+				// buttons += '<a href="<?=base_url('hr_documents_management/pd');?>/'+( status )+'/print/description/'+( d.sid )+'" target="_blank" class="btn btn-success btn-sm">Print</a>&nbsp;';
+				// buttons += '<a href="<?=base_url('hr_documents_management/pd');?>/'+( status )+'/download/description/'+( d.sid )+'" target="_blank"  class="btn btn-success btn-sm">Download</a>';
 				//
-				$('.js-generated-document .panel-body').html( g );
-				$('.js-generated-document .js-button').html( buttons );
+				// $('.js-generated-document .panel-body').html( g );
+				// $('.js-generated-document .js-button').html( buttons );
+
+				
 			} else{
 				$('.js-generated-document .panel-body').html( g.getHTML() );
-				$('.js-generated-document .js-button').html( g.getButtonHTML() );
+				// $('.js-generated-document .js-button').html( g.getButtonHTML() );
 			}
 			//
-			$('.js-generated-document .js-text').html(' <strong>Section 2: </strong> Description');
+			$('.js-generated-document .js-text').html('<strong>Section 2: </strong> Description');
 			// Full Download
 			// $('#js-preview-hybrid-modal .modal-footer').prepend( buttons );
 			//
 			$('#js-preview-hybrid-modal').modal();
 			//
 			if(f.Type == 'iframe') loadIframe( f.URL, '.js-uploaded-document iframe', true);
+
+			print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/assigned_document/print";
+			download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/assigned_document/download";
+			$("#hybrid_print_doc").attr("href",print_url)
+			$("#hybrid_download_doc").attr("href",download_url)
+			if(status == 'submitted'){
+				$('#hybird_uploaded_doc').hide();
+			}
 		}
 
 
@@ -793,17 +802,23 @@
 			</div>
 			<div class="modal-body js-preview-hyrid-modal-body">
 
-				<p>
+				<!-- <p>
 					<strong>Note:</strong>
 					Hybrid document is divided into two sections; <br />
 					1- Uploaded document <br />
 					2- Description
-				</p>
+				</p> -->
+				<div>
+					<a class="btn btn-success pull-right" id="hybrid_download_doc">Download</a>
+					<a class="btn btn-success pull-right" style="margin-right: 6px;" id="hybrid_print_doc">Print</a>
+				</div>
+				<br>
+				<hr>
 				
-				<div class="panel panel-success js-uploaded-document">
+				<div class="panel panel-success js-uploaded-document" id="hybird_uploaded_doc">
 					<div class="panel-heading">
 						<h3 class="panel-title">
-							<i class="fa fa-minus js-toggle-modal-btn"></i>
+							<!-- <i class="fa fa-minus js-toggle-modal-btn"></i> -->
 							<span class="js-text"></span>
 							<span class="pull-right js-button" style="margin-top: -7px;"></span>
 						</h3>
@@ -815,12 +830,12 @@
 				<div class="panel panel-success js-generated-document">
 					<div class="panel-heading">
 						<h3 class="panel-title">
-							<i class="fa fa-plus js-toggle-modal-btn"></i>
+							<!-- <i class="fa fa-plus js-toggle-modal-btn"></i> -->
 							<span class="js-text">Description</span>
 							<span class="pull-right js-button" style="margin-top: -7px;"></span>
 						</h3>
 					</div>
-					<div class="panel-body" style="display: none;"></div>
+					<div class="panel-body" ></div>
 				</div>
 
 			</div>

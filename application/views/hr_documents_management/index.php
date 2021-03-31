@@ -29,7 +29,7 @@
                                     <a href="<?php echo base_url('hr_documents_management/generate_new_document'); ?>" class="btn btn-success">Generate <i class="fa fa-file" aria-hidden="true"></i></a>
                                     <?php } ?>
                                     <?php if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document') && checkIfAppIsEnabled('hybrid_document')) { ?>
-                                    <a href="<?php echo base_url('hr_documents_management/hybrid_document/add'); ?>" class="btn btn-success">Add Document <i class="fa fa-file" aria-hidden="true"></i></a>
+                                    <a href="<?php echo base_url('hr_documents_management/hybrid_document/add'); ?>" class="btn btn-success">Hybrid Document <i class="fa fa-file" aria-hidden="true"></i></a>
                                     <?php } ?>
 
                                     <?php if (check_access_permissions_for_view($security_details, 'add_edit_offer_letter')) { ?>
