@@ -30,6 +30,7 @@ class Notification_model extends CI_Model {
         $c = $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
         ->where('authorized_document_assigned_manager.assigned_to_sid', $ses['employer_detail']['sid'])
+        ->where('authorized_document_assigned_manager.company_sid', $ses['company_detail']['sid'])
         // ->where('authorized_document_assigned_manager.assigned_status', 1)
         ->where('documents_assigned.archive', 0)
         ->where('documents_assigned.status', 1)
