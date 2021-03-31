@@ -284,12 +284,11 @@ class Application_tracking_system extends Public_Controller {
                         }
                     }
                 } else { // logged in user is an employee
+                
+                    
                     $applicants = $this->application_tracking_system_model->get_employee_jobs_and_applicants($company_sid, $employer_sid, $archived, $records_per_page, $my_offset, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
                     $applicant_total_array = $this->application_tracking_system_model->get_employee_jobs_and_applicants_count($company_sid, $employer_sid, $archived, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
 
-//                    echo '<pre>';
-//                    print_r($applicant_total_array);
-//                    die();
                     if (!empty($applicant_total_array)) {
                         $applicant_total = $applicant_total_array['all_job_applicants'];
                         $all_manual_applicants = $applicant_total_array['all_manual_applicants'];

@@ -47,6 +47,79 @@ if (!function_exists('getCompanyNameBySid')) {
     }
 }
 
+if (!function_exists('getEmployeeJobfairApplicant')) {
+    function getEmployeeJobfairApplicant($company_sid, $employee_sid, $arrayinfo = null, $today_start = NULL, $today_end = NULL, $approval_status = NULL, $count = "no", $fair_type = "all", $applicant_filters = array())
+    {
+        $CI = &get_instance();
+
+        $CI->db->select("page_url");
+        $CI->db->where("company_sid", $company_sid);
+        //
+        if ($fair_type != "all") {
+            $CI->db->where("page_url", $fair_type);
+        }
+        //
+        $CI->db->where("FIND_IN_SET({$employee_sid}, visibility_employees) > 0", false, false);
+        //
+        $assign_custom_job_fair = $CI->db->get('job_fairs_forms')->result_array();
+        //
+        $CI->db->select("page_url");
+        $CI->db->where("company_sid", $company_sid);
+        //
+        if ($fair_type != "all") {
+            $CI->db->where("page_url", $fair_type);
+        }
+        //
+        $CI->db->where("FIND_IN_SET({$employee_sid}, visibility_employees) > 0", false, false);
+        //
+        $assign_default_job_fair = $CI->db->get('job_fairs_recruitment')->result_array();
+
+        $assign_job_fair = array_merge($assign_default_job_fair,$assign_custom_job_fair);
+
+        if (!empty($assign_job_fair)) {
+            $page_urls = array();
+            foreach ($assign_job_fair as $key => $job_fair) {
+                array_push($page_urls , $job_fair['page_url']); 
+            }
+
+            if ($count == "no") {
+                $CI->db->select('sid');
+            }
+            $CI->db->where('applicant_type', 'Job Fair');
+            $CI->db->where_in('job_fair_key', $page_urls);
+
+            if (!empty($arrayinfo)) {
+                $CI->db->where_not_in('sid', $arrayinfo);
+            }
+
+            if (!empty($applicant_filters)) {
+                $CI->db->where('status_sid', $applicant_filters['status_sid']);
+            }
+
+            if ($today_start != NULL && $today_end != NULL) {
+                $CI->db->where('portal_applicant_jobs_list.date_applied >= ', $today_start);
+                $CI->db->where('portal_applicant_jobs_list.date_applied <= ', $today_end);
+            }
+
+            if ($approval_status != NULL) {
+                $CI->db->where('portal_applicant_jobs_list.approval_status', $approval_status);
+            }
+
+            $CI->db->from('portal_applicant_jobs_list');
+
+            if ($count == "no") {
+                return $CI->db->get()->result_array();
+            } else {
+                return $CI->db->count_all_results();
+            }
+
+        } else {
+            return $count != 'no' ? 0 : array();
+        }
+        
+    }
+}
+
 if (!function_exists('getCompanyName')) {
     function getCompanyName($user_sid, $user_type)
     {

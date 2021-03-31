@@ -943,7 +943,10 @@ class Dashboard_model extends CI_Model
 
     function get_all_company_applicants_count($company_sid, $employer_sid = 0, $today_start = NULL, $today_end = NULL, $approval_status = NULL)
     {
+        $count = 0;
+        //
         if ($employer_sid > 0) {
+            $this->db->select('portal_applicant_jobs_list.sid');
             $this->db->select('portal_job_listings_visibility.job_sid');
             $this->db->select('portal_applicant_jobs_list.date_applied');
             $this->db->select('portal_applicant_jobs_list.approval_status');
@@ -964,9 +967,23 @@ class Dashboard_model extends CI_Model
                 $this->db->where('portal_applicant_jobs_list.approval_status', $approval_status);
             }
 
-            $this->db->from('portal_job_listings_visibility');
-            return $this->db->count_all_results();
-            //            return $this->db->get('portal_job_listings_visibility')->result_array();
+            // $this->db->from('portal_job_listings_visibility');
+            // $count = $this->db->count_all_results();
+            $result = $this->db->get('portal_job_listings_visibility')->result_array();
+            $job_listing_sids = array();
+
+            if(!empty($result)){
+                $job_listing_sids = array_column($result, "sid"); 
+            }
+
+            $job_fair_applicant = getEmployeeJobfairApplicant($company_sid, $employer_sid, $job_listing_sids, $today_start, $today_end, $approval_status, 'yes');
+             
+            $count = count($result) + $job_fair_applicant;
+            
+
+        
+            
+            // return $this->db->get('portal_job_listings_visibility')->result_array();
         } else {
             $this->db->select('portal_applicant_jobs_list.job_sid');
             $this->db->select('portal_applicant_jobs_list.date_applied');
@@ -987,14 +1004,20 @@ class Dashboard_model extends CI_Model
 
             $this->db->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left');
             $this->db->from('portal_applicant_jobs_list');
-            return $this->db->count_all_results();
-            //            return $this->db->get('portal_applicant_jobs_list')->result_array();
+            $count = $this->db->count_all_results();
+            
+            // return $this->db->get('portal_applicant_jobs_list')->result_array();
         }
+
+        return $count;
     }
 
     function get_all_active_inactive_applicants_count($company_sid, $employer_sid = 0, $today_start = NULL, $today_end = NULL, $approval_status = NULL)
     {
+        $count = 0;
+        //
         if ($employer_sid > 0) {
+            $this->db->select('portal_applicant_jobs_list.sid');
             $this->db->select('portal_job_listings_visibility.job_sid');
             $this->db->select('portal_applicant_jobs_list.date_applied');
             $this->db->select('portal_applicant_jobs_list.approval_status');
@@ -1014,9 +1037,21 @@ class Dashboard_model extends CI_Model
                 $this->db->where('portal_applicant_jobs_list.approval_status', $approval_status);
             }
 
-            $this->db->from('portal_job_listings_visibility');
-            return $this->db->count_all_results();
-            //            return $this->db->get('portal_job_listings_visibility')->result_array();
+            // $this->db->from('portal_job_listings_visibility');
+            // $count = $this->db->count_all_results();
+            $result = $this->db->get('portal_job_listings_visibility')->result_array();
+            $job_listing_sids = array();
+
+            if(!empty($result)){
+                $job_listing_sids = array_column($result, "sid"); 
+            }
+
+            $job_fair_applicant = getEmployeeJobfairApplicant($company_sid, $employer_sid, $job_listing_sids, $today_start, $today_end, $approval_status, 'yes');
+
+             
+            $count = count($result) + $job_fair_applicant;
+
+            // return $this->db->get('portal_job_listings_visibility')->result_array();
         } else {
             $this->db->select('portal_applicant_jobs_list.job_sid');
             $this->db->select('portal_applicant_jobs_list.date_applied');
@@ -1036,9 +1071,12 @@ class Dashboard_model extends CI_Model
 
             $this->db->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left');
             $this->db->from('portal_applicant_jobs_list');
-            return $this->db->count_all_results();
-            //            return $this->db->get('portal_applicant_jobs_list')->result_array();
+        
+            $count = $this->db->count_all_results();
+            // return $this->db->get('portal_applicant_jobs_list')->result_array();
         }
+
+        return $count;
     }
 
     function get_background_checks_count($company_id, $monthly = '')

@@ -20,3 +20,8 @@ ADD `is_signature_required` TINYINT(1) NOT NULL DEFAULT '0' AFTER `is_required`;
 ALTER TABLE `applicant_w9form` ADD `is_required` TINYINT(1) NOT NULL DEFAULT '0' AFTER `uploaded_by_sid`, 
 ADD `is_signature_required` TINYINT(1) NOT NULL DEFAULT '0' AFTER `is_required`;
 
+-- Added employee visibility to job fair
+-- 03/22/2021
+ALTER TABLE `job_fairs_recruitment` ADD `visibility_employees` LONGTEXT NOT NULL AFTER `page_url`;
+ALTER TABLE `job_fairs_forms` ADD `visibility_employees` LONGTEXT NOT NULL AFTER `page_url`;
+ALTER TABLE `job_fairs_recruitment` CHANGE `visibility_employees` `visibility_employees` LONGTEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL;

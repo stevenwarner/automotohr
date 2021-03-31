@@ -404,4 +404,27 @@ class Job_fair_model extends CI_Model {
         return $this->db->get('portal_email_templates')->result_array();
     }
 
+    /**
+     * 
+     */
+    function getAllEmployees($companyId){
+        //
+        return 
+        $this->db
+        ->select('
+            sid,
+            first_name,
+            last_name,
+            access_level,
+            access_level_plus,
+            pay_plan_flag,
+            is_executive_admin,
+            job_title
+        ')
+        ->where('active', 1)
+        ->where('terminated_status', 0)
+        ->where('parent_sid', $companyId)
+        ->get('users')
+        ->result_array();
+    }
 }

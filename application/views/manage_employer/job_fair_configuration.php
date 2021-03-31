@@ -192,12 +192,31 @@
                                             </div>
                                         </div>   
                                     </li>
-                                    <li class="form-col-100 autoheight">
-                                        <input value="Save" class="submit-btn" type="submit">
-                                    </li>
                                 </ul>
                             </div>
-                        </div>                    
+                        </div>
+                        <!--  -->
+                        <div class="col-sm-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <label>Make Applicant For This Job Fair Only Visible To Following Employees:</label>
+                                </div>
+                                <div class="panel-body">
+                                <?php 
+                                    $preSelected = isset($job_fair_data['visibility_employees']) ? explode(',', $job_fair_data['visibility_employees']) : [];
+                                ?>
+                                    <select class="select2" name="visibility[]" multiple>
+                                    <?php 
+                                    foreach($employees as $emp) { ?>
+                                        <option value="<?=$emp['sid'];?>" <?php echo in_array($emp['sid'], $preSelected) ? 'selected="true"' : ''; ?> ><?=remakeEmployeeName($emp, true);?></option>
+                                    <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <input value="Save" class="submit-btn" type="submit">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -216,6 +235,7 @@
     </div>
 </div>
 
+<script type="text/javascript" src="<?= base_url() ?>assets/select2/select2.js"></script>
 <script type="text/javascript" src="<?= base_url() ?>assets/js/bootstrap-colorpicker.js"></script>
 <link rel="stylesheet" href="<?= base_url() ?>assets/css/bootstrap-colorpicker.min.css " />
 <script type="text/javascript">
@@ -263,6 +283,8 @@
     }
     
     $(document).ready(function () {
+        //
+        $('.select2').select2({ closeOnSelect: false});
         var value = $("input[name='picture_or_video']:checked").val();
         display(value);
         

@@ -331,6 +331,7 @@ class Application_tracking_system_model extends CI_Model {
     /*     * * employee ** */
 
     function get_employee_jobs_and_applicants($company_sid, $employer_sid, $archived = 0, $limit = 0, $start = 1, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
+       //
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -436,6 +437,11 @@ class Application_tracking_system_model extends CI_Model {
         if ($job_fit_category_sid != 0 && $job_fit_category_sid != 'all') {
             $this->db->where('FIND_IN_SET(' . $job_fit_category_sid . ', `portal_job_applications`.`job_fit_category_sid`)');
         }
+
+        if(!empty($applicant_sid_list)) {
+            $this->db->or_where_in('portal_applicant_jobs_list.sid', $applicant_sid_list);
+        }
+
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
 
         if ($limit > 0) {
@@ -454,7 +460,185 @@ class Application_tracking_system_model extends CI_Model {
         }
 
         $applications = $this->rearrange_applicant_data($company_sid, $records_arr);
+
+        $get = array();
+        //
+        if($type == 'Job Fair' || $type == 'all') {
+            $applicant_sid_list = array_column($applications, "sid");
+            $get = getEmployeeJobfairApplicant($company_sid, $employer_sid, $applicant_sid_list, '', '', '', 'no', $fair_type, $applicant_filters);
+        }    
+        //
+
+        if (!empty($get)) {
+            $job_fair_list = array_column($get, "sid");
+            $job_fair_applications = $this->get_job_fair_applicant($job_fair_list, $company_sid, $applicant_status);
+           
+            return array_merge($applications,$job_fair_applications);
+        } else {
+            return $applications;
+        }
+        
+        
+    }
+
+    function get_job_fair_applicant ($applicant_sids, $company_sid, $applicant_status) {
+        $this->db->select('portal_job_applications.sid as applicant_sid');
+        $this->db->select('portal_job_applications.employer_sid');
+        $this->db->select('portal_job_applications.first_name');
+        $this->db->select('portal_job_applications.last_name');
+        $this->db->select('portal_job_applications.pictures');
+        $this->db->select('portal_job_applications.email');
+        $this->db->select('portal_job_applications.phone_number');
+        $this->db->select('portal_job_applications.cover_letter');
+        $this->db->select('portal_job_applications.YouTube_Video');
+        $this->db->select('portal_job_applications.full_employment_application');
+        $this->db->select('portal_job_applications.hired_sid');
+        $this->db->select('portal_job_applications.hired_status');
+        $this->db->select('portal_job_applications.hired_date');
+        $this->db->select('portal_job_applications.verification_key');
+        $this->db->select('portal_job_applications.linkedin_profile_url');
+        $this->db->select('portal_job_applications.extra_info');
+        $this->db->select('portal_job_applications.referred_by_name');
+        $this->db->select('portal_job_applications.referred_by_email');
+        $this->db->select('portal_job_applications.job_fit_category_sid');
+        $this->db->select('portal_job_applications.is_onboarding');
+        $this->db->select('portal_applicant_jobs_list.*'); 
+        $this->db->select('IF ((portal_applicant_jobs_list.resume IS NULL) , (portal_job_applications.resume) , (portal_applicant_jobs_list.resume)) AS resume');
+        $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
+
+        $this->db->where_in('portal_applicant_jobs_list.sid', $applicant_sids);
+        $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
+
+        $records_obj = $this->db->get('portal_applicant_jobs_list');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!in_array($applicant_status, array('active', 'archive', 'onboarding'))) {
+            if (empty($assigned_applicants_sids)) {
+                $records_arr = array();
+            }
+        }
+
+        $applications = $this->rearrange_jobfair_data($company_sid, $records_arr);
+
+        // return $records_arr;
         return $applications;
+    }
+
+    function rearrange_jobfair_data($company_sid, $applications = array()) {
+        $have_status = $this->have_status_records($company_sid);
+
+        if ($have_status == true) {
+            $company_statuses = $this->get_company_statuses_specific($company_sid);
+        }
+
+        $result_array = array();
+        $applicants_array = array();
+
+        //foreach ($applications as $key => $application) {
+        for ($i = 0; $i < count($applications); $i++) {
+            $application = $applications[$i];
+            $applicant_sid = $application['applicant_sid'];
+            $result = array();
+            $result = $application;
+
+            $result['job_title'] = 'Job Not Applied';
+
+            if (!isset($applicants_array[$applicant_sid])) {
+                $applicants_array[$applicant_sid] = $this->get_applicant_multiple_job_count($applicant_sid, $company_sid);
+            }
+
+            $result['multiple_jobs'] = $applicants_array[$applicant_sid];
+
+            if ($have_status == true) {
+                $status_sid = $application['status_sid'];
+
+                if (!empty($company_statuses) && $status_sid > 1 && isset($company_statuses[$status_sid])) {
+                    $result['status_name'] = $company_statuses[$status_sid]['name'];
+                    $result['status_css_class'] = $company_statuses[$status_sid]['css_class'];
+                    $result['status_text_css_class'] = $company_statuses[$status_sid]['text_css_class'];
+                    $result['status_type'] = $company_statuses[$status_sid]['status_type'];
+                    $result['bar_bgcolor'] = $company_statuses[$status_sid]['bar_bgcolor'];
+                } else {
+                    $result['status_name'] = 'Not Contacted Yet';
+                    $result['status_css_class'] = 'not_contacted';
+                    $result['status_text_css_class'] = 'not_contacted_text';
+                    $result['status_type'] = '';
+                    $result['bar_bgcolor'] = '';
+                }
+            }
+
+            $reviews_count = $this->get_applicant_reviews_count($applicant_sid);
+            $applicant_average_rating = '';
+            $result['reviews_count'] = $reviews_count;
+
+            if ($reviews_count > 0) {
+                $applicant_average_rating = $this->getApplicantAverageRating($applicant_sid, 'applicant');
+            }
+
+            $result['applicant_average_rating'] = $applicant_average_rating;
+            $resume_download_link = '';
+            $cover_letter_download_link = '';
+            $resume_direct_link = '';
+            $cover_letter_direct_link = '';
+
+            if (empty($application['resume'])) {
+                $resume_direct_link = '';
+                $resume_download_link = '';
+            } else {
+                $resume_direct_link = AWS_S3_BUCKET_URL . $application['resume'];
+                //$resume_download_link = base_url('applicant_profile/downloadFile') . '/' . $application['resume'];
+                $resume_download_link = AWS_S3_BUCKET_URL . $application['resume'];
+            }
+
+            if (empty($application['cover_letter'])) {
+                $cover_letter_direct_link = '';
+                $cover_letter_download_link = '';
+            } else {
+                $cover_letter_direct_link = AWS_S3_BUCKET_URL . $application['cover_letter'];
+                //$cover_letter_download_link = base_url('applicant_profile/downloadFile') . '/' . $application['cover_letter']; //
+                $cover_letter_download_link = AWS_S3_BUCKET_URL . $application['cover_letter'];
+            }
+
+            $result['resume_direct_link'] = $resume_direct_link;
+            $result['resume_download_link'] = $resume_download_link;
+            $result['cover_letter_direct_link'] = $cover_letter_direct_link;
+            $result['cover_letter_download_link'] = $cover_letter_download_link;
+            $questionnaire_manual_sent = $application['questionnaire_manual_sent']; //get resent applicants history // get the questionnaire results.
+
+            if ($questionnaire_manual_sent == 1) {
+                $manual_applicant_sid = $application['sid'];
+                $manual_applicant_jobs_list_sid = $application['applicant_sid'];
+                $result['manual_questionnaire_history'] = $this->screening_questionnaire_manual_sent_tracking($manual_applicant_sid, $manual_applicant_jobs_list_sid);
+            } else {
+                $result['manual_questionnaire_history'] = array();
+            }
+
+            /*             * ************************************************************************* */
+            $average_interview_score = $this->get_questionnaire_average_score($company_sid, $applicant_sid, 'applicant', 0);
+            $result['interview_score'] = $average_interview_score;
+            $video_interview_scores = $this->get_applicant_video_interview_rating($company_sid, $applicant_sid);
+            $average_rating = 0;
+            $total_rating = 0;
+
+            if (!empty($video_interview_scores)) {
+                foreach ($video_interview_scores as $score) {
+                    $total_rating = $total_rating + $score['rating'];
+                }
+            }
+
+            if (count($video_interview_scores) > 0) {
+                $average_rating = $total_rating / count($video_interview_scores);
+            }
+
+            $result['video_interview_score'] = round($average_rating, 1);
+            $result['notes_count'] = $this->get_applicant_notes_count($applicant_sid);
+            /*             * ************************************************************************ */
+
+            $result_array[] = $result;
+        }
+
+        return $result_array;
     }
 
     function get_employee_jobs_and_applicants_count($company_sid, $employer_sid, $archived = 0, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
@@ -578,6 +762,22 @@ class Application_tracking_system_model extends CI_Model {
 
         $all_manual_talent_and_job_fair_applicants = $records_arr;
         $applicants = array_merge($filtered_visible_applicants, $all_manual_talent_and_job_fair_applicants);
+
+        $get = array();
+        //
+        if($type == 'Job Fair' || $type == 'all') {
+            $applicant_sid_list = array_column($applicants, "sid");
+            $get = getEmployeeJobfairApplicant($company_sid, $employer_sid, $applicant_sid_list, '', '', '', 'no', $fair_type, $applicant_filters);
+        }    
+        //
+
+        if (!empty($get)) {
+            $job_fair_list = array_column($get, "sid");
+            $job_fair_applications = $this->get_job_fair_applicant($job_fair_list, $company_sid, $applicant_status);
+           
+            $applicants = array_merge($applicants,$job_fair_applications);
+        }
+
         $result = $this->generate_applicants_counts($applicants);
 
         return $result;
