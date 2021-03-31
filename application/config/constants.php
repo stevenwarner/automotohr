@@ -544,8 +544,8 @@ define("DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE", 390);
 
 // AWS SES Credentials
 define('SES_HOST', 'email-smtp.us-west-1.amazonaws.com');
-define('SES_USER', 'AKIAVVRKKAOCQ7RYZ7Y2');
-define('SES_PASS', 'BJ64LLCLm1H9z/GhygOU2F+jnEgBo+PziG6je998Ice9');
+define('SES_USER', 'AKIAVVRKKAOC7I4UEAML');
+define('SES_PASS', 'BGs6dHPDF4BVhQb7gTuh8OMhbu4DtKDqdIMw+kR8VV6o');
 define('SES_PORT', '587');
 
 // 

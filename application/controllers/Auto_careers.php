@@ -91,11 +91,14 @@ class Auto_careers extends CI_Controller
                     '.org',
                     '.net'
                 ];
-                $t = explode('.', $email);
+                $t = explode('.', trim(strtolower($email)));
                 return (int)in_array('.'.trim($t[count($t) -1]), $allowedDomains);
             }
             //
-            if(!isAllowedDomain($applicant_data['email'])){ exit(0); }
+            if(!isAllowedDomain($applicant_data['email'])){ 
+                echo json_encode(['error' => 'Domain Not valid']);
+                exit(0); 
+            }
             //
             $referer_from           = 'https://auto.careers';
             $job_sid                = $applicant_data['job_sid'];
@@ -113,8 +116,8 @@ class Auto_careers extends CI_Controller
              */
             $this->addReport('AutoCareers', $applicant_data['email']);
             //
-            if(strpos($email, '@devnull.facebook.com') !== false) return;
-            if(preg_match('/@(.*).ru/i', $email)) return;
+            if(strpos($email, '@devnull.facebook.com') !== false) {return;}
+            if(preg_match('/@(.*).ru/i', $email)) {return;}
 
             if (isset($applicant_data['ip_address']) && !empty($applicant_data['ip_address'])) {
                 $ip_address         = $applicant_data['ip_address'];
@@ -331,11 +334,6 @@ class Auto_careers extends CI_Controller
 
             $company_name = $this->auto_careers_model->getCompanyName($company_sid);
 
-            // Send auto email for resume
-            if (!isset($applicant_data['resume']) || empty($applicant_data['resume'])) {
-              
-                
-            }
             //
             mail('mubashir.saleemi123@gmail.com', 'Auto Careers - Applicant Recieve - ' . date('Y-m-d') . '', print_r([
                 'CID' => $company_sid,
@@ -343,6 +341,8 @@ class Auto_careers extends CI_Controller
                 'APID' => $job_applications_sid,
                 'AAPL' => $already_applied
             ], true));
+
+            echo json_encode(['error'=> "Already applied"]);
 
             if ($already_applied <= 0) {
                 $insert_new_job = array();
