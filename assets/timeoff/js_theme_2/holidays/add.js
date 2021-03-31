@@ -1,4 +1,4 @@
-$(function(){
+$(function() {
     //
     let holidayOBJ = {
         year: 0,
@@ -11,18 +11,18 @@ $(function(){
     };
 
     //
-    $('#js-year-add').change(function(e){
-        $('#js-from-date-add').val(''); 
-        $('#js-from-date-add').datepicker('option', 'yearRange', getYearRange()); 
-        $('#js-from-date-add').datepicker('option', 'defaultDate', moment().format('MM-DD-')+getYearRange('add', true)); 
+    $('#js-year-add').change(function(e) {
+        $('#js-from-date-add').val('');
+        $('#js-from-date-add').datepicker('option', 'yearRange', getYearRange());
+        $('#js-from-date-add').datepicker('option', 'defaultDate', moment().format('MM-DD-') + getYearRange('add', true));
 
-        $('#js-to-date-add').val(''); 
-        $('#js-to-date-add').datepicker('option', 'yearRange', getYearRange()); 
-        $('#js-to-date-add').datepicker('option', 'minDate', moment().format('MM-DD-')+getYearRange('add', true)); 
+        $('#js-to-date-add').val('');
+        $('#js-to-date-add').datepicker('option', 'yearRange', getYearRange());
+        $('#js-to-date-add').datepicker('option', 'minDate', moment().format('MM-DD-') + getYearRange('add', true));
     });
 
     //
-    $('#js-icon-add').click(function(e){
+    $('#js-icon-add').click(function(e) {
         //
         e.preventDefault();
         //
@@ -42,7 +42,7 @@ $(function(){
     });
 
     //
-    $(document).on('click', '.jsSaveIcon[data-type="add"]', function(e){
+    $(document).on('click', '.jsSaveIcon[data-type="add"]', function(e) {
         //
         e.preventDefault();
         //
@@ -52,7 +52,7 @@ $(function(){
         $('#js-icon-plc-box-add').addClass('hidden');
         $('#js-holiday-icon-add').val(0);
         //
-        if($('.js-icon-select.active').length != 0){
+        if ($('.js-icon-select.active').length != 0) {
             let type = $('#js-holiday-icon-type').val();
             //
             $('#js-icon-plc-add').prop('src', $('.js-icon-select.active').find('img').prop('src'));
@@ -67,50 +67,45 @@ $(function(){
     });
 
     //
-    $('#js-icon-remove-add').click(function(){
+    $('#js-icon-remove-add').click(function() {
         $('#js-icon-plc-add').prop('src', false);
         $('#js-icon-plc-box-add').addClass('hidden');
         $('#js-holiday-icon-add').val('');
         holidayOBJ.icon = '';
     });
-    
+
     //
-    $('#js-save-add-btn').click(function(e){
+    $('#js-save-add-btn').click(function(e) {
         //
         e.preventDefault();
         //
-        holidayOBJ.year = getField('#js-year-add');
         holidayOBJ.holiday = getField('#js-holiday-add');
         holidayOBJ.startDate = getField('#js-from-date-add');
         holidayOBJ.endDate = getField('#js-to-date-add');
         holidayOBJ.workOnHoliday = getField('.js-to-date-add:checked');
         holidayOBJ.deactivate = $('#js-archive-check-add').prop('checked') === true ? 1 : 0;
         //
-        if(holidayOBJ.year == 0 || holidayOBJ.year == -1){
-            alertify.alert('WARNING!', 'Please, select the year.', () => {});
-            return false;
-        }
-        //
-        if(holidayOBJ.holiday == 0){
+        if (holidayOBJ.holiday == 0) {
             alertify.alert('WARNING!', 'Holiday is required.', () => {});
             return false;
         }
         //
-        if(holidayOBJ.startDate == 0){
+        if (holidayOBJ.startDate == 0) {
             alertify.alert('WARNING!', 'Please, select the holiday start date.', () => {});
             return false;
         }
         //
-        if(holidayOBJ.endDate == 0){
+        if (holidayOBJ.endDate == 0) {
             alertify.alert('WARNING!', 'Please, select the holiday end date.', () => {});
             return false;
         }
+        holidayOBJ.year = moment(holidayOBJ.startDate).format('YYYY');
         //
         addHoliday(holidayOBJ);
     });
 
     //
-    function addHoliday(type){
+    function addHoliday(type) {
         //
         ml(true, 'holiday');
         //
@@ -125,7 +120,7 @@ $(function(){
         $.post(handlerURL, post, (resp) => {
             ml(false, 'holiday');
             //
-            if(resp.Redirect === true){
+            if (resp.Redirect === true) {
                 //
                 alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
                     window.location.reload();
@@ -133,7 +128,7 @@ $(function(){
                 return;
             }
             // On fail
-            if(resp.Status === false){
+            if (resp.Status === false) {
                 alertify.alert('WARNING!', resp.Response, () => {});
                 return;
             }

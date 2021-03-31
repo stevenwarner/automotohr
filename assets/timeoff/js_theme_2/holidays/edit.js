@@ -1,43 +1,43 @@
-$(function(){
+$(function() {
     //
     let holidayOBJ = {
-        year: 0,
-        holiday: 0,
-        icon: 0,
-        startDate: 0,
-        endDate: 0,
-        workOnHoliday: 0,
-        deactivate: 0
-    },
-    cmnOBJ = {
-        Holidays:{
-            Main: {
-                action: 'get_single_holiday',
-                companyId: companyId,
-                employerId: employerId,
-                employeeId: employeeId,
-                public: 0,
+            year: 0,
+            holiday: 0,
+            icon: 0,
+            startDate: 0,
+            endDate: 0,
+            workOnHoliday: 0,
+            deactivate: 0
+        },
+        cmnOBJ = {
+            Holidays: {
+                Main: {
+                    action: 'get_single_holiday',
+                    companyId: companyId,
+                    employerId: employerId,
+                    employeeId: employeeId,
+                    public: 0,
+                }
             }
-        }
-    };
+        };
     holidayId = 0;
 
     //
-    window.timeoff.startEditProcess  = startEditProcess ;
+    window.timeoff.startEditProcess = startEditProcess;
 
     //
-    $('#js-year-edit').change(function(e){
-        $('#js-from-date-edit').val(''); 
-        $('#js-from-date-edit').datepicker('option', 'yearRange', getYearRange()); 
-        $('#js-from-date-edit').datepicker('option', 'defaultDate', moment().format('MM-DD-')+getYearRange('add', true)); 
+    $('#js-year-edit').change(function(e) {
+        $('#js-from-date-edit').val('');
+        $('#js-from-date-edit').datepicker('option', 'yearRange', getYearRange());
+        $('#js-from-date-edit').datepicker('option', 'defaultDate', moment().format('MM-DD-') + getYearRange('add', true));
 
-        $('#js-to-date-edit').val(''); 
-        $('#js-to-date-edit').datepicker('option', 'yearRange', getYearRange()); 
-        $('#js-to-date-edit').datepicker('option', 'minDate', moment().format('MM-DD-')+getYearRange('add', true)); 
+        $('#js-to-date-edit').val('');
+        $('#js-to-date-edit').datepicker('option', 'yearRange', getYearRange());
+        $('#js-to-date-edit').datepicker('option', 'minDate', moment().format('MM-DD-') + getYearRange('add', true));
     });
 
     //
-    $('#js-icon-edit').click(function(e){
+    $('#js-icon-edit').click(function(e) {
         //
         e.preventDefault();
         //
@@ -57,7 +57,7 @@ $(function(){
     });
 
     //
-    $(document).on('click', '.jsSaveIcon[data-type="edit"]', function(e){
+    $(document).on('click', '.jsSaveIcon[data-type="edit"]', function(e) {
         //
         e.preventDefault();
         //
@@ -67,7 +67,7 @@ $(function(){
         $('#js-icon-plc-box-edit').addClass('hidden');
         $('#js-holiday-icon-edit').val(0);
         //
-        if($('.js-icon-select.active').length != 0){
+        if ($('.js-icon-select.active').length != 0) {
             let type = $('#js-holiday-icon-type').val();
             //
             $('#js-icon-plc-edit').prop('src', $('.js-icon-select.active').find('img').prop('src'));
@@ -82,50 +82,46 @@ $(function(){
     });
 
     //
-    $('#js-icon-remove-edit').click(function(){
+    $('#js-icon-remove-edit').click(function() {
         $('#js-icon-plc-edit').prop('src', false);
         $('#js-icon-plc-box-edit').addClass('hidden');
         $('#js-holiday-icon-edit').val('');
         holidayOBJ.icon = '';
     });
-    
+
     //
-    $('#js-save-edit-btn').click(function(e){
+    $('#js-save-edit-btn').click(function(e) {
         //
         e.preventDefault();
         //
-        holidayOBJ.year = getField('#js-year-edit');
         holidayOBJ.holiday = getField('#js-holiday-edit');
         holidayOBJ.startDate = getField('#js-from-date-edit');
         holidayOBJ.endDate = getField('#js-to-date-edit');
         holidayOBJ.workOnHoliday = getField('.allow_work_on_holiday-edit:checked');
         holidayOBJ.deactivate = $('#js-archive-check-edit').prop('checked') === true ? 1 : 0;
+
         //
-        if(holidayOBJ.year == 0 || holidayOBJ.year == -1){
-            alertify.alert('WARNING!', 'Please, select the year.', () => {});
-            return false;
-        }
-        //
-        if(holidayOBJ.holiday == 0){
+        if (holidayOBJ.holiday == 0) {
             alertify.alert('WARNING!', 'Holiday is required.', () => {});
             return false;
         }
         //
-        if(holidayOBJ.startDate == 0){
+        if (holidayOBJ.startDate == 0) {
             alertify.alert('WARNING!', 'Please, select the holiday start date.', () => {});
             return false;
         }
         //
-        if(holidayOBJ.endDate == 0){
+        if (holidayOBJ.endDate == 0) {
             alertify.alert('WARNING!', 'Please, select the holiday end date.', () => {});
             return false;
         }
+        holidayOBJ.year = moment(holidayOBJ.startDate).format('YYYY');
         //
         updateHoliday(holidayOBJ);
     });
 
     //
-    function updateHoliday(type){
+    function updateHoliday(type) {
         //
         ml(true, 'holiday');
         //
@@ -141,7 +137,7 @@ $(function(){
         $.post(handlerURL, post, (resp) => {
             ml(false, 'holiday');
             //
-            if(resp.Redirect === true){
+            if (resp.Redirect === true) {
                 //
                 alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
                     window.location.reload();
@@ -149,7 +145,7 @@ $(function(){
                 return;
             }
             // On fail
-            if(resp.Status === false){
+            if (resp.Status === false) {
                 alertify.alert('WARNING!', resp.Response, () => {});
                 return;
             }
@@ -162,18 +158,18 @@ $(function(){
     }
 
     //
-    function startEditProcess (
+    function startEditProcess(
         id
-    ){
+    ) {
         //
         holidayId = id;
         //
         $.post(
-            handlerURL, 
-            Object.assign(cmnOBJ.Holidays.Main, { holidayId: holidayId}), 
+            handlerURL,
+            Object.assign(cmnOBJ.Holidays.Main, { holidayId: holidayId }),
             (resp) => {
                 //
-                if(resp.Redirect === true){
+                if (resp.Redirect === true) {
                     //
                     alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
                         window.location.reload();
@@ -181,7 +177,7 @@ $(function(){
                     return;
                 }
                 // On fail
-                if(resp.Status === false){
+                if (resp.Status === false) {
                     alertify.alert('WARNING!', resp.Response, () => {
                         loadViewPage();
                     });
@@ -208,7 +204,7 @@ $(function(){
                 //
                 $(`.allow_work_on_holiday-edit[value="${holidayOBJ.workOnHoliday}"]`).prop('checked', true);
                 //
-                if(holidayOBJ.icon != null && holidayOBJ.icon != ''){
+                if (holidayOBJ.icon != null && holidayOBJ.icon != '') {
                     $('#js-icon-plc-edit').prop('src', `${baseURL}assets/images/holidays/${holidayOBJ.icon}`);
                     $('#js-icon-plc-box-edit').removeClass('hidden');
                     $('#js-holiday-icon-edit').val(holidayOBJ.icon);

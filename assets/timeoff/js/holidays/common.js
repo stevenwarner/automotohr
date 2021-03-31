@@ -208,6 +208,7 @@ function loadAddPage() {
     $('#js-from-date-add').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
+        changeYear: true,
         yearRange: getYearRange('add'),
         onSelect: function(v) {
             $('#js-to-date-add').datepicker('option', 'minDate', v);
@@ -217,7 +218,8 @@ function loadAddPage() {
     $('#js-to-date-add').datepicker({
         dateFormat: 'mm-dd-yy',
         yearRange: getYearRange('add'),
-        changeMonth: true
+        changeMonth: true,
+        changeYear: true
     }).datepicker('option', 'minDate', $('#js-from-date-add').val());
     //
     ml(false, 'holiday');
@@ -286,6 +288,7 @@ function loadEditPage(holidayId) {
     $('#js-from-date-edit').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
+        changeYear: true,
         yearRange: getYearRange('edit'),
         onSelect: function(v) {
             $('#js-to-date-edit').datepicker('option', 'minDate', v);
@@ -295,6 +298,7 @@ function loadEditPage(holidayId) {
     $('#js-to-date-edit').datepicker({
         dateFormat: 'mm-dd-yy',
         yearRange: getYearRange('edit'),
+        changeYear: true,
         changeMonth: true
     }).datepicker('option', 'minDate', $('#js-from-date-edit').val());
     //

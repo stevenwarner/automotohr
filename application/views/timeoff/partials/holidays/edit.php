@@ -22,7 +22,7 @@
 
     <!-- Active Tab -->
     <div class="active-content">
-        <div class="row margin-top">
+        <div class="row margin-top hidden">
             <div class="col-sm-6 col-xs-12">
                 <label>Year <span class="cs-required">*</span></label>
                 <div class="">

@@ -19,7 +19,7 @@
     <div class="csPageBody">
 
         <!--  -->
-        <div class="form-group">
+        <div class="form-group hidden">
             <div class="row">
                 <div class="col-sm-6">
                     <label>Year <span class="cs-required">*</span></label>
