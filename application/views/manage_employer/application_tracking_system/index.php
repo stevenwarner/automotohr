@@ -1731,7 +1731,7 @@
             },
             function () {
                 alertify.error('Canceled');
-            });
+            }).set('labels', {ok: 'Yes', cancel: 'No'});
     }
 
     function modify_note(val,applicant_sid) {
@@ -1974,7 +1974,7 @@
             },
             function () {
                 alertify.error('Cancelled');
-            });
+            }).set('labels', {ok: 'Yes', cancel: 'No'});
     }
 
     function archive_single_applicant(id) {
@@ -2005,7 +2005,7 @@
             },
             function () {
                 alertify.error('Cancelled');
-            });
+            }).set('labels', {ok: 'Yes', cancel: 'No'});
     }
 
     function active_single_applicant(id) {
@@ -2028,7 +2028,7 @@
             },
             function () {
                 alertify.error('Cancelled');
-            });
+            }).set('labels', {ok: 'Yes', cancel: 'No'});
     }
 
     function candidate_email_form_validate() {
@@ -2420,7 +2420,7 @@
                     },
                     function () {
                         alertify.error('Cancelled');
-                    });
+                    }).set('labels', {ok: 'Yes', cancel: 'No'});
             } else {
                 alertify.alert('Send Rejection Email Error', 'Please select Applicant(s) to send rejection email.');
             }
@@ -2446,7 +2446,7 @@
                     },
                     function () {
                         alertify.error('Cancelled');
-                    });
+                    }).set('labels', {ok: 'Yes', cancel: 'No'});
             } else {
                 alertify.alert('Send Acknowledgment Email Error', 'Please select Applicant(s) to send acknowledgement email.');
             }
@@ -2484,7 +2484,7 @@
                     },
                     function () {
                         alertify.error('Cancelled');
-                    });
+                    }).set('labels', {ok: 'Yes', cancel: 'No'});
             } else {
                 alertify.error('Please select Applicant(s) to assign to additional job.');
             }
@@ -2498,7 +2498,7 @@
                     },
                     function () {
                         alertify.error('Cancelled');
-                    });
+                    }).set('labels', {ok: 'Yes', cancel: 'No'});
             } else {
                 alertify.error('Please select Applicant(s) to send bulk email.');
             }
@@ -2513,7 +2513,7 @@
                     },
                     function () {
                         alertify.error('Cancelled');
-                    });
+                    }).set('labels', {ok: 'Yes', cancel: 'No'});
             } else {
                 alertify.error('Please select Applicant(s).');
             }
@@ -2551,7 +2551,7 @@
                     },
                     function () {
                         alertify.error('Cancelled');
-                    });
+                    }).set('labels', {ok: 'Yes', cancel: 'No'});
             } else {
                 alertify.error('Please select Applicant(s).');
             }
@@ -2589,7 +2589,7 @@
                     },
                     function () {
                         alertify.error('Cancelled');
-                    });
+                    }).set('labels', {ok: 'Yes', cancel: 'No'});
             } else {
                 alertify.error('Please select Applicant(s).');
             }
@@ -2617,7 +2617,7 @@
                         },
                         function () {
                             alertify.error('Cancelled');
-                        });
+                        }).set('labels', {ok: 'Yes', cancel: 'No'});
                 }
             } else {
                 alertify.alert('Please select application(s) to delete');
