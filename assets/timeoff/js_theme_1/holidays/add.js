@@ -79,17 +79,11 @@ $(function(){
         //
         e.preventDefault();
         //
-        holidayOBJ.year = getField('#js-year-add');
         holidayOBJ.holiday = getField('#js-holiday-add');
         holidayOBJ.startDate = getField('#js-from-date-add');
         holidayOBJ.endDate = getField('#js-to-date-add');
         holidayOBJ.workOnHoliday = getField('.js-to-date-add:checked');
         holidayOBJ.deactivate = $('#js-archive-check-add').prop('checked') === true ? 1 : 0;
-        //
-        if(holidayOBJ.year == 0 || holidayOBJ.year == -1){
-            alertify.alert('WARNING!', 'Please, select the year.', () => {});
-            return false;
-        }
         //
         if(holidayOBJ.holiday == 0){
             alertify.alert('WARNING!', 'Holiday is required.', () => {});
@@ -105,6 +99,7 @@ $(function(){
             alertify.alert('WARNING!', 'Please, select the holiday end date.', () => {});
             return false;
         }
+        holidayOBJ.year = mopment(holidayOBJ.startDate).format('YYYY');
         //
         addHoliday(holidayOBJ);
     });
