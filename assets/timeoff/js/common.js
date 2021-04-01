@@ -11,7 +11,7 @@ if (holidayDates.length > 0) {
     });
 }
 
-//
+//git commit 
 $('.btn-apply-filter').click(function() {
     $(this).parent().next('.filter-content').toggle();
 });
