@@ -99,7 +99,7 @@ $(function(){
             alertify.alert('WARNING!', 'Please, select the holiday end date.', () => {});
             return false;
         }
-        holidayOBJ.year = mopment(holidayOBJ.startDate).format('YYYY');
+        holidayOBJ.year = moment(holidayOBJ.startDate).format('YYYY');
         //
         addHoliday(holidayOBJ);
     });
