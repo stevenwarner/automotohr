@@ -13135,4 +13135,16 @@ if(!function_exists('getUserInfo')){
         //
         return $ra;
     }
+
+    if(!function_exists('getUserHint')){
+        function getUserHint ($slug) {
+            $hints = array (
+                'department_supervisor_hint' => 'Please select an employee or multiple employees as a supervisor for this department.',
+                'department_approver_hint' => 'Please select an employee or multiple employees as an approver for this department.',
+                'department_reporting_manager_hint' => 'Please select an employee or multiple employees as a reporting manager for this department.',
+            );
+
+            return $hints[$slug];
+        }
+    }    
 }

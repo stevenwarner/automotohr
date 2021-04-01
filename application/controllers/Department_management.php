@@ -57,10 +57,10 @@ class Department_management extends Public_Controller {
                 $department = $this->department_management_model->get_department($department_sid);
                 $data['department'] = $department;
                 $data['submit_button_text'] = 'Update';
-                $data['perform_action'] = 'edit_document_group';
+                $data['perform_action'] = 'edit_department';
             } else {
                 $data['submit_button_text'] = 'Save';
-                $data['perform_action'] = 'add_document_group';
+                $data['perform_action'] = 'add_department';
             }
 
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
@@ -73,7 +73,7 @@ class Department_management extends Public_Controller {
                 $perform_action = $this->input->post('perform_action');
     
                 switch ($perform_action) {
-                    case 'add_document_group':
+                    case 'add_department':
                         $department_name = $this->input->post('name');
                         $department_description = $this->input->post('description');
                         $department_supervisor = $this->input->post('supervisor');
@@ -101,11 +101,18 @@ class Department_management extends Public_Controller {
                         $data_to_insert['company_sid'] = $company_sid;
                         $data_to_insert['created_by_sid'] = $employer_sid;
                         
-                        $this->department_management_model->insert_department($data_to_insert);
+                        $new_department_sid = $this->department_management_model->insert_department($data_to_insert);
+
+                        if (checkIfAppIsEnabled('timeoff')) {
+                            foreach ($approvers as $key => $approver) {
+                                $this->department_management_model->check_employee_already_exist($company_sid, $new_department_sid, $approver, $employer_sid);
+                            } 
+                        }    
+
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Department Created Successfully!');
                         redirect('department_management', 'refresh');
                         break;
-                        case 'edit_document_group':
+                        case 'edit_department':
                         $department_name = $this->input->post('name');
                         $department_description = $this->input->post('description');
                         $department_supervisor = $this->input->post('supervisor');
@@ -131,6 +138,15 @@ class Department_management extends Public_Controller {
                         $data_to_update['modified_date'] = date('Y-m-d H:i:s');
                         
                         $this->department_management_model->update_department($department_sid, $data_to_update);
+
+                        if (checkIfAppIsEnabled('timeoff')) {
+                            foreach ($approvers as $key => $approver) {
+                                $this->department_management_model->check_employee_already_exist($company_sid, $department_sid, $approver, $employer_sid);
+                            }
+                            //
+                            $this->department_management_model->archive_all_removed_approvers($company_sid, $department_sid, $approvers);
+                        }    
+                        //
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Department Updated Successfully!');
                         redirect('department_management', 'refresh');
                         break;

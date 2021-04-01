@@ -76,6 +76,7 @@ class Department_management_model extends CI_Model {
 
     function insert_department($data_to_insert) {
         $this->db->insert('departments_management', $data_to_insert);
+        return $this->db->insert_id();
     }
 
     function update_department($department_sid, $data_to_update) {
@@ -227,5 +228,48 @@ class Department_management_model extends CI_Model {
         } else {
             return array();
         }
+    }
+
+    function check_employee_already_exist ($company_sid, $department_sid, $approver, $employer_sid) {
+        $this->db->select('sid');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('employee_sid', $approver);
+        $this->db->where('department_sid', $department_sid);
+        $record_obj = $this->db->get('timeoff_approvers');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        
+        if (empty($record_arr)) {
+            $data_to_insert = array();
+            $data_to_insert['company_sid'] = $company_sid;
+            $data_to_insert['employee_sid'] = $approver;
+            $data_to_insert['department_sid'] = $department_sid;
+            $data_to_insert['status'] = 1;
+            $data_to_insert['creator_sid'] = $employer_sid;
+            $data_to_insert['approver_percentage'] = 0;
+            $data_to_insert['is_archived'] = 0;
+            $data_to_insert['is_department'] = 1;
+            $data_to_insert['sort_order'] = 1;
+
+            $this->db->insert('timeoff_approvers', $data_to_insert);
+
+        } else {
+            $row_sid = $record_arr['sid'];
+            $this->db
+            ->where('sid', $row_sid)
+            ->update('timeoff_approvers', array(
+                'is_archived' => 0
+            ));
+        }
+    }
+
+    function archive_all_removed_approvers ($company_sid, $department_sid, $approvers) {
+        $this->db
+            ->where('company_sid', $company_sid)
+            ->where('department_sid', $department_sid)
+            ->where_not_in('employee_sid', $approvers)
+            ->update('timeoff_approvers', array(
+                'is_archived' => 1
+            ));
     }
 }
