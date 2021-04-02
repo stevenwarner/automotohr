@@ -80,3 +80,6 @@ applicant/*
 
 manage_ams/sitemap.xml
 manage_ams/robots.xml
+
+vendor
+vendor/*
