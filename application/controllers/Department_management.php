@@ -66,21 +66,37 @@ class Department_management extends Public_Controller {
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
 
             if ($this->form_validation->run() == false) {
+                // Get this and all department approvers
+                $approvers = $this->department_management_model->getApprovers($company_sid, $department_sid, 1);
+                //
+                if(isset($department) && !empty($approvers)){
+                    $data['department']['approvers'] = implode(',',
+                        array_unique(
+                            array_merge(
+                                explode(',', $department['approvers']),
+                                $approvers
+                            ),
+                            SORT_STRING
+                        )
+                    );
+                }
+                //
                 $this->load->view('main/header', $data);
                 $this->load->view('department_management/add_edit_department'); 
                 $this->load->view('main/footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
+                //
+                $isTA = checkIfAppIsEnabled('timeoff');
+                $isPA = checkIfAppIsEnabled('performance_review');
     
                 switch ($perform_action) {
                     case 'add_department':
                         $department_name = $this->input->post('name');
                         $department_description = $this->input->post('description');
                         $department_supervisor = $this->input->post('supervisor');
-                        $department_rm = $this->input->post('reporting_manager');
-                        $approvers = $this->input->post('approvers');
                         $department_sort_order = $this->input->post('sort_order');
-
+                        
                         // TODO
                         // link approvers with time off table
                         
@@ -91,22 +107,31 @@ class Department_management extends Public_Controller {
                             $department_sort_order = 0;
                         }
 
+                        if($isTA){
+                            $approvers = $this->input->post('approvers');
+                            $data_to_insert['approvers'] = implode(',', $approvers);
+                        }
+                        
+                        if($isPA){
+                            $department_rm = $this->input->post('reporting_manager');
+                            $data_to_insert['reporting_managers'] = implode(',', $department_rm);
+                        }
+
                         $data_to_insert['name'] = $department_name;
                         $data_to_insert['description'] = $department_description;
                         $data_to_insert['supervisor'] = implode(',', $department_supervisor);
-                        $data_to_insert['reporting_managers'] = implode(',', $department_rm);
-                        $data_to_insert['approvers'] = implode(',', $approvers);
                         $data_to_insert['status'] = 1;
                         $data_to_insert['sort_order'] = $department_sort_order;
                         $data_to_insert['company_sid'] = $company_sid;
                         $data_to_insert['created_by_sid'] = $employer_sid;
                         
                         $new_department_sid = $this->department_management_model->insert_department($data_to_insert);
-
-                        if (checkIfAppIsEnabled('timeoff')) {
-                            foreach ($approvers as $key => $approver) {
-                                $this->department_management_model->check_employee_already_exist($company_sid, $new_department_sid, $approver, $employer_sid);
+                        //
+                        if($isTA){
+                            foreach ($approvers as $approver) {
+                                $this->department_management_model->check_employee_already_exist($company_sid, $new_department_sid, $approver, $employer_sid, 1);
                             } 
+                            $this->department_management_model->archive_all_removed_approvers($company_sid, $department_sid, $approvers, 1);
                         }    
 
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Department Created Successfully!');
@@ -117,8 +142,6 @@ class Department_management extends Public_Controller {
                         $department_description = $this->input->post('description');
                         $department_supervisor = $this->input->post('supervisor');
                         $department_sort_order = $this->input->post('sort_order');
-                        $department_rm = $this->input->post('reporting_manager');
-                        $approvers = $this->input->post('approvers');
                         
                         
                         $data_to_update = array();
@@ -128,23 +151,31 @@ class Department_management extends Public_Controller {
                             $department_sort_order = 0;
                         }
                         
+                        if($isTA){
+                            $approvers = $this->input->post('approvers');
+                            $data_to_update['approvers'] = implode(',', $approvers);
+                        }
+                        
+                        if($isPA){
+                            $department_rm = $this->input->post('reporting_manager');
+                            $data_to_update['reporting_managers'] = implode(',', $department_rm);
+                        }
+                        
                         $data_to_update['name'] = $department_name;
                         $data_to_update['description'] = $department_description;
                         $data_to_update['supervisor'] = implode(',', $department_supervisor);
-                        $data_to_update['reporting_managers'] = implode(',', $department_rm);
-                        $data_to_update['approvers'] = implode(',', $approvers);
                         $data_to_update['sort_order'] = $department_sort_order;
                         $data_to_update['modified_by_sid'] = $employer_sid;
                         $data_to_update['modified_date'] = date('Y-m-d H:i:s');
                         
                         $this->department_management_model->update_department($department_sid, $data_to_update);
 
-                        if (checkIfAppIsEnabled('timeoff')) {
-                            foreach ($approvers as $key => $approver) {
-                                $this->department_management_model->check_employee_already_exist($company_sid, $department_sid, $approver, $employer_sid);
+                        if ($isTA) {
+                            foreach ($approvers as $approver) {
+                                $this->department_management_model->check_employee_already_exist($company_sid, $department_sid, $approver, $employer_sid, 1);
                             }
-                            //
-                            $this->department_management_model->archive_all_removed_approvers($company_sid, $department_sid, $approvers);
+                            
+                            $this->department_management_model->archive_all_removed_approvers($company_sid, $department_sid, $approvers, 1);
                         }    
                         //
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Department Updated Successfully!');
@@ -220,11 +251,28 @@ class Department_management extends Public_Controller {
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
 
             if ($this->form_validation->run() == false) {
+                 // Get this and all department approvers
+                 $approvers = $this->department_management_model->getApprovers($company_sid, $department_sid, 0);
+                 //
+                 if(isset($department) && !empty($approvers)){
+                    $data['team']['approvers'] = implode(',',
+                         array_unique(
+                             array_merge(
+                                 explode(',', $team['approvers']),
+                                 $approvers
+                             ),
+                             SORT_STRING
+                         )
+                     );
+                 }
                 $this->load->view('main/header', $data);
                 $this->load->view('department_management/add_edit_department_team');
                 $this->load->view('main/footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
+                //
+                $isTA = checkIfAppIsEnabled('timeoff');
+                $isPA = checkIfAppIsEnabled('performance_review');
     
                 switch ($perform_action) {
                     case 'add_department_team':
@@ -232,27 +280,39 @@ class Department_management extends Public_Controller {
                         $team_description = $this->input->post('description');
                         $team_lead_name = $this->input->post('teamlead_name');
                         $team_sort_order = $this->input->post('sort_order');
-                        $department_rm = $this->input->post('reporting_manager');
-                        $approvers = $this->input->post('approvers');
-
+                        
                         $data_to_insert = array();
                         $team_description = htmlentities($team_description);
                         
                         if (empty($team_sort_order)) {
                             $team_sort_order = 0;
                         }
+                        
+                        if($isTA){
+                            $approvers = $this->input->post('approvers');
+                            $data_to_insert['approvers'] = implode(',', $approvers);
+                        }
+                        if($isPA){
+                            $department_rm = $this->input->post('reporting_manager');
+                            $data_to_insert['reporting_managers'] = implode(',', $department_rm);
+                        }
 
                         $data_to_insert['name'] = $team_name;
                         $data_to_insert['description'] = $team_description;
                         $data_to_insert['team_lead'] = implode(',', $team_lead_name);
-                        $data_to_insert['reporting_managers'] = implode(',', $department_rm);
-                        $data_to_insert['approvers'] = implode(',', $approvers);
                         $data_to_insert['status'] = 1;
                         $data_to_insert['sort_order'] = $team_sort_order;
                         $data_to_insert['company_sid'] = $company_sid;
                         $data_to_insert['department_sid'] = $department_sid;
                         $data_to_insert['created_by_sid'] = $employer_sid;
                         $this->department_management_model->insert_team($data_to_insert);
+                        if ($isTA) {
+                            foreach ($approvers as $approver) {
+                                $this->department_management_model->check_employee_already_exist($company_sid, $department_sid, $approver, $employer_sid, 0);
+                            }
+                            
+                            $this->department_management_model->archive_all_removed_approvers($company_sid, $department_sid, $approvers, 0);
+                        }    
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Team Created Successfully!');
                         redirect('department_management/manage_department/'.$department_sid, 'refresh');
                         break;
@@ -261,8 +321,6 @@ class Department_management extends Public_Controller {
                         $team_description = $this->input->post('description');
                         $team_lead_name = $this->input->post('teamlead_name');
                         $team_sort_order = $this->input->post('sort_order');
-                        $department_rm = $this->input->post('reporting_manager');
-                        $approvers = $this->input->post('approvers');
                         
                         $data_to_update = array();
                         $team_description = htmlentities($team_description);
@@ -271,15 +329,29 @@ class Department_management extends Public_Controller {
                             $team_sort_order = 0;
                         }
 
+                        if($isTA){
+                            $approvers = $this->input->post('approvers');
+                            $data_to_update['approvers'] = implode(',', $approvers);
+                        }
+                        if($isPA){
+                            $department_rm = $this->input->post('reporting_manager');
+                            $data_to_update['reporting_managers'] = implode(',', $department_rm);
+                        }
+
                         $data_to_update['name'] = $team_name;
                         $data_to_update['description'] = $team_description;
                         $data_to_update['team_lead'] = implode(',', $team_lead_name);
                         $data_to_update['sort_order'] = $team_sort_order;
                         $data_to_update['modified_by_sid'] = $employer_sid;
                         $data_to_update['modified_date'] = date('Y-m-d H:i:s');
-                        $data_to_update['reporting_managers'] = implode(',', $department_rm);
-                        $data_to_update['approvers'] = implode(',', $approvers);
                         $this->department_management_model->update_team($team_sid, $data_to_update);
+                        if ($isTA) {
+                            foreach ($approvers as $approver) {
+                                $this->department_management_model->check_employee_already_exist($company_sid, $department_sid, $approver, $employer_sid, 0);
+                            }
+                            
+                            $this->department_management_model->archive_all_removed_approvers($company_sid, $department_sid, $approvers, 0);
+                        }    
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Team Updated Successfully!');
                         redirect('department_management/manage_department/'.$department_sid, 'refresh');
                         break;

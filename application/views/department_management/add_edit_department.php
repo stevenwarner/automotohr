@@ -90,7 +90,7 @@
                                             </div>    
                                             <?php if (checkIfAppIsEnabled('timeoff')) { ?>
                                                 <div class="form-group autoheight">
-                                                    <label for="name">Approver(s)<span class="staric"> </span><i
+                                                    <label for="name">Approver(s) <i
                                                     class="fa fa-question-circle-o help"
                                                     src="approver_hint" action="show"></i></label>
                                                     <p class="input_hint" id="approver_hint"><?php echo getUserHint('department_approver_hint'); ?></p>
@@ -108,7 +108,7 @@
                                             <?php } ?> 
                                             <?php if (checkIfAppIsEnabled('performance_review')) { ?>      
                                                 <div class="form-group autoheight">
-                                                    <label for="name">Reporting Manager(s)<span class="staric"> </span><i
+                                                    <label for="name">Reporting Manager(s) <i
                                                     class="fa fa-question-circle-o help"
                                                     src="manager_hint" action="show"></i></label>
                                                    <p class="input_hint" id="manager_hint"><?php echo getUserHint('department_reporting_manager_hint'); ?></p>
@@ -153,6 +153,7 @@
         $('#supervisor_id').select2({ closeOnSelect: false });
         $('#reporting_manager_ids').select2({ closeOnSelect: false });
         $('#approvers_ids').select2({ closeOnSelect: false });
+        $('#approvers_ids').trigger('change');
     })
 </script>
 
@@ -194,8 +195,6 @@
             },
             submitHandler: function (form) {
                 var supervisor = $('#supervisor_id').val();
-                var repoting_manager = $('#reporting_manager_ids').val();
-                var approvers = $('#approvers_ids').val();
                 // if(supervisor != null && repoting_manager != null && approvers != null) {
                 if(supervisor != null ) {
                     form.submit();

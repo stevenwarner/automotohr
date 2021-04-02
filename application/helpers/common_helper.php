@@ -13136,15 +13136,19 @@ if(!function_exists('getUserInfo')){
         return $ra;
     }
 
-    if(!function_exists('getUserHint')){
-        function getUserHint ($slug) {
-            $hints = array (
-                'department_supervisor_hint' => 'Please select an employee or multiple employees as a supervisor for this department.',
-                'department_approver_hint' => 'Please select an employee or multiple employees as an approver for this department.',
-                'department_reporting_manager_hint' => 'Please select an employee or multiple employees as a reporting manager for this department.',
-            );
-
-            return $hints[$slug];
-        }
-    }    
 }
+
+if(!function_exists('getUserHint')){
+    function getUserHint ($slug) {
+        $hints = array (
+            'department_supervisor_hint' => 'Please select the "Department Heads". The selected employees will be marked as "Managers".',
+            'department_approver_hint' => 'Please select the "Approvers". Any time off created by employees belonging to this department will go to the selected approvers.',
+            'department_reporting_manager_hint' => 'Please select the "Reporting Managers". Any employee belonging to this department will report to the selected reporting managers and the performance reviews will be submitted to them.',
+            'team_supervisor_hint' => 'Please select the "Team Leads". The selected employees will be marked as "Team Leaders".',
+            'team_approver_hint' => 'Please select the "Approvers". Any time off created by employees belonging to this team will go to the selected approvers.',
+            'team_reporting_manager_hint' => 'Please select the "Reporting Managers". Any employee belonging to this team will report to the selected reporting managers and the performance reviews will be submitted to them.',
+        );
+
+        return isset($hints[$slug]) ? $hints[$slug] : '';
+    }
+}    
