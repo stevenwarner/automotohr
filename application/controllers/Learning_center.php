@@ -223,6 +223,10 @@ class Learning_center extends Public_Controller {
                 }
                 $employees_assigned_sid = $employees_assigned_sid == null || empty($employees_assigned_sid) ? null : $employees_assigned_sid;
                 $applicants_assigned_sid = $applicants_assigned_sid == null || empty($applicants_assigned_sid) ? null : $applicants_assigned_sid;
+                if($employees_assigned_to == "none"){
+                    $post['departments_assigned_sid'] = null;
+                    $employees_assigned_sid = $post['employees_assigned_sid'] = null;
+                }
                 $data_to_insert = array();
                 $data_to_insert['company_sid'] = $company_sid;
                 $data_to_insert['created_by_sid'] = $created_by;
@@ -230,13 +234,18 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['video_description'] = $video_description;
                 $data_to_insert['video_source'] = $video_source;
                 $data_to_insert['video_id'] = $video_id;
+                $data_to_insert['employees_assigned_sid'] = '';
+                $data_to_insert['applicants_assigned_sid'] = '';
                 $data_to_insert['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
                 $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to;
                 $data_to_insert['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
+
                 if(isset($post['departments_assigned_sid'])){
                     $dts = $data_to_insert['department_sids'] = array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
                 }
-                $data_to_insert['screening_questionnaire_sid'] = $questionnaire_sid;                
+                $data_to_insert['screening_questionnaire_sid'] = $questionnaire_sid;       
+                
+                // _e($data_to_insert, true, true);
                 
                 if($exist_video_sid > 0){
                     $video_sid = $exist_video_sid;
@@ -250,6 +259,7 @@ class Learning_center extends Public_Controller {
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
                 if (!empty($employees_assigned_sid) && $employees_assigned_to == "specific") {
+
                     foreach ($employees_assigned_sid as $sid) {
                         $last_active_assignment = $this->get_assignment_record($last_active_assignments, 'employee', $sid);
                         $data_to_insert = array();
@@ -260,7 +270,7 @@ class Learning_center extends Public_Controller {
                         $data_to_insert['status'] = 1;
 
                         if (!empty($last_active_assignment)) {
-                            $data_to_insert['watched'] = $last_active_assignment['watched'];
+                            $data_to_insert['watched'] = $last_active_assignment['watched'] = '' ? 0 : $last_active_assignment['watched'];
                             $data_to_insert['date_watched'] = $last_active_assignment['date_watched'];
                         }
 
@@ -289,7 +299,7 @@ class Learning_center extends Public_Controller {
 
 
                 // Check email
-                if($post['send_email'] == 'yes'){
+                if($post['send_email'] == 'yes' && $employees_assigned_to != 'none'){
                     //
                     $employeesList = array();
                     
@@ -733,6 +743,11 @@ class Learning_center extends Public_Controller {
                 $online_video_sid = implode(',', $online_video_sid != '' ? $online_video_sid : array());
                 $startam = date('h:i A', strtotime($session_start_time));
                 $endam = date('h:i A', strtotime($session_end_time));
+                //
+                if($employees_assigned_to == 'none'){
+                    $employees_assigned_sid = null;
+                    $applicants_assigned_to = null;
+                }
                 $data_to_insert = array();
                 $data_to_insert['company_sid'] = $company_sid;
                 $data_to_insert['created_by'] = $employer_sid;
@@ -742,7 +757,7 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['session_date'] = DateTime::createFromFormat('m-d-Y', $session_date)->format('Y-m-d');
                 $data_to_insert['session_start_time'] = $session_start_time;
                 $data_to_insert['session_end_time'] = $session_end_time;
-                $data_to_insert['employees_assigned_to'] = $employees_assigned_to;
+                $data_to_insert['employees_assigned_to'] = $employees_assigned_to == 'none' ? 'specific' : $employees_assigned_to;
                 $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to;
                 $data_to_insert['online_video_sid'] = $online_video_sid;
                 $this->learning_center_model->insert_training_session_record($data_to_insert);

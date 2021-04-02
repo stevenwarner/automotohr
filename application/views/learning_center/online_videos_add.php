@@ -210,20 +210,7 @@
                                     
                                     <!--<input class="employees_assigned_to" type="hidden" id="employees_assigned_to_specific" name="employees_assigned_to" value="specific"  />-->
                                     
-                                    <!-- <div class="form-group autoheight assign_option">
-                                        <?php $field_name = 'employees_assigned_sid'; $selected_employees = $temp == 'all' ? array() : $selected_employees; ?>
-                                        <?php echo form_label('Assigned To Employees', $field_name); ?>
-                                        <div class="hr-select-dropdown">
-                                            <select data-rule-required="false" class="" name="employees_assigned_sid[]" id="employees_assigned_sid" multiple="multiple" >
-                                                <option value="">Please Select</option>
-                                                <?php if (!empty($employees)) { ?>
-                                                    <?php foreach ($employees as $employee) { ?>
-                                                        <option <?php echo set_select($field_name, $employee['sid'], in_array($employee['sid'], $selected_employees)); ?>  value="<?php echo $employee['sid']; ?>" ><?=remakeEmployeeName($employee);?></option>
-                                                    <?php } ?>
-                                                <?php } ?>      
-                                            </select>
-                                        </div>
-                                    </div> -->
+                                   
 
                                     <div class="form-group autoheight assign_option">
                                         <label>Assigned To Employees<span class="staric">*</span></label>
@@ -243,10 +230,8 @@
                                         <?php $field_name = 'departments_assigned_sid';?>
                                         <?php $selected_departments = isset($selected_departments) ? ($selected_departments[0] == 'all' ? array('-1') : $selected_departments) : array(); ?>
                                         <?php echo form_label('Assigned To Departments', $field_name); ?>
-                                        <div class="hr-select-dropdown">
+                                        <div class="">
                                             <select class="" name="departments_assigned_sid[]" id="departments_assigned_sid" multiple="multiple" >
-                                                <option value="">Please Select</option>
-
                                                 <?php 
                                                     // Push all to department
                                                     $departments[] = array('sid' => -1, 'name'=> 'All'); 
@@ -481,7 +466,7 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
     $(function(){
-        $('#employees_assigned_sid').select2({ closeOnSelect: true });
+        // $('#employees_assigned_sid').select2({ closeOnSelect: true });
     });
 
     $(".employees_assigned_to").on("click",function(){
@@ -868,7 +853,7 @@
 
         
         
-        $('select[multiple]').chosen();
+        $('select[multiple]').select2({closeOnSelect: false});
         // $('#my_loader').hide();
 
         <?php   if (isset($video_source)) { ?>
