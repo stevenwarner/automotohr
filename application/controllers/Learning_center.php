@@ -230,7 +230,7 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['video_description'] = $video_description;
                 $data_to_insert['video_source'] = $video_source;
                 $data_to_insert['video_id'] = $video_id;
-                $data_to_insert['employees_assigned_to'] = $employees_assigned_to;
+                $data_to_insert['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
                 $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to;
                 $data_to_insert['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
                 if(isset($post['departments_assigned_sid'])){
@@ -249,7 +249,7 @@ class Learning_center extends Public_Controller {
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
-                if (!empty($employees_assigned_sid)) {
+                if (!empty($employees_assigned_sid) && $employees_assigned_to == "specific") {
                     foreach ($employees_assigned_sid as $sid) {
                         $last_active_assignment = $this->get_assignment_record($last_active_assignments, 'employee', $sid);
                         $data_to_insert = array();
@@ -449,6 +449,10 @@ class Learning_center extends Public_Controller {
                 $data_to_update = array();
                 $remove_flag = false;
 
+                if ($employees_assigned_to == "none") {
+                    $this->learning_center_model->delete_all_assign_video_user($video_sid);
+                }
+
                 if (!empty($_FILES) && isset($_FILES['video_upload']) && $_FILES['video_upload']['size'] > 0) {
                     $random = generateRandomString(5);
                     $company_id = $data['session']['company_detail']['sid'];
@@ -514,7 +518,7 @@ class Learning_center extends Public_Controller {
                 if ($video_source != 'do_not_change') {
                     $data_to_update['video_source'] = $video_source;
                 }
-                $data_to_update['employees_assigned_to'] = $employees_assigned_to;
+                $data_to_update['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
                 $data_to_update['applicants_assigned_to'] = $applicants_assigned_to;
                 $data_to_update['screening_questionnaire_sid'] = $questionnaire_sid;
                 $data_to_update['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
@@ -523,7 +527,7 @@ class Learning_center extends Public_Controller {
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
-                if (!empty($employees_assigned_sid)) {
+                if (!empty($employees_assigned_sid) && $employees_assigned_to == "specific") {
                     foreach ($employees_assigned_sid as $sid) {
                         $last_active_assignment = $this->get_assignment_record($last_active_assignments, 'employee', $sid);
                         $data_to_insert = array();
