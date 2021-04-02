@@ -142,10 +142,10 @@ $db['default'] = array(
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => '172.31.18.37',
-	'username' => 'ahrdbadmin',
-	'password' => '8E*QrG)M5nw6g',
-	'database' => 'automoto_hr',
+	'hostname' => 'localhost',
+		'username' => 'automoto_2021',
+		'password' => '-^by2),4IRgf%]mMj{',
+		'database' => 'automoto_hr',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
