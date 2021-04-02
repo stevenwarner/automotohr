@@ -76,6 +76,7 @@ class Department_management_model extends CI_Model {
 
     function insert_department($data_to_insert) {
         $this->db->insert('departments_management', $data_to_insert);
+        return $this->db->insert_id();
     }
 
     function update_department($department_sid, $data_to_update) {
@@ -226,6 +227,78 @@ class Department_management_model extends CI_Model {
             return $return_data;
         } else {
             return array();
+        }
+    }
+
+    function check_employee_already_exist ($company_sid, $department_sid, $approver, $employer_sid, $is_department = 1) {
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('employee_sid', $approver);
+        $this->db->where('is_department', $is_department);
+        $this->db->where("FIND_IN_SET({$department_sid}, department_sid) > 0", NULL, NULL);
+        
+        if (!$this->db->count_all_results('timeoff_approvers')) {
+            $data_to_insert = array();
+            $data_to_insert['company_sid'] = $company_sid;
+            $data_to_insert['employee_sid'] = $approver;
+            $data_to_insert['department_sid'] = $department_sid;
+            $data_to_insert['status'] = 1;
+            $data_to_insert['creator_sid'] = $employer_sid;
+            $data_to_insert['approver_percentage'] = 0;
+            $data_to_insert['is_archived'] = 0;
+            $data_to_insert['is_department'] = $is_department;
+            $data_to_insert['sort_order'] = 1;
+
+            $this->db->insert('timeoff_approvers', $data_to_insert);
+        }
+    }
+    
+    
+    function getApprovers ($company_sid, $department_sid, $is_department = 1) {
+        $this->db->select('employee_sid');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('is_archived', 0);
+        $this->db->where('is_department', $is_department);
+        $this->db->where("FIND_IN_SET({$department_sid}, department_sid) > 0", NULL, NULL);
+        $record_obj = $this->db->get('timeoff_approvers');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+      
+        //
+        return array_column($record_arr, 'employee_sid');
+    }
+
+    function archive_all_removed_approvers ($company_sid, $department_sid, $approvers, $is_department = 1) {
+        //
+        $this->db->select('sid, department_sid');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('is_department', $is_department);
+        $this->db->where("FIND_IN_SET({$department_sid}, department_sid) > 0", NULL, NULL);
+        $this->db->where_not_in('employee_sid', $approvers);
+        $record_obj = $this->db->get('timeoff_approvers');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        if(empty($record_arr)) { return; }
+        //
+        foreach($record_arr as $record){
+            //
+            $upd = [];
+            //
+            if($record['department_sid'] == $department_sid){
+                $upd['is_archived'] = 1;
+            } else{
+                //
+                $p1 = $department_sid.',';
+                $p2 = ','.$department_sid;
+                //
+                $newDept = str_replace([$p1, $p2], '', $record['department_sid']);
+                //
+                $upd['department_sid'] = $newDept;
+            }
+            //
+            $this->db
+            ->where('sid', $record['sid'])
+            ->update('timeoff_approvers', $upd);
         }
     }
 }

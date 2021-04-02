@@ -61,7 +61,10 @@
                                                 </div>
                                             </div> -->
                                             <div class="form-group autoheight">
-                                                <label for="name">Team Lead Name<span class="staric">*</span></label>
+                                                <label for="name">Select Team Lead(s) <i
+                                                    class="fa fa-question-circle-o help"
+                                                    src="supervisor_hint" action="show"></i></label>
+                                                    <p class="input_hint" id="supervisor_hint"><?php echo getUserHint('team_supervisor_hint'); ?></p>
                                                 <div class="">
                                                     <select name="teamlead_name[]" class="invoice-fields" id="teamlead_id" multiple="true">
                                                         <option value="0">Please Select Team Lead</option>
@@ -74,8 +77,12 @@
                                                     <span id="add_teamlead_error" class="text-danger person_error"></span>
                                                 </div>
                                             </div> 
+                                            <?php if (checkIfAppIsEnabled('performance_review')) { ?>  
                                             <div class="form-group autoheight">
-                                                <label for="name">Approvers<span class="staric">*</span></label>
+                                                <label for="name">Approvers <i
+                                                    class="fa fa-question-circle-o help"
+                                                    src="approver_hint" action="show"></i></label>
+                                                    <p class="input_hint" id="approver_hint"><?php echo getUserHint('team_approver_hint'); ?></p>
                                                 <div class="">
                                                     <select name="approvers[]" class="invoice-fields" id="approvers_id" multiple="true">
                                                         <?php foreach ($employees as $key => $employee): ?>
@@ -87,8 +94,13 @@
                                                     <span id="add_approvers_error" class="text-danger person_error"></span>
                                                 </div>
                                             </div> 
+                                            <?php } ?>
+                                            <?php if (checkIfAppIsEnabled('performance_review')) { ?>  
                                             <div class="form-group autoheight">
-                                                <label for="name">Reporting Managers <span class="staric">*</span></label>
+                                                <label for="name">Reporting Managers <i
+                                                    class="fa fa-question-circle-o help"
+                                                    src="manager_hint" action="show"></i></label>
+                                                   <p class="input_hint" id="manager_hint"><?php echo getUserHint('team_reporting_manager_hint'); ?></p>
                                                 <div class="">
                                                     <select name="reporting_manager[]" class="invoice-fields" id="reporting_manager_id" multiple="true">
                                                         <option value="0">Please Select Team Lead</option>
@@ -101,6 +113,7 @@
                                                     <span id="add_reporting_manager_error" class="text-danger person_error"></span>
                                                 </div>
                                             </div> 
+                                            <?php } ?>
                                             <div class="form-group autoheight">
                                                 <label>Sort Order</label>
                                                 <input type="number" name="sort_order" class="form-control" value="<?php echo isset($team['sort_order']) ? $team['sort_order'] : ''; ?>">
@@ -130,6 +143,7 @@
         $('#teamlead_id').select2({ closeOnSelect: false });
         $('#reporting_manager_id').select2({ closeOnSelect: false });
         $('#approvers_id').select2({ closeOnSelect: false });
+        $('#approvers_id').trigger('change');
     })
 </script>
 
@@ -141,14 +155,6 @@
     	var teamlead = $('#teamlead_id').val();
         if(teamlead == 0) {
             $('#add_teamlead_error').text('Team Lead name is required');
-        }
-        var repoting_manager = $('#reporting_manager_id').val();
-        var approvers = $('#approvers_id').val();
-        if(approvers == null) {
-            $('#add_approvers_error').text('Approvers are required');
-        }
-        if(repoting_manager == null) {
-            $('#add_reporting_manager_error').text('Reporting managers are required');
         }
 
         $("#form_add_edit_team_info").validate({
@@ -171,12 +177,26 @@
             },
             submitHandler: function (form) {
                 var teamlead = $('#teamlead_id').val();
-                var repoting_manager = $('#reporting_manager_id').val();
-                var approvers = $('#approvers_id').val();
-                if(teamlead != null && repoting_manager != null && approvers != null) {
+                if(teamlead != null ) {
                     form.submit();
                 }   
             }
         });
     }
+
+    $('.help').click(function(event) {
+
+event.preventDefault();
+
+var element_id = $(this).attr("src");
+var action = $(this).attr("action");
+
+if (action == "show") {
+    $(this).attr("action", "hide");
+    $("#"+element_id).hide();
+} else {
+    $(this).attr("action", "show");
+    $("#"+element_id).show();
+}
+});
 </script>
