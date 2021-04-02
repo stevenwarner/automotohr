@@ -213,6 +213,11 @@ class Learning_center_model extends CI_Model {
         $this->db->insert('learning_center_online_videos_assignments', $data_to_insert);
     }
 
+    function delete_all_assign_video_user ($video_id) {
+        $this->db->where('learning_center_online_videos_sid', $video_id);
+        $this->db->delete('learning_center_online_videos_assignments');
+    }
+
     function get_online_videos_assignments_records($user_type, $video_id) {
         $this->db->where('learning_center_online_videos_sid', $video_id);
         $this->db->where('user_type', $user_type);
