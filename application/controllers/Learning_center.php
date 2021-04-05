@@ -223,6 +223,7 @@ class Learning_center extends Public_Controller {
                 }
                 $employees_assigned_sid = $employees_assigned_sid == null || empty($employees_assigned_sid) ? null : $employees_assigned_sid;
                 $applicants_assigned_sid = $applicants_assigned_sid == null || empty($applicants_assigned_sid) ? null : $applicants_assigned_sid;
+                $data_to_insert = array();
                 if($employees_assigned_to == "none"){
                     $dts = [];
                     $post['departments_assigned_sid'] = 
@@ -230,9 +231,10 @@ class Learning_center extends Public_Controller {
                 }else{
                     if(isset($post['departments_assigned_sid'])){
                         $dts = $data_to_insert['department_sids'] = array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
+                    } else{ 
+                        $data_to_insert['department_sids'] = NULL;
                     }
                 }
-                $data_to_insert = array();
                 $data_to_insert['company_sid'] = $company_sid;
                 $data_to_insert['created_by_sid'] = $created_by;
                 $data_to_insert['video_title'] = $video_title;
@@ -247,8 +249,6 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to == "none" ? "specific" : $applicants_assigned_to;
                 $data_to_insert['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
                 $data_to_insert['screening_questionnaire_sid'] = $questionnaire_sid;       
-                
-                // _e($data_to_insert, true, true);
                 
                 if($exist_video_sid > 0){
                     $video_sid = $exist_video_sid;
@@ -465,8 +465,8 @@ class Learning_center extends Public_Controller {
                     $this->learning_center_model->delete_all_assign_video_user($video_sid);
                     $dts = $data_to_update['department_sids'] = $employees_assigned_sid = $applicants_assigned_sid = NULL;
                 } else{
-                    $dts = $data_to_update['department_sids'] =
-                    array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
+                    $dts = $data_to_update['department_sids'] = isset($post['departments_assigned_sid']) ? 
+                    (array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',')) : NULL;
                 }
 
                 if (!empty($_FILES) && isset($_FILES['video_upload']) && $_FILES['video_upload']['size'] > 0) {
