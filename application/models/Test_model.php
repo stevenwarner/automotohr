@@ -29,7 +29,6 @@ class Test_model extends CI_Model {
     function getJobs(){
         $ids = $this->db2
         ->get(PJL)
-        ->limit(10)
         ->order_by('sid', 'desc')
         ->result_array();
         //
@@ -64,7 +63,6 @@ class Test_model extends CI_Model {
     function getApplicants(){
         $ids = $this->db2
         ->get(PJA)
-        ->limit(10)
         ->order_by('sid', 'desc')
         ->result_array();
         //
@@ -99,7 +97,6 @@ class Test_model extends CI_Model {
     function getApplicantsJob(){
         $ids = $this->db2
         ->get(PAJL)
-        ->limit(10)
         ->order_by('sid', 'desc')
         ->result_array();
         //
