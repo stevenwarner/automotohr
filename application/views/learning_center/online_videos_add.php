@@ -221,7 +221,19 @@
                                                         <option <?php echo set_select($field_name, $employee['sid'], in_array($employee['sid'], $selected_employees)); ?>  value="<?php echo $employee['sid']; ?>" ><?=remakeEmployeeName($employee);?></option>
                                                     <?php } ?>
                                                 <?php } ?>      
+
+                                   
+
+                                    <div class="form-group autoheight assign_option">
+                                        <label>Assigned To Employees<span class="staric">*</span></label>
+                                        <div class="">
+                                            <select name="employees_assigned_sid[]" class="invoice-fields" id="employees_assigned_sid" multiple="true">
+                                                <?php foreach ($employees as $employee): ?>
+                                                    <option <?php echo set_select($field_name, $employee['sid'], in_array($employee['sid'], $selected_employees)); ?>  value="<?php echo $employee['sid']; ?>" ><?=remakeEmployeeName($employee);?></option>
+                                                <?php endforeach ?>
+
                                             </select>
+                                            <span id="employees_assigned_error" class="text-danger person_error"></span>
                                         </div>
                                     </div> -->
 
@@ -246,7 +258,6 @@
                                         <div class="hr-select-dropdown">
                                             <select class="" name="departments_assigned_sid[]" id="departments_assigned_sid" multiple="multiple" >
                                                 <option value="">Please Select</option>
-
                                                 <?php 
                                                     // Push all to department
                                                     $departments[] = array('sid' => -1, 'name'=> 'All'); 
@@ -481,7 +492,11 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
     $(function(){
+<<<<<<< HEAD
         $('#employees_assigned_sid').select2({ closeOnSelect: true });
+=======
+        // $('#employees_assigned_sid').select2({ closeOnSelect: true });
+>>>>>>> 0a054b448d2807c88400d9cbf4a059559fc220d6
     });
 
     $(".employees_assigned_to").on("click",function(){
@@ -868,7 +883,7 @@
 
         
         
-        $('select[multiple]').chosen();
+        $('select[multiple]').select2({closeOnSelect: false});
         // $('#my_loader').hide();
 
         <?php   if (isset($video_source)) { ?>
@@ -937,6 +952,7 @@
 
                     $('#up_video_container input').prop('disabled', false);
                     $('#up_video_container').show();
+<<<<<<< HEAD
 
                     $('#add_edit_submit').attr('onClick', 'check_file("video");');
                 <?php } else {  ?>
@@ -955,6 +971,26 @@
                 $('#add_edit_submit').removeAttr('onClick');
             <?php } ?> 
 
+=======
+
+                    $('#add_edit_submit').attr('onClick', 'check_file("video");');
+                <?php } else {  ?>
+
+                    $('#yt_vm_video_container input').prop('disabled', false);
+                    $('#yt_vm_video_container').show();
+                    $('.radio_btn_video_source').show();
+
+                    $('#up_video_container input').prop('disabled', true);
+                    $('#up_video_container').hide();
+                    $('#add_edit_submit').removeAttr('onClick');
+                <?php } ?>
+            <?php } else {  ?>  
+                $('#up_video_container input').prop('disabled', true);
+                $('#up_video_container').hide();
+                $('#add_edit_submit').removeAttr('onClick');
+            <?php } ?> 
+
+>>>>>>> 0a054b448d2807c88400d9cbf4a059559fc220d6
         });
 
 
