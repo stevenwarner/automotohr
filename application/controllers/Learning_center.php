@@ -280,7 +280,7 @@ class Learning_center extends Public_Controller {
                     }
                 }
 
-                if (!empty($applicants_assigned_sid)) {
+                if (!empty($applicants_assigned_sid) && $applicants_assigned_to == 'specific') {
                     foreach ($applicants_assigned_sid as $sid) {
                         $last_active_assignment = $this->get_assignment_record($last_active_assignments, 'applicant', $sid);
                         $data_to_insert = array();
@@ -563,7 +563,7 @@ class Learning_center extends Public_Controller {
                     }
                 }
 
-                if (!empty($applicants_assigned_sid)) {
+                if (!empty($applicants_assigned_sid) && $applicants_assigned_to == "specific") {
                     foreach ($applicants_assigned_sid as $sid) {
                         $last_active_assignment = $this->get_assignment_record($last_active_assignments, 'applicant', $sid);
                         $data_to_insert = array();
@@ -583,7 +583,7 @@ class Learning_center extends Public_Controller {
                 }
 
                  // Check email
-                if($post['send_email'] == 'yes'){
+                if($post['send_email'] == 'yes' && $employees_assigned_to != 'none'){
                     //
                     $employeesList = array();
                     

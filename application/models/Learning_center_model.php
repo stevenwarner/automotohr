@@ -44,6 +44,7 @@ class Learning_center_model extends CI_Model {
     function get_all_online_videos($company_sid) {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
+        $this->db->order_by('sid', 'desc');
         $this->db->from('learning_center_online_videos');
         $records_obj = $this->db->get();
         $records_arr = $records_obj->result_array();
@@ -54,6 +55,7 @@ class Learning_center_model extends CI_Model {
     function get_online_video($video_sid) {
         $this->db->select('*');
         $this->db->where('sid', $video_sid);
+        $this->db->order_by('sid', 'desc');
         $this->db->from('learning_center_online_videos');
         $records_obj = $this->db->get();
         $records_arr = $records_obj->result_array();
