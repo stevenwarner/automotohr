@@ -1600,7 +1600,8 @@ class Calendar extends Public_Controller {
                     $this->set_training_session(
                         $company_id,
                         $event_sid,
-                        $event_add_post_updated
+                        $event_add_post_updated,
+                        'update'
                     );
                 }else{
                     // Check for LCTS and remove it
@@ -2913,8 +2914,13 @@ class Calendar extends Public_Controller {
             $this->calendar_model->set_training_session_assignment_status($session_sid);
         }
 
+        // echo sizeof($interviewer_list);
+        // echo '<pre>';
+        // print_r($event_add_post);
+        // die('love');
+
         // For employees
-        if (sizeof($interviewer_list)) {
+        if (sizeof($interviewer_list) && $event_add_post['training_session_type'] != 'none') {
             // Check for current login employee id
             if (!in_array($event_add_post['employee_sid'], $interviewer_list)) {
                 $interviewer_list[] = $event_add_post['employee_sid'];

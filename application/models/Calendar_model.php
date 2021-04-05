@@ -317,12 +317,14 @@ class Calendar_model extends CI_Model
 
     function save_event($data)
     {
+        unset($data['training_session_type']);
         $this->db->insert('portal_schedule_event', $data);
         return $this->db->insert_id();
     }
 
     function update_event($sid, $data)
     {
+        unset($data['training_session_type']);
         $this->db->where('sid', $sid);
         return $this->db->update('portal_schedule_event', $data);
     }
