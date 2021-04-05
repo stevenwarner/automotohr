@@ -1276,3 +1276,8 @@ $route['performance-management/download/(:any)/(:num)/(:num)/(:num)'] = 'Perform
 //
 $route['performance-management/employee/review/(:num)/(:num)'] = 'Performance_management/gp_review/$1/$2';
 $route['performance-management/employee/review/(:num)/(:num)/(:num)'] = 'Performance_management/gp_review/$1/$2/$3';
+
+// Sync
+$route['sync_jobs']['cli'] = 'Testing/sj';
+$route['sync_applicants']['cli'] = 'Testing/sja';
+$route['sync_applicant_jobs']['cli'] = 'Testing/sajl';

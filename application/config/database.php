@@ -74,14 +74,36 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'ahr';
 $query_builder = TRUE;
 //
-$creds = getCreds('AHR');
+$creds = getCreds();
 //
 $db['ahr'] = array(
 	'dsn'	=> '',
-	'hostname' => $creds->DB->Host,
-	'username' => $creds->DB->User,
-	'password' => $creds->DB->Password,
-	'database' => $creds->DB->Database,
+	'hostname' => $creds->AHR->DB->Host,
+	'username' => $creds->AHR->DB->User,
+	'password' => $creds->AHR->DB->Password,
+	'database' => $creds->AHR->DB->Database,
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => false,
+	'cache_on' => TRUE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => TRUE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => FALSE
+);
+
+$db['ac'] = array(
+	'dsn'	=> '',
+	'hostname' => $creds->AC->DB->Host,
+	'username' => $creds->AC->DB->User,
+	'password' => $creds->AC->DB->Password,
+	'database' => $creds->AC->DB->Database,
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
