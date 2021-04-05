@@ -87,3 +87,9 @@ vendor/*
 creds.json
 google_hire_automotosocial.json
 google_hire.json
+
+affiliate_portal/application/logs/*
+application/logs/*
+executive_admin/application/logs/*
+manage_ams/application/logs/*
+manage_portal/application/logs/*
