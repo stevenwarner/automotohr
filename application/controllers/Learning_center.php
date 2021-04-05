@@ -224,8 +224,13 @@ class Learning_center extends Public_Controller {
                 $employees_assigned_sid = $employees_assigned_sid == null || empty($employees_assigned_sid) ? null : $employees_assigned_sid;
                 $applicants_assigned_sid = $applicants_assigned_sid == null || empty($applicants_assigned_sid) ? null : $applicants_assigned_sid;
                 if($employees_assigned_to == "none"){
-                    $post['departments_assigned_sid'] = null;
-                    $employees_assigned_sid = $post['employees_assigned_sid'] = null;
+                    $dts = [];
+                    $post['departments_assigned_sid'] = 
+                    $applicants_assigned_sid = $employees_assigned_sid  = null;
+                }else{
+                    if(isset($post['departments_assigned_sid'])){
+                        $dts = $data_to_insert['department_sids'] = array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
+                    }
                 }
                 $data_to_insert = array();
                 $data_to_insert['company_sid'] = $company_sid;
@@ -234,17 +239,13 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['video_description'] = $video_description;
                 $data_to_insert['video_source'] = $video_source;
                 $data_to_insert['video_id'] = $video_id;
-
-                $data_to_insert['employees_assigned_sid'] = '';
-                $data_to_insert['applicants_assigned_sid'] = '';
+                //
+                $data_to_insert['employees_assigned_sid'] = $employees_assigned_sid;
+                $data_to_insert['applicants_assigned_sid'] = $applicants_assigned_sid;
 
                 $data_to_insert['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
                 $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to;
                 $data_to_insert['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
-
-                if(isset($post['departments_assigned_sid'])){
-                    $dts = $data_to_insert['department_sids'] = array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
-                }
                 $data_to_insert['screening_questionnaire_sid'] = $questionnaire_sid;       
                 
                 // _e($data_to_insert, true, true);
@@ -462,6 +463,10 @@ class Learning_center extends Public_Controller {
 
                 if ($employees_assigned_to == "none") {
                     $this->learning_center_model->delete_all_assign_video_user($video_sid);
+                    $data_to_update['department_sids'] = $applicants_assigned_to = $applicants_assigned_sid = NULL;
+                } else{
+                    $data_to_update['department_sids'] =
+                    array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
                 }
 
                 if (!empty($_FILES) && isset($_FILES['video_upload']) && $_FILES['video_upload']['size'] > 0) {
@@ -531,9 +536,10 @@ class Learning_center extends Public_Controller {
                 }
                 $data_to_update['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
                 $data_to_update['applicants_assigned_to'] = $applicants_assigned_to;
+                $data_to_update['employees_assigned_sid'] = $employees_assigned_sid;
                 $data_to_update['screening_questionnaire_sid'] = $questionnaire_sid;
                 $data_to_update['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
-                $data_to_update['department_sids'] = array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
+               
                 $this->learning_center_model->update_training_video($video_sid, $data_to_update);
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
