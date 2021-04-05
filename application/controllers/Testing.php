@@ -1,5 +1,8 @@
 <?php defined('BASEPATH') || exit('No direct script access allowed');
 
+ini_set('memory_limit', -1);
+set_time_limit(0);
+
 class Testing extends CI_Controller{
     //
     public function __construct(){
