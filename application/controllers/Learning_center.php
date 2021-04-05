@@ -310,7 +310,7 @@ class Learning_center extends Public_Controller {
                         $employeesList = $this->learning_center_model->getActiveEmployees(
                             $company_sid
                         );
-                    } else {
+                    } else if(!empty($dts) && $dts == 'all'){{
                         if(isset($dts)){
                             // Get selected department employees
                             $employeesList = $this->learning_center_model->getDepartmentEmployeesList(
@@ -463,9 +463,9 @@ class Learning_center extends Public_Controller {
 
                 if ($employees_assigned_to == "none") {
                     $this->learning_center_model->delete_all_assign_video_user($video_sid);
-                    $data_to_update['department_sids'] = $employees_assigned_sid = $applicants_assigned_sid = NULL;
+                    $dts = $data_to_update['department_sids'] = $employees_assigned_sid = $applicants_assigned_sid = NULL;
                 } else{
-                    $data_to_update['department_sids'] =
+                    $dts = $data_to_update['department_sids'] =
                     array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
                 }
 
@@ -592,7 +592,7 @@ class Learning_center extends Public_Controller {
                         $employeesList = $this->learning_center_model->getActiveEmployees(
                             $company_sid
                         );
-                    } else {
+                    } else if(!empty($dts) && $dts == 'all'){
                         // Get selected department employees
                         $employeesList = $this->learning_center_model->getDepartmentEmployeesList(
                             $company_sid,
