@@ -30,8 +30,8 @@ class Notifications extends Public_Controller {
         if (checkIfAppIsEnabled('performance_review')) {
             $this->load->model('Performance_management_model', 'pmm');
             $goalsCount = $this->pmm->getMyGoals($ses['employer_detail']['sid']);
-            if($goalsCount != 0){
-
+            //
+            if(count($goalsCount)){
                 $data[] = [
                     'count' => count($goalsCount),
                     'link' => base_url('performance-management/lms/goals'),
