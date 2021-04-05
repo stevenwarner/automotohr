@@ -492,11 +492,9 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
     $(function(){
-<<<<<<< HEAD
+
         $('#employees_assigned_sid').select2({ closeOnSelect: true });
-=======
-        // $('#employees_assigned_sid').select2({ closeOnSelect: true });
->>>>>>> 0a054b448d2807c88400d9cbf4a059559fc220d6
+
     });
 
     $(".employees_assigned_to").on("click",function(){
@@ -952,7 +950,6 @@
 
                     $('#up_video_container input').prop('disabled', false);
                     $('#up_video_container').show();
-<<<<<<< HEAD
 
                     $('#add_edit_submit').attr('onClick', 'check_file("video");');
                 <?php } else {  ?>
@@ -970,27 +967,6 @@
                 $('#up_video_container').hide();
                 $('#add_edit_submit').removeAttr('onClick');
             <?php } ?> 
-
-=======
-
-                    $('#add_edit_submit').attr('onClick', 'check_file("video");');
-                <?php } else {  ?>
-
-                    $('#yt_vm_video_container input').prop('disabled', false);
-                    $('#yt_vm_video_container').show();
-                    $('.radio_btn_video_source').show();
-
-                    $('#up_video_container input').prop('disabled', true);
-                    $('#up_video_container').hide();
-                    $('#add_edit_submit').removeAttr('onClick');
-                <?php } ?>
-            <?php } else {  ?>  
-                $('#up_video_container input').prop('disabled', true);
-                $('#up_video_container').hide();
-                $('#add_edit_submit').removeAttr('onClick');
-            <?php } ?> 
-
->>>>>>> 0a054b448d2807c88400d9cbf4a059559fc220d6
         });
 
 
