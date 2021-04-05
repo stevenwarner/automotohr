@@ -244,7 +244,7 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['applicants_assigned_sid'] = $applicants_assigned_sid;
 
                 $data_to_insert['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
-                $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to;
+                $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to == "none" ? "specific" : $applicants_assigned_to;
                 $data_to_insert['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
                 $data_to_insert['screening_questionnaire_sid'] = $questionnaire_sid;       
                 
@@ -463,7 +463,7 @@ class Learning_center extends Public_Controller {
 
                 if ($employees_assigned_to == "none") {
                     $this->learning_center_model->delete_all_assign_video_user($video_sid);
-                    $data_to_update['department_sids'] = $applicants_assigned_to = $applicants_assigned_sid = NULL;
+                    $data_to_update['department_sids'] = $employees_assigned_sid = $applicants_assigned_sid = NULL;
                 } else{
                     $data_to_update['department_sids'] =
                     array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
@@ -535,8 +535,8 @@ class Learning_center extends Public_Controller {
                     $data_to_update['video_source'] = $video_source;
                 }
                 $data_to_update['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
-                $data_to_update['applicants_assigned_to'] = $applicants_assigned_to;
-                $data_to_update['employees_assigned_sid'] = $employees_assigned_sid;
+                $data_to_update['applicants_assigned_to'] = $applicants_assigned_to == "none" ? "specific" : $applicants_assigned_to;
+                $data_to_update['employees_assigned_sid'] = implode(',', $employees_assigned_sid);
                 $data_to_update['screening_questionnaire_sid'] = $questionnaire_sid;
                 $data_to_update['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
                
