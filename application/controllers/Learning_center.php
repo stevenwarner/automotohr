@@ -2475,7 +2475,7 @@ class Learning_center extends Public_Controller {
      *
      * @return JSON
      */
-    function get_training_sessions($page, $status){
+    function get_training_sessions($page, $status, $add = false){
         // Redirect if not logged in
         if(!$this->input->is_ajax_request() || !$this->session->userdata('logged_in'))
             redirect(base_url('login'), "refresh");
@@ -2495,7 +2495,8 @@ class Learning_center extends Public_Controller {
             $page,
             $this->limit,
             $status,
-            $employeeId
+            $employeeId,
+            $add
         );
 
         $return_array['Status'] = FALSE;

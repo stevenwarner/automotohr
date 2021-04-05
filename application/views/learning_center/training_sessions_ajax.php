@@ -390,7 +390,7 @@
         function fetch_training_sessions(){
             loader();
             //
-            $.get("<?=base_url('learning_center/get_training_sessions');?>/"+( pagination_settings.current_page )+"/"+( ts_status )+"", 
+            $.get("<?=base_url('learning_center/get_training_sessions');?>/"+( pagination_settings.current_page )+"/"+( ts_status )+"/1", 
                 function(resp) {
                     load_ts(resp);
             });

@@ -275,6 +275,7 @@ $route['manage_admin/copy_applicants/move_applicants'] = 'manage_admin/Copy_appl
 $route['manage_admin/my-events'] = 'manage_admin/Calendar/index';
 // Added on: 10-05-2019
 $route['learning_center/get-training-sessions/(:num)/([a-z])'] = 'learning_center/get_training_sessions/$1/$2';
+$route['learning_center/get-training-sessions/(:num)/([a-z])/(:num)'] = 'learning_center/get_training_sessions/$1/$2/$3';
 $route['calendar/reschedule-training-session'] = 'Calendar/reschedule_training_session';
 // Added on: 06-05-2019
 $route['calendar/fetch-online-videos'] = 'Calendar/fetch_online_videos';
