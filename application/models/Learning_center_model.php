@@ -213,6 +213,11 @@ class Learning_center_model extends CI_Model {
         $this->db->insert('learning_center_online_videos_assignments', $data_to_insert);
     }
 
+    function delete_all_assign_video_user ($video_id) {
+        $this->db->where('learning_center_online_videos_sid', $video_id);
+        $this->db->delete('learning_center_online_videos_assignments');
+    }
+
     function get_online_videos_assignments_records($user_type, $video_id) {
         $this->db->where('learning_center_online_videos_sid', $video_id);
         $this->db->where('user_type', $user_type);
@@ -1203,7 +1208,7 @@ class Learning_center_model extends CI_Model {
      *
      * @return Array|Bool
      */
-    function get_training_sessions($company_sid, $page, $limit, $status = 'pending', $employeeId) {
+    function get_training_sessions($company_sid, $page, $limit, $status = 'pending', $employeeId, $add = false) {
         //
         $curdate = reset_datetime(array(
             'datetime' => date('Y-m-d'),
@@ -1261,16 +1266,19 @@ class Learning_center_model extends CI_Model {
                     $exclude++; continue;
                 }
                 //
-                if($v0['employees_assigned_to'] == 'specific'){
-                    // Check if it is assigned to login employee
-                    if($this->db
-                    ->where('training_session_sid', $v0['id'])
-                    ->where('user_sid', $employeeId)
-                    ->where('user_type', 'employee')
-                    ->count_all_results('learning_center_training_sessions_assignments') == 0) {
-                        unset($result_arr[$k0]);
-                        $exclude++;
-                        continue;
+                if(!$add){
+                    //
+                    if($v0['employees_assigned_to'] == 'specific'){
+                        // Check if it is assigned to login employee
+                        if($this->db
+                        ->where('training_session_sid', $v0['id'])
+                        ->where('user_sid', $employeeId)
+                        ->where('user_type', 'employee')
+                        ->count_all_results('learning_center_training_sessions_assignments') == 0) {
+                            unset($result_arr[$k0]);
+                            $exclude++;
+                            continue;
+                        }
                     }
                 }
                 //

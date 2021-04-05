@@ -34,6 +34,7 @@
 
     $allChecked = 'checked="true"';
     $specificChecked = '';
+    $noneChecked = '';
     $selected_videos = $selected_employees = array();
 
     if(isset($training_session) && $training_session['employees_assigned_to'] == 'all') $allChecked = 'checked="true"';
@@ -48,8 +49,13 @@
     }
 
     if(isset($training_session) && $allChecked == '') {
-        foreach ($training_session['employees'] as $key => $value) {
-            $selected_employees[$value['user_sid']] = true;
+        if (!empty($training_session['employees'])) {
+            foreach ($training_session['employees'] as $key => $value) {
+                $selected_employees[$value['user_sid']] = true;
+            }
+        } else {
+            $specificChecked = '';
+            $noneChecked = 'checked="true"';
         }
     }
 
@@ -177,12 +183,17 @@
                                 <input class="employees_assigned_to" type="radio" id="employees_assigned_to_specific" name="employees_assigned_to" value="specific" <?=$specificChecked;?>  />
                                 <div class="control__indicator"></div>
                             </label>
+                            <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
+                                None
+                                <input class="employees_assigned_to" type="radio" id="employees_assigned_to_none" name="employees_assigned_to" value="none" <?=$noneChecked;?>  />
+                                <div class="control__indicator"></div>
+                            </label>
                             <div class="clearfix"></div>
                         </div>
 
                         <!--  -->
                         <div class="form-group">
-                            <div class="hr-select-dropdown">
+                            <div class="">
                                 <select data-rule-required="true" name="employees_assigned_sid[]" id="employees_assigned_sid" multiple="multiple"  data-placeholder="Select employee(s)">
                                     <option value="">Please Select</option>
                                     <?php if(!empty($employees)) { ?>
@@ -323,17 +334,18 @@
         $('#js-training-session').validate({ ignore: '[disabled=disabled]' });
 
         $('.employees_assigned_to').on('click', function () {
-            if ($(this).prop('checked') == true)
-                $('#employees_assigned_sid').prop('disabled', ($(this).val() == 'all' ? true : false)).trigger("chosen:updated");
+
+            //
+            $('#employees_assigned_sid').prop('disabled', $(this).val() == 'specific' ? false : true);
 
             // $('#js-training-session').valid();
         });
 
         $('input[type=radio]:checked').trigger('click');
 
-        $('#employees_assigned_sid').chosen();
+        $('#employees_assigned_sid').select2({ closeOnSelect: false });
 
-        $('#online_video_sid').chosen({ placeholder: "Select videos"});
+        $('#online_video_sid').chosen({ placeholder: "Select videos", closeOnSelect: false});
 
         $('.datepicker').datepicker({ dateFormat: 'mm-dd-yy' });
 
@@ -470,12 +482,18 @@
                     }
                 }
             }
-
+            console.log(obj);
+            //
+            obj.training_session_type = '';
             //
             if(obj.interviewer_type == 'all'){
                 var tmp = [];
                 employee_list.map(function(v){ tmp.push(v.sid); });
                 obj.interviewer = tmp.join(',');
+            }else if(obj.interviewer_type == 'none'){
+                obj.interviewer = [];
+                obj.interviewer_type = 'specific';
+                obj.training_session_type = 'none';
             }else{
                 obj.interviewer = obj.interviewer.join(',');
                 obj.interviewer_type = 'specific';
@@ -538,14 +556,14 @@
             var obj =  {
                 action: 'save_event',
                 title: $('#session_topic').val().trim(),
-                description: $('#session_description').val(),
+                description: $.trim(CKEDITOR.instances.session_description.getData()),
                 address: $('#js-address-select').prop('checked') !== true ? $('#js-address-text').val() : $('#js-address-list').val(),
                 date: $('#session_date').val(),
                 eventstarttime: $('#session_start_time').val(),
                 eventendtime: $('#session_end_time').val(),
                 interviewer: $('#employees_assigned_sid').val(),
                 interviewer_show_email: '',
-                interviewer_type: $('#employees_assigned_to_all').prop('checked') === true ? 'all' : 'specific',
+                interviewer_type: $('#employees_assigned_to_all').prop('checked') === true ? 'all' : $('#employees_assigned_to_specific').prop('checked') === true ? 'specific' : 'none',
                 external_participants: func_get_external_users_data(),
                 video_ids: $('#online_video_sid').val() != null ? $('#online_video_sid').val().join(',') : '',
                 category: 'training-session',

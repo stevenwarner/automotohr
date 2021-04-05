@@ -189,59 +189,88 @@
                                     <?php $temp = isset($video[$field_name]) && !empty($video[$field_name]) ? $video[$field_name] : 'all'; ?>
                                     <?php echo form_label('Assigned To Employees', $field_name); ?>
                                     <?php $default_selected = $temp == 'all' ? true : false; ?>
+                                    <?php $temp = empty($selected_employees) ? "none" : $temp; ?>
                                         <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                             All
-                                            <input class="employees_assigned_to" type="radio" id="employees_assigned_to_all" name="employees_assigned_to" value="all" <?php echo set_radio($field_name, 'all', $default_selected); ?> />
+                                            <input class="employees_assigned_to" type="radio" id="employees_assigned_to_all" name="employees_assigned_to" value="all" <?php echo ($temp == 'all') ?  "checked" : "" ;  ?> />
                                             <div class="control__indicator"></div>
                                         </label>
                                     <?php $default_selected = $temp == 'specific' ? true : false; ?>
                                         <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                             Specific
-                                            <input class="employees_assigned_to" type="radio" id="employees_assigned_to_specific" name="employees_assigned_to" value="specific" <?php echo set_radio($field_name, 'specific', $default_selected); ?> />
+                                            <input class="employees_assigned_to" type="radio" id="employees_assigned_to_specific" name="employees_assigned_to" value="specific" <?php echo ($temp == 'specific') ?  "checked" : "" ;  ?> />
+                                            <div class="control__indicator"></div>
+                                        </label>
+                                        <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
+                                            None
+                                            <input class="employees_assigned_to" type="radio" id="employees_assigned_to_none" name="employees_assigned_to" value="none" <?php echo ($temp == 'none') ?  "checked" : "" ;  ?> />
                                             <div class="control__indicator"></div>
                                         </label>
                                     </div>
                                     
                                     <!--<input class="employees_assigned_to" type="hidden" id="employees_assigned_to_specific" name="employees_assigned_to" value="specific"  />-->
                                     
-                                    <div class="form-group autoheight">
-                                    <?php $field_name = 'employees_assigned_sid'; $selected_employees = $temp == 'all' ? array() : $selected_employees; ?>
-                                    <?php echo form_label('Assigned To Employees', $field_name); ?>
+                                    <!-- <div class="form-group autoheight assign_option">
+                                        <?php $field_name = 'employees_assigned_sid'; $selected_employees = $temp == 'all' ? array() : $selected_employees; ?>
+                                        <?php echo form_label('Assigned To Employees', $field_name); ?>
                                         <div class="hr-select-dropdown">
-                                            <select data-rule-required="true" class="" name="employees_assigned_sid[]" id="employees_assigned_sid" multiple="multiple" >
+                                            <select data-rule-required="false" class="" name="employees_assigned_sid[]" id="employees_assigned_sid" multiple="multiple" >
                                                 <option value="">Please Select</option>
-                                    <?php if (!empty($employees)) { ?>
-                                        <?php foreach ($employees as $employee) { ?>
-                                                <option <?php echo set_select($field_name, $employee['sid'], in_array($employee['sid'], $selected_employees)); ?>  value="<?php echo $employee['sid']; ?>" ><?=remakeEmployeeName($employee);?></option>
-                                        <?php } ?>
-                                    <?php } ?>      
+                                                <?php if (!empty($employees)) { ?>
+                                                    <?php foreach ($employees as $employee) { ?>
+                                                        <option <?php echo set_select($field_name, $employee['sid'], in_array($employee['sid'], $selected_employees)); ?>  value="<?php echo $employee['sid']; ?>" ><?=remakeEmployeeName($employee);?></option>
+                                                    <?php } ?>
+                                                <?php } ?>      
+
+                                   
+
+                                    <div class="form-group autoheight assign_option">
+                                        <label>Assigned To Employees<span class="staric">*</span></label>
+                                        <div class="">
+                                            <select name="employees_assigned_sid[]" class="invoice-fields" id="employees_assigned_sid" multiple="true">
+                                                <?php foreach ($employees as $employee): ?>
+                                                    <option <?php echo set_select($field_name, $employee['sid'], in_array($employee['sid'], $selected_employees)); ?>  value="<?php echo $employee['sid']; ?>" ><?=remakeEmployeeName($employee);?></option>
+                                                <?php endforeach ?>
+
                                             </select>
+                                            <span id="employees_assigned_error" class="text-danger person_error"></span>
                                         </div>
-                                    </div>
+                                    </div> -->
+
+                                    <div class="form-group autoheight assign_option">
+                                        <label>Assigned To Employees<span class="staric">*</span></label>
+                                        <div class="">
+                                            <select name="employees_assigned_sid[]" class="invoice-fields" id="employees_assigned_sid" multiple="true">
+                                                <?php foreach ($employees as $employee): ?>
+                                                    <option <?php echo set_select($field_name, $employee['sid'], in_array($employee['sid'], $selected_employees)); ?>  value="<?php echo $employee['sid']; ?>" ><?=remakeEmployeeName($employee);?></option>
+                                                <?php endforeach ?>
+                                            </select>
+                                            <span id="employees_assigned_error" class="text-danger person_error"></span>
+                                        </div>
+                                    </div> 
 
                                     <!--<input class="employees_assigned_to" type="hidden" id="employees_assigned_to_specific" name="employees_assigned_to" value="specific"  />-->
                                     
-                                    <div class="form-group autoheight">
-                                    <?php $field_name = 'departments_assigned_sid';?>
-                                    <?php $selected_departments = isset($selected_departments) ? ($selected_departments[0] == 'all' ? array('-1') : $selected_departments) : array(); ?>
-                                    <?php echo form_label('Assigned To Departments', $field_name); ?>
+                                    <div class="form-group autoheight assign_option">
+                                        <?php $field_name = 'departments_assigned_sid';?>
+                                        <?php $selected_departments = isset($selected_departments) ? ($selected_departments[0] == 'all' ? array('-1') : $selected_departments) : array(); ?>
+                                        <?php echo form_label('Assigned To Departments', $field_name); ?>
                                         <div class="hr-select-dropdown">
                                             <select class="" name="departments_assigned_sid[]" id="departments_assigned_sid" multiple="multiple" >
                                                 <option value="">Please Select</option>
-
-                                    <?php 
-                                        // Push all to department
-                                        $departments[] = array('sid' => -1, 'name'=> 'All'); 
-                                        // Resort the array
-                                        asort($departments);
-                                    ?>
-                                    <?php if (!empty($departments)) { ?>
-                                                <!-- <option value="-1">All</option> -->
-                                        <?php foreach ($departments as $department) { ?>
-                                                <option <?php echo set_select(
-                                                    $field_name, $department['sid'], array_search($department['sid'], $selected_departments) !== false ? true : false); ?>  value="<?php echo $department['sid']; ?>" ><?=$department['name'];?></option>
-                                        <?php } ?>
-                                    <?php } ?>
+                                                <?php 
+                                                    // Push all to department
+                                                    $departments[] = array('sid' => -1, 'name'=> 'All'); 
+                                                    // Resort the array
+                                                    asort($departments);
+                                                ?>
+                                                <?php if (!empty($departments)) { ?>
+                                                    <!-- <option value="-1">All</option> -->
+                                                    <?php foreach ($departments as $department) { ?>
+                                                        <option <?php echo set_select(
+                                                            $field_name, $department['sid'], array_search($department['sid'], $selected_departments) !== false ? true : false); ?>  value="<?php echo $department['sid']; ?>" ><?=$department['name'];?></option>
+                                                    <?php } ?>
+                                                <?php } ?>
                                             </select>
                                         </div>
                                     </div>
@@ -462,6 +491,21 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
+    $(function(){
+
+        $('#employees_assigned_sid').select2({ closeOnSelect: true });
+
+    });
+
+    $(".employees_assigned_to").on("click",function(){
+        var value = $(this).val();
+        if (value == 'specific' ) {
+            $(".assign_option").show();
+        } else {
+            $(".assign_option").hide();
+        }
+    });
+
     function check_file(val) {
         var fileName  = $("#" + val).val();
         
@@ -529,7 +573,7 @@
         }   
     }
 
-     function CancelUpload(){
+    function CancelUpload(){
         $('.upload_learning_doc').show();
         
         if($('#uploaded-files').html() != ''){
@@ -549,7 +593,7 @@
         var video_sid = $('#video_sid').val();
         var video_title = $('#video_title').val();
         var video_description = $('#video_description').val();
-//        var employees_assigned_sid = $('#employees_assigned_sid').val();
+        // var employees_assigned_sid = $('#employees_assigned_sid').val();
         var questionnaire_sid = $('#questionnaire_sid').val();
         var video_source = $('input[name="video_source"]:checked').val();
         var video_id = $('#video_id').val();
@@ -572,7 +616,7 @@
                 form_data.append('video_description', video_description);
                 form_data.append('video_id', video_id);
                 form_data.append('video_source', video_source);
-//                form_data.append('employees_assigned_sid', employees_assigned_sid);
+                // form_data.append('employees_assigned_sid', employees_assigned_sid);
                 form_data.append('questionnaire_sid', questionnaire_sid);
                 form_data.append('assigned_employee', assigned_employee);
             }
@@ -759,76 +803,77 @@
         if($('input[name="video_source"]:checked').val() == 'do_not_change'){
             required_condition = false;
         }
-               $("#form_save_video").validate({
-                    ignore: [],
-                    rules: {
-                        video_title: {
-                            required: true,
-                        },
-                        video_id: {
-                            required: required_condition,
-                        },
-                        video_upload:{
-                            required: required_condition,
-                        }
-                    },
-                    messages: {
-                        title: {
-                            required: 'Video Title Is Required',
-                        },
-                        video_id: {
-                            required: 'Please provide Valid Video URL',
-                        },
-                        video_upload: {
-                            required: 'Please upload video',
-                        }
-                    },
-                    submitHandler: function (form) {
 
-                        if($('input[name="video_source"]:checked').val() == 'youtube'){
+        $("#form_save_video").validate({
+            ignore: [],
+            rules: {
+                video_title: {
+                    required: true,
+                },
+                video_id: {
+                    required: required_condition,
+                },
+                video_upload:{
+                    required: required_condition,
+                }
+            },
+            messages: {
+                title: {
+                    required: 'Video Title Is Required',
+                },
+                video_id: {
+                    required: 'Please provide Valid Video URL',
+                },
+                video_upload: {
+                    required: 'Please upload video',
+                }
+            },
+            submitHandler: function (form) {
+
+                if($('input[name="video_source"]:checked').val() == 'youtube'){
+            
+                    var flag = 0;
+                    if($('#video_id').val() != '') { 
+
+                        var p = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/;
+                        if (!$('#video_id').val().match(p)) {
+                            alertify.error('Not a Valid Youtube URL');
+                            flag = 1;
+                            return false;
+                        }
+                    }
                     
-                            var flag = 0;
-                            if($('#video_id').val() != '') { 
-
-                                var p = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/;
-                                if (!$('#video_id').val().match(p)) {
-                                    alertify.error('Not a Valid Youtube URL');
+                } 
+                if($('input[name="video_source"]:checked').val() == 'vimeo'){
+                    
+                    if($('#video_id').val() != '') {              
+                        var flag = 0;
+                        var myurl = "<?= base_url() ?>learning_center/validate_vimeo";
+                        $.ajax({
+                            type: "POST",
+                            url: myurl,
+                            data: {url: $('#video_id').val()},
+                            async : false,
+                            success: function (data) {
+                                if (data == false) {
+                                    alertify.error('Not a Valid Vimeo URL');
                                     flag = 1;
                                     return false;
                                 }
+                            },
+                            error: function (data) {
                             }
-                            
-                        } 
-                        if($('input[name="video_source"]:checked').val() == 'vimeo'){
-                            
-                            if($('#video_id').val() != '') {              
-                                var flag = 0;
-                                var myurl = "<?= base_url() ?>learning_center/validate_vimeo";
-                                $.ajax({
-                                    type: "POST",
-                                    url: myurl,
-                                    data: {url: $('#video_id').val()},
-                                    async : false,
-                                    success: function (data) {
-                                        if (data == false) {
-                                            alertify.error('Not a Valid Vimeo URL');
-                                            flag = 1;
-                                            return false;
-                                        }
-                                    },
-                                    error: function (data) {
-                                    }
-                                });
-                            }
-                            if(flag){
-                                return false;
-                            }
-                        }
-                        $('#my_loader').show(); 
-                        $("#add_edit_submit").attr("disabled", true); 
-                        form.submit();
+                        });
                     }
-                });        
+                    if(flag){
+                        return false;
+                    }
+                }
+                $('#my_loader').show(); 
+                $("#add_edit_submit").attr("disabled", true); 
+                form.submit();
+            }
+        });        
         
     });
     
@@ -836,7 +881,7 @@
 
         
         
-        $('select[multiple]').chosen();
+        $('select[multiple]').select2({closeOnSelect: false});
         // $('#my_loader').hide();
 
         <?php   if (isset($video_source)) { ?>
@@ -894,44 +939,35 @@
 
         $('input[type=radio]:checked').trigger('click');
 
-       $('.edit_filter_check').on('click', function(){
+        $('.edit_filter_check').on('click', function(){
             $('.edit_filter_check').hide();
-            <?php   
-                if (isset($video_source)) { 
-                    if ($video_source == 'upload') {
-            ?>
+            <?php if (isset($video_source)) { ?>
+                <?php if ($video_source == 'upload') { ?>
 
-                            $('.radio_btn_video_source').show();
-                            $('#yt_vm_video_container input').prop('disabled', true);
-                            $('#yt_vm_video_container').hide();
+                    $('.radio_btn_video_source').show();
+                    $('#yt_vm_video_container input').prop('disabled', true);
+                    $('#yt_vm_video_container').hide();
 
-                            $('#up_video_container input').prop('disabled', false);
-                            $('#up_video_container').show();
+                    $('#up_video_container input').prop('disabled', false);
+                    $('#up_video_container').show();
 
-                            $('#add_edit_submit').attr('onClick', 'check_file("video");');
-            <?php   
-                    } else { 
-            ?>
+                    $('#add_edit_submit').attr('onClick', 'check_file("video");');
+                <?php } else {  ?>
 
-                            $('#yt_vm_video_container input').prop('disabled', false);
-                            $('#yt_vm_video_container').show();
-                            $('.radio_btn_video_source').show();
+                    $('#yt_vm_video_container input').prop('disabled', false);
+                    $('#yt_vm_video_container').show();
+                    $('.radio_btn_video_source').show();
 
-                            $('#up_video_container input').prop('disabled', true);
-                            $('#up_video_container').hide();
-                            $('#add_edit_submit').removeAttr('onClick');
-            <?php 
-                    } 
-                } else {
-            ?>  
-                        $('#up_video_container input').prop('disabled', true);
-                        $('#up_video_container').hide();
-                        $('#add_edit_submit').removeAttr('onClick');
-            <?php 
-                } 
-            ?> 
-
-       });
+                    $('#up_video_container input').prop('disabled', true);
+                    $('#up_video_container').hide();
+                    $('#add_edit_submit').removeAttr('onClick');
+                <?php } ?>
+            <?php } else {  ?>  
+                $('#up_video_container input').prop('disabled', true);
+                $('#up_video_container').hide();
+                $('#add_edit_submit').removeAttr('onClick');
+            <?php } ?> 
+        });
 
 
         $('.video_source').on('click', function(){
@@ -963,8 +999,6 @@
                 $('#yt_vm_video_container input').prop('disabled', true);
                 $('#add_edit_submit').removeAttr('onClick');
             }
-
-
         });
     });
 </script>
