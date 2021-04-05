@@ -310,7 +310,7 @@ class Learning_center extends Public_Controller {
                         $employeesList = $this->learning_center_model->getActiveEmployees(
                             $company_sid
                         );
-                    } else if(!empty($dts) && $dts == 'all'){{
+                    } else if(!empty($dts) && $dts == 'all'){
                         if(isset($dts)){
                             // Get selected department employees
                             $employeesList = $this->learning_center_model->getDepartmentEmployeesList(
