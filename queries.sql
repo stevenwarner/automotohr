@@ -25,3 +25,9 @@ ADD `is_signature_required` TINYINT(1) NOT NULL DEFAULT '0' AFTER `is_required`;
 ALTER TABLE `job_fairs_recruitment` ADD `visibility_employees` LONGTEXT NOT NULL AFTER `page_url`;
 ALTER TABLE `job_fairs_forms` ADD `visibility_employees` LONGTEXT NOT NULL AFTER `page_url`;
 ALTER TABLE `job_fairs_recruitment` CHANGE `visibility_employees` `visibility_employees` LONGTEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL;
+
+-- Online video
+-- 04/05/2021
+ALTER TABLE `learning_center_online_videos` CHANGE `employees_assigned_sid` `employees_assigned_sid` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL, CHANGE `applicants_assigned_sid` `applicants_assigned_sid` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL, CHANGE `department_sids` `department_sids` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+
+ALTER TABLE `learning_center_online_videos` CHANGE `applicants_assigned_to` `applicants_assigned_to` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'all';
