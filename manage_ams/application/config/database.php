@@ -70,86 +70,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | The $query_builder variables lets you determine whether or not to load
 | the query builder class.
 */
-$active_group = 'default';
-$query_builder = TRUE;
-if($_SERVER['HTTP_HOST']=='ams.local'){
-	$db['default'] = array(
-		'dsn'	=> '',
-		'hostname' => 'localhost',
-		'username' => 'root',
-		'password' => '1122',
-		'database' => 'automotohr',
-		'dbdriver' => 'mysqli',
-		'dbprefix' => '',
-		'pconnect' => FALSE,
-		'db_debug' => TRUE,
-		'cache_on' => TRUE,
-		'cachedir' => '',
-		'char_set' => 'utf8',
-		'dbcollat' => 'utf8_general_ci',
-		'swap_pre' => '',
-		'encrypt' => FALSE,
-		'compress' => TRUE,
-		'stricton' => TRUE,
-		'failover' => array(),
-		'save_queries' => FALSE
-	);
-	} 
-	else if($_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='intranet.dev' || $_SERVER['HTTP_HOST']=='corp.dev'){
-$db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '',
-	'database' => 'automotoci',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
-);
-} else {
-  $db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'automoto_super',
-	'password' => '6Q?lgxvOo9u_EZpgVM',
-	'database' => 'automoto_hr',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
-);  
 
-$db['default'] = array(
+$active_group = 'ahr';
+$query_builder = TRUE;
+//
+$creds = getCreds('AHR');
+//
+$db['ahr'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-		'username' => 'automoto_2021',
-		'password' => '-^by2),4IRgf%]mMj{',
-		'database' => 'automoto_hr',
+	'hostname' => $creds->DB->Host,
+	'username' => $creds->DB->User,
+	'password' => $creds->DB->Password,
+	'database' => $creds->DB->Database,
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
+	'db_debug' => false,
 	'cache_on' => TRUE,
 	'cachedir' => '',
 	'char_set' => 'utf8',
@@ -161,4 +97,3 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => FALSE
 );
-}

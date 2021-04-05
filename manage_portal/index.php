@@ -290,6 +290,25 @@ switch (ENVIRONMENT)
 	}
 
 	define('VIEWPATH', $view_folder);
+	//
+	error_reporting(0);
+	ini_set('display_errors', 0);
+
+	//
+	if(!function_exists('getCreds')){
+		function getCreds($index = false){
+			//
+			$file = APPPATH.'../../../creds.json';
+			//
+			$h = fopen($file, 'r');
+			//
+			$data = json_decode(fread($h, filesize($file)));
+			//
+			fclose($h);
+			//
+			return $index ? $data->$index : $data;
+		}
+	}
 
 /*
  * --------------------------------------------------------------------

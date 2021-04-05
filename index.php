@@ -304,7 +304,7 @@ switch (ENVIRONMENT)
  * And away we go...
  */
 
-if($_SERVER['HTTP_HOST'] == 'automotohr.com'){
+if($_SERVER['HTTP_HOST'] == 'www.automotohr.com'){
 	error_reporting(0);
 	ini_set('display_errors', 0);
 } else{

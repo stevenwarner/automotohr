@@ -85,7 +85,7 @@ $db['ahr'] = array(
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
+	'db_debug' => false,
 	'cache_on' => TRUE,
 	'cachedir' => '',
 	'char_set' => 'utf8',
