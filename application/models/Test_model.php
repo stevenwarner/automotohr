@@ -28,8 +28,8 @@ class Test_model extends CI_Model {
     //
     function getJobs(){
         $ids = $this->db2
-        ->get(PJL)
         ->order_by('sid', 'desc')
+        ->get(PJL)
         ->result_array();
         //
         return !empty($ids) ? array_column($ids, 'sid') : [];
@@ -62,8 +62,8 @@ class Test_model extends CI_Model {
     //
     function getApplicants(){
         $ids = $this->db2
-        ->get(PJA)
         ->order_by('sid', 'desc')
+        ->get(PJA)
         ->result_array();
         //
         return !empty($ids) ? array_column($ids, 'sid') : [];
@@ -96,8 +96,8 @@ class Test_model extends CI_Model {
     //
     function getApplicantsJob(){
         $ids = $this->db2
-        ->get(PAJL)
         ->order_by('sid', 'desc')
+        ->get(PAJL)
         ->result_array();
         //
         return !empty($ids) ? array_column($ids, 'sid') : [];
