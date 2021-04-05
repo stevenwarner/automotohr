@@ -32,7 +32,7 @@ class Test_model extends CI_Model {
         ->get(PJL)
         ->result_array();
         //
-        return !empty($ids) ? array_column($ids, 'sid') : [];
+        return $ids;
     }
 
     //
@@ -66,7 +66,7 @@ class Test_model extends CI_Model {
         ->get(PJA)
         ->result_array();
         //
-        return !empty($ids) ? array_column($ids, 'sid') : [];
+        return $ids;
     }
 
     //
@@ -100,7 +100,7 @@ class Test_model extends CI_Model {
         ->get(PAJL)
         ->result_array();
         //
-        return !empty($ids) ? array_column($ids, 'sid') : [];
+        return $ids;
     }
 
     //
