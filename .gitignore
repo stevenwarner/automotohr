@@ -83,3 +83,7 @@ manage_ams/robots.xml
 
 vendor
 vendor/*
+
+creds.json
+google_hire_automotosocial.json
+google_hire.json

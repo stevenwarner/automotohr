@@ -307,11 +307,11 @@ if (!function_exists('sendMail')) {
         
         $mail->addAddress($to);
         $mail->CharSet = 'UTF-8';
+        mailAWSSES($mail, $to);
         //$mail->addBCC('prosaifhasi@gmail.com');
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $body;
-        mailAWSSES($mail, $to);
         $mail->send();
     }
 }
@@ -339,11 +339,11 @@ if (!function_exists('sendMailMultipleRecipients')) {
         }
 
         //
-        mailAWSSES($mail, $to);
-
+        
         $mail->CharSet = 'UTF-8';
         //$mail->addBCC('prosaifhasi@gmail.com');
         $mail->isHTML(true);
+        mailAWSSES($mail, $to);
         $mail->Subject = $subject;
         $mail->Body = $body;
         $mail->send();
@@ -367,11 +367,11 @@ if (!function_exists('sendMailWithCC')) {
         }
 
         //
-        mailAWSSES($mail, $to);
-
+        
         $mail->addAddress($to);
         $mail->addCC($cc);
         $mail->CharSet = 'UTF-8';
+        mailAWSSES($mail, $to);
         //$mail->addBCC('prosaifhasi@gmail.com');
         $mail->isHTML(true);
         $mail->Subject = $subject;
@@ -395,11 +395,11 @@ if (!function_exists('sendMailWithAttachment')) {
             $mail->addReplyTo($replyTo);
         }
 
-        //
-        mailAWSSES($mail, $to);
-
+        
         $mail->addAddress($to);
         $mail->CharSet = 'UTF-8';
+        //
+        mailAWSSES($mail, $to);
         //$mail->addBCC('prosaifhasi@gmail.com');
         $mail->isHTML(true);
         //
@@ -11916,7 +11916,8 @@ if(!function_exists('mailAWSSES')){
         $to,
         $d = false
     ){
-        // if(!$d) return;
+        //
+        $creds = getCreds('AHR');
         // Set XMailer
         $mail->XMailer = 'mail.automotohr.com';
         $mail->Mailer = 'mail.automotohr.com';
@@ -11925,14 +11926,14 @@ if(!function_exists('mailAWSSES')){
         // Set Host
         $mail->isSMTP();
         $mail->SMTPAuth   = true;
-        $mail->Host       = SES_HOST;
-        $mail->Username   = SES_USER;
-        $mail->Password   = SES_PASS;
-        $mail->SMTPSecure = 'tls';
-        $mail->Port       = SES_PORT; 
+        $mail->Host       = $creds->SES->Host;
+        $mail->Username   = $creds->SES->User;
+        $mail->Password   = $creds->SES->Password;
+        $mail->SMTPSecure = $creds->SES->Method;
+        $mail->Port       = $creds->SES->Port; 
         //
         // For local machines
-        if(in_array(getUserIP(), ['::1', '127.0.0.1'])){
+        if(in_array($_SERVER['HTTP_HOST'], ['localhost', 'automotohr.local'])){
             $mail->SMTPOptions = array(
                 'ssl' => array(
                     'verify_peer' => false,
@@ -11940,9 +11941,6 @@ if(!function_exists('mailAWSSES')){
                     'allow_self_signed' => true
                     )
                 );  
-            // $mail->From = 'notifications@automotohr.com';
-            // $mail->FromName = 'Notifications @ AutomotoHR';
-            // $mail->to = 'mubashar.ahmed@egenienext.com';
             $mail->clearAddresses();
             $mail->addAddress('mubashir.saleemi123@gmail.com');
         }
