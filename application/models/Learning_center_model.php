@@ -1514,12 +1514,15 @@ class Learning_center_model extends CI_Model {
             users.last_name,
             users.email
         ')
-        ->join('users', 'users.sid = departments_employee_2_team.employee_sid', 'inner')
+        ->join('users', 'users.sid = departments_employee_2_team.employee_sid')
+        ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
+        ->where('departments_management.status', 1)
+        ->where('departments_management.is_deleted', 0)
         ->where('users.active', 1)
         ->where('users.parent_sid', $companySid)
         ->where('users.terminated_status', 0);
         //
-        if(array_search('-1', $departmentSids) === false) $this->db->where_in('departments_employee_2_team.department_sid', $departmentSids);
+        if(array_search('-1', $departmentSids) === false){ $this->db->where_in('departments_employee_2_team.department_sid', $departmentSids);}
         //
         $a = $this->db->get('departments_employee_2_team');
         //
