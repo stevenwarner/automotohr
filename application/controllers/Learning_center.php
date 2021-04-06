@@ -254,10 +254,11 @@ class Learning_center extends Public_Controller {
                     $video_sid = $exist_video_sid;
                     $this->learning_center_model->update_training_video($video_sid, $data_to_insert);
 
-                }else{
-                    $this->learning_center_model->insert_training_video($data_to_insert);
-                    $video_sid = $this->db->insert_id();
+                }else{ 
+                    $video_sid = $this->learning_center_model->insert_training_video($data_to_insert);
+                    // $video_sid = $this->db->insert_id();
                 }
+                die();
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
@@ -310,21 +311,26 @@ class Learning_center extends Public_Controller {
                         $employeesList = $this->learning_center_model->getActiveEmployees(
                             $company_sid
                         );
-                    } else if(!empty($dts) && $dts == 'all'){
-                        if(isset($dts)){
-                            // Get selected department employees
-                            $employeesList = $this->learning_center_model->getDepartmentEmployeesList(
+                    } else {
+                        $specific_assign_employees = array();
+                        if ($post['employees_assigned_to'] == 'specific') {
+                            $specific_assign_employees = $this->learning_center_model->getActiveEmployees(
+                                $company_sid,
+                                $employees_assigned_sid
+                            );
+                        }
+
+                        $selected_department_employees = array();
+                        // Get selected department employees
+                        if (isset($post['departments_assigned_sid']) && !empty($post['departments_assigned_sid'])) {
+                            $selected_department_employees = $this->learning_center_model->getDepartmentEmployeesList(
                                 $company_sid,
                                 $post['departments_assigned_sid']
                             );
-                        }
-                        // Get specific employees
-                        $e = $this->learning_center_model->getActiveEmployees(
-                            $company_sid,
-                            $employees_assigned_sid
-                        );
-                        //
-                        $employeesList = array_unique(array_merge($employeesList, $e), SORT_REGULAR);
+                        }  
+
+                        $employeesMergeList = array_merge($specific_assign_employees, $selected_department_employees);  
+                        $employeesList = array_unique($employeesMergeList, SORT_REGULAR);
                     }
 
                     if(sizeof($employeesList)){
@@ -536,7 +542,7 @@ class Learning_center extends Public_Controller {
                 }
                 $data_to_update['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
                 $data_to_update['applicants_assigned_to'] = $applicants_assigned_to == "none" ? "specific" : $applicants_assigned_to;
-                $data_to_update['employees_assigned_sid'] = implode(',', $employees_assigned_sid);
+                $data_to_update['employees_assigned_sid'] = !empty($employees_assigned_sid) ? implode(',', $employees_assigned_sid) : '';
                 $data_to_update['screening_questionnaire_sid'] = $questionnaire_sid;
                 $data_to_update['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
                
@@ -592,12 +598,26 @@ class Learning_center extends Public_Controller {
                         $employeesList = $this->learning_center_model->getActiveEmployees(
                             $company_sid
                         );
-                    } else if(!empty($dts) && $dts == 'all'){
+                    } else {
+                        $specific_assign_employees = array();
+                        if ($post['employees_assigned_to'] == 'specific') {
+                            $specific_assign_employees = $this->learning_center_model->getActiveEmployees(
+                                $company_sid,
+                                $employees_assigned_sid
+                            );
+                        }
+
+                        $selected_department_employees = array();
                         // Get selected department employees
-                        $employeesList = $this->learning_center_model->getDepartmentEmployeesList(
-                            $company_sid,
-                            $post['departments_assigned_sid']
-                        );
+                        if (isset($post['departments_assigned_sid']) && !empty($post['departments_assigned_sid'])) {
+                            $selected_department_employees = $this->learning_center_model->getDepartmentEmployeesList(
+                                $company_sid,
+                                $post['departments_assigned_sid']
+                            );
+                        }  
+
+                        $employeesMergeList = array_merge($specific_assign_employees, $selected_department_employees);  
+                        $employeesList = array_unique($employeesMergeList, SORT_REGULAR);
                     }
 
                     if(sizeof($employeesList)){

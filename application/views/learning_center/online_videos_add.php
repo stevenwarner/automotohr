@@ -829,25 +829,21 @@
                 }
             },
             submitHandler: function (form) {
+                var flag = 0;
 
                 if($('input[name="video_source"]:checked').val() == 'youtube'){
-            
-                    var flag = 0;
                     if($('#video_id').val() != '') { 
-
                         var p = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/;
                         if (!$('#video_id').val().match(p)) {
-                            alertify.error('Not a Valid Youtube URL');
+                            alertify.alert('Error','Not a Valid Youtube URL');
                             flag = 1;
                             return false;
                         }
-                    }
-                    
+                    }   
                 } 
+
                 if($('input[name="video_source"]:checked').val() == 'vimeo'){
-                    
-                    if($('#video_id').val() != '') {              
-                        var flag = 0;
+                    if($('#video_id').val() != '') {    
                         var myurl = "<?= base_url() ?>learning_center/validate_vimeo";
                         $.ajax({
                             type: "POST",
@@ -856,7 +852,7 @@
                             async : false,
                             success: function (data) {
                                 if (data == false) {
-                                    alertify.error('Not a Valid Vimeo URL');
+                                    alertify.alert('Error','Not a Valid Vimeo URL');
                                     flag = 1;
                                     return false;
                                 }
@@ -865,13 +861,25 @@
                             }
                         });
                     }
-                    if(flag){
+                }
+
+                var assign_employee_type = $('input[name="employees_assigned_to"]:checked').val();
+                if (assign_employee_type == "specific") {
+                    var selected_employees = $("#employees_assigned_sid").val();
+                    if (selected_employees == "" || selected_employees == null || selected_employees == undefined) {
+                        flag = 1;
+                        alertify.alert('Error','Please select an employees');
                         return false;
                     }
                 }
-                $('#my_loader').show(); 
-                $("#add_edit_submit").attr("disabled", true); 
-                form.submit();
+
+                if(flag == 0){
+                    $('#my_loader').show(); 
+                    $("#add_edit_submit").attr("disabled", true); 
+                    form.submit();
+                }
+                        
+                
             }
         });        
         
