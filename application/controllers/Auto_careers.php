@@ -36,15 +36,10 @@ class Auto_careers extends CI_Controller
 
     public function index()
     {
-        // $f = fopen('dummp.json', 'w');
-        // fwrite($f, json_encode(file_get_contents('php://input')));
-        // fclose($f);
-        //
-        @mail('mubashir.saleemi123@gmail.com', 'Auto Careers - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
         //
         $folder = APPPATH.'../../applicant/autocareers';
         //
-        if(!is_dir($folder)) mkdir($folder, 0777, true);
+        if(!is_dir($folder)){ mkdir($folder, 0777, true);}
         // Create json file for all filters job categories
         $categories_file = fopen($folder.'/AutoCareers_Applicant_Recieve_' . date('Y_m_d_H_i_s') . '.json', 'w');
         //
@@ -55,7 +50,6 @@ class Auto_careers extends CI_Controller
         if ($applicant_job_info         = file_get_contents('php://input')) {
             $video_type                 = '';
             $video_url                  = '';
-            $YouTube_Video              = '';
             $address                    = '';
             $referred_by_name           = '';
             $referred_by_email          = '';
@@ -74,31 +68,55 @@ class Auto_careers extends CI_Controller
             if ($auto_fill == 1) {
                 $applicant_sid              = $applicant_data['applicant_sid'];
                 $applicant_old_data         = $this->auto_careers_model->fetch_applicant_info($applicant_sid);
-                if (sizeof($applicant_old_data) > 0) {
+                if (!empty($applicant_old_data)) {
                     $applicant_primary_picture  = $applicant_old_data['pictures'];
                     $applicant_primary_resume   = $applicant_old_data['resume'];
                     $applicant_primary_CV       = $applicant_old_data['cover_letter'];
                 }
             }
-            //            
-            function isAllowedDomain($email){
-                $allowedDomains = [
-                    '.com',
-                    '.us',
-                    '.ca',
-                    '.edu',
-                    '.gov',
-                    '.org',
-                    '.net'
-                ];
-                $t = explode('.', trim(strtolower($email)));
-                return (int)in_array('.'.trim($t[count($t) -1]), $allowedDomains);
+            //
+            $response = [];
+            $response['error'] = 'Invalid request';
+            /**
+             * Add report
+             */
+            $this->addReport('AutoCareers', $applicant_data['email']);
+            //
+            if(
+                strpos($applicant_data['email'], '@devnull.facebook.com') !== false || 
+                preg_match('/@(.*).ru/i', $applicant_data['email']) ||
+                !isAllowedDomain($applicant_data['email'])
+            ) {
+                $response['error'] = "Domain Not Valid";
+                sendResponse($response);
+            }
+            // Check for blocked array
+            if($this->db->where('LOWER(applicant_email)', strtolower($applicant_data['email']))->count_all_results('blocked_applicants')){
+                $response['error'] = "Candidate is blocked";
+                sendResponse($response);
             }
             //
-            if(!isAllowedDomain($applicant_data['email'])){ 
-                echo json_encode(['error' => 'Domain Not valid']);
-                exit(0); 
+            if (isset($applicant_data['ip_address']) && !empty($applicant_data['ip_address'])) {
+                $ip_address         = $applicant_data['ip_address'];
+            } else {
+                $ip_address         = '';
             }
+            // Lets check the city and IP
+            if(!empty($ip_address) && empty($applicant_data['country'])){
+                //
+                $ip_details = getIpDetails($ip_address);
+                //
+                if(!empty($ip_details['country_name']) && !in_array(strtolower(trim($ip_details['country_name'])), ['united states', 'canada'])){
+                    $response['error'] = "Candidate not from US/CAN.";
+                    sendResponse($response);
+                }
+            } else if(!empty($applicant_data['country'])){
+                if(!in_array(strtolower(trim($applicant_data['country'])), ['united states', 'canada'])){
+                    $response['error'] = "Candidate not from US/CAN.";
+                    sendResponse($response);
+                }
+            }
+            
             //
             $referer_from           = 'https://auto.careers';
             $job_sid                = $applicant_data['job_sid'];
@@ -110,20 +128,7 @@ class Auto_careers extends CI_Controller
             $state_sid              = $applicant_data['state'];
             $country_sid            = $applicant_data['country'];
             $eeo_form               = $applicant_data['EEO'];
-
-            /**
-             * Add report
-             */
-            $this->addReport('AutoCareers', $applicant_data['email']);
-            //
-            if(strpos($email, '@devnull.facebook.com') !== false) {return;}
-            if(preg_match('/@(.*).ru/i', $email)) {return;}
-
-            if (isset($applicant_data['ip_address']) && !empty($applicant_data['ip_address'])) {
-                $ip_address         = $applicant_data['ip_address'];
-            } else {
-                $ip_address         = '';
-            }
+            
 
             if (isset($applicant_data['user_agent']) && !empty($applicant_data['user_agent'])) {
                 $user_agent         = $applicant_data['user_agent'];
@@ -132,7 +137,6 @@ class Auto_careers extends CI_Controller
             }
 
             // Check if applicant already applied to this job
-           // if($this->auto_careers_model->hasAlreadyApplied($job_sid, $email)) exit(0);
 
             $date_applied   = date('Y-m-d H:i:s');
 
@@ -154,7 +158,6 @@ class Auto_careers extends CI_Controller
                 $video_url = $applicant_data['video_url'];
             }
             
-            // echo '<pre>'; print_r($applicant_data);exit;
 
             if (isset($applicant_data['YouTube_Video_Id']) && !empty($applicant_data['YouTube_Video_Id'])) {
                 $YouTube_Video      = $applicant_data['YouTube_Video_Id'];
@@ -328,12 +331,11 @@ class Auto_careers extends CI_Controller
                 //     $this->auto_careers_model->insert_resume_log($resume_log_data);
                 // }
             }
-
-            //check if the user has already applied for this job
+            
+            // Check if the user has already applied for this job
             $already_applied = $this->auto_careers_model->applicant_list_exists_check($job_applications_sid, $job_sid, $company_sid);
-
+            //
             $company_name = $this->auto_careers_model->getCompanyName($company_sid);
-
             //
             mail('mubashir.saleemi123@gmail.com', 'Auto Careers - Applicant Recieve - ' . date('Y-m-d') . '', print_r([
                 'CID' => $company_sid,
@@ -341,10 +343,9 @@ class Auto_careers extends CI_Controller
                 'APID' => $job_applications_sid,
                 'AAPL' => $already_applied
             ], true));
-
-            echo json_encode(['error'=> "Already applied"]);
-
+            
             if ($already_applied <= 0) {
+                //
                 $insert_new_job = array();
                 $insert_new_job['job_sid']                      = $job_sid;
                 $insert_new_job['company_sid']                  = $company_sid;
@@ -359,8 +360,10 @@ class Auto_careers extends CI_Controller
                 $insert_new_job['resume']                       = $resume_aws_path;
                 $insert_new_job['last_update']                  = date('Y-m-d');
                 $insert_new_job['portal_job_applications_sid']  = $job_applications_sid;
-
+                
                 $portal_applicant_jobs_list_sid = $this->auto_careers_model->add_applicant_job_details($insert_new_job);
+                $response['applicant_sid'] = $job_applications_sid;
+                $response['applicant_job_sid'] = $portal_applicant_jobs_list_sid;
 
                 //
                 //
@@ -402,7 +405,6 @@ class Auto_careers extends CI_Controller
                             $replacement_array['original_job_title'] = $job_details['Title'];
                             $replacement_array['applicant_profile_link'] = $profile_anchor;
                             $rp = $replacement_array;
-                            // log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, 'mubashir.saleemi123@gmail.com', $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
                             log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, $contact['email'], $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
                         }
                         sendMail(REPLY_TO, 'mubashir.saleemi123@gmail.com', 'Auto.Careers Alert', print_r($rp, true), 'Accounts', REPLY_TO);
@@ -418,7 +420,6 @@ class Auto_careers extends CI_Controller
                     $q_passing                                  = 0;
                     $array_questionnaire                        = array();
                     $overall_status                             = 'Pass';
-                    $is_string                                  = 0;
                     $screening_questionnaire_results            = array();
 
                     $post_questionnaire_sid             = $applicant_data['questionnaire_sid'];
@@ -429,7 +430,7 @@ class Auto_careers extends CI_Controller
                     $q_pass_text                        = '';
                     $q_send_fail                        = '';
                     $q_fail_text                        = '';
-                    if (sizeof($post_screening_questionnaires) > 0) {
+                    if (sizeof($post_screening_questionnaires)) {
                         $q_name                             = $post_screening_questionnaires[0]['name'];
                         $q_send_pass                        = $post_screening_questionnaires[0]['auto_reply_pass'];
                         $q_pass_text                        = $post_screening_questionnaires[0]['email_text_pass'];
@@ -554,10 +555,10 @@ class Auto_careers extends CI_Controller
                     $questionnaire_result               = $overall_status;
                     $datetime                           = date('Y-m-d H:i:s');
                     $remote_addr                        = getUserIP();
-                    if (isset($_SERVER['HTTP_USER_AGENT']))
-                        $user_agent                         = $_SERVER['HTTP_USER_AGENT'];
-                    else if (isset($applicant_data['user_agent']))
-                        $user_agent                         = $applicant_data['user_agent'];
+                    if (isset($_SERVER['HTTP_USER_AGENT'])){
+                        $user_agent                         = $_SERVER['HTTP_USER_AGENT'];}
+                    else if (isset($applicant_data['user_agent'])){
+                        $user_agent                         = $applicant_data['user_agent'];}
                     $questionnaire_data = array(
                         'applicant_sid'             => $job_applications_sid,
                         'applicant_jobs_list_sid'   => $portal_applicant_jobs_list_sid,
@@ -643,6 +644,7 @@ class Auto_careers extends CI_Controller
                     $this->auto_careers_model->save_eeo_form($eeo_data_to_insert);
                 }
             } else {
+                $response['error'] = 'Applied';
                 /**
                  * Add report
                  */
@@ -652,6 +654,59 @@ class Auto_careers extends CI_Controller
 
                 $this->auto_careers_model->update_job_related_resume($portal_job_applications_sid, $company_sid, $job_sid, $resume_to_update);
             }
+
+            //
+            sendResponse($response);
+        } else{
+            sendResponse(['error' => 'Invalid request']);
         }
     }
+}
+
+//            
+function isAllowedDomain($email){
+    $allowedDomains = [
+        '.com',
+        '.us',
+        '.ca',
+        '.edu',
+        '.gov',
+        '.org',
+        '.net'
+    ];
+    $t = explode('.', trim(strtolower($email)));
+    return (int)in_array('.'.trim($t[count($t) -1]), $allowedDomains);
+}
+//
+function sendResponse($response){
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit(0);
+}
+//
+function getIpDetails($ip){
+    //
+    $key = getCreds()->AHR->IP->Key;
+    //
+    $curl = curl_init();
+    //
+    curl_setopt_array($curl, array(
+    CURLOPT_URL => "http://api.ipstack.com/{$ip}?access_key={$key}&fields=country_name,%20city,%20latitude,%20longitude,%20region_name&output=json&language=en",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => '',
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => 'GET',
+    ));
+    //
+    $response = json_decode(curl_exec($curl), true);
+    //
+    curl_close($curl);
+    return $response;
+}
+//
+function getCitiesList(){
+    return json_decode(file_get_contents(APPPATH.'../cities.json'), true);
 }

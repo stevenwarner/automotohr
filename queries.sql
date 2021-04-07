@@ -31,3 +31,8 @@ ALTER TABLE `job_fairs_recruitment` CHANGE `visibility_employees` `visibility_em
 ALTER TABLE `learning_center_online_videos` CHANGE `employees_assigned_sid` `employees_assigned_sid` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL, CHANGE `applicants_assigned_sid` `applicants_assigned_sid` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL, CHANGE `department_sids` `department_sids` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
 
 ALTER TABLE `learning_center_online_videos` CHANGE `applicants_assigned_to` `applicants_assigned_to` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'all';
+
+-- State by applied ip
+-- 04/07/2021
+ALTER TABLE `portal_applicant_jobs_list` ADD `ip_state` VARCHAR(70) NULL DEFAULT NULL AFTER `from_indeed`, ADD `ip_city` VARCHAR(70) NULL DEFAULT NULL AFTER `ip_state`;
+ALTER TABLE `portal_applicant_jobs_list` ADD `latitude` VARCHAR(50) NULL AFTER `ip_city`, ADD `longitude` VARCHAR(50) NULL AFTER `latitude`;
