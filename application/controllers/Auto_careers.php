@@ -110,11 +110,6 @@ class Auto_careers extends CI_Controller
                     $response['error'] = "Candidate not from US/CAN.";
                     sendResponse($response);
                 }
-            } else if(!empty($applicant_data['country'])){
-                if(!in_array(strtolower(trim($applicant_data['country'])), ['united states', 'canada'])){
-                    $response['error'] = "Candidate not from US/CAN.";
-                    sendResponse($response);
-                }
             }
             
             //
