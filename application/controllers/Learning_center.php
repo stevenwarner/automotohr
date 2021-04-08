@@ -225,11 +225,12 @@ class Learning_center extends Public_Controller {
                 $applicants_assigned_sid = $applicants_assigned_sid == null || empty($applicants_assigned_sid) ? null : $applicants_assigned_sid;
                 $data_to_insert = array();
                 if($employees_assigned_to == "none"){
+                    $dts = [];
                     $post['departments_assigned_sid'] = 
                     $applicants_assigned_sid = $employees_assigned_sid  = null;
                 }else{
                     if(isset($post['departments_assigned_sid'])){
-                        $data_to_insert['department_sids'] = array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
+                        $dts = $data_to_insert['department_sids'] = array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',');
                     } else{ 
                         $data_to_insert['department_sids'] = NULL;
                     }
@@ -241,8 +242,20 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['video_source'] = $video_source;
                 $data_to_insert['video_id'] = $video_id;
                 //
-                $data_to_insert['employees_assigned_sid'] = empty($employees_assigned_sid) ? '' : implode(',',$employees_assigned_sid);
-                $data_to_insert['applicants_assigned_sid'] = empty($applicants_assigned_sid) ? '' : implode(',',$applicants_assigned_sid);
+                if ($_POST['is_video_expired'] == 'yes') {
+                    $data_to_insert['expired_number'] = $_POST['expired_number'];
+                    $data_to_insert['expired_type'] = $_POST['expired_type'];
+                    $data_to_insert['is_video_expired'] = $_POST['is_video_expired'];
+                    $data_to_insert['expired_start_date'] = date('Y-m-d H:i:s');
+                } else {
+                    $data_to_insert['is_video_expired'] = "no";
+                    $data_to_insert['expired_number'] = null;
+                    $data_to_insert['expired_type'] = null;
+                    $data_to_insert['expired_start_date'] = null;
+                }
+                //
+                $data_to_insert['employees_assigned_sid'] = $employees_assigned_sid;
+                $data_to_insert['applicants_assigned_sid'] = $applicants_assigned_sid;
 
                 $data_to_insert['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
                 $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to == "none" ? "specific" : $applicants_assigned_to;
@@ -255,7 +268,9 @@ class Learning_center extends Public_Controller {
 
                 }else{ 
                     $video_sid = $this->learning_center_model->insert_training_video($data_to_insert);
+                    // $video_sid = $this->db->insert_id();
                 }
+                die();
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
@@ -326,10 +341,8 @@ class Learning_center extends Public_Controller {
                             );
                         }  
 
-                        $employeesList = array_unique(
-                            array_merge($specific_assign_employees, $selected_department_employees),
-                            SORT_REGULAR
-                        );  
+                        $employeesMergeList = array_merge($specific_assign_employees, $selected_department_employees);  
+                        $employeesList = array_unique($employeesMergeList, SORT_REGULAR);
                     }
 
                     if(sizeof($employeesList)){
@@ -410,6 +423,8 @@ class Learning_center extends Public_Controller {
                     $data['selected_departments'] = explode(',', $video['department_sids']);
                 }
                 
+                // _e($data['selected_departments'], true, true);
+                // _e($data['selected_departments'], true, true);
                 $selected_applicants = array();
 
                 if (isset($video['applicants'])) {
@@ -452,6 +467,7 @@ class Learning_center extends Public_Controller {
                 $video_title = $this->input->post('video_title');
                 $video_description = $this->input->post('video_description');
                 $video_source = $this->input->post('video_source');
+                $video_id = $this->input->post('video_id');
                 $employees_assigned_to = $this->input->post('employees_assigned_to');
                 $employees_assigned_sid = $this->input->post('employees_assigned_sid');
                 $applicants_assigned_to = $this->input->post('applicants_assigned_to');
@@ -465,9 +481,9 @@ class Learning_center extends Public_Controller {
 
                 if ($employees_assigned_to == "none") {
                     $this->learning_center_model->delete_all_assign_video_user($video_sid);
-                    $data_to_update['department_sids'] = $employees_assigned_sid = $applicants_assigned_sid = NULL;
+                    $dts = $data_to_update['department_sids'] = $employees_assigned_sid = $applicants_assigned_sid = NULL;
                 } else{
-                    $data_to_update['department_sids'] = isset($post['departments_assigned_sid']) ? 
+                    $dts = $data_to_update['department_sids'] = isset($post['departments_assigned_sid']) ? 
                     (array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',')) : NULL;
                 }
 
@@ -527,6 +543,22 @@ class Learning_center extends Public_Controller {
                         $video_url = 'assets/uploaded_videos/' . $video_source_name[0]['video_id'];
                         unlink($video_url);
                     }
+                }
+
+                if ($_POST['is_video_expired'] == 'yes') {
+                    $check_expiry = $this->learning_center_model->check_video_expiry($video_sid, $_POST['expired_number'], $_POST['expired_type']);
+                    if (empty($check_expiry)) {
+                        $data_to_update['expired_number'] = $_POST['expired_number'];
+                        $data_to_update['expired_type'] = $_POST['expired_type'];
+                        $data_to_update['is_video_expired'] = $_POST['is_video_expired'];
+                        $data_to_update['expired_start_date'] = date('Y-m-d H:i:s');
+                    }
+                    
+                } else {
+                    $data_to_update['is_video_expired'] = "no";
+                    $data_to_update['expired_number'] = null;
+                    $data_to_update['expired_type'] = null;
+                    $data_to_update['expired_start_date'] = null;
                 }
 
                 $data_to_update['company_sid'] = $company_sid;

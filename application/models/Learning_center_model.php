@@ -223,6 +223,7 @@ class Learning_center_model extends CI_Model {
     function get_online_videos_assignments_records($user_type, $video_id) {
         $this->db->where('learning_center_online_videos_sid', $video_id);
         $this->db->where('user_type', $user_type);
+        $this->db->where('status', 1);
         $records_obj = $this->db->get('learning_center_online_videos_assignments');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
@@ -1552,6 +1553,24 @@ class Learning_center_model extends CI_Model {
         $a = $a->free_result();
         //
         return $b;
+    }
+
+    function check_video_expiry($video_sid, $expired_number, $expired_type) {
+        $this->db->select('sid');
+        $this->db->where('sid', $video_sid);
+        $this->db->where('expired_number', $expired_number);
+        $this->db->where('expired_type', $expired_type);
+        $records_obj = $this->db->get('learning_center_online_videos');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
     }
 
 }

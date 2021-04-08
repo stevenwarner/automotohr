@@ -1,0 +1,1 @@
+ALTER TABLE `learning_center_online_videos` ADD `is_video_expired` VARCHAR(5) NOT NULL DEFAULT 'no' AFTER `department_sids`, ADD `expired_number` INT(11) NULL DEFAULT NULL AFTER `is_video_expired`, ADD `expired_type` VARCHAR(10) NULL DEFAULT NULL AFTER `expired_number`, ADD `expired_start_date` DATETIME NULL DEFAULT NULL AFTER `expired_type`;
