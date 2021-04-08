@@ -54,6 +54,7 @@ class Auto_careers extends CI_Controller
             $this->add_applicant($applicant_job_info);
         } else{
             sendResponse(['error' => 'Invalid request']);
+            return;
         }
         
     }
@@ -116,11 +117,13 @@ class Auto_careers extends CI_Controller
             ) {
                 $response['error'] = "Domain Not Valid";
                 sendResponse($response);
+                return;
             }
             // Check for blocked array
             if($this->db->where('LOWER(applicant_email)', strtolower($applicant_data['email']))->count_all_results('blocked_applicants')){
                 $response['error'] = "Candidate is blocked";
                 sendResponse($response);
+                return;
             }
             //
             if (isset($applicant_data['ip_address']) && !empty($applicant_data['ip_address'])) {
@@ -136,6 +139,7 @@ class Auto_careers extends CI_Controller
                 if(!empty($ip_details['country_name']) && !in_array(strtolower(trim($ip_details['country_name'])), ['united states', 'canada'])){
                     $response['error'] = "Candidate not from US/CAN.";
                     sendResponse($response);
+                    return;
                 }
             }
             
@@ -679,13 +683,14 @@ class Auto_careers extends CI_Controller
 
             //
             sendResponse($response);
+            return;
         
     }
 
     //
     function mover(){
         //
-        $dt = date('Ymd');
+        $dt = date('Y_m_d');
         //
         $path = APPPATH."../../applicant/autocareers/*_{$dt}_*.json";
         //
@@ -704,7 +709,6 @@ class Auto_careers extends CI_Controller
 function sendResponse($response){
     header('Content-Type: application/json');
     echo json_encode($response);
-    exit(0);
 }
 //
 function getIpDetails($ip){
