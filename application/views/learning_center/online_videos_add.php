@@ -275,6 +275,49 @@
                                         </div>
                                     </div>
 
+
+                                    <div class="form-group autoheight">
+                                        <label>Would you like the video to be expired after a certain period?</label> &nbsp;&nbsp;
+                                        <label class="control control--radio">
+                                            <input type="radio" class="is_video_expired" name="is_video_expired" value="yes" <?php echo !empty($video['is_video_expired']) && $video['is_video_expired'] == 'yes' ? 'checked="checked"' : ''; ?>/> Yes &nbsp;
+                                            <div class="control__indicator"></div>
+                                        </label>
+                                        <label class="control control--radio">
+                                            <input type="radio" class="is_video_expired" name="is_video_expired" value="no" <?php echo !empty($video['is_video_expired']) && $video['is_video_expired'] == 'no' ? 'checked="checked"' : ''; ?> /> No &nbsp;
+                                            <div class="control__indicator"></div>
+                                        </label>
+                                    </div>
+
+                                    <div class="hr-box " id="video_expired_section" style="display: none;">
+                                        <div class="hr-box-header bg-header-green">
+                                            <span class="pull-left">
+                                                <h1 class="hr-registered">Video Expired Detail</h1>
+                                            </span>
+                                        </div>
+                                        <div class="hr-innerpadding">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <div class="form-group autoheight">
+                                                        <label for="upload_title">Number :<span class="hr-required">*</span></label>
+                                                        <input type="text" name="expired_number" value="<?php echo !empty($video['expired_number']) && $video['expired_number']; ?>" class="form-control" id="expired_number" >
+                                                    </div>
+                                                    <div class="form-group autoheight">
+                                                        <label>Expired type:<span class="hr-required">*</span></label>
+                                                        <div class="hr-select-dropdown">
+                                                            <select class="form-control" name="expired_type" id="expired_type">
+                                                                <option value="0">Please Select type</option>
+                                                                <option <?php echo !empty($video['expired_type']) && $video['expired_type'] == 'day' ? 'selected="selected"' : ''; ?> value="day">Day</option>
+                                                                <option <?php echo !empty($video['expired_type']) && $video['expired_type'] == 'week' ? 'selected="selected"' : ''; ?> value="week">Week</option>
+                                                                <option <?php echo !empty($video['expired_type']) && $video['expired_type'] == 'month' ? 'selected="selected"' : ''; ?> value="month">Month</option>
+                                                                <option <?php echo !empty($video['expired_type']) && $video['expired_type'] == 'year' ? 'selected="selected"' : ''; ?> value="year">Year</option>
+                                                            </select>
+                                                        </div>    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <?php if (!empty($screening_questions)) { ?>
                                         <div class="form-group">
                                             <label>Screening Questionnaire:</label>
@@ -289,19 +332,16 @@
                                         </div>
                                     <?php } ?>
 
-                                    <div class="form-group">
-                                        <label>Send notification email?</label>
-                                        <div>
-                                            <br />
-                                            <label class="control control--radio">
-                                                <input type="radio" name="send_email" value="yes" /> Yes &nbsp;
-                                                <div class="control__indicator"></div>
-                                            </label>
-                                            <label class="control control--radio">
-                                                <input type="radio" name="send_email" value="no" checked="false" /> No &nbsp;
-                                                <div class="control__indicator"></div>
-                                            </label>
-                                        </div>
+                                    <div class="form-group autoheight">
+                                        <label>Send notification email?</label> &nbsp;&nbsp;
+                                        <label class="control control--radio">
+                                            <input type="radio" name="send_email" value="yes" /> Yes &nbsp;
+                                            <div class="control__indicator"></div>
+                                        </label>
+                                        <label class="control control--radio">
+                                            <input type="radio" name="send_email" value="no" checked="false" /> No &nbsp;
+                                            <div class="control__indicator"></div>
+                                        </label>
                                     </div>
                                    
                                     <!----><?php //if ($this->uri->segment(2) == 'edit_online_video') { ?>
@@ -372,50 +412,7 @@
                                             </table>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label>Would you like the video to be expired after a certain period?</label>
-                                            <div>
-                                                <br />
-                                                <label class="control control--radio">
-                                                    <input type="radio" class="is_video_expired" name="is_video_expired" value="yes" <?php echo $video['is_video_expired'] == 'yes' ? 'checked="checked"' : ''; ?>/> Yes &nbsp;
-                                                    <div class="control__indicator"></div>
-                                                </label>
-                                                <label class="control control--radio">
-                                                    <input type="radio" class="is_video_expired" name="is_video_expired" value="no" <?php echo $video['is_video_expired'] == 'no' ? 'checked="checked"' : ''; ?> /> No &nbsp;
-                                                    <div class="control__indicator"></div>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <div class="hr-box" id="video_expired_section" style="display: none;">
-                                            <div class="hr-box-header bg-header-green">
-                                                <span class="pull-left">
-                                                    <h1 class="hr-registered">Video Expired Detail</h1>
-                                                </span>
-                                            </div>
-                                            <div class="hr-innerpadding">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <div class="form-group autoheight">
-                                                            <label for="upload_title">Number :<span class="hr-required">*</span></label>
-                                                            <input type="text" name="expired_number" value="<?php echo $video['expired_number']; ?>" class="form-control" id="expired_number" >
-                                                        </div>
-                                                        <div class="form-group autoheight">
-                                                            <label>Expired type:<span class="hr-required">*</span></label>
-                                                            <div class="hr-select-dropdown">
-                                                                <select class="form-control" name="expired_type" id="expired_type">
-                                                                    <option value="0">Please Select type</option>
-                                                                    <option <?php echo $video['expired_type'] == 'day' ? 'selected="selected"' : ''; ?> value="day">Day</option>
-                                                                    <option <?php echo $video['expired_type'] == 'week' ? 'selected="selected"' : ''; ?> value="week">Week</option>
-                                                                    <option <?php echo $video['expired_type'] == 'month' ? 'selected="selected"' : ''; ?> value="month">Month</option>
-                                                                    <option <?php echo $video['expired_type'] == 'year' ? 'selected="selected"' : ''; ?> value="year">Year</option>
-                                                                </select>
-                                                            </div>    
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        
                                     <!----><?php //} ?>
                                     <!--
                                     <li class="form-col-100 autoheight">
@@ -1080,5 +1077,12 @@
                 $('#add_edit_submit').removeAttr('onClick');
             }
         });
+    });
+
+    // To make sure we get a number
+    $('#expired_number').keyup(function(){
+        $(this).val(
+           $(this).val().trim() != '' ?  $(this).val().replace(/[^0-9]/ig, '') : ''
+        );
     });
 </script>

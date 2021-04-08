@@ -254,8 +254,8 @@ class Learning_center extends Public_Controller {
                     $data_to_insert['expired_start_date'] = null;
                 }
                 //
-                $data_to_insert['employees_assigned_sid'] = $employees_assigned_sid;
-                $data_to_insert['applicants_assigned_sid'] = $applicants_assigned_sid;
+                $data_to_insert['employees_assigned_sid'] = !empty($employees_assigned_sid) ? implode(',', $employees_assigned_sid) : NULL;
+                $data_to_insert['applicants_assigned_sid'] = !empty($applicants_assigned_sid) ? implode(',', $applicants_assigned_sid) : NULL;
 
                 $data_to_insert['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
                 $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to == "none" ? "specific" : $applicants_assigned_to;
@@ -268,9 +268,7 @@ class Learning_center extends Public_Controller {
 
                 }else{ 
                     $video_sid = $this->learning_center_model->insert_training_video($data_to_insert);
-                    // $video_sid = $this->db->insert_id();
                 }
-                die();
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
@@ -1669,8 +1667,6 @@ class Learning_center extends Public_Controller {
                     $user_type = $this->input->post('user_type');
                     $user_sid = $this->input->post('user_sid');
                     $this->session->set_flashdata('message', '<strong>Success:</strong> Video marked as watched!');
-                    echo $data['back_url'].' 1416';
-                    die();
                     redirect($data['back_url']);
                 }
             } else {
