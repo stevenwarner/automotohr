@@ -95,20 +95,7 @@ class Auto_careers extends CI_Controller
              * Add report
              */
             $this->addReport('AutoCareers', $applicant_data['email']);
-            //            
-            function isAllowedDomain($email){
-                $allowedDomains = [
-                    '.com',
-                    '.us',
-                    '.ca',
-                    '.edu',
-                    '.gov',
-                    '.org',
-                    '.net'
-                ];
-                $t = explode('.', trim(strtolower($email)));
-                return (int)in_array('.'.trim($t[count($t) -1]), $allowedDomains);
-            }
+           
             //
             if(
                 strpos($applicant_data['email'], '@devnull.facebook.com') !== false || 
@@ -736,4 +723,19 @@ function getIpDetails($ip){
 //
 function getCitiesList(){
     return json_decode(file_get_contents(APPPATH.'../cities.json'), true);
+}
+
+//            
+function isAllowedDomain($email){
+    $allowedDomains = [
+        '.com',
+        '.us',
+        '.ca',
+        '.edu',
+        '.gov',
+        '.org',
+        '.net'
+    ];
+    $t = explode('.', trim(strtolower($email)));
+return (int)in_array('.'.trim($t[count($t) -1]), $allowedDomains);
 }
