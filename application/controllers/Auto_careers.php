@@ -39,15 +39,28 @@ class Auto_careers extends CI_Controller
         //
         $folder = APPPATH.'../../applicant/autocareers';
         //
-        if(!is_dir($folder)){ mkdir($folder, 0777, true);}
+        if(!is_dir($folder)){ mkdir($folder, 0777, true); }
         // Create json file for all filters job categories
         $categories_file = fopen($folder.'/AutoCareers_Applicant_Recieve_' . date('Y_m_d_H_i_s') . '.json', 'w');
         //
-        fwrite($categories_file, file_get_contents('php://input'));
+        $applicant_job_info         = file_get_contents('php://input');
+        //
+        fwrite($categories_file, $applicant_job_info);
         //
         fclose($categories_file);
         //
-        if ($applicant_job_info         = file_get_contents('php://input')) {
+        if($applicant_job_info){
+            //
+            $this->add_applicant($applicant_job_info);
+        } else{
+            sendResponse(['error' => 'Invalid request']);
+        }
+        
+    }
+
+    //
+    private function add_applicant($applicant_job_info){
+        //
             $video_type                 = '';
             $video_url                  = '';
             $address                    = '';
@@ -193,7 +206,7 @@ class Auto_careers extends CI_Controller
             $job_type    = $job_details['JobType'];
             $company_sid = $job_details['user_sid'];
             
-     
+
 
             if (isset($applicant_data['pictures']) && !empty($applicant_data['pictures'])) { //making Resume file to upload on AWS
                 $base64Data = $applicant_data['pictures']; //Decode pdf content
@@ -655,8 +668,8 @@ class Auto_careers extends CI_Controller
             } else {
                 $response['error'] = 'Applied';
                 /**
-                 * Add report
-                 */
+                * Add report
+                */
                 $this->addReport('AutoCareers', $applicant_data['email'], 'update');
                 $resume_to_update = array();
                 $resume_to_update['resume'] = $resume_aws_path;
@@ -666,9 +679,23 @@ class Auto_careers extends CI_Controller
 
             //
             sendResponse($response);
-        } else{
-            sendResponse(['error' => 'Invalid request']);
+        
+    }
+
+    //
+    function mover(){
+        //
+        $dt = date('Ymd');
+        //
+        $path = APPPATH."../../applicant/autocareers/*_{$dt}_*.json";
+        //
+        $files = glob($path, GLOB_BRACE);
+        //
+        foreach ($files as $file) {
+            $this->add_applicant(file_get_contents($file));
         }
+        echo "All done";
+        exit(0);
     }
 }
 
