@@ -1356,7 +1356,7 @@ if (isset($applicant)) {
                                                                 <strong>Online Videos</strong>
                                                             </div>
                                                             <div class="panel-body"><?php foreach ($videos as $document) { ?>
-                                                                    <article class="listing-article interview-video-listing">
+                                                                    <article class="col-sm-12 listing-article interview-video-listing">
                                                                         <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5">
                                                                             <figure class="assign-video-player">
                                                                                 <?php   if($document['video_source'] == 'youtube') { ?>
