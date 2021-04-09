@@ -5,15 +5,17 @@
             <div class="panel-heading">
                 <ul>
                     <li class="csFirst"><a href="<?=base_url('employee_management_system');?>" class="btn btn-orange" title="Go to dasboard" placement="top"><i
-                                class="fa fa-dashboard"></i> Dashboard</a></li>
+                                aria-hidden="true" class="fa fa-dashboard"></i> Dashboard</a></li>
                     <li><a href="" class="btn btn-orange jsHolidays" title="Show company holidays" placement="top"><i
-                                class="fa fa-calendar-o"></i> Holidays</a></li>
+                                aria-hidden="true" class="fa fa-calendar-o"></i> Holidays</a></li>
                     <li><a href="" class="btn btn-orange jsCalendarView" title="Show calendar" placement="top"><i
-                                class="fa fa-calendar"></i> Calendar</a></li>
+                                aria-hidden="true" class="fa fa-calendar"></i> Calendar</a></li>
                     <?php if($level == 1) { ?>
                     <li><a href="" class="btn btn-orange jsCreateRequest" id="jsCreateTimeOffForEmployee" title="Create a time off" placement="top"><i
-                                class="fa fa-plus-circle"></i> Create a time off</a></li>
+                                aria-hidden="true" class="fa fa-plus-circle"></i> Create a time off</a></li>
                     <?php } ?>
+                <li><a href="" class="btn btn-orange jsReport" title="Download Report" placement="top"><i
+                                aria-hidden="true" class="fa fa-area-chart"></i> Report</a></li>
                     <li class="toRight" style="margin-right: 5px;"><a href="" class="csTabAnchor jsTeamShiftTab"
                             title="Show time offs for my team members" placement="top" data-key="0">All Time-off</a></li>
                     <li class="toRight"><a href="" class="csTabAnchor jsTeamShiftTab active" title="Show my time offs"

@@ -588,11 +588,7 @@ class Time_off extends Public_Controller
         //
         $this->load->view('timeoff/includes/on_boarding_header', $data);
 
-        // if ($this->theme == 1) {
-        //     $this->load->view('timeoff/lms/'.( $this->prefix ).'index');
-        // } else if ($this->theme == 2) {
-            $this->load->view('timeoff/lms/new_index');
-        // }
+        $this->load->view('timeoff/lms/new_index');
         
         $this->load->view('main/footer');
     }
@@ -909,6 +905,48 @@ class Time_off extends Public_Controller
         $this->load->view('main/header', $data);
         $this->load->view('timeoff/export');
         $this->load->view('main/footer');
+    }
+    
+    
+    /**
+     * Report
+     */
+    public function report()
+    {
+        $data = array();
+        $this->check_login($data);
+        //
+        $data['page'] = 'view';
+        $data['title'] = 'Report::time-off';
+        //
+        $data['company_employees'] = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($data['company_sid']);
+        $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
+        $data['theme'] = $this->theme;
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('timeoff/report');
+        $this->load->view('main/footer');
+    }
+    
+    
+    /**
+     * Print & Download Report
+     */
+    public function pd_report($action, $employeeId)
+    {
+        $data = array();
+        $this->check_login($data);
+        //
+        $data['title'] = 'Report::time-off';
+        //
+        $data['data'] = $this->timeoff_model->getEmployeesTimeOff(
+            $data['company_sid'],
+            strpos($employeeId, ',') !== false ? explode(',', $employeeId) : $employeeId,
+            $this->input->get('start', true),
+            $this->input->get('end', true)
+        );
+        //
+        $this->load->view('timeoff/'.(strtolower(trim($action))).'_report', $data);
     }
 
 
@@ -6002,5 +6040,18 @@ class Time_off extends Public_Controller
         //     _e($policy['RemainingTime']['text']);
         // }
         //
+    }
+
+
+    //
+    function getTimeOffs($employeeId){
+        //
+        $data = array();
+        $this->check_login($data);
+        //
+        header('Content-Type: application/json');
+        //
+        echo json_encode( $this->timeoff_model->getMyTimeOffs($data['company_sid'], $employeeId) );
+        exit(0);
     }
 }

@@ -749,10 +749,10 @@ canvas {
 
 .csModal .csModalButtonWrap button,
 .csModal .csModalButtonWrap a {
-    border-radius: 100px !important;
-    -webkit-border-radius: 100px !important;
-    -moz-border-radius: 100px !important;
-    -o-border-radius: 100px !important;
+    border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    -o-border-radius: 5px !important;
 }
 
 
@@ -903,7 +903,7 @@ canvas {
 }
 
 .csSeparator .csFix button {
-    border-radius: 100px !important;
+    border-radius: 5px !important;
     border: 1px solid #ddd;
 }
 
@@ -964,10 +964,10 @@ a.btn-orange,
 button.btn-orange {
     background-color: #fd7a2a;
     color: #fff;
-    border-radius: 100px !important;
-    -webkit-border-radius: 100px !important;
-    -moz-border-radius: 100px !important;
-    -o-border-radius: 100px !important;
+    border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    -o-border-radius: 5px !important;
 }
 
 a.btn-orange:hover,
@@ -980,20 +980,20 @@ button.btn-orange:focus {
 
 button.btn-theme,
 a.btn-theme {
-    border-radius: 100px !important;
-    -webkit-border-radius: 100px !important;
-    -moz-border-radius: 100px !important;
-    -o-border-radius: 100px !important;
+    border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    -o-border-radius: 5px !important;
 }
 
 a.btn-black,
 button.btn-black {
     background-color: #555555;
     color: #fff;
-    border-radius: 100px !important;
-    -webkit-border-radius: 100px !important;
-    -moz-border-radius: 100px !important;
-    -o-border-radius: 100px !important;
+    border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    -o-border-radius: 5px !important;
 }
 
 a.btn-black:hover,
@@ -1047,10 +1047,10 @@ button.btn-black:focus {
 }
 
 .csRadius100 {
-    border-radius: 100px !important;
-    -webkit-border-radius: 100px !important;
-    -moz-border-radius: 100px !important;
-    -o-border-radius: 100px !important;
+    border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    -o-border-radius: 5px !important;
 }
 
 .csShadow {
@@ -1065,15 +1065,15 @@ button.btn-black:focus {
 .wrapper-outer .select2-container--default .select2-selection--single,
 .wrapper-outer .select2-container--default .select2-selection--multiple,
 .wrapper-outer .select2-container--default.select2-container--focus .select2-selection--multiple {
-    border-radius: 100px;
-    -webkit-border-radius: 100px;
-    -moz-border-radius: 100px;
-    -o-border-radius: 100px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
 }
 
 .select2-container--default.select2-container--open.select2-container--below .select2-selection--single,
 .select2-container--default.select2-container--open.select2-container--below .select2-selection--multiple {
-    border-radius: 100px !important;
+    border-radius: 5px !important;
 }
 
 .select2-container .select2-selection--single .select2-selection__rendered {
@@ -1089,24 +1089,24 @@ button.btn-black:focus {
 .select2-container .select2-selection--single {
     height: auto !important;
     /* height: 34px !important; */
-    border-radius: 100px;
-    -webkit-border-radius: 100px;
-    -moz-border-radius: 100px;
-    -o-border-radius: 100px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
 }
 
 .select2-container--default .select2-selection--multiple {
-    border-radius: 100px;
-    -webkit-border-radius: 100px;
-    -moz-border-radius: 100px;
-    -o-border-radius: 100px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
-    border-radius: 100px;
-    -webkit-border-radius: 100px;
-    -moz-border-radius: 100px;
-    -o-border-radius: 100px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
     background-color: #fd7a2a;
     border-color: #fd7a2a;
     color: #ffffff;

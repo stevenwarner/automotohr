@@ -117,6 +117,11 @@ let
         <script src="<?=base_url('assets/timeoff/js_theme_1/dashboard/dashboard'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
         <script src="<?=base_url('assets/timeoff/js_theme_1/breakdown'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
     <?php endif; ?>
+    
+    <?php if(in_array('report', $this->uri->segment_array())): ?>
+        <!-- For ems employee -->
+        <script src="<?=base_url('assets/timeoff/js_theme_1/report'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+    <?php endif; ?>
 <?php } else if (isset($theme) && $theme == 2) { ?>
     <!-- Common functions -->
     <script src="<?=base_url('assets/timeoff/js_theme_2/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
@@ -201,5 +206,9 @@ let
         <!-- For ems employee -->
         <script src="<?=base_url('assets/timeoff/js_theme_2/dashboard/dashboard'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
         <script src="<?=base_url('assets/timeoff/js_theme_2/breakdown'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+    <?php endif; ?>
+    <?php if(in_array('report', $this->uri->segment_array())): ?>
+        <!-- For ems employee -->
+        <script src="<?=base_url('assets/timeoff/js_theme_2/report'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
     <?php endif; ?>
 <?php } ?>

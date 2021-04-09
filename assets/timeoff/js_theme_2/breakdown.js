@@ -19,22 +19,22 @@ $(function() {
                                 async() => {
                                     //
                                     let bodyText = `
-            <div>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Policy</th>
-                            <th>Allowed Time</th>
-                            <th>Consumed Time</th>
-                            <th>Remaining Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="jsEmployeePolicyModalBody"></tbody>
-                </table>
-            </div>
-            </div>
-            `;
+										<div>
+										<div class="table-responsive">
+											<table class="table table-striped">
+												<thead>
+													<tr>
+														<th>Policy</th>
+														<th>Allowed Time</th>
+														<th>Consumed Time</th>
+														<th>Remaining Time</th>
+													</tr>
+												</thead>
+												<tbody id="jsEmployeePolicyModalBody"></tbody>
+											</table>
+										</div>
+										</div>
+										`;
 
                                     $("#breakdownModal").find(".csModalBody").append(bodyText);
                                     // Get employee policies

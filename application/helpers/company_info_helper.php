@@ -1958,8 +1958,6 @@ if (!function_exists('get_pto_user_access')) {
         $user_status = get_this_user_status($user_sid);
         $is_access_level_plus = $user_status['access_level_plus'];
         $is_pay_roll = $user_status['pay_plan_flag'];
-        // $is_supervisor = get_department_status($company_sid, $user_sid, 'supervisor');
-        // $is_team_lead = get_department_status($company_sid, $user_sid, 'team_lead');
         $is_approver = is_approver($company_sid, $user_sid);
 
         $return_access_array = array();
@@ -1981,56 +1979,8 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_type'] = 1;
             $return_access_array['time_off_policies'] = 1;
             $return_access_array['time_off_policy_overwrite'] = 1;
-            $return_access_array['time_off_policy_overwrite'] = 0;
-        }
-        // } else if ($is_pay_roll == 1) {
-
-        //     $return_access_array['url'] = base_url('timeoff/requests');
-        //     $return_access_array['dashboard'] = 1;
-        //     $return_access_array['quick_link'] = 1;
-        //     $return_access_array['create_time_off'] = 0;
-        //     $return_access_array['time_off_request'] = 1;
-        //     $return_access_array['time_off_balance'] = 1;
-        //     $return_access_array['time_off_report'] = 1;
-        //     $return_access_array['import_time_off'] = 0;
-        //     $return_access_array['export_time_off'] = 0;
-        //     $return_access_array['time_off_setting'] = 0;
-        //     $return_access_array['time_off_approver'] = 0;
-        //     $return_access_array['company_holiday'] = 0;
-        //     $return_access_array['time_off_type'] = 0;
-        //     $return_access_array['time_off_policies'] = 0;
-        //     $return_access_array['time_off_policy_overwrite'] = 0;
-
-        // } 
-        // else if ($is_supervisor || $is_team_lead) {
-        //     //
-        //     // $members = [];
-        //     // if(is_array($is_supervisor)) $members = $is_supervisor;
-        //     // if(is_array($is_team_lead)) $members = array_merge($members, $is_team_lead);
-        //     // //
-        //     // $_SESSION['TeamMembers'] = $members;
-        //     // //
-        //     // $members = array_unique($members, SORT_REGULAR);
-        //     //
-        //     $return_access_array['url'] = base_url('timeoff/requests');
-        //     $return_access_array['dashboard'] = 1;
-        //     $return_access_array['quick_link'] = 1;
-        //     $return_access_array['create_time_off'] = 1;
-        //     $return_access_array['time_off_request'] = 1;
-        //     $return_access_array['time_off_balance'] = 1;
-        //     $return_access_array['time_off_report'] = 1;
-        //     $return_access_array['import_time_off'] = 0;
-        //     $return_access_array['export_time_off'] = 0;
-        //     $return_access_array['time_off_setting'] = 0;
-        //     $return_access_array['time_off_approver'] = 0;
-        //     $return_access_array['company_holiday'] = 0;
-        //     $return_access_array['time_off_type'] = 0;
-        //     $return_access_array['time_off_policies'] = 0;
-        //     $return_access_array['time_off_policy_overwrite'] = 0;
-        //     // $return_access_array['team_members'] = $members;
-        // }
-         else if ($is_approver) {
-            // $_SESSION['TeamMembers'] = $is_approver;
+            $return_access_array['report'] = 1;
+        } else if ($is_approver) {
             //
             $return_access_array['url'] = base_url('timeoff/requests');
             $return_access_array['dashboard'] = 1;
@@ -2047,7 +1997,7 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_type'] = 0;
             $return_access_array['time_off_policies'] = 0;
             $return_access_array['time_off_policy_overwrite'] = 0;
-            // $return_access_array['team_members'] = $is_approver;
+            $return_access_array['report'] = 0;
         } else {
             $return_access_array['url'] = base_url('dashboard');
             $return_access_array['dashboard'] = 0;
@@ -2064,8 +2014,9 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_type'] = 0;
             $return_access_array['time_off_policies'] = 0;
             $return_access_array['time_off_policy_overwrite'] = 0;
+            $return_access_array['report'] = 0;
         }
-
+        
         return $return_access_array; 
     }
 }

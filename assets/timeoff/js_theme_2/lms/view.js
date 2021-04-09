@@ -612,7 +612,7 @@ $(function() {
 
         $(".csContentWrap").html(rows);
         //
-        $('.jsTooltip').tooltip({ placement: 'top' });
+        $('.jsTooltip').tooltip({ placement: 'top', trigger: 'hover' });
         //
         $(".jsCommentsPopover").popover({
             html: true,
@@ -930,4 +930,64 @@ $(function() {
         return comments;
     }
 
+     //
+     $('.jsReport').click(function(e){
+        //
+        e.preventDefault();
+        //
+        Modal({
+            Id: "jsReportModal",
+            Title: "My time-off Report",
+            Loader: "jsReportModalLoader",
+            Body: `<div class="row">
+            <div class="col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label>Select Period</label>
+                    <div class="row">
+                        <div class="col-sm-2 col-xs-12">
+                            <input type="text" id="jsReportStartDate" class="form-control" readonly />
+                        </div>
+                        <div class="col-sm-1 col-xs-12 hidden-xs">
+                            <p class="text-center"><i class="fa fa-minus" aria-hidden="true"></i></p>
+                        </div>
+                        <div class="col-sm-2 col-xs-12">
+                            <input type="text" id="jsReportEndDate" class="form-control" readonly />
+                        </div>
+                        <div class="col-sm-5 col-xs-12">
+                            <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/print/'+(employeeId)+''}"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print</button>
+                            <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/download/'+(employeeId)+''}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`
+        }, function(){
+            //
+            ml(false, 'jsReportModalLoader');
+            //
+            $('#jsReportStartDate').datepicker({
+                format: 'm/d/y',
+                changeMonth: true,
+                changeYear: true,
+                onSelect: function(d){
+                    $('#jsReportEndDate').datepicker('option', 'minDate', d);
+                }
+            });
+            //
+            $('#jsReportEndDate').datepicker({
+                format: 'm/d/y',
+                changeMonth: true,
+                changeYear: true
+            });
+            //
+            $('.jsReportLink').click(function(c){
+                //
+                c.preventDefault();
+                let startDate = $('#jsReportStartDate').val() ||'all',
+                endDate = $('#jsReportEndDate').val() || 'all';
+                //
+                window.open($(this).data('href')+'?start='+(startDate)+'&end='+(endDate)+'');
+            });
+        });
+    });
 });
