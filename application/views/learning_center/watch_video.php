@@ -1,13 +1,34 @@
 
 <?php if (!$load_view) { ?>
 
+<?php 
+function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue = '', $isSelect = false){
+    //
+    if(!isset($answers_given[$question])){ return ''; }
+    //
+    if($doReturn){
+        return $answers_given[$question]['answer'];
+    }
+    //
+    $rt = 'checked="checked"';
+    //
+    if(is_array($answers_given[$question]['answer'])){
+        if(in_array((int) trim($compareValue), array_values($answers_given[$question]['answer']))){
+            return $rt;
+        } else{
+            return '';
+        }
+    } else if(trim($answers_given[$question]['answer']) == trim($compareValue)){
+        return $isSelect ? 'selected="true"' : $rt;
+    }
+}
+    
+?>
+
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
             <div class="row">
-<!--                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">-->
-<!--                    --><?php //$this->load->view('main/employer_column_left_view'); ?>
-<!--                </div>-->
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
                     <?php if($top_view) {
                         $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top');
@@ -48,11 +69,25 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area margin-top">
                                 <span class="page-heading down-arrow">
-                                    <a class="dashboard-link-btn" href="<?php echo $back_url; ?>"><i class="fa fa-chevron-left"></i>Online Videos</a>
+                                    <a class="dashboard-link-btn" href="<?php echo $back_url; ?>"><i class="fa fa-chevron-left" aria-hidden="true"></i>Online Videos</a>
                                     <?php echo $title; ?>
                                 </span>
                             </div>
 
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="hr-box">
+                                <div class="hr-innerpadding">
+                                    <strong style="font-size: 20px;"><?php echo $video['video_title']; ?><span class="pull-right">
+                                        <button class="btn btn-danger" id="jsRevokeVideo"><i class="fa fa-times-circle" style="font-size: 14px;" aria-hidden="true"></i>&nbsp;Revoke Video</button>
+                                    </span></strong>
+                                    <p><?php echo $video['video_description']; ?></p>
+                                    
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -75,18 +110,83 @@
                             </div>
                         </div>
                     </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="hr-box">
-                                <div class="hr-innerpadding">
-                                    <strong style="font-size: 20px;"><?php echo $video['video_title']; ?></strong>
-                                    <p><?php echo $video['video_description']; ?></p>
+                    <?php 
+                    if(!empty($job_details)) {
+                        ?>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="hr-box">
+                                    <div class="hr-innerpadding">
+                                        <div class="pull-left">
+                                            <strong style="font-size: 20px;">Video watch status: </strong><span style="font-size: 20px;"> <?php echo empty($assignment['watched']) || $assignment['watched'] == 0 ? "Pending" : "Watched"; ?></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="pull-right">
+                                            <strong style="font-size: 20px;">Questionnaire Result: </strong><span style="font-size: 20px;" class="<?=$questionnaire_result == 'Pass' ? 'text-success' : 'text-danger'; ?>"> <?php echo empty($questionnaire_result) ? "Pending" : $questionnaire_result; ?></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <hr />
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="hr-box">
+                                    <div class="hr-innerpadding">
+                                        <strong style="font-size: 20px;">Questionnaire</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                        //
+                        $questionId = $job_details['my_id'];
+                        foreach($job_details[$questionId] as $question){
+                            //
+                            $answer = isset($job_details['q_answer_'.$question['questions_sid']]) ? $job_details['q_answer_'.$question['questions_sid']] : [];
+                        ?>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="hr-box">
+                                        <div class="hr-innerpadding">
+                                            <label><?=$question['caption'];?></label> <br />
+                                            <?php if($question['question_type'] == 'boolean') {
+                                                foreach($answer as $a){ ?>
+                                                <label class="control control--radio">
+                                                    <input type="radio" disabled <?=getAnswer($answers_given[0], $question['caption'], false, $a['value']);?> /><?=$a['value'];?>
+                                                    <div class="control__indicator"></div>
+                                                </label> &nbsp;
+                                            <?php 
+                                                }
+                                            } else if($question['question_type'] == 'string') { ?>
+                                            <textarea class="form-control" disabled><?=getAnswer($answers_given[0], $question['caption'], true);?></textarea>
+                                            <?php } else if($question['question_type'] == 'list') { ?>
+                                            <select class="form-control" disabled>
+                                                <option value="">Please Select</option>
+                                                <?php 
+                                                 foreach($answer as $a){ ?>
+                                                    <option value="<?=$a['value'];?>" <?=getAnswer($answers_given[0], $question['caption'], false, $a['value'], true);?>><?=$a['value'];?></option>
+                                                <?php } ?>
+                                            </select>
+                                            <?php } else if($question['question_type'] == 'multilist'){
+                                                foreach($answer as $a){ 
+                                                ?>
+                                                <label class="control control--checkbox">
+                                                    <input type="checkbox" disabled <?=getAnswer($answers_given[0], $question['caption'], false, $a['value']);?> /><?=$a['value'];?>
+                                                    <div class="control__indicator"></div>
+                                                </label> 
+                                                <?php
+                                                }
+                                            } ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    <?php
+                        }
+                    } ?>
+
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4"></div>
                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
@@ -96,11 +196,6 @@
                                 <input type="hidden" id="user_type" name="user_type" value=<?= $user_type?> />
                                 <input type="hidden" id="user_sid" name="user_sid" value="<?php echo $employer_sid; ?>" />
                             </form>
-                            <?php if($assignment['watched'] == 0) { ?>
-<!--                                <button type="button" class="btn btn-success btn-block" onclick="func_mark_video_as_watched();">Mark as Watched</button>-->
-                            <?php } else { ?>
-<!--                                <button type="button" class="btn btn-success btn-block disabled" disabled="disabled">Watched on --><?php //echo DateTime::createFromFormat('Y-m-d H:i:s', $assignment['date_watched'])->format('m-d-Y h:i A'); ?><!--</button>-->
-                            <?php } ?>
                         </div>
                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4"></div>
                     </div>
@@ -126,6 +221,42 @@
             }
         );
     }
+
+    $(function(){
+        $('#jsRevokeVideo').click(function(event){
+            //
+            event.preventDefault();
+            //
+            alertify.confirm(
+                "This action will remove the <?=$user_type;?> from this video and remove the saved data.",
+                function(){
+                    revokeVideoAccess();
+                }
+            ).setHeader('Confirm!').set('label', {
+                ok: "Yes",
+                cancel: "No"
+            });
+        });
+
+        //
+        function revokeVideoAccess(){
+            $.post("<?=base_url("learning_center/video_access");?>", {
+                action: 'revoke',
+                userId: <?=$employer_sid;?>,
+                userType: "<?=$user_type;?>",
+                videoId: "<?=$video['sid'];?>"
+            }).done(function(resp){
+                //
+                if(resp == 'success'){
+                    alertify.alert('Success!', "You have successfully removed this <?=$user_type;?> from video.", function(){
+                        window.location.href = "<?=base_url('/learning_center/my_learning_center/'.($employer_sid).'');?>"
+                    });
+                } else{
+                    alertify.alert('Warning!', "Something went wrong. Please, try again in a few moments.");
+                }
+            });
+        }
+    });
 </script>
 
 <?php } else { ?>

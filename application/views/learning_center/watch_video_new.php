@@ -137,7 +137,7 @@ if (isset($applicant)) {
                             </div>
                         <?php } ?>
                         
-                        <?php if(isset($job_details) && sizeof($job_details)>0) { ?>
+                        <?php if(!empty($job_details)) { ?>
                             <div class="row" id="que-div" style="display : none">
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="hr-box">

@@ -1282,3 +1282,6 @@ $route['performance-management/employee/review/(:num)/(:num)/(:num)'] = 'Perform
 $route['sync_jobs']['cli'] = 'Testing/sj';
 $route['sync_applicants']['cli'] = 'Testing/sja';
 $route['sync_applicant_jobs']['cli'] = 'Testing/sajl';
+
+// LEarning center revoke / assign routes
+$route['learning_center/video_access']['post'] = 'Learning_center/video_access';

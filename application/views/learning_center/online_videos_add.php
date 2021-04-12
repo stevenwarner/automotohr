@@ -560,8 +560,7 @@
         //
         $('#video_start_date').datepicker({
             dateFormat: 'mm-dd-yy',
-            setDate: new Date(),
-            minDate: new Date()
+            setDate: new Date()
         });
     });
 
@@ -959,14 +958,12 @@
                         alertify.alert('Error','please select any type.');
                         return false;
                     }
+                    if (expired_number == undefined || expired_number == 0 || expired_number == '') {
+                        flag = 1;
+                        alertify.alert('Error','Please select video start date.');
+                        return false;
+                    } 
                 }
-
-                var start_date = $('#video_start_date').val();
-                if (expired_number == undefined || expired_number == 0 || expired_number == '') {
-                    flag = 1;
-                    alertify.alert('Error','Please select video start date.');
-                    return false;
-                } 
 
                 if(flag == 0){
                     $('#my_loader').show(); 
