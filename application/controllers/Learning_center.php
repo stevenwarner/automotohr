@@ -241,6 +241,7 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['video_description'] = $video_description;
                 $data_to_insert['video_source'] = $video_source;
                 $data_to_insert['video_id'] = $video_id;
+                $data_to_insert['video_start_date'] = date('Y-m-d', strtotime($_POST['video_start_date']));
                 //
                 if ($_POST['is_video_expired'] == 'yes') {
                     $data_to_insert['expired_number'] = $_POST['expired_number'];
@@ -257,6 +258,7 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['employees_assigned_sid'] = !empty($employees_assigned_sid) ? implode(',', $employees_assigned_sid) : NULL;
                 $data_to_insert['applicants_assigned_sid'] = !empty($applicants_assigned_sid) ? implode(',', $applicants_assigned_sid) : NULL;
 
+
                 $data_to_insert['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
                 $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to == "none" ? "specific" : $applicants_assigned_to;
                 $data_to_insert['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
@@ -269,6 +271,7 @@ class Learning_center extends Public_Controller {
                 }else{ 
                     $video_sid = $this->learning_center_model->insert_training_video($data_to_insert);
                 }
+
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
@@ -571,6 +574,7 @@ class Learning_center extends Public_Controller {
                 $data_to_update['employees_assigned_sid'] = !empty($employees_assigned_sid) ? implode(',', $employees_assigned_sid) : '';
                 $data_to_update['screening_questionnaire_sid'] = $questionnaire_sid;
                 $data_to_update['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
+                $data_to_update['video_start_date'] = date('Y-m-d', strtotime($_POST['video_start_date']));
                
                 $this->learning_center_model->update_training_video($video_sid, $data_to_update);
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
