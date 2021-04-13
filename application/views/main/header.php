@@ -1276,7 +1276,7 @@
                                                             </a>
                                                         </li>
                                                     <?php  } ?>
-                                                    <?php if (checkIfAppIsEnabled('goals') ) { ?>
+                                                    <?php if (checkIfAppIsEnabled('performance_review') ) { ?>
                                                         <li>
                                                             <?php $get_data = $this->session->userdata('logged_in'); ?>
                                                             <a href="<?php echo base_url('performance-management/goals'); ?>">
