@@ -1444,7 +1444,7 @@ class Learning_center extends Public_Controller {
                 $data['employee'] = $data['session']['employer_detail'];
                 $this->form_validation->set_rules('perform_action', 'preform_action', 'required|trim');
                 $video = $this->learning_center_model->get_single_online_video($video_sid, $company_sid);
-                $assignment = $this->learning_center_model->get_video_assignment('employee', $employer_sid, $video_sid, $company_sid);
+                $assignment = $this->learning_center_model->get_video_assignment($user_type, $employer_sid, $video_sid, $company_sid);
                 $data['attempt_status'] = $assignment['attempt_status'];
 
                 if ($assignment['attempt_status']) {
