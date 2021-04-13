@@ -67,7 +67,7 @@ class Department_management extends Public_Controller {
 
             if ($this->form_validation->run() == false) {
                 // Get this and all department approvers
-                $approvers = empty($department_sid) ? [] : $this->department_management_model->getApprovers($company_sid, $department_sid, 1);
+                $approvers = empty($department_sid) || $department_sid == null ? [] : $this->department_management_model->getApprovers($company_sid, $department_sid, 1);
                 //
                 if(isset($department) && !empty($approvers)){
                     $data['department']['approvers'] = implode(',',
@@ -252,7 +252,7 @@ class Department_management extends Public_Controller {
 
             if ($this->form_validation->run() == false) {
                  // Get this and all department approvers
-                 $approvers = empty($department_sid) ? [] : $this->department_management_model->getApprovers($company_sid, $department_sid, 0);
+                 $approvers = empty($team_sid) || $team_sid == null ? [] : $this->department_management_model->getApprovers($company_sid, $team_sid, 0);
                  //
                  if(isset($department) && !empty($approvers)){
                     $data['team']['approvers'] = implode(',',
