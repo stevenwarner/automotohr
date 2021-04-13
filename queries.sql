@@ -36,3 +36,12 @@ ALTER TABLE `learning_center_online_videos` CHANGE `applicants_assigned_to` `app
 -- 04/07/2021
 ALTER TABLE `portal_applicant_jobs_list` ADD `ip_state` VARCHAR(70) NULL DEFAULT NULL AFTER `from_indeed`, ADD `ip_city` VARCHAR(70) NULL DEFAULT NULL AFTER `ip_state`;
 ALTER TABLE `portal_applicant_jobs_list` ADD `latitude` VARCHAR(50) NULL AFTER `ip_city`, ADD `longitude` VARCHAR(50) NULL AFTER `latitude`;
+
+-- LMS
+-- 04/12/2021
+ALTER TABLE `learning_center_online_videos` ADD `is_video_expired` VARCHAR(5) NOT NULL DEFAULT 'no' AFTER `department_sids`, 
+ADD `expired_number` INT(11) NULL DEFAULT NULL AFTER `is_video_expired`, 
+ADD `expired_type` VARCHAR(10) NULL DEFAULT NULL AFTER `expired_number`, 
+ADD `expired_start_date` DATETIME NULL DEFAULT NULL AFTER `expired_type`;
+ALTER TABLE `learning_center_online_videos` ADD `video_start_date` DATE NULL DEFAULT NULL AFTER `sent_email`;
+ALTER TABLE `learning_center_online_videos_assignments` ADD `is_deleted` TINYINT(1) NOT NULL DEFAULT '0' AFTER `completed`, ADD `deleted_at` DATETIME NULL DEFAULT NULL AFTER `is_deleted`;

@@ -223,6 +223,7 @@ class Learning_center_model extends CI_Model {
     function get_online_videos_assignments_records($user_type, $video_id) {
         $this->db->where('learning_center_online_videos_sid', $video_id);
         $this->db->where('user_type', $user_type);
+        $this->db->where('status', 1);
         $records_obj = $this->db->get('learning_center_online_videos_assignments');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
@@ -324,16 +325,28 @@ class Learning_center_model extends CI_Model {
         return $records_arr;
     }
 
-    function get_my_all_online_videos($user_type, $user_sid, $company_sid) {
+    function get_my_all_online_videos($user_type, $user_sid, $company_sid, $fromProfile = false) {
         // Get all employees
         $this->db->select('sid, created_date, video_title, video_description, video_source, video_id')
+        ->select('learning_center_online_videos.video_start_date')
+        ->select('learning_center_online_videos.expired_start_date')
         ->where('company_sid', $company_sid)
         ->where('employees_assigned_to', 'all')
         ->order_by('created_date', 'DESC');
         //
+        if(!$fromProfile){
+            $this->db
+            ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
+            ->group_start()
+            ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
+            ->or_where('expired_start_date IS NULL', NULL)
+            ->group_end();
+        }
+        //
         $a = $this->db->get('learning_center_online_videos');
         $b = $a->result_array();
         $a->free_result();
+
         //
         $ids = array();
         //
@@ -342,24 +355,35 @@ class Learning_center_model extends CI_Model {
         $r = $b;
 
         // Get specific employees
-        $a = $this->db->select('learning_center_online_videos.sid')
+        $this->db->select('learning_center_online_videos.sid')
         ->select('learning_center_online_videos.created_date')
         ->select('learning_center_online_videos.video_title')
         ->select('learning_center_online_videos.video_description')
         ->select('learning_center_online_videos.video_source')
         ->select('learning_center_online_videos.video_id')
+        ->select('learning_center_online_videos.video_start_date')
+        ->select('learning_center_online_videos.expired_start_date')
         ->select('learning_center_online_videos_assignments.learning_center_online_videos_sid')
         ->where('learning_center_online_videos_assignments.user_type', $user_type)
         ->where('learning_center_online_videos_assignments.user_sid', $user_sid)
         ->where('learning_center_online_videos_assignments.status', 1)
         ->order_by('learning_center_online_videos_assignments.date_assigned', 'DESC')
-        ->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid', 'left')
-        ->get('learning_center_online_videos_assignments');
+        ->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid');
         //
+        if(!$fromProfile){
+            $this->db
+            ->where('learning_center_online_videos.video_start_date <= ', date('Y-m-d', strtotime('now')))
+            ->group_start()
+            ->where('learning_center_online_videos.expired_start_date >= ', date('Y-m-d', strtotime('now')))
+            ->or_where('learning_center_online_videos.expired_start_date IS NULL', NULL)
+            ->group_end();
+        }
+        //
+        $a = $this->db->get('learning_center_online_videos_assignments');
         $b = $a->result_array();
         $a->free_result();
         //
-        if(sizeof($b)) foreach ($b as $k => $v) $ids[$v['sid']] = $v['sid'];
+        if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
         //
         $r = array_merge($r, $b);
         //
@@ -496,7 +520,19 @@ class Learning_center_model extends CI_Model {
         $this->db->where('learning_center_online_videos_sid', $video_sid);
         $this->db->set('duration', $video_duration);
         $this->db->set('completed', 1);
-        $this->db->update('learning_center_online_videos_assignments');
+        return $this->db->update('learning_center_online_videos_assignments');
+    }
+    
+    
+    function setVideoAsWatched($user_type, $user_sid, $video_sid) {
+
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('learning_center_online_videos_sid', $video_sid);
+        $this->db->set('watched', 1);
+        $this->db->set('date_watched', date('Y-m-d H:i:s', strtotime('now')));
+        $this->db->set('completed', 1);
+        return $this->db->update('learning_center_online_videos_assignments');
     }
 
     function get_video_assignment($user_type, $user_sid, $video_sid, $company_sid = NULL) {
@@ -509,9 +545,11 @@ class Learning_center_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if(sizeof($b)) return $b;
+        if(sizeof($b)) {return $b;}
         //
-        if($company_sid == NULL) return 0;
+        if($company_sid == NULL) {
+            
+        }
         //
         // Get all videos with assign to yes
         $a = $this->db
@@ -530,11 +568,11 @@ class Learning_center_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->free_result(); 
         //
-        if(!sizeof($b)) return 0;
+        if(!sizeof($b)) {return 0;}
         //
         $doInsert = false;
         //
-        if($b['employees_assigned_to'] == 'all') $doInsert = true;
+        if($b['employees_assigned_to'] == 'all'){ $doInsert = true;}
         else{
             // Fetch all departments
             $dept = $this->getDepartmentEmployees($company_sid, 'all', true);
@@ -552,7 +590,7 @@ class Learning_center_model extends CI_Model {
             // 
         }
         //
-        if(!$doInsert) return 0;
+        if(!$doInsert){ return 0;}
         //
         $data_to_insert = array();
         $data_to_insert['learning_center_online_videos_sid'] = $video_sid;
@@ -1049,7 +1087,7 @@ class Learning_center_model extends CI_Model {
     }
 
     function get_video_questionnaire_attempt($video_id,$assign_id){
-        $this->db->select('attend_timestamp,questionnaire_result');
+        $this->db->select('attend_timestamp,questionnaire_result,questionnaire');
         $this->db->where('video_sid',$video_id);
         $this->db->where('video_assign_sid',$assign_id);
         $result = $this->db->get('learning_center_screening_questionnaire')->result_array();
@@ -1554,4 +1592,81 @@ class Learning_center_model extends CI_Model {
         return $b;
     }
 
+    function check_video_expiry($video_sid, $expired_number, $expired_type) {
+        $this->db->select('sid');
+        $this->db->where('sid', $video_sid);
+        $this->db->where('expired_number', $expired_number);
+        $this->db->where('expired_type', $expired_type);
+        $records_obj = $this->db->get('learning_center_online_videos');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+
+    function getVideoAssignedDetails($companyId, $userId, $userType, $videoId){
+        //
+        $b = 
+        $this->db->select('
+            lcova.sid
+        ')
+        ->from('learning_center_online_videos_assignments lcova')
+        ->join('learning_center_online_videos lcov', 'lcova.learning_center_online_videos_sid = lcov.sid AND lcova.is_deleted = 0')
+        ->where('lcov.company_sid', $companyId)
+        ->where('lcov.sid', $videoId)
+        ->group_start()
+        ->where('lcov.'.( $userType == 'employee' ? 'employees_assigned_to' : 'applicants_assigned_to' ).'', 'all')
+        ->or_group_start()
+        ->where('lcova.user_sid', $userId)
+        ->where('lcova.user_type', $userType)
+        ->group_end()
+        ->group_end()
+        ->get()
+        ->row_array();
+        //
+        return !empty($b) ? $b['sid'] : 0;
+    }
+
+    //
+    function removeUserFromVideo($videoId){
+        $this->db
+        ->where('sid', $videoId)
+        ->update('learning_center_online_videos_assignments', [
+            'status' => 0,
+            'is_deleted' => 1,
+            'deleted_at' => date('Y-m-d H:i:s', strtotime('now'))
+        ]);
+    }
+    
+    //
+    function addUserFromVideo($data){
+        $this->db
+        ->insert('learning_center_online_videos_assignments', $data);
+        return $this->db->insert_id();
+    }
+    
+    //
+    function get_video_list($companyId){
+        return
+        $this->db
+        ->select('
+            sid,
+            video_title,
+            video_description,
+            video_id,
+            video_source,
+            video_start_date
+        ')
+        ->where('company_sid', $companyId)
+        ->order_by('sid', 'desc')
+        ->get('learning_center_online_videos')
+        ->result_array();
+    }
 }

@@ -47,7 +47,7 @@
                                     <div class="form-group autoheight">
                                         <?php $field_name = 'video_title' ?>
                                         <?php $temp = isset($video[$field_name]) && !empty($video[$field_name]) ? $video[$field_name] : ''; ?>
-                                        <?php echo form_label('Video Title <span class="hr-required">*</span>', $field_name); ?>
+                                        <?php echo form_label('Video Title <span class="staric">*</span>', $field_name); ?>
                                         <?php echo form_input($field_name, set_value($field_name, $temp), 'class="form-control" id="' . $field_name . '" data-rule-required="true"'); ?>
                                         <?php echo form_error($field_name); ?>
                                     </div>
@@ -76,7 +76,7 @@
                                     <?php } ?>
                                     <?php if (isset($video_source)) { ?>
                                         <div class="form-group edit_filter_check autoheight">
-                                            <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
+                                            <label class="control control--radio" style="margin-left:0px; margin-top:10px;">
                                                 Change Video Source
                                                 <input class="" type="radio" id="change_video_source" name="want_change"/>
                                                 <div class="control__indicator"></div>
@@ -121,7 +121,7 @@
                                         if ($video_source == 'upload') {?>
                                             <div class="radio_video_source_upload">
                                                 <div class="form-group autoheight edit_filter" id="up_video_container">
-                                                    <label>Upload Video <span class="hr-required">*</span></label>
+                                                    <label>Upload Video <span class="staric">*</span></label>
                                                     <?php 
                                                         if (!empty($video['video_id']) && $video['video_source'] == 'uploaded') {
                                                     ?>
@@ -141,7 +141,7 @@
                                                 </div>
                                                 <div class="form-group autoheight edit_filter" id="yt_vm_video_container">
                                                     <?php $field_name = 'video_id' ?>
-                                                    <?php echo form_label('Video Url <span class="hr-required">*</span>', $field_name); ?>
+                                                    <?php echo form_label('Video Url <span class="staric">*</span>', $field_name); ?>
                                                     <?php echo form_input($field_name, set_value($field_name, ''), 'class="form-control" id="' . $field_name . '" data-rule-required="true"'); ?>
                                                     <?php echo form_error($field_name); ?>
                                                 </div>
@@ -153,12 +153,12 @@
                                             <div class="radio_video_source_links">
                                                 <div class="form-group autoheight edit_filter" id="yt_vm_video_container">
                                                     <?php $field_name = 'video_id' ?>
-                                                    <?php echo form_label('Video Url <span class="hr-required">*</span>', $field_name); ?>
+                                                    <?php echo form_label('Video Url <span class="staric">*</span>', $field_name); ?>
                                                     <?php echo form_input($field_name, set_value($field_name, ''), 'class="form-control" id="' . $field_name . '" data-rule-required="true"'); ?>
                                                     <?php echo form_error($field_name); ?>
                                                 </div>
                                                 <div class="form-group autoheight edit_filter" id="up_video_container">
-                                                    <label>Upload Video <span class="hr-required">*</span></label>
+                                                    <label>Upload Video <span class="staric">*</span></label>
                                                     <div class="upload-file form-control">
                                                         <span class="selected-file" id="name_video"></span>
                                                         <input type="file" name="video_upload" id="video" onchange="check_file('video')" >
@@ -170,12 +170,12 @@
                                     <?php } else { ?>
                                         <div class="form-group autoheight" id="yt_vm_video_container">
                                             <?php $field_name = 'video_id' ?>
-                                            <?php echo form_label('Video Url <span class="hr-required">*</span>', $field_name); ?>
+                                            <?php echo form_label('Video Url <span class="staric">*</span>', $field_name); ?>
                                             <?php echo form_input($field_name, set_value($field_name, $video_url), 'class="form-control" id="' . $field_name . '" data-rule-required="true"'); ?>
                                             <?php echo form_error($field_name); ?>
                                         </div>
                                         <div class="form-group autoheight" id="up_video_container">
-                                            <label>Upload Video <span class="hr-required">*</span></label>
+                                            <label>Upload Video <span class="staric">*</span></label>
                                             <div class="upload-file form-control">
                                                 <span class="selected-file" id="name_video">No video selected</span>
                                                 <input type="file" name="video_upload" id="video" onchange="check_file('video')" <?php echo set_value($video_url); ?> >
@@ -275,9 +275,68 @@
                                         </div>
                                     </div>
 
+
+
+                                    <div class="form-group autoheight">
+                                        <?php $video_start_date = isset($video) && !empty($video['video_start_date']) ? DateTime::createfromformat(
+                                            'Y-m-d',
+                                            $video['video_start_date']
+                                        )
+                                        ->format('m-d-Y') : ''; ?>
+                                        <label>Video Start Date<span class="staric">*</span></label>
+                                        <input type="text" name="video_start_date" value="<?php echo $video_start_date; ?>" class="form-control" id="video_start_date">
+                                    </div> 
+
+                                    <div class="form-group">
+                                        <label>Would you like this video to expire after a certain period of time?</label>
+                                        <div>
+                                            <?php $default_check = isset($video) ? '' : 'checked="checked"'; ?>
+                                            <br />
+                                            <label class="control control--radio">
+                                                <input type="radio" class="is_video_expired" name="is_video_expired" value="yes" <?php echo isset($video) && $video['is_video_expired'] == 'yes' ? 'checked="checked"' : ''; ?>/> Yes &nbsp;
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                            <label class="control control--radio">
+                                                <input type="radio" class="is_video_expired" name="is_video_expired" value="no" <?php echo isset($video) && $video['is_video_expired'] == 'no' ? 'checked="checked"' : $default_check; ?> /> No &nbsp;
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="hr-box" id="video_expired_section" style="display: none;">
+                                        <div class="hr-box-header bg-header-green">
+                                            <span class="pull-left">
+                                                <h1 class="hr-registered">Video Expiration Details</h1>
+                                            </span>
+                                        </div>
+                                        <div class="hr-innerpadding">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <div class="form-group autoheight">
+
+                                                        <label for="upload_title">Number :<span class="staric">*</span></label>
+                                                        <input type="text" name="expired_number" value="<?php echo isset($video) ? $video['expired_number'] : ''; ?>" class="form-control" id="expired_number" >
+                                                    </div>
+                                                    <div class="form-group autoheight">
+                                                        <label>Expiration Type:<span class="staric">*</span></label>
+                                                        <div class="hr-select-dropdown">
+                                                            <select class="form-control" name="expired_type" id="expired_type">
+                                                                <option value="0">Please Select type</option>
+                                                                <option <?php echo isset($video) && $video['expired_type'] == 'day' ? 'selected="selected"' : ''; ?> value="day">Day</option>
+                                                                <option <?php echo isset($video) && $video['expired_type'] == 'week' ? 'selected="selected"' : ''; ?> value="week">Week</option>
+                                                                <option <?php echo isset($video) && $video['expired_type'] == 'month' ? 'selected="selected"' : ''; ?> value="month">Month</option>
+                                                                <option <?php echo isset($video) && $video['expired_type'] == 'year' ? 'selected="selected"' : ''; ?> value="year">Year</option>
+                                                            </select>
+                                                        </div>    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <?php if (!empty($screening_questions)) { ?>
                                         <div class="form-group">
-                                            <label>Screening Questionnaire:</label>
+                                            <label>Learning Management Questionnaire:</label>
                                             <div class="hr-select-dropdown">
                                                 <select class="form-control" name="questionnaire_sid" id="questionnaire_sid">
                                                     <option value="">Select Screening Questionnaire</option>
@@ -290,7 +349,7 @@
                                     <?php } ?>
 
                                     <div class="form-group">
-                                        <label>Send notification email?</label>
+                                        <label>Would you like to Send a Notification Email?</label>
                                         <div>
                                             <br />
                                             <label class="control control--radio">
@@ -315,11 +374,11 @@
                                                 <div class="row">
                                                     <div class="col-xs-12">
                                                         <div class="form-group autoheight">
-                                                            <label for="upload_title">Document Title :<span class="hr-required">*</span></label>
+                                                            <label for="upload_title">Document Title :<span class="staric">*</span></label>
                                                             <input type="text" name="upload_doc_title" value="" class="form-control" id="upload_doc_title" >
                                                         </div>
                                                         <div class="form-group autoheight">
-                                                            <label>Document File:<span class="hr-required">*</span></label>
+                                                            <label>Document File:<span class="staric">*</span></label>
                                                             <div class="upload_learning_doc form-control upload-file">
                                                                 <span class="selected-file" id="name_learning_doc">No file selected</span>
                                                                 <input name="learning_doc" id="learning_doc" onchange="check_learning_doc('learning_doc')" type="file">
@@ -441,7 +500,7 @@
                         <div class="col-xs-12 universal-form-style-v2">
                             <ul>
                                 <li class="form-col-100 autoheight">
-                                    <label for="upload_title">Document Title :<span class="hr-required">*</span></label>
+                                    <label for="upload_title">Document Title :<span class="staric">*</span></label>
                                     <input type="text" value="" class="form-control" id="upload_doc_title_edit" >
                                 </li>
                                 <li class="form-col-100 autoheight ">
@@ -491,10 +550,22 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
+    $(".is_video_expired").on("click",function(){
+        var video_expired = $('input[name="is_video_expired"]:checked').val();
+        if (video_expired == "yes") {
+            $("#video_expired_section").show();
+        } else {
+            $("#video_expired_section").hide();
+        }
+    });
+
     $(function(){
-
         $('#employees_assigned_sid').select2({ closeOnSelect: true });
-
+        //
+        $('#video_start_date').datepicker({
+            dateFormat: 'mm-dd-yy',
+            setDate: new Date()
+        });
     });
 
     $(".employees_assigned_to").on("click",function(){
@@ -873,6 +944,31 @@
                     }
                 }
 
+                var video_expired = $('input[name="is_video_expired"]:checked').val();
+                if (video_expired == "yes") {
+                    var expired_number = $("#expired_number").val();
+                    var expired_type = $("#expired_type").val();
+
+                    if (expired_number == undefined || expired_number == 0 || expired_number == '') {
+                        flag = 1;
+                        alertify.alert('Error','Please enter any number');
+                        return false;
+                    } else if (expired_number != '' && !/^[0-9]+$/.test(expired_number)) {
+                        flag = 1;
+                        alertify.alert('Error','Only number are accepted.');
+                        return false;
+                    } else if (expired_type == undefined || expired_type == 0 || expired_type == '') {
+                        flag = 1;
+                        alertify.alert('Error','please select any type.');
+                        return false;
+                    }
+                    if (expired_number == undefined || expired_number == 0 || expired_number == '') {
+                        flag = 1;
+                        alertify.alert('Error','Please select video start date.');
+                        return false;
+                    } 
+                }
+
                 if(flag == 0){
                     $('#my_loader').show(); 
                     $("#add_edit_submit").attr("disabled", true); 
@@ -1008,5 +1104,12 @@
                 $('#add_edit_submit').removeAttr('onClick');
             }
         });
+    });
+
+    // To make sure we get a number
+    $('#expired_number').keyup(function(){
+        $(this).val(
+           $(this).val().trim() != '' ?  $(this).val().replace(/[^0-9]/ig, '') : ''
+        );
     });
 </script>

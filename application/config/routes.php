@@ -1285,3 +1285,5 @@ $route['sync_applicant_jobs']['cli'] = 'Testing/sajl';
 
 // AC REader
 $route['recheck_app']['cli'] = 'Auto_careers/mover';
+// LEarning center revoke / assign routes
+$route['learning_center/video_access']['post'] = 'Learning_center/video_access';

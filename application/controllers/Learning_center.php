@@ -138,7 +138,8 @@ class Learning_center extends Public_Controller {
                 $video = $this->learning_center_model->get_empty_video_record($employer_sid);
                 $video_url = '';
                 $data['questionnaire_sid'] = 0;
-                if(sizeof($video) > 0){
+                //
+                if(!empty($video)){
                     if (isset($video['video_source'])) {
                         if ($video['video_source'] == 'youtube' && !empty($video['video_id'])) {
                             $video_url = $video['video_id'];
@@ -165,7 +166,6 @@ class Learning_center extends Public_Controller {
 
                 $post = $this->input->post(NULL, TRUE);
 
-                $perform_action = $this->input->post('perform_action');
                 $company_sid = $this->input->post('company_sid');
                 $created_by = $this->input->post('employer_sid');
                 $video_title = $this->input->post('video_title');
@@ -218,6 +218,7 @@ class Learning_center extends Public_Controller {
                 $applicants_assigned_to     = $this->input->post('applicants_assigned_to');
                 $applicants_assigned_sid    = $this->input->post('applicants_assigned_sid');
                 $questionnaire_sid          = $this->input->post('questionnaire_sid');
+                //
                 if (empty($questionnaire_sid)) {
                     $questionnaire_sid = 0;
                 }
@@ -240,19 +241,33 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['video_description'] = $video_description;
                 $data_to_insert['video_source'] = $video_source;
                 $data_to_insert['video_id'] = $video_id;
+                $data_to_insert['video_start_date'] = DateTime::createfromformat('m-d-Y', $_POST['video_start_date'])->format('Y-m-d');
                 //
-                $data_to_insert['employees_assigned_sid'] = empty($employees_assigned_sid) ? '' : implode(',',$employees_assigned_sid);
-                $data_to_insert['applicants_assigned_sid'] = empty($applicants_assigned_sid) ? '' : implode(',',$applicants_assigned_sid);
+                if ($_POST['is_video_expired'] == 'yes') {
+                    $data_to_insert['expired_number'] = $_POST['expired_number'];
+                    $data_to_insert['expired_type'] = $_POST['expired_type'];
+                    $data_to_insert['is_video_expired'] = $_POST['is_video_expired'];
+                    $data_to_insert['expired_start_date'] = date('Y-m-d', strtotime($data_to_insert['video_start_date']. '+'.($data_to_insert['expired_number']).' '.$data_to_insert['expired_type'] ));
+                } else {
+                    $data_to_insert['is_video_expired'] = "no";
+                    $data_to_insert['expired_number'] = null;
+                    $data_to_insert['expired_type'] = null;
+                    $data_to_insert['expired_start_date'] = null;
+                }
+                //
+                $data_to_insert['employees_assigned_sid'] = !empty($employees_assigned_sid) ? implode(',', $employees_assigned_sid) : NULL;
+                $data_to_insert['applicants_assigned_sid'] = !empty($applicants_assigned_sid) ? implode(',', $applicants_assigned_sid) : NULL;
 
                 $data_to_insert['employees_assigned_to'] = $employees_assigned_to == "none" ? "specific" : $employees_assigned_to;
                 $data_to_insert['applicants_assigned_to'] = $applicants_assigned_to == "none" ? "specific" : $applicants_assigned_to;
                 $data_to_insert['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
                 $data_to_insert['screening_questionnaire_sid'] = $questionnaire_sid;       
+                //
                 
                 if($exist_video_sid > 0){
                     $video_sid = $exist_video_sid;
                     $this->learning_center_model->update_training_video($video_sid, $data_to_insert);
-
+                    
                 }else{ 
                     $video_sid = $this->learning_center_model->insert_training_video($data_to_insert);
                 }
@@ -326,10 +341,8 @@ class Learning_center extends Public_Controller {
                             );
                         }  
 
-                        $employeesList = array_unique(
-                            array_merge($specific_assign_employees, $selected_department_employees),
-                            SORT_REGULAR
-                        );  
+                        $employeesMergeList = array_merge($specific_assign_employees, $selected_department_employees);  
+                        $employeesList = array_unique($employeesMergeList, SORT_REGULAR);
                     }
 
                     if(sizeof($employeesList)){
@@ -410,6 +423,8 @@ class Learning_center extends Public_Controller {
                     $data['selected_departments'] = explode(',', $video['department_sids']);
                 }
                 
+                // _e($data['selected_departments'], true, true);
+                // _e($data['selected_departments'], true, true);
                 $selected_applicants = array();
 
                 if (isset($video['applicants'])) {
@@ -452,6 +467,7 @@ class Learning_center extends Public_Controller {
                 $video_title = $this->input->post('video_title');
                 $video_description = $this->input->post('video_description');
                 $video_source = $this->input->post('video_source');
+                $video_id = $this->input->post('video_id');
                 $employees_assigned_to = $this->input->post('employees_assigned_to');
                 $employees_assigned_sid = $this->input->post('employees_assigned_sid');
                 $applicants_assigned_to = $this->input->post('applicants_assigned_to');
@@ -465,9 +481,9 @@ class Learning_center extends Public_Controller {
 
                 if ($employees_assigned_to == "none") {
                     $this->learning_center_model->delete_all_assign_video_user($video_sid);
-                    $data_to_update['department_sids'] = $employees_assigned_sid = $applicants_assigned_sid = NULL;
+                    $dts = $data_to_update['department_sids'] = $employees_assigned_sid = $applicants_assigned_sid = NULL;
                 } else{
-                    $data_to_update['department_sids'] = isset($post['departments_assigned_sid']) ? 
+                    $dts = $data_to_update['department_sids'] = isset($post['departments_assigned_sid']) ? 
                     (array_search('-1', $post['departments_assigned_sid']) !== false || $post['departments_assigned_sid'] == 'all' ? 'all' : implode($post['departments_assigned_sid'],',')) : NULL;
                 }
 
@@ -528,6 +544,19 @@ class Learning_center extends Public_Controller {
                         unlink($video_url);
                     }
                 }
+                $data_to_update['video_start_date'] =  DateTime::createfromformat('m-d-Y', $_POST['video_start_date'])->format('Y-m-d');
+
+                if ($_POST['is_video_expired'] == 'yes') {
+                    $data_to_update['expired_number'] = $_POST['expired_number'];
+                    $data_to_update['expired_type'] = $_POST['expired_type'];
+                    $data_to_update['is_video_expired'] = $_POST['is_video_expired'];
+                    $data_to_update['expired_start_date'] = date('Y-m-d', strtotime($data_to_update['video_start_date']. '+'.($data_to_update['expired_number']).' '.$data_to_update['expired_type'] ));
+                } else {
+                    $data_to_update['is_video_expired'] = "no";
+                    $data_to_update['expired_number'] = null;
+                    $data_to_update['expired_type'] = null;
+                    $data_to_update['expired_start_date'] = null;
+                }
 
                 $data_to_update['company_sid'] = $company_sid;
                 $data_to_update['created_by_sid'] = $created_by;
@@ -541,7 +570,7 @@ class Learning_center extends Public_Controller {
                 $data_to_update['employees_assigned_sid'] = !empty($employees_assigned_sid) ? implode(',', $employees_assigned_sid) : '';
                 $data_to_update['screening_questionnaire_sid'] = $questionnaire_sid;
                 $data_to_update['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
-               
+
                 $this->learning_center_model->update_training_video($video_sid, $data_to_update);
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
@@ -1316,11 +1345,15 @@ class Learning_center extends Public_Controller {
                 $user_type = 'employee';
             }
 
+            $data['user_type'] = $user_type;
+            $data['employer_sid'] = $employer_sid;
+
             $data['title'] = 'Learning Center';
             $this->form_validation->set_rules('perform_action', 'preform_action', 'required|trim');
 
-            if ($this->form_validation->run() == false) {
-                $videos = $this->learning_center_model->get_my_all_online_videos($user_type, $employer_sid, $company_sid);
+            if (!$this->form_validation->run()) {
+                $data['video_list'] = $this->learning_center_model->get_video_list($company_sid);
+                $videos = $this->learning_center_model->get_my_all_online_videos($user_type, $employer_sid, $company_sid, $app_id == NULL ? false : true);
                 $data['videos'] = $videos;
                 $assigned_sessions = $this->learning_center_model->get_assigned_all_training_sessions($user_type, $employer_sid, $company_sid);
                 $data['load_view'] = $load_view;
@@ -1415,7 +1448,7 @@ class Learning_center extends Public_Controller {
                 $data['attempt_status'] = $assignment['attempt_status'];
 
                 if ($assignment['attempt_status']) {
-                    $attempted_questionnaire = $this->learning_center_model->get_video_questionnaire_attempt($video_sid, $assignment['sid']);
+                    $data['attempted_questionnaire'] = $attempted_questionnaire = $this->learning_center_model->get_video_questionnaire_attempt($video_sid, $assignment['sid']);
                     $data['attempted_questionnaire_timestamp'] = $attempted_questionnaire[0]['attend_timestamp'];
                     $data['questionnaire_result'] = $attempted_questionnaire[0]['questionnaire_result'];
                 }
@@ -1454,6 +1487,14 @@ class Learning_center extends Public_Controller {
                         }
 
                         $data['job_details'] = $list;
+                    }
+                    //
+                    $data['answers_given'] = [];
+                    //
+                    if(!empty($data['attempted_questionnaire'] )){
+                        foreach($data['attempted_questionnaire'] as $dd){
+                            $data['answers_given'][] = unserialize($dd['questionnaire']);
+                        }
                     }
 
                     $data['video'] = $video;
@@ -1632,13 +1673,18 @@ class Learning_center extends Public_Controller {
                         }
                         redirect('learning_center/watch_video/' . $video_sid);
                     }
-
-                    $video_sid = $this->input->post('video_sid');
-                    $user_type = $this->input->post('user_type');
-                    $user_sid = $this->input->post('user_sid');
+                    //
+                    $post = $this->input->post(NULL, TRUE);
+                    //
+                    if($post['perform_action'] == 'mark_video_as_watched'){
+                        $this->learning_center_model->setVideoAsWatched(
+                            $post['user_type'],
+                            $post['user_sid'],
+                            $post['video_sid']
+                        );
+                    }
+                    //
                     $this->session->set_flashdata('message', '<strong>Success:</strong> Video marked as watched!');
-                    echo $data['back_url'].' 1416';
-                    die();
                     redirect($data['back_url']);
                 }
             } else {
@@ -2545,6 +2591,52 @@ class Learning_center extends Public_Controller {
 
         header('Content-Type: application/json');
         echo json_encode($return_array); exit(0);
+    }
+
+
+    //
+    function video_access(){
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        if(empty($post)){
+            echo 'error';
+            exit(0);
+        }
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        if($post['action'] == 'revoke'){
+            // Get the video assigned details
+            $videoDetails = $this->learning_center_model->getVideoAssignedDetails(
+                $session['company_detail']['sid'],
+                $post['userId'],
+                $post['userType'],
+                $post['videoId']
+            );
+            $this->learning_center_model->removeUserFromVideo($videoDetails);
+            echo 'success';
+            exit(0);
+        }
+        //
+        if($post['action'] == 'assign'){
+            //
+            foreach($post['ids'] as $videoId){
+                //
+                $this->learning_center_model->addUserFromVideo([
+                    'learning_center_online_videos_sid' => $videoId,
+                    'user_type' => $post['userType'],
+                    'user_sid' => $post['userId'],
+                    'date_assigned' => date('Y-m-d H:i:s', strtotime('now')),
+                    'watched' => 0,
+                    'status' => 1,
+                    'attempt_status' => 0,
+                    'completed' => 0
+                ]);
+            }
+            echo 'success';
+            exit(0);
+        }
     }
 
 }
