@@ -583,29 +583,20 @@
                                             <li>
                                                 <span id="jsRemainingTime">0 hour(s)</span>
                                                 <span>remaining</span>
-                                                <!-- <i class="cs-jam-ul fa fa-question-circle question-custom"
-                                                    data-html="true" data-toggle="popover" data-placement="top"
-                                                    data-trigger="hover" data-content="Balance remaining">
-                                                </i> -->
+                                             
                                             </li>
                                             <li>
                                                 <span id="jsConsumedTime">0 hour(s)</span>
                                                 <span>consumed</span>
-                                                <!-- <i class="cs-jam-ul fa fa-question-circle question-custom"
-                                                    data-html="true" data-toggle="popover" data-placement="top"
-                                                    data-trigger="hover" data-content="Balance consumed">
-                                                </i> -->
+                                             
                                             </li>
                                             <li>
                                                 <span id="jsTotalTimeoffs">0 Time-offs approved</span>
-                                                <!-- <i class="cs-jam-ul fa fa-question-circle question-custom"
-                                                    data-html="true" data-toggle="popover" data-placement="top"
-                                                    data-trigger="hover" data-content="# of Time-offs approved">
-                                                </i> -->
+                                            
                                             </li>
-                                            <li>
-                                            <br />
-                                                <a href="javascript:void(0)" data-id="<?=$employee_sid;?>" class="btn btn-black jsBreakdownRequest">View Details</a>
+                                            <li style="margin-top: 10px;">
+                                                <a href="javascript:void(0)" data-id="<?=$employee_sid;?>" class="btn btn-black jsBreakdownRequest"><i class="fa fa-eye" style="font-size: 14px;"  aria-hidden="true"></i>&nbsp;View Policies</a>
+                                                <a href="javascript:void(0)" data-id="<?=$employee_sid;?>" class="btn btn-success jsReport"><i class="fa fa-area-chart" style="font-size: 14px;"  aria-hidden="true"></i>&nbsp;Report</a>
                                             </li>
                                         </ul>
 
@@ -621,7 +612,7 @@
                                         ">
                                             <a href="#" data-id="<?=$employee_sid;?>"
                                                 class="btn btn-success form-control jsCreateRequest"
-                                                style="margin-right: 5px;">Create A Time-off Request</a>
+                                                style="margin-right: 5px;"><i class="fa fa-plus-circle" style="font-size: 14px;" aria-hidden="true"></i>&nbsp;Create A Time-off Request</a>
                                         </div>
                                     </div>
                                 </div>
@@ -958,3 +949,80 @@ ul.cs-jam-ul li {
     color: #C6C6C6;
 }
 </style>
+
+<script>
+    $(function(){
+
+    
+     //
+    $('.jsReport').click(function(e){
+        //
+        e.preventDefault();
+        //
+        Modal({
+            Id: "jsReportModal",
+            Title: "My time-off Report",
+            Loader: "jsReportModalLoader",
+            Body: `<div class="row">
+            <div class="col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label>Select Period</label>
+                    <div class="row">
+                        <div class="col-sm-2 col-xs-12">
+                            <input type="text" id="jsReportStartDate" class="form-control" readonly />
+                        </div>
+                        <div class="col-sm-1 col-xs-12 hidden-xs">
+                            <p class="text-center"><i class="fa fa-minus" aria-hidden="true"></i></p>
+                        </div>
+                        <div class="col-sm-2 col-xs-12">
+                            <input type="text" id="jsReportEndDate" class="form-control" readonly />
+                        </div>
+                        <div class="col-sm-5 col-xs-12">
+                            <button class="btn btn-success jsFetchTimeOffs">Fetch</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`
+        }, function(){
+            //
+            ml(false, 'jsReportModalLoader');
+            //
+            $('#jsReportStartDate').datepicker({
+                format: 'm/d/y',
+                changeMonth: true,
+                changeYear: true,
+                onSelect: function(d){
+                    $('#jsReportEndDate').datepicker('option', 'minDate', d);
+                }
+            });
+            //
+            $('#jsReportEndDate').datepicker({
+                format: 'm/d/y',
+                changeMonth: true,
+                changeYear: true
+            });
+        });
+    });
+
+    //
+    $(document).on('click', '.jsFetchTimeOffs', fetchTimeOffs);
+    //
+    function fetchTimeOffs(){
+        let startDate = $('#jsReportStartDate').val() ||'all',
+                endDate = $('#jsReportEndDate').val() || 'all';
+        //
+        let ajaxCall = new Promise(function(res){
+            $.get(baseURL+'timeoff/get_my_timeoff/'+employeeId)
+            .done(function(resp){
+                res(resp);
+            });
+        });
+        //
+        ajaxCall.then(function(resp){
+            // TODO append the time offs
+            // if(resp.length == 0)
+        });
+    }
+});
+</script>

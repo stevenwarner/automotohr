@@ -80,6 +80,13 @@
                     'icon' => 'download',
                     'segment' => 'export',
                 ],
+                [
+                    'title' => 'Download Report',
+                    'url' => 'report',
+                    'slug' => 'report',
+                    'icon' => 'area-chart',
+                    'segment' => 'report',
+                ],
             ]
         ]
     ];
@@ -90,17 +97,17 @@
     //
     foreach($tabs as $tab){
         //
-        if(!isset($tab['submenu']) && $timeOffAccess[$tab['slug']] != 1) continue;
+        if(!isset($tab['submenu']) && $timeOffAccess[$tab['slug']] != 1) {continue;}
         //
         if(isset($tab['submenu'])){
             //
             $tmp = '';
             foreach($tab['submenu'] as $item){
-                if($timeOffAccess[$item['slug']] != 1) continue;
+                if($timeOffAccess[$item['slug']] != 1){ continue;}
                 $tmp .= '<li><a href="'.( $item["url"] == "javascript:void(0)" ? $item : $baseURL.$item['url'] ).'"><i class="fa fa-'.( $item['icon'] ).'"></i> '.( $item['title'] ).'</a></li>';
             }
             //
-            if($tmp == '') continue;
+            if($tmp == ''){ continue;}
             //
             $lis .= '<li class="has">';
             $lis .= '   <a href="javascript:void(0)">More &nbsp;&nbsp;<i class="fa fa-caret-down"></i></a>';

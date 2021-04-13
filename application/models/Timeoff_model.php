@@ -7102,7 +7102,7 @@ class Timeoff_model extends CI_Model
      * 
      * @return Array
      */
-    function getCompanyEmployees($companySid, $employerId){
+    function getCompanyEmployees($companySid, $employerId = false){
         //
         $ses = $this->session->userdata('logged_in')['employer_detail'];
         $ids = [];
@@ -11650,6 +11650,210 @@ class Timeoff_model extends CI_Model
             'FromEmail' => !empty($b['from_email']) ? $b['from_email'] : 'no-reply@automotohr.com',
             'FromName' => !empty($b['from_name']) ? $b['from_name'] : '{{company_name}}'
         ];
+    }
+
+
+    //
+    function getEmployeesWithDepartmentAndTeams($companyId){
+        //
+        $this->db->select('
+            sid,
+            first_name,
+            last_name,
+            email,
+            access_level,
+            access_level_plus,
+            pay_plan_flag,
+            is_executive_admin,
+            job_title,
+            employee_type,
+            employee_number,
+            joined_at,
+            registration_date
+        ')
+        ->where('parent_sid', $companyId)
+        ->where('active', 1)
+        ->where('terminated_status', 0)
+        ->order_by('first_name', 'ASC');
+        // Get employees
+        $a = $this->db->get('users');
+        $employees = $a->result_array();
+        $a = $a->free_result();
+        //
+        if(empty($employees)) {
+            return [];
+        }
+        // 
+        $sids = array_column($employees, 'sid');
+        //Get department
+        $this->db->select('
+            de2t.employee_sid,
+            dtm.sid as team_sid,
+            dt.sid as department_sid
+        ')
+        ->from('departments_employee_2_team de2t')
+        ->join('departments_team_management dtm', 'dtm.sid = de2t.team_sid')
+        ->join('departments_management dt', 'dt.sid = dtm.department_sid')
+        ->where_in('de2t.employee_sid', $sids)
+        ->where('dtm.status', 1)
+        ->where('dtm.is_deleted', 0)
+        ->where('dt.status', 1)
+        ->where('dt.is_deleted', 0);
+        //
+        $a = $this->db->get();
+        $dt = $a->result_array();
+        $a = $a->free_result();
+        //
+        $newIds = [];
+        //
+        if(!empty($dt)){
+            //
+            foreach($dt as $record){
+                //
+                if(!isset($newIds[$record['employee_sid']])){
+                    $newIds[$record['employee_sid']] = ['DepartmentIds' => [], 'TeamIds' => []];
+                }
+                //
+                $newIds[$record['employee_sid']]['DepartmentIds'][$record['department_sid']] = $record['department_sid'];
+                $newIds[$record['employee_sid']]['TeamIds'][$record['team_sid']] = $record['team_sid'];
+            }
+        }
+        //
+        foreach($employees as $index => $employee){
+            //
+            if(!isset($newIds[$employee['sid']])){
+                $employees[$index] = array_merge($employee, ['DepartmentIds' => [], 'TeamIds' => []]);
+            } else{
+                $employees[$index] = array_merge($employee, $newIds[$employee['sid']]);
+            }
+        }
+        //
+        return $employees;
+    }
+
+
+    //
+    function getEmployeesTimeOff(
+        $companyId,
+        $employeeIds,
+        $startDate = FALSE,
+        $endDate = FALSE
+    ){
+
+        $this->db->select('
+            tp.title,
+            tr.request_from_date,
+            tr.request_to_date,
+            tr.requested_time,
+            tr.reason,
+            tr.created_at,
+            tr.timeoff_days,
+            u.first_name,
+            u.sid as employeeId,
+            u.job_title,
+            u.last_name,
+            u.access_level,
+            u.employee_number,
+            u.access_level_plus,
+            u.is_executive_admin,
+            u.pay_plan_flag,
+            u.user_shift_minutes,
+            u.user_shift_hours,
+        ')
+        ->from('timeoff_requests tr')
+        ->join('timeoff_policies tp', 'tp.sid = tr.timeoff_policy_sid')
+        ->join('users u', 'u.sid = tr.employee_sid')
+        ->where('tr.company_sid', $companyId)
+        ->where('tr.archive', 0)
+        ->where('tr.is_draft', 0)
+        ->where('tr.status', 'approved')
+        ->order_by('tr.request_from_date', 'ASC');
+        //
+        if($employeeIds != 'all'){
+            $this->db->where_in('tr.employee_sid', $employeeIds);
+        }
+        //
+        if($startDate && $startDate != 'all'){
+            $this->db->where('tr.request_from_date >= ', DateTime::createfromformat('m/d/Y', $startDate)->format('Y-m-d'));
+        }
+        //
+        if($endDate && $endDate != 'all'){
+            $this->db->where('tr.request_from_date <= ', DateTime::createfromformat('m/d/Y', $endDate)->format('Y-m-d'));
+        }
+
+        //
+        $a = $this->db->get();
+        //
+        $b = $a->result_array();
+        //
+        $a = $a->free_result();
+        //
+        if(!empty($b)){
+            //
+            $settings = $this->getSettings($companyId);
+            //
+            foreach($b as $k => $request){
+                $tmp = get_array_from_minutes(
+                    $request['requested_time'],
+                    (($request['user_shift_hours'] * 60) + $request['user_shift_minutes']) / 60,
+                    $settings['slug']
+                );
+                //
+                $b[$k]['consumed_time'] = $tmp['text'];
+            }
+        }
+        return $b;
+    }
+
+    //
+    function getMyTimeOffs(
+        $companyId,
+        $employeeId
+    ){
+        //
+        $this->db
+        ->select('
+            timeoff_requests.sid,
+            timeoff_requests.requested_time,
+            timeoff_requests.request_from_date,
+            timeoff_requests.request_to_date,
+            timeoff_requests.status,
+            timeoff_requests.level_status,
+            timeoff_requests.reason,
+            timeoff_requests.created_at,
+            users.user_shift_hours,
+            users.user_shift_minutes,
+            timeoff_policies.title
+        ')
+        ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
+        ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
+        ->where('timeoff_policies.is_archived', 0)
+        ->where('timeoff_requests.company_sid', $companyId);
+        $this->db->where('timeoff_requests.archive', 0);
+        $this->db->where('timeoff_requests.status', 'approved');
+        $this->db->where('timeoff_requests.employee_sid', $employeeId);
+        $this->db->order_by('timeoff_requests.request_from_date', 'DESC', false);
+        //
+        $requests = $this->db
+        ->get('timeoff_requests')
+        ->result_array();
+        //
+        if(!empty($requests)){
+            //
+            $settings = $this->getSettings($companyId);
+            //
+            foreach($requests as $k => $request){
+                $b = get_array_from_minutes(
+                    $request['requested_time'],
+                    (($request['user_shift_hours'] * 60) + $request['user_shift_minutes']) / 60,
+                    $settings['slug']
+                );
+                //
+                $requests[$k]['consumed_time'] = $b['text'];
+            }
+        }
+        //
+        return $requests;
     }
 
 }

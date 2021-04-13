@@ -1287,3 +1287,6 @@ $route['sync_applicant_jobs']['cli'] = 'Testing/sajl';
 $route['recheck_app']['cli'] = 'Auto_careers/mover';
 // LEarning center revoke / assign routes
 $route['learning_center/video_access']['post'] = 'Learning_center/video_access';
+$route['timeoff/report'] = 'Time_off/report';
+$route['timeoff/report/(:any)/(:any)'] = 'Time_off/pd_report/$1/$2';
+$route['timeoff/get_my_timeoff/(:num)'] = 'Time_off/getTimeOffs/$1';

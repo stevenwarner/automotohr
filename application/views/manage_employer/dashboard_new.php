@@ -713,7 +713,7 @@
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
-                                                <figure><i class="fa fa-clock-o <?php echo !empty($pending_time_off) && $pending_time_off > 0 ? 'start_animation' : ''; ?>"></i></figure>
+                                                <figure><i class="fa fa-clock-o <?php echo !empty($pending_time_off) && $pending_time_off > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i></figure>
                                                 <h2 class="post-title">
                                                     <a href="<?php echo $pto_user_access['url']; ?>">Time Off</a>
                                                 </h2>
@@ -733,9 +733,9 @@
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
-                                                <figure><i class="fa fa-calendar-check-o"></i></figure>
+                                                <figure><i class="fa fa-calendar-check-o" aria-hidden="true"></i></figure>
                                                 <h2 class="post-title">
-                                                    <a href="javascript:void(0)">My Time Off</a>
+                                                    <a href="<?=base_url('timeoff/lms');?>">My Time Off</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
                                                     <span class="green" id="jsRemainingTime">0 hour(s)</span>
