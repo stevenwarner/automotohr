@@ -127,6 +127,11 @@ class Department_management extends Public_Controller {
                         
                         $new_department_sid = $this->department_management_model->insert_department($data_to_insert);
                         //
+                        if(!$new_department_sid){
+                            $this->session->set_flashdata('message', '<strong>Error:</strong> Somethign went wrong!');
+                            redirect('department_management', 'refresh');    
+                        }
+                        //
                         if($isTA){
                             foreach ($approvers as $approver) {
                                 $this->department_management_model->check_employee_already_exist($company_sid, $new_department_sid, $approver, $employer_sid, 1);
