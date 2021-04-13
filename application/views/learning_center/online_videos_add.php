@@ -278,7 +278,11 @@
 
 
                                     <div class="form-group autoheight">
-                                        <?php $video_start_date = isset($video) && !empty($video['video_start_date']) ? date('d-m-Y', strtotime($video['video_start_date'])) : ''; ?>
+                                        <?php $video_start_date = isset($video) && !empty($video['video_start_date']) ? DateTime::createfromformat(
+                                            'Y-m-d',
+                                            $video['video_start_date']
+                                        )
+                                        ->format('m-d-Y') : ''; ?>
                                         <label>Video Start Date<span class="staric">*</span></label>
                                         <input type="text" name="video_start_date" value="<?php echo $video_start_date; ?>" class="form-control" id="video_start_date">
                                     </div> 

@@ -87,6 +87,7 @@
                                                                             <thead>
                                                                             <tr>
                                                                                 <th>Video</th>
+                                                                                <th>Status</th>
                                                                                 <th class="text-center">Action</th>
                                                                             </tr>
                                                                             </thead>
@@ -94,9 +95,25 @@
                                                                             <?php if(!empty($videos)) { ?>
                                                                                 <?php foreach($videos as $video) {
                                                                                     $alreadyAssignedVideos[] = $video['sid'];
+                                                                                    //
+                                                                                    $status = ['success', 'Pending'];
+                                                                                    // Check for start date
+                                                                                    if(
+                                                                                        $video['expired_start_date'] <= date('Y-m-d', strtotime('now'))
+                                                                                    ){
+                                                                                        $status = ['danger', 'Expired'];
+                                                                                    } else if(
+                                                                                        $video['video_start_date']
+                                                                                        <= date('Y-m-d', strtotime('now'))
+                                                                                    ){
+                                                                                        $status = ['success', 'Started'];
+                                                                                    }
                                                                                 ?>
                                                                                     <tr data-id="<?=$video['sid'];?>">
                                                                                         <td class="col-xs-8"><?php echo $video['video_title']; ?></td>
+                                                                                        <td>
+                                                                                            <strong class="text-<?=$status[0];?>"><?=$status[1];?></strong>
+                                                                                        </td>
                                                                                         <td class="col-xs-4" align="center">
                                                                                             <button class="btn btn-danger jsRevokeVideo"><i class="fa fa-times-circle" style="font-size: 14px;" aria-hidden="true"></i>&nbsp;Revoke Video</button>
                                                                                             <a href="<?php echo base_url('learning_center/watch_video') . '/' . $video['sid'] . $watch_url; ?>" class="btn btn-success"><i class="fa fa-eye" style="font-size: 14px;" aria-hidden="true"></i>&nbsp;View Details</a>
@@ -239,7 +256,6 @@
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         <?php if(!empty($video_list)){ ?>
                         <button type="button" class="btn btn-success jsAssignVideBTN">Assign Selected Videos</button>
-                        <!-- <button type="button" class="btn btn-success jsAssignVideBTN" data-send="email">Assign Selected Videos & Send Email</button> -->
                         <?php } ?>
                     </div>
                 </div>

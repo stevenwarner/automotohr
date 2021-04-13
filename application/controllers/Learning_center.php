@@ -241,13 +241,13 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['video_description'] = $video_description;
                 $data_to_insert['video_source'] = $video_source;
                 $data_to_insert['video_id'] = $video_id;
-                $data_to_insert['video_start_date'] = date('Y-m-d', strtotime($_POST['video_start_date']));
+                $data_to_insert['video_start_date'] = DateTime::createfromformat('m-d-Y', $_POST['video_start_date'])->format('Y-m-d');
                 //
                 if ($_POST['is_video_expired'] == 'yes') {
                     $data_to_insert['expired_number'] = $_POST['expired_number'];
                     $data_to_insert['expired_type'] = $_POST['expired_type'];
                     $data_to_insert['is_video_expired'] = $_POST['is_video_expired'];
-                    $data_to_insert['expired_start_date'] = date('Y-m-d H:i:s', strtotime('now'));
+                    $data_to_insert['expired_start_date'] = date('Y-m-d', strtotime($data_to_insert['video_start_date']. '+'.($data_to_insert['expired_number']).' '.$data_to_insert['expired_type'] ));
                 } else {
                     $data_to_insert['is_video_expired'] = "no";
                     $data_to_insert['expired_number'] = null;
@@ -544,16 +544,13 @@ class Learning_center extends Public_Controller {
                         unlink($video_url);
                     }
                 }
+                $data_to_update['video_start_date'] =  DateTime::createfromformat('m-d-Y', $_POST['video_start_date'])->format('Y-m-d');
 
                 if ($_POST['is_video_expired'] == 'yes') {
-                    $check_expiry = $this->learning_center_model->check_video_expiry($video_sid, $_POST['expired_number'], $_POST['expired_type']);
-                    if (empty($check_expiry)) {
-                        $data_to_update['expired_number'] = $_POST['expired_number'];
-                        $data_to_update['expired_type'] = $_POST['expired_type'];
-                        $data_to_update['is_video_expired'] = $_POST['is_video_expired'];
-                        $data_to_update['expired_start_date'] = date('Y-m-d H:i:s');
-                    }
-                    
+                    $data_to_update['expired_number'] = $_POST['expired_number'];
+                    $data_to_update['expired_type'] = $_POST['expired_type'];
+                    $data_to_update['is_video_expired'] = $_POST['is_video_expired'];
+                    $data_to_update['expired_start_date'] = date('Y-m-d', strtotime($data_to_update['video_start_date']. '+'.($data_to_update['expired_number']).' '.$data_to_update['expired_type'] ));
                 } else {
                     $data_to_update['is_video_expired'] = "no";
                     $data_to_update['expired_number'] = null;
@@ -573,8 +570,7 @@ class Learning_center extends Public_Controller {
                 $data_to_update['employees_assigned_sid'] = !empty($employees_assigned_sid) ? implode(',', $employees_assigned_sid) : '';
                 $data_to_update['screening_questionnaire_sid'] = $questionnaire_sid;
                 $data_to_update['sent_email'] = $post['send_email'] == 'yes' ? 1 : 0;
-                $data_to_update['video_start_date'] = date('Y-m-d', strtotime($_POST['video_start_date']));
-               
+
                 $this->learning_center_model->update_training_video($video_sid, $data_to_update);
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
@@ -1357,7 +1353,7 @@ class Learning_center extends Public_Controller {
 
             if (!$this->form_validation->run()) {
                 $data['video_list'] = $this->learning_center_model->get_video_list($company_sid);
-                $videos = $this->learning_center_model->get_my_all_online_videos($user_type, $employer_sid, $company_sid);
+                $videos = $this->learning_center_model->get_my_all_online_videos($user_type, $employer_sid, $company_sid, $app_id == NULL ? false : true);
                 $data['videos'] = $videos;
                 $assigned_sessions = $this->learning_center_model->get_assigned_all_training_sessions($user_type, $employer_sid, $company_sid);
                 $data['load_view'] = $load_view;

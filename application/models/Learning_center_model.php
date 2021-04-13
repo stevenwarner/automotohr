@@ -325,16 +325,28 @@ class Learning_center_model extends CI_Model {
         return $records_arr;
     }
 
-    function get_my_all_online_videos($user_type, $user_sid, $company_sid) {
+    function get_my_all_online_videos($user_type, $user_sid, $company_sid, $fromProfile = false) {
         // Get all employees
         $this->db->select('sid, created_date, video_title, video_description, video_source, video_id')
+        ->select('learning_center_online_videos.video_start_date')
+        ->select('learning_center_online_videos.expired_start_date')
         ->where('company_sid', $company_sid)
         ->where('employees_assigned_to', 'all')
         ->order_by('created_date', 'DESC');
         //
+        if(!$fromProfile){
+            $this->db
+            ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
+            ->group_start()
+            ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
+            ->or_where('expired_start_date IS NULL', NULL)
+            ->group_end();
+        }
+        //
         $a = $this->db->get('learning_center_online_videos');
         $b = $a->result_array();
         $a->free_result();
+
         //
         $ids = array();
         //
@@ -343,20 +355,31 @@ class Learning_center_model extends CI_Model {
         $r = $b;
 
         // Get specific employees
-        $a = $this->db->select('learning_center_online_videos.sid')
+        $this->db->select('learning_center_online_videos.sid')
         ->select('learning_center_online_videos.created_date')
         ->select('learning_center_online_videos.video_title')
         ->select('learning_center_online_videos.video_description')
         ->select('learning_center_online_videos.video_source')
         ->select('learning_center_online_videos.video_id')
+        ->select('learning_center_online_videos.video_start_date')
+        ->select('learning_center_online_videos.expired_start_date')
         ->select('learning_center_online_videos_assignments.learning_center_online_videos_sid')
         ->where('learning_center_online_videos_assignments.user_type', $user_type)
         ->where('learning_center_online_videos_assignments.user_sid', $user_sid)
         ->where('learning_center_online_videos_assignments.status', 1)
         ->order_by('learning_center_online_videos_assignments.date_assigned', 'DESC')
-        ->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid')
-        ->get('learning_center_online_videos_assignments');
+        ->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid');
         //
+        if(!$fromProfile){
+            $this->db
+            ->where('learning_center_online_videos.video_start_date <= ', date('Y-m-d', strtotime('now')))
+            ->group_start()
+            ->where('learning_center_online_videos.expired_start_date >= ', date('Y-m-d', strtotime('now')))
+            ->or_where('learning_center_online_videos.expired_start_date IS NULL', NULL)
+            ->group_end();
+        }
+        //
+        $a = $this->db->get('learning_center_online_videos_assignments');
         $b = $a->result_array();
         $a->free_result();
         //
