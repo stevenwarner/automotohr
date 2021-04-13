@@ -231,6 +231,8 @@ class Department_management_model extends CI_Model {
     }
 
     function check_employee_already_exist ($company_sid, $department_sid, $approver, $employer_sid, $is_department = 1) {
+        //
+        if(empty($department_sid) || $department_sid == null) { return []; }
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employee_sid', $approver);
         $this->db->where('is_department', $is_department);
@@ -254,6 +256,8 @@ class Department_management_model extends CI_Model {
     
     
     function getApprovers ($company_sid, $department_sid, $is_department = 1) {
+        //
+        if(empty($department_sid) || $department_sid == null) { return []; }
         $this->db->select('employee_sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('is_archived', 0);
@@ -269,6 +273,8 @@ class Department_management_model extends CI_Model {
 
     function archive_all_removed_approvers ($company_sid, $department_sid, $approvers, $is_department = 1) {
         //
+        //
+        if(empty($department_sid) || $department_sid == null) { return []; }
         $this->db->select('sid, department_sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('is_department', $is_department);
