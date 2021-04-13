@@ -546,70 +546,70 @@ class Learning_center_model extends CI_Model {
         $a = $a->free_result();
         //
         if(sizeof($b)) {return $b;}
-        //
-        if($company_sid == NULL) {
-            
-        }
-        //
-        // Get all videos with assign to yes
-        $a = $this->db
-        ->select('sid, department_sids, employees_assigned_to')
-        ->where('company_sid', $company_sid)
-        ->where('sid', $video_sid)
-        ->group_start()
-        ->where('employees_assigned_to', 'all')
-        ->or_group_start()
-        ->where('department_sids', 'all')
-        ->or_where('department_sids <> ', 'all')
-        ->group_end()
-        ->group_end()
-        ->get('learning_center_online_videos');
-        //
-        $b = $a->row_array();
-        $a = $a->free_result(); 
-        //
-        if(!sizeof($b)) {return 0;}
-        //
-        $doInsert = false;
-        //
-        if($b['employees_assigned_to'] == 'all'){ $doInsert = true;}
-        else{
-            // Fetch all departments
-            $dept = $this->getDepartmentEmployees($company_sid, 'all', true);
+
+        if($user_type == 'employee'){
+
             //
-            if(!sizeof($dept)) return 0;
+            // Get all videos with assign to yes
+            $a = $this->db
+            ->select('sid, department_sids, employees_assigned_to')
+            ->where('company_sid', $company_sid)
+            ->where('sid', $video_sid)
+            ->group_start()
+            ->where('employees_assigned_to', 'all')
+            ->or_group_start()
+            ->where('department_sids', 'all')
+            ->or_where('department_sids <> ', 'all')
+            ->group_end()
+            ->group_end()
+            ->get('learning_center_online_videos');
             //
-            $t = explode(',', $b['department_sids']);
+            $b = $a->row_array();
+            $a = $a->free_result(); 
             //
-            foreach ($t as $k => $v) {
-                if(isset($dept[$v][$user_sid])){
-                    $doInsert = true;
-                    break;
-                }               
+            if(!sizeof($b)) {return 0;}
+            //
+            $doInsert = false;
+            //
+            if($b['employees_assigned_to'] == 'all'){ $doInsert = true;}
+            else{
+                // Fetch all departments
+                $dept = $this->getDepartmentEmployees($company_sid, 'all', true);
+                //
+                if(!sizeof($dept)) return 0;
+                //
+                $t = explode(',', $b['department_sids']);
+                //
+                foreach ($t as $k => $v) {
+                    if(isset($dept[$v][$user_sid])){
+                        $doInsert = true;
+                        break;
+                    }               
+                }
+                // 
             }
-            // 
+            //
+            if(!$doInsert){ return 0;}
+            //
+            $data_to_insert = array();
+            $data_to_insert['learning_center_online_videos_sid'] = $video_sid;
+            $data_to_insert['user_type'] = $user_type;
+            $data_to_insert['user_sid'] = $user_sid;
+            $data_to_insert['date_assigned'] = date('Y-m-d H:i:s');
+            $data_to_insert['status'] = 0;
+            //
+            $this->db->insert('learning_center_online_videos_assignments', $data_to_insert);
+            //
+            $a = $this->db
+            ->where('user_type', $user_type)
+            ->select('*')
+            ->where('user_sid', $user_sid)
+            ->where('learning_center_online_videos_sid', $video_sid)
+            ->get('learning_center_online_videos_assignments');
+            //
+            $b = $a->row_array();
+            $a->free_result();
         }
-        //
-        if(!$doInsert){ return 0;}
-        //
-        $data_to_insert = array();
-        $data_to_insert['learning_center_online_videos_sid'] = $video_sid;
-        $data_to_insert['user_type'] = $user_type;
-        $data_to_insert['user_sid'] = $user_sid;
-        $data_to_insert['date_assigned'] = date('Y-m-d H:i:s');
-        $data_to_insert['status'] = 0;
-        //
-        $this->db->insert('learning_center_online_videos_assignments', $data_to_insert);
-        //
-        $a = $this->db
-        ->where('user_type', $user_type)
-        ->select('*')
-        ->where('user_sid', $user_sid)
-        ->where('learning_center_online_videos_sid', $video_sid)
-        ->get('learning_center_online_videos_assignments');
-        //
-        $b = $a->row_array();
-        $a->free_result();
         //
         return $b;
     }
