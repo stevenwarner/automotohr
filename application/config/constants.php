@@ -575,3 +575,8 @@ define('TIMEOFF_MAGIC_QUOTES', implode(',', [
 // Performance management email ids
 define('REVIEW_ADDED', 399);
 define('REVIEW_EXPIRING', 400);
+
+// Goal template ids
+define('GOAL_CREATED_BY_ADMIN', 401);
+define('GOAL_EXPIRY_7', 402);
+define('PM_ASSIGNED', 403);

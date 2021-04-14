@@ -24,8 +24,8 @@ $(document).on('click', '.jsAddReviewers', function(event) {
         //
         let options = '<option value="0">[Select a Reviewee]</option>';
         //
-        pm.cemployees.map((em) => {
-            options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
+        pm.allEmployees.map((em) => {
+            options += `<option value="${em.Id}">${em.FirstName} ${em.LastName}</option>`;
         });
         //
         $('#jsAddReviewReviewee').html(options).select2();
@@ -72,8 +72,8 @@ $(document).on('change', '#jsAddReviewReviewee', function() {
         //
         let options = '';
         //
-        pm.cemployees.map((em) => {
-            options += `<option value="${em.userId}" ${$.inArray(em.userId, resp.Data) !== -1 ? 'disabled="true"' : ''} >${remakeEmployeeName(em)}</option>`;
+        pm.allEmployees.map((em) => {
+            options += `<option value="${em.Id}" ${$.inArray(em.Id, resp.Data) !== -1 ? 'disabled="true"' : ''} >${em.FirstName} ${em.LastName}</option>`;
         });
         //
         $('#jsAddReviewReviewer').html(options).select2();

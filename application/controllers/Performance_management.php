@@ -827,13 +827,13 @@ class Performance_management extends Public_Controller{
                 $ins['review_end_date'] = !empty($params['schedule']['reviewEndDate']) ? $params['schedule']['reviewEndDate'] : NULL;
                 $ins['repeat_after'] = $params['schedule']['repeatVal'];
                 $ins['repeat_type'] = $params['schedule']['repeatType'];
-                $ins['review_runs'] = json_encode($params['schedule']['customRuns']);
+                $ins['review_runs'] = empty($params['schedule']['customRuns']) ? '{}' : json_encode($params['schedule']['customRuns']);
                 $ins['repeat_review'] = $params['schedule']['continueReview'];
                 $ins['review_due'] = $params['schedule']['reviewDue'];
-                $ins['visibility_roles'] = implode(',', $params['visibility']['roles']);
-                $ins['visibility_departments'] = implode(',', $params['visibility']['departments']);
-                $ins['visibility_teams'] = implode(',', $params['visibility']['teams']);
-                $ins['visibility_employees'] = implode(',', $params['visibility']['individuals']);
+                $ins['visibility_roles'] = empty($params['visibility']) ? '' : implode(',', $params['visibility']['roles']);
+                $ins['visibility_departments'] = empty($params['visibility']) ? '' : implode(',', $params['visibility']['departments']);
+                $ins['visibility_teams'] = empty($params['visibility']) ? '' : implode(',', $params['visibility']['teams']);
+                $ins['visibility_employees'] = empty($params['visibility']) ? '' : implode(',', $params['visibility']['individuals']);
                 //
                 if($ins['frequency'] == 'custom'){
                     $ins['repeat_after'] = 0;
@@ -957,6 +957,7 @@ class Performance_management extends Public_Controller{
             break;
             // Save
             case "finish_save_review":
+                
                 //
                 $upd = [];
                 $upd['share_feedback'] = $params['feedback'];
@@ -968,7 +969,7 @@ class Performance_management extends Public_Controller{
                 $review = $this->pmm->getReviewByid($params['id'], ['included_employees', 'reviewers', 'questions', 'review_start_date', 'review_end_date']);
                 //
                 $is_started = 0;
-                if($review['review_start_date'] >= date('Y-m-d', strtolower('now')) && $review['review_end_date'] < date('Y-m-d', strtolower('now'))) $is_started = 1;
+                if($review['review_start_date'] >= date('Y-m-d', strtotime('now')) && $review['review_end_date'] < date('Y-m-d', strtotime('now'))) {$is_started = 1;}
                 //
                 $ins = [];
                 // Lets set reviwees
@@ -1043,7 +1044,20 @@ class Performance_management extends Public_Controller{
                 $this->pmm->_insert($this->tables['PMQ'], $ins);
                 //
                 $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
+                // Get added reviewers
+                $reviewersList = $this->pmm->getReviewReviewers2($params['id']);
                 //
+                if(!empty($reviewersList)){
+                    foreach($reviewersList as $imp){
+                        $this->sendEmail(
+                            PM_ASSIGNED,
+                            $imp,
+                            $pargs['companyId'],
+                            $pargs['companyName'],
+                            'Review'
+                        );
+                    }
+                }
                 //
                 $this->resp['Status'] = true;
                 $this->resp['Response'] = 'Proceed.';
@@ -1190,10 +1204,10 @@ class Performance_management extends Public_Controller{
                     $ins['employee_sid'] = empty($goal['departmentId']) ? 0 : $goal['departmentId'];
                 }
                 //
-                $ins['roles'] = json_encode($goal['roles']);
-                $ins['teams'] = json_encode($goal['teams']);
-                $ins['departments'] = json_encode($goal['departments']);
-                $ins['employees'] = json_encode($goal['employees']);
+                $ins['roles'] = empty($goal['roles']) ? '{}' : json_encode($goal['roles']);
+                $ins['teams'] = empty($goal['teams']) ? '{}' : json_encode($goal['teams']);
+                $ins['departments'] = empty($goal['departments']) ? '{}' : json_encode($goal['departments']);
+                $ins['employees'] = empty($goal['employees']) ? '{}' : json_encode($goal['employees']);
                 $ins['measure_type'] = $goal['measure'];
                 $ins['aligned_goal_sid'] =  empty($goal['alignedGoal']) ? 0 : $goal['alignedGoal'];
                 //
@@ -1202,6 +1216,30 @@ class Performance_management extends Public_Controller{
                 if(!$insertId){
                     $this->resp['Response'] = 'Something went wrong while adding goal.';
                     res($this->resp);
+                }
+                //
+                $employeList = [];
+                //
+                if($ins['goal_type'] == 2){
+                    //
+                    $employeList = $this->pmm->getTeamEmployees($ins['employee_sid'], $pargs['companyId']);
+                } else if($ins['goal_type'] == 3){
+                    $employeList = $this->pmm->getDepartmentEmployees($ins['employee_sid'], $pargs['companyId']);
+                } else if($ins['goal_type'] == 1 && $ins['employee_sid'] != $pargs['employerId']){
+                    $employeList[] = $ins['employee_sid'];
+                }
+                //
+                if(!empty($employeList)){
+                    //
+                    foreach($employeList as $imp){
+                        //
+                        $this->sendEmail(
+                            GOAL_CREATED_BY_ADMIN, 
+                            $imp,
+                            $pargs['companyId'],
+                            $pargs['companyName']
+                        );
+                    }
                 }
                 //
                 $ins = [];
@@ -1512,10 +1550,28 @@ class Performance_management extends Public_Controller{
 
 
 
-    // function test($id){
-    //     //
-    //     $record = $this->pmm->checkAndGetRole($id);
-
-    //     _e($record);
-    // }
+    //
+    private function sendEmail($templateId, $employeeId, $companyId, $companyName, $type= 'Goal'){
+        // Get employee details
+        $employeeDetails = $this->pmm->getEmployeeDetails($employeeId);
+        // Get template details
+        $template = $this->pmm->getTemplate($templateId);
+        //
+        $replaceArray = [];
+        $replaceArray['{{first_name}}'] = ucwords($employeeDetails['first_name']);
+        $replaceArray['{{last_name}}'] = ucwords($employeeDetails['last_name']);
+        $replaceArray['{{link}}'] = '<a href="'.base_url('performance-management/'.($type == 'Review' ? 'reviews' : 'goals').'').'" style="padding: 10px; color: #fff; background-color: #fd7a2a; border-radius: 5px;">Show '.($type).'</a>';
+        //
+        $hf = message_header_footer($companyId, $companyName);
+        //
+        $body = $hf['header']. str_replace(array_keys($replaceArray), $replaceArray, $template['text']).$hf['footer'];
+        //
+        log_and_sendEmail(
+            'notification@automotohr.com', 
+            $employeeDetails['email'],
+            $template['subject'],
+            $body,
+            $companyName
+        );
+    }
 }

@@ -43,7 +43,7 @@
                                 <h3 class="csF18 csB7"><?=$goal['title'];?></h3>
                                 <h4 class="csF16">
                                     <span class="<?=$goal['on_track'] == 1 ? 'text-success' : 'text-danger';?> csB8"><?=$goal['on_track'] == 1 ? "On" : "Off"; ?> Track</span>
-                                    <span class="pull-right"><?= $goal['measure_tyh3e'] == 1 ? '%' : ($goal['measure_type'] == 2 ? '$' : '');?> <?=$goal['completed_target'];?> / <?=$goal['target'];?></span>
+                                    <span class="pull-right"><?= $goal['measure_type'] == 1 ? '%' : ($goal['measure_type'] == 2 ? '$' : '');?> <?=$goal['completed_target'];?> / <?=$goal['target'];?></span>
                                 </h4>
                             </div>
                         </div>

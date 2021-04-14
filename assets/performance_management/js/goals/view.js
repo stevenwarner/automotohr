@@ -651,7 +651,7 @@ $(function() {
             rows += `                        </div>`;
             rows += `                        <div class="row ma10">`;
             rows += `                            <div class="col-sm-6">`;
-            rows += `                                <p class="csF14">${startDate.format(pm.dateTimeFormats.mdy)}<br /> Start Date ${goal.description}</p>`;
+            rows += `                                <p class="csF14">${startDate.format(pm.dateTimeFormats.mdy)}<br /> Start Date </p>`;
             rows += `                            </div>`;
             rows += `                            <div class="col-sm-6">`;
             rows += `                                <p class="text-right csF14">${endDate.format(pm.dateTimeFormats.mdy)}<br /> Due Date</p>`;

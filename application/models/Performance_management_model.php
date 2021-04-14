@@ -268,7 +268,7 @@ class Performance_management_model extends CI_Model{
         ->where('users.parent_sid', $companyId)
         ->order_by('users.first_name', 'ASC');
         //
-        if(is_array($employees)) $this->db->where_in('users.sid', $employeeIds);
+        if(is_array($employeeIds)) {$this->db->where_in('users.sid', $employeeIds);}
         //
         $employees = $this->db->get()->result_array();
         //
@@ -607,7 +607,7 @@ class Performance_management_model extends CI_Model{
                 $t['Image'] = $v['profile_picture'];
                 $t['EmployeeNumber'] = empty($v['employee_number']) ? 
                 $v['sid'] : $v['employee_number'];
-                $t['Level'] = $v['access_level_plus'] == 1 || $v['pay_pan_flag'] == 1 ? 1 : 0;
+                $t['Level'] = $v['access_level_plus'] == 1 || $v['pay_plan_flag'] == 1 ? 1 : 0;
                 // Get current employee team and department ids
                 $t['DT'] = $this->getEmployeeDTR($v['sid'], $v['access_level']);
                 //
@@ -885,7 +885,7 @@ class Performance_management_model extends CI_Model{
         ->select('dtm.team_lead')
         ->from('departments_employee_2_team dm2t')
         ->join('departments_team_management dtm', 'dtm.sid = dm2t.team_sid')
-        ->where('dm2t.employee_sid', $employerId)
+        ->where('dm2t.employee_sid', $employeeId)
         ->where('dtm.status', 1)
         ->where('dtm.is_deleted', 0)
         ->get();
@@ -1429,6 +1429,73 @@ class Performance_management_model extends CI_Model{
         }
         //
         return $goals;
+    }
+    
+    //
+    function getEmployeeDetails($employeeId){
+        return $this->db->where('sid', $employeeId)
+        ->get('users')
+        ->row_array();
+    }
+    
+    //
+    function getTemplate($templateId){
+        return $this->db->where('sid', $templateId)
+        ->get('email_templates')
+        ->row_array();
+    }
+
+    //
+    function getDepartmentEmployees($departmentId, $companyId){
+        return array_column(
+        $this->db
+        ->select('users.sid')
+        ->from('departments_employee_2_team')
+        ->join('users', 'users.sid = departments_employee_2_team.employee_sid')
+        ->where('users.active', 1)
+        ->where('users.parent_sid', $companyId)
+        ->where('users.terminated_status', 0)
+        ->where('departments_employee_2_team.department_sid', $departmentId)
+        ->get()
+        ->result_array(),'sid');
+    }
+    
+    //
+    function getTeamEmployees($teamId, $companyId){
+        return array_column(
+        $this->db
+        ->select('users.sid')
+        ->from('departments_employee_2_team')
+        ->join('users', 'users.sid = departments_employee_2_team.employee_sid')
+        ->where('users.active', 1)
+        ->where('users.parent_sid', $companyId)
+        ->where('users.terminated_status', 0)
+        ->where('departments_employee_2_team.team_sid', $teamId)
+        ->get()
+        ->result_array(), 'sid');
+    }
+
+    //
+    function getGoalsExpire($time = 7){
+        //
+        return $this->db
+        ->select('goals.title, goals.goal_type, employee.sid, company.sid as companyId, company.CompanyName')
+        ->where('goals.end_date', date('Y-m-d', strtotime("+ {$time} days")))
+        ->join('users employee', 'employee.sid = goals.employee_sid', 'left')
+        ->join('users company', 'company.sid = goals.company_sid')
+        ->get('goals')
+        ->result_array();
+    }
+
+    //
+    function getReviewReviewers2($reviewId){
+        return array_column(
+        $this->db
+        ->select('reviewer_sid')
+        ->distinct()
+        ->where('pmr.review_sid', $reviewId)
+        ->get('performance_management_reviewers pmr')
+        ->result_array(),'reviewer_sid');
     }
 }
 
