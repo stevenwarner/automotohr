@@ -318,7 +318,7 @@ class Learning_center_model extends CI_Model {
         $this->db->where('learning_center_online_videos_assignments.user_sid', $user_sid);
         $this->db->where('learning_center_online_videos_assignments.status', 1);
         $this->db->order_by('learning_center_online_videos_assignments.date_assigned', 'DESC');
-        $this->db->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid', 'left');
+        $this->db->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid', 'inner');
         $records_obj = $this->db->get('learning_center_online_videos_assignments');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
