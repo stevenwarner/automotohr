@@ -96,10 +96,10 @@
                                                                                 <?php foreach($videos as $video) {
                                                                                     $alreadyAssignedVideos[] = $video['sid'];
                                                                                     //
-                                                                                    $status = ['success', 'Pending'];
+                                                                                    $status = ['success', 'Not Started'];
                                                                                     // Check for start date
                                                                                     if(
-                                                                                        $video['expired_start_date'] <= date('Y-m-d', strtotime('now'))
+                                                                                        !empty($video['expired_start_date']) && $video['expired_start_date'] <= date('Y-m-d', strtotime('now'))
                                                                                     ){
                                                                                         $status = ['danger', 'Expired'];
                                                                                     } else if(
