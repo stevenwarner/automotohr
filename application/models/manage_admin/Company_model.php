@@ -1947,7 +1947,7 @@ class Company_model extends CI_Model {
         $b = $a->result_array();
         $a->free_result();
         //
-        if(!sizeof($b)) return $b;
+        if(!sizeof($b)){ return $b;}
         //
         foreach ($b as $k => $v) {
             if(

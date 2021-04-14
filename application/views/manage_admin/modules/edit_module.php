@@ -38,9 +38,8 @@
                                                 <div class="field-row">
                                                       <label>Disabled </label><br>
                                                       <select name="is_disabled" class="js-from full_width" id="is_disabled">
-                                                            <option value="all"<?php echo $module_data['is_disabled']=='all' ? 'selected' : ''?> >All</option>
-                                                            <option value="0"  <?php echo $module_data['is_disabled']=='0' ? 'selected' : ''?> >Yes</option>
-                                                            <option value="1"  <?php echo $module_data['is_disabled']=='1' ? 'selected' : ''?>>No</option>
+                                                            <option value="1"  <?php echo $module_data['is_disabled']=='1' ? 'selected' : ''?> >Yes</option>
+                                                            <option value="0"  <?php echo $module_data['is_disabled']=='0' ? 'selected' : ''?>>No</option>
                                                        </select>
                                                 </div>
                                             </div>
@@ -48,7 +47,6 @@
                                                 <div class="field-row">
                                                       <label>Available on Ems </label><br>
                                                        <select name="is_ems_module" class="js-from full_width" id="is_ems_module">
-                                                            <option value="all"<?php echo $module_data['is_ems_module']=='all' ? 'selected' : ''?> >All</option>
                                                             <option value="1"  <?php echo $module_data['is_ems_module']=='1' ? 'selected' : ''?> >Yes</option>
                                                             <option value="0"  <?php echo $module_data['is_ems_module']=='0' ? 'selected' : ''?>>No</option>
                                                        </select>

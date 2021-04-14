@@ -10,15 +10,13 @@
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title">
-                                        <h1 class="page-title"><i class="fa fa-envelope-o"></i>Companies</h1>
+                                        <h1 class="page-title"><i class="fa fa-envelope-o" aria-hidden="true"></i>Companies</h1>
                                     </div>
-                                    <!-- Search Table Start -->
-                                    <!-- Search Table End -->
                                     <!-- Email Logs Start -->
                                     <div class="hr-box">
                                         <div class="hr-box-header bg-header-green">
                                             <span class="pull-left">
-                                                <h1 class="hr-registered">Companies</h1>
+                                                <h1 class="hr-registered"><?=ucwords($module_data['module_name']);?></h1>
                                             </span>
                                         </div>
                                         <div class="hr-innerpadding">
@@ -49,7 +47,9 @@
                                                                         </td>
                                                                          <td>
                                                                             <button data-status="<?php echo $company['status'] ?>" company_sid="<?php echo $company['sid'] ?>" class="btn js-dynamic-module-btn btn-<?php echo $company['status']==0 ? "success" : "danger" ?>"><?php echo $company['status']==0 ? "Activate" : "Deactivate" ?></button>
+                                                                            <?php if($module_data['sid'] == 1) { ?>
                                                                             <a href="<?= base_url('manage_admin/manage_policies') ?>/<?= $company['sid'] ?>" class="btn btn-success">Manage</a>
+                                                                            <?php } ?>
                                                                         </td>
                                                                      </tr>
                                                                  <?php } ?>
