@@ -284,6 +284,7 @@
                                         )
                                         ->format('m-d-Y') : ''; ?>
                                         <label>Video Start Date<span class="staric">*</span></label>
+                                        <p><em>Video will be visible to employees on the selected date.</em></p>
                                         <input type="text" name="video_start_date" value="<?php echo $video_start_date; ?>" class="form-control" id="video_start_date">
                                     </div> 
 
@@ -311,23 +312,20 @@
                                         </div>
                                         <div class="hr-innerpadding">
                                             <div class="row">
-                                                <div class="col-xs-12">
-                                                    <div class="form-group autoheight">
-
-                                                        <label for="upload_title">Number :<span class="staric">*</span></label>
-                                                        <input type="text" name="expired_number" value="<?php echo isset($video) ? $video['expired_number'] : ''; ?>" class="form-control" id="expired_number" >
-                                                    </div>
-                                                    <div class="form-group autoheight">
-                                                        <label>Expiration Type:<span class="staric">*</span></label>
-                                                        <div class="hr-select-dropdown">
-                                                            <select class="form-control" name="expired_type" id="expired_type">
-                                                                <option value="0">Please Select type</option>
-                                                                <option <?php echo isset($video) && $video['expired_type'] == 'day' ? 'selected="selected"' : ''; ?> value="day">Day</option>
-                                                                <option <?php echo isset($video) && $video['expired_type'] == 'week' ? 'selected="selected"' : ''; ?> value="week">Week</option>
-                                                                <option <?php echo isset($video) && $video['expired_type'] == 'month' ? 'selected="selected"' : ''; ?> value="month">Month</option>
-                                                                <option <?php echo isset($video) && $video['expired_type'] == 'year' ? 'selected="selected"' : ''; ?> value="year">Year</option>
-                                                            </select>
-                                                        </div>    
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <p style="margin-top: 10px;"><label>The video will expire after</label></p>
+                                                </div>
+                                                <div class="col-sm-2 col-xs-12">
+                                                    <input type="text" name="expired_number" value="<?php echo isset($video) ? $video['expired_number'] : ''; ?>" class="form-control" id="expired_number" placeholder="2" /> 
+                                                </div>
+                                                <div class="col-sm-3 col-xs-12">
+                                                    <div class="hr-select-dropdown">
+                                                        <select class="form-control" name="expired_type" id="expired_type">
+                                                            <option <?php echo isset($video) && $video['expired_type'] == 'day' ? 'selected="selected"' : ''; ?> value="day">Days</option>
+                                                            <option <?php echo isset($video) && $video['expired_type'] == 'week' ? 'selected="selected"' : ''; ?> value="week">Weeks</option>
+                                                            <option <?php echo isset($video) && $video['expired_type'] == 'month' ? 'selected="selected"' : ''; ?> value="month">Months</option>
+                                                            <option <?php echo isset($video) && $video['expired_type'] == 'year' ? 'selected="selected"' : ''; ?> value="year">Years</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
