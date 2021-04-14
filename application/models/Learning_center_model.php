@@ -346,7 +346,6 @@ class Learning_center_model extends CI_Model {
         $a = $this->db->get('learning_center_online_videos');
         $b = $a->result_array();
         $a->free_result();
-
         //
         $ids = array();
         //
