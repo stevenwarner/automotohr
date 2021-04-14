@@ -326,33 +326,37 @@ class Learning_center_model extends CI_Model {
     }
 
     function get_my_all_online_videos($user_type, $user_sid, $company_sid, $fromProfile = false) {
-        // Get all employees
-        $this->db->select('sid, created_date, video_title, video_description, video_source, video_id')
-        ->select('learning_center_online_videos.video_start_date')
-        ->select('learning_center_online_videos.expired_start_date')
-        ->where('company_sid', $company_sid)
-        ->where('employees_assigned_to', 'all')
-        ->order_by('created_date', 'DESC');
         //
-        if(!$fromProfile){
-            $this->db
-            ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
-            ->group_start()
-            ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
-            ->or_where('expired_start_date IS NULL', NULL)
-            ->group_end();
+        $r = [];
+        //
+        if($user_type == 'employee'){
+            // Get all employees
+            $this->db->select('sid, created_date, video_title, video_description, video_source, video_id')
+            ->select('learning_center_online_videos.video_start_date')
+            ->select('learning_center_online_videos.expired_start_date')
+            ->where('company_sid', $company_sid)
+            ->where('employees_assigned_to', 'all')
+            ->order_by('created_date', 'DESC');
+            //
+            if(!$fromProfile){
+                $this->db
+                ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
+                ->group_start()
+                ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
+                ->or_where('expired_start_date IS NULL', NULL)
+                ->group_end();
+            }
+            //
+            $a = $this->db->get('learning_center_online_videos');
+            $b = $a->result_array();
+            $a->free_result();
+            //
+            $ids = array();
+            //
+            if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+            //
+            $r = $b;
         }
-        //
-        $a = $this->db->get('learning_center_online_videos');
-        $b = $a->result_array();
-        $a->free_result();
-        //
-        $ids = array();
-        //
-        if(sizeof($b)) foreach ($b as $k => $v) $ids[$v['sid']] = $v['sid'];
-        //
-        $r = $b;
-
         // Get specific employees
         $this->db->select('learning_center_online_videos.sid')
         ->select('learning_center_online_videos.created_date')
@@ -386,44 +390,47 @@ class Learning_center_model extends CI_Model {
         //
         $r = array_merge($r, $b);
         //
-        $ids = array_values($ids);
-
-        // Check for departments
-        $this->db
-        ->select('sid, created_date, video_title, video_description, video_source, video_id, department_sids')
-        ->where('company_sid', $company_sid)
-        ->group_start()
-        ->where('department_sids', 'all')
-        ->or_where('department_sids <> ', 'all')
-        ->group_end()
-        ->where('department_sids IS NOT NULL', NULL)
-        ->where('employees_assigned_to', 'specific')
-        ->order_by('created_date', 'DESC');
-        //
-        if(sizeof($ids)) $this->db->where_not_in('sid', $ids);
-        //
-        $a = $this->db->get('learning_center_online_videos');
-        $b = $a->result_array();
-        $a->free_result();
-        //
-        if(!sizeof($b)) return $r;
-        //
-        $d = array();
-        //
-        $dept = $this->getDepartmentEmployees($company_sid, 'all', true);
-        //
-        foreach ($b as $k => $v) {
-            if($v['department_sids'] == 'all'){
-                if(!isset($dept[$v['department_sids']][$user_sid])) unset($b[$k]);
-            } else {
-                $t = explode(',', $v['department_sids']);
-                foreach ($t as $k0 => $v0) {
-                    if(!isset($dept[$v0][$user_sid])) unset($b[$k]);
+        if($user_type == 'employee'){
+            //
+            $ids = array_values($ids);
+    
+            // Check for departments
+            $this->db
+            ->select('sid, created_date, video_title, video_description, video_source, video_id, department_sids')
+            ->where('company_sid', $company_sid)
+            ->group_start()
+            ->where('department_sids', 'all')
+            ->or_where('department_sids <> ', 'all')
+            ->group_end()
+            ->where('department_sids IS NOT NULL', NULL)
+            ->where('employees_assigned_to', 'specific')
+            ->order_by('created_date', 'DESC');
+            //
+            if(sizeof($ids)) $this->db->where_not_in('sid', $ids);
+            //
+            $a = $this->db->get('learning_center_online_videos');
+            $b = $a->result_array();
+            $a->free_result();
+            //
+            if(!sizeof($b)) return $r;
+            //
+            $d = array();
+            //
+            $dept = $this->getDepartmentEmployees($company_sid, 'all', true);
+            //
+            foreach ($b as $k => $v) {
+                if($v['department_sids'] == 'all'){
+                    if(!isset($dept[$v['department_sids']][$user_sid])) unset($b[$k]);
+                } else {
+                    $t = explode(',', $v['department_sids']);
+                    foreach ($t as $k0 => $v0) {
+                        if(!isset($dept[$v0][$user_sid])) unset($b[$k]);
+                    }
                 }
             }
+            //
+            $r = array_merge($r, $b);
         }
-        //
-        $r = array_merge($r, $b);
         //
         function r($a, $b){
             return $a['created_date'] < $b['created_date'] ? true : false;
