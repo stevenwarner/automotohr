@@ -325,4 +325,11 @@ class logs_model extends CI_Model
         }
         return $b;
     }
+
+    function getModuleInfo($sid){
+        return $this->db->select('sid, module_name')
+        ->where('sid', $sid)
+        ->get('modules')
+        ->row_array();
+    }
 }

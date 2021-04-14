@@ -395,6 +395,7 @@ class logs extends Admin_Controller
         $this->data['groups'] = $this->ion_auth->groups()->result(); 
         $companies=$this->logs_model->get_all_companies($sid);
         $this->data['company_data']=$companies;
+        $this->data['module_data']= $this->logs_model->getModuleInfo($sid);
         $this->render('manage_admin/modules/company_module'); 
      }
      public function notification_email_log ($email = 'all', $start_date = 'all', $end_date = 'all') {

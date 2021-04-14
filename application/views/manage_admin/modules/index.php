@@ -109,10 +109,10 @@
                                                                      <tr>
                                                                          <td><?php echo ucfirst($module['module_name']) ?></td>
                                                                          <td><?php echo ucfirst($module['stage']) ?></td>
-                                                                         <td><p class="text-<?php echo $module['is_disabled']==0 ? "danger" : "success" ?>"><?php echo $module['is_disabled']==0 ? "Yes" : "No" ?></p></td>
+                                                                         <td><p class="text-<?php echo $module['is_disabled']=='0' ? "danger" : "success" ?>"><?php echo $module['is_disabled']==0 ? "Yes" : "No" ?></p></td>
                                                                          <td><p class="text-<?php echo $module['is_ems_module']==0 ? "danger" : "success" ?>"><?php echo $module['is_ems_module']==0 ? "No" : "Yes" ?><p></p></td>
                                                                          <td><button class="btn btn-success" onclick="window.location.href = '<?php echo base_url('manage_admin/edit_module/'.$module['sid'])?>' ">Edit</button> &nbsp <button class="btn btn-success" onclick="window.location.href='<?php echo base_url('manage_admin/company_module/'.$module['sid']) ?>'">Companies</button>
-                                                                         <?php if(strtolower($module['module_name']) == 'timeoff') {?>
+                                                                         <?php if(strtolower($module['module_slug']) == 'time_off') {?>
                                                                             <a href="<?=base_url('manage_admin/manage_time_off_icons/51');?> " class="btn btn-success">Manage Help Text</a>
                                                                          <?php }?>
                                                                         </td>
