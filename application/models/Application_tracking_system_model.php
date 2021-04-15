@@ -339,11 +339,6 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->select('portal_job_applications.pictures');
         $this->db->select('portal_job_applications.email');
         $this->db->select('portal_job_applications.phone_number');
-//        $this->db->select('portal_job_applications.address');
-//        $this->db->select('portal_job_applications.country');
-//        $this->db->select('portal_job_applications.city');
-//        $this->db->select('portal_job_applications.state');
-//        $this->db->select('portal_job_applications.zipcode');
         $this->db->select('portal_job_applications.cover_letter');
         $this->db->select('portal_job_applications.YouTube_Video');
         $this->db->select('portal_job_applications.full_employment_application');
@@ -359,7 +354,6 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->select('portal_job_applications.is_onboarding');
         $this->db->select('portal_applicant_jobs_list.*'); //hassanbokhary here here
         $this->db->select('IF ((portal_applicant_jobs_list.resume IS NULL) , (portal_job_applications.resume) , (portal_applicant_jobs_list.resume)) AS resume');
-        //$this->db->select('portal_applicant_jobs_list.sid, portal_applicant_jobs_list.portal_job_applications_sid, portal_applicant_jobs_list.job_sid, portal_applicant_jobs_list.date_applied, portal_applicant_jobs_list.status, portal_applicant_jobs_list.status_sid, portal_applicant_jobs_list.questionnaire, portal_applicant_jobs_list.score, portal_applicant_jobs_list.passing_score, portal_applicant_jobs_list.applicant_type, portal_applicant_jobs_list.desired_job_title, portal_job_applications.hired_status, portal_job_applications.first_name, portal_job_applications.last_name, portal_job_applications.phone_number, portal_job_applications.resume, portal_job_applications.cover_letter, portal_job_applications.pictures, portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_listings_visibility.job_sid as visibility_job_sid');
         $this->db->select('portal_job_listings.Title as job_title');
         $this->db->select('portal_job_listings.Location_State');
@@ -472,8 +466,12 @@ class Application_tracking_system_model extends CI_Model {
         if (!empty($get)) {
             $job_fair_list = array_column($get, "sid");
             $job_fair_applications = $this->get_job_fair_applicant($job_fair_list, $company_sid, $applicant_status);
+            $applicants = array_merge($applications,$job_fair_applications);
+            
+            //
+            usort($applicants, 'sort_by_date');
            
-            return array_merge($applications,$job_fair_applications);
+            return $applicants;
         } else {
             return $applications;
         }
@@ -776,6 +774,8 @@ class Application_tracking_system_model extends CI_Model {
             $job_fair_applications = $this->get_job_fair_applicant($job_fair_list, $company_sid, $applicant_status);
            
             $applicants = array_merge($applicants,$job_fair_applications);
+            //
+            usort($applicants, 'sort_by_date');
         }
 
         $result = $this->generate_applicants_counts($applicants);
@@ -3375,4 +3375,9 @@ class Application_tracking_system_model extends CI_Model {
 //            'commission-and-piece-rate-employees' => 'Commission and piece rate employees',
         ];
     }
+}
+
+//
+function sort_by_date($a, $b){
+    return $a['date_applied'] < $b['date_applied'];
 }
