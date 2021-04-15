@@ -20,13 +20,20 @@
             <div class="video-area text-center">
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
         <?php       if($theme4_enable_job_fair_homepage == 1 && !empty($job_fairs)) { 
-                        $fair_title = $job_fairs[$job_fair_homepage_page_url]['title'];  
-                        $button_background_color = $job_fairs[$job_fair_homepage_page_url]['button_background_color'];   
-                        $button_text_color = $job_fairs[$job_fair_homepage_page_url]['button_text_color']; ?>
+                        //
+                        $jobFairs = explode(',', $job_fair_homepage_page_url);
+                        //
+                        foreach($jobFairs as $jf){
+                            $fair_title = $job_fairs[$jf]['title'];  
+                            $button_background_color = $job_fairs[$jf]['button_background_color'];   
+                            $button_text_color = $job_fairs[$jf]['button_text_color']; 
+                            ?>
+                            <a href="<?php echo base_url('/job_fair').'/'.$jf; ?>" class="site-btn" style="background: <?=$button_background_color?>; color: <?=$button_text_color;?>">
+                                <?php echo $fair_title; ?>
+                            </a>
+                            <?php
+                        }?>
 
-                        <a href="<?php echo base_url('/job_fair').'/'.$job_fair_homepage_page_url; ?>" class="site-btn" style="background: <?=$button_background_color?>; color: <?=$button_text_color;?>">
-                            <?php echo $fair_title; ?>
-                        </a>
         <?php       } ?> 
                 </div>   
             </div>

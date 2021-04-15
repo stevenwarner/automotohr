@@ -2775,6 +2775,8 @@ class Settings extends Public_Controller
             }
 
             if ($this->form_validation->run() === FALSE) {
+                $this->load->model('job_fair_model');
+                $data['employees'] = $this->job_fair_model->getAllEmployees($company_sid);
                 $data['title'] = 'Talent Network Configuration';
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/talent_network_content_configuration');
@@ -2798,6 +2800,7 @@ class Settings extends Public_Controller
                 $insert_array['title'] = $title;
                 $insert_array['content'] = $content;
                 $insert_array['youtube_link'] = $youtube_link;
+                $insert_array['visibility_employees'] = !empty($this->input->post('visibility', TRUE)) ? implode(',', $this->input->post('visibility', TRUE)) : NULL;
                 $insert_array['picture_or_video'] = $picture_or_video;
 
                 if (isset($result) && $result != 'error' && $result != '') {

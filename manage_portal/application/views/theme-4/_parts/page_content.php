@@ -18,14 +18,29 @@
                                             $fair_page_url = $fair_value['page_url'];
                                         }
                                     }
+                                    $button_background_color = $job_fairs[$fair_page_url]['button_background_color'];   
+                                    $button_text_color = $job_fairs[$fair_page_url]['button_text_color']; ?>
+                                    <a href="<?php echo base_url('/job_fair').'/'.$fair_page_url; ?>" class="site-btn" style="background: <?=$button_background_color?>; color: <?=$button_text_color;?>">
+                                        <?php echo $job_fairs[$fair_page_url]['title']; ?>
+                                    </a>
+                                    <?php
+                                } else{
+                                    //
+                                    $jobFairs = explode(',', $fair_page_url);
+                                    //
+                                    foreach($jobFairs as $jb){
+                                        $button_background_color = $job_fairs[$jb]['button_background_color'];   
+                                        $button_text_color = $job_fairs[$jb]['button_text_color']; 
+                                        ?>
+                                        <a href="<?php echo base_url('/job_fair').'/'.$jb; ?>" class="site-btn" style="background: <?=$button_background_color?>; color: <?=$button_text_color;?>">
+                                            <?php echo $job_fairs[$jb]['title']; ?>
+                                        </a>
+                                        <?php
+                                    }
                                 }
+                                ?>
                 
-                                $button_background_color = $job_fairs[$fair_page_url]['button_background_color'];   
-                                $button_text_color = $job_fairs[$fair_page_url]['button_text_color']; ?>
 
-                                <a href="<?php echo base_url('/job_fair').'/'.$fair_page_url; ?>" class="site-btn" style="background: <?=$button_background_color?>; color: <?=$button_text_color;?>">
-                                    <?php echo $job_fairs[$fair_page_url]['title']; ?>
-                                </a>
                 <?php       } ?>
                         </li>                       
                     </ul>

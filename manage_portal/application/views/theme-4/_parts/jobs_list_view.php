@@ -71,15 +71,22 @@
                             <h1 class="section-title">All<span>Jobs</span></h1>
                         </div>
                         
-                <?php   if($theme4_enable_job_fair_careerpage == 1 && !empty($job_fairs)) { 
-                            $fair_title = $job_fairs[$job_fair_career_page_url]['title'];  
-                            $button_background_color = $job_fairs[$job_fair_career_page_url]['button_background_color'];   
-                            $button_text_color = $job_fairs[$job_fair_career_page_url]['button_text_color']; ?>
-
+                <?php   if($theme4_enable_job_fair_careerpage == 1 && !empty($job_fairs)) {
+                            //
+                            $jobFairs = explode(',', $job_fair_career_page_url);
+                            ?>
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4 text-center">
-                                <a class="site-btn" style="background: <?=$button_background_color?>; color: <?=$button_text_color;?>" href="<?php echo base_url('/job_fair').'/'.$job_fair_career_page_url; ?>">
+                            <?php
+                            //
+                            foreach($jobFairs as $jf){
+                                $fair_title = $job_fairs[$jf]['title'];  
+                                $button_background_color = $job_fairs[$jf]['button_background_color'];   
+                                $button_text_color = $job_fairs[$jf]['button_text_color']; ?>
+                                <a class="site-btn" style="background: <?=$button_background_color?>; color: <?=$button_text_color;?>" href="<?php echo base_url('/job_fair').'/'.$jf; ?>">
                                     <?php echo $fair_title; ?>
                                 </a>
+                                <?php
+                            } ?>
                             </div>
                 <?php   } ?>
                         <div class="pull-right join-our-telentnetwork col-lg-4 col-md-4 col-xs-12 col-sm-4"><a class="site-btn bg-color" href="<?php echo base_url('/join_our_talent_network/');?>">Join Our Talent Network</a></div>

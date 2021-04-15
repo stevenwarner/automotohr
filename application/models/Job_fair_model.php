@@ -421,9 +421,11 @@ class Job_fair_model extends CI_Model {
             is_executive_admin,
             job_title
         ')
+        ->where_in('access_level', ['manager', 'hiring manager', 'admin'])
         ->where('active', 1)
         ->where('terminated_status', 0)
         ->where('parent_sid', $companyId)
+        ->order_by('LOWER(first_name)', 'ASC')
         ->get('users')
         ->result_array();
     }

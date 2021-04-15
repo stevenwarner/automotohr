@@ -1,3 +1,8 @@
+<style>
+ul.select2-selection__rendered li{
+    height: auto  !important;
+}
+</style>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -221,11 +226,13 @@
                                                                                                 if($job_fair_configuration) { ?>
                                                                                                     <li class="form-col-50-left autoheight">
                                                                                                         <label for="job_fair">Job Fair Forms</label>
-                                                                                                        <div class="hr-select-dropdown">
-                                                                                                            <select class="invoice-fields" name="job_fair_career_page_url">
+                                                                                                        <div class="">
+                                                                                                            <select class="jsSelect2" name="job_fair_career_page_url[]" multiple>
                                                                                         <?php                   if(empty($job_fair_multiple_forms)) { echo '<option value="">Default</option>'; } ?>
-                                                                                        <?php                       foreach($job_fair_multiple_forms as $jfmf) { ?>
-                                                                                                                        <option value="<?php echo $jfmf['page_url']; ?>" <?php echo ($theme['job_fair_career_page_url'] == $jfmf['page_url'] ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
+                                                                                        <?php                       
+                                                                                        $jobFairMatches = !empty($theme['job_fair_career_page_url']) ? explode(',', $theme['job_fair_career_page_url']) : [];
+                                                                                        foreach($job_fair_multiple_forms as $jfmf) { ?>
+                                                                                                                        <option value="<?php echo $jfmf['page_url']; ?>" <?php echo (in_array($jfmf['page_url'], $jobFairMatches) ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
                                                                                         <?php                       } ?>
                                                                                                             </select>
                                                                                                         </div>
@@ -427,14 +434,17 @@
                                                                                                 <label for="job_opportunities_text">Job Opportunities button text <span class="staric">*</span></label>
                                                                                                 <input type="text" name="job_opportunities_text" id="job_opportunities_text" value="<?php echo (isset($page['job_opportunities_text']) && $page['job_opportunities_text'] != '') ? $page['job_opportunities_text'] : 'View Job Opportunities'; ?>" class="invoice-fields"/>
                                                                                             </li>
-                                                                                    <?php   if($job_fair_configuration) { ?>
+                                                                                    <?php   if($job_fair_configuration) {
+                                                                                        //
+                                                                                        $matchURLs = !empty($page['job_fair_page_url']) ? explode(',', $page['job_fair_page_url']) : []
+                                                                                        ?>
                                                                                                 <li class="form-col-50-left autoheight">
                                                                                                     <label for="job_fair">Job Fair Forms</label>
-                                                                                                    <div class="hr-select-dropdown">
-                                                                                                        <select class="invoice-fields" name="job_fair_page_url">
+                                                                                                    <div class="">
+                                                                                                        <select class="jsSelect2" name="job_fair_page_url[]" multiple>
                                                                                     <?php                   if(empty($job_fair_multiple_forms)) { echo '<option value="">Default</option>'; } ?>
                                                                                     <?php                       foreach($job_fair_multiple_forms as $jfmf) { ?>
-                                                                                                                    <option value="<?php echo $jfmf['page_url']; ?>" <?php echo ($page['job_fair_page_url'] == $jfmf['page_url'] ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
+                                                                                                                    <option value="<?php echo $jfmf['page_url']; ?>" <?php echo (in_array($jfmf['page_url'], $matchURLs) ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
                                                                                     <?php                       } ?>
                                                                                                         </select>
                                                                                                     </div>
@@ -1048,24 +1058,27 @@
                 success: function (data) {
                     var names = JSON.parse(data);
 
-                    var safe_page_title = replace_special_chars(page_title);
+                    if(names.length > 0){
+                        var safe_page_title = replace_special_chars(page_title);
+    
+                        $.each(names, function (key, val) {
+    
+                            var safe_page_name = replace_special_chars(val.page_name);
+    
+                            /*
+                            if (val.page_title.toLowerCase() == page_title) {
+                                alertify.error('You already have a page with same name');
+                                nameFlag = true;
+                            }
+                            */
+                            if (safe_page_name == safe_page_title) {
+                                alertify.error('You already have a page with same name');
+                                nameFlag = true;
+                            }
+    
+                        });
+                    }
 
-                    $.each(names, function (key, val) {
-
-                        var safe_page_name = replace_special_chars(val.page_name);
-
-                        /*
-                        if (val.page_title.toLowerCase() == page_title) {
-                            alertify.error('You already have a page with same name');
-                            nameFlag = true;
-                        }
-                        */
-                        if (safe_page_name == safe_page_title) {
-                            alertify.error('You already have a page with same name');
-                            nameFlag = true;
-                        }
-
-                    });
                 },
                 error: function () {
                     console.log("error");
@@ -1351,4 +1364,8 @@
             $('#name_' + val).html('No file selected');
         }
     }
+    //
+    $(document).ready(function(){
+        $('.jsSelect2').select2({ closeOnSelect: false});
+    });
 </script> 

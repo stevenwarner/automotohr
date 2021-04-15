@@ -1,3 +1,8 @@
+<style>
+ul.select2-selection__rendered li{
+    height: auto  !important;
+}
+</style>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -87,11 +92,13 @@
                                                     </div>
                                                     <div class="col-lg-7 col-md-7 col-xs-12 col-sm-12">
                                                         <div class="input-group"> 
-                                                            <div class="hr-select-dropdown mb-20">
-                                                            <select class="invoice-fields" name="job_fair_homepage_page_url">
+                                                            <div class=" mb-20">
+                                                            <select class="jsSelect2" name="job_fair_homepage_page_url[]" multiple>
                                         <?php               if(empty($job_fair_multiple_forms)) { echo '<option value="">Default</option>'; } ?>
-                                        <?php                       foreach($job_fair_multiple_forms as $jfmf) { ?>
-                                                                        <option value="<?php echo $jfmf['page_url']; ?>" <?php echo ($theme['job_fair_homepage_page_url'] == $jfmf['page_url'] ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
+                                        <?php                       
+                                                                                    $jobFairMultiples = explode(',', $theme['job_fair_homepage_page_url']);
+                                                                                    foreach($job_fair_multiple_forms as $jfmf) { ?>
+                                                                        <option value="<?php echo $jfmf['page_url']; ?>" <?php echo (in_array($jfmf['page_url'], $jobFairMultiples) ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
                                         <?php                       } ?>
                                                             </select>
                                                         </div>
@@ -216,11 +223,13 @@
                                                     </div>
                                                     <div class="col-lg-7 col-md-7 col-xs-12 col-sm-12">
                                                         <div class="input-group"> 
-                                                            <div class="hr-select-dropdown mb-20">
-                                                            <select class="invoice-fields" name="job_fair_homepage_page_url">
+                                                            <div class=" mb-20">
+                                                            <select class="jsSelect2" name="job_fair_homepage_page_url[]" multiple>
                                         <?php               if(empty($job_fair_multiple_forms)) { echo '<option value="">Default</option>'; } ?>
-                                        <?php                       foreach($job_fair_multiple_forms as $jfmf) { ?>
-                                                                        <option value="<?php echo $jfmf['page_url']; ?>" <?php echo ($theme['job_fair_homepage_page_url'] == $jfmf['page_url'] ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
+                                        <?php                       
+                                                                                    $jobFairMultiples = explode(',', $theme['job_fair_homepage_page_url']);
+                                        foreach($job_fair_multiple_forms as $jfmf) { ?>
+                                                                        <option value="<?php echo $jfmf['page_url']; ?>" <?php echo (in_array($jfmf['page_url'], $jobFairMultiples) ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
                                         <?php                       } ?>
                                                             </select>
                                                         </div>
@@ -354,11 +363,14 @@
                                                     </div>
                                                     <div class="col-lg-7 col-md-7 col-xs-12 col-sm-12">
                                                         <div class="input-group"> 
-                                                            <div class="hr-select-dropdown mb-20">
-                                                            <select class="invoice-fields" name="job_fair_homepage_page_url">
+                                                            <div class=" mb-20">
+                                                            <select class="jsSelect2" name="job_fair_homepage_page_url[]" multiple>
                                         <?php               if(empty($job_fair_multiple_forms)) { echo '<option value="">Default</option>'; } ?>
-                                        <?php                       foreach($job_fair_multiple_forms as $jfmf) { ?>
-                                                                        <option value="<?php echo $jfmf['page_url']; ?>" <?php echo ($theme['job_fair_homepage_page_url'] == $jfmf['page_url'] ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
+                                        <?php                       
+                                            $jobFairMultiples = explode(',', $theme['job_fair_homepage_page_url']);
+                                            
+                                        foreach($job_fair_multiple_forms as $jfmf) { ?>
+                                                                        <option value="<?php echo $jfmf['page_url']; ?>" <?php echo (in_array($jfmf['page_url'], $jobFairMultiples) ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
                                         <?php                       } ?>
                                                             </select>
                                                         </div>
@@ -463,4 +475,8 @@
                 $('#name_' + val).html('No file selected');
             }
         }
+         //
+    $(document).ready(function(){
+        $('.jsSelect2').select2({ closeOnSelect: false});
+    });
 </script>

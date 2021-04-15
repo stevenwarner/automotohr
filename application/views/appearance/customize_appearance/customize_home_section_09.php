@@ -45,15 +45,17 @@
                                         </div>
                                     </div>
                                     <?php //echo '<pre>'; print_r($job_fair_data); echo '</pre>'; ?>
-                            <?php   if($job_fair_configuration == 1) { ?>
+                            <?php   if($job_fair_configuration == 1) { 
+                                $jobFairsMultip = explode(',', $theme['job_fair_homepage_page_url']);
+                                ?>
                                         <div class="row"><br>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <label for="job_fair">Job Fair Forms</label>
-                                                <div class="hr-select-dropdown">
-                                                    <select class="invoice-fields" name="job_fair_homepage_page_url">
+                                                <div class="">
+                                                    <select class="jsSelect2" name="job_fair_homepage_page_url[]" multiple>
                                 <?php                   if(empty($job_fair_multiple_forms)) { echo '<option value="">Default</option>'; } ?>
                                 <?php                       foreach($job_fair_multiple_forms as $jfmf) { ?>
-                                                                <option value="<?php echo $jfmf['page_url']; ?>" <?php echo ($theme['job_fair_homepage_page_url'] == $jfmf['page_url'] ? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
+                                                                <option value="<?php echo $jfmf['page_url']; ?>" <?php echo (in_array($jfmf['page_url'], $jobFairsMultip )? 'selected' : ''); ?>><?php echo $jfmf['title']; ?></option>
                                 <?php                       } ?>
                                                     </select>
                                                 </div>

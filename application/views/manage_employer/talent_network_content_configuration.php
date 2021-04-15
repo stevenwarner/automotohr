@@ -19,20 +19,26 @@
                         </div>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="universal-form-style-v2 talent-network-config">
-                                <ul>
-                                    <li class="form-col-100">
-                                        <label>title <span class="hr-required">*</span></label>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label>Title <span class="hr-required">*</span></label>
                                         <input name="title" id="title" value="<?php echo isset($talent_data['title']) ? $talent_data['title'] : ''; ?>" class="invoice-fields" type="text">
                                         <?php echo form_error('title'); ?>
-                                    </li>
-                                    <li class="form-col-100 autoheight">
+                                    </div>
+                                </div>
+                                    <br />
+                                <div class="row">
+                                    <div class="col-sm-12 ">
                                         <label>Content <span class="hr-required">*</span></label>
                                         <div style='margin-bottom:5px;'><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
                                         <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
                                         <textarea class="ckeditor" name="content" id="content" rows="8" cols="60" ><?php echo isset($talent_data['content']) ? $talent_data['content'] : ''; ?></textarea>
                                         <?php echo form_error('content'); ?>
-                                    </li>
-                                    <li class="form-col-100 autoheight">
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-sm-12 ">
                                         <div class="row">
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
                                                 <label class="control control--radio">
@@ -59,32 +65,64 @@
                                             	<?php echo form_error('picture_or_video'); ?>
                                             </div>
                                         </div>
-                                    </li>
-                                    <li class="form-col-100" id="video_div">
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-sm-12" id="video_div">
                                         <label>YouTube Video&nbsp; <span class="example-link">e.g. https://www.youtube.com/watch?v=XXXXXXXXXXX</span></label>
                                         <input name="youtube_link" id="youtube_link" value="<?php echo !empty($talent_data['youtube_link']) ? 'https://www.youtube.com/watch?v='.$talent_data['youtube_link'] : ''; ?>" class="invoice-fields" onblur="return youtube_check()" type="text">
                                         <?php echo form_error('youtube_link'); ?><br>
 <!--                                        <p id="video_link_error"></p>-->
-                                    </li>
+                                    </div>
+                                </div>
+                                <br />
                                     <?php if(isset($talent_data['picture']) && $talent_data['picture'] != '' && $talent_data['picture'] != NULL){ ?>
-                                    <li class="form-col-100 autoheight no-margin" id="pic_display">
+                                        <div class="row">
+                                    <div class="col-sm-12  no-margin" id="pic_display">
                                         <div class="well well-sm">
                                             <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $talent_data['picture']; ?>" alt="">
                                         </div>
-                                    </li>
+                                    </div>
+                                    </div>
+                                    <br />
                                     <?php } ?>
-                                    <li class="form-col-100" id="picture_div">
+                                <div class="row">
+                                    <div class="col-sm-12" id="picture_div">
                                         <label>upload image</label>
                                         <div class="upload-file invoice-fields">
                                             <span class="selected-file" id="name_pictures">No file selected</span>
                                             <input name="pictures" id="pictures" onchange="check_file('pictures')" type="file">
                                             <a href="javascript:;">Choose File</a>
                                         </div>
-                                    </li>
-                                    <li class="form-col-100 autoheight">
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label>Make Applicant For This Job Fair Only Visible To Following Employees:</label>
+                                        <div class="">
+                                            <select id="jsVE" name="visibility[]" multiple>
+                                            <?php if(!empty($employees)){
+                                                $ids = !empty($talent_data['visibility_employees']) ? 
+                                                explode(',', $talent_data['visibility_employees']) : [];
+                                                
+                                                foreach($employees as $emp){
+                                                    ?>
+                                                    <option value="<?=$emp['sid'];?>" <?=in_array($emp['sid'], $ids) ? 'selected="true"' : ''; ?>><?=remakeEmployeeName($emp);?> </option>
+                                                    <?php
+                                                }
+                                            } ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-sm-12 ">
                                         <input value="Save" class="submit-btn" type="submit">
-                                    </li>
-                                </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -137,6 +175,8 @@
     }
     
     $(document).ready(function () {
+        //
+        $('#jsVE').select2({ closeOnSelect: false });
         var value = $("input[name='picture_or_video']:checked").val();
         display(value);
     });

@@ -140,7 +140,7 @@ class Appearance extends Public_Controller {
             if (isset($_POST["action"]) && $_POST["action"] == "update") {
                 $theme_name = $this->input->post('theme_name');
                 $sid = $this->input->post('sid');
-                $job_fair_homepage_page_url = $this->input->post('job_fair_homepage_page_url');
+                $job_fair_homepage_page_url = !empty($this->input->post('job_fair_homepage_page_url')) ? implode(',', $this->input->post('job_fair_homepage_page_url')) : '';
                 $theme4_enable_job_fair_homepage = 0;
                 
                 if (isset($_POST['job_fair'])) {
@@ -496,23 +496,6 @@ class Appearance extends Public_Controller {
                 $page_name = preg_replace('/-+/', '-', $page_name); // Replaces multiple hyphens with single one.
                 $page_name = preg_replace('/_+/', '-', $page_name); // Replaces multiple unserscores with single one.
 
-                /*
-                $page_name = str_replace('  ', ' ', $page_name);
-                $page_name = str_replace(' ', '-', $page_name);
-                $page_name = str_replace('\`', '', $page_name);
-                $page_name = str_replace('"', '', $page_name);
-                $page_name = str_replace('\'', '', $page_name);
-                //$page_name = str_replace('-', '_', $page_name);
-                $page_name = str_replace('%', '', $page_name);
-                $page_name = str_replace('&', '-and-', $page_name);
-                $page_name = str_replace('%', '', $page_name);
-                $page_name = str_replace('^', '', $page_name);
-                $page_name = str_replace('$', '', $page_name);
-                $page_name = str_replace('*', '', $page_name);
-                $page_name = str_replace('__', '-', $page_name);
-                $page_name = preg_replace('/[^A-Za-z0-9\_]/', '', $page_name);
-                */
-
                 //Generate Page Name From Title Field - End
 
                 if (isset($_POST['job_opportunities'])) {
@@ -541,7 +524,7 @@ class Appearance extends Public_Controller {
                     $record_id = $_POST['sid'];
                 }
                 
-                $job_fair_page_url = $_POST['job_fair_page_url'];
+                $job_fair_page_url = !empty($_POST['job_fair_page_url']) ? implode(',', $_POST['job_fair_page_url']) : '';
                 $this->themes_pages_model->Save($sid, $company_id, $theme_name, $page_name, $page_title, $page_content, $page_status, $job_opportunities, $job_opportunities_text, $job_fair, $job_fair_page_url);
             }
 
@@ -761,7 +744,7 @@ class Appearance extends Public_Controller {
                 $theme4_enable_home_job_opportunity = $_POST['job_button_customization'];
                 $theme4_home_job_opportunity_text = $_POST['job_opportunities_text'];
                 $theme4_enable_job_fair_homepage = 0;
-                $job_fair_homepage_page_url = $_POST['job_fair_homepage_page_url'];
+                $job_fair_homepage_page_url = !empty($_POST['job_fair_homepage_page_url']) ? implode(',', $_POST['job_fair_homepage_page_url']) : '';
                 
                 if (isset($_POST['job_fair'])) {
                     $theme4_enable_job_fair_homepage = 1;
@@ -817,7 +800,7 @@ class Appearance extends Public_Controller {
                     $page_name = 'jobs';
                     $this->customize_appearance_model->fSaveThemeMetaData($company_sid, $theme_name, $page_name, 'jobs_page_title', $jobs_page_title);
                     $theme4_enable_job_fair_careerpage = 0;
-                    $job_fair_career_page_url = $_POST['job_fair_career_page_url'];
+                    $job_fair_career_page_url = !empty($_POST['job_fair_career_page_url']) ? implode(',', $_POST['job_fair_career_page_url']) : '';
                     
                     if (isset($_POST['job_fair'])) {
                         $theme4_enable_job_fair_careerpage = 1;
@@ -1217,7 +1200,8 @@ class Appearance extends Public_Controller {
         $sid = $this->input->get('sid');
         $company_id = $data["session"]["company_detail"]["sid"];
         $result = $this->themes_pages_model->GetAllPagesNameCompanySpecific($company_id, $sid);
-        print_r(json_encode($result));
+        echo json_encode($result);
+        exit(0);
     }
 
     public function add_additional_sections($theme_id) {
