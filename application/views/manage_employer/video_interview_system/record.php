@@ -104,6 +104,18 @@
                                                     <strong>Q:</strong>&nbsp;&nbsp;<?php echo ucwords($questionnaire['question_text']); ?>
                                                 <?php } ?>
                                             </span>
+                                            <div class="embed-responsive embed-responsive-16by9">
+                                                <?php $video_url = $questionnaire['video_id']; ?>
+                                                <?php if($questionnaire['video_source'] == 'youtube') { ?>
+                                                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/<?php echo $video_url ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                                <?php } elseif($questionnaire['video_source'] == 'vimeo') { ?>
+                                                    <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $video_url ?>"  frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                                <?php } else {?>
+                                                    <video controls style="width:100%; height:auto;">
+                                                        <source src="<?php echo $video_url ?>" type='video/mp4'>
+                                                    </video>
+                                                <?php } ?>
+                                            </div>
                                             <?php if ($questionnaire['resent_status'] == 1) { ?>
                                                 <hr />
                                                 <div class="row">
