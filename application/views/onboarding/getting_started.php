@@ -573,6 +573,46 @@
                         </div>
                         <?php } ?>
 
+                        
+
+                        <?php if (checkIfAppIsEnabled('performance_review')) { ?>
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6" id="js-to-box">
+                            <a href="<?= base_url('performance-management/lms/reviews'); ?>">
+                                <div class="widget-box">
+                                    <div class="link-box  bg-pr full-width">
+                                        <h2 class="text-blue">Performance Management</h2>
+                                        <div><span>&nbsp;</span></div>
+                                        <div class="current-date">
+                                            <span><?php echo $performanceReviewPending; ?><sub>Pending</sub></span>
+                                        </div>
+                                        <div class="status-panel">
+                                            <h3>Show</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php } ?>
+
+                        <?php if (checkIfAppIsEnabled('performance_review')) { ?>
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6" id="js-to-box">
+                            <a href="<?= base_url('performance-management/lms/goals'); ?>">
+                                <div class="widget-box">
+                                    <div class="link-box bg-blue full-width">
+                                        <h2 class="text-blue">Goals</h2>
+                                        <div><span>&nbsp;</span></div>
+                                        <div class="current-date">
+                                            <span><?php echo $goals; ?></span>
+                                        </div>
+                                        <div class="status-panel">
+                                            <h3>Show</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php } ?>
+
                         <?php if (checkIfAppIsEnabled('timeoff')) { ?>
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6" id="js-to-box">
                             <a href="<?=base_url('timeoff/lms');?>">
@@ -613,44 +653,6 @@
                                             <a href="#" data-id="<?=$employee_sid;?>"
                                                 class="btn btn-success form-control jsCreateRequest"
                                                 style="margin-right: 5px;"><i class="fa fa-plus-circle" style="font-size: 14px;" aria-hidden="true"></i>&nbsp;Create A Time-off Request</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <?php } ?>
-
-                        <?php if (checkIfAppIsEnabled('performance_review')) { ?>
-                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6" id="js-to-box">
-                            <a href="<?= base_url('performance-management/lms/reviews'); ?>">
-                                <div class="widget-box">
-                                    <div class="link-box  bg-pr full-width">
-                                        <h2 class="text-blue">Performance Management</h2>
-                                        <div><span>&nbsp;</span></div>
-                                        <div class="current-date">
-                                            <span><?php echo $performanceReviewPending; ?><sub>Pending</sub></span>
-                                        </div>
-                                        <div class="status-panel">
-                                            <h3>Show</h3>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <?php } ?>
-
-                        <?php if (checkIfAppIsEnabled('performance_review')) { ?>
-                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6" id="js-to-box">
-                            <a href="<?= base_url('performance-management/lms/goals'); ?>">
-                                <div class="widget-box">
-                                    <div class="link-box bg-blue full-width">
-                                        <h2 class="text-blue">Goals</h2>
-                                        <div><span>&nbsp;</span></div>
-                                        <div class="current-date">
-                                            <span><?php echo $goals; ?></span>
-                                        </div>
-                                        <div class="status-panel">
-                                            <h3>Show</h3>
                                         </div>
                                     </div>
                                 </div>
