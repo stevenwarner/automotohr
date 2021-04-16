@@ -5067,7 +5067,7 @@ class Onboarding extends CI_Controller {
                 if ($user_type == 'applicant') { //Initialize Progress
                     $this->onboarding_model->initialize_section_status_information($company_sid, $user_type, $user_sid);
                     $this->session->set_flashdata('message', 'Applicant Successfully Setup for Onboarding!');
-                    redirect('learning_center/applicant/' . $user_sid . '/' . $job_list_sid, 'refresh');
+                    redirect('onboarding/setup/applicant/' . $user_sid . '/' . $job_list_sid, 'refresh');
                 } else if ($user_type == 'employee') {
                     $this->session->set_flashdata('message', 'Employee Panel Successfully Configured!');
                     redirect('onboarding/setup/employee/' . $user_sid, 'refresh');
