@@ -75,6 +75,8 @@ class Auto_careers extends CI_Controller
             $applicant_primary_picture  = '';
             $applicant_primary_resume   = '';
             $applicant_primary_CV       = '';
+            $is_archive                 = 0;
+            $for_notification                = 0;
             $applicant_primary_data     = array();
             $applicant_data             = json_decode($applicant_job_info, true);
             $auto_fill                  = $applicant_data['auto_fill'];
@@ -95,6 +97,8 @@ class Auto_careers extends CI_Controller
              * Add report
              */
             $this->addReport('AutoCareers', $applicant_data['email']);
+
+            $applicant_data['email'] = fixEmailAddress($applicant_data['email'], 'gmail');
            
             //
             if(
@@ -125,8 +129,11 @@ class Auto_careers extends CI_Controller
                 //
                 if(!empty($ip_details['country_name']) && !in_array(strtolower(trim($ip_details['country_name'])), ['united states', 'canada'])){
                     $response['error'] = "Candidate not from US/CAN.";
-                    sendResponse($response);
-                    return;
+                    // sendResponse($response);
+                    // return;
+
+                    $is_archive         = 1;
+                    $for_notification   = 1;
                 }
             }
             
@@ -373,6 +380,8 @@ class Auto_careers extends CI_Controller
                 $insert_new_job['resume']                       = $resume_aws_path;
                 $insert_new_job['last_update']                  = date('Y-m-d');
                 $insert_new_job['portal_job_applications_sid']  = $job_applications_sid;
+                $insert_new_job['is_archive']                   = $is_archive;
+                $insert_new_job['for_notification']             = $for_notification;
                 
                 $portal_applicant_jobs_list_sid = $this->auto_careers_model->add_applicant_job_details($insert_new_job);
                 $response['applicant_sid'] = $job_applications_sid;

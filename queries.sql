@@ -62,3 +62,5 @@ CREATE TABLE IF NOT EXISTS `fix_email_address_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 COMMIT;
+
+ALTER TABLE `portal_applicant_jobs_list` ADD `for_notification` TINYINT(1) NOT NULL DEFAULT '0' AFTER `job_fair_key`;

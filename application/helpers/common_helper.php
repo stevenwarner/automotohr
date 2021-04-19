@@ -13154,9 +13154,21 @@ if(!function_exists('getUserHint')){
 //
 if(!function_exists('fixEmailAddress')) {
     function fixEmailAddress($email, $type) {
-        $old_email = $email;
+        $regx = 'gm';
         //
         $email_info = explode('@', $email);
+    
+        switch ($type) {
+            case 'gmail':
+                $regx = 'gm';
+                break;
+        }
+
+        if (preg_match('/$regx/', $email_info[1])) {
+            return trim($email);
+        }
+        //
+        
         $second_part = $email_info[1];
         $email_extention = explode('.', $second_part);
         //
