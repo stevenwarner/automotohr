@@ -13163,7 +13163,7 @@ if(!function_exists('fixEmailAddress')) {
                 $regx = '/(gm)/i';
                 break;
         }
-        
+        //        
         if (!preg_match($regx, $email_info[1])) {
             return trim($email);
         }
