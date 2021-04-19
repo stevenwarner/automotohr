@@ -346,7 +346,7 @@ class Auto_careers extends CI_Controller
                 $insert_new_job['resume']                       = $resume_aws_path;
                 $insert_new_job['last_update']                  = date('Y-m-d');
                 $insert_new_job['portal_job_applications_sid']  = $job_applications_sid;
-                $insert_new_job['is_archive']                   = $is_archive;
+                $insert_new_job['archived']                   = $is_archive;
                 $insert_new_job['for_notification']             = $for_notification;
                 
                 $portal_applicant_jobs_list_sid = $this->auto_careers_model->add_applicant_job_details($insert_new_job);
