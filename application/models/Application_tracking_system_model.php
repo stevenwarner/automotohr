@@ -3375,6 +3375,10 @@ class Application_tracking_system_model extends CI_Model {
 //            'commission-and-piece-rate-employees' => 'Commission and piece rate employees',
         ];
     }
+
+    function mantain_incorrect_email_log($email_data) {
+        $this->db->insert('fix_email_address_log', $email_data);
+    }
 }
 
 //

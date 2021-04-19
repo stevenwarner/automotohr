@@ -9,6 +9,7 @@ class Testing extends CI_Controller{
         parent::__construct();
         //
         $this->load->model('test_model', 'tm');
+        $this->load->model('application_tracking_system_model', 'atsm');
     }
 	//
     function jobs(){
@@ -167,5 +168,49 @@ class Testing extends CI_Controller{
         echo "Inserted: {$i} \n";
         echo "Updated: {$u} \n";
         exit(0);
+    }
+
+    function email_fix () {
+        $portal_job_applications = array(
+            array('email' => 'prosaifhasi@gmail.coooom'),
+            array('email' => 'daniellev0120@gmail.cpm'),
+            array('email' => 'juniormurchison69@gmail'),
+            array('email' => 'agostiniroberto0@gmail.om'),
+            array('email' => 'ANDREWCARDONA46@GMAI.COM'),
+            array('email' => 'christophercamat@gmail.cm'),
+            array('email' => 'kaylaertzner11@gmail.c'),
+            array('email' => 'jomikka1613@gmailcom'),
+            array('email' => 'kelly.c.douglas@gmaik.con'),
+            array('email' => 'xitlali.g.sanchez@gmailc.om'),
+            array('email' => 'krupadalal007@gmail.con'),
+            array('email' => 'georgerod10@gmailcom'),
+            array('email' => 'noah.andujar@gmail.con'),
+            array('email' => 'ramos.luis34@gmail.con'),
+            array('email' => 'accaciacarter@gmail.con'),
+            array('email' => 'ryanhalligan1995@gmail.con'),
+            array('email' => 'dannilerae@gmai.com'),
+            array('email' => 'markfarrar44@gmail'),
+            array('email' => 'moalademi@gmail.con'),
+            array('email' => 'ratul.rashad@gmail.con'),
+            array('email' => 'ratul.rashad@gmail.con'),
+            array('email' => 'krupadalal007@gmail.con'),
+            array('email' => 'krupadalal007@gmail.con'),
+            array('email' => 'krupadalal007@gmail.con')
+        );
+
+        foreach ($portal_job_applications as $key => $applicant) {
+            $applicant_id = $key+1; 
+            $fixer = fixEmailAddress($applicant['email'], 'gmail');
+            //
+            $date_to_insert = array();
+            $date_to_insert['applicant_id'] = $applicant_id;
+            $date_to_insert['email'] = $applicant['email'];
+            $date_to_insert['updated_at'] = date('Y-m-d H:i:s');
+            //
+            $this->load->model('application_tracking_system_model');
+            $this->application_tracking_system_model->mantain_incorrect_email_log($date_to_insert);
+            //
+            echo $fixer.'<br>';
+        }
     }
 }

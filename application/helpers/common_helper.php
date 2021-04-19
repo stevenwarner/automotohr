@@ -13150,3 +13150,26 @@ if(!function_exists('getUserHint')){
         return isset($hints[$slug]) ? $hints[$slug] : '';
     }
 }    
+
+//
+if(!function_exists('fixEmailAddress')) {
+    function fixEmailAddress($email, $type) {
+        $old_email = $email;
+        //
+        $email_info = explode('@', $email);
+        $second_part = $email_info[1];
+        $email_extention = explode('.', $second_part);
+        //
+        if ($email_extention[0] != $type) {
+            $email = str_replace($email_extention[0], $type, $email);
+        }
+        //
+        if (empty($email_extention[1])) {
+            $email = $email.'.com';
+        } else if ($email_extention[1] != 'com') {
+            $email = str_replace($email_extention[1], 'com', $email);
+        }
+        //
+        return trim($email);
+    }
+}

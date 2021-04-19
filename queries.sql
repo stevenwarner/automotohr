@@ -50,3 +50,15 @@ ALTER TABLE `learning_center_online_videos_assignments` ADD `is_deleted` TINYINT
 -- 04/15/2021
 ALTER TABLE `talent_network_content_config` ADD `visibility_employees` TEXT NULL DEFAULT NULL AFTER `picture_or_video`;
 ALTER TABLE `portal_themes` CHANGE `job_fair_career_page_url` `job_fair_career_page_url` VARCHAR(700) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL;
+
+-- Save old email
+-- 04/19/2021
+DROP TABLE IF EXISTS `fix_email_address_log`;
+CREATE TABLE IF NOT EXISTS `fix_email_address_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `applicant_id` int(11) NOT NULL,
+  `email` varchar(225) NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+COMMIT;
