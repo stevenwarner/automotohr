@@ -53,7 +53,6 @@ ALTER TABLE `portal_themes` CHANGE `job_fair_career_page_url` `job_fair_career_p
 
 -- Save old email
 -- 04/19/2021
-DROP TABLE IF EXISTS `fix_email_address_log`;
 CREATE TABLE IF NOT EXISTS `fix_email_address_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `applicant_id` int(11) NOT NULL,
@@ -61,6 +60,4 @@ CREATE TABLE IF NOT EXISTS `fix_email_address_log` (
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-COMMIT;
-
 ALTER TABLE `portal_applicant_jobs_list` ADD `for_notification` TINYINT(1) NOT NULL DEFAULT '0' AFTER `job_fair_key`;

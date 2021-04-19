@@ -13154,34 +13154,39 @@ if(!function_exists('getUserHint')){
 //
 if(!function_exists('fixEmailAddress')) {
     function fixEmailAddress($email, $type) {
-        $regx = 'gm';
+        $regx = '/gm/';
         //
         $email_info = explode('@', $email);
-    
+        //
         switch ($type) {
             case 'gmail':
-                $regx = 'gm';
+                $regx = '/(gm)/i';
                 break;
         }
-
-        if (preg_match('/$regx/', $email_info[1])) {
+        
+        if (!preg_match($regx, $email_info[1])) {
             return trim($email);
         }
         //
-        
+        $newEmailAddress = trim($email_info[0]).'@';
+        //
         $second_part = $email_info[1];
         $email_extention = explode('.', $second_part);
         //
-        if ($email_extention[0] != $type) {
-            $email = str_replace($email_extention[0], $type, $email);
+        if (empty($email_extention[0]) || $email_extention[0] != $type) {
+            $newEmailAddress .= "{$type}";
+        } else{
+            $newEmailAddress .= "{$type}";
         }
         //
         if (empty($email_extention[1])) {
-            $email = $email.'.com';
+            $newEmailAddress .= ".com";
         } else if ($email_extention[1] != 'com') {
-            $email = str_replace($email_extention[1], 'com', $email);
+            $newEmailAddress .= ".com";
+        } else{
+            $newEmailAddress .= ".com";
         }
         //
-        return trim($email);
+        return trim($newEmailAddress);
     }
 }

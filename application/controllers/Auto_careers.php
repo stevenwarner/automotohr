@@ -122,16 +122,15 @@ class Auto_careers extends CI_Controller
             } else {
                 $ip_address         = '';
             }
+            //
+            $is_archive         = 0;
+            $for_notification   = 0;
             // Lets check the city and IP
             if(!empty($ip_address) && empty($applicant_data['country'])){
                 //
                 $ip_details = getIpDetails($ip_address);
                 //
                 if(!empty($ip_details['country_name']) && !in_array(strtolower(trim($ip_details['country_name'])), ['united states', 'canada'])){
-                    $response['error'] = "Candidate not from US/CAN.";
-                    // sendResponse($response);
-                    // return;
-
                     $is_archive         = 1;
                     $for_notification   = 1;
                 }
@@ -316,40 +315,7 @@ class Auto_careers extends CI_Controller
 
                 $job_applications_sid = $this->auto_careers_model->save_applicant($applicant_primary_data);
             } else {
-
-                //$old_s3_resume = $this->auto_careers_model->get_old_resume($portal_job_applications_sid, $company_sid, $job_sid);
-
                 $job_applications_sid = $portal_job_applications_sid;
-
-                // $resume_to_update = array();
-                // $resume_to_update['resume'] = $resume_aws_path;
-
-                // $this->auto_careers_model->update_applicant_resume($portal_job_applications_sid, $resume_to_update);
-
-                // if (!empty($old_s3_resume)) {
-                //     $resume_log_data                            = array();
-                //     $resume_log_data['company_sid']             = $company_sid;
-                //     $resume_log_data['user_type']               = 'Applicant';
-                //     $resume_log_data['user_sid']                = $portal_job_applications_sid;
-                //     $resume_log_data['user_email']              = $email;
-                //     $resume_log_data['requested_by']            = 0;
-                //     $resume_log_data['requested_subject']       = 'NULL';
-                //     $resume_log_data['requested_message']       = 'NULL';
-                //     $resume_log_data['requested_ip_address']    = $ip_address;
-                //     $resume_log_data['requested_user_agent']    = $user_agent;
-                //     $resume_log_data['request_status']          = 3;
-                //     $resume_log_data['is_respond']              = 1;
-                //     $resume_log_data['resume_original_name']    = 'applicant_indeed_resume';
-                //     $resume_log_data['resume_s3_name']          = $resume_aws_path;
-                //     $resume_log_data['resume_extension']        = '.pdf';
-                //     $resume_log_data['old_resume_s3_name']      = $old_s3_resume;
-                //     $resume_log_data['response_date']           = date('Y-m-d H:i:s');
-                //     $resume_log_data['requested_date']          = date('Y-m-d H:i:s');
-                //     $resume_log_data['job_sid']                 = $job_sid;
-                //     $resume_log_data['job_type']                = 'profile_update';
-
-                //     $this->auto_careers_model->insert_resume_log($resume_log_data);
-                // }
             }
             
             // Check if the user has already applied for this job
