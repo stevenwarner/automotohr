@@ -13164,7 +13164,7 @@ if(!function_exists('fixEmailAddress')) {
                 break;
         }
 
-        if (preg_match('/$regx/', $email_info[1])) {
+        if (!preg_match('/$regx/', $email_info[1])) {
             return trim($email);
         }
         //
