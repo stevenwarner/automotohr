@@ -39,16 +39,16 @@ function getProgress(reviewerArray, reviewerType) {
             if (record.completion_status == 1 && record.reviewer_type == 'Review') returnOBJ.completed++;
             else if (record.completion_status == 0 && record.reviewer_type == 'Review') returnOBJ.pending++;
         } else if (reviewerType == 'feedback') {
-            if (record.completion_status == 1 && record.reviewer_type == 'Feedback') returnOBJ.completed++;
-            else if (record.completion_status == 0 && record.reviewer_type == 'Feedback') returnOBJ.pending++;
+            if (record.completion_status == 1 && record.reviewer_type == 'Feeback') returnOBJ.completed++;
+            else if (record.completion_status == 0 && record.reviewer_type == 'Feeback') returnOBJ.pending++;
         }
     });
     //
     returnOBJ.total = returnOBJ.completed + returnOBJ.pending;
     //
-    returnOBJ.completed = (returnOBJ.completed * 100) / returnOBJ.total;
-    returnOBJ.completed = isNaN(returnOBJ.completed) ? 0 : returnOBJ.completed;
-    returnOBJ.pending = (returnOBJ.pending * 100) / returnOBJ.total;
+    returnOBJ.completed = Math.ceil((returnOBJ.completed * 100) / returnOBJ.total);
+    returnOBJ.completed = Math.ceil(isNaN(returnOBJ.completed) ? 0 : returnOBJ.completed);
+    returnOBJ.pending = Math.ceil((returnOBJ.pending * 100) / returnOBJ.total);
     //
     returnOBJ.total = 100;
     //
