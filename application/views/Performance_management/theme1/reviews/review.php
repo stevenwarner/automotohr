@@ -64,7 +64,6 @@
                     </span>
                     <h1>
                         <span class="csF18 csB7"><?=$review['review_title'];?></span>
-                        <span class="btn alert-<?=$review['status'] == 'pending' || empty($review['status']) ? 'warning' : ( $review['status'] == 'started' ? 'success' : 'danger');?> csF16"><?=$review['status'] == 'pending' || empty($review['status']) ? 'Pending' : ( $review['status'] == 'started' ? 'Running' : 'Ended');?></span>
                     </h1>
                 </h1>
             </div>

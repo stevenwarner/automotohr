@@ -782,24 +782,6 @@
                                         </div>
                                     </div>
                                 <?php } ?>
-                                <?php if (checkIfAppIsEnabled('performance_review') ) { ?>
-                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                        <div class="dash-box">
-                                            <div class="dashboard-widget-box">
-                                                <figure><i class="fa fa-bullseye <?php echo $total_goals > 0 ? 'start_animation' : ''; ?>"></i></figure>
-                                                <h2 class="post-title">
-                                                    <a href="<?= base_url("performance-management/goals"); ?>">Goals</a>
-                                                </h2>
-                                                <div class="count-box" style="font-size: 12px">
-                                                    <small style="font-size: 12px"><?=$total_goals;?> Total Goals</small>
-                                                </div>
-                                                <div class="button-panel">
-                                                    <a href="<?= base_url("performance-management/goals"); ?>" class="site-btn">Show</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php } ?>
 
                                 <!-- Account Activity -->
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">

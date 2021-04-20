@@ -295,7 +295,7 @@ $(function() {
             }
             //
             rows += `<tr data-id="${review.sid}">`;
-            rows += `   <td><p class="csF16">${review.review_title} ${status}</p></td>`;
+            rows += `   <td><p class="csF16">${review.review_title}</p></td>`;
             rows += `   <td class="csF16">${convertDate(review.review_start_date)}</td>`;
             rows += `   <td>`;
             if (filter.reviewStatus != 'draft') {

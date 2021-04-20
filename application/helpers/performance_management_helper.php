@@ -126,14 +126,14 @@ if(!function_exists('getQuestionBody')){
         }
 
         // For rating
-        if($question['question_type'] == 'text-rating' || $question['question_type'] == 'rating'){
+        if($question['question_type'] == 'text-rating' || $question['question_type'] == 'text-n-rating' || $question['question_type'] == 'rating'){
             //
             $html .= '<ul>';
             //
             for($i = 1; $i <= $question['scale']; $i++){
                 $html .= '<li '.( !empty($answer) && $answer['rating'] == $i ? 'class="active"' : '' ).'>';
                 $html .= '  <div class="csFeedbackViewBoxTab">';
-                $html .= '      <p class="mb0 csF16 fa-tint'.($rClass).'" data-id="'.($i).'">'.($i).'</p>';
+                $html .= '      <p class="mb0 csF16 '.($rClass).'" data-id="'.($i).'">'.($i).'</p>';
                 if($question['labels_flag'] == 1):
                     $html .= '  <p class="csF16">'.(getLabel($i, ($question['label_question']))).'</p>';
                 endif;
@@ -147,6 +147,7 @@ if(!function_exists('getQuestionBody')){
         if(
             $question['question_type'] == 'text' || 
             $question['question_type'] == 'text-rating' || 
+            $question['question_type'] == 'text-n-rating' || 
             $question['question_type'] == 'multiple-choice-with-text'
         ){
             $html .= '<div class="csFeedbackViewBoxComment ">';

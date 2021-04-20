@@ -61,8 +61,8 @@
                     <?php 
                         $answers = [];
                         foreach($review['Questions'] as $key => $question):
-                        $ques = json_decode($question['question'], true);
-                        $answ = json_decode($question['answer'], true);
+                            $ques = json_decode($question['question'], true);
+                            $answ = json_decode($question['answer'], true);
                         //
                         if(!empty($answ)) {
                             $answers[$question['sid']] = $answ;
