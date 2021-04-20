@@ -468,7 +468,7 @@ $route['send_offer_letter_documents/(:num)'] = 'employee_management/send_offer_l
 $route['send_hr_documents'] = 'employee_management/send_hr_documents';
 $route['send_hr_documents/(:num)'] = 'employee_management/send_hr_documents/$1';
 $route['employee_profile'] = 'employee_management/employee_profile';
-$route['employee_profile/(:num)'] = 'employee_manmangeagement/employee_profile/$1';
+$route['employee_profile/(:num)'] = 'employee_management/employee_profile/$1';
 $route['employee_login_credentials'] = 'employee_management/employee_login_credentials';
 $route['employee_login_credentials/(:num)'] = 'employee_management/employee_login_credentials/$1';
 //private message
