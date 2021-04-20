@@ -241,7 +241,10 @@ class Learning_center extends Public_Controller {
                 $data_to_insert['video_description'] = $video_description;
                 $data_to_insert['video_source'] = $video_source;
                 $data_to_insert['video_id'] = $video_id;
-                $data_to_insert['video_start_date'] = DateTime::createfromformat('m-d-Y', $_POST['video_start_date'])->format('Y-m-d');
+                //
+                if (isset($_POST['video_start_date']) && !empty($_POST['video_start_date'])) {
+                    $data_to_insert['video_start_date'] = DateTime::createfromformat('m-d-Y', $_POST['video_start_date'])->format('Y-m-d');
+                }
                 //
                 if ($_POST['is_video_expired'] == 'yes') {
                     $data_to_insert['expired_number'] = $_POST['expired_number'];
@@ -267,10 +270,10 @@ class Learning_center extends Public_Controller {
                 if($exist_video_sid > 0){
                     $video_sid = $exist_video_sid;
                     $this->learning_center_model->update_training_video($video_sid, $data_to_insert);
-                    
                 }else{ 
                     $video_sid = $this->learning_center_model->insert_training_video($data_to_insert);
                 }
+
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
                 $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
@@ -2255,8 +2258,11 @@ class Learning_center extends Public_Controller {
             $data_to_return['video_sid'] = $video_sid;
             $data_to_return['attached_date'] = my_date_format($attached_date);
             $data_to_return['delete_url'] = base_url('learning_center/delete_attachment_document/' . $document_sid . '/' . $video_sid);
-             $data_to_return['update_url'] = base_url('learning_center/update_supporting_document/' . $document_sid . '/' . $video_sid);
+            $data_to_return['update_url'] = base_url('learning_center/update_supporting_document/' . $document_sid . '/' . $video_sid);
+            
+            header('Content-type: application/json');
             echo json_encode($data_to_return);
+            exit(0);
         } else {
             echo 'error';
         }
