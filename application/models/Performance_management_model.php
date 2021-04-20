@@ -1178,6 +1178,7 @@ class Performance_management_model extends CI_Model{
             pmr.end_date,
             pmr.review_sid
         ')
+        ->distinct()
         ->from('performance_management_reviewers pmrs')
         ->join('performance_management_reviewees pmr', 'pmr.reviewee_sid = pmrs.reviewee_sid')
         ->where('pmrs.reviewer_sid', $employeeId)

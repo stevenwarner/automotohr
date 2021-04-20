@@ -95,7 +95,7 @@ $db['ahr'] = array(
 	'compress' => TRUE,
 	'stricton' => FALSE,
 	'failover' => array(),
-	'save_queries' => FALSE
+	'save_queries' => TRUE
 );
 
 $db['ac'] = array(
