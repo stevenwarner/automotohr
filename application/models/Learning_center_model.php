@@ -1675,4 +1675,41 @@ class Learning_center_model extends CI_Model {
         ->get('learning_center_online_videos')
         ->result_array();
     }
+
+    function get_all_remove_user ($video_sid, $assign_users) {
+
+        $this->db->select('*');
+        $this->db->where_not_in('user_sid',$assign_users);
+        $this->db->where('status',1);
+        $this->db->where('learning_center_online_videos_sid',$video_sid);
+        $records_obj = $this->db->get('learning_center_online_videos_assignments');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    function get_user_question_record ($video_sid, $video_assign_sid) {
+
+        $this->db->select('video_assign_sid, questionnaire_name, questionnaire, questionnaire_result, questionnaire_attend_timestamp');
+        $this->db->where('video_sid', $video_sid);
+        $this->db->where('video_assign_sid',$video_assign_sid);
+        $records_obj = $this->db->get('learning_center_screening_questionnaire');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
 }

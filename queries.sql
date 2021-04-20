@@ -61,3 +61,26 @@ CREATE TABLE IF NOT EXISTS `fix_email_address_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 ALTER TABLE `portal_applicant_jobs_list` ADD `for_notification` TINYINT(1) NOT NULL DEFAULT '0' AFTER `job_fair_key`;
+
+-- learning center history
+-- 04/20/2021
+CREATE TABLE IF NOT EXISTS `learning_center_assign_user_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `learning_center_online_videos_sid` int(11),
+  `user_type` varchar(128),
+  `user_sid` int(11),
+  `date_assigned` datetime,
+  `watched` tinyint(1),
+  `date_watched` datetime,
+  `status` tinyint(1),
+  `attempt_status` tinyint(1),
+  `duration` varchar(255),
+  `completed` tinyint(1),
+  `from_training_session` tinyint(1),
+  `video_assign_sid` int(11),
+  `questionnaire_name` text,
+  `questionnaire` text,
+  `questionnaire_result` varchar(32),
+  `questionnaire_attend_timestamp` timestamp, 
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
