@@ -581,6 +581,7 @@ class Performance_management_model extends CI_Model{
         ->where('parent_sid', $companyId)
         ->where('active', 1)
         ->where('terminated_status', 0)
+        ->order_by('first_name', 'ASC')
         ->get('users');
         //
         $b = $a->result_array();
@@ -1496,6 +1497,149 @@ class Performance_management_model extends CI_Model{
         ->where('pmr.review_sid', $reviewId)
         ->get('performance_management_reviewers pmr')
         ->result_array(),'reviewer_sid');
+    }
+
+
+    //
+    function getAllReviews(
+        $companyId,
+        $reviewIds,
+        $employeeIds,
+        $startDate,
+        $endDate
+    ){
+        // Get all reviews for report
+        $this->db
+        ->select('sid, review_title')
+        ->from('performance_management')
+        ->where('company_sid', $companyId)
+        ->where('review_start_date >= ', $startDate)
+        ->where('review_end_date <= ', $endDate);
+        //
+        if($reviewIds != 'all'){
+            $this->db->where_in('sid', $reviewIds);
+        }
+        
+        //
+        $reviews = $this->db->get()->result_array();
+        //
+        if(empty($reviews)){
+            return [];
+        }
+        //
+        $answers = [
+            'employees' => [],
+            'reviews' => []
+        ];
+        //
+        foreach($reviews as $review){
+            // Get anwers
+            $reviewAnswer = $this->db
+            ->select('performance_management_review_answers.answer, performance_management_review_answers.reviewee_sid, performance_management_review_questions.question_type')
+            ->from('performance_management_review_answers')
+            ->join('performance_management_review_questions', 'performance_management_review_questions.sid = performance_management_review_answers.review_question_sid')
+            ->where('performance_management_review_questions.review_sid', $review['sid'])
+            ->where_in('performance_management_review_questions.question_type', ['text-n-rating', 'text-rating', 'multiple-choice-with-text', 'multiple-choice', 'rating'])
+            ->where('performance_management_review_answers.review_question_sid <> ', 0)
+            ->get()
+            ->result_array();
+            //
+            if(!empty($reviewAnswer)){
+                //
+                foreach($reviewAnswer as $answ){
+                    //
+                    if($employeeIds != 'all'){
+                        if(!in_array($answ['reviewee_sid'], [$employeeIds])) {
+                            continue;
+                        };
+                    }
+                    //
+                    $ans = json_decode($answ['answer'], true);
+                    //
+                    $neutral = 0;
+                    $agree = 0;
+                    $disagree = 0;
+                    //
+                    if($answ['question_type'] == 'rating' || $answ['question_type'] == 'text-n-rating' || $answ['question_type'] == 'text-rating'){
+                        if($ans['rating'] <= 2){
+                            $agree++;
+                        } else if($ans['rating'] >= 4){
+                            $disagree++;
+                        } else{
+                            $neutral++;
+                        }
+                    } else if($answ['question_type'] == 'multiple-choice' || $answ['question_type'] == 'multiple-choice-with-text'){
+                        if($ans['radio'] == 'yes'){
+                            $agree++;
+                        } else if($ans['radio'] == 'no'){
+                            $disagree++;
+                        } else{
+                            $neutral++;
+                        }
+                    }
+                    //
+                    if(!isset($answers['reviews'][$review['sid']])){
+                        $answers['reviews'][$review['sid']] = [
+                            'agree' => 0,
+                            'neutral' => 0,
+                            'disagree' => 0,
+                            'title' => $review['review_title']
+                        ];
+                    }
+                    //
+                    if(!isset($answers['employees'][$answ['reviewee_sid']])){
+                        $answers['employees'][$answ['reviewee_sid']] = [
+                            'agree' => 0,
+                            'neutral' => 0,
+                            'disagree' => 0
+                        ];
+                    }
+                    //
+                    $answers['reviews'][$review['sid']]['agree'] += $agree;
+                    $answers['reviews'][$review['sid']]['neutral'] += $neutral;
+                    $answers['reviews'][$review['sid']]['disagree'] += $disagree;
+                    //
+                    $answers['employees'][$answ['reviewee_sid']]['agree'] += $agree;
+                    $answers['employees'][$answ['reviewee_sid']]['neutral'] += $neutral;
+                    $answers['employees'][$answ['reviewee_sid']]['disagree'] += $disagree;
+                }
+            }
+        }
+        //
+        if(!empty($answers['reviews'])){
+            foreach($answers['reviews'] as $key => $review){
+                //
+                $total = $review['agree'] + $review['disagree'] + $review['neutral'];
+                //
+                $answers['reviews'][$key]['agree'] = ceil(($review['agree'] * 100) / $total);
+                $answers['reviews'][$key]['neutral'] = ceil(($review['neutral'] * 100) / $total);
+                $answers['reviews'][$key]['disagree'] = ceil(($review['disagree'] * 100) / $total);
+            }
+        }
+        //
+        if(!empty($answers['employees'])){
+            foreach($answers['employees'] as $key => $review){
+                //
+                $total = $review['agree'] + $review['disagree'] + $review['neutral'];
+                //
+                $answers['employees'][$key]['agree'] = ceil(($review['agree'] * 100) / $total);
+                $answers['employees'][$key]['neutral'] = ceil(($review['neutral'] * 100) / $total);
+                $answers['employees'][$key]['disagree'] = ceil(($review['disagree'] * 100) / $total);
+            }
+        }
+        //
+        return $answers;
+    }
+
+    //
+    function getReviewTitles($companyId){
+        // Get all reviews for report
+        return $this->db
+        ->select('sid, review_title')
+        ->from('performance_management')
+        ->where('company_sid', $companyId)
+        ->get()
+        ->result_array();
     }
 }
 

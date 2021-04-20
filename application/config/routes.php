@@ -468,7 +468,7 @@ $route['send_offer_letter_documents/(:num)'] = 'employee_management/send_offer_l
 $route['send_hr_documents'] = 'employee_management/send_hr_documents';
 $route['send_hr_documents/(:num)'] = 'employee_management/send_hr_documents/$1';
 $route['employee_profile'] = 'employee_management/employee_profile';
-$route['employee_profile/(:num)'] = 'employee_management/employee_profile/$1';
+$route['employee_profile/(:num)'] = 'employee_manmangeagement/employee_profile/$1';
 $route['employee_login_credentials'] = 'employee_management/employee_login_credentials';
 $route['employee_login_credentials/(:num)'] = 'employee_management/employee_login_credentials/$1';
 //private message
@@ -478,7 +478,7 @@ $route['outbox_message_detail/(:num)'] = 'private_messages/outbox_message_detail
 $route['inbox_message_detail/(:num)'] = 'private_messages/inbox_message_detail/$1';
 $route['reply_message/(:num)'] = 'private_messages/reply_message/$1';
 //Appearance
-$route['customize_appearance'] = 'appearance/customize_appearance';
+$route['fmana'] = 'appearance/customize_appearance';
 $route['customize_appearance/(:num)'] = 'appearance/customize_appearance/$1';
 $route['enterprise_theme_activation'] = 'appearance/enterprise_theme_activation';
 $route['appearance/get_pages_name'] = 'appearance/get_pages_name';
@@ -1277,6 +1277,9 @@ $route['performance-management/download/(:any)/(:num)/(:num)/(:num)'] = 'Perform
 //
 $route['performance-management/employee/review/(:num)/(:num)'] = 'Performance_management/gp_review/$1/$2';
 $route['performance-management/employee/review/(:num)/(:num)/(:num)'] = 'Performance_management/gp_review/$1/$2/$3';
+//
+$route['performance-management/report'] = 'Performance_management/report';
+$route['performance-management/report/(:any)/(:any)/(:any)/(:any)'] = 'Performance_management/report/$1/$2/$3/$4';
 
 // Sync
 $route['sync_jobs']['cli'] = 'Testing/sj';

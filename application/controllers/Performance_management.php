@@ -149,7 +149,7 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function report(){
+    function report($reviewId = 'all', $employeeIds = 'all', $startDate = 'all', $endDate = 'all'){
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -158,6 +158,20 @@ class Performance_management extends Public_Controller{
         $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
         // Get department & teams list
         $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        //
+        $this->pargs['allEmployees'] = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['reviews'] = $this->pmm->getReviewTitles($this->pargs['companyId']);
+        //
+        $startDate = $startDate == 'all' ? date('Y-01-01', strtotime('now')) : DateTime::createfromformat('m-d-Y', $startDate)->format('Y-m-d');
+        $endDate = $endDate == 'all' ? date('Y-12-t', strtotime('now')) : DateTime::createfromformat('m-d-Y', $endDate)->format('Y-m-d');
+        // Get all reviews
+        $this->pargs['allReviews'] = $this->pmm->getAllReviews($this->pargs['companyId'], $reviewId, $employeeIds, $startDate, $endDate);
+        //
+        $this->pargs['startDate'] = DateTime::createfromformat('Y-m-d', $startDate)->format('m/d/Y');
+        $this->pargs['endDate'] = DateTime::createfromformat('Y-m-d', $endDate)->format('m/d/Y');
+        $this->pargs['reviewId'] = $reviewId;
+        $this->pargs['employeeIds'] = $employeeIds;
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
