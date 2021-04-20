@@ -461,6 +461,16 @@ class Learning_center extends Public_Controller {
                 $this->load->view('learning_center/online_videos_add');
                 $this->load->view('main/footer');
             } else {
+                $assign_users = array();
+                $assign_users = $_POST['employees_assigned_sid'];
+                $removed_users = $this->learning_center_model->get_all_remove_user($video_sid, $assign_users);
+
+                if(!empty($removed_users)) {
+                    foreach ($removed_users as $user) {
+                        $user_question = $this->learning_center_model->get_user_question_record($video_sid, $user['sid']);
+                    }
+                }
+                
                 $post = $this->input->post(NULL, TRUE);
 
                 $perform_action = $this->input->post('perform_action');
