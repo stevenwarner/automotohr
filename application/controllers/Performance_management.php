@@ -613,6 +613,27 @@ class Performance_management extends Public_Controller{
         $this->pargs['pp'] = $this->pp;
         $this->pargs['gp'] = true;
         $this->pargs['employeeId'] = $sid;
+
+        //
+        $startDate = date('Y-01-01', strtotime('now'));
+        $endDate = date('Y-12-t', strtotime('now'));
+        // Get all reviews
+        $this->pargs['allReviews'] = $this->pmm->getAllReviews($this->pargs['companyId'], 'all', $sid, $startDate, $endDate);
+        $this->pargs['myReviews'] = $this->pmm->getMyReviews($this->pargs['companyId'], $sid);
+
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image']),
+                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
+                ];
+            }
+        }
         //
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);

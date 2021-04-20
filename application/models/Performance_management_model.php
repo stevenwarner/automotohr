@@ -549,7 +549,7 @@ class Performance_management_model extends CI_Model{
         ->where('is_archived', $archived)
         ->limit(1);
         //
-        if(!empty($where)) $this->db->where($where);
+        if(!empty($where)){ $this->db->where($where);}
         //
         $a = $this->db->get($this->tables['PM']);
         $b = $a->row_array();
@@ -1629,6 +1629,27 @@ class Performance_management_model extends CI_Model{
         }
         //
         return $answers;
+    }
+    
+    
+    //
+    function getMyReviews(
+        $companyId,
+        $employeeId
+    ){
+        // Get all reviews for report
+        $this->db
+        ->select('
+            performance_management.sid, 
+            performance_management.review_title,
+            performance_management_reviewers.reviewer_sid
+        ')
+        ->from('performance_management')
+        ->join('performance_management_reviewers', 'performance_management_reviewers.review_sid = performance_management.sid')
+        ->where('performance_management_reviewers.reviewee_sid', $employeeId)
+        ->where('performance_management.company_sid', $companyId);
+        //
+        return $this->db->get()->result_array();
     }
 
     //
