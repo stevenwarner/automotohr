@@ -700,7 +700,8 @@
                 type: 'post',
                 data: form_data,
                 success: function(return_data_array){
-                    var obj = jQuery.parseJSON(return_data_array);
+                    // var obj = jQuery.parseJSON(return_data_array);
+                    var obj = return_data_array;
                     var Title = obj.upload_file_title;
                     var attach_date = obj.attached_date;
                     var delete_url = obj.delete_url;
@@ -714,7 +715,7 @@
                     alertify.success('New document has been uploaded');
                     $('.upload_learning_doc').show();
                     $('#uploaded-files').show();
-                    $('#attach_document_upload_status tr:last').after('<tr><td>'+Title+'</td><td class="text-center">'+attach_date+'</td><td class="text-center col-xs-12"><div class="col-lg-4 col-md-4 col-xs-4 col-sm-4"><a href="javascript:;" class="btn btn-warning btn-bg supporting_doc_status" src="0" data="'+document_sid+'" id="'+active_btn+'">De-Activate</a></div><div class="col-lg-4 col-md-4 col-xs-4 col-sm-4"><a href="'+delete_url+'" class="btn btn-danger btn-bg" type="submit">Delete</a></div><div class="col-lg-4 col-md-4 col-xs-4 col-sm-4"><a href="javascript:;" src="'+update_url+'" class="btn btn-info btn-bg update_supporting_doc" type="submit">Update</a></div></td></tr>');
+                    $('#attach_document_upload_status tr:last').after('<tr><td>'+Title+'</td><td class="text-center">'+attach_date+'</td><td class="text-center"><a href="javascript:;" class="btn btn-warning btn-bg btn-block supporting_doc_status" src="0" data="'+document_sid+'" id="'+active_btn+'">De-Activate</a></td><td class="text-center"><a href="'+delete_url+'" class="btn btn-danger btn-bg btn-block" type="submit">Delete</a></td><td class="text-center"><a href="javascript:;" class="btn btn-info btn-bg btn-block update_supporting_doc" src="'+update_url+'" type="submit">Update</a></td></td></tr>');
                     $('#file-upload-div').html("");
                     $('#upload_doc_title').val("");
                     $('#video_sid').val(obj.video_sid);
@@ -942,10 +943,18 @@
                     }
                 }
 
+                var video_start_date = $("#video_start_date").val();
+                if (video_start_date == undefined || video_start_date == 0 || video_start_date == '') {
+                    flag = 1;
+                    alertify.alert('Error','Please select video start date.');
+                    return false;
+                } 
+
                 var video_expired = $('input[name="is_video_expired"]:checked').val();
                 if (video_expired == "yes") {
                     var expired_number = $("#expired_number").val();
                     var expired_type = $("#expired_type").val();
+                    
 
                     if (expired_number == undefined || expired_number == 0 || expired_number == '') {
                         flag = 1;
@@ -960,11 +969,7 @@
                         alertify.alert('Error','please select any type.');
                         return false;
                     }
-                    if (expired_number == undefined || expired_number == 0 || expired_number == '') {
-                        flag = 1;
-                        alertify.alert('Error','Please select video start date.');
-                        return false;
-                    } 
+                    
                 }
 
                 if(flag == 0){
