@@ -32,15 +32,24 @@
                                     <caption></caption>
                                     <thead>
                                         <tr>
-                                            <th scope="column">Review</th>
                                             <th scope="column">Reviewer</th>
+                                            <th scope="column">Review / Period</th>
                                             <th scope="column">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="jsReviewWraps">
-                                        <?php foreach($Reviews['MyReviews'] as $review){?>
+                                        <?php 
+                                        if(empty($Reviews['MyReviews'])){
+                                            ?>
                                             <tr>
-                                                <td><?=$review['review_title'];?></td>
+                                                <td colspan="3">
+                                                    <p class="alert alert-info text-center">No review found</p>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        } else{
+                                        foreach($Reviews['MyReviews'] as $review){?>
+                                            <tr>
                                                 <td>
                                                     <div class="csEBox">
                                                         <figure>
@@ -54,10 +63,14 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <a href="<?=base_url('performance-management/employee/review/'.($review['review_sid']).'/'.($review['reviewee_sid']).'');?>" class="btn btn-black"><i class="fa fa-eye" aria-hidden="true"></i> View</a>
+                                                    <strong><?=$review['review_title'];?> <br></strong>
+                                                    <?=formatDate($review['start_date']);?> - <?=formatDate($review['end_date']);?>
+                                                </td>
+                                                <td>
+                                                    <a href="<?=base_url('performance-management/employee/review/'.($review['review_sid']).'/'.($review['reviewee_sid']).'');?>" class="btn btn-black"><i class="fa fa-eye" aria-hidden="true"></i> View Details</a>
                                                 </td>
                                             </tr>
-                                        <?php } ?>
+                                        <?php }} ?>
                                     </tbody>
                                 </table>
                             </div>

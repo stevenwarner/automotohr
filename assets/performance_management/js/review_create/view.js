@@ -486,7 +486,7 @@ $(function() {
         $('#jsQuestionValEdit').val(question.title);
         $('#jsQuestionDescriptionEdit').val(question.text);
 
-        $('#jsStartVideoRecordEdit').prop('checked', question.video_help !== undefined ? true : false);
+        $('#jsStartVideoRecordEdit').prop('checked', question.video_help !== undefined && question.video_help !== null ? true : false);
         $('#jsQuestionTypeEdit').select2('val', question.question_type);
         $('#jsQuestionRatingScaleEdit').select2('val', question.scale);
         $('#jsQuestionUseLabelsEdit').prop('checked', question.labels_flag == 1 ? true : false);
@@ -504,7 +504,7 @@ $(function() {
                 //
                 for (let i = 1; i <= question.scale; i++) {
                     $(`.jsQuestionRatingScaleValEdit[data-id="${i}"]`).closest('.jsQuestionRatingScaleValBoxEdit').show();
-                    $(`.jsQuestionRatingScaleValEdit[data-id="${i}"]`).val(question.label_question[i]);
+                    $(`.jsQuestionRatingScaleValEdit[data-id="${i}"]`).val(question.label_question[i]).prop('disabled', true);
                 }
             }
         }
@@ -990,7 +990,7 @@ $(function() {
         //
         while (i <= $(`#jsQuestionRatingScale${type}`).val()) {
             //
-            $(`.jsQuestionRatingScaleVal${type}[data-id="${i}"]`).closest(`.jsQuestionRatingScaleValBox${type}`).show();
+            $(`.jsQuestionRatingScaleVal${type}[data-id="${i}"]`).closest(`.jsQuestionRatingScaleValBox${type}`).show().prop('disabled', true);
             //
             i++;
         }

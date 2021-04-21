@@ -841,27 +841,27 @@
                                                 <div class="col-sm-9 col-xs-12">
                                                     <div class="form-group jsQuestionRatingScaleValBox">
                                                         <label class="csF16 csB7">Rating 1</label>
-                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal"
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal disabled" disabled
                                                             value="<?=getDefaultLabel()[1];?>" data-id="1" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBox">
                                                         <label class="csF16 csB7">Rating 2</label>
-                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal"
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal disabled" disabled
                                                             value="<?=getDefaultLabel()[2];?>" data-id="2" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBox">
                                                         <label class="csF16 csB7">Rating 3</label>
-                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal"
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal disabled" disabled
                                                             value="<?=getDefaultLabel()[3];?>" data-id="3" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBox">
                                                         <label class="csF16 csB7">Rating 4</label>
-                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal"
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal disabled" disabled
                                                             value="<?=getDefaultLabel()[4];?>" data-id="4" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBox">
                                                         <label class="csF16 csB7">Rating 5</label>
-                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal"
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleVal disabled" disabled
                                                             value="<?=getDefaultLabel()[5];?>" data-id="5" />
                                                     </div>
                                                 </div>
@@ -1106,27 +1106,27 @@
                                                 <div class="col-sm-9 col-xs-12">
                                                     <div class="form-group jsQuestionRatingScaleValBoxEdit">
                                                         <label class="csF16 csB7">Rating 1</label>
-                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit"
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit disabled" disabled
                                                             value="<?=getDefaultLabel()[1];?>" data-id="1" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBoxEdit">
                                                         <label class="csF16 csB7">Rating 2</label>
-                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit"
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit disabled" disabled
                                                             value="<?=getDefaultLabel()[2];?>" data-id="2" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBoxEdit">
                                                         <label class="csF16 csB7">Rating 3</label>
-                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit"
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit disabled" disabled
                                                             value="<?=getDefaultLabel()[3];?>" data-id="3" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBoxEdit">
                                                         <label class="csF16 csB7">Rating 4</label>
-                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit"
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit disabled" disabled
                                                             value="<?=getDefaultLabel()[4];?>" data-id="4" />
                                                     </div>
                                                     <div class="form-group jsQuestionRatingScaleValBoxEdit">
                                                         <label class="csF16 csB7">Rating 5</label>
-                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit"
+                                                        <input type="text" class="form-control csF16 jsQuestionRatingScaleValEdit disabled" disabled
                                                             value="<?=getDefaultLabel()[5];?>" data-id="5" />
                                                     </div>
                                                 </div>

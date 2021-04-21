@@ -130,7 +130,7 @@
                                         <tr 
                                             data-id="<?=$reviewee['reviewee_sid'];?>" 
                                             data-name="<?=$employees[$reviewee['reviewee_sid']]['name'];?>"
-                                            data-sd ="<?=formatDate($reviewee['start_date'], 'Y-m-d', 'm/d/ Y');?>"
+                                            data-sd ="<?=formatDate($reviewee['start_date'], 'Y-m-d', 'm/d/Y');?>"
                                             data-ed ="<?=formatDate($reviewee['end_date'], 'Y-m-d', 'm/d/Y');?>"
                                         >
                                             <td>

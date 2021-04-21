@@ -1316,18 +1316,21 @@ class Performance_management_model extends CI_Model{
         $assignedReviews = 
         $this->db
         ->select('
-            pm.review_title,
+        pm.review_title,
+        pm.share_feedback,
             pmr.review_sid, 
             pmr.reviewee_sid, 
             pmrv.reviewer_sid, 
             pmr.is_started,
-            pmrv.is_manager
-            ')
-            ->from('performance_management_reviewers pmrv')
+            pmrv.is_manager,
+            pmr.start_date,
+            pmr.end_date
+        ')
+        ->from('performance_management_reviewers pmrv')
         ->join('performance_management_reviewees pmr', 'pmrv.review_sid = pmr.review_sid and pmrv.reviewee_sid = pmr.reviewee_sid')
         ->join('performance_management pm', 'pmrv.review_sid = pm.sid')
         ->where('pmrv.reviewer_sid', $employeeId)
-        // ->where('pmr.is_started', 1)
+        ->where('pmr.is_started', 1)
         ->where('pm.company_sid', $companyId)
         ->get()
         ->result_array();
@@ -1335,18 +1338,22 @@ class Performance_management_model extends CI_Model{
         $myReviews = 
         $this->db
         ->select('
-            pm.review_title,
-            pmr.review_sid, 
-            pmr.reviewee_sid, 
-            pmrv.reviewer_sid, 
+        pm.review_title,
+        pm.share_feedback,
+        pmr.review_sid, 
+        pmr.reviewee_sid, 
+        pmrv.reviewer_sid, 
             pmr.is_started,
-            pmrv.is_manager
-        ')
-        ->from('performance_management_reviewers pmrv')
-        ->join('performance_management_reviewees pmr', 'pmrv.review_sid = pmr.review_sid and pmrv.reviewee_sid = pmr.reviewee_sid')
-        ->join('performance_management pm', 'pmrv.review_sid = pm.sid')
-        ->where('pmr.reviewee_sid', $employeeId)
-        // ->where('pm.share_feedback', 1)
+            pmrv.is_manager,
+            pmr.start_date,
+            pmr.end_date
+            ')
+            ->from('performance_management_reviewers pmrv')
+            ->join('performance_management_reviewees pmr', 'pmrv.review_sid = pmr.review_sid and pmrv.reviewee_sid = pmr.reviewee_sid')
+            ->join('performance_management pm', 'pmrv.review_sid = pm.sid')
+            ->where('pmr.reviewee_sid', $employeeId)
+            ->where('pm.share_feedback', 1)
+            ->where('pmr.is_started', 1)
         ->where('pm.company_sid', $companyId)
         ->get()
         ->result_array();

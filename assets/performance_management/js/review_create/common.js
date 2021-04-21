@@ -70,7 +70,10 @@ const
             } else if (type == 'edit') {
                 this.questions[id] = questions;
                 index = id;
-            } else if (type === undefined) this.questions = questions;
+            } else if (type === undefined) {
+
+                this.questions = questions;
+            }
             //
             this.remakeQuestionsView(type === undefined ? false : true);
             return index;
@@ -918,4 +921,8 @@ function makeQuestionPreview(type){
 }
 
 
+setEmployees();
+setEmployees();
+setEmployees();
+setEmployees();
 setEmployees();
