@@ -34,8 +34,8 @@ if ($this->session->userdata('logged_in')) {
         </a>
         <div class="next-applicant">
             <ul>
-                <li class="previous-btn"><a href="<?php echo $prev_app ?>"><i class="fa fa-chevron-left"></i>Prev</a></li>
-                <li class="next-btn"><a href="<?php echo $next_app ?>">next<i class="fa fa-chevron-right"></i></a></li>
+                <li class="previous-btn"><a href="<?php echo $prev_app ?>"><i aria-hidden="true" class="fa fa-chevron-left"></i>Prev</a></li>
+                <li class="next-btn"><a href="<?php echo $next_app ?>">next<i aria-hidden="true" class="fa fa-chevron-right"></i></a></li>
             </ul>
         </div>
         
@@ -97,10 +97,10 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'applicant_profile')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-user"></i>
+                                <i aria-hidden="true" class="fa fa-user"></i>
                             </span>
                             <h4>Applicant Profile</h4>
-                            <a href="<?php echo base_url('applicant_profile') . '/' . $applicant_info['sid']. '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url('applicant_profile') . '/' . $applicant_info['sid']. '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <!-- Light Bulb Code - Start -->
                             <?php if(false) { ?>
                                 <?php if(true) { ?>
@@ -115,15 +115,15 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'background_check')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-check"></i>
+                                <i aria-hidden="true" class="fa fa-check"></i>
                             </span>
                             <h4>Background Check</h4>
                             <?php   $_SESSION['applicant_id'] = $applicant_info['sid'];
                                     $_SESSION['applicant_type'] = 'applicant_profile';
                                     if ($company_background_check == 1) { ?>
-                                        <a href="<?php echo base_url('background_check') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid ; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                        <a href="<?php echo base_url('background_check') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid ; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <?php   } else { ?>
-                                        <a href="<?php echo base_url('background_check/activate') ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                        <a href="<?php echo base_url('background_check/activate') ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <?php   } ?>
 
                             <!-- Light Bulb Code - Start -->
@@ -139,37 +139,37 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'drug_test')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-medkit"></i>
+                                <i aria-hidden="true" class="fa fa-medkit"></i>
                             </span>
                             <h4>Drug Testing</h4>
                             <?php   if ($company_background_check == 1) { ?>
-                                        <a href="<?php echo base_url('drug_test') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                        <a href="<?php echo base_url('drug_test') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <?php   } else {
                                         $_SESSION['applicant_id'] = $applicant_info['sid']; ?>
-                                        <a href="<?php echo base_url('background_check/activate') ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                        <a href="<?php echo base_url('background_check/activate') ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <?php   } ?>
 
                             <!-- Light Bulb Code - Start -->
                             <?php $background_check_count = count_accurate_background_orders($applicant_info['sid'], 'drug-testing'); ?>
                             <?php if(intval($background_check_count) > 0) { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Background Check Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Drug Test Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                             <?php } else { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Background Check Not Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Drug Test Not Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                             <?php } ?>
                             <!-- Light Bulb Code - End -->
                         </li>
                         <?php } ?>
                         <!--<li>
                             <h4>Behavioral Assessment</h4>
-                            <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="javascript:;">Browse<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                         </li>-->
                         <?php if(check_access_permissions_for_view($security_details, 'reference_checks')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-link"></i>
+                                <i aria-hidden="true" class="fa fa-link"></i>
                             </span>
                             <h4>Reference Check</h4>
-                            <a href="<?php echo base_url('reference_checks') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url('reference_checks') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <!-- Light Bulb Code - Start -->
                             <?php $references_count = count_references_records($applicant_info['sid']);?>
                             <?php if(intval($references_count) > 0) { ?>
@@ -183,14 +183,14 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'send_reference_request_email')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-link"></i>
+                                <i aria-hidden="true" class="fa fa-link"></i>
                             </span>
                             <form action="<?php echo base_url('applicant_profile/send_reference_request_email'); ?>" method="post" id="form_request_references_<?php echo $applicant_info['sid']; ?>">
                                 <input type="hidden" id="perform_action" name="perform_action" value="send_add_reference_request_email" />
                                 <input type="hidden" id="applicant_sid" name="applicant_sid" value="<?php echo $applicant_info['sid']; ?>" />
                             </form>
                             <h4>References Request</h4>
-                            <a href="javascript:;" onclick="fSendAddReferencesRequestEmail(<?php echo $applicant_info['sid']; ?>);">Send<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="javascript:;" onclick="fSendAddReferencesRequestEmail(<?php echo $applicant_info['sid']; ?>);">Send<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <!-- Light Bulb Code - Start -->
                             <?php $reference_check_request_status = get_reference_checks_request_sent_status($applicant_info['sid']); ?>
 
@@ -206,14 +206,14 @@ if ($this->session->userdata('logged_in')) {
                             <?php if($kpa_onboarding_check == 1) { ?>
                             <li>
                                 <span class="left-addon">
-                                    <i class="fa fa-cog"></i>
+                                    <i aria-hidden="true" class="fa fa-cog"></i>
                                 </span>
                                 <h4>Outsourced HR Onboarding</h4>
                                 <form action="<?php echo base_url('applicant_profile/send_kpa_onboarding'); ?>" method="post" id="form_kpa_onboarding_<?php echo $applicant_info['sid']; ?>">
                                     <input type="hidden"  name="kpa_action" value="send_kpa_onboarding_email" />
                                     <input type="hidden" name="applicant_sid" value="<?php echo $applicant_info['sid']; ?>" />
                                 </form>
-                                <a href="javascript:;" onclick="fSendKpaOnboardingEmail(<?php echo $applicant_info['sid']; ?>);">Send<i class="fa fa-chevron-circle-right"></i></a>
+                                <a href="javascript:;" onclick="fSendKpaOnboardingEmail(<?php echo $applicant_info['sid']; ?>);">Send<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                 
                                 <?php if($kpa_email_sent == true) { ?>
                                         <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Sent" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
@@ -226,10 +226,10 @@ if ($this->session->userdata('logged_in')) {
                         <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] == 1){?>
                             <li>
                                 <span class="left-addon">
-                                    <i class="fa fa-envelope"></i>
+                                    <i aria-hidden="true" class="fa fa-envelope"></i>
                                 </span>
                                 <h4>Send Offer Letter / Pay Plans</h4>
-                                <a href="<?php echo base_url('onboarding/send_offer_letter/applicant') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                <a href="<?php echo base_url('onboarding/send_offer_letter/applicant') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                 <?php $offer_letter_ststus = count_offer_letter('applicant', $applicant_info['sid']);?>
                                 <!-- Light Bulb Code - Start -->
                                 <?php if ($offer_letter_ststus == 'sign' || $offer_letter_ststus == 'sent') { ?>
@@ -243,10 +243,10 @@ if ($this->session->userdata('logged_in')) {
                         <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] == 1){?>
                             <li>
                                 <span class="left-addon">
-                                    <i class="fa fa-envelope"></i>
+                                    <i aria-hidden="true" class="fa fa-envelope"></i>
                                 </span>
                                 <h4>View Offer Letter / Pay Plans</h4>
-                                <a href="<?php echo base_url('onboarding/view_offer_letter/applicant') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                <a href="<?php echo base_url('onboarding/view_offer_letter/applicant') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                 <?php $offer_letter_ststus = count_offer_letter('applicant', $applicant_info['sid']);?>
                                 <!-- Light Bulb Code - Start -->
                                 <?php if ($offer_letter_ststus == 'sign') { ?>
@@ -260,36 +260,36 @@ if ($this->session->userdata('logged_in')) {
                         <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['employer_detail']['access_level_plus'] == 1)){?>
                             <li>
                                 <span class="left-addon">
-                                    <i class="fa fa-star"></i>
+                                    <i aria-hidden="true" class="fa fa-star"></i>
                                 </span>
                                 <h4>Merge Into Employee</h4>
-<!--                                <a href="javascript:0;" data-toogle="modal" data-target="#merge_modal">Merge<i class="fa fa-chevron-circle-right"></i></a>-->
-                                <a class="" href="javascript:0;" data-toggle="modal" data-target="#merge_modal">Merge<i class="fa fa-chevron-circle-right"></i></a>
+<!--                                <a href="javascript:0;" data-toogle="modal" data-target="#merge_modal">Merge<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>-->
+                                <a class="" href="javascript:0;" data-toggle="modal" data-target="#merge_modal">Merge<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
 
                             </li>
                         <?php }?>
                         <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['company_detail']['has_applicant_approval_rights'] == 0 || $session['employer_detail']['has_applicant_approval_rights'] == 1)){?>
                             <li>
                                 <span class="left-addon">
-                                    <i class="fa fa-user-plus"></i>
+                                    <i aria-hidden="true" class="fa fa-user-plus"></i>
                                 </span>
                                 <h4>Direct Hire Candidate</h4>
-                                <a href="javascript:;" onclick="fun_hire_applicant();">Hire<i class="fa fa-chevron-circle-right"></i></a>
+                                <a href="javascript:;" onclick="fun_hire_applicant();">Hire<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             </li>
                         <?php }?>
                         <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['company_detail']['has_applicant_approval_rights'] == 0 || $session['employer_detail']['has_applicant_approval_rights'] == 1)){?>
                             <li>
                                 <span class="left-addon">
-                                    <i class="fa fa-star"></i>
+                                    <i aria-hidden="true" class="fa fa-star"></i>
                                 </span>
                                 <h4>Setup Applicant Panel</h4>
-                                <a href="<?php echo base_url('onboarding/setup/applicant') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                <a href="<?php echo base_url('onboarding/setup/applicant') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                 <!-- Light Bulb Code - Start -->
                                 <?php $applicant_panel_config_count = count_onboarding_panel_records('applicant', $applicant_info['sid']);?>
                                 <?php if(intval($applicant_panel_config_count) > 0) { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Has References Setup" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Applicant Panel Set-up" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                 <?php } else { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No References Found" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Applicant Panel Not Set-up" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                                 <?php } ?>
                                 <!-- Light Bulb Code - End -->
                             </li>
@@ -307,7 +307,7 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'send_applicant_full_employment_application')) { ?>
                             <li>
                                 <span class="left-addon">
-                                    <i class="fa fa-file-text"></i>
+                                    <i aria-hidden="true" class="fa fa-file-text"></i>
                                 </span>
                                 <h4>Full Employment Application</h4>
                                 <?php $full_emp_form_status = get_full_emp_app_form_status($applicant_info['sid'],'applicant'); ?>
@@ -318,7 +318,7 @@ if ($this->session->userdata('logged_in')) {
                                     <input type="hidden" name="list_sid" value="<?php echo $job_list_sid; ?>" />
                                 </form>
                                 <div <?= $full_emp_form_status == 'sent' || $full_emp_form_status == 'signed' ? 'class="view-btn"':''?>>
-                                    <a href="javascript:void(0);" onclick="fSendFullEmploymentForm();"><?= $full_emp_form_status == 'sent' || $full_emp_form_status == 'signed' ? 'Resend' :'Send';?><i class="fa fa-chevron-circle-right"></i></a>
+                                    <a href="javascript:void(0);" onclick="fSendFullEmploymentForm();"><?= $full_emp_form_status == 'sent' || $full_emp_form_status == 'signed' ? 'Resend' :'Send';?><i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                     <!-- Light Bulb Code - Start -->
 
                                     <?php if($full_emp_form_status == 'sent' || $full_emp_form_status == 'signed') { ?>
@@ -333,10 +333,10 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'view_applicant_full_employment_application')) { ?>
                             <li>
                                 <span class="left-addon">
-                                    <i class="fa fa-file-text"></i>
+                                    <i aria-hidden="true" class="fa fa-file-text"></i>
                                 </span>
                                 <h4>Full Employment Application</h4>
-                                <a href="<?php echo base_url('applicant_full_employment_application') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                <a href="<?php echo base_url('applicant_full_employment_application') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
 <!--                                --><?php //$full_employment_application_status = get_full_employment_application_status($applicant_info['sid'], 'applicant'); ?>
                                 <?php $full_employment_application_status = get_full_emp_app_form_status($applicant_info['sid'],'applicant'); ?>
 
@@ -353,10 +353,10 @@ if ($this->session->userdata('logged_in')) {
                         if(sizeof($w4_form)>0) { ?>
 <!--                            <li>-->
 <!--                            <span class="left-addon">-->
-<!--                                <i class="fa fa-file-text"></i>-->
+<!--                                <i aria-hidden="true" class="fa fa-file-text"></i>-->
 <!--                            </span>-->
 <!--                                <h4>Fillable W4 Form</h4>-->
-<!--                                <a data-toggle="modal" data-target="#w4_modal" href="javascript:void(0);">View<i class="fa fa-chevron-circle-right"></i></a>-->
+<!--                                <a data-toggle="modal" data-target="#w4_modal" href="javascript:void(0);">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>-->
                                 <!-- Light Bulb Code - Start -->
 <!--                                --><?php //if($w4_form['user_consent']) { ?>
 <!--                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="--><?php //echo site_url('assets/manage_admin/images/on.gif'); ?><!--">-->
@@ -370,10 +370,10 @@ if ($this->session->userdata('logged_in')) {
                         if(sizeof($w9_form)>0) { ?>
 <!--                            <li>-->
 <!--                            <span class="left-addon">-->
-<!--                                <i class="fa fa-file-text"></i>-->
+<!--                                <i aria-hidden="true" class="fa fa-file-text"></i>-->
 <!--                            </span>-->
 <!--                                <h4>Fillable W9 Form</h4>-->
-<!--                                <a data-toggle="modal" data-target="#w9_modal" href="javascript:void(0);">View<i class="fa fa-chevron-circle-right"></i></a>-->
+<!--                                <a data-toggle="modal" data-target="#w9_modal" href="javascript:void(0);">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>-->
                                 <!-- Light Bulb Code - Start -->
 <!--                                --><?php //if($w9_form['user_consent']) { ?>
 <!--                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="--><?php //echo site_url('assets/manage_admin/images/on.gif'); ?><!--">-->
@@ -387,13 +387,13 @@ if ($this->session->userdata('logged_in')) {
                         if(sizeof($i9_form)>0) { ?>
 <!--                            <li>-->
 <!--                            <span class="left-addon">-->
-<!--                                <i class="fa fa-file-text"></i>-->
+<!--                                <i aria-hidden="true" class="fa fa-file-text"></i>-->
 <!--                            </span>-->
 <!--                                <h4>Fillable I9 Form</h4>-->
 <!--                                --><?php //if($i9_form['employer_flag']){ ?>
-<!--                                    <a data-toggle="modal" data-target="#i9_modal" href="javascript:void(0);">View<i class="fa fa-chevron-circle-right"></i></a>-->
+<!--                                    <a data-toggle="modal" data-target="#i9_modal" href="javascript:void(0);">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>-->
 <!--                                --><?php //} else{ ?>
-<!--                                    <a href="--><?php //echo base_url('form_i9/applicant') . '/' . $applicant_info['sid'] . "/" . $job_list_sid; ?><!--">View<i class="fa fa-chevron-circle-right"></i></a>-->
+<!--                                    <a href="--><?php //echo base_url('form_i9/applicant') . '/' . $applicant_info['sid'] . "/" . $job_list_sid; ?><!--">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>-->
 <!--                                --><?php //} ?>
                                 <!-- Light Bulb Code - Start -->
 <!--                                --><?php //if($i9_form['user_consent']) { ?>
@@ -406,15 +406,15 @@ if ($this->session->userdata('logged_in')) {
                         <?php } ?>
                         <!--<li>
                             <h4>WOTC New Hire Tax Credits</h4>
-                            <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="javascript:;">Browse<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                         </li>-->
                         <?php if(check_access_permissions_for_view($security_details, 'applicant_emergency_contacts')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-ambulance"></i>
+                                <i aria-hidden="true" class="fa fa-ambulance"></i>
                             </span>
                             <h4>Emergency Contacts</h4>
-                            <a href="<?php echo base_url('emergency_contacts') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url('emergency_contacts') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <!-- Light Bulb Code - Start -->
                             <?php $emergency_contacts_count = count_emergency_contacts($applicant_info['sid']);  ?>
                             <?php if(intval($emergency_contacts_count > 0)) { ?>
@@ -428,10 +428,10 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'applicant_occupational_license_info')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-industry"></i>
+                                <i aria-hidden="true" class="fa fa-industry"></i>
                             </span>
                             <h4>Occupational License Info</h4>
-                            <a href="<?php echo base_url('occupational_license_info') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url('occupational_license_info') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <!-- Light Bulb Code - Start -->
                             <?php $occ_licenses_count = count_licenses($applicant_info['sid'], 'occupational'); ?>
                             <?php if(intval($occ_licenses_count) > 0) { ?>
@@ -445,10 +445,10 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'applicant_drivers_license_info')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-automobile"></i>
+                                <i aria-hidden="true" class="fa fa-automobile"></i>
                             </span>
                             <h4>Drivers License Info</h4>
-                            <a href="<?php echo base_url('drivers_license_info') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url('drivers_license_info') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <!-- Light Bulb Code - Start -->
                             <?php $drv_licenses_count = count_licenses($applicant_info['sid'], 'drivers'); ?>
                             <?php if(intval($drv_licenses_count) > 0) { ?>
@@ -462,16 +462,16 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'applicant_equipment_info')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-laptop"></i>
+                                <i aria-hidden="true" class="fa fa-laptop"></i>
                             </span>
                             <h4>Equipment Info</h4>
-                            <a href="<?php echo base_url('equipment_info') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url('equipment_info') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <!-- Light Bulb Code - Start -->
                             <?php $equipments_count = count_equipments($applicant_info['sid']); ?>
                             <?php if(intval($equipments_count) > 0) { ?>
-                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Equipments Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Equipment Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                             <?php } else { ?>
-                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Equipments Assinged" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Equipment Assinged" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                             <?php } ?>
                             <!-- Light Bulb Code - End -->
                         </li>
@@ -479,19 +479,19 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'applicant_i9form')) { ?>
 <!--                        <li>
                             <span class="left-addon">
-                                <i class="fa fa-file-text"></i>
+                                <i aria-hidden="true" class="fa fa-file-text"></i>
                             </span>
                             <h4>i9 Employment Verification</h4>
-                            <a href="<?php echo base_url('i9form') . '/applicant/' . $applicant_info['sid']; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url('i9form') . '/applicant/' . $applicant_info['sid']; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                         </li>-->
                         <?php } ?>
                         <?php if(check_access_permissions_for_view($security_details, 'applicant_dependants')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-child"></i>
+                                <i aria-hidden="true" class="fa fa-child"></i>
                             </span>
                             <h4>Dependents</h4>
-                            <a href="<?php echo base_url('dependants') . '/applicant/' . $applicant_info['sid'] . "/" . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url('dependants') . '/applicant/' . $applicant_info['sid'] . "/" . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <!-- Light Bulb Code - Start -->
                             <?php $dependant_count = count_dependants($applicant_info['sid']); ?>
                             <?php if(intval($dependant_count) > 0) { ?>
@@ -506,10 +506,10 @@ if ($this->session->userdata('logged_in')) {
                         <!--<li>-->
                             <!--
                             <span class="left-addon">
-                                <i class="fa fa-question-circle"></i>
+                                <i aria-hidden="true" class="fa fa-question-circle"></i>
                             </span>
                             <h4>Interview Questionnaire</h4>
-                            <a href="<?php /*echo base_url('interview_questionnaires') . '/applicant/' . $applicant_info['sid']; */?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php /*echo base_url('interview_questionnaires') . '/applicant/' . $applicant_info['sid']; */?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
 -->
                             <!-- Light Bulb Code - Start -->
                             <?php /*$interview_score_count = count_interview_score_records($applicant_info['sid']); */?><!--
@@ -523,22 +523,22 @@ if ($this->session->userdata('logged_in')) {
                         <!--
                         <li>
                             <h4>Benefit Elections</h4>
-                            <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="javascript:;">Browse<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                         </li>
 
                         <li>
                             <h4>Payroll</h4>
-                            <a href="javascript:;">Browse<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="javascript:;">Browse<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                         </li>
                         -->
                         <?php if(check_access_permissions_for_view($security_details, 'send_video_interview_questionnaire')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-video-camera"></i>
+                                <i aria-hidden="true" class="fa fa-video-camera"></i>
                             </span>
                             <h4>Video Interview Questions</h4>
                             <!-- change to bulb to on/off state based on previous records whether the questions have been sent or not -->
-                            <a href="<?php echo base_url() . 'video_interview_system/send_questions/' . $applicant_info['sid'] . '/' . $job_list_sid . '/' ; ?>" >Send<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url() . 'video_interview_system/send_questions/' . $applicant_info['sid'] . '/' . $job_list_sid . '/' ; ?>" >Send<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <?php if ($questions_sent == false) { ?>
                             <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Send Video Interview Questions" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                             <?php } else { ?>
@@ -549,11 +549,11 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(check_access_permissions_for_view($security_details, 'view_video_interview_questionnaire')) { ?>
                         <li>
                             <span class="left-addon">
-                                <i class="fa fa-video-camera"></i>
+                                <i aria-hidden="true" class="fa fa-video-camera"></i>
                             </span>
                             <h4>Video Interview Questions</h4>
                             <!-- change to bulb to on/off state based on previous records whether the questions have been sent or not -->
-                            <a href="<?php echo base_url() . 'video_interview_system/question_responses/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>" >View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url() . 'video_interview_system/question_responses/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>" >View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             <?php if ($questions_answered == false) { ?>
                             <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Video Interview Response" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                             <?php } else { ?>
@@ -564,15 +564,15 @@ if ($this->session->userdata('logged_in')) {
 
                         <?php if(check_access_permissions_for_view($security_details, 'ats_direct_deposit')) { ?>
                             <li>
-                                <span class="left-addon"><i class="fa fa-bank"></i></span>
+                                <span class="left-addon"><i aria-hidden="true" class="fa fa-bank"></i></span>
                                 <h4>Direct Deposit Information</h4>
-                                <a href="<?php echo base_url('direct_deposit') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                <a href="<?php echo base_url('direct_deposit') . '/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                 <!-- Light Bulb Code - Start -->
                                 <?php $direct_deposit_count = count_direct_deposit($applicant_info['sid']); ?>
                                 <?php if(intval($direct_deposit_count) > 0) { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Equipments Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Direct Deposit Info Added" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                 <?php } else { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Equipments Assinged" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Direct Deposit Info Not Added" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                                 <?php } ?>
                                 <!-- Light Bulb Code - End -->
                             </li>
@@ -580,29 +580,29 @@ if ($this->session->userdata('logged_in')) {
 
                         <?php if(false) { ?>
                             <li>
-                                <span class="left-addon"><i class="fa fa-file"></i></span>
+                                <span class="left-addon"><i aria-hidden="true" class="fa fa-file"></i></span>
                                 <h4>Documents</h4>
-                                <a href="<?php echo base_url('hr_documents_management/documents_assignment/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                                <a href="<?php echo base_url('hr_documents_management/documents_assignment/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                 <?php $direct_deposit_count = count_assigned_documents('applicant', $applicant_info['sid']); ?>
                                 <?php if(intval($direct_deposit_count) > 0) { ?>
                                     <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Equipments Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                 <?php } else { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Equipments Assinged" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Equipments Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                                 <?php } ?>
                                 <!-- Light Bulb Code - End -->
                             </li>
                         <?php } ?>
                         <?php if(check_access_permissions_for_view($security_details, 'ats_learning_center')) { ?>
                         <li>
-                            <span class="left-addon"><i class="fa fa-file"></i></span>
+                            <span class="left-addon"><i aria-hidden="true" class="fa fa-file"></i></span>
                             <h4>Learning Center</h4>
-                            <a href="<?php echo base_url('learning_center/my_learning_center/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url('learning_center/my_learning_center/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                         </li>
                         <?php } if(check_access_permissions_for_view($security_details, 'ats_documents') && $this->session->userdata('logged_in')['company_detail']['ems_status']){ ?>
                         <li>
-                            <span class="left-addon"><i class="fa fa-file-text"></i></span>
+                            <span class="left-addon"><i aria-hidden="true" class="fa fa-file-text"></i></span>
                             <h4>Documents</h4>
-                            <a href="<?php echo base_url('hr_documents_management/documents_assignment/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">View<i class="fa fa-chevron-circle-right"></i></a>
+                            <a href="<?php echo base_url('hr_documents_management/documents_assignment/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                         </li>
                         <?php } ?>
                     </ul>
@@ -636,12 +636,12 @@ if ($this->session->userdata('logged_in')) {
                     <div class="browse-attachments">
                         <ul>
                             <li>
-                                <span class="left-addon"><i class="fa fa-envelope"></i></span>
+                                <span class="left-addon"><i aria-hidden="true" class="fa fa-envelope"></i></span>
                                 <h4>Send Resume Request</h4>
                                 <?php //if (in_array($applicant_info['employer_sid'], array("7", "51"))) { ?>
                                 <?php if (!in_array($applicant_info['employer_sid'], array("0"))) { ?>
                                     <?php if(count($applicant_jobs) == 1){ ?>
-                                        <a href="javascript:;" class="confirmation" >Send<i class="fa fa-chevron-circle-right"></i></a>
+                                        <a href="javascript:;" class="confirmation" >Send<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                         <div class="" style="display: none;">
                                             <form name="send_resume_request_form" id="send_resume_request_form" method="post" action="<?php echo base_url('onboarding/send_applicant_resume_request/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">
                                                 <?php if(isset($applicant_jobs[0]['job_sid']) && $applicant_jobs[0]['job_sid'] != 0){
@@ -677,18 +677,18 @@ if ($this->session->userdata('logged_in')) {
                                         </div>
                                     <?php } else { ?>
                                             <!-- If applicant job is more then one then we call "send_resume_request" modal -->
-                                            <a class="" href="javascript:0;" data-toggle="modal" data-target="#send_resume_request">Send<i class="fa fa-chevron-circle-right"></i></a>
+                                            <a class="" href="javascript:0;" data-toggle="modal" data-target="#send_resume_request">Send<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                     <?php } ?>
                                 <?php } else { ?>
-                                    <a href="javascript:;" class="confirmation_old" src="<?php echo base_url('onboarding/send_applicant_resume_request/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">Send<i class="fa fa-chevron-circle-right"></i></a>
+                                    <a href="javascript:;" class="confirmation_old" src="<?php echo base_url('onboarding/send_applicant_resume_request/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">Send<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                 <?php } ?>
                                 
 
                                 <?php $resume = check_resume_exist($applicant_info['employer_sid'] , 'applicant',$applicant_info['sid']); ?>
                                 <?php if ($resume == 'not_empty') { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Equipments Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Resume Request Sent" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                 <?php } else if ($resume == 'empty') { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Equipments Assinged" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Resume Request Not Sent" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                                 <?php } ?>
                             </li>
                             <?php 
@@ -721,7 +721,7 @@ if ($this->session->userdata('logged_in')) {
                         <div class="remove-file">
                             <p id="name_resume"><?php echo substr($resume_link_title, 0, 28); ?></p>
                             <?php if ($resume_link_title != "No Resume found!") { ?>
-                                <a class="remove-icon" href="javascript:void(0);" onclick="file_remove(<?php echo $applicant_info['sid'] ?>, 'Resume')"><i class="fa fa-remove"></i></a>
+                                <a class="remove-icon" href="javascript:void(0);" onclick="file_remove(<?php echo $applicant_info['sid'] ?>, 'Resume')"><i aria-hidden="true" class="fa fa-remove"></i></a>
                             <?php } ?>
                         </div>
                         <h4>Resume</h4>
@@ -731,19 +731,19 @@ if ($this->session->userdata('logged_in')) {
                                 <?php if(count($applicant_jobs) == 1){ ?>
                                     <input type="file" name="resume" id="resume"   onchange="check_file('resume')" class="choose-file-filed"> 
                                     <a href="" class="select-photo">
-                                        <i class="fa fa-plus"></i>
+                                        <i aria-hidden="true" class="fa fa-plus"></i>
                                     </a>
                                 <?php } else{ ?>
                                     <!-- If applicant job is more then one then we call "upload_resume" modal -->
                                     <a href="javascript:0;" data-toggle="modal" data-target="#upload_resume" class="">
                                         <span class="upload-resume">
-                                            <i class="fa fa-plus"></i>
+                                            <i aria-hidden="true" class="fa fa-plus"></i>
                                         </span>
                                     </a>
                                 <?php } ?>
                             <?php } else { ?>
                                 <input type="file" name="resume" id="resume"   onchange="check_file('resume')" class="choose-file-filed"> 
-                                <a href="" class="select-photo"><i class="fa fa-plus"></i></a>
+                                <a href="" class="select-photo"><i aria-hidden="true" class="fa fa-plus"></i></a>
                             <?php } ?>    
                         </div>
                     </div>
@@ -751,13 +751,13 @@ if ($this->session->userdata('logged_in')) {
                         <div class="remove-file">
                             <p id="name_cover_letter"><?php echo substr($cover_letter_title, 0, 28); ?></p>
                             <?php if ($cover_letter_title != "No Cover Letter found!") { ?>
-                                <a class="remove-icon" href="javascript:void(0);" onclick="file_remove(<?php echo $applicant_info['sid'] ?>, 'Cover Letter')"><i class="fa fa-remove"></i></a>
+                                <a class="remove-icon" href="javascript:void(0);" onclick="file_remove(<?php echo $applicant_info['sid'] ?>, 'Cover Letter')"><i aria-hidden="true" class="fa fa-remove"></i></a>
                             <?php } ?>
                         </div>
                         <h4>Cover Letter</h4>
                         <div class="btn-inner">
                             <input type="file"  id="cover_letter" name="cover_letter" onchange="check_file('cover_letter')" class="choose-file-filed"> 
-                            <a href="" class="select-photo"><i class="fa fa-plus"></i></a>
+                            <a href="" class="select-photo"><i aria-hidden="true" class="fa fa-plus"></i></a>
                         </div>
                     </div>
                     
@@ -796,7 +796,7 @@ if ($this->session->userdata('logged_in')) {
                             <h4>Add File<samp class="red"> * </samp></h4>
                             <div class="btn-inner">
                                 <input type="file" name="newlife" id="all_file" required="required" onchange="check_file('all_file')" class="choose-file-filed"> 
-                                <a href="" class="select-photo"><i class="fa fa-plus"></i></a>
+                                <a href="" class="select-photo"><i aria-hidden="true" class="fa fa-plus"></i></a>
                             </div>
                         </div>
                     </div>
@@ -815,9 +815,9 @@ if ($this->session->userdata('logged_in')) {
                                             <li>
                                                 <h4><?php echo $attachment['original_name']; ?></h4>
                                                 <div class="remove-file remove-icon">
-                                                    <a class="" href="javascript:void(0);" onclick="file_remove(<?= $attachment['sid'] ?>, 'file')"><i class="fa fa-remove"></i></a>
+                                                    <a class="" href="javascript:void(0);" onclick="file_remove(<?= $attachment['sid'] ?>, 'file')"><i aria-hidden="true" class="fa fa-remove"></i></a>
                                                 </div>
-                                                <a href="<?php echo AWS_S3_BUCKET_URL . $attachment['uploaded_name']; ?>">Download<i class="fa fa-chevron-circle-down"></i></a>
+                                                <a href="<?php echo AWS_S3_BUCKET_URL . $attachment['uploaded_name']; ?>">Download<i aria-hidden="true" class="fa fa-chevron-circle-down"></i></a>
 
                                             </li>
                                         <?php } ?>
@@ -1040,7 +1040,7 @@ if ($this->session->userdata('logged_in')) {
                         <input class="btn btn-success pull-right" type="button" id="merge-emp" value="Merge">
                         <div class="custom_loader pull-right">
                             <div id="submit-loader" class="loader" style="display: none">
-                                <i style="font-size: 25px; color: #81b431;" class="fa fa-cog fa-spin"></i>
+                                <i style="font-size: 25px; color: #81b431;" aria-hidden="true" class="fa fa-cog fa-spin"></i>
                                 <span>Please Wait...</span>
                             </div>
                         </div>

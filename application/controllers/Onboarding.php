@@ -6308,9 +6308,9 @@ class Onboarding extends CI_Controller {
 
                 $requested_job_sid = $this->input->post('job_sid',true);
                 $requested_job_type = $this->input->post('job_type',true);
-                echo $requested_job_sid.'<br>';
-                echo $requested_job_type.'<br>';
-                die();
+                // echo $requested_job_sid.'<br>';
+                // echo $requested_job_type.'<br>';
+                // die();
 
                 $data               = array();
                 $user_info          = array();
