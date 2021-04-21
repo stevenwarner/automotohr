@@ -122,7 +122,7 @@
                                                                                 <?php } ?>
                                                                             <?php } else { ?>
                                                                                 <tr>
-                                                                                    <td class="text-center" colspan="2">
+                                                                                    <td class="text-center" colspan="3">
                                                                                         <span class="no-data">No Videos Assigned</span>
                                                                                     </td>
                                                                                 </tr>

@@ -82,7 +82,17 @@
                                                 </div>
                                             </article>
                                 <?php       } // end of foreach
-                                        } //end if ?>
+                                        } //end if
+                                        else {
+                                            ?>
+                                            <article class="listing-article">
+                                                <h3 class="alert alert-info text-center">
+                                                    You haven't added any videos yet. Click the below button to add videos <br> <br>
+                                                    <a href="<?php echo base_url('learning_center/add_online_video'); ?>" class="btn btn-success btn-lg"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Add A Video</a>
+                                                </h3>
+                                            </article>
+                                            <?php
+                                        } ?>
                                 </div>
                             </div>
                         </div>
