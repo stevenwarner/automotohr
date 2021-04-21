@@ -64,6 +64,7 @@ ALTER TABLE `portal_applicant_jobs_list` ADD `for_notification` TINYINT(1) NOT N
 
 -- learning center history
 -- 04/20/2021
+DROP TABLE IF EXISTS `learning_center_assign_user_history`;
 CREATE TABLE IF NOT EXISTS `learning_center_assign_user_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `learning_center_online_videos_sid` int(11),
@@ -77,10 +78,9 @@ CREATE TABLE IF NOT EXISTS `learning_center_assign_user_history` (
   `duration` varchar(255),
   `completed` tinyint(1),
   `from_training_session` tinyint(1),
-  `video_assign_sid` int(11),
-  `questionnaire_name` text,
-  `questionnaire` text,
-  `questionnaire_result` varchar(32),
-  `questionnaire_attend_timestamp` timestamp, 
+  `questionnaire_name` text NULL DEFAULT NULL,
+  `questionnaire` text NULL DEFAULT NULL,
+  `questionnaire_result` varchar(32) NULL DEFAULT NULL,
+  `questionnaire_attend_timestamp` timestamp NULL DEFAULT NULL, 
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
