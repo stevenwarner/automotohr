@@ -212,4 +212,32 @@ class Testing extends CI_Controller{
         //
         die('Till here');
     }
+
+    //
+    function tos(){
+        //
+        $records = $this->db
+        ->select('sid, questions')
+        ->get('performance_management_templates')
+        ->result_array();
+        //
+        //
+        foreach($records as $record){
+            //
+            $ques = json_decode($record['questions'], true);
+            //
+            foreach($ques as $k => $sq){
+                //
+                if($sq['question_type'] == 'text-rating'){
+                    $ques[$k]['question_type'] = 'text-n-rating';
+                }
+            }
+            //
+            $this->db
+            ->where('sid', $record['sid'])
+            ->update('performance_management_templates', [
+                'questions' => json_encode($ques)
+            ]);             
+        }
+    }
 }

@@ -1667,6 +1667,8 @@ class Performance_management_model extends CI_Model{
         ->select('sid, review_title')
         ->from('performance_management')
         ->where('company_sid', $companyId)
+        ->where('is_draft', 0)
+        ->where('is_archived', 0)
         ->get()
         ->result_array();
     }
