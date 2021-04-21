@@ -101,15 +101,6 @@ if ($this->session->userdata('logged_in')) {
                             </span>
                             <h4>Applicant Profile</h4>
                             <a href="<?php echo base_url('applicant_profile') . '/' . $applicant_info['sid']. '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                            <!-- Light Bulb Code - Start -->
-                            <?php if(false) { ?>
-                                <?php if(true) { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Title" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                <?php } else { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Title" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
-                                <?php } ?>
-                            <?php } ?>
-                            <!-- Light Bulb Code - End -->
                         </li>
                         <?php } ?>
                         <?php if(check_access_permissions_for_view($security_details, 'background_check')) { ?>
@@ -471,7 +462,7 @@ if ($this->session->userdata('logged_in')) {
                             <?php if(intval($equipments_count) > 0) { ?>
                                 <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Equipment Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                             <?php } else { ?>
-                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Equipment Assinged" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Equipment Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                             <?php } ?>
                             <!-- Light Bulb Code - End -->
                         </li>
@@ -585,9 +576,9 @@ if ($this->session->userdata('logged_in')) {
                                 <a href="<?php echo base_url('hr_documents_management/documents_assignment/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                 <?php $direct_deposit_count = count_assigned_documents('applicant', $applicant_info['sid']); ?>
                                 <?php if(intval($direct_deposit_count) > 0) { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Equipments Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Documents Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                 <?php } else { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Equipments Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Documents Assigned" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                                 <?php } ?>
                                 <!-- Light Bulb Code - End -->
                             </li>
