@@ -228,7 +228,7 @@
                                             <li><a href="<?php echo base_url('timeoff/settings'); ?>">Time Off Settings</a></li>
                                         <?php } ?>
                                         <?php if (checkIfAppIsEnabled('timeoff') && ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'])) { ?>
-                                            <li><a href="<?php echo base_url('export_time_off'); ?>">Export Time Off</a></li>
+                                            <li><a href="<?php echo base_url('timeoff/export'); ?>">Export Time Off</a></li>
                                         <?php } ?>
                                         <?php if (checkIfAppIsEnabled('timeoff') && ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'])) { ?>
                                             <li><a href="<?php echo base_url('timeoff/import'); ?>">Import Time Off</a></li>
