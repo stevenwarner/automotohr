@@ -436,7 +436,10 @@ class Learning_center_model extends CI_Model {
             return $a['created_date'] < $b['created_date'] ? true : false;
         }
         //
-        asort($r, 'r');
+        if (!empty($r)) {
+            usort($r, 'r');
+        }
+        //
         return $r;
     }
 
@@ -1695,12 +1698,13 @@ class Learning_center_model extends CI_Model {
         return $return_data;
     }
 
-    function get_user_question_record ($video_sid, $video_assign_sid) {
+    function get_already_assign_user ($video_sid, $assign_users) {
 
-        $this->db->select('video_assign_sid, questionnaire_name, questionnaire, questionnaire_result, questionnaire_attend_timestamp');
-        $this->db->where('video_sid', $video_sid);
-        $this->db->where('video_assign_sid',$video_assign_sid);
-        $records_obj = $this->db->get('learning_center_screening_questionnaire');
+        $this->db->select('user_sid');
+        $this->db->where_in('user_sid',$assign_users);
+        $this->db->where('status',1);
+        $this->db->where('learning_center_online_videos_sid',$video_sid);
+        $records_obj = $this->db->get('learning_center_online_videos_assignments');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         
@@ -1711,5 +1715,34 @@ class Learning_center_model extends CI_Model {
         }
 
         return $return_data;
+    }
+
+    function get_user_question_record ($video_sid, $video_assign_sid) {
+
+        $this->db->select('video_assign_sid, questionnaire_name, questionnaire, questionnaire_result, attend_timestamp');
+        $this->db->where('video_sid', $video_sid);
+        $this->db->where('video_assign_sid',$video_assign_sid);
+        $record_obj = $this->db->get('learning_center_screening_questionnaire');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    function save_user_assign_video_history ($data_to_insert) {
+        $this->db->insert('learning_center_assign_user_history', $data_to_insert);
+    }
+
+    function change_user_assign_video_status($user_sid, $video_sid) {
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('learning_center_online_videos_sid', $video_sid);
+        $this->db->set('status', 0);
+        $this->db->update('learning_center_online_videos_assignments');
     }
 }

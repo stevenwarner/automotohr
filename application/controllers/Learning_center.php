@@ -461,15 +461,6 @@ class Learning_center extends Public_Controller {
                 $this->load->view('learning_center/online_videos_add');
                 $this->load->view('main/footer');
             } else {
-                $assign_users = array();
-                $assign_users = $_POST['employees_assigned_sid'];
-                $removed_users = $this->learning_center_model->get_all_remove_user($video_sid, $assign_users);
-
-                if(!empty($removed_users)) {
-                    foreach ($removed_users as $user) {
-                        $user_question = $this->learning_center_model->get_user_question_record($video_sid, $user['sid']);
-                    }
-                }
                 
                 $post = $this->input->post(NULL, TRUE);
 
@@ -586,24 +577,44 @@ class Learning_center extends Public_Controller {
 
                 $this->learning_center_model->update_training_video($video_sid, $data_to_update);
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
-                $this->learning_center_model->set_online_videos_assignment_status($video_sid);
+                // $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
                 if (!empty($employees_assigned_sid) && $employees_assigned_to == "specific") {
-                    foreach ($employees_assigned_sid as $sid) {
-                        $last_active_assignment = $this->get_assignment_record($last_active_assignments, 'employee', $sid);
-                        $data_to_insert = array();
-                        $data_to_insert['learning_center_online_videos_sid'] = $video_sid;
-                        $data_to_insert['user_type'] = 'employee';
-                        $data_to_insert['user_sid'] = $sid;
-                        $data_to_insert['date_assigned'] = date('Y-m-d H:i:s');
-                        $data_to_insert['status'] = 1;
+                    // echo '<pre>';
+                    $removed_users = $this->learning_center_model->get_all_remove_user($video_sid, $employees_assigned_sid);
+                    
+                    if(!empty($removed_users)) {
+                        foreach ($removed_users as $r_key => $removed_user) {
+                            $user_question = $this->learning_center_model->get_user_question_record($video_sid, $removed_user['sid']);
+                            if (!empty($user_question)) {
+                                $removed_user['questionnaire_name'] = $user_question['questionnaire_name'];
+                                $removed_user['questionnaire'] = $user_question['questionnaire'];
+                                $removed_user['questionnaire_result'] = $user_question['questionnaire_result'];
+                                $removed_user['questionnaire_attend_timestamp'] = $user_question['attend_timestamp'];
+                            }
 
-                        if (!empty($last_active_assignment)) {
-                            $data_to_insert['watched'] = $last_active_assignment['watched'];
-                            $data_to_insert['date_watched'] = $last_active_assignment['date_watched'];
+                            $this->learning_center_model->change_user_assign_video_status($removed_user['user_sid'], $video_sid);
+
+                            unset($removed_user['sid']);
+                            $this->learning_center_model->save_user_assign_video_history($removed_user);
+                            
                         }
+                    }
 
-                        $this->learning_center_model->insert_online_videos_assignments_record($data_to_insert);
+                    $already_assigned_users = $this->learning_center_model->get_already_assign_user($video_sid, $employees_assigned_sid);
+                    $alreadyAssignedUsers = array_column($already_assigned_users, 'user_sid');
+
+                    foreach ($employees_assigned_sid as $sid) {
+                        if (!in_array($sid, $alreadyAssignedUsers)) {
+                            $data_to_insert = array();
+                            $data_to_insert['learning_center_online_videos_sid'] = $video_sid;
+                            $data_to_insert['user_type'] = 'employee';
+                            $data_to_insert['user_sid'] = $sid;
+                            $data_to_insert['date_assigned'] = date('Y-m-d H:i:s');
+                            $data_to_insert['status'] = 1;
+
+                            $this->learning_center_model->insert_online_videos_assignments_record($data_to_insert);
+                        }    
                     }
                 }
 
