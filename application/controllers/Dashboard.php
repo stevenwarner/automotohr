@@ -759,10 +759,7 @@ class Dashboard extends Public_Controller {
             $data['level'] = $this->timeoff_model->getEmployerApprovalStatus($data['employer_sid']);
 
             $data['timeOffDays'] = $this->timeoff_model->getTimeOffDays($data['session']['company_detail']['sid']);
-            $this->load->model('Performance_review_model', 'prm');
-            $data['performanceReviewPending'] = $this->prm->getPendingReviewCount(
-                $data['session']['employer_detail']['sid']
-            );
+            $data['performanceReviewPending'] = 0;
 
             $data['theme'] = 2;
 
