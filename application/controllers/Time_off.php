@@ -661,6 +661,7 @@ class Time_off extends Public_Controller
         //
         $data['page'] = 'Import Time Off';
         $data['title'] = 'TimeOff - Import';
+        $data['theme'] = $this->theme;
         //
         $this->load->view('main/header', $data);
         $this->load->view('timeoff/import');
@@ -899,6 +900,7 @@ class Time_off extends Public_Controller
         //
         $data['page'] = 'view';
         $data['title'] = 'Export time off';
+        $data['theme'] = $this->theme;
         //
         $data['allEmp'] = $this->timeoff_model->getCompanyEmployees($data['company_sid']);
 
@@ -938,6 +940,7 @@ class Time_off extends Public_Controller
         $this->check_login($data);
         //
         $data['title'] = 'Report::time-off';
+        $data['theme'] = $this->theme;
         //
         $data['data'] = $this->timeoff_model->getEmployeesTimeOff(
             $data['company_sid'],
