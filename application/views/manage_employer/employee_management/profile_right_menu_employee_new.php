@@ -525,14 +525,12 @@
                             </li>
                         <?php }?>
                         <!-- Reminded Emails Send -->
-                        <?php if(in_array($this->session->userdata('logged_in')['company_detail']['sid'], [57,51])) { ?>
                         <li style="cursor: pointer;">
                             <span class="left-addon"><i aria-hidden="true" class="fa fa-envelope"></i></span>
                             <h4>Send An Email Reminder</h4>
                             <a href="javascript:void(0)" title="Send An Email Reminder" id="JsSendReminderEmail">Send <i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a><br>
                             <a href="javascript:void(0)" title="View Email Reminder History" id="JsSendReminderEmailHistory">View <i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a> 
                         </li>
-                        <?php } ?>
                     </ul>
                 </div>
             </div>

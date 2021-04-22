@@ -596,7 +596,6 @@ if ($this->session->userdata('logged_in')) {
                             <a href="<?php echo base_url('hr_documents_management/documents_assignment/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                         </li>
                         <?php } ?>
-                        <?php if(in_array($company_sid, [57,51])) { ?>
                         <!-- Reminded Emails Send -->
                         <li style="cursor: pointer;">
                             <span class="left-addon"><i aria-hidden="true" class="fa fa-envelope"></i></span>
@@ -604,7 +603,6 @@ if ($this->session->userdata('logged_in')) {
                             <a href="javascript:void(0)" title="Send An Email Reminder" id="JsSendReminderEmail">Send <i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a><br>
                             <a href="javascript:void(0)" title="View Email Reminder History" id="JsSendReminderEmailHistory">View <i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a> 
                         </li>
-                        <?php } ?>
                     </ul>
                 </div>
             </div>
