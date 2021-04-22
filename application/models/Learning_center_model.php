@@ -331,7 +331,7 @@ class Learning_center_model extends CI_Model {
         //
         if($user_type == 'employee'){
             // Get all employees
-            $this->db->select('sid, created_date, video_title, video_description, video_source, video_id')
+            $this->db->select('sid, created_date, video_title, video_description, video_source, video_id, video_start_date')
             ->select('learning_center_online_videos.video_start_date')
             ->select('learning_center_online_videos.expired_start_date')
             ->where('company_sid', $company_sid)
@@ -396,7 +396,7 @@ class Learning_center_model extends CI_Model {
     
             // Check for departments
             $this->db
-            ->select('sid, created_date, video_title, video_description, video_source, video_id, department_sids')
+            ->select('sid, created_date, video_title, video_description, video_source, video_id, department_sids, video_start_date')
             ->where('company_sid', $company_sid)
             ->group_start()
             ->where('department_sids', 'all')
@@ -433,7 +433,7 @@ class Learning_center_model extends CI_Model {
         }
         //
         function r($a, $b){
-            return $a['created_date'] < $b['created_date'] ? true : false;
+            return $a['video_start_date'] < $b['video_start_date'] ? true : false;
         }
         //
         if (!empty($r)) {
@@ -1563,8 +1563,11 @@ class Learning_center_model extends CI_Model {
         ')
         ->join('users', 'users.sid = departments_employee_2_team.employee_sid')
         ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
+        ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
         ->where('departments_management.status', 1)
         ->where('departments_management.is_deleted', 0)
+        ->where('departments_team_management.status', 1)
+        ->where('departments_team_management.is_deleted', 0)
         ->where('users.active', 1)
         ->where('users.parent_sid', $companySid)
         ->where('users.terminated_status', 0);
@@ -1744,5 +1747,21 @@ class Learning_center_model extends CI_Model {
         $this->db->where('learning_center_online_videos_sid', $video_sid);
         $this->db->set('status', 0);
         $this->db->update('learning_center_online_videos_assignments');
+    }
+
+    function get_user_assign_online_video ($video_sid) {
+        $this->db->select('*');
+        $this->db->where('sid', $video_sid);
+        $this->db->order_by('sid', 'desc');
+        $this->db->from('learning_center_online_videos');
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
     }
 }

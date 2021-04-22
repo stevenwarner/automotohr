@@ -68,6 +68,10 @@ DROP TABLE IF EXISTS `learning_center_assign_user_history`;
 CREATE TABLE IF NOT EXISTS `learning_center_assign_user_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `learning_center_online_videos_sid` int(11),
+  `video_title` text,
+  `video_url` text,
+  `video_source` varchar(128),
+  `video_start_date` date,
   `user_type` varchar(128),
   `user_sid` int(11),
   `date_assigned` datetime,

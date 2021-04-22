@@ -583,6 +583,7 @@ class Dashboard extends Public_Controller {
             $incidents_new = $this->dashboard_model->assigned_incidents_new_flow_count($employer_id, $company_id);
             $incident_count = $this->dashboard_model->assigned_incidents_count($employer_id, $company_id);
             $training_session_count = $this->dashboard_model->get_training_session_count('employee', $employer_id, $company_id);
+            $online_video_count = $this->dashboard_model->get_my_all_online_videos_count('employee', $employer_id, $company_id);
             // $documents_count = $this->dashboard_model->get_documents_count('employee', $employer_id);
             $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id , 'employee', $employer_id, 0);
             $assigned_offer_letter = $this->dashboard_model->get_assigned_offer_letter($company_id, 'employee', $employer_id);
@@ -745,7 +746,8 @@ class Dashboard extends Public_Controller {
             // $data['incidents_count'] = $incidents_new;
             $data['incidents_count'] = $incident_count;
             $data['messages'] = $messages;
-            $data['training_session_count'] = $training_session_count;
+            $data['training_session_count'] = $training_session_count+$online_video_count;
+            // $data['online_video_count'] = $online_video_count;
             $data['documents_count'] = $documents_count;
 
             $data['title']                                                      = 'Dashboard';

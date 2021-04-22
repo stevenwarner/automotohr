@@ -2464,6 +2464,194 @@ class Dashboard_model extends CI_Model
         return $allCount;
     }
 
+    function get_my_all_online_videos_count($user_type, $user_sid, $company_sid, $fromProfile = false) {
+        //
+        $r = [];
+        //
+        if($user_type == 'employee'){
+            // Get all employees
+            $this->db->select('sid, created_date, video_title, video_description, video_source, video_id, video_start_date, screening_questionnaire_sid')
+            ->select('learning_center_online_videos.video_start_date')
+            ->select('learning_center_online_videos.expired_start_date')
+            ->where('company_sid', $company_sid)
+            ->where('employees_assigned_to', 'all')
+            ->order_by('created_date', 'DESC');
+            //
+            if(!$fromProfile){
+                $this->db
+                ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
+                ->group_start()
+                ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
+                ->or_where('expired_start_date IS NULL', NULL)
+                ->group_end();
+            }
+            //
+            $a = $this->db->get('learning_center_online_videos');
+            $b = $a->result_array();
+            $a->free_result();
+            //
+            $ids = array();
+            //
+            if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+            //
+            $r = $b;
+        }
+        // Get specific employees
+        $this->db->select('learning_center_online_videos.sid')
+        ->select('learning_center_online_videos.created_date')
+        ->select('learning_center_online_videos.video_title')
+        ->select('learning_center_online_videos.video_description')
+        ->select('learning_center_online_videos.video_source')
+        ->select('learning_center_online_videos.video_id')
+        ->select('learning_center_online_videos.video_start_date')
+        ->select('learning_center_online_videos.expired_start_date')
+        ->select('learning_center_online_videos.screening_questionnaire_sid')
+        ->select('learning_center_online_videos_assignments.learning_center_online_videos_sid')
+        ->where('learning_center_online_videos_assignments.user_type', $user_type)
+        ->where('learning_center_online_videos_assignments.user_sid', $user_sid)
+        ->where('learning_center_online_videos_assignments.status', 1)
+        ->order_by('learning_center_online_videos_assignments.date_assigned', 'DESC')
+        ->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid');
+        //
+        if(!$fromProfile){
+            $this->db
+            ->where('learning_center_online_videos.video_start_date <= ', date('Y-m-d', strtotime('now')))
+            ->group_start()
+            ->where('learning_center_online_videos.expired_start_date >= ', date('Y-m-d', strtotime('now')))
+            ->or_where('learning_center_online_videos.expired_start_date IS NULL', NULL)
+            ->group_end();
+        }
+        //
+        $a = $this->db->get('learning_center_online_videos_assignments');
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+        //
+        $r = array_merge($r, $b);
+        //
+        if($user_type == 'employee'){
+            //
+            $ids = array_values($ids);
+    
+            // Check for departments
+            $this->db
+            ->select('sid, created_date, video_title, video_description, video_source, video_id, department_sids, video_start_date, screening_questionnaire_sid')
+            ->where('company_sid', $company_sid)
+            ->group_start()
+            ->where('department_sids', 'all')
+            ->or_where('department_sids <> ', 'all')
+            ->group_end()
+            ->where('department_sids IS NOT NULL', NULL)
+            ->where('employees_assigned_to', 'specific')
+            ->order_by('created_date', 'DESC');
+            //
+            if(sizeof($ids)) $this->db->where_not_in('sid', $ids);
+            //
+            $a = $this->db->get('learning_center_online_videos');
+            $b = $a->result_array();
+            $a->free_result();
+            //
+            if(!sizeof($b)) return $r;
+            //
+            $d = array();
+            //
+            $dept = $this->getDepartmentEmployees($company_sid, 'all', true);
+            //
+            foreach ($b as $k => $v) {
+                if($v['department_sids'] == 'all'){
+                    if(!isset($dept[$v['department_sids']][$user_sid])) unset($b[$k]);
+                } else {
+                    $t = explode(',', $v['department_sids']);
+                    foreach ($t as $k0 => $v0) {
+                        if(!isset($dept[$v0][$user_sid])) unset($b[$k]);
+                    }
+                }
+            }
+            //
+            $r = array_merge($r, $b);
+        }
+        //
+        $current_date = date('Y-m-d');
+        $video_count = 0;
+        $screening_questionnaire_check = 1;
+        //
+        foreach ($r as $key => $single_r) {
+            $video_start_date = date('Y-m-d', strtotime($single_r['video_start_date']));
+
+            if ($video_start_date < $current_date) {
+                
+                $this->db->select('attempt_status,sid');
+                $this->db->where('learning_center_online_videos_sid', $single_r['sid']);
+                $this->db->where('user_sid', $user_sid);
+                $this->db->where('user_type', $user_type);
+                $user_video_result = $this->db->get('learning_center_online_videos_assignments')->row_array();
+
+                if (empty($user_video_result) || $user_video_result['attempt_status'] == 0) {
+                    $video_count = $video_count + 1;
+                } else {
+                    if (empty($single_r['screening_questionnaire_sid']) || $single_r['screening_questionnaire_sid'] != 0) {
+                        $this->db->select('sid');
+                        $this->db->where('video_assign_sid', $user_video_result['sid']);
+                        $this->db->where('video_sid', $single_r['sid']);
+                        $user_video_questionnaire_result = $this->db->get('learning_center_screening_questionnaire')->row_array();
+
+                        if (empty($user_video_questionnaire_result)) {
+                            $video_count = $video_count + 1;
+                        } 
+                    }
+                }
+                
+                
+            }
+        }
+        //
+        return $video_count;
+    }
+
+    function getDepartmentEmployees(
+        $companySid,
+        $departmentSids,
+        $dept = FALSE
+    ){
+        $this->db
+        ->select('users.sid')
+        ->join('users', 'users.sid = departments_employee_2_team.employee_sid', 'inner')
+        ->where('users.active', 1)
+        ->where('users.parent_sid', $companySid)
+        ->where('users.terminated_status', 0);
+        //
+        if($dept){
+            $this->db
+            ->select('departments_management.sid as department_sid')
+            ->select('departments_management.name')
+            ->where('departments_management.is_deleted', 0)
+            ->where('departments_management.status', 1)
+            ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid', 'inner');
+        }
+        //
+        if($departmentSids != 'all') $this->db->where_in('departments_employee_2_team.sid', $departmentSids);
+        //
+        $a = $this->db->get('departments_employee_2_team');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        if(!sizeof($b)) return array();
+        //
+        $r = array();
+        //
+        if(!$dept) foreach ($b as $k => $v) $r[] = $v['sid'];
+        else {
+            foreach ($b as $k => $v) {
+                $r[$v['department_sid']][$v['sid']] = true;
+                $r['all'][$v['sid']] = true;
+            }
+        }
+        //
+        return $r;
+    }
+
     function get_documents_count($user_type, $user_sid)
     {
 
