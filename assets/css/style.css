@@ -17783,3 +17783,25 @@ input[type='checkbox'].user_checkbox:checked:after {
     content: '\2714';
     color: #fff;
 }
+
+
+/* Common Loader */
+
+.csCommonLoader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.csCommonLoader i {
+    position: relative;
+    left: 50%;
+    top: 50%;
+    font-size: 40px;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    color: #fd7a2a;
+}

@@ -54,8 +54,18 @@
                             </div>
                             <div class="dashboard-conetnt-wrp">
                                 <div class="tagline-heading">
-                                    <span class="pull-right" id="jsGeneralDocumentArea"></span>
+                                    <span class="pull-right" >
+                                        <button 
+                                                class="btn btn-success JsSendReminderEmailLI form-control"
+                                                data-id="<?=$user_sid;?>"
+                                                data-type="<?=$user_type;?>"
+                                                data-slug="drivers-license"
+                                            >Send An Email Reminder</button>
+                                    </span>
                                     <h4>Add License / Certification</h4>
+                                </div>
+                                <div class="tagline-heading">
+                                    <span class="pull-right" id="jsGeneralDocumentArea"></span>
                                 </div>
                                 <form method="POST" enctype="multipart/form-data">
                                     <div class="universal-form-style-v2">

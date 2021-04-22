@@ -17,7 +17,15 @@
                                     <?php echo $title; ?></span>
                             </div>
                             <div class="row">
-                                <div class="col-sm-12">
+                                <div class="col-sm-4">
+                                    <button 
+                                            class="btn btn-success JsSendReminderEmailLI form-control"
+                                            data-id="<?=$user_sid;?>"
+                                            data-type="<?=$user_type;?>"
+                                            data-slug="dependents"
+                                        >Send An Email Reminder</button>
+                                </div>
+                                <div class="col-sm-8">
                                     <span class="pull-right" id="jsGeneralDocumentArea"></span>
                                 </div>
                             </div>

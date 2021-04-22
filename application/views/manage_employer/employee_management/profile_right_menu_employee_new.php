@@ -362,9 +362,9 @@
                             <!-- Light Bulb Code - Start -->
                             <?php $emergency_contacts_count = count_emergency_contacts($employer['sid']);  ?>
                             <?php if(intval($emergency_contacts_count > 0)) { ?>
-                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Has Emergency Contacts Setup" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Has Emergency Contacts Setup" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>" alt="">
                             <?php } else { ?>
-                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Emergency Contacts Setup" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Emergency Contacts Setup" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>" alt="">
                             <?php } ?>
                             <!-- Light Bulb Code - End -->
                         </li>
@@ -524,23 +524,14 @@
                                 <a href="<?php echo base_url('hr_documents_management/documents_assignment/employee/' . $employer['sid']); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             </li>
                         <?php }?>
-                        <?php //if(check_access_permissions_for_view($security_details, 'employee_eeo_form')) { ?>
-                        <?php if(false) { ?>
-                            <li>
-                                <span class="left-addon"><i aria-hidden="true" class="fa fa-file-text-o"></i></span>
-                                <h4>E.E.O.C. Form</h4>
-                                <a href="<?php echo base_url('eeo/form/employee/' . $employer["sid"]); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-
-                                <!-- Light Bulb Code - Start -->
-                                <?php $direct_deposit_count = count_eeoc_forms('employee', $employer["sid"]); ?>
-                                <?php if(intval($direct_deposit_count) > 0) { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Has Referred Jobs" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                <?php } else { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No Referrals Found" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
-                                <?php } ?>
-                                <!-- Light Bulb Code - End -->
-
-                            </li>
+                        <!-- Reminded Emails Send -->
+                        <?php if(in_array($this->session->userdata('logged_in')['company_detail']['sid'], [57,51])) { ?>
+                        <li style="cursor: pointer;">
+                            <span class="left-addon"><i aria-hidden="true" class="fa fa-envelope"></i></span>
+                            <h4>Send An Email Reminder</h4>
+                            <a href="javascript:void(0)" title="Send An Email Reminder" id="JsSendReminderEmail">Send <i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a><br>
+                            <a href="javascript:void(0)" title="View Email Reminder History" id="JsSendReminderEmailHistory">View <i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a> 
+                        </li>
                         <?php } ?>
                     </ul>
                 </div>
@@ -1030,3 +1021,13 @@
 </script>
 
 <?php $this->load->view('iframeLoader'); ?>
+
+
+<script>
+    window.sre = {};
+    window.sre.url = "<?=base_url();?>";
+    window.sre.userId = <?=$employer['sid'];?>;
+    window.sre.userType = 'employee';
+</script>
+
+<style>.select2-container--default .select2-selection--multiple .select2-selection__rendered{ height: auto !important; }</style>

@@ -1293,3 +1293,9 @@ $route['learning_center/video_access']['post'] = 'Learning_center/video_access';
 $route['timeoff/report'] = 'Time_off/report';
 $route['timeoff/report/(:any)/(:any)'] = 'Time_off/pd_report/$1/$2';
 $route['timeoff/get_my_timeoff/(:num)'] = 'Time_off/getTimeOffs/$1';
+
+
+// Send Reminder Email - Routes
+$route['get_send_reminder_email_body']['get'] = 'Common_ajax/get_send_reminder_email_body';
+$route['send_reminder_email_by_type']['post'] = 'Common_ajax/send_reminder_email_by_type';
+$route['get_send_reminder_email_history/(:num)/(:any)']['get'] = 'Common_ajax/get_send_reminder_email_history/$1/$2';

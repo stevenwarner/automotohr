@@ -30,12 +30,20 @@
 
                             <div class="page-header-area margin-top">
                                 <span class="page-heading down-arrow">
-                                    <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
+                                    <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left" aria-hidden="true"></i><?php echo $return_title_heading; ?></a>
                                     <?php echo $title; ?></span>
                             </div>
                             <div class="dashboard-conetnt-wrp">
                                 <div class="row">
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-4">
+                                        <button 
+                                            class="btn btn-success JsSendReminderEmailLI form-control"
+                                            data-id="<?=$user_sid;?>"
+                                            data-type="<?=$user_type;?>"
+                                            data-slug="emergency-contact"
+                                        >Send An Email Reminder</button>
+                                    </div>
+                                    <div class="col-sm-8">
                                         <span class="pull-right" id="jsGeneralDocumentArea"></span>
                                     </div>
                                 </div>
@@ -49,7 +57,6 @@
                                             <table class="table">
                                                 <thead>
                                                     <tr>
-                                                        <!--<th><input name="" type="checkbox" value="" id="selectall"></th>-->
                                                         <th width="30%">Name</th>
                                                         <th>Relationship</th>
                                                         <th>Phone Number</th>
@@ -61,7 +68,6 @@
                                                 <tbody>
                                                     <?php foreach ($emergency_contacts as $emergency_contact) { ?>
                                                         <tr>
-                                                            <!--<td> <input name="ej_active[]" type="checkbox" value="<?php //echo $emergency_contact['sid'];      ?>" id="<?php //echo $emergency_contact['sid'];      ?>"  class="checkbox1"></td>-->
                                                             <td width="30%"><?php echo $emergency_contact['first_name'] . ' ' . $emergency_contact['last_name']; ?></td>
                                                             <td><?php echo $emergency_contact['Relationship']; ?></td>
                                                             <td><?=$emergency_contact['PhoneNumber']; ?></td>

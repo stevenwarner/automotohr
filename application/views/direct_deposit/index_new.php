@@ -57,6 +57,13 @@
                                     <span class="pull-left" id="jsGeneralDocumentArea"></span>
                                     <a class="btn btn-success pull-right" href="<?php echo base_url('direct_deposit/pd').'/'.$dd_user_type.'/'.$dd_user_sid.'/'.$company_id.'/download'; ?>" target="_blank">Download</a>
                                     <a class="btn btn-success pull-right" href="<?php echo base_url('direct_deposit/pd').'/'.$dd_user_type.'/'.$dd_user_sid.'/'.$company_id.'/print'; ?>" target="_blank" style="margin-right: 10px;">Print</a>
+                                    <button 
+                                            class="btn btn-success JsSendReminderEmailLI pull-right"
+                                            data-id="<?=$dd_user_sid;?>"
+                                            data-type="<?=$dd_user_type;?>"
+                                            data-slug="direct-deposit-information"
+                                            style="margin-right: 10px;"
+                                        >Send An Email Reminder</button>
                                 </div>
                             </div>
                             <div class="dashboard-conetnt-wrp">

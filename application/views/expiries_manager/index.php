@@ -115,3 +115,8 @@
     </div>
 </div>
 <!-- Main End -->
+
+<script>
+    window.sre = {};
+    window.sre.url = "<?=base_url();?>";
+</script>

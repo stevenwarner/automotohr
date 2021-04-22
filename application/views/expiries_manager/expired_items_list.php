@@ -8,10 +8,10 @@
                 <thead>
                     <tr>
                         <th class="col-xs-1">Sr. #</th>
-                        <th class="col-xs-3">License Type</th>
-                        <th class="col-xs-5">User Full Name</th>
+                        <th class="col-xs-2">License Type</th>
+                        <th class="col-xs-4">User Full Name</th>
                         <th class="col-xs-2">Expiration Date</th>
-                        <th class="col-xs-1">Actions</th>
+                        <th class="col-xs-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,10 +31,18 @@
                             <td><?php echo remakeEmployeeName($item['user_details']); ?></td>
                             <td><?=reset_datetime(array('datetime' => $license_date, '_this' => $this, 'from_format' => 'm-d-Y', 'format' => 'M d Y, D')); ?></td>
                             <td>
+                                <button 
+                                    title="This action will send an email reminder to update the <?=$item['license_type'] == 'drivers' ? 'driver\'s' : 'occupational' ;?> license."
+                                    placement="top"
+                                    class="btn btn-success JsSendReminderEmailLI form-control"
+                                    data-id="<?=$item['users_sid'];?>"
+                                    data-type="<?=$item['users_type'];?>"
+                                    data-slug="<?=$item['license_type'] == 'drivers' ? 'drivers-license' : 'occupational-license' ;?>"
+                                >Send An Email Reminder</button>
                                 <?php if($item['license_type'] == 'drivers'){?>
-                                    <a class="action-btn manage-btn bg-btn" href="<?php echo base_url('drivers_license_info') . '/' . 'employee' . '/' . $item['user_details']['sid']; ?>">View</a>
+                                    <a class="btn btn-success form-control" href="<?php echo base_url('drivers_license_info') . '/' . 'employee' . '/' . $item['user_details']['sid']; ?>">View</a>
                                 <?php } else if($item['license_type'] == 'occupational') {?>
-                                    <a class="action-btn manage-btn bg-btn" href="<?php echo base_url('occupational_license_info') . '/' . 'employee' . '/' . $item['user_details']['sid']; ?>">View</a>
+                                    <a class="btn btn-success form-control" href="<?php echo base_url('occupational_license_info') . '/' . 'employee' . '/' . $item['user_details']['sid']; ?>">View</a>
                                 <?php } ?>
                             </td>
                         </tr>
