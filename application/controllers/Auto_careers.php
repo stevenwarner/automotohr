@@ -54,7 +54,7 @@ class Auto_careers extends CI_Controller
             $this->add_applicant($applicant_job_info);
         } else{
             sendResponse(['error' => 'Invalid request']);
-            return;
+            exit(0);
         }
         
     }
@@ -108,13 +108,13 @@ class Auto_careers extends CI_Controller
             ) {
                 $response['error'] = "Domain Not Valid";
                 sendResponse($response);
-                return;
+                exit(0);
             }
             // Check for blocked array
             if($this->db->where('LOWER(applicant_email)', strtolower($applicant_data['email']))->count_all_results('blocked_applicants')){
                 $response['error'] = "Candidate is blocked";
                 sendResponse($response);
-                return;
+                exit(0);
             }
             //
             if (isset($applicant_data['ip_address']) && !empty($applicant_data['ip_address'])) {
@@ -195,6 +195,12 @@ class Auto_careers extends CI_Controller
             }
 
             $job_details    = $this->auto_careers_model->get_job_detail($job_sid);
+            //
+            if(empty($job_details)){
+                $response['error'] = "Job is inactive";
+                sendResponse($response);
+                exit(0);
+            }
 
             if (!empty($job_details)) {
                 $original_job_title = $job_details['Title'];
@@ -645,7 +651,7 @@ class Auto_careers extends CI_Controller
 
             //
             sendResponse($response);
-            return;
+            exit(0);
         
     }
 

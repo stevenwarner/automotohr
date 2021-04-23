@@ -9,6 +9,12 @@ class auto_careers_model extends CI_Model {
     function get_job_detail($job_sid){
         $this->db->select('*');
         $this->db->where('sid', $job_sid);
+        $this->db->where('active', 1);
+        $this->db->where('organic_feed', 1);
+        $this->db->group_start();
+        $this->db->where('expiration_date IS NULL', NULL, NULL);
+        $this->db->or_where('expiration_date >= ', date('Y-m-d', strtotime('now')));
+        $this->db->group_end();
         $record_obj = $this->db->get('portal_job_listings');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
