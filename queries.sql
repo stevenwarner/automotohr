@@ -115,3 +115,7 @@ CREATE TABLE IF NOT EXISTS `reminder_emails_log` (
   `note` text,
   PRIMARY KEY (`sid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+-- License Auto Reminder
+-- 04/23/2021
+ALTER TABLE `license_information` ADD `last_notification_sent_at` VARCHAR(11) NULL AFTER `license_file`;
