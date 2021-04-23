@@ -360,8 +360,8 @@ class portal_email_templates_model extends CI_Model {
         $this->db->where('portal_job_applications.sid', $applicant_sid);
         $this->db->where('portal_job_applications.employer_sid', $company_sid);
         // Added on: 29-04-2019
-        $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_job_applications.job_sid', 'left');
         $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.portal_job_applications_sid  = portal_job_applications.sid', 'left');
+        $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
         $records_obj = $this->db->get('portal_job_applications');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
