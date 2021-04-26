@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php defined('BASEPATH') || exit('No direct script access allowed');
 
 
 class Cron_common extends CI_Controller{
@@ -38,7 +38,7 @@ class Cron_common extends CI_Controller{
         //
         foreach($records as $record){
             //
-            $expiryDate = !empty($record['license_details']['license_expiration_date']) ? $record['license_details']['license_expiration_date'] : '';
+            $expiryDate = !empty($record['license_details']['license_expiration_date']) ? trim($record['license_details']['license_expiration_date']) : '';
             // //
             if(empty($expiryDate)){
                 continue;
@@ -48,7 +48,7 @@ class Cron_common extends CI_Controller{
             //
             $format = 'Y-m-d';
             // Re-format the date
-            if(preg_match('/[0-9]{2}-[0-9]/', $expiryDate)){
+            if(preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $expiryDate)){
                 $format = 'm-d-Y';
             }
             //
@@ -94,9 +94,8 @@ class Cron_common extends CI_Controller{
                 // Last Send Date Update
                 $this->common_model->update_license_last_sent_date($record['licenseId']);
             }
-            //
-            echo "Executed \n";
         }
+        echo "Executed \n";
         //
         exit(0);
     }
