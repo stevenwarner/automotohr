@@ -266,8 +266,8 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->where('documents_assigned.status', 1);
         $this->db->where('documents_assigned.archive', 0);
         $this->db->group_start();
-        $this->db->where('documents_assigned.document_description regexp "{{authorized_signature}}"', null ,false);
-        $this->db->or_where('documents_assigned.document_description regexp "{{authorized_signature_date}}"', null ,false);
+        $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false);
+        $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false);
         $this->db->group_end();
         $this->db->join('documents_assigned','documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid','inner');
 
@@ -289,8 +289,8 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->where('documents_assigned.status', 1);
         $this->db->where('documents_assigned.archive', 0);
         $this->db->group_start();
-        $this->db->where('documents_assigned.document_description regexp "{{authorized_signature}}"', null ,false);
-        $this->db->or_where('documents_assigned.document_description regexp "{{authorized_signature_date}}"', null ,false);
+        $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false);
+        $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false);
         $this->db->group_end();
         if($limit != null){
             $this->db->limit($limit, $start);
