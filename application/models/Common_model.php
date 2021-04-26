@@ -55,6 +55,8 @@ class Common_model extends CI_Model {
         ->join('users as company', 'company.sid = users.parent_sid')
         ->where_in('users.parent_sid', array_column($b, 'sid'))
         ->where('license_information.users_type', 'employee')
+        ->where('users.active', 1)
+        ->where('users.terminated_status', 0)
         ->group_start()
         ->where('license_information.last_notification_sent_at IS NULL', NULL, NULL)
         ->or_where('license_information.last_notification_sent_at <>', date('Y-m-d', strtotime('now')))
