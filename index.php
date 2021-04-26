@@ -319,6 +319,9 @@ if(!function_exists('getCreds')){
 	function getCreds($index = false){
 		//
 		$file = APPPATH.'../../creds.json';
+		if($_SERVER['HTTP_HOST'] == 'staging.automotohr.com'){
+			$file = APPPATH.'../../../creds-staging.json';
+		}
 		//
 		$h = fopen($file, 'r');
 		//
