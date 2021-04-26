@@ -2581,16 +2581,16 @@ class Dashboard_model extends CI_Model
 
             if ($video_start_date < $current_date) {
                 
-                $this->db->select('attempt_status,sid');
+                $this->db->select('watched,sid');
                 $this->db->where('learning_center_online_videos_sid', $single_r['sid']);
                 $this->db->where('user_sid', $user_sid);
                 $this->db->where('user_type', $user_type);
                 $user_video_result = $this->db->get('learning_center_online_videos_assignments')->row_array();
 
-                if (empty($user_video_result) || $user_video_result['attempt_status'] == 0) {
+                if (empty($user_video_result) || $user_video_result['watched'] == 0) {
                     $video_count = $video_count + 1;
                 } else {
-                    if (empty($single_r['screening_questionnaire_sid']) || $single_r['screening_questionnaire_sid'] != 0) {
+                    if (!empty($single_r['screening_questionnaire_sid']) || $single_r['screening_questionnaire_sid'] != 0) {
                         $this->db->select('sid');
                         $this->db->where('video_assign_sid', $user_video_result['sid']);
                         $this->db->where('video_sid', $single_r['sid']);

@@ -548,6 +548,29 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
+    $("#departments_assigned_sid").on('change', function(){
+        department_sid = $(this).val();
+        
+        var form_data = new FormData();
+        form_data.append('department_sid', department_sid);
+        form_data.append('company_sid', <?php echo $company_sid; ?>);
+
+         
+        $.ajax({
+            url: '<?= base_url('learning_center/get_department_employee');?>',
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'post',
+            data: form_data,
+            success: function(return_data_array){
+               $('#employees_assigned_sid').val(return_data_array).change();
+            },
+            error: function(){
+            }
+        });
+    })
+
     $(".is_video_expired").on("click",function(){
         var video_expired = $('input[name="is_video_expired"]:checked').val();
         if (video_expired == "yes") {

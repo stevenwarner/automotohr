@@ -26,6 +26,35 @@ if (isset($applicant)) {
     $save_post_url = current_url();
 } ?>
 
+<style>
+    .completed {
+        background: #28a745 !important;
+    }
+
+    .pending {
+        background: #ffc107 !important;
+    }
+
+    .badge {
+        padding: 8px 10px !important;
+        margin-left: 5px;
+    }
+
+    .note {
+        font-size: 14px !important;
+    }
+
+    .badge-success {
+        margin-bottom: 5px;
+        background: #81b431 !important;
+    }
+
+    .badge-warning {
+            margin-bottom: 5px;
+        background: #fd7a2a !important;
+    }
+</style>
+
 <div class="main">
     <div class="container">
         <div class="row">
@@ -40,20 +69,49 @@ if (isset($applicant)) {
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                 </div>
             </div>
+
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                 <div class="page-header">
                     <h1 class="section-ttile">Learning Center</h1>
                 </div>
+                <div class="panel panel-default" id="online_videos_notes">
+                    <div class="panel-heading">
+                        <strong>Important Note</strong>
+                    </div>
+                    <div class="panel-body">
+                        <small class="form-text text-muted note">
+                            <span class="badge badge-success completed">Video Watched</span>
+                            <b>"Video Watched"</b> mean you have watched the assigned video.
+                        </small>
+                        <br>
+                        <small class="form-text text-muted note">
+                            <span class="badge badge-warning pending">Video Not Watched</span>
+                            <b>"Video Not Watched"</b> mean you are not watched the assigned video yet.
+                        </small>
+                        <br>
+                        <small class="form-text text-muted note">
+                            <span class="badge badge-success completed">Questionnaire Completed</span>
+                            <b>"Questionnaire Completed"</b> mean you have attended the assigned questionnaire.
+                        </small>
+                        <br>
+                        <small class="form-text text-muted note">
+                            <span class="badge badge-warning pending">Questionnaire Not Completed</span>
+                            <b>"Questionnaire Not Completed"</b> mean you are not attended the assigned questionnaire yet.
+                        </small>
+                    </div>
+                </div>
                 <div class="panel panel-default lc-tabs-panel">
                     <div class="panel-heading">
                         <ul class="nav nav-tabs nav-justified">
-                            <li class="active"><a href="#online_videos" data-toggle="tab">Online Videos</a></li>
-                            <li><a href="#training_sessions" data-toggle="tab">Training Sessions</a></li>
+                            <li class="active"><a href="#online_videos" data-toggle="tab" id="OV_tab">Online Videos</a></li>
+                            <li><a href="#training_sessions" data-toggle="tab" id="TS_tab">Training Sessions</a></li>
                         </ul>
                     </div>
+                    
                     <div class="panel-body">
                         <div class="tab-content">
                             <div class="tab-pane fade in active" id="online_videos">
+                                
                                 <!--<div class="table-responsive">-->
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -79,7 +137,27 @@ if (isset($applicant)) {
                                                             <?php   } ?>
                                                                 </figure>
                                                                 <div class="text">
-                                                                    <h3><a href="<?php echo $watch_video_base_url . '/' . $video['sid']; ?>"><?php echo $video['video_title']; ?></a></h3>
+                                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                                        <h3><a href="<?php echo $watch_video_base_url . '/' . $video['sid']; ?>"><?php echo $video['video_title']; ?></a></h3>
+                                                                    </div>
+                                                                    <div class="col-lg-8 col-md-8 col-xs-12 col-sm-8">      
+                                                                        <?php if ($video['video_have_question'] == "yes") { ?>
+                                                                            <?php if ($video['video_question_completed'] == "pending") { ?>
+                                                                                <span class="pull-right badge badge-warning pending">Questionnaire Not Completed</span>
+                                                                            <?php } else { ?>
+                                                                                <span class="pull-right badge badge-success completed">Questionnaire Completed</span>
+                                                                            <?php } ?>
+                                                                        <?php } ?>
+
+                                                                        <?php if ($video['video_watched_status'] == "pending") { ?>
+                                                                            <span class="pull-right badge badge-warning pending">Video Not Watched</span>
+                                                                        <?php } else { ?>
+                                                                            <span class="pull-right badge badge-success completed">Video Watched</span>
+                                                                        <?php } ?>
+                                                                    </div>
+                                                                   
+                                                                    
+                                                                    
                                                                     <div class="post-options">
                                                                         <ul>
                                                                             <li><?php echo reset_datetime(array('datetime' => $video['created_date'], '_this' => $this)); ?></li>
@@ -153,6 +231,14 @@ if (isset($applicant)) {
         }).on('hidden.bs.collapse', function () {
             $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
+    });
+
+    $('#TS_tab').on('click', function () {
+        $('#online_videos_notes').hide();
+    });
+
+    $('#OV_tab').on('click', function () {
+        $('#online_videos_notes').show();
     });
 
     function func_submit_form(form_id, alert_message){

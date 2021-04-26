@@ -481,23 +481,6 @@ class Learning_center extends Public_Controller {
                 $applicants_assigned_sid = $this->input->post('applicants_assigned_sid');
                 $questionnaire_sid = $this->input->post('questionnaire_sid');
 
-                if (!empty($employees_assigned_sid) && $employees_assigned_to == "specific") {
-                    //
-
-                    $selected_department_employees = array();
-                    // Get selected department employees
-                    if (isset($post['departments_assigned_sid']) && !empty($post['departments_assigned_sid'])) {
-                        $selected_department_employees = $this->learning_center_model->getDepartmentEmployeesList(
-                            $company_sid,
-                            $post['departments_assigned_sid']
-                        );
-                    }  
-
-                    $employeesMergeList = array_merge($employees_assigned_sid, array_column($selected_department_employees, 'sid'));  
-                    $employeesList = array_unique($employeesMergeList, SORT_REGULAR);
-
-                    $employees_assigned_sid = $employeesList;
-                }
 
                 if (empty($questionnaire_sid)) {
                     $questionnaire_sid = 0;
@@ -2695,6 +2678,24 @@ class Learning_center extends Public_Controller {
             echo 'success';
             exit(0);
         }
+    }
+
+    function get_department_employee () {
+        $company_sid    = $_POST['company_sid'];
+
+        $department_sid = explode(',', $_POST['department_sid']);
+
+        $selected_department_employees = $this->learning_center_model->getDepartmentEmployeesList(
+            $company_sid,
+            $department_sid
+        );
+
+        $employeesList = array_column($selected_department_employees, 'sid');  
+        $employeesList = array_unique($employeesList, SORT_REGULAR);
+
+        header('Content-type: application/json');
+        echo json_encode($employeesList);
+        exit(0);
     }
 
 }

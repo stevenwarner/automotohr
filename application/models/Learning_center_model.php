@@ -331,7 +331,7 @@ class Learning_center_model extends CI_Model {
         //
         if($user_type == 'employee'){
             // Get all employees
-            $this->db->select('sid, created_date, video_title, video_description, video_source, video_id, video_start_date')
+            $this->db->select('sid, created_date, video_title, video_description, video_source, video_id, video_start_date, screening_questionnaire_sid')
             ->select('learning_center_online_videos.video_start_date')
             ->select('learning_center_online_videos.expired_start_date')
             ->where('company_sid', $company_sid)
@@ -366,6 +366,7 @@ class Learning_center_model extends CI_Model {
         ->select('learning_center_online_videos.video_id')
         ->select('learning_center_online_videos.video_start_date')
         ->select('learning_center_online_videos.expired_start_date')
+        ->select('learning_center_online_videos.screening_questionnaire_sid')
         ->select('learning_center_online_videos_assignments.learning_center_online_videos_sid')
         ->where('learning_center_online_videos_assignments.user_type', $user_type)
         ->where('learning_center_online_videos_assignments.user_sid', $user_sid)
@@ -396,7 +397,7 @@ class Learning_center_model extends CI_Model {
     
             // Check for departments
             $this->db
-            ->select('sid, created_date, video_title, video_description, video_source, video_id, department_sids, video_start_date')
+            ->select('sid, created_date, video_title, video_description, video_source, video_id, department_sids, video_start_date, screening_questionnaire_sid')
             ->where('company_sid', $company_sid)
             ->group_start()
             ->where('department_sids', 'all')
@@ -440,7 +441,55 @@ class Learning_center_model extends CI_Model {
             usort($r, 'r');
         }
         //
-        return $r;
+        $current_date = date('Y-m-d');
+        $my_online_video = array();
+        //
+        foreach ($r as $key => $single_video) {
+            $video_start_date = date('Y-m-d', strtotime($single_video['video_start_date']));
+
+            if ($video_start_date < $current_date) {
+                
+                $this->db->select('watched,sid');
+                $this->db->where('learning_center_online_videos_sid', $single_video['sid']);
+                $this->db->where('user_sid', $user_sid);
+                $this->db->where('user_type', $user_type);
+                $user_video_result = $this->db->get('learning_center_online_videos_assignments')->row_array();
+
+                if (empty($user_video_result) || $user_video_result['watched'] == 0) {
+                    $single_video['video_watched_status'] = 'pending';
+                } else {
+                    $single_video['video_watched_status'] = 'completed';
+                }
+
+                if (!empty($single_video['screening_questionnaire_sid']) || $single_video['screening_questionnaire_sid'] != 0) {
+                    $this->db->select('sid');
+                    $this->db->where('video_assign_sid', $user_video_result['sid']);
+                    $this->db->where('video_sid', $single_video['sid']);
+                    $user_video_questionnaire_result = $this->db->get('learning_center_screening_questionnaire')->row_array();
+
+                    if (empty($user_video_questionnaire_result)) {
+                        $single_video['video_have_question'] = 'yes';
+                        $single_video['video_question_completed'] = 'pending';
+                    } else {
+                        $single_video['video_have_question'] = 'yes';
+                        $single_video['video_question_completed'] = 'completed';
+                    }
+                } else {
+                    $single_video['video_have_question'] = 'no';
+                }
+
+                $my_online_video[$key] = $single_video;
+            }
+        }
+
+        // echo '<pre>';
+        // print_r($r);
+        // print_r($my_online_video);
+        // die();
+
+        //
+        return $my_online_video;
+        // return $r;
     }
 
     function get_single_online_video($video_sid, $company_sid = 0) {
