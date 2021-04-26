@@ -935,3 +935,22 @@ function fetchTodaysOffEmployees() {
         );
     });
 }
+
+//
+function getParams(index) {
+    //
+    if (window.location.search == '') {
+        return index !== undefined ? 'all' : {};
+    }
+    //
+    var t = {};
+    //
+    window.location.search.replace('?', '').split('&').map(function(b) {
+        var l = b.split('=');
+        t[l[0]] = l[1]
+    });
+    //
+    return index !== undefined ? (
+        t[index] === undefined ? 'all' : t[index]
+    ) : t;
+}

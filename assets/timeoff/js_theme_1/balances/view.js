@@ -9,8 +9,8 @@ $(function() {
                     employeeId: employeeId,
                     level: level,
                     filter: {
-                        employees: "all",
-                        policies: "all",
+                        employees: getParams('id'),
+                        policies: getParams('pid'),
                         type: $(".jsEditResetCheckbox:checked").val(),
                     },
                     public: 0,
@@ -64,7 +64,7 @@ $(function() {
         callOBJ.Balances.Main.filter.policies = "all";
         callOBJ.Balances.Main.filter.type = $(".jsEditResetCheckbox:checked").val();
         //
-        fetchBalances();
+        window.location = "?id=all&pid=all";
     }
 
     //
@@ -81,7 +81,8 @@ $(function() {
             $("#js-filter-policies").val();
         callOBJ.Balances.Main.filter.type = $(".jsEditResetCheckbox:checked").val();
         //
-        fetchBalances();
+        //
+        window.location = "?id=" + (callOBJ.Balances.Main.filter.employees) + "&pid=" + (callOBJ.Balances.Main.filter.policies) + "";
     }
 
     // Fetch plans
@@ -95,6 +96,9 @@ $(function() {
         }
         //
         if (xhr != null) return;
+        //
+        $('#js-filter-employee').select2('val', getParams('id'));
+        $('#js-filter-policies').select2('val', getParams('pid'));
         //
         ml(true, "balance");
         //

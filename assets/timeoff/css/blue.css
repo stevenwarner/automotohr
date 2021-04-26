@@ -139,7 +139,7 @@
     height: 25px;
     line-height: 15px;
     background-color: #81b431;
-    border-radius: 100%;
+    border-radius: 5px;
 }
 
 .count-increament {
