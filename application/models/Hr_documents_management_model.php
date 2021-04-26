@@ -5150,7 +5150,9 @@ class Hr_documents_management_model extends CI_Model {
         ->join('documents_assigned', 'documents_assigned.document_sid = documents_management.sid', 'inner')
         ->join('users', 'users.sid = documents_management.company_sid', 'inner')
         ->where('documents_management.assign_type <> ', 'none')
-        ->where('documents_management.archive', 0);
+        ->where('documents_management.archive', 0)
+        ->where('users.active', 1)
+        ->where('users.terminated_status', 0);
         //
         if($type) $this->db->where_in('documents_management.assign_type', $type);
         $a = $this->db->get('documents_management');

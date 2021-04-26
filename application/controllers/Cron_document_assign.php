@@ -36,10 +36,6 @@ class Cron_document_assign extends Public_Controller {
         //
         $send = [];
         //
-        // $hi2 = "07:00";
-        // $d = 18;
-        // $m = 11;
-        //
         foreach(
             $documents as $document
         ){
@@ -77,9 +73,6 @@ class Cron_document_assign extends Public_Controller {
             ];
             $tas['Sent'] = 0;
             //
-            // $hi2 = '06:00';
-            // $n = 1;
-            //
             $employees = null;
             //
             if(!empty($document['assigned_employee_list'])) if($document['assigned_employee_list'] != 'all') $employees = json_decode($document['assigned_employee_list'], true);
@@ -97,8 +90,6 @@ class Cron_document_assign extends Public_Controller {
                     } else if(!empty($document['assign_time'])){
                         if($hi2 == $document['assign_time']) $yes = true;
                     }
-
-                    // _e($yes, true);
                     //
                     if($yes){
                         $tas['Sent'] = 1;
@@ -112,10 +103,6 @@ class Cron_document_assign extends Public_Controller {
                 case 'monthly':
                     //
                     $yes = false;
-                    //
-                    // $document['assigned_date'] = '2020-10-16 00:00:00';
-                    // $document['assign_time'] = '19:53';
-                    // $document['assign_date'] = '16';
                     //
                     $ad = new DateTime(DateTime::createFromFormat('Y-m-d H:i:s', $document['assigned_date'])->format('Y-m-d'));
                     $cd = new DateTime(date('Y-m-d', strtotime('now')));
@@ -142,10 +129,6 @@ class Cron_document_assign extends Public_Controller {
                 case 'custom':
                     //
                     $yes = false;
-                    //
-                    // $document['assigned_date'] = '2019-10-16 00:00:00';
-                    // $document['assign_time'] = '19:53';
-                    // $document['assign_date'] = '16';
                     //
                     $ad = new DateTime(DateTime::createFromFormat('Y-m-d H:i:s', $document['assigned_date'])->format('Y-m-d'));
                     $cd = new DateTime(date('Y-m-d', strtotime('now')));
@@ -175,8 +158,6 @@ class Cron_document_assign extends Public_Controller {
                 break;
                 case "daily":
                     //
-                    // $document['assigned_date'] = '2020-11-15 00:00:00';
-                    // $document['assign_time'] = '13:06';
                     $ad = new DateTime(DateTime::createFromFormat('Y-m-d H:i:s', $document['assigned_date'])->format('Y-m-d'));
                     $cd = new DateTime(date('Y-m-d', strtotime('now')));
                     //
@@ -199,12 +180,12 @@ class Cron_document_assign extends Public_Controller {
 
         //
         sendMail(
-            'dev@automotohr.com',
+            FROM_EMAIL_NOTIFICATIONS,
             'dev@automotohr.com',
             'Scheduled documents reassign',
             '<pre>it is auto executed at '.date('Y-m-d H:i:s', strtotime('now')).'<br />'.(print_r($report, true)),
             'AutomotoHR',
-            'dev@automotohr.com'
+            'no-reply@automotohr.com'
         );
         exit(0);
     }
