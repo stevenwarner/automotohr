@@ -182,7 +182,7 @@
                         </div>
                     </div>
                     <div class="panel panel-success panel-black">
-                        <div class="panel-heading"><strong>Upcomming Time-offs</strong></div>
+                        <div class="panel-heading"><strong>Upcoming Time-offs</strong></div>
                         <div class="panel-body">
                             <div class="jsTimeOffUpComing p10"></div>
                         </div>

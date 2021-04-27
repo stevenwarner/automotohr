@@ -14,7 +14,7 @@
                             <div id="jsApproversListingAdd" class="p10"></div>
                         </div>
                         <div class="csSidebarApproverSection">
-                            <h4>Upcomming Time-offs</h4>
+                            <h4>Upcoming Time-offs</h4>
                             <div class="jsTimeOffUpComing p10"></div>
                         </div>
                         <div class="csSidebarApproverSection">
