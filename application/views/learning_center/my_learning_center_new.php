@@ -28,11 +28,11 @@ if (isset($applicant)) {
 
 <style>
     .completed {
-        background: #28a745 !important;
+        background: #ffc107 !important;
     }
 
     .pending {
-        background: #ffc107 !important;
+        background: #444 !important;
     }
 
     .badge {
@@ -46,12 +46,21 @@ if (isset($applicant)) {
 
     .badge-success {
         margin-bottom: 5px;
-        background: #81b431 !important;
+        background: #fd7a2a !important;
     }
 
     .badge-warning {
-            margin-bottom: 5px;
-        background: #fd7a2a !important;
+        margin-bottom: 5px;
+        background: #444 !important;
+    }
+
+    .video_time_log {
+        display: block !important;
+    }
+
+    .video_time_log:after {
+        content: "" !important;
+        margin: 0 3px 0 6px;
     }
 </style>
 
@@ -76,27 +85,27 @@ if (isset($applicant)) {
                 </div>
                 <div class="panel panel-default" id="online_videos_notes">
                     <div class="panel-heading">
-                        <strong>Important Note</strong>
+                        <strong>Notes</strong>
                     </div>
                     <div class="panel-body">
                         <small class="form-text text-muted note">
-                            <span class="badge badge-success completed">Video Watched</span>
-                            <b>"Video Watched"</b> mean you have watched the assigned video.
+                            <span class="badge badge-success completed"><i class="fa fa-check" aria-hidden="true"></i> Video Watched</span>
+                            mean you have watched the assigned video.
                         </small>
                         <br>
                         <small class="form-text text-muted note">
-                            <span class="badge badge-warning pending">Video Not Watched</span>
-                            <b>"Video Not Watched"</b> mean you are not watched the assigned video yet.
+                            <span class="badge badge-success completed"><i class="fa fa-check" aria-hidden="true"></i> Questionnaire Completed</span>
+                            mean you have attended the assigned questionnaire.
                         </small>
                         <br>
                         <small class="form-text text-muted note">
-                            <span class="badge badge-success completed">Questionnaire Completed</span>
-                            <b>"Questionnaire Completed"</b> mean you have attended the assigned questionnaire.
+                            <span class="badge badge-warning pending"><i class="fa fa-ban" aria-hidden="true"></i> Video Not Watched</span>
+                            mean you are not watched the assigned video yet.
                         </small>
                         <br>
                         <small class="form-text text-muted note">
-                            <span class="badge badge-warning pending">Questionnaire Not Completed</span>
-                            <b>"Questionnaire Not Completed"</b> mean you are not attended the assigned questionnaire yet.
+                            <span class="badge badge-warning pending"><i class="fa fa-ban" aria-hidden="true"></i> Questionnaire Not Completed</span>
+                            mean you are not attended the assigned questionnaire yet.
                         </small>
                     </div>
                 </div>
@@ -137,22 +146,34 @@ if (isset($applicant)) {
                                                             <?php   } ?>
                                                                 </figure>
                                                                 <div class="text">
-                                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4" style="padding-left: 0px !important;">
                                                                         <h3><a href="<?php echo $watch_video_base_url . '/' . $video['sid']; ?>"><?php echo $video['video_title']; ?></a></h3>
                                                                     </div>
                                                                     <div class="col-lg-8 col-md-8 col-xs-12 col-sm-8">      
                                                                         <?php if ($video['video_have_question'] == "yes") { ?>
                                                                             <?php if ($video['video_question_completed'] == "pending") { ?>
-                                                                                <span class="pull-right badge badge-warning pending">Questionnaire Not Completed</span>
+                                                                                <span class="pull-right badge badge-warning pending">
+                                                                                    <i class="fa fa-ban" aria-hidden="true"></i>
+                                                                                    Questionnaire Not Completed
+                                                                                </span>
                                                                             <?php } else { ?>
-                                                                                <span class="pull-right badge badge-success completed">Questionnaire Completed</span>
+                                                                                <span class="pull-right badge badge-success completed">
+                                                                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                                                                    Questionnaire Completed
+                                                                                </span>
                                                                             <?php } ?>
                                                                         <?php } ?>
 
                                                                         <?php if ($video['video_watched_status'] == "pending") { ?>
-                                                                            <span class="pull-right badge badge-warning pending">Video Not Watched</span>
+                                                                            <span class="pull-right badge badge-warning pending">
+                                                                                <i class="fa fa-ban" aria-hidden="true"></i>
+                                                                                Video Not Watched
+                                                                            </span>
                                                                         <?php } else { ?>
-                                                                            <span class="pull-right badge badge-success completed">Video Watched</span>
+                                                                            <span class="pull-right badge badge-success completed">
+                                                                                <i class="fa fa-check" aria-hidden="true"></i>
+                                                                                Video Watched
+                                                                            </span>
                                                                         <?php } ?>
                                                                     </div>
                                                                    
@@ -160,7 +181,11 @@ if (isset($applicant)) {
                                                                     
                                                                     <div class="post-options">
                                                                         <ul>
-                                                                            <li><?php echo reset_datetime(array('datetime' => $video['created_date'], '_this' => $this)); ?></li>
+                                                                            <li class="video_time_log"><b>Video Assigned On : </b><?php echo date("M d Y, D", strtotime($video['created_date'])); ?></li>
+                                                                            <li class="video_time_log"><b>Video Watched On : </b><?php echo $video['video_watched_date']; ?></li>
+                                                                            <?php if ($video['video_have_question'] == "yes") { ?>
+                                                                                <li class="video_time_log"><b>Questionnaire Completed On : </b><?php echo $video['video_question_completed_date']; ?></li>
+                                                                            <?php } ?>
                                                                         </ul>
                                                                         <span class="post-author"><a href="<?php echo $watch_video_base_url . '/' . $video['sid']; ?>" class="btn btn-block btn-info">Watch Video</a></span>
                                                                     </div>

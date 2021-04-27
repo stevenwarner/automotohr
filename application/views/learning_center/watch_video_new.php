@@ -25,6 +25,30 @@ if (isset($applicant)) {
     $save_post_url = current_url();
 } ?>
 
+<?php 
+function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue = '', $isSelect = false){
+    //
+    if(!isset($answers_given[$question])){ return ''; }
+    //
+    if($doReturn){
+        return $answers_given[$question]['answer'];
+    }
+    //
+    $rt = 'checked="checked"';
+    //
+    if(is_array($answers_given[$question]['answer'])){
+        if(in_array((int) trim($compareValue), array_values($answers_given[$question]['answer']))){
+            return $rt;
+        } else{
+            return '';
+        }
+    } else if(trim($answers_given[$question]['answer']) == trim($compareValue)){
+        return $isSelect ? 'selected="true"' : $rt;
+    }
+}
+    
+?>
+
 <div class="main">
     <div class="container">
         <div class="row">
@@ -124,7 +148,11 @@ if (isset($applicant)) {
                                                                     <?php } ?>
                                                                 </td>
                                                                 <td class="col-lg-1 text-center">
-                                                                    <a href="<?php echo base_url('learning_center/view_supported_attachment_document/'.$document['sid']); ?>" class="btn btn-info">View</a>
+                                                                    <button class="btn btn-info"
+                                                                        onclick="preview_latest_generic_function(this);"
+                                                                        data-title="<?php echo $document['upload_file_title']; ?>"
+                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['upload_file_name']; ?>"
+                                                                        data-s3-name="<?php echo $document['upload_file_name']; ?>">View</button>
                                                                 </td>
                                                             </tr>
                                                         <?php } ?>
@@ -138,7 +166,11 @@ if (isset($applicant)) {
                         <?php } ?>
                         
                         <?php if(!empty($job_details)) { ?>
-                            <div class="row" id="que-div" style="display : none">
+                            <?php 
+                                $show_qwestion_div = $attempt_status ? 'display: block;' : "display: none;";
+                                $is_attemped = $attempt_status ? 'yes' : "no";
+                            ?>
+                            <div class="row" id="que-div" style="<?php echo $show_qwestion_div; ?>">
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="hr-box">
                                         <div class="hr-innerpadding">
@@ -151,55 +183,81 @@ if (isset($applicant)) {
                                                     <input type='hidden' name="q_send_fail" value="<?php echo $job_details['q_send_fail']; ?>">
                                                     <input type='hidden' name="q_fail_text" value="<?php echo $job_details['q_fail_text']; ?>">
                                                     <input type='hidden' name="my_id" value="<?php echo $job_details['my_id']; ?>">
-                                            <?php   $my_id = $job_details['my_id'];
+                                                    <?php   $my_id = $job_details['my_id'];
                                                     $iterate = 0;
                                                     
-                                                        foreach ($job_details[$my_id] as $questions_list) { ?>
-                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                    <input type="hidden" name="all_questions_ids[]" value="<?php echo $questions_list['questions_sid']; ?>">
-                                                                    <input type="hidden" name="caption<?php echo $questions_list['questions_sid']; ?>" value="<?php echo $questions_list['caption']; ?>">
-                                                                    <input type="hidden" name="type<?php echo $questions_list['questions_sid']; ?>" value="<?php echo $questions_list['question_type']; ?>">
-                                                                    <input type="hidden" name="perform_action" value="questionnaire">
-                                                                    <div class="form-group autoheight">
-                                                                    <label><?php echo $questions_list['caption']; ?>: <?php if ($questions_list['is_required'] == 1) { ?><span class="required"> * </span><?php } ?></label>
-                                                                    <?php if ($questions_list['question_type'] == 'string') { ?>
-                                                                        <input type="text" class="form-control" name="string<?php echo $questions_list['questions_sid']; ?>" placeholder="<?php echo $questions_list['caption']; ?>" value="" <?php if ($questions_list['is_required'] == 1) { ?> required <?php } ?>>
-                                                                    <?php } ?>
-                                                                    <?php if ($questions_list['question_type'] == 'boolean') { ?>
-                                                                        <?php $answer_key = 'q_answer_' . $questions_list['questions_sid']; ?>
-                                                                        <?php foreach ($job_details[$answer_key] as $answer_list) { ?>
-                                                                            <label class="control control--radio">
-                                                                                <input type="radio" name="boolean<?php echo $questions_list['questions_sid']; ?>" value="<?php echo $answer_list['value']; ?> @#$ <?php echo $answer_list['score']; ?>" <?php if ($questions_list['is_required'] == 1) { ?> required <?php } ?>> <?php echo $answer_list['value']; ?>&nbsp;
-                                                                                <div class="control__indicator"></div>
-                                                                            </label>
-                                                                        <?php } ?>
-                                                                        <?php } ?>
-                                                                        <?php if ($questions_list['question_type'] == 'list') { ?>
-                                                                            <?php $answer_key = 'q_answer_' . $questions_list['questions_sid']; ?>
-                                                                        <select name="list<?php echo $questions_list['questions_sid']; ?>" class="form-control" <?php if ($questions_list['is_required'] == 1) { ?> required <?php } ?>>
-                                                                            <option value="">-- Please Select --</option>
-                                                                        <?php foreach ($job_details[$answer_key] as $answer_list) { ?>
-                                                                                <option value="<?php echo $answer_list['value']; ?> @#$ <?php echo $answer_list['score']; ?>"> <?php echo $answer_list['value']; ?></option>
-                                                                        <?php } ?>
-                                                                        </select>
-                                                                    <?php } ?>
-                                                                <?php if ($questions_list['question_type'] == 'multilist') { ?>
-                                                                <?php $answer_key = 'q_answer_' . $questions_list['questions_sid']; ?>
-                                                                <div class="row">
+                                                    foreach ($job_details[$my_id] as $questions_list) { ?>
+                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                            <input type="hidden" name="all_questions_ids[]" value="<?php echo $questions_list['questions_sid']; ?>">
+                                                            <input type="hidden" name="caption<?php echo $questions_list['questions_sid']; ?>" value="<?php echo $questions_list['caption']; ?>">
+                                                            <input type="hidden" name="type<?php echo $questions_list['questions_sid']; ?>" value="<?php echo $questions_list['question_type']; ?>">
+                                                            <input type="hidden" name="perform_action" value="questionnaire">
+                                                            <div class="form-group autoheight">
+                                                                <label><?php echo $questions_list['caption']; ?>: <?php if ($questions_list['is_required'] == 1) { ?><span class="required"> * </span><?php } ?></label>
+                                                                <?php $question_caption = $questions_list['caption']; ?>
+                                                                <?php if ($questions_list['question_type'] == 'string') { ?>
+                                                                    <?php 
+                                                                        $string_answer = '';
+                                                                        if ($is_attemped == 'yes') {
+                                                                            $string_answer = getAnswer($answers_given[0], $question_caption, false, $answer_list['value']);
+                                                                        }
+                                                                    ?>
+                                                                    <input type="text" class="form-control" name="string<?php echo $questions_list['questions_sid']; ?>" placeholder="<?php echo $questions_list['caption']; ?>" value="<?=$string_answer;?>" <?php echo $questions_list['is_required'] == 1 ? "required" : ""; ?> <?php echo $is_attemped == 'yes' ? "disabled " : ""; ?>>
+                                                                <?php } ?>
+                                                                <?php if ($questions_list['question_type'] == 'boolean') { ?>
+                                                                    <?php $answer_key = 'q_answer_' . $questions_list['questions_sid']; ?>
+                                                                    
                                                                     <?php foreach ($job_details[$answer_key] as $answer_list) { ?>
-                                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                            <label for="squared<?php echo $iterate; ?>" class="control control--checkbox">
-                                                                                <?php echo $answer_list['value']; ?>
-                                                                                <input type="checkbox" class="checkbox-<?php echo $questions_list['questions_sid']; ?>" onclick="unCheckAll('checkbox-<?php echo $questions_list['questions_sid']; ?>',this)" name="multilist<?php echo $questions_list['questions_sid']; ?>[]" id="squared<?php echo $iterate++; ?>" value="<?php echo $answer_list['value']; ?> @#$ <?php echo $answer_list['score']; ?>">
-                                                                                <div class="control__indicator"></div>
-                                                                            </label>
-                                                                        </div>
+                                                                        <?php 
+                                                                            $boolean_answer = '';
+                                                                            if ($is_attemped == 'yes') {
+                                                                                $boolean_answer = getAnswer($answers_given[0], $question_caption, false, $answer_list['value']);
+                                                                            }
+                                                                        ?>
+                                                                        <label class="control control--radio">
+                                                                            <input type="radio" name="boolean<?php echo $questions_list['questions_sid']; ?>" value="<?php echo $answer_list['value']; ?> @#$ <?php echo $answer_list['score']; ?>" <?php if ($questions_list['is_required'] == 1) { ?> required <?php } ?> <?=$boolean_answer;?> <?php echo $is_attemped == 'yes' ? "disabled " : ""; ?>> <?php echo $answer_list['value']; ?>&nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    <?php } ?>
+                                                                <?php } ?>
+                                                                <?php if ($questions_list['question_type'] == 'list') { ?>
+                                                                    <?php $answer_key = 'q_answer_' . $questions_list['questions_sid']; ?>
+                                                                    <?php 
+                                                                        $list_answer = '';
+                                                                        if ($is_attemped == 'yes') {
+                                                                            $list_answer = getAnswer($answers_given[0], $question_caption, false, $answer_list['value']);
+                                                                        }
+                                                                    ?>
+                                                                    <select name="list<?php echo $questions_list['questions_sid']; ?>" class="form-control" <?php if ($questions_list['is_required'] == 1) { ?> required <?php } ?>>
+                                                                        <option value="">-- Please Select --</option>
+                                                                        <?php foreach ($job_details[$answer_key] as $answer_list) { ?>
+                                                                            <option value="<?php echo $answer_list['value']; ?> @#$ <?php echo $answer_list['score']; ?>" <?=$list_answer;?> <?php echo $is_attemped == 'yes' ? "disabled " : ""; ?>> <?php echo $answer_list['value']; ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                <?php } ?>
+                                                                <?php if ($questions_list['question_type'] == 'multilist') { ?>
+                                                                    <?php $answer_key = 'q_answer_' . $questions_list['questions_sid']; ?>
+                                                                    <?php 
+                                                                        $multilist_answer = '';
+                                                                        if ($is_attemped == 'yes') {
+                                                                            $multilist_answer = getAnswer($answers_given[0], $question_caption, false, $answer_list['value']);
+                                                                        }
+                                                                    ?>
+                                                                    <div class="row">
+                                                                        <?php foreach ($job_details[$answer_key] as $answer_list) { ?>
+                                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                                <label for="squared<?php echo $iterate; ?>" class="control control--checkbox">
+                                                                                    <?php echo $answer_list['value']; ?>
+                                                                                    <input type="checkbox" class="checkbox-<?php echo $questions_list['questions_sid']; ?>" onclick="unCheckAll('checkbox-<?php echo $questions_list['questions_sid']; ?>',this)" name="multilist<?php echo $questions_list['questions_sid']; ?>[]" id="squared<?php echo $iterate++; ?>" value="<?php echo $answer_list['value']; ?> @#$ <?php echo $answer_list['score']; ?>" <?=$multilist_answer;?> <?php echo $is_attemped == 'yes' ? "disabled " : ""; ?>>
+                                                                                    <div class="control__indicator"></div>
+                                                                                </label>
+                                                                            </div>
                                                                         <?php } ?>
                                                                     </div>
-                                                                    <?php } ?>
-                                                                    </div>
-                                                                </div>
-                                                        <?php } ?>
+                                                                <?php } ?>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <input id="mySubmitBtn" class="btn btn-info" type="submit" value="<?php echo $attempt_status ? 'Questionnaire Already Submitted' : "Save";?>" <?php echo $attempt_status ? 'disabled="disabled"' : '';?>>
                                                     </div>
@@ -263,6 +321,34 @@ if (isset($applicant)) {
         </div>
     </div>
 </div>
+
+<!-- Preview Latest Document Modal Start -->
+<div id="show_latest_preview_document_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="latest_document_modal_title"></h4>
+            </div>
+            <div class="modal-body">
+                <div id="latest-iframe-container" style="display:none;">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <div id="latest-iframe-holder" class="embed-responsive-item">
+                        </div>
+                    </div>
+                </div> 
+                <div id="latest_assigned_document_preview" style="display:none;">
+
+                </div>
+            </div>
+            <div class="modal-footer" id="latest_document_modal_footer">
+                
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Preview Latest Document Modal Modal End -->
+
 <!-- Including Youtube player javascript API -->
 <!-- <script src="https://www.youtube.com/iframe_api"></script> -->
 <!-- Including Vimeo player javascript API -->
@@ -504,5 +590,112 @@ if (isset($applicant)) {
 
     function validate_form() {
         $("#register-form").validate();
+    }
+
+    function preview_latest_generic_function (source) {
+        var document_title = $(source).attr('data-title');
+        
+        var preview_document        = 1;
+        var model_contant           = '';
+        var preview_iframe_url      = '';
+        var preview_image_url       = '';
+        var document_print_url      = '';
+        var document_download_url   = '';
+
+
+        var file_s3_path            = $(source).attr('data-preview-url');
+        var file_s3_name            = $(source).attr('data-s3-name');
+
+        var file_extension          = file_s3_name.substr(file_s3_name.lastIndexOf('.') + 1, file_s3_name.length);
+        var document_file_name      = file_s3_name.substr(0, file_s3_name.lastIndexOf('.'));
+        var document_extension      = file_extension.toLowerCase();
+        
+
+        switch (file_extension.toLowerCase()) {
+            case 'pdf':
+                preview_iframe_url = 'https://docs.google.com/gview?url=' + file_s3_path + '&embedded=true';
+                document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'+ document_file_name +'.pdf';
+                break;
+            case 'csv':
+                preview_iframe_url = 'https://docs.google.com/gview?url=' + file_s3_path + '&embedded=true';
+                document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'+ document_file_name +'.csv';
+                break;
+            case 'doc':
+                preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(file_s3_path);
+                document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'+ document_file_name +'%2Edoc&wdAccPdf=0';
+                break;
+            case 'docx':
+                preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(file_s3_path);
+                document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'+ document_file_name +'%2Edocx&wdAccPdf=0';
+                break;
+            case 'ppt':
+                preview_iframe_url = 'https://docs.google.com/gview?url=' + file_s3_path + '&embedded=true';
+                document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'+ document_file_name +'.ppt';
+                break;
+            case 'pptx':
+                dpreview_iframe_url = 'https://docs.google.com/gview?url=' + file_s3_path + '&embedded=true';
+                document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'+ document_file_name +'.pptx';
+                break;
+            case 'xls':
+                preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(file_s3_path);
+                ocument_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'+ document_file_name +'%2Exls';
+                break;
+            case 'xlsx':
+                preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(file_s3_path);
+                document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'+ document_file_name +'%2Exlsx';
+                break;
+            case 'jpg':
+            case 'jpe':
+            case 'jpeg':
+            case 'png':
+            case 'gif':
+            case 'JPG':
+            case 'JPE':
+            case 'JPEG':
+            case 'PNG':
+            case 'GIF':
+                preview_document = 0;
+                preview_image_url = file_s3_path;
+                document_print_url = '<?php echo base_url("hr_documents_management/print_s3_image"); ?>'+'/'+file_s3_name;
+                break;
+            default : //using google docs
+                preview_iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
+                break;
+        }
+
+        document_download_url = '<?php echo base_url("hr_documents_management/download_upload_document"); ?>'+'/'+file_s3_name;
+
+        $('#show_latest_preview_document_modal').modal('show');
+        $("#latest_document_modal_title").html(document_title);
+        $('#latest-iframe-container').show();
+
+        if (preview_document == 1) {
+            model_contant = $("<iframe />")
+                .attr("id", "latest_document_iframe")
+                .attr("class", "uploaded-file-preview")
+                .attr("src", preview_iframe_url);
+        } else {
+            model_contant = $("<img />")
+                .attr("id", "latest_image_tag")
+                .attr("class", "img-responsive")
+                .css("margin-left", "auto")
+                .css("margin-right", "auto")
+                .attr("src", preview_image_url);
+        }
+        
+
+        $("#latest-iframe-holder").append(model_contant);
+        //
+        if (preview_document == 1) {
+            loadIframe(
+                    preview_iframe_url,
+                    '#latest_document_iframe',
+                    true
+                );
+        }
+
+        footer_content = '<a target="_blank" class="btn btn-success" href="' + document_print_url + '">Print</a>';
+        footer_content += '<a target="_blank" class="btn btn-success" href="' + document_download_url + '">Download</a>';
+        $("#latest_document_modal_footer").html(footer_content);
     }
 </script>
