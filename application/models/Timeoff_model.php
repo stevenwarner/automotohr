@@ -7107,24 +7107,21 @@ class Timeoff_model extends CI_Model
         $ses = $this->session->userdata('logged_in')['employer_detail'];
         $ids = [];
         //
-        //if($ses['access_level_plus'] == 0 && $ses['pay_plan_flag'] == 0){
-          //  $ids = $this->getEmployeeTeamMemberIds($employerId);
-            //if(empty($ids)) return [];
-        //}
-        //
         $this->db
             ->select('sid as user_id, 
             employee_number, 
             email, 
             first_name, 
             last_name, 
-          job_title, 
-          is_executive_admin, 
-          concat(first_name," ",last_name) as full_name, 
-          profile_picture as image, 
-          access_level,
-          access_level_plus,
-          pay_plan_flag
+            job_title, 
+            is_executive_admin, 
+            concat(first_name," ",last_name) as full_name, 
+            profile_picture as image, 
+            access_level,
+            access_level_plus,
+            pay_plan_flag,
+            joined_at,
+            registration_date
         ')
             ->from('users')
             ->where('parent_sid', $companySid)

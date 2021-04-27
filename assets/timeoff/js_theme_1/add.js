@@ -717,12 +717,15 @@ $(function() {
                     const employeeDetail = getUserById(opt.id, resp.Data, 'user_id');
                     selectedEmployeeId = employeeDetail.user_id;
                     selectedEmployeeName = `${employeeDetail.first_name} ${employeeDetail.last_name}`;
+                    var employeeJoinedAt = employeeDetail['joined_at'] == null ? employeeDetail['joined_at'] : employeeDetail['registration_date'];
+                    //
+                    employeeJoinedAt = moment(employeeJoinedAt, 'YYYY-MM-DD').format(timeoffDateFormat);
                     //
                     ml(true, 'addAdminModalLoader');
                     //
                     loadAddSectionPage('addAdminModalLoader', 'addAdminModal');
                     //
-                    return $(`<span><img  style="padding: 5px; margin-left: 5px;" src="${employeeDetail.image == '' || employeeDetail.image == null ? awsURL+'test_file_01.png' : awsURL+employeeDetail.image}" width="60px" /> <span>${opt.text}</span></span>`);
+                    return $(`<span><img  style="padding: 5px; margin-left: 5px;" src="${employeeDetail.image == '' || employeeDetail.image == null ? awsURL+'test_file_01.png' : awsURL+employeeDetail.image}" width="60px" /> <span>${opt.text}</span> (<span>${employeeJoinedAt}</span>)</span>`);
                 }
             });
             //

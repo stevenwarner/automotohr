@@ -902,6 +902,9 @@ $(function() {
         //
         window.timeoff.companyEmployees.map(function(emp) {
             if (emp.user_id == selectedEmployeeId) {
+                var employeeJoinedAt = emp['joined_at'] == null ? emp['joined_at'] : emp['registration_date'];
+                //
+                employeeJoinedAt = moment(employeeJoinedAt, 'YYYY-MM-DD').format(timeoffDateFormat);
                 //
                 $('#jsEmployeeInfoAdd').html(`
                 <figure>
@@ -911,6 +914,7 @@ $(function() {
                         <p>${emp.first_name} ${emp.last_name}</p>
                         <p class="csTextSmall"> ${remakeEmployeeName(emp, false)}</p>
                         <p class="csTextSmall">${emp.email}</p>
+                        <p class="csTextSmall">${employeeJoinedAt}</p>
                     </div>
                 </figure>
                 <div class="clearfix"></div>
