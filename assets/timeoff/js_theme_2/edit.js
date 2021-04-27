@@ -164,7 +164,7 @@ $(function() {
             Title: `Edit Time off for ${$(this).closest('.jsBox').data('name')}`,
             Body: '',
             Buttons: [
-                '<button class="btn btn-orange btn-theme jsCreateTimeOffBalanceEdit" style="margin-right: 10px;" title="See employee balance" placement="left"><i class="fa fa-balance-scale" aria-hidden="true"></i>&nbsp;View Balance</button>',
+                '<button class="btn btn-orange btn-theme jsCreateTimeOffBalanceEdit" style="margin-right: 10px;" title="See employee balance" placement="left"><i class="fa fa-balance-scale" aria-hidden="true"></i>&nbsp;View Balance History</button>',
                 '<button class="btn btn-black jsCreateTimeOffBalanceBackEdit dn" style="margin-right: 10px;" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Back To Create</button>',
                 `<a class="btn btn-orange" target="_blank" style="margin-right: 5px; margin-top: -5px;" href="${baseURL}timeoff/print/requests/${requestId}"><i class="fa fa-print"></i> Print</a>`,
                 `<a class="btn btn-orange" target="_blank" style="margin-right: 5px; margin-top: -5px;" href="${baseURL}timeoff/download/requests/${requestId}"><i class="fa fa-download"></i> Download</a>`,

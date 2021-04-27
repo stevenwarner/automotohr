@@ -179,7 +179,7 @@ $(function() {
             Title: `Create Time-off for ${selectedEmployeeName}`,
             Body: '',
             Buttons: [
-                '<button class="btn btn-orange btn-theme jsCreateTimeOffBalance" style="margin-right: 10px;" title="See employee balance" placement="left"><i class="fa fa-balance-scale" aria-hidden="true"></i>&nbsp;View Balance</button>',
+                '<button class="btn btn-orange btn-theme jsCreateTimeOffBalance" style="margin-right: 10px;" title="See employee balance" placement="left"><i class="fa fa-balance-scale" aria-hidden="true"></i>&nbsp;View Balance History</button>',
                 '<button class="btn btn-black jsCreateTimeOffBalanceBack dn" style="margin-right: 10px;" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Back To Create</button>',
                 '<button class="btn btn-orange btn-theme jsCreateTimeOffBTN"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Create</button>',
             ],
@@ -690,7 +690,7 @@ $(function() {
                 <div class="clearfix"></div>
             `,
             Buttons: [
-                '<button class="btn btn-orange btn-theme jsCreateTimeOffBalanceAdmin" style="margin-right: 10px;" title="See employee balance" placement="left"><i class="fa fa-balance-scale" aria-hidden="true"></i>&nbsp;View Balance</button>',
+                '<button class="btn btn-orange btn-theme jsCreateTimeOffBalanceAdmin" style="margin-right: 10px;" title="See employee balance" placement="left"><i class="fa fa-balance-scale" aria-hidden="true"></i>&nbsp;View Balance History</button>',
                 '<button class="btn btn-black jsCreateTimeOffBalanceBackAdmin dn" style="margin-right: 10px;" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Back To Create</button>',
                 '<button class="btn btn-orange btn-theme jsCreateTimeOffBTN"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Create</button>',
             ],
