@@ -136,17 +136,9 @@ class Time_off extends Public_Controller
 
         // Created By: Aleem Shaukat
         // Created On: 03-02-2021
-        if (!$this->session->userdata('time_off_theme')) {
-            if ($this->session->userdata('logged_in') && isset($this->session->userdata('logged_in')['company_detail'])) {
-                $this->theme = $this->timeoff_model->getCompanyTheme(
-                    $this->session->userdata('logged_in')['company_detail']['sid']
-                );
-
-                $this->session->set_userdata('time_off_theme', $this->theme);
-            }
-        } else {
-            $this->theme = $this->session->userdata('time_off_theme');
-        }
+        $this->theme = $this->timeoff_model->getCompanyTheme(
+            $this->session->userdata('logged_in')['company_detail']['sid']
+        );
     }
     
 
