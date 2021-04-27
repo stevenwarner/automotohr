@@ -376,6 +376,8 @@ $(function() {
             setApproversView(approvers, request.Data.history);
             setHistoryView(request.Data.history);
             //
+            setUpcomingTimeOffs(selectedEmployeeId);
+            //
             ml(false, 'editModalLoader');
 
         });

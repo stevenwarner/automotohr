@@ -1006,3 +1006,50 @@ function getText(o) {
     //
     return r.replace(/&$/, '').trim();
 }
+
+//
+function setUpcomingTimeOffs(employeeId) {
+    //
+    $.post(
+        handlerURL, {
+            action: 'get_employee_upcoming_timeoffs',
+            companyId: companyId,
+            employerId: employerId,
+            employeeId: employeeId
+        }
+    ).done(function(resp) {
+        //
+        if (resp.Data.length === 0) {
+            $('.jsTimeOffUpComing').html('<p class="alert alert-info text-center">Currently, there are no upcoming time-offs.</p>');
+            return;
+        }
+        //
+        var rows = '';
+        //
+        rows += '<ul>';
+        //
+        resp.Data.map(function(to) {
+            //
+            var
+                startDate = moment(to.request_from_date, 'YYYY-MM-DD').format(timeoffDateFormat),
+                endDate = moment(to.request_to_date, 'YYYY-MM-DD').format(timeoffDateFormat);
+            //
+            var diff = moment(to.request_to_date, 'YYYY-MM-DD').diff(moment(to.request_from_date, 'YYYY-MM-DD'), 'days') + 1;
+            //
+            rows += '    <li style="display: block;">';
+            rows += '        <p>';
+            rows += '            <strong>' + (to.title) + ' <span class="pull-right text-' + (to.status == 'approved' ? 'success' : 'warning') + '">';
+            rows += '                <strong>' + (ucwords(to.status)) + '</strong>';
+            rows += '            </span></strong> <br/>';
+            rows += '            <span>' + (startDate) + (startDate == endDate ? '' : ' - ' + endDate) + '</span><br/>';
+            rows += '            <span>' + (diff) + ' Day' + (diff <= 1 ? '' : 's') + '</span>';
+            rows += '            ';
+            rows += '        </p>';
+            rows += '    </li>';
+        });
+        //
+        rows += '</ul>';
+        //
+        $('.jsTimeOffUpComing').html(rows);
+    });
+}

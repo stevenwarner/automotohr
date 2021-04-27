@@ -11895,4 +11895,26 @@ class Timeoff_model extends CI_Model
         return $requests;
     }
 
+    // Get employee upcoming timeoffs
+    function getEmployeeUpcomingTimeoffs($companyId, $employeeId){
+        //
+        return $this->db
+        ->select('
+            timeoff_requests.sid,
+            timeoff_requests.status,
+            timeoff_requests.request_from_date,
+            timeoff_requests.request_to_date,
+            timeoff_policies.title
+        ')
+        ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid')
+        ->where('timeoff_requests.employee_sid', $employeeId)
+        ->where('timeoff_requests.company_sid', $companyId)
+        ->where('timeoff_requests.is_draft', 0)
+        ->where_in('timeoff_requests.status', ['approved', 'pending'])
+        ->where('timeoff_requests.request_from_date >=', date('Y-m-d', strtotime('now')))
+        ->order_by('timeoff_requests.request_from_date', 'ASC')
+        ->get('timeoff_requests')
+        ->result_array();
+    }
+
 }

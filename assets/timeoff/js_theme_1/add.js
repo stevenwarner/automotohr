@@ -905,6 +905,8 @@ $(function() {
         getSideBarPolicies(selectedEmployeeId);
         setApproversView(resp.Data.Approvers);
         //
+        setUpcomingTimeOffs(selectedEmployeeId);
+        //
         $('.jsCreateTimeOffBTN').removeClass('dn');
         //
         ml(false, loader);

@@ -190,6 +190,12 @@
                         </div>
                     </div>
                     <div class="panel panel-success panel-black">
+                        <div class="panel-heading"><strong>Upcomming Time-offs</strong></div>
+                        <div class="panel-body">
+                            <div class="jsTimeOffUpComing p10"></div>
+                        </div>
+                    </div>
+                    <div class="panel panel-success panel-black">
                         <div class="panel-heading"><strong>As Of Today</strong></div>
                         <div class="panel-body jsAsOfTodayPolicies">
                         </div>

@@ -925,6 +925,8 @@ $(function() {
         //
         loadTitles();
         //
+        setUpcomingTimeOffs(selectedEmployeeId);
+        //
         ml(false, loader);
     }
 

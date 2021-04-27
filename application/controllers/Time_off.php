@@ -2921,6 +2921,16 @@ class Time_off extends Public_Controller
                 exit;
             break;
 
+            //
+            case "get_employee_upcoming_timeoffs":
+                //
+                $data = $this->timeoff_model->getEmployeeUpcomingTimeoffs($post['companyId'], $post['employeeId']);
+                //
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed...';
+                $this->res['Data'] = $data;
+            break;
+
             // EMOPLOYEE POLCIIES
             case "get_employee_policies_by_date":
                 //

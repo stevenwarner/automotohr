@@ -21,6 +21,10 @@
                             </div>
                         </div>
                         <div class="csSidebarApproverSection">
+                            <h4>Upcomming Time-offs</h4>
+                            <div class="jsTimeOffUpComing p10"></div>
+                        </div>
+                        <div class="csSidebarApproverSection">
                             <h4>AS Of Today</h4>
                             <div id="jsAsOfTodayPolicies"></div>
                         </div>
