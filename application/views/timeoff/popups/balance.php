@@ -93,21 +93,26 @@
                         </div>
                         <!-- -->
                         <div class="jsBalancePage" data-step="2" style="display: none;">
+                            <div class="">
+                                <h4><strong>Number Of Approved Time-offs</strong>: <span class="jsCreateTimeOffNumber">0</span></h4>
+                                <h4><strong>Total Time Approved</strong>: <span class="jsCreateTimeOffTimeTaken">0</span></h4>
+                                <h4><strong>Total Manual Allowed Balance</strong>: <span class="jsCreateTimeOffManualAllowedTime">0</span></h4>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Employee</th>
-                                            <th>Policy</th>
-                                            <th>Balance</th>
-                                            <th>Note</th>
-                                            <th>Effective Date</th>
-                                            <th>Action Taken</th>
+                                        <th scope="col" class="col-sm-2">Approved / Added By</th>
+                                        <th scope="col" class="col-sm-2">Policy / Time off start & end date</th>
+                                        <th scope="col" class="col-sm-2">Balance</th>
+                                        <th scope="col" class="col-sm-2">Note</th>
+                                        <th scope="col" class="col-sm-2">Action Taken  <br> (When the time off was requested / balance was added)</th>
+                                        <th scope="col" class="col-sm-2">Manual Balance (The balance was added manually or not)</th>
                                         </tr>
                                     </thead>
                                     <tbody id="jsBalanceHistoryTable">
                                         <tr>
-                                            <td colspan="5"><p class="text-center alert alert-info">Please wait, while we are fetching balances.</p></td>
+                                            <td colspan="6"><p class="text-center alert alert-info">Please wait, while we are fetching balances.</p></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -447,19 +452,110 @@
         $('#jsBalanceModal .modal-dialog').addClass('modal-lg');
         //
         $('#jsBalanceHistoryTable').html('');
+        var
+        rows = '',
+            totalTOs = 0,
+            totalTimeTaken = {},
+            totalManualTime = {};
         //
-        balanceHistory.Data.map((bh) => {
-            $('#jsBalanceHistoryTable').append(`
-                <tr>
-                <td>${bh.first_name} ${bh.last_name}<br />${remakeEmployeeName(bh, false)}</td>
-                    <td>${bh.title}</td>
-                    <td class="${bh.is_added == 0 ? 'text-danger' : 'text-success'}"><i class="fa fa-arrow-${bh.is_added == 0 ? 'down' : 'up'}"></i> ${bh.timeoff_breakdown.text}</td>
-                    <td>${bh.note != '' && bh.note != null ?  bh.note : '-'}</td>
-                    <td>${moment(bh.effective_at, 'YYYY-MM-DD').format('MMM DD YYYY, ddd')}</td>
-                    <td>${moment(bh.created_at, 'YYYY-MM-DD').format('MMM DD YYYY, ddd hh:mm a')}</td>
-                </tr>
-            `);
+        if (balanceHistory.Data[0].timeoff_breakdown.active.hour !== undefined) {
+            totalTimeTaken['hour'] = 0;
+            totalManualTime['hour'] = 0;
+        }
+
+        //
+        if (balanceHistory.Data[0].timeoff_breakdown.active.minutes !== undefined) {
+            totalTimeTaken['minutes'] = 0;
+            totalManualTime['minutes'] = 0;
+        }
+        //
+        balanceHistory.Data.map(function(balance) {
+             //
+             var
+                startDate = '',
+                endDate = '',
+                employeeName = '',
+                employeeRole = '';
+            //
+            if (balance.is_manual == 1) {
+                startDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+                endDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+                employeeName = balance.first_name + ' ' + balance.last_name;
+                employeeRole = remakeEmployeeName(balance, false);
+                //
+                if (balance.timeoff_breakdown.active.hours !== undefined) {
+                    //
+                    if (totalManualTime['hours'] === undefined) {
+                        totalManualTime['hours'] = 0;
+                    }
+                    totalManualTime['hours'] += balance.timeoff_breakdown.active.hours;
+                }
+                //
+                if (balance.timeoff_breakdown.active.minutes !== undefined) {
+                    //
+                    if (totalManualTime['minutes'] === undefined) {
+                        totalManualTime['minutes'] = 0;
+                    }
+                    totalManualTime['minutes'] += balance.timeoff_breakdown.active.minutes;
+                }
+            } else {
+                totalTOs++;
+                startDate = moment(balance.request_from_date, 'YYYY-MM-DD').format(timeoffDateFormat);
+                endDate = moment(balance.request_to_date, 'YYYY-MM-DD').format(timeoffDateFormat);
+                employeeName = balance.approverName;
+                employeeRole = balance.approverRole;
+                //
+                if (balance.timeoff_breakdown.active.hours !== undefined) {
+                    //
+                    if (totalTimeTaken['hours'] === undefined) {
+                        totalTimeTaken['hours'] = 0;
+                    }
+                    totalTimeTaken['hours'] += balance.timeoff_breakdown.active.hours;
+                }
+                //
+                if (balance.timeoff_breakdown.active.minutes !== undefined) {
+                    //
+                    if (totalTimeTaken['minutes'] === undefined) {
+                        totalTimeTaken['minutes'] = 0;
+                    }
+                    totalTimeTaken['minutes'] += balance.timeoff_breakdown.active.minutes;
+                }
+
+            }
+            //
+            rows += '<tr>';
+            rows += '   <td>';
+            rows += '       <strong>';
+            rows += employeeName + '<br>';
+            rows += '       </strong>';
+            rows += employeeRole;
+            rows += '   </td>';
+            rows += '   <td>';
+            rows += '       <strong>' + (balance.title) + '</strong>';
+            rows += '       <p>' + (startDate) + (endDate != '' ? ' - ' + endDate : '') + '</p>';
+            rows += '   </td>';
+            rows += ' <td class="' + (balance.is_added == 0 ? 'text-danger' : 'text-success') + '"><i class="fa fa-arrow-' + (balance.is_added == 0 ? 'down ' : 'up') + '"></i>&nbsp;' + (balance.timeoff_breakdown.text) + '</td>';
+            rows += '   <td>';
+            rows += (balance.note != '' ? balance.note : '-');
+            rows += '   </td>';
+            rows += '   <td>';
+            rows += moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime);
+            rows += '   </td>';
+            rows += '   <td>';
+            rows += '       <strong class="text-' + (balance.is_manual == 1 ? "success" : "danger") + '">' + (balance.is_manual == 1 ? "Yes" : "No") + '</strong>';
+            rows += '   </td>';
+            rows += '</tr>';
+            rows += '<tr>';
+            rows += '   <td colspan="6">';
+            rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
+            rows += '   </td>';
+            rows += '</tr>';
         });
+        //
+        $('.jsCreateTimeOffNumber').text(totalTOs);
+        $('.jsCreateTimeOffTimeTaken').text(getText(totalTimeTaken));
+        $('.jsCreateTimeOffManualAllowedTime').text(getText(totalManualTime));
+        $('#jsBalanceHistoryTable').html(rows);
     });
     
     //

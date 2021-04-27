@@ -9319,7 +9319,8 @@ class Timeoff_model extends CI_Model
              users.is_executive_admin,
              users.pay_plan_flag,
              users.job_title,
-             timeoff_policies.title
+             timeoff_policies.title,
+             "1" as is_manual 
          ')
          ->join('users', 'users.sid = timeoff_balances.added_by', 'inner')
          ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner')
@@ -9334,7 +9335,10 @@ class Timeoff_model extends CI_Model
         // Get employees taken time off
         $a = $this->db
         ->select('
+            timeoff_requests.sid,
             timeoff_requests.requested_time as added_time,
+            timeoff_requests.request_from_date,
+            timeoff_requests.request_to_date,
             timeoff_requests.created_at,
             timeoff_requests.updated_at as effective_at ,
             "0" as is_added,
@@ -9346,7 +9350,8 @@ class Timeoff_model extends CI_Model
             users.is_executive_admin,
             users.pay_plan_flag,
             users.job_title,
-            timeoff_policies.title
+            timeoff_policies.title,
+            "0" as is_manual 
         ')
         ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
         ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
@@ -9360,7 +9365,41 @@ class Timeoff_model extends CI_Model
         $c = $a->result_array();
         $a = $a->free_result();
         //
-        if(count($c)) $b = array_merge($b, $c);
+        if(sizeof($c)) {
+            //
+            foreach($c as $key => $balance){
+                //
+                $c[$key]['approverName'] = '';
+                $c[$key]['approverRole'] = '';
+                //
+                $status = '"status":"approved"';
+                $canApprove = '"canApprove":1';
+                //
+                $e = 
+                $this->db->select('
+                    users.first_name,
+                    users.last_name,
+                    users.access_level,
+                    users.access_level_plus,
+                    users.is_executive_admin,
+                    users.pay_plan_flag,
+                    users.job_title
+                ')
+                ->join('users', 'users.sid = timeoff_request_timeline.employee_sid')
+                ->where('timeoff_request_timeline.request_sid', $balance['sid'])
+                ->where("timeoff_request_timeline.note regexp '$status'", NULL, NULL)
+                ->where("timeoff_request_timeline.note regexp '$canApprove'", NULL, NULL)
+                ->order_by('timeoff_request_timeline.sid', 'DESC')
+                ->get('timeoff_request_timeline')
+                ->row_array();
+                //
+                if(!empty($e)){
+                    $c[$key]['approverName'] = ucwords($e['first_name'] . ' '. $e['last_name']);
+                    $c[$key]['approverRole'] = remakeEmployeeName($e, false);
+                }
+            }
+            $b = array_merge($b, $c);
+        }
 
         //
         if(count($b)){

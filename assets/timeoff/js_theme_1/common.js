@@ -219,8 +219,9 @@ function Modal(
         <div class="container-fluid">
             <div class="csModalHeader">
                 <h3 class="csModalHeaderTitle">
-                    
+                    <span>
                     ${options.Title}
+                    </span>
                     <span class="csToRight">
                     ${ options.Buttons !== undefined && options.Buttons.length !== 0 ? options.Buttons.join('') : '' }
                         <button class="btn btn-black jsModalCancel" ${options.Ask === undefined ? '' : 'data-ask="no"'} title="Close this window">Cancel</button>
@@ -953,4 +954,28 @@ function getParams(index) {
     return index !== undefined ? (
         t[index] === undefined ? 'all' : t[index]
     ) : t;
+}
+
+//
+function getText(o) {
+    //
+    var r = '';
+    //
+    if (o.minutes !== undefined) {
+        //
+        if (o.hours !== undefined) {
+            //
+            if ((o.minutes / 60) >= 1) {
+                o.hours += (o.minutes / 60).split('.')[0];
+                o.minutes += Math.floor((o.minutes / 60).split('.')[1]);
+            }
+            r = o.hours + ' hours & ' + o.minutes + ' minutes';
+        } else {
+            r = o.minutes + ' minutes';
+        }
+    } else if (o.hours !== undefined) {
+        r = o.hours + ' hours';
+    }
+    //
+    return r.replace(/&$/, '').trim();
 }

@@ -201,5 +201,38 @@
                 </div>
             </div>
         </div>
+         <!-- Balance Page -->
+         <div class="js-page dn" data-page="balance-view">
+            <!-- Loader  -->
+            <div class="csIPLoader jsIPLoader" data-page="balance-view"><i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i></div>
+            <!--  -->
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4><strong>Number Of Approved Time-offs</strong>: <span class="jsCreateTimeOffNumber">0</span></h4>
+                    <h4><strong>Total Time Approved</strong>: <span class="jsCreateTimeOffTimeTaken">0</span></h4>
+                    <h4><strong>Total Manual Allowed Balance</strong>: <span class="jsCreateTimeOffManualAllowedTime">0</span></h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <caption></caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="col-sm-2">Approved / Added By</th>
+                                    <th scope="col" class="col-sm-2">Policy / Time off start & end date</th>
+                                    <th scope="col" class="col-sm-2">Balance</th>
+                                    <th scope="col" class="col-sm-2">Note</th>
+                                    <th scope="col" class="col-sm-2">Action Taken  <br> (When the time off was requested / balance was added)</th>
+                                    <th scope="col" class="col-sm-2">Manual Balance (The balance was added manually or not)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jsCreateTimeoffBalanceBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -164,6 +164,8 @@ $(function() {
             Title: `Edit Time off for ${$(this).closest('.jsBox').data('name')}`,
             Body: '',
             Buttons: [
+                '<button class="btn btn-orange btn-theme jsCreateTimeOffBalanceEdit" style="margin-right: 10px;" title="See employee balance" placement="left"><i class="fa fa-balance-scale" aria-hidden="true"></i>&nbsp;View Balance</button>',
+                '<button class="btn btn-black jsCreateTimeOffBalanceBackEdit dn" style="margin-right: 10px;" ><i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Back To Create</button>',
                 `<a class="btn btn-orange" target="_blank" style="margin-right: 5px; margin-top: -5px;" href="${baseURL}timeoff/print/requests/${requestId}"><i class="fa fa-print"></i> Print</a>`,
                 `<a class="btn btn-orange" target="_blank" style="margin-right: 5px; margin-top: -5px;" href="${baseURL}timeoff/download/requests/${requestId}"><i class="fa fa-download"></i> Download</a>`,
                 status == 'cancelled' || view == 1 ? '' : '<button class="btn btn-orange jsEditTimeOffBTN">Update</button>'
@@ -185,7 +187,7 @@ $(function() {
             //
             if (policies.length === 0) {
                 $('.jsAddTimeOff').remove();
-                $('#addModal').find('.csModalBody').append(`<div class="alert alert-success text-center">We are unable to find policies against this employee.</div>`);
+                $('#editModal').find('.csModalBody').append(`<div class="alert alert-success text-center">We are unable to find policies against this employee.</div>`);
                 ml(false, 'editModalLoader');
                 return;
             }
@@ -377,6 +379,177 @@ $(function() {
             ml(false, 'editModalLoader');
 
         });
+    });
+
+    /**
+     * @param {Object} event
+     */
+    $(document).on('click', '.jsCreateTimeOffBalanceEdit', function(event) {
+        //
+        event.preventDefault();
+        //
+        if (selectedEmployeeId == null) {
+            alertify.alert('Warning!', 'Please, select an employee.');
+            return;
+        }
+        //
+        $(this).hide(0);
+        $('.jsCreateTimeOffBalanceBackEdit').show(0);
+        $('.jsCreateTimeOffBTN').hide(0);
+        $('#editModal').find('[data-page="main"]').hide(0);
+        $('#editModal').find('[data-page="balance-view"]').show(0);
+        //
+        $('#editModal').find('.csModalHeaderTitle span:nth-child(1)').text(
+            $('#editModal').find('.csModalHeaderTitle span:nth-child(1)').text().trim().replace('Edit Time off', 'Balance History')
+        );
+        //
+        $.post(
+            handlerURL, {
+                action: 'get_employee_balance_history',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: selectedEmployeeId,
+            }
+        ).done(function(resp) {
+            //
+            var rows = '';
+            //
+            if (resp.Data.length === 0) {
+                rows += '<tr>';
+                rows += '   <td colspan="6">';
+                rows += '       <p class="alert alert-info text-center">';
+                rows += '          No balance history found.';
+                rows += '       </p>';
+                rows += '   </td>';
+                rows += '</tr>';
+            } else {
+                var
+                    totalTOs = 0,
+                    totalTimeTaken = {},
+                    totalManualTime = {};
+                //
+                if (resp.Data[0].timeoff_breakdown.active.hour !== undefined) {
+                    totalTimeTaken['hour'] = 0;
+                    totalManualTime['hour'] = 0;
+                }
+
+                //
+                if (resp.Data[0].timeoff_breakdown.active.minutes !== undefined) {
+                    totalTimeTaken['minutes'] = 0;
+                    totalManualTime['minutes'] = 0;
+                }
+
+                //
+                resp.Data.map(function(balance) {
+                    //
+                    var
+                        startDate = '',
+                        endDate = '',
+                        employeeName = '',
+                        employeeRole = '';
+                    //
+                    if (balance.is_manual == 1) {
+                        startDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+                        endDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+                        employeeName = balance.first_name + ' ' + balance.last_name;
+                        employeeRole = remakeEmployeeName(balance, false);
+                        //
+                        if (balance.timeoff_breakdown.active.hours !== undefined) {
+                            //
+                            if (totalManualTime['hours'] === undefined) {
+                                totalManualTime['hours'] = 0;
+                            }
+                            totalManualTime['hours'] += balance.timeoff_breakdown.active.hours;
+                        }
+                        //
+                        if (balance.timeoff_breakdown.active.minutes !== undefined) {
+                            //
+                            if (totalManualTime['minutes'] === undefined) {
+                                totalManualTime['minutes'] = 0;
+                            }
+                            totalManualTime['minutes'] += balance.timeoff_breakdown.active.minutes;
+                        }
+                    } else {
+                        totalTOs++;
+                        startDate = moment(balance.request_from_date, 'YYYY-MM-DD').format(timeoffDateFormat);
+                        endDate = moment(balance.request_to_date, 'YYYY-MM-DD').format(timeoffDateFormat);
+                        employeeName = balance.approverName;
+                        employeeRole = balance.approverRole;
+                        //
+                        if (balance.timeoff_breakdown.active.hours !== undefined) {
+                            //
+                            if (totalTimeTaken['hours'] === undefined) {
+                                totalTimeTaken['hours'] = 0;
+                            }
+                            totalTimeTaken['hours'] += balance.timeoff_breakdown.active.hours;
+                        }
+                        //
+                        if (balance.timeoff_breakdown.active.minutes !== undefined) {
+                            //
+                            if (totalTimeTaken['minutes'] === undefined) {
+                                totalTimeTaken['minutes'] = 0;
+                            }
+                            totalTimeTaken['minutes'] += balance.timeoff_breakdown.active.minutes;
+                        }
+                    }
+                    //
+                    rows += '<tr>';
+                    rows += '   <td>';
+                    rows += '       <strong>';
+                    rows += employeeName + '<br>';
+                    rows += '       </strong>';
+                    rows += employeeRole;
+                    rows += '   </td>';
+                    rows += '   <td>';
+                    rows += '       <strong>' + (balance.title) + '</strong>';
+                    rows += '       <p>' + (startDate) + (endDate != '' ? ' - ' + endDate : '') + '</p>';
+                    rows += '   </td>';
+                    rows += ' <td class="' + (balance.is_added == 0 ? 'text-danger' : 'text-success') + '"><i class="fa fa-arrow-' + (balance.is_added == 0 ? 'down ' : 'up') + '"></i>&nbsp;' + (balance.timeoff_breakdown.text) + '</td>';
+                    rows += '   <td>';
+                    rows += (balance.note != '' ? balance.note : '-');
+                    rows += '   </td>';
+                    rows += '   <td>';
+                    rows += moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime);
+                    rows += '   </td>';
+                    rows += '   <td>';
+                    rows += '       <strong class="text-' + (balance.is_manual == 1 ? "success" : "danger") + '">' + (balance.is_manual == 1 ? "Yes" : "No") + '</strong>';
+                    rows += '   </td>';
+                    rows += '</tr>';
+                    rows += '<tr>';
+                    rows += '   <td colspan="6">';
+                    rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
+                    rows += '   </td>';
+                    rows += '</tr>';
+                });
+                //
+                $('.jsCreateTimeOffNumber').text(totalTOs);
+                $('.jsCreateTimeOffTimeTaken').text(getText(totalTimeTaken));
+                $('.jsCreateTimeOffManualAllowedTime').text(getText(totalManualTime));
+            }
+            //
+            $('#jsCreateTimeoffBalanceBody').html(rows);
+            //
+            ml(false, "balance-view");
+        });
+    });
+
+
+    /**
+     * @param {Object} event
+     */
+    $(document).on('click', '.jsCreateTimeOffBalanceBackEdit', function(event) {
+        //
+        event.preventDefault();
+        //
+        $(this).hide(0);
+        $('.jsCreateTimeOffBalanceEdit').show(0);
+        $('.jsCreateTimeOffBTN').show(0);
+        $('#editModal').find('[data-page="balance-view"]').hide(0);
+        $('#editModal').find('[data-page="main"]').show(0);
+        //
+        $('#editModal').find('.csModalHeaderTitle span:nth-child(1)').text(
+            $('#editModal').find('.csModalHeaderTitle span:nth-child(1)').text().trim().replace('Balance History', 'Edit Time off')
+        );
     });
 
     //
