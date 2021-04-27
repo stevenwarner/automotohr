@@ -268,7 +268,7 @@ $(function() {
                             if (totalManualTime['hours'] === undefined) {
                                 totalManualTime['hours'] = 0;
                             }
-                            totalManualTime['hours'] += balance.timeoff_breakdown.active.hours;
+                            totalManualTime['hours'] += parseInt(balance.timeoff_breakdown.active.hours);
                         }
                         //
                         if (balance.timeoff_breakdown.active.minutes !== undefined) {
@@ -276,7 +276,7 @@ $(function() {
                             if (totalManualTime['minutes'] === undefined) {
                                 totalManualTime['minutes'] = 0;
                             }
-                            totalManualTime['minutes'] += balance.timeoff_breakdown.active.minutes;
+                            totalManualTime['minutes'] += parseInt(balance.timeoff_breakdown.active.minutes);
                         }
                     } else {
                         totalTOs++;
@@ -290,7 +290,7 @@ $(function() {
                             if (totalTimeTaken['hours'] === undefined) {
                                 totalTimeTaken['hours'] = 0;
                             }
-                            totalTimeTaken['hours'] += balance.timeoff_breakdown.active.hours;
+                            totalTimeTaken['hours'] += parseInt(balance.timeoff_breakdown.active.hours);
                         }
                         //
                         if (balance.timeoff_breakdown.active.minutes !== undefined) {
@@ -298,7 +298,7 @@ $(function() {
                             if (totalTimeTaken['minutes'] === undefined) {
                                 totalTimeTaken['minutes'] = 0;
                             }
-                            totalTimeTaken['minutes'] += balance.timeoff_breakdown.active.minutes;
+                            totalTimeTaken['minutes'] += parseInt(balance.timeoff_breakdown.active.minutes);
                         }
                     }
                     //
@@ -438,7 +438,7 @@ $(function() {
                             if (totalManualTime['hours'] === undefined) {
                                 totalManualTime['hours'] = 0;
                             }
-                            totalManualTime['hours'] += balance.timeoff_breakdown.active.hours;
+                            totalManualTime['hours'] += parseInt(balance.timeoff_breakdown.active.hours);
                         }
                         //
                         if (balance.timeoff_breakdown.active.minutes !== undefined) {
@@ -446,7 +446,7 @@ $(function() {
                             if (totalManualTime['minutes'] === undefined) {
                                 totalManualTime['minutes'] = 0;
                             }
-                            totalManualTime['minutes'] += balance.timeoff_breakdown.active.minutes;
+                            totalManualTime['minutes'] += parseInt(balance.timeoff_breakdown.active.minutes);
                         }
                     } else {
                         totalTOs++;
@@ -460,7 +460,7 @@ $(function() {
                             if (totalTimeTaken['hours'] === undefined) {
                                 totalTimeTaken['hours'] = 0;
                             }
-                            totalTimeTaken['hours'] += balance.timeoff_breakdown.active.hours;
+                            totalTimeTaken['hours'] += parseInt(balance.timeoff_breakdown.active.hours);
                         }
                         //
                         if (balance.timeoff_breakdown.active.minutes !== undefined) {
@@ -468,7 +468,7 @@ $(function() {
                             if (totalTimeTaken['minutes'] === undefined) {
                                 totalTimeTaken['minutes'] = 0;
                             }
-                            totalTimeTaken['minutes'] += balance.timeoff_breakdown.active.minutes;
+                            totalTimeTaken['minutes'] += parseInt(balance.timeoff_breakdown.active.minutes);
                         }
 
                     }
