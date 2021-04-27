@@ -5183,10 +5183,13 @@ class Hr_documents_management_model extends CI_Model {
     ){
         // Get the previous document
         $this->db
-        ->where('document_sid', $documentSid)
-        ->where('user_type', 'employee');
+        ->where('documents_assigned.document_sid', $documentSid)
+        ->where('documents_assigned.user_type', 'employee')
+        ->join('users', 'users.sid = documents_assigned.user_sid')
+        ->where('users.active', 1)
+        ->where('users.terminated_status', 0);
         //
-        if(!empty($employees)) $this->db->where_in('user_sid', $employees);
+        if(!empty($employees)) { $this->db->where_in('documents_assigned.user_sid', $employees); }
         //
         $a = $this->db->get('documents_assigned');
         //
@@ -5194,8 +5197,6 @@ class Hr_documents_management_model extends CI_Model {
         $a = $a->free_result();
         // /
         if(!$b || !count($b)) return $b;
-
-        // _e($b, true, true);
         //
         foreach($b as $document){
             // Save a copy in history
