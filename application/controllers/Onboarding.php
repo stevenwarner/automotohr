@@ -960,9 +960,12 @@ class Onboarding extends CI_Controller {
         $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim');
         // $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
 
+        $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
+        $applicant_sid = $onboarding_details['applicant_sid'];
+        $applicant_information = $this->onboarding_model->get_applicant_information($applicant_sid);
+        
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Automoto HR Onboarding';
-            $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
             if (!empty($onboarding_details)) {
                 $data['onboarding_details'] = $onboarding_details;
@@ -972,10 +975,8 @@ class Onboarding extends CI_Controller {
                 $data['session']['company_detail'] = $company_info;
                 $data['company_info'] = $company_info;
                 $data['unique_sid'] = $unique_sid;
-                $applicant_sid = $onboarding_details['applicant_sid'];
-                $data['applicant_sid'] = $applicant_sid;
-                $applicant_information = $this->onboarding_model->get_applicant_information($applicant_sid);
                 $data['applicant_information'] = $applicant_information;
+                $data['applicant_sid'] = $applicant_sid;
                 $data_countries = db_get_active_countries();
 
                 foreach ($data_countries as $value) {
