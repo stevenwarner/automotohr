@@ -24,23 +24,23 @@ class Facebook_feed extends CI_Controller
         $this->accessTokenType = 'bearer';
     }
     /**
- * 
- */
-private function addLastRead($sid){
-    $this->db
-    ->where('sid', $sid)
-    ->set([
-        'last_read' => date('Y-m-d H:i:s', strtotime('now')),
-        'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
-    ])->update('job_feeds_management');
-    //
-    $this->db
-    ->insert('job_feeds_management_history', [
-        'feed_id' => $sid,
-        'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
-        'created_at' => date('Y-m-d H:i:s', strtotime('now'))
-    ]);
-}
+     * 
+     */
+    private function addLastRead($sid){
+        $this->db
+        ->where('sid', $sid)
+        ->set([
+            'last_read' => date('Y-m-d H:i:s', strtotime('now')),
+            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
+        ])->update('job_feeds_management');
+        //
+        $this->db
+        ->insert('job_feeds_management_history', [
+            'feed_id' => $sid,
+            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
+            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+        ]);
+    }
 
     public function index($generate_file = 0)
     {
@@ -572,6 +572,11 @@ private function addLastRead($sid){
         unset($t);
         //
         $this->addReport('AutoCareers', trim($applicantInfo['email']));
+        //
+        if(!isset($applicantInfo['email'])){
+            echo "Email not found";
+            exit(0);
+        }
         // Check if applicant exists in company
         //  - If No then add it
         //  - else get applicant id
