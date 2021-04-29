@@ -9,6 +9,7 @@
             users.access_level,
             users.access_level_plus,
             users.pay_plan_flag,
+            users.job_title,
             users.is_executive_admin
         ');
         $this->db->join("users","notifications_emails_management.employer_sid=users.sid", 'left');

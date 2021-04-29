@@ -77,7 +77,7 @@
                                     <?php   } else { ?>
                                     <?php       foreach ($notifications_emails as $notifications_email) { ?>
                                                     <tr id="tr_row_<?php echo $notifications_email['sid'] ?>">
-                                                        <td><?php echo $notifications_email["contact_name"]; ?><?php if($notifications_email['employer_sid'] != 0 || $notifications_email['employer_sid'] == ''){?><br/>[ <?php echo remakeAccessLevel(array("access_level_plus"=>$notifications_email['access_level_plus'],"pay_plan_flag"=>$notifications_email['pay_plan_flag'],"access_level"=>$notifications_email['access_level'],"is_executive_admin"=>$notifications_email['is_executive_admin']))?> ]<?php } ?> </td>
+                                                        <td><?php echo $notifications_email["contact_name"]; ?><?php if($notifications_email['employer_sid'] != 0 || $notifications_email['employer_sid'] == ''){?><br/><?php echo remakeEmployeeName(array("access_level_plus"=>$notifications_email['access_level_plus'],"pay_plan_flag"=>$notifications_email['pay_plan_flag'],"access_level"=>$notifications_email['access_level'],"is_executive_admin"=>$notifications_email['is_executive_admin'],"job_title"=>$notifications_email['job_title']), false)?><?php } ?> </td>
                                                         <!--<td><?php echo $notifications_email["short_description"]; ?> </td>-->
                                                         <td><?php echo $notifications_email["email"]; ?> </td>
                                                         <!--<td><?php echo $notifications_email["contact_no"]; ?></td>-->
