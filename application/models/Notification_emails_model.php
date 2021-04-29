@@ -161,6 +161,7 @@
         $this->db->select('access_level_plus');
         $this->db->select('is_executive_admin');
         $this->db->select('pay_plan_flag');
+        $this->db->select('job_title');
 
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('username !=', '');
