@@ -168,7 +168,7 @@
                                 <li class="form-col-100 autoheight">
                                     <?php $field_name = 'employees_assigned_sid' ?>
                                     <?php echo form_label('Assigned To Employees', $field_name); ?>
-                                    <div class="hr-select-dropdown">
+                                    <div class="">
                                         <select data-rule-required="true" class="" name="employees_assigned_sid[]" id="employees_assigned_sid" multiple="multiple" disabled="disabled">
                                             <option value="">Please Select</option>
                                             <?php if (!empty($employees)) { ?>
@@ -224,7 +224,7 @@
     </div>
 </div>
 
-<script language="JavaScript" type="text/javascript" src="http://localhost/ahr//assets/js/chosen.jquery.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?=base_url('assets/js/chosen.jquery.js');?>"></script>
 <script>
     function check_banner_file(val) {
         var fileName = $("#" + val).val();
