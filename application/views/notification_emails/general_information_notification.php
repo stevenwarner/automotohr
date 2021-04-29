@@ -164,7 +164,7 @@
                                                                 <select class='invoice-fields' name='employee' id='employee'>
                                                                     <?php foreach ($employees as $employee) { ?>
                                                                         <option value="<?php echo $employee['sid']; ?>" <?php echo (isset($emp_id) && ($emp_id == $employee['sid'])) ? 'selected' : ''; ?>>
-                                                                            <?php echo ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ' [ ' . strtolower($employee['email']) . ' ] ( ' .  remakeAccessLevel(array('access_level_plus'=>$employee['access_level_plus'],'pay_plan_flag'=>$employee['pay_plan_flag'],'access_level'=>$employee['access_level'],"is_executive_admin"=>$employee['is_executive_admin'])) . ' )'; ?>
+                                                                            <?php echo $employee['employee_name'];  ?>
                                                                         </option>
                                                                     <?php } ?>
                                                                 </select>
