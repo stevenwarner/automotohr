@@ -447,13 +447,13 @@ private function addLastRead($sid){
                         </application-callback-url>
                         <form-config>
                             <email-field>
-                                <optional><![CDATA[true]]></optional>
+                                <optional><![CDATA[false]]></optional>
                             </email-field>
                             <phone-number-field>
                                 <optional><![CDATA[true]]></optional>
                             </phone-number-field>
                             <work-experience-field>
-                                <optional><![CDATA[false]]></optional>
+                                <optional><![CDATA[true]]></optional>
                             </work-experience-field>
                         </form-config>
                     </facebook-apply-data>
