@@ -224,6 +224,7 @@
     </div>
 </div>
 
+<script language="JavaScript" type="text/javascript" src="http://localhost/ahr//assets/js/chosen.jquery.js"></script>
 <script>
     function check_banner_file(val) {
         var fileName = $("#" + val).val();

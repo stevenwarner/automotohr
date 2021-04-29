@@ -59,7 +59,7 @@ class Manage_ems extends Public_Controller {
             $employees_for_select                                           = array();
 
             foreach ($employees as $employee) {
-                $employees_for_select[$employee['sid']]                     = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
+                $employees_for_select[$employee['sid']]                     = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).'] ['.$employee['email'].']';
             }
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|xss_clean|trim');
             $data['employees']                                              = $employees_for_select;
@@ -187,7 +187,7 @@ class Manage_ems extends Public_Controller {
 
             foreach ($employees as $employee) {
                 // $employees_for_select[$employee['sid']] = ucwords($employee['first_name'] . ' ' . $employee['last_name']);
-                $employees_for_select[$employee['sid']]                     = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
+                $employees_for_select[$employee['sid']]                     = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).'] ['.$employee['email'].']';
 
             }
 
