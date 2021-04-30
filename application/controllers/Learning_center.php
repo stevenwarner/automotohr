@@ -2655,7 +2655,25 @@ class Learning_center extends Public_Controller {
                 $post['userType'],
                 $post['videoId']
             );
-            $this->learning_center_model->removeUserFromVideo($videoDetails);
+            //
+            $user_question = $this->learning_center_model->get_user_question_record($post['videoId'], $post['userId']);
+            //
+            if (!empty($user_question)) {
+                $videoDetails['questionnaire_name'] = $user_question['questionnaire_name'];
+                $videoDetails['questionnaire'] = $user_question['questionnaire'];
+                $videoDetails['questionnaire_result'] = $user_question['questionnaire_result'];
+                $videoDetails['questionnaire_attend_timestamp'] = $user_question['attend_timestamp'];
+            }
+            //
+            $assign_video_row_sid = $videoDetails['sid'];
+            $videoDetails['video_url'] = $videoDetails['video_id'];
+            //
+            unset($videoDetails['sid']);
+            unset($videoDetails['video_id']);
+            unset($videoDetails['deleted_at']);
+            //
+            $this->learning_center_model->save_user_assign_video_history($videoDetails);
+            $this->learning_center_model->removeUserFromVideo($assign_video_row_sid);
             echo 'success';
             exit(0);
         }

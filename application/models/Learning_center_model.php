@@ -1674,13 +1674,14 @@ class Learning_center_model extends CI_Model {
 
         return $return_data;
     }
-
+// lcova.*, lcov.video_title, lcov.video_id, lcov.video_source, lcov.video_start_date
 
     function getVideoAssignedDetails($companyId, $userId, $userType, $videoId){
         //
         $b = 
         $this->db->select('
-            lcova.sid
+            lcova.*, lcov.video_title, lcov.video_id, lcov.video_source, lcov.video_start_date
+            
         ')
         ->from('learning_center_online_videos_assignments lcova')
         ->join('learning_center_online_videos lcov', 'lcova.learning_center_online_videos_sid = lcov.sid AND lcova.is_deleted = 0')
@@ -1696,7 +1697,7 @@ class Learning_center_model extends CI_Model {
         ->get()
         ->row_array();
         //
-        return !empty($b) ? $b['sid'] : 0;
+        return !empty($b) ? $b : array();
     }
 
     //

@@ -88,3 +88,5 @@ CREATE TABLE IF NOT EXISTS `learning_center_assign_user_history` (
   `questionnaire_attend_timestamp` timestamp NULL DEFAULT NULL, 
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+ALTER TABLE `learning_center_assign_user_history` ADD `is_deleted` TINYINT(1) NOT NULL DEFAULT '0' AFTER `questionnaire_attend_timestamp`;
