@@ -259,7 +259,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select("
             ".( getUserFields() )."
-            IF(users.joined_at = '' OR users.joined_at = NULL, DATE_FORMAT(users.registration_date, '%Y-%m-%d'), users.joined_at) as joined_at,
+            IF(users.joined_at = NULL, DATE_FORMAT(users.registration_date, '%Y-%m-%d'), users.joined_at) as joined_at,
             users.employee_type
         ")
         ->from('users')
