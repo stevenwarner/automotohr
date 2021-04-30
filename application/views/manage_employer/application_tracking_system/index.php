@@ -606,7 +606,9 @@
                                                      }} ?>
                                                     <?php if(!empty($employer_job['email'])): ?>
                                                     <br />
+                                                    <strong>
                                                     <a href="javascript:void(0);" class="theme-color"><i class="fa fa-envelope"></i> <?=$employer_job['email'];?></a>
+                                                    </strong>
                                                     <?php endif; ?>
                                                 </div>
                                                 <br />

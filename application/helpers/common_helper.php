@@ -12412,7 +12412,7 @@ if(!function_exists('sendResumeEmailToApplicant')){
         //
         $message_body = str_replace('{{link}}', $link_btn, $message_body);
         //
-        $from = 'notification@automotohr.com';
+        $from = FROM_EMAIL_NOTIFICATIONS;
         $to = $applicant_email;
         $from_name = ucwords(STORE_DOMAIN);
         $email_hf = message_header_footer_domain($company_sid, $company_name);

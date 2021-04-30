@@ -661,7 +661,7 @@ class Facebook_feed extends CI_Controller
                     'user_type' => 'applicant',
                     'requested_job_sid' => $jobId,
                     'requested_job_type' => 'job'
-                ]);
+                ], false);
             }
 
             // Email sent to applicant

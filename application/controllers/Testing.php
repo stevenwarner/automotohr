@@ -9,235 +9,67 @@ class Testing extends CI_Controller{
         parent::__construct();
         //
         $this->load->model('test_model', 'tm');
-        $this->load->model('application_tracking_system_model', 'atsm');
-    }
-	//
-    function jobs(){
-        //
-        $jobs = $this->db->select('
-            portal_job_listings.sid,
-            portal_job_listings.status,
-            portal_job_listings.active,
-            portal_job_listings.approval_status,
-            portal_job_listings.approval_status_change_datetime,
-            portal_job_listings.organic_feed,
-            portal_job_listings.activation_date,
-            portal_job_listings.deactivation_date,
-            portal_job_listings.published_on_career_page,
-            portal_job_listings.expiration_date,
-            users.sid as company_id,
-            users.active as company_active,
-            users.has_job_approval_rights,
-            users.is_paid
-        ')
-        ->join('users', 'users.sid = portal_job_listings.user_sid', 'inner')
-        ->get('portal_job_listings')
-        ->result_array();
-        //
-        header('Content-Type: application/json');
-        echo json_encode($jobs);
-    }
-
+   }
+	
     //
-    function sj(){
+    function mover($date, $index){
         //
-        if(!is_cli()){
-            echo "Finished";
-            exit(0);
+        $url = '';
+        $folder = '';
+        //
+        switch($index){
+            case "facebook":
+                $url = 'https://www.automotohr.com/Facebook_feed/jobXmlCallback';
+                $folder = '/home/automotohr/applicant/Facebook/';
+                break;
+            case "autocareers":
+                $url = 'https://www.automotohr.com/Auto_careers/index';
+                $folder = '/home/automotohr/applicant/autocareers/';
+                break;
+            case "indeed":
+                $url = 'https://www.automotohr.com/indeed_feed/indeedPostUrl';
+                $folder = '/home/automotohr/applicant/indeed/';
+                break;
+            case "zip":
+                $url = 'https://www.automotohr.com/Zip_recruiter_organic/zipPostUrl';
+                $folder = '/home/automotohr/applicant/zipRecruter/';
+                break;
         }
         //
-        $ids = $this->tm->jobIds();
-        $jobs = $this->tm->getJobs();
+        $path = $folder."*_{$date}_*.json";
         //
-        if(empty($jobs)){
-            echo "Finished..";
-            exit(0);
-        }
-        $isEmpty = empty($ids);
+        $files = glob($path, GLOB_BRACE);
         //
-        $u = 0;
-        $i = 0;
-        //
-        foreach($jobs as $job){
+        foreach ($files as $file) {
+            $fileData = file_get_contents($file);
             //
-            if(!$isEmpty && in_array($job['sid'], $ids)){
-                // Update
-                $sid = $job['sid'];
-                //
-                unset($job['sid']);
-                //
-                $this->tm->updateJob($sid, $job);
-                //
-                $u++;
-            } else{
-                // Insert
-                $this->tm->insertJob($job);
-                //
-                $i++;
-            }
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $fileData,
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Cookie: ci_session=0b21abda66d70e809f46b6b6ea3bc6a9af0aa57b'
+            ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+            echo $response;
+            //
+            usleep(300);
+
         }
-        //
-        echo "Inserted: {$i} \n";
-        echo "Updated: {$u} \n";
+        echo "All done";
         exit(0);
-    }
-
-    //
-    function sja(){
-        //
-        if(!is_cli()){
-            echo "Finished";
-            exit(0);
-        }
-        //
-        $ids = $this->tm->applicantIds();
-        $jobs = $this->tm->getApplicants();
-        //
-        if(empty($jobs)){
-            echo "Finished.";
-            exit(0);
-        }
-        $isEmpty = empty($ids);
-        //
-        $u = 0;
-        $i = 0;
-        //
-        foreach($jobs as $job){
-            //
-            if(!$isEmpty && in_array($job['sid'], $ids)){
-                // Update
-                $sid = $job['sid'];
-                //
-                unset($job['sid']);
-                //
-                $this->tm->updateApplicant($sid, $job);
-                //
-                $u++;
-            } else{
-                // Insert
-                $this->tm->insertApplicant($job);
-                //
-                $i++;
-            }
-        }
-        //
-        echo "Inserted: {$i} \n";
-        echo "Updated: {$u} \n";
-        exit(0);
-    }
-    
-    //
-    function sajl(){
-        //
-        if(!is_cli()){
-            echo "Finished";
-            exit(0);
-        }
-        //
-        $ids = $this->tm->applicantJobIds();
-        $jobs = $this->tm->getApplicantsJob();
-        //
-        if(empty($jobs)){
-            echo "Finished.";
-            exit(0);
-        }
-        $isEmpty = empty($ids);
-        //
-        $u = 0;
-        $i = 0;
-        //
-        foreach($jobs as $job){
-            //
-            if(!$isEmpty && in_array($job['sid'], $ids)){
-                // Update
-                $sid = $job['sid'];
-                //
-                unset($job['sid']);
-                //
-                $this->tm->updateApplicantJob($sid, $job);
-                //
-                $u++;
-            } else{
-                // Insert
-                $this->tm->insertApplicantJob($job);
-                //
-                $i++;
-            }
-        }
-        //
-        echo "Inserted: {$i} \n";
-        echo "Updated: {$u} \n";
-        exit(0);
-    }
-
-    function email_fix () {
-        //
-        $a = $this->db
-        ->select('sid, email')
-        ->where('email regexp "@gma"', NULL, NULL)
-        ->where('email not regexp "@gmail.com"', NULL, NULL)
-        ->where('email not regexp ".edu"', NULL, NULL)
-        ->where('email not regexp ".net"', NULL, NULL)
-        ->where('email not regexp ".org"', NULL, NULL)
-        ->where('email not regexp ".us"', NULL, NULL)
-        ->where('email not regexp ".ca"', NULL, NULL)
-        ->where('email not regexp ".de"', NULL, NULL)
-        ->get('portal_job_applications');
-        //
-        $pa = $a->result_array();
-        $a->free_result();
-        //
-        if(empty($pa)) {
-            exit(0);
-        }
-        //
-        foreach($pa as $p){
-            //
-            $oldEmail = $p['email'];
-            //
-            $newEmail = fixEmailAddress($p['email'], 'gmail');
-            //
-            $date_to_insert = array();
-            $date_to_insert['applicant_id'] = $p['sid'];
-            $date_to_insert['email'] = $oldEmail;
-            $date_to_insert['updated_at'] = date('Y-m-d H:i:s');
-            //
-            $this->db->insert('fix_email_address_log', $date_to_insert);
-            //
-            $this->db->where('sid', $p['sid'])->update('portal_job_applications', [ 'email' => $newEmail ]);
-            //
-            echo $newEmail.'<br>';
-        }
-
-        //
-        die('Till here');
-    }
-
-    //
-    function tos(){
-        //
-        $records = $this->db
-        ->select('sid, questions')
-        ->get('performance_management_templates')
-        ->result_array();
-        //
-        //
-        foreach($records as $record){
-            //
-            $ques = json_decode($record['questions'], true);
-            //
-            foreach($ques as $k => $sq){
-                //
-                if($sq['question_type'] == 'text-rating'){
-                    $ques[$k]['question_type'] = 'text-n-rating';
-                }
-            }
-            //
-            $this->db
-            ->where('sid', $record['sid'])
-            ->update('performance_management_templates', [
-                'questions' => json_encode($ques)
-            ]);             
-        }
     }
 }
