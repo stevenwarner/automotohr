@@ -73,27 +73,48 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $active_group = 'ahr';
 $query_builder = TRUE;
-//
-$creds = getCreds('AHR');
+$creds = getCreds();
 //
 $db['ahr'] = array(
 	'dsn'	=> '',
-	'hostname' => $creds->DB->Host,
-	'username' => $creds->DB->User,
-	'password' => $creds->DB->Password,
-	'database' => $creds->DB->Database,
+	'hostname' => $creds->AHR->DB->Host,
+	'username' => $creds->AHR->DB->User,
+	'password' => $creds->AHR->DB->Password,
+	'database' => $creds->AHR->DB->Database,
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
-	'db_debug' => false,
-	'cache_on' => TRUE,
+	'db_debug' => $creds->AHR->DB->Debug,
+	'cache_on' => $creds->AHR->DB->CacheOn,
 	'cachedir' => '',
 	'char_set' => 'utf8',
 	'dbcollat' => 'utf8_general_ci',
 	'swap_pre' => '',
 	'encrypt' => FALSE,
 	'compress' => TRUE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => FALSE
+	'stricton' => $creds->AHR->DB->Strict,
+	'failover' => array(
+		array(
+			'dsn'	=> '',
+			'hostname' => $creds->AHR->DB_REPLICA->Host,
+			'username' => $creds->AHR->DB_REPLICA->User,
+			'password' => $creds->AHR->DB_REPLICA->Password,
+			'database' => $creds->AHR->DB_REPLICA->Database,
+			'dbdriver' => 'mysqli',
+			'dbprefix' => '',
+			'pconnect' => FALSE,
+			'db_debug' => $creds->AHR->DB_REPLICA->Debug,
+			'cache_on' => $creds->AHR->DB_REPLICA->CacheOn,
+			'cachedir' => '',
+			'char_set' => 'utf8',
+			'dbcollat' => 'utf8_general_ci',
+			'swap_pre' => '',
+			'encrypt' => FALSE,
+			'compress' => TRUE,
+			'stricton' => $creds->AHR->DB_REPLICA->Strict,
+			'failover' => array(),
+			'save_queries' => $creds->AHR->DB_REPLICA->SaveQueries
+		)
+	),
+	'save_queries' => $creds->AHR->DB->SaveQueries
 );

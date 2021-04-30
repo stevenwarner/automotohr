@@ -924,20 +924,24 @@ if(!function_exists('mailAWSSES')){
         $to,
         $d = false
     ){
-        // if(!$d) return;
+        //
+        $creds = getCreds('AHR');
         // Set XMailer
         $mail->XMailer = 'mail.automotohr.com';
+        $mail->Mailer = 'mail.automotohr.com';
+        $mail->ReturnPath = 'no-reply@automotohr.com';
+        $mail->Sender = 'no-reply@automotohr.com';
         // Set Host
         $mail->isSMTP();
         $mail->SMTPAuth   = true;
-        $mail->Host       = SES_HOST;
-        $mail->Username   = SES_USER;
-        $mail->Password   = SES_PASS;
-        $mail->SMTPSecure = 'tls';
-        $mail->Port       = SES_PORT; 
+        $mail->Host       = $creds->SES->Host;
+        $mail->Username   = $creds->SES->User;
+        $mail->Password   = $creds->SES->Password;
+        $mail->SMTPSecure = $creds->SES->Method;
+        $mail->Port       = $creds->SES->Port; 
         //
         // For local machines
-        if(in_array(getUserIP(), ['::1', '127.0.0.1'])){
+        if(in_array($_SERVER['HTTP_HOST'], ['localhost', 'automotohr.local'])){
             $mail->SMTPOptions = array(
                 'ssl' => array(
                     'verify_peer' => false,
@@ -945,9 +949,6 @@ if(!function_exists('mailAWSSES')){
                     'allow_self_signed' => true
                     )
                 );  
-            $mail->From = 'notifications@automotohr.com';
-            $mail->FromName = 'Notifications @ AutomotoHR';
-            // $mail->to = 'mubashar.ahmed@egenienext.com';
             $mail->clearAddresses();
             $mail->addAddress('mubashir.saleemi123@gmail.com');
         }
@@ -1344,7 +1345,6 @@ if(!function_exists('sendResumeEmailToApplicant')){
         }
 
         $verification_key = '';
-        // $applicant_email = 'mubashir.saleemi123@gmail.com';
         $applicant_email = $user_info['email'];
 
         if ($user_info['verification_key'] == NULL || empty($user_info['verification_key'])) {
@@ -1386,7 +1386,7 @@ if(!function_exists('sendResumeEmailToApplicant')){
         //
         $message_body = str_replace('{{link}}', $link_btn, $message_body);
         //
-        $from = 'notification@automotohr.com';
+        $from = FROM_EMAIL_NOTIFICATIONS;
         $to = $applicant_email;
         $from_name = ucwords(STORE_DOMAIN);
         $email_hf = message_header_footer_domain($company_sid, $company_name);
