@@ -11287,14 +11287,13 @@ ini_set('memory_limit', -1);
         $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9);
         $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9);
         //
+        asort($employee_pending);
+        asort($applicant_pending);
+        //
         $data['session'] = $session;
         $data['company_sid'] = $company_sid;
         $data['security_details'] = $security_details;
-        $data['title'] = 'Learning Management System';
-        // $data['employee_pending_w4'] = $employee_pending_w4;
-        // $data['employee_pending_i9'] = $employee_pending_i9;
-        // $data['applicant_pending_w4'] = $applicant_pending_w4;
-        // $data['applicant_pending_i9'] = $applicant_pending_i9;
+        $data['title'] = 'Pending Employer Section For Verificastion Documents';
         $data['employee_pending'] = $employee_pending;
         $data['applicant_pending'] = $applicant_pending;
         //

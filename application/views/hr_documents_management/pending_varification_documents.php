@@ -26,14 +26,24 @@
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="hr-box">
                                     <div class="hr-innerpadding">
+                                        <!-- / -->
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <h4 class="alert alert-default" style="padding: 0">
+                                                    <strong>Employee / Applicant pending employer section for the verification documents.</strong>
+                                                </h4>
+                                                <hr>
+                                            </div>
+                                        </div>
+                                        <!--  -->
                                         <div role="tabpanel" id="js-main-page">
                                             <!-- Nav tabs -->
                                             <ul class="nav nav-tabs cs-tab js-tab" role="tablist">
                                                 <li role="presentation" class="active">
-                                                    <a href="#employee-box" aria-controls="tab" role="tab" data-toggle="tab">Employee(s)</a>
+                                                    <a href="#employee-box" aria-controls="tab" role="tab" data-toggle="tab">Employees (<?=count($employee_pending);?>)</a>
                                                 </li>
                                                 <li role="presentation">
-                                                    <a href="#applicant-box" aria-controls="home" role="tab" data-toggle="tab">Applicant(s)</a>
+                                                    <a href="#applicant-box" aria-controls="home" role="tab" data-toggle="tab">Applicants (<?=count($applicant_pending);?>)</a>
                                                 </li>
                                             </ul>
 
@@ -49,23 +59,19 @@
                                                             <?php if (!empty($employee_pending)) { ?>
                                                                 <div class="table-responsive full-width table-outer">
                                                                     <table class="table table-plane js-uncompleted-docs table-striped table-condensed table-bordered">
+                                                                        <caption></caption>
                                                                         <thead>
                                                                             <tr>
-                                                                                <th class="col-lg-4">Document Name</th>
-                                                                                <th class="col-lg-3">Employee Name</th>
-                                                                                <th class="col-lg-2 text-center">Assigned Date</th>
-                                                                                <th class="col-lg-2 text-center">Filled Date</th>
-                                                                                <th class="col-lg-2 text-center">Actions</th>
+                                                                                <th scope="col" class="col-lg-3">Employee Name</th>
+                                                                                <th scope="col" class="col-lg-4">Document Name</th>
+                                                                                <th scope="col" class="col-lg-2 text-center">Assigned Date</th>
+                                                                                <th scope="col" class="col-lg-2 text-center">Filled Date</th>
+                                                                                <th scope="col" class="col-lg-2 text-center">Action</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
                                                                             <?php foreach ($employee_pending as $document) { ?>
                                                                                 <tr class="">
-                                                                                    <td class="col-lg-3">
-                                                                                        <?php
-                                                                                            echo $document['document_name'] . '&nbsp; <br />';
-                                                                                        ?>
-                                                                                    </td>
                                                                                     <td class="col-lg-4">
                                                                                         <?php 
                                                                                             $user_type = '';
@@ -78,6 +84,11 @@
                                                                                                 $user_name = getUserNameBySID($document['user_sid']);
                                                                                             }
                                                                                             echo $user_name ."<br /> <b>(".$user_type.")</b>";
+                                                                                        ?>
+                                                                                    </td>
+                                                                                    <td class="col-lg-3">
+                                                                                        <?php
+                                                                                            echo $document['document_name'] . '&nbsp; <br />';
                                                                                         ?>
                                                                                     </td>
                                                                                     <td class="col-lg-2  text-center">
@@ -95,7 +106,7 @@
                                                                                         ?>
                                                                                     </td>  
                                                                                     <td class="col-lg-2">
-                                                                                        <a class="btn blue-button btn-sm btn-block" href="<?php echo  base_url('hr_documents_management/documents_assignment/employee').'/'.$document['user_sid']; ?>">
+                                                                                        <a class="btn btn-success" target="_blank" href="<?php echo  base_url('hr_documents_management/documents_assignment/employee').'/'.$document['user_sid']; ?>">
                                                                                             View
                                                                                         </a>
                                                                                     </td>
@@ -105,7 +116,7 @@
                                                                     </table>
                                                                 </div>
                                                             <?php } else { ?>
-                                                                <h1 class="section-ttile text-center"> No Document Assigned! </h1>   
+                                                                <h1 class="section-ttile text-center"> No Employer Section Pending </h1>   
                                                             <?php } ?>
                                                         </div>
                                                         <!-- Applicant Box -->
@@ -115,21 +126,16 @@
                                                                     <table class="table table-plane js-uncompleted-docs table-striped table-condensed table-bordered">
                                                                         <thead>
                                                                             <tr>
+                                                                                <th class="col-lg-3">Applicant Name</th>
                                                                                 <th class="col-lg-4">Document Name</th>
-                                                                                <th class="col-lg-3">Employee Name</th>
                                                                                 <th class="col-lg-2 text-center">Assigned Date</th>
                                                                                 <th class="col-lg-2 text-center">Filled Date</th>
-                                                                                <th class="col-lg-2 text-center">Actions</th>
+                                                                                <th class="col-lg-2 text-center">Action</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
                                                                             <?php foreach ($applicant_pending as $document) { ?>
                                                                                 <tr class="">
-                                                                                    <td class="col-lg-3">
-                                                                                        <?php
-                                                                                            echo $document['document_name'] . '&nbsp; <br />';
-                                                                                        ?>
-                                                                                    </td>
                                                                                     <td class="col-lg-4">
                                                                                         <?php 
                                                                                             $user_type = '';
@@ -142,6 +148,11 @@
                                                                                                 $user_name = getUserNameBySID($document['user_sid']);
                                                                                             }
                                                                                             echo $user_name ."<br /> <b>(".$user_type.")</b>";
+                                                                                        ?>
+                                                                                    </td>
+                                                                                    <td class="col-lg-3">
+                                                                                        <?php
+                                                                                            echo $document['document_name'] . '&nbsp; <br />';
                                                                                         ?>
                                                                                     </td>
                                                                                     <td class="col-lg-2  text-center">
@@ -159,7 +170,7 @@
                                                                                         ?>
                                                                                     </td>
                                                                                     <td class="col-lg-2">
-                                                                                        <a class="btn blue-button btn-sm btn-block" href="<?php echo  base_url('hr_documents_management/documents_assignment/applicant').'/'.$document['user_sid']; ?>">
+                                                                                        <a class="btn btn-success" target="_blank" href="<?php echo  base_url('hr_documents_management/documents_assignment/applicant').'/'.$document['user_sid']; ?>">
                                                                                             View
                                                                                         </a>
                                                                                     </td>
@@ -169,7 +180,7 @@
                                                                     </table>
                                                                 </div>
                                                             <?php } else { ?>
-                                                                <h1 class="section-ttile text-center"> No Document Assigned! </h1>   
+                                                                <h1 class="section-ttile text-center"> No Employer Section Pending </h1>   
                                                             <?php } ?>
                                                         </div>
                                                     </div>
