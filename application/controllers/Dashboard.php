@@ -462,6 +462,20 @@ class Dashboard extends Public_Controller {
             $data['review'] = 0;
             $data['total_goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
 
+            //
+            $this->load->model('varification_document_model');
+            $employeeTotal = 0;
+            $employeeTotal = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'employee', TRUE);
+            $employeeTotal += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'employee', TRUE);
+            $applicantTotal = 0;
+            $applicantTotal = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'applicant', TRUE);
+            $applicantTotal += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'applicant', TRUE);
+
+            //
+            $data['employeeTotal'] = $employeeTotal;
+            $data['applicantTotal'] = $applicantTotal;
+            $data['totalPD'] = $applicantTotal + $employeeTotal;
+            
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
             $this->load->view('main/footer');

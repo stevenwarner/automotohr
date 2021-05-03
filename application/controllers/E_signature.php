@@ -71,6 +71,7 @@ class E_signature extends Public_Controller {
             $return_data['user_name'] = $signature['first_name'].' '.$signature['last_name'];
 
             echo json_encode($return_data);
+            exit(0);
         } else {
             echo false;
         }

@@ -10,6 +10,7 @@ class Hr_documents_management extends Public_Controller {
         // if ($this->session->userdata('logged_in')) {
             $this->load->model('hr_documents_management_model');
             $this->load->model('onboarding_model');
+            $this->load->model('varification_document_model');
             $this->load->library('pagination');
         // } else {
         //     redirect(base_url('login'), 'refresh');
@@ -11269,5 +11270,36 @@ ini_set('memory_limit', -1);
         //
         echo 'success';
     }
+
+    function company_varification_document () {
+        if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
+
+        $session = $this->session->userdata('logged_in');
+        $company_sid = $session['company_detail']['sid'];
+        $security_sid = $session['employer_detail']['sid'];
+        $security_details = db_get_access_level_details($security_sid);
+        //
+        $employee_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'employee');
+        $employee_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'employee');
+        $applicant_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'applicant');
+        $applicant_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'applicant');
+
+        $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9);
+        $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9);
+        //
+        asort($employee_pending);
+        asort($applicant_pending);
+        //
+        $data['session'] = $session;
+        $data['company_sid'] = $company_sid;
+        $data['security_details'] = $security_details;
+        $data['title'] = 'Pending Employer Section For Verificastion Documents';
+        $data['employee_pending'] = $employee_pending;
+        $data['applicant_pending'] = $applicant_pending;
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('hr_documents_management/pending_varification_documents');
+        $this->load->view('main/footer');
+    }    
 
 }
