@@ -11288,7 +11288,7 @@ ini_set('memory_limit', -1);
         $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9);
         //
         function tempr($a, $b){
-            return $a['filled_date'] - $b['filled_date'];
+            return $a['filled_date'] < $b['filled_date'];
         }
         //
         usort($employee_pending, 'tempr');
