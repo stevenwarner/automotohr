@@ -11287,8 +11287,12 @@ ini_set('memory_limit', -1);
         $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9);
         $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9);
         //
-        asort($employee_pending);
-        asort($applicant_pending);
+        function tempr($a, $b){
+            return $a['filled_date'] - $b['filled_date'];
+        }
+        //
+        usort($employee_pending, 'tempr');
+        usort($applicant_pending, 'tempr');
         //
         $data['session'] = $session;
         $data['company_sid'] = $company_sid;
