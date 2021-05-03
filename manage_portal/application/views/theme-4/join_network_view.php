@@ -140,7 +140,7 @@
                                         <input type="checkbox" required="required" name="check_box" value="1" id="squared">
                                     </li>
 
-                                    <li>
+                                    <li style="display: none;">
                                         <?php echo isset( $this->form_validation->error_array()['g-recaptcha-response'] ) ? '<p>Captcha is required</p>' : ''; ?> 
                                         <div id="jsGoogleCaptcha"></div> 
                                     </li>
@@ -207,10 +207,10 @@
                     if(phone != '' && phone != '(___) ___-____') $("#join_network").append('<input type="hidden" name="txt_phonenumber" id="txt_phonenumber" value="+1'+(phone.replace(/\D/g, ''))+'" />');
                     <?php } ?>
                     // Google Captcha Handler
-                    if($('#jsGoogleCaptcha').find('textarea').length == 0 || $('#jsGoogleCaptcha').find('textarea').val() == '') {
-                        $('#jsGoogleCaptcha').before('<p class="js-error-class" style="color: #cc0000;">Captcha is required.</p>');
-                        error = true;
-                    }
+                    // if($('#jsGoogleCaptcha').find('textarea').length == 0 || $('#jsGoogleCaptcha').find('textarea').val() == '') {
+                    //     $('#jsGoogleCaptcha').before('<p class="js-error-class" style="color: #cc0000;">Captcha is required.</p>');
+                    //     error = true;
+                    // }
 
                     if(error === false) form.submit();
                 }
