@@ -16,6 +16,7 @@ class Varification_document_model extends CI_Model {
         $this->db->where('first_date_of_employment', NULL);
         $this->db->where('first_date_of_employment', NULL);
         $this->db->where('user_consent', 1);
+        $this->db->where('uploaded_file', NULL);
         //
         if($count){
             return $this->db->count_all_results('form_w4_original');
@@ -43,6 +44,7 @@ class Varification_document_model extends CI_Model {
         $this->db->where('section2_sig_emp_auth_rep', NULL);
         $this->db->where('section3_emp_sign', NULL);
         $this->db->where('user_consent', 1);
+        $this->db->where('s3_filename', NULL);
         //
         if($count){
             return $this->db->count_all_results('applicant_i9form');
