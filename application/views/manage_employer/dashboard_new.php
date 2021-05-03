@@ -666,6 +666,27 @@
                                     </div>
                                 </div>
 
+                                <?php if($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1){ ?>
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure><i class="fa fa-clipboard <?php echo !empty($total_pending_auth_doc) && $total_pending_auth_doc > 0 ? 'start_animation' : ''; ?>"></i></figure>
+                                                <h2 class="post-title" style="margin: 2px 0;">
+                                                    <a href="<?php echo base_url('authorized_document'); ?>">Varification Documents</a>
+                                                </h2>
+                                                <div class="count-box" style="font-size: 12px">
+                                                    <span class="green"><?php echo $total_assigned_today_doc; ?> Assigned Document(s) Today</span><br>
+                                                    <small style="font-size: 12px"><?php echo $total_pending_auth_doc; ?> Pending Document(s)</small><br>
+                                                    <small style="font-size: 12px"><?php echo $total_assigned_auth_doc; ?> Total Document(s)</small>
+                                                </div>
+                                                <div class="button-panel">
+                                                    <a href="<?php echo base_url('hr_documents_management/company_varification_document'); ?>" class="site-btn">View Varification Documents</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+
                                 
 
                                 <?php $comply_status = $data["session"]["company_detail"]["complynet_status"];
