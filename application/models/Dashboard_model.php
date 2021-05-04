@@ -2579,7 +2579,7 @@ class Dashboard_model extends CI_Model
         foreach ($r as $key => $single_r) {
             $video_start_date = date('Y-m-d', strtotime($single_r['video_start_date']));
 
-            if ($video_start_date < $current_date) {
+            if ($video_start_date <= $current_date) {
                 
                 $this->db->select('watched,sid');
                 $this->db->where('learning_center_online_videos_sid', $single_r['sid']);

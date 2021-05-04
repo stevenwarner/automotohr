@@ -275,7 +275,7 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
                                     <div class="hr-innerpadding">
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
                                             <?php if($attempt_status){?>
-                                                <label>Questionnaire Result: </label> <span><?php echo $questionnaire_result; ?></span>
+                                                <!-- <label>Questionnaire Result: </label> <span><?php echo $questionnaire_result; ?></span> -->
                                             <?php }?>
                                         </div>
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">

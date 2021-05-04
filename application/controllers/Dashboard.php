@@ -278,6 +278,7 @@ class Dashboard extends Public_Controller {
             $incidents = $this->dashboard_model->get_all_incidents_count($company_id, $employer_id);
             $incidents_new = $this->dashboard_model->assigned_incidents_new_flow_count($employer_id, $company_id);
             $training_session_count = $this->dashboard_model->get_training_session_count('employee', $employer_id, $company_id);
+            $online_video_count = $this->dashboard_model->get_my_all_online_videos_count('employee', $employer_id, $company_id);
             // $documents_count = $this->dashboard_model->get_documents_count('employee', $employer_id);
             $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id , 'employee', $employer_id, 0);
             $assigned_offer_letter = $this->dashboard_model->get_assigned_offer_letter($company_id, 'employee', $employer_id);
@@ -445,7 +446,7 @@ class Dashboard extends Public_Controller {
             $data['documents_count']            = $documents_count;
             $data['eventCountToday']            = $eventCountToday; //count($all_company_events_today);
             $data['unreadMessageCount']         = $unreadMessageCount;
-            $data['training_session_count']     = $training_session_count;
+            $data['training_session_count']     = $training_session_count + $online_video_count ;
             $data['total_assigned_today_doc']   = $total_assigned_today_doc;
             $data['total_pending_auth_doc']     = $total_pending_auth_doc;
             $data['total_assigned_auth_doc']    = $total_assigned_auth_doc;

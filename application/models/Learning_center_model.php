@@ -42,9 +42,10 @@ class Learning_center_model extends CI_Model {
     }
 
     function get_all_online_videos($company_sid) {
-        $this->db->select('*');
-        $this->db->where('company_sid', $company_sid);
-        $this->db->order_by('sid', 'desc');
+        $this->db->select('learning_center_online_videos.*, '.(getUserFields()).'');
+        $this->db->join('users', 'users.sid = learning_center_online_videos.created_by_sid');
+        $this->db->where('learning_center_online_videos.company_sid', $company_sid);
+        $this->db->order_by('learning_center_online_videos.sid', 'desc');
         $this->db->from('learning_center_online_videos');
         $records_obj = $this->db->get();
         $records_arr = $records_obj->result_array();
@@ -447,7 +448,7 @@ class Learning_center_model extends CI_Model {
         foreach ($r as $key => $single_video) {
             $video_start_date = date('Y-m-d', strtotime($single_video['video_start_date']));
 
-            if ($video_start_date < $current_date) {
+            if ($video_start_date <= $current_date) {
                 
                 $this->db->select('watched, sid, date_watched');
                 $this->db->where('learning_center_online_videos_sid', $single_video['sid']);

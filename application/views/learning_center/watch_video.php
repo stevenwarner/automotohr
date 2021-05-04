@@ -84,8 +84,16 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
                                     <strong style="font-size: 20px;"><?php echo $video['video_title']; ?><span class="pull-right">
                                         <button class="btn btn-danger" id="jsRevokeVideo"><i class="fa fa-times-circle" style="font-size: 14px;" aria-hidden="true"></i>&nbsp;Revoke Video</button>
                                     </span></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="hr-box">
+                                <div class="hr-innerpadding">
+                                    <strong>Description:</strong>
                                     <p><?php echo $video['video_description']; ?></p>
-                                    
                                 </div>
                             </div>
                         </div>
@@ -118,7 +126,7 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
                                 <div class="hr-box">
                                     <div class="hr-innerpadding">
                                         <div class="pull-left">
-                                            <strong style="font-size: 20px;">Video watch status: </strong><span style="font-size: 20px;"> <?php echo empty($assignment['watched']) || $assignment['watched'] == 0 ? "Pending" : "Watched"; ?></span>
+                                            <strong style="font-size: 20px;">Video watch status: </strong><span style="font-size: 20px;" class=" <?php echo empty($assignment['watched']) || $assignment['watched'] == 0 ? "text-danger" : "text-success"; ?>"> <?php echo empty($assignment['watched']) || $assignment['watched'] == 0 ? "Pending" : "Watched"; ?></span>
                                             <?php if (empty($assignment['date_watched']) && $assignment['watched'] != 0) { ?>
                                                 <button type="button" class="btn btn-success btn-block mb-2 disabled" disabled="disabled">Watched on <?php echo DateTime::createFromFormat('Y-m-d H:i:s', $assignment['date_watched'])->format('m-d-Y h:i A'); ?></button>
                                             <?php } ?>

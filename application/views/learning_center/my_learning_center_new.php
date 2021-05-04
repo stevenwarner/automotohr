@@ -88,25 +88,41 @@ if (isset($applicant)) {
                         <strong>Notes</strong>
                     </div>
                     <div class="panel-body">
-                        <small class="form-text text-muted note">
-                            <span class="badge badge-success completed"><i class="fa fa-check" aria-hidden="true"></i> Video Watched</span>
-                            mean you have watched the assigned video.
-                        </small>
-                        <br>
-                        <small class="form-text text-muted note">
-                            <span class="badge badge-success completed"><i class="fa fa-check" aria-hidden="true"></i> Questionnaire Completed</span>
-                            mean you have attended the assigned questionnaire.
-                        </small>
-                        <br>
-                        <small class="form-text text-muted note">
-                            <span class="badge badge-warning pending"><i class="fa fa-ban" aria-hidden="true"></i> Video Not Watched</span>
-                            mean you are not watched the assigned video yet.
-                        </small>
-                        <br>
-                        <small class="form-text text-muted note">
-                            <span class="badge badge-warning pending"><i class="fa fa-ban" aria-hidden="true"></i> Questionnaire Not Completed</span>
-                            mean you are not attended the assigned questionnaire yet.
-                        </small>
+                        <!-- / -->
+                        <div class="row">
+                            <div class="col-sm-3 col-xs-12">
+                                <span class="badge badge-warning completed"><i class="fa fa-check" aria-hidden="true"></i> Video Not Watched</span>
+                            </div>
+                            <div class="col-sm-9 col-xs-12">
+                                <?=getUserHint('video_not_watched_ems');?>
+                            </div>
+                        </div>
+                        <!--  -->
+                        <div class="row">
+                            <div class="col-sm-3 col-xs-12">
+                                <span class="badge badge-warning completed"><i class="fa fa-check" aria-hidden="true"></i> Questionnaire Not Completed</span>
+                            </div>
+                            <div class="col-sm-9 col-xs-12">
+                                <?=getUserHint('questionnaire_not_watched_ems');?>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 col-xs-12">
+                                <span class="badge badge-success completed"><i class="fa fa-check" aria-hidden="true"></i> Video Watched</span>
+                            </div>
+                            <div class="col-sm-9 col-xs-12">
+                                <?=getUserHint('video_watched_ems');?>
+                            </div>
+                        </div>
+                        <!--  -->
+                        <div class="row">
+                            <div class="col-sm-3 col-xs-12">
+                                <span class="badge badge-success completed"><i class="fa fa-check" aria-hidden="true"></i>  Questionnaire Completed</span>
+                            </div>
+                            <div class="col-sm-9 col-xs-12">
+                                <?=getUserHint('questionnaire_watched_ems');?>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="panel panel-default lc-tabs-panel">

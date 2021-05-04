@@ -24,7 +24,7 @@
                     <div class="row">
                         <?php if(check_access_permissions_for_view($security_details, 'add_online_videos')) { ?>
                             <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3">
-                                <a href="<?php echo base_url('learning_center/add_online_video'); ?>" class="btn btn-success btn-block">Add Video</a>
+                                <a href="<?php echo base_url('learning_center/add_online_video'); ?>" class="btn btn-success btn-block">Add A Video</a>
                             </div>
                         <?php }?>
                         <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3"></div>
@@ -57,7 +57,10 @@
                                                         <div class="row">
                                                             <div class="col-lg-8 col-md-6 col-xs-12 col-sm-6">
                                                                 <ul>
-                                                                    <li><?=reset_datetime(array( 'datetime' => $video['created_date'], '_this' => $this)); ?></li>
+                                                                    <li><strong>Assigned On: </strong><?=reset_datetime(array( 'datetime' => $video['created_date'], '_this' => $this)); ?></li>
+                                                                    <li><strong>Start Date: </strong><?=reset_datetime(array( 'datetime' => $video['video_start_date'], '_this' => $this)); ?></li>
+                                                                    <li><strong>Visibility Type: </strong><?=ucwords($video['employees_assigned_to']);?></li>
+                                                                    <li><strong>Created By: </strong><?=remakeEmployeeName($video);?></li>
                                                                 </ul>
                                                             </div>
                                                             <div class="col-lg-2 col-md-3 col-xs-12 col-sm-3">

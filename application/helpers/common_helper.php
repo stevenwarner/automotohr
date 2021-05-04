@@ -13146,6 +13146,11 @@ if(!function_exists('getUserHint')){
             'team_approver_hint' => 'Please select the "Approvers". Any time off created by employees belonging to this team will go to the selected approvers.',
             'team_reporting_manager_hint' => 'Please select the "Reporting Managers". Any employee belonging to this team will report to the selected reporting managers and the performance reviews will be submitted to them.',
         );
+        //
+        $hints['video_watched_ems'] = 'It represents that you have watched the assigned video.';
+        $hints['questionnaire_watched_ems'] = 'It represents that you have completed the assigned questionnaire.';
+        $hints['video_not_watched_ems'] = 'It represents that you have not watched the assigned video.';
+        $hints['questionnaire_not_watched_ems'] = 'It represents that you have not completed the assigned questionnaire.';
 
         return isset($hints[$slug]) ? $hints[$slug] : '';
     }
