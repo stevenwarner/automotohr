@@ -896,6 +896,11 @@ function loadAddPage(){
     //
     $('#js-employee-type-add').select2();
     $('#js-employee-type-add').select2('val', 'all');
+
+    //Add by Alee on 4 Apr 2021
+    $('#js-off-days-add').select2();
+    $('#js-off-days-add').select2('val', 'mon');
+
     // Set approver check
     $('#js-approver-check-add').prop('checked', false);
     // Set archive check
@@ -1024,6 +1029,10 @@ function loadEditPage(){
     //
     $('#js-employee-type-edit').select2();
     $('#js-employee-type-edit').select2('val', 'all');
+
+    //Add by Alee on 4 Apr 2021
+    $('#js-off-days-edit').select2();
+    $('#js-off-days-edit').select2('val', 'mon');
     // Set approver check
     $('#js-approver-check-edit').prop('checked', false);
     // Set archive check
