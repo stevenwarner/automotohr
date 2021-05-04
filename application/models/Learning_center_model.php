@@ -1819,4 +1819,16 @@ class Learning_center_model extends CI_Model {
             return array();
         }
     }
+
+
+    //
+    function get_video_history($userType, $userId, $companyId){
+        //
+        return $this->db
+        ->where('user_type', $userType)
+        ->where('user_sid', $userId)
+        ->order_by('id', 'DESC')
+        ->get('learning_center_assign_user_history')
+        ->result_array();
+    }
 }

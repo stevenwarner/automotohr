@@ -124,3 +124,4 @@ CREATE TABLE IF NOT EXISTS `reminder_emails_log` (
 -- 04/23/2021
 ALTER TABLE `license_information` ADD `last_notification_sent_at` VARCHAR(11) NULL AFTER `license_file`;
 ALTER TABLE `learning_center_assign_user_history` ADD `is_deleted` TINYINT(1) NOT NULL DEFAULT '0' AFTER `questionnaire_attend_timestamp`;
+ALTER TABLE `learning_center_assign_user_history` ADD `deleted_at` DATE NULL DEFAULT NULL AFTER `is_deleted`;

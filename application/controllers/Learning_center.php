@@ -583,7 +583,6 @@ class Learning_center extends Public_Controller {
 
                 $this->learning_center_model->update_training_video($video_sid, $data_to_update);
                 $last_active_assignments = $this->learning_center_model->get_last_active_video_assignments($video_sid);
-                // $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
                 if (!empty($employees_assigned_sid) && $employees_assigned_to == "specific") {
                     
@@ -1393,6 +1392,7 @@ class Learning_center extends Public_Controller {
                 $data['video_list'] = $this->learning_center_model->get_video_list($company_sid);
                 $videos = $this->learning_center_model->get_my_all_online_videos($user_type, $employer_sid, $company_sid, $app_id == NULL ? false : true);
                 $data['videos'] = $videos;
+                $data['history'] = $this->learning_center_model->get_video_history($user_type, $employer_sid, $company_sid, $app_id == NULL ? false : true);
                 $assigned_sessions = $this->learning_center_model->get_assigned_all_training_sessions($user_type, $employer_sid, $company_sid);
                 $data['load_view'] = $load_view;
                 $data['assigned_sessions'] = $assigned_sessions;

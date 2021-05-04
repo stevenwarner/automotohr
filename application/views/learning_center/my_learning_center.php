@@ -153,7 +153,7 @@
                                                                                 <?php } ?>
                                                                             <?php } else { ?>
                                                                                 <tr>
-                                                                                    <td class="text-center" colspan="3">
+                                                                                    <td class="text-center" colspan="7">
                                                                                         <span class="no-data">No Videos Assigned</span>
                                                                                     </td>
                                                                                 </tr>
@@ -161,6 +161,73 @@
                                                                             </tbody>
                                                                         </table>
                                                                     </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- History Panel -->
+                                                    <div class="col-sm-12">
+                                                        <div class="panel panel-success">
+                                                            <div class="panel-heading">
+                                                                <h4 class="panel-title">
+                                                                    Online Video History (<?=count($history);?>)
+                                                                </h4>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-striped table-bordered">
+                                                                        <caption></caption>
+                                                                        <thead>
+                                                                            <th scope="col">Video</th>
+                                                                            <th scope="col">Watched</th>
+                                                                            <th scope="col">Questionnaire</th>
+                                                                            <th scope="col">Assigned On</th>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <?php 
+                                                                                if(!empty($history)) { 
+                                                                                    foreach($history as $video){
+                                                                                        //
+                                                                                        $videoWatched = '<span class="text-danger">Pending</span>';
+                                                                                        //
+                                                                                        if($video['watched']){
+                                                                                            $videoWatched = '<span class="text-success">Watched <br> '.(reset_datetime(array( 'datetime' => $video['date_watched'], '_this' => $this))).'</span>';
+                                                                                        }
+                                                                                        //
+                                                                                        $questionnaire = '<span class="text-danger">N/A</span>';
+                                                                                        //
+                                                                                        if(!empty($video['questionnaire_result'])){
+                                                                                            //
+                                                                                            $questionnaire = '<span class="text-danger">Pending</span>';
+                                                                                            //
+                                                                                            if($video['questionnaire_result'] == 'Pass'){
+                                                                                                $questionnaire = '<span class="text-success">Pass <br>'.(reset_datetime(array( 'datetime' => $video['questionnaire_attend_timestamp'], '_this' => $this))).'</span>';
+                                                                                            } else{
+                                                                                                $questionnaire = '<span class="text-danger">Fail <br>'.(reset_datetime(array( 'datetime' => $video['questionnaire_attend_timestamp'], '_this' => $this))).'</span>';
+                                                                                            }
+                                                                                        }
+                                                                                        ?>
+                                                                                        <tr>
+                                                                                            <td><?=$video['video_title'];?></td>
+                                                                                            <td><?=$videoWatched;?></td>
+                                                                                            <td><?=$questionnaire;?></td>
+                                                                                            <td><?=reset_datetime(array( 'datetime' => $video['date_assigned'], '_this' => $this)); ?></td>
+                                                                                        </tr>
+                                                                                        <?php
+                                                                                    }
+                                                                                } else{
+                                                                                    ?>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <p class="alert alert-info text-center">No history found.</p>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <?php
+                                                                                }
+                                                                            ?>
+                                                                        </tbody>
+                                                                    </table>
                                                                 </div>
                                                             </div>
                                                         </div>
