@@ -222,9 +222,12 @@ class Learning_center extends Public_Controller {
                 if (empty($questionnaire_sid)) {
                     $questionnaire_sid = 0;
                 }
+                //
                 $employees_assigned_sid = $employees_assigned_sid == null || empty($employees_assigned_sid) ? null : $employees_assigned_sid;
                 $applicants_assigned_sid = $applicants_assigned_sid == null || empty($applicants_assigned_sid) ? null : $applicants_assigned_sid;
+                //
                 $data_to_insert = array();
+                //
                 if($employees_assigned_to == "none"){
                     $post['departments_assigned_sid'] = 
                     $applicants_assigned_sid = $employees_assigned_sid  = null;
@@ -477,9 +480,12 @@ class Learning_center extends Public_Controller {
                 $applicants_assigned_to = $this->input->post('applicants_assigned_to');
                 $applicants_assigned_sid = $this->input->post('applicants_assigned_sid');
                 $questionnaire_sid = $this->input->post('questionnaire_sid');
+
+
                 if (empty($questionnaire_sid)) {
                     $questionnaire_sid = 0;
                 }
+
                 $data_to_update = array();
                 $remove_flag = false;
 
@@ -580,10 +586,12 @@ class Learning_center extends Public_Controller {
                 // $this->learning_center_model->set_online_videos_assignment_status($video_sid);
 
                 if (!empty($employees_assigned_sid) && $employees_assigned_to == "specific") {
-                    // echo '<pre>';
+                    
                     $removed_users = $this->learning_center_model->get_all_remove_user($video_sid, $employees_assigned_sid);
                     
                     if(!empty($removed_users)) {
+                        $assign_video = $this->learning_center_model->get_user_assign_online_video($video_sid);
+                        //
                         foreach ($removed_users as $r_key => $removed_user) {
                             $user_question = $this->learning_center_model->get_user_question_record($video_sid, $removed_user['sid']);
                             if (!empty($user_question)) {
@@ -596,6 +604,12 @@ class Learning_center extends Public_Controller {
                             $this->learning_center_model->change_user_assign_video_status($removed_user['user_sid'], $video_sid);
 
                             unset($removed_user['sid']);
+                            //
+                            $removed_user['video_title']        = $assign_video['video_title'];
+                            $removed_user['video_url']          = $assign_video['video_id'];
+                            $removed_user['video_source']       = $assign_video['video_source'];
+                            $removed_user['video_start_date']   = $assign_video['video_start_date'];
+                            //
                             $this->learning_center_model->save_user_assign_video_history($removed_user);
                             
                         }
@@ -2641,7 +2655,25 @@ class Learning_center extends Public_Controller {
                 $post['userType'],
                 $post['videoId']
             );
-            $this->learning_center_model->removeUserFromVideo($videoDetails);
+            //
+            $user_question = $this->learning_center_model->get_user_question_record($post['videoId'], $post['userId']);
+            //
+            if (!empty($user_question)) {
+                $videoDetails['questionnaire_name'] = $user_question['questionnaire_name'];
+                $videoDetails['questionnaire'] = $user_question['questionnaire'];
+                $videoDetails['questionnaire_result'] = $user_question['questionnaire_result'];
+                $videoDetails['questionnaire_attend_timestamp'] = $user_question['attend_timestamp'];
+            }
+            //
+            $assign_video_row_sid = $videoDetails['sid'];
+            $videoDetails['video_url'] = $videoDetails['video_id'];
+            //
+            unset($videoDetails['sid']);
+            unset($videoDetails['video_id']);
+            unset($videoDetails['deleted_at']);
+            //
+            $this->learning_center_model->save_user_assign_video_history($videoDetails);
+            $this->learning_center_model->removeUserFromVideo($assign_video_row_sid);
             echo 'success';
             exit(0);
         }
@@ -2664,6 +2696,24 @@ class Learning_center extends Public_Controller {
             echo 'success';
             exit(0);
         }
+    }
+
+    function get_department_employee () {
+        $company_sid    = $_POST['company_sid'];
+
+        $department_sid = explode(',', $_POST['department_sid']);
+
+        $selected_department_employees = $this->learning_center_model->getDepartmentEmployeesList(
+            $company_sid,
+            $department_sid
+        );
+
+        $employeesList = array_column($selected_department_employees, 'sid');  
+        $employeesList = array_unique($employeesList, SORT_REGULAR);
+
+        header('Content-type: application/json');
+        echo json_encode($employeesList);
+        exit(0);
     }
 
 }

@@ -86,8 +86,12 @@
                                                                         <table class="table table-bordered table-hover table-striped">
                                                                             <thead>
                                                                             <tr>
-                                                                                <th>Video</th>
-                                                                                <th>Status</th>
+                                                                                <th scope="col">Video</th>
+                                                                                <th scope="col">Watched</th>
+                                                                                <th scope="col">Questionnaire</th>
+                                                                                <th scope="col">Status</th>
+                                                                                <th scope="col">Assigned On</th>
+                                                                                <th scope="col">Start Date</th>
                                                                                 <th class="text-center">Action</th>
                                                                             </tr>
                                                                             </thead>
@@ -110,11 +114,38 @@
                                                                                     }
                                                                                 ?>
                                                                                     <tr data-id="<?=$video['sid'];?>">
-                                                                                        <td class="col-xs-8"><?php echo $video['video_title']; ?></td>
+                                                                                        <td><?php echo $video['video_title']; ?></td>
+                                                                                        <td>
+                                                                                            <?php if ($video['video_watched_status'] == "pending") { ?>
+                                                                                                <span class="text-danger">
+                                                                                                    Pending
+                                                                                                </span>
+                                                                                            <?php } else { ?>
+                                                                                                <span class="text-success">
+                                                                                                    Watched
+                                                                                                </span>
+                                                                                            <?php } ?>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <?php if ($video['video_have_question'] == "yes") { ?>
+                                                                                                <?php if ($video['video_question_completed'] == "pending") { ?>
+                                                                                                    <span class="text-danger">Pending</span>
+                                                                                                <?php } else { ?>
+                                                                                                        
+                                                                                                    <span class="text-success">Completed</span>
+                                                                                                <?php } ?>
+                                                                                            <?php } ?>
+                                                                                        </td>
                                                                                         <td>
                                                                                             <strong class="text-<?=$status[0];?>"><?=$status[1];?></strong>
                                                                                         </td>
-                                                                                        <td class="col-xs-4" align="center">
+                                                                                        <td>
+                                                                                        <?=reset_datetime(array( 'datetime' => $video['created_date'], '_this' => $this)); ?>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                        <?=reset_datetime(array( 'datetime' => $video['video_start_date'], '_this' => $this)); ?>
+                                                                                        </td>
+                                                                                        <td  align="center">
                                                                                             <button class="btn btn-danger jsRevokeVideo"><i class="fa fa-times-circle" style="font-size: 14px;" aria-hidden="true"></i>&nbsp;Revoke Video</button>
                                                                                             <a href="<?php echo base_url('learning_center/watch_video') . '/' . $video['sid'] . $watch_url; ?>" class="btn btn-success"><i class="fa fa-eye" style="font-size: 14px;" aria-hidden="true"></i>&nbsp;View Details</a>
                                                                                         </td>
