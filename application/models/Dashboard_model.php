@@ -2480,7 +2480,10 @@ class Dashboard_model extends CI_Model
             //
             if(!$fromProfile){
                 $this->db
-                ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
+                ->group_start()
+                ->where('learning_center_online_videos.video_start_date <= ', date('Y-m-d', strtotime('now')))
+                ->or_where('learning_center_online_videos.video_start_date IS NULL', NULL)
+                ->group_end()
                 ->group_start()
                 ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
                 ->or_where('expired_start_date IS NULL', NULL)
@@ -2516,7 +2519,10 @@ class Dashboard_model extends CI_Model
         //
         if(!$fromProfile){
             $this->db
+            ->group_start()
             ->where('learning_center_online_videos.video_start_date <= ', date('Y-m-d', strtotime('now')))
+            ->or_where('learning_center_online_videos.video_start_date IS NULL', NULL)
+            ->group_end()
             ->group_start()
             ->where('learning_center_online_videos.expired_start_date >= ', date('Y-m-d', strtotime('now')))
             ->or_where('learning_center_online_videos.expired_start_date IS NULL', NULL)
@@ -2580,7 +2586,7 @@ class Dashboard_model extends CI_Model
         foreach ($r as $key => $single_r) {
             $video_start_date = date('Y-m-d', strtotime($single_r['video_start_date']));
 
-            if ($video_start_date <= $current_date) {
+            if ($video_start_date <= $current_date || empty($single_r['video_start_date'])) {
                 
                 $this->db->select('watched,sid');
                 $this->db->where('learning_center_online_videos_sid', $single_r['sid']);
