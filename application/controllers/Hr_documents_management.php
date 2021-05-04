@@ -11275,6 +11275,10 @@ ini_set('memory_limit', -1);
         if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
 
         $session = $this->session->userdata('logged_in');
+        //
+        if($session['employer_detail']['access_level'] != 'Admin' && (!$session['employer_detail']['access_level_plus'] && !$session['employer_detail']['pay_plan_plus'])){
+           redirect('dashboard', 'refresh');
+        }
         $company_sid = $session['company_detail']['sid'];
         $security_sid = $session['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);

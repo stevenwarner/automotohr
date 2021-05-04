@@ -40,19 +40,22 @@ class Notifications extends Public_Controller {
             }
         }
         //
-        $this->load->model('varification_document_model');
-        $total = 0;
-        $total += $this->varification_document_model->get_all_users_pending_w4($ses['company_detail']['sid'], 'employee', TRUE);
-        $total += $this->varification_document_model->get_all_users_pending_i9($ses['company_detail']['sid'], 'employee', TRUE);
-        $total += $this->varification_document_model->get_all_users_pending_w4($ses['company_detail']['sid'], 'applicant', TRUE);
-        $total += $this->varification_document_model->get_all_users_pending_i9($ses['company_detail']['sid'], 'applicant', TRUE);
-        //
-        if($total != 0){
-            $data[] = [
-                'count' => $total,
-                'link' => base_url('hr_documents_management/company_varification_document'),
-                'title' => 'Pending Employer Sections'
-            ];
+        if($ses['employer_detail']['access_level'] == 'Admin' || $ses['employer_detail']['access_level_plus'] || $ses['employer_detail']['pay_plan_plus']){
+            //
+            $this->load->model('varification_document_model');
+            $total = 0;
+            $total += $this->varification_document_model->get_all_users_pending_w4($ses['company_detail']['sid'], 'employee', TRUE);
+            $total += $this->varification_document_model->get_all_users_pending_i9($ses['company_detail']['sid'], 'employee', TRUE);
+            $total += $this->varification_document_model->get_all_users_pending_w4($ses['company_detail']['sid'], 'applicant', TRUE);
+            $total += $this->varification_document_model->get_all_users_pending_i9($ses['company_detail']['sid'], 'applicant', TRUE);
+            //
+            if($total != 0){
+                $data[] = [
+                    'count' => $total,
+                    'link' => base_url('hr_documents_management/company_varification_document'),
+                    'title' => 'Pending Employer Sections'
+                ];
+            }
         }
         //
         if(!sizeof($data)){
