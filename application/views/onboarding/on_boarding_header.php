@@ -31,7 +31,7 @@
     <!--  -->
     <?php if (in_array('timeoff', $this->uri->segment_array()) || in_array('employee_management_system', $this->uri->segment_array())  || in_array('dashboard', $this->uri->segment_array()) ) { ?>
             <?php $this->load->view('timeoff/style'); ?>
-            <link rel="stylesheet" href="<?=base_url('assets/timeoff/css/blue.css');?>" />
+            <link rel="stylesheet" href="<?=base_url('assets/timeoff/css/blue'.($GLOBALS['minified_version']).'.css?v='.( ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0').'');?>" />
         <?php }?>
     
     <script src="<?php echo base_url('assets/bootstrap-filestyle/js/bootstrap-filestyle.min.js'); ?>"></script>
