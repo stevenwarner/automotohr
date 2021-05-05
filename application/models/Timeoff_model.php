@@ -8544,6 +8544,7 @@ class Timeoff_model extends CI_Model
             timeoff_policies.title,
             timeoff_policies.accruals,
             timeoff_policies.assigned_employees,
+            timeoff_policies.off_days,
             timeoff_policies.is_included,
             timeoff_policies.for_admin,
             timeoff_policies.default_policy,
@@ -9501,6 +9502,7 @@ class Timeoff_model extends CI_Model
                 'Balance' => 0,
                 'MaxNegativeTime' => 0,
                 'Category' => $policy['category_name'],
+                'OffDays' => $policy['off_days'],
                 'Settings' => [
                     'Slug' => $slug,
                     'ShiftHours' => $employee['user_shift_hours'],
