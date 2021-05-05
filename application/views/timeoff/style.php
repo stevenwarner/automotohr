@@ -1,5 +1,5 @@
 <?php
-	$prefixJS = '';
+	$timeoff_version = '';
 ?>
 
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
@@ -9,8 +9,8 @@
 <link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>assets/mFileUploader/index.css"/>
 
 <?php if (isset($theme) && $theme == 1) { ?>
-	<link rel="stylesheet" href="<?=base_url('assets/timeoff/css/main'.( $prefixJS ).'.css');?>?v=<?=time();?>" />
+	<link rel="stylesheet" href="<?=base_url('assets/timeoff/css/main'.( $timeoff_version ).'.css');?>?v=1.0" />
 <?php } else if (isset($theme) && $theme == 2) { ?>
-	<link rel="stylesheet" href="<?=base_url('assets/timeoff/css/theme2021'.( $prefixJS ).'.css');?>?v=<?=time();?>" />
+	<link rel="stylesheet" href="<?=base_url('assets/timeoff/css/theme2021'.( $timeoff_version ).'.css');?>?v=1.0" />
 <?php } ?>
 <link rel="stylesheet" href="<?=base_url('assets/bootstrapToggle/main.css');?>" />

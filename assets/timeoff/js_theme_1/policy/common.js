@@ -905,6 +905,9 @@ function loadAddPage(){
     // $('#js-accrual-method-add').select2({minimumResultsForSearch: -1});
     // $('#js-accrual-method-add').select2('val', 'hours_per_month');
     // $('#js-accrual-method-add').trigger('change');
+    //Add by Alee on 4 Apr 2021
+    $('#js-off-days-add').select2({closeOnSelect: false});
+    $('#js-off-days-add').select2('val', null);
     // Set accrual time
     $('#js-accrual-time-add').select2({minimumResultsForSearch: -1});
     $('#js-accrual-time-add').select2('val', 'none');

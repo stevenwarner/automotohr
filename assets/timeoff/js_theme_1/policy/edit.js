@@ -544,6 +544,7 @@ $(function() {
         //
         $('#js-employee-type-edit').select2('val', policy.employeeTypes);
         //
+        $('#js-off-days-edit').select2({ closeOnSelect: false });
         $('#js-off-days-edit').select2('val', policy.offDays);
         // Set approver check
         $('#js-approver-check-edit').prop('checked', policy.approver == 1 ? true : false);

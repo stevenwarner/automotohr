@@ -124,24 +124,17 @@
     <!-- Off days in week -->
     <div class="row mb10 csRow">
         <div class="col-sm-6 col-xs-12">
-            <label><?php echo $get_policy_item_info['week_off_days_label']; ?>
-                <i class="fa fa-question-circle" data-hint="js-hint"
-                    data-target="employees-type"></i>
-            </label>
-            <div class="js-hint js-hint-employees-type">
-                <?php echo $get_policy_item_info['week_off_days_info']; ?></div>
-            <div>
-                <select class="invoice-fields" name="templateday[]" id="js-off-days-add"
-                    multiple="true">
-                    <option value="mon">Monday</option>
-                    <option value="tue">Tuesday</option>
-                    <option value="wed">Wednesday</option>
-                    <option value="thu">Thursday</option>
-                    <option value="fri">Friday</option>
-                    <option value="sat">Saturday</option>
-                    <option value="sun">Sunday</option>
-                </select>
-            </div>
+            <label><?php echo $get_policy_item_info['week_off_days_info']; ?></label>
+            <select name="templatedayadd[]" id="js-off-days-add"
+                multiple="true">
+                <option value="monday">Monday</option>
+                <option value="tuesday">Tuesday</option>
+                <option value="wednesday">Wednesday</option>
+                <option value="thursday">Thursday</option>
+                <option value="friday">Friday</option>
+                <option value="saturday">Saturday</option>
+                <option value="sunday">Sunday</option>
+            </select>
         </div>
     </div>
 
