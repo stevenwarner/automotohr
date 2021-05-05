@@ -536,7 +536,7 @@ $(function() {
         // Set policy types
         $('#js-category-edit').select2('val', policy.type);
         // Set policy title
-        $('#js-policy-title-edit').val(policy.title);
+        $('#js-policy-title-edit').val(policy.title); 
         // Set sort order
         $('#js-sort-order-edit').val(policy.order);
         // Set employees
