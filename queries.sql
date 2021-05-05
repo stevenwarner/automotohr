@@ -125,3 +125,11 @@ CREATE TABLE IF NOT EXISTS `reminder_emails_log` (
 ALTER TABLE `license_information` ADD `last_notification_sent_at` VARCHAR(11) NULL AFTER `license_file`;
 ALTER TABLE `learning_center_assign_user_history` ADD `is_deleted` TINYINT(1) NOT NULL DEFAULT '0' AFTER `questionnaire_attend_timestamp`;
 ALTER TABLE `learning_center_assign_user_history` ADD `deleted_at` DATE NULL DEFAULT NULL AFTER `is_deleted`;
+
+ALTER TABLE `timeoff_policies` ADD `off_days` VARCHAR(225) NULL DEFAULT NULL AFTER `assigned_employees`;
+ALTER TABLE `timeoff_policy_history` ADD `off_days` VARCHAR(225) NULL DEFAULT NULL AFTER `assigned_employees`
+
+
+-- Mubashir Ahmed
+-- 05/05/2021
+INSERT INTO `timeoff_policy_icons_info` (`sid`, `slug`, `info_content`, `sort_order`) VALUES (NULL, 'week_off_days_info', 'Week Off Day(s)', '1');

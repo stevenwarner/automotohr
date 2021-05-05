@@ -638,11 +638,34 @@ $(function() {
     }
 
     //
+    $(document).on('change', '#jsAddPolicy', function() {
+        //
+        if ($(this).val() === null) {
+            policyOffDays = undefined;
+            return;
+        }
+        //
+        var singlePolicy = getPolicy(
+            $(this).val(),
+            window.timeoff.cPolicies
+        );
+        //
+        if (singlePolicy.OffDays == null) {
+            policyOffDays = undefined;
+        } else {
+            policyOffDays = singlePolicy.OffDays.split(',');
+        }
+    });
+
+    //
     function unavailable(date) {
+        //
+        var checkOffDays = policyOffDays === undefined ? timeOffDays : policyOffDays;
+        //
         var dmy = moment(date).format('MM-DD-YYYY');
         let d = moment(date).format('dddd').toString().toLowerCase();
         let t = 1;
-        if ($.inArray(d, timeOffDays) !== -1) {
+        if ($.inArray(d, checkOffDays) !== -1) {
             t = { work_on_holiday: 0, holiday_title: 'Weekly off' };
         } else {
             t = inObject(dmy, holidayDates);
@@ -753,6 +776,8 @@ $(function() {
 
     //
     async function loadAddSectionPage(loader, modalId) {
+        //
+        policyOffDays = undefined;
         //
         currentLoader = loader;
         // Get modal body

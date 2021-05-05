@@ -12,6 +12,7 @@ $(function() {
             order: 1,
             entitledEmployees: [],
             employeeTypes: [],
+            offDays: [],
             approver: 0,
             deactivate: 0,
             include: 1,
@@ -526,6 +527,7 @@ $(function() {
         policy.newHireTimeType = accruals.newHireTimeType;
         policy.newHireRate = accruals.newHireRate;
         policy.employeeTypes = accruals.employeeTypes;
+        policy.offDays = resp.Data.off_days !== null ? resp.Data.off_days.split(',') : null;
         policy.plans = accruals.plans;
         //
         originalOBJ = Object.assign({}, policy);
@@ -534,13 +536,15 @@ $(function() {
         // Set policy types
         $('#js-category-edit').select2('val', policy.type);
         // Set policy title
-        $('#js-policy-title-edit').val(policy.title);
+        $('#js-policy-title-edit').val(policy.title); 
         // Set sort order
         $('#js-sort-order-edit').val(policy.order);
         // Set employees
         $('#js-employee-edit').select2('val', policy.entitledEmployees);
         //
         $('#js-employee-type-edit').select2('val', policy.employeeTypes);
+        //
+        $('#js-off-days-edit').select2('val', policy.offDays);
         // Set approver check
         $('#js-approver-check-edit').prop('checked', policy.approver == 1 ? true : false);
         // Set archive check
@@ -621,6 +625,7 @@ $(function() {
         resetPolicy.newHireTimeType = resetAccrual.newHireTimeType;
         resetPolicy.newHireRate = resetAccrual.newHireRate;
         resetPolicy.employeeTypes = resetAccrual.employeeTypes;
+        resetPolicy.offDays = resp.Data.off_days !== null ? resp.Data.off_days.split(',') : null;
         resetPolicy.plans = resetAccrual.plans;
         //
         //load reset policy
@@ -635,6 +640,8 @@ $(function() {
         $('#js-sort-order-reset').val(policy.order);
         // Set employees
         $('#js-employee-reset').select2('val', policy.entitledEmployees);
+        //
+        $('#js-off-days-edit').select2('val', policy.offDays);
         //
         $('#js-employee-type-reset').select2('val', policy.employeeTypes);
         // Set approver check
@@ -725,6 +732,8 @@ $(function() {
             policyOBJ.entitledEmployees = getField('#js-employee-edit');
             //
             policyOBJ.employeeTypes = getField('#js-employee-type-edit');
+            //
+            policyOBJ.offDays = getField('#js-off-days-edit');
             // Set approver check
             policyOBJ.approver = $('#js-approver-check-edit').prop('checked') === true ? 1 : 0;
             // // Set deactivate check

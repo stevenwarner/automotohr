@@ -444,6 +444,9 @@ let inObject = function(val, searchIn) {
 };
 
 //
+var policyOffDays = undefined;
+
+//
 function remakeRangeRows(
     t1,
     t2,
@@ -466,13 +469,15 @@ function remakeRangeRows(
     //
     slug = slug === undefined ? '' : '-' + slug;
     //
+    var policyDayOffs = policyOffDays === undefined ? timeOffDays : policyOffDays;
+    //
     let rows = '';
     let i = 0,
         il = diff;
     for (i; i <= il; i++) {
         //
         let sd = moment(startDate).add(i, 'days');
-        if ($.inArray(sd.format('MM-DD-YYYY'), holidayDates) === -1 && $.inArray(sd.format('dddd').toString().toLowerCase(), timeOffDays) === -1) {
+        if ($.inArray(sd.format('MM-DD-YYYY'), holidayDates) === -1 && $.inArray(sd.format('dddd').toString().toLowerCase(), policyDayOffs) === -1) {
             rows += '<tr data-id="' + (i) + '" data-date="' + (sd.format('MM-DD-YYYY')) + '">';
             rows += '    <th style="vertical-align: middle">' + (sd.format('MMMM Do, YYYY')) + '</th>';
             rows += '    <th style="vertical-align: middle">';

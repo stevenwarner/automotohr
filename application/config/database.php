@@ -92,7 +92,7 @@ $db['ahr'] = array(
 	'dbcollat' => 'utf8_general_ci',
 	'swap_pre' => '',
 	'encrypt' => FALSE,
-	'compress' => TRUE,
+	'compress' => FALSE,
 	'stricton' => $creds->AHR->DB->Strict,
 	'failover' => array(
 		array(

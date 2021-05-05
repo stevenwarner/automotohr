@@ -1,8 +1,3 @@
-<?php
-
-    $prefixJS = '';
-?>
-
 <!--  -->
 <script>
 let
@@ -34,181 +29,181 @@ let
 
 <?php if (isset($theme) && $theme == 1) { ?>
     <!-- Common functions -->
-    <script src="<?=base_url('assets/timeoff/js_theme_1/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-    <script src="<?=base_url('assets/timeoff/js_theme_1/add'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+    <script src="<?=base_url('assets/timeoff/js_theme_1/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+    <script src="<?=base_url('assets/timeoff/js_theme_1/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
 
     <?php if(in_array('policies', $this->uri->segment_array())): ?>
         <!-- For policies -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/policy/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/policy/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/policy/add'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/policy/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/policy/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/policy/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/policy/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/policy/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('types', $this->uri->segment_array())): ?>
         <!-- For types -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/type/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/type/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/type/add'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/type/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/type/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/type/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/type/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/type/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('holidays', $this->uri->segment_array())): ?>
         <!-- For holidays -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/holidays/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/holidays/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/holidays/add'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/holidays/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/holidays/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/holidays/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/holidays/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/holidays/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('settings', $this->uri->segment_array())): ?>
         <!-- For settings -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/setting/setting'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/setting/setting'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('approvers', $this->uri->segment_array())): ?>
         <!-- For approvers -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/approvers/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/approvers/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/approvers/add'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/approvers/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/approvers/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/approvers/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/approvers/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/approvers/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('balance', $this->uri->segment_array())): ?>
         <!-- For balance -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/balances/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/balances/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/mFileUploader/index.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/balances/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/balances/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/mFileUploader/index.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('requests', $this->uri->segment_array())): ?>
         <!-- For requests -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/requests/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/requests/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/requests/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/requests/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('lms', $this->uri->segment_array())): ?>
         <!-- For lms -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/lms/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/lms/graph'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/lms/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/lms/policies'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/lms/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/lms/graph'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/lms/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/lms/policies'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('create_employee', $this->uri->segment_array())): ?>
         <!-- For employee -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/employee/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/employee/graph'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/employee/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/employee/policies'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/employee/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/employee/graph'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/employee/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/employee/policies'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('employee_management_system', $this->uri->segment_array())): ?>
         <!-- For ems dashboard -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/dashboard/dashboard'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/breakdown'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/dashboard/dashboard'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/breakdown'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('dashboard', $this->uri->segment_array())): ?>
         <!-- For ems employee -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/dashboard/dashboard'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_1/breakdown'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/dashboard/dashboard'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/breakdown'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
     
     <?php if(in_array('report', $this->uri->segment_array())): ?>
         <!-- For ems employee -->
-        <script src="<?=base_url('assets/timeoff/js_theme_1/report'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_1/report'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 <?php } else if (isset($theme) && $theme == 2) { ?>
     <!-- Common functions -->
-    <script src="<?=base_url('assets/timeoff/js_theme_2/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-    <script src="<?=base_url('assets/timeoff/js_theme_2/add'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+    <script src="<?=base_url('assets/timeoff/js_theme_2/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+    <script src="<?=base_url('assets/timeoff/js_theme_2/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
 
     <?php if(in_array('policies', $this->uri->segment_array())): ?>
         <!-- For policies -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/add'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('types', $this->uri->segment_array())): ?>
         <!-- For types -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/type/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/type/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/type/add'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/type/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/type/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/type/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/type/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/type/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('holidays', $this->uri->segment_array())): ?>
         <!-- For holidays -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/holidays/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/holidays/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/holidays/add'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/holidays/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/holidays/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/holidays/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/holidays/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/holidays/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('settings', $this->uri->segment_array())): ?>
         <!-- For settings -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/setting/setting'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/setting/setting'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('approvers', $this->uri->segment_array())): ?>
         <!-- For approvers -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/approvers/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/approvers/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/approvers/add'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/approvers/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/approvers/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/approvers/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/approvers/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/approvers/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('balance', $this->uri->segment_array())): ?>
         <!-- For balance -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/balances/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/balances/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/mFileUploader/index.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/balances/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/balances/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/mFileUploader/index.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('requests', $this->uri->segment_array())): ?>
         <!-- For requests -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/requests/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/requests/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/requests/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/requests/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
     <?php endif; ?>
 
     <?php if(in_array('lms', $this->uri->segment_array())): ?>
         <!-- For lms -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/lms/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/lms/graph'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/lms/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/lms/policies'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/lms/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/lms/graph'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/lms/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0';?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/lms/policies'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
     <?php endif; ?>
 
     <?php if(in_array('create_employee', $this->uri->segment_array())): ?>
         <!-- For employee -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/common'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/graph'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/view'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/policies'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/edit'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/graph'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/policies'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
     <?php endif; ?>
 
     <?php if(in_array('employee_management_system', $this->uri->segment_array())): ?>
         <!-- For ems dashboard -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/dashboard/dashboard'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/breakdown'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/dashboard/dashboard'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/breakdown'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
     <?php endif; ?>
 
     <?php if(in_array('dashboard', $this->uri->segment_array())): ?>
         <!-- For ems employee -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/dashboard/dashboard'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/breakdown'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/dashboard/dashboard'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/breakdown'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
     <?php endif; ?>
     <?php if(in_array('report', $this->uri->segment_array())): ?>
         <!-- For ems employee -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/report'.( $prefixJS ).'.js');?>?v=<?=time();?>"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/report'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
     <?php endif; ?>
 <?php } ?>

@@ -131,6 +131,24 @@
                                 </div>
                             </div>
 
+                            <!-- Off days in week -->
+                            <div class="row mb10 csRow">
+                                <div class="col-sm-6 col-xs-12">
+                                    <label><?php echo $get_policy_item_info['week_off_days_info']; ?>
+                                    </label>
+                                        <select name="templatedayedit[]" id="js-off-days-edit"
+                                            multiple="true">
+                                                <option value="monday">Monday</option>
+                                                <option value="tuesday">Tuesday</option>
+                                                <option value="wednesday">Wednesday</option>    
+                                                <option value="thursday">Thursday</option>
+                                                <option value="friday">Friday</option>
+                                                <option value="saturday">Saturday</option>
+                                                <option value="sunday">Sunday</option>
+                                        </select>
+                                </div>
+                            </div>
+
                             <div class="row mb10 csRow">
                                 <div class="col-sm-6 col-xs-12">
                                     <div class="">

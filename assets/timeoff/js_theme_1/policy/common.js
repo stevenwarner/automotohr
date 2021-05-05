@@ -890,6 +890,11 @@ function loadAddPage(){
     //
     $('#js-employee-type-add').select2();
     $('#js-employee-type-add').select2('val', 'all');
+
+    //Add by Alee on 4 Apr 2021
+    $('#js-off-days-add').select2();
+    $('#js-off-days-add').select2('val', 'mon');
+
     // Set approver check
     $('#js-approver-check-add').prop('checked', false);
     // Set archive check
@@ -900,6 +905,9 @@ function loadAddPage(){
     // $('#js-accrual-method-add').select2({minimumResultsForSearch: -1});
     // $('#js-accrual-method-add').select2('val', 'hours_per_month');
     // $('#js-accrual-method-add').trigger('change');
+    //Add by Alee on 4 Apr 2021
+    $('#js-off-days-add').select2({closeOnSelect: false});
+    $('#js-off-days-add').select2('val', null);
     // Set accrual time
     $('#js-accrual-time-add').select2({minimumResultsForSearch: -1});
     $('#js-accrual-time-add').select2('val', 'none');
@@ -1018,6 +1026,10 @@ function loadEditPage(){
     //
     $('#js-employee-type-edit').select2();
     $('#js-employee-type-edit').select2('val', 'all');
+
+    //Add by Alee on 4 Apr 2021
+    $('#js-off-days-edit').select2();
+    $('#js-off-days-edit').select2('val', 'mon');
     // Set approver check
     $('#js-approver-check-edit').prop('checked', false);
     // Set archive check

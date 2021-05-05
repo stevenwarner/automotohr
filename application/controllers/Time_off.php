@@ -1861,6 +1861,7 @@ class Time_off extends Public_Controller
                 $in['accruals'] = json_encode($accruals);
                 $in['policy_start_date'] = $post['applicableDateType'] == 'customHireDate' ? formatDate($post['applicableDate'], 'm-d-Y', 'Y-m-d')  : NULL;
                 $in['reset_policy'] = $in['accruals'];
+                $in['off_days'] = implode(',', $post['offDays']);
                 //
                 $policyId = $this->timeoff_model->insertPolicy($in);
                 //
@@ -1945,6 +1946,7 @@ class Time_off extends Public_Controller
                 $up['is_included'] = $post['include'];
                 $up['is_unlimited'] = $post['rate'] == 0 ? 1 : 0;
                 $up['sort_order'] = $post['order'];
+                $up['off_days'] = implode(',', $post['offDays']);
                 $up['accruals'] = json_encode($accruals);
                 $up['policy_start_date'] = $post['applicableDateType'] == 'customHireDate' ? formatDate($post['applicableDate'], 'm-d-Y', 'Y-m-d')  : NULL;
                 //

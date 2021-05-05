@@ -331,6 +331,10 @@ if(!function_exists('getCreds')){
 	}
 }
 
+// Setting GLOBAL minified version and time
+$GLOBALS['minified_version'] = ENVIRONMENT == 'development' ? '' : '.min' ;
+$GLOBALS['asset_version'] = time();
+
 
 //echo '<!-- **********************'.( microtime(true) - $GLOBALS['BENCHMARKSTARTTIME'] ).'****************** --> <br />';
 require_once BASEPATH.'core/CodeIgniter.php';

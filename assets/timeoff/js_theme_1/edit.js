@@ -19,6 +19,8 @@ $(function() {
         //
         e.preventDefault();
         //
+        policyOffDays = undefined;
+        //
         let policy = getSelectedPolicy(
             getField('#jsEditPolicy')
         );
@@ -95,6 +97,12 @@ $(function() {
             cOBJ.policyId,
             window.timeoff.cPolicies
         );
+        //
+        if (selectedPolicy.OffDays == null) {
+            policyOffDays = undefined;
+        } else {
+            policyOffDays = selectedPolicy.OffDays.split(',');
+        }
         // Check if it's not unlimited
         if (selectedPolicy.IsUnlimited == 0) {
             //
@@ -645,15 +653,17 @@ $(function() {
 
     //
     function unavailable(date) {
-        let dmy = moment(date).format('MM-DD-YYYY');
+        //
+        var checkOffDays = policyOffDays === undefined ? timeOffDays : policyOffDays;
+        //
+        var dmy = moment(date).format('MM-DD-YYYY');
         let d = moment(date).format('dddd').toString().toLowerCase();
         let t = 1;
-        if ($.inArray(d, timeOffDays) !== -1) {
+        if ($.inArray(d, checkOffDays) !== -1) {
             t = { work_on_holiday: 0, holiday_title: 'Weekly off' };
         } else {
             t = inObject(dmy, holidayDates);
         }
-        //
         if (t == -1) {
             return [true, ""];
         } else {
@@ -847,4 +857,24 @@ $(function() {
         //
         return selectedPolicy;
     }
+
+    //
+    $(document).on('change', '#jsEditPolicy', function() {
+        //
+        if ($(this).val() === null) {
+            policyOffDays = undefined;
+            return;
+        }
+        //
+        var singlePolicy = getPolicy(
+            $(this).val(),
+            window.timeoff.cPolicies
+        );
+        //
+        if (singlePolicy.OffDays == null) {
+            policyOffDays = undefined;
+        } else {
+            policyOffDays = singlePolicy.OffDays.split(',');
+        }
+    });
 })
