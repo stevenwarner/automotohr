@@ -301,5 +301,11 @@ class Indeed_model extends CI_Model {
         $this->db
         ->where('sid', $post['budgetSid'])
         ->update('portal_job_indeed', $updateArray);
+        //
+        $this->db
+        ->where('sid', $post['jobSid'])
+        ->update('portal_job_listings', array(
+            'indeed_sponsored' => 1
+        ));
     }
 }
