@@ -259,7 +259,36 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+     function getAllCompanyInactiveEmployee($companySid) {
+        $a = $this->db
+        ->select('
+            sid, 
+            first_name, 
+            last_name, 
+            is_executive_admin, 
+            access_level, 
+            access_level_plus,
+            pay_plan_flag,
+            job_title
+        ')
+        ->where('parent_sid', $companySid)
+        ->group_start()
+        ->where('active <>', 1)
+        ->where('general_status <>', 'active')
+        ->group_end()
+        ->or_where('terminated_status <>', 0)
+        ->order_by('concat(first_name,last_name)', 'ASC', false)
+        ->get('users');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+
+        return $b;
+    }
+
     function get_all_assigned_auth_documents ($company_sid, $employer_sid) {
+        $inactive_users = $this->getAllCompanyInactiveEmployee($company_sid);
+        echo '<pre>'; print_r($inactive_users); die();
         $this->db->select('documents_assigned.*, authorized_document_assigned_manager.assigned_by_date');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
         $this->db->where('authorized_document_assigned_manager.assigned_to_sid', $employer_sid);
@@ -269,6 +298,7 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false);
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false);
         $this->db->group_end();
+        $this->db->join('documents_assigned','documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid','inner');
         $this->db->join('documents_assigned','documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid','inner');
 
         $record_obj = $this->db->get('authorized_document_assigned_manager');
@@ -1641,7 +1671,10 @@ class Hr_documents_management_model extends CI_Model {
     function getEmployeesDetails($employees) {
         return $this->db->select('sid,first_name,last_name,email, pay_plan_flag, is_executive_admin, access_level_plus, access_level, job_title')->where_in('sid', $employees)->order_by("concat(first_name,last_name)", "asc", false)
         ->where('terminated_status', 0)
+        ->group_start()
         ->where('active', 1)
+        ->where('general_status', 'active')
+        ->group_end()
         ->get('users')->result_array();
     }
 
@@ -3686,7 +3719,10 @@ class Hr_documents_management_model extends CI_Model {
             job_title
         ')
         ->where('parent_sid', $companySid)
+        ->group_start()
         ->where('active', 1)
+        ->where('general_status', 'active')
+        ->group_end()
         ->where('terminated_status', 0)
         ->order_by('concat(first_name,last_name)', 'ASC', false)
         ->get('users');
