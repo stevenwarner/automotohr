@@ -1286,6 +1286,10 @@ class Dashboard_model extends CI_Model
 
     function get_all_auth_documents_assigned_count($company_id, $employer_id)
     {
+        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_id);
+        //
+        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
+        //
         return $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
         ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
@@ -1293,14 +1297,64 @@ class Dashboard_model extends CI_Model
         ->where('documents_assigned.archive', 0)
         ->where('documents_assigned.status', 1)
         ->group_start()
+        ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
+        ->where_not_in('documents_assigned.user_type', 'employee')
+        ->group_end()
+        ->group_start()
+        ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
+        ->where_not_in('documents_assigned.user_type', 'applicant')
+        ->group_end()
+        ->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
         ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)
         ->group_end()
         ->count_all_results('authorized_document_assigned_manager');
+
+
+    }
+
+    function getAllCompanyInactiveEmployee($companySid) {
+        $a = $this->db
+        ->select('
+            sid
+        ')
+        ->where('parent_sid', $companySid)
+        ->group_start()
+        ->where('active <>', 1)
+        ->where('general_status <>', 'active')
+        ->group_end()
+        ->or_where('terminated_status <>', 0)
+        ->or_where('general_status', 'suspended')
+        ->order_by('concat(first_name,last_name)', 'ASC', false)
+        ->get('users');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+
+        return array_column($b, 'sid');
+    }
+
+    function getAllCompanyInactiveApplicant($companySid) {
+        $a = $this->db
+        ->select('
+            portal_job_applications_sid as sid
+        ')
+        ->where('company_sid', $companySid)
+        ->where('archived', 1)
+        ->get('portal_applicant_jobs_list');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+
+        return array_column($b, 'sid');
     }
 
     function get_all_auth_documents_assigned_today_count($company_id, $employer_id)
     {
+        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_id);
+        //
+        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
+        //
         return $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
         ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
@@ -1309,6 +1363,14 @@ class Dashboard_model extends CI_Model
         ->where("assigned_by_date <= ", date('Y-m-d 23:59:59'))
         ->where('documents_assigned.archive', 0)
         ->where('documents_assigned.status', 1)
+        ->group_start()
+        ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
+        ->where_not_in('documents_assigned.user_type', 'employee')
+        ->group_end()
+        ->group_start()
+        ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
+        ->where_not_in('documents_assigned.user_type', 'applicant')
+        ->group_end()
         ->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
         ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)
@@ -1322,12 +1384,24 @@ class Dashboard_model extends CI_Model
 
     function get_all_pending_auth_documents_count($company_id, $employer_id)
     {
+        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_id);
+        //
+        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
+        //
         return $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
         ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
         ->where('authorized_document_assigned_manager.company_sid', $company_id)
         ->where('documents_assigned.archive', 0)
         ->where('documents_assigned.status', 1)
+        ->group_start()
+        ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
+        ->where_not_in('documents_assigned.user_type', 'employee')
+        ->group_end()
+        ->group_start()
+        ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
+        ->where_not_in('documents_assigned.user_type', 'applicant')
+        ->group_end()
         ->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
         ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)

@@ -262,14 +262,7 @@ class Hr_documents_management_model extends CI_Model {
      function getAllCompanyInactiveEmployee($companySid) {
         $a = $this->db
         ->select('
-            sid, 
-            first_name, 
-            last_name, 
-            is_executive_admin, 
-            access_level, 
-            access_level_plus,
-            pay_plan_flag,
-            job_title
+            sid
         ')
         ->where('parent_sid', $companySid)
         ->group_start()
@@ -277,18 +270,32 @@ class Hr_documents_management_model extends CI_Model {
         ->where('general_status <>', 'active')
         ->group_end()
         ->or_where('terminated_status <>', 0)
+        ->or_where('general_status', 'suspended')
         ->order_by('concat(first_name,last_name)', 'ASC', false)
         ->get('users');
         //
         $b = $a->result_array();
         $a = $a->free_result();
 
-        return $b;
+        return array_column($b, 'sid');
+    }
+
+    function getAllCompanyInactiveApplicant($companySid) {
+        $a = $this->db
+        ->select('
+            portal_job_applications_sid as sid
+        ')
+        ->where('company_sid', $companySid)
+        ->where('archived', 1)
+        ->get('portal_applicant_jobs_list');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+
+        return array_column($b, 'sid');
     }
 
     function get_all_assigned_auth_documents ($company_sid, $employer_sid) {
-        $inactive_users = $this->getAllCompanyInactiveEmployee($company_sid);
-        echo '<pre>'; print_r($inactive_users); die();
         $this->db->select('documents_assigned.*, authorized_document_assigned_manager.assigned_by_date');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
         $this->db->where('authorized_document_assigned_manager.assigned_to_sid', $employer_sid);
@@ -299,13 +306,24 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false);
         $this->db->group_end();
         $this->db->join('documents_assigned','documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid','inner');
-        $this->db->join('documents_assigned','documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid','inner');
 
         $record_obj = $this->db->get('authorized_document_assigned_manager');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
+            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+            //
+            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+            //
+            foreach ($record_arr as $d_key => $aut_doc) {
+                if (in_array($aut_doc['user_sid'], $inactive_employee_sid) && $aut_doc['user_type'] == 'employee') {
+                    unset($record_arr[$d_key]);
+                } else if (in_array($aut_doc['user_sid'], $inactive_applicant_sid) && $aut_doc['user_type'] == 'applicant') {
+                    unset($record_arr[$d_key]);
+                }
+            }
+            //
             return $record_arr;
         } else {
             return array();
@@ -336,6 +354,18 @@ class Hr_documents_management_model extends CI_Model {
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
+            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+            //
+            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+            //
+            foreach ($record_arr as $d_key => $aut_doc) {
+                if (in_array($aut_doc['user_sid'], $inactive_employee_sid) && $aut_doc['user_type'] == 'employee') {
+                    unset($record_arr[$d_key]);
+                } else if (in_array($aut_doc['user_sid'], $inactive_applicant_sid) && $aut_doc['user_type'] == 'applicant') {
+                    unset($record_arr[$d_key]);
+                }
+            }
+            //
             return $record_arr;
         } else {
             return array();
