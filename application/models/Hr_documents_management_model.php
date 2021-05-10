@@ -265,12 +265,8 @@ class Hr_documents_management_model extends CI_Model {
             sid
         ')
         ->where('parent_sid', $companySid)
-        ->group_start()
         ->where('active <>', 1)
-        ->where('general_status <>', 'active')
-        ->group_end()
         ->or_where('terminated_status <>', 0)
-        ->or_where('general_status', 'suspended')
         ->order_by('concat(first_name,last_name)', 'ASC', false)
         ->get('users');
         //

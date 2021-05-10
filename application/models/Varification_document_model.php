@@ -14,16 +14,19 @@ class Varification_document_model extends CI_Model {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
 
-        if ($user_type == 'employee') {
+        if ($user_type == 'employee' && !empty($inactive_employee_sid)) {
             $this->db->group_start();
             $this->db->where_not_in('employer_sid', $inactive_employee_sid);
             $this->db->where_not_in('user_type', 'employee');
             $this->db->group_end();
         } else {
-            $this->db->group_start();
-            $this->db->where_not_in('employer_sid', $inactive_applicant_sid);
-            $this->db->where_not_in('user_type', 'applicant');
-            $this->db->group_end();
+            if(!empty($inactive_applicant_sid)){
+
+                $this->db->group_start();
+                $this->db->where_not_in('employer_sid', $inactive_applicant_sid);
+                $this->db->where_not_in('user_type', 'applicant');
+                $this->db->group_end();
+            }
         }
 
         $this->db->where('emp_identification_number', NULL);
@@ -61,16 +64,18 @@ class Varification_document_model extends CI_Model {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
 
-        if ($user_type == 'employee') {
+        if ($user_type == 'employee' && !empty($inactive_employee_sid)) {
             $this->db->group_start();
             $this->db->where_not_in('user_sid', $inactive_employee_sid);
             $this->db->where_not_in('user_type', 'employee');
             $this->db->group_end();
         } else {
-            $this->db->group_start();
-            $this->db->where_not_in('user_sid', $inactive_applicant_sid);
-            $this->db->where_not_in('user_type', 'applicant');
-            $this->db->group_end();
+            if(!empty($inactive_applicant_sid)){
+                $this->db->group_start();
+                $this->db->where_not_in('user_sid', $inactive_applicant_sid);
+                $this->db->where_not_in('user_type', 'applicant');
+                $this->db->group_end();
+            }
         }
         
         $this->db->where('section2_sig_emp_auth_rep', NULL);
@@ -102,12 +107,8 @@ class Varification_document_model extends CI_Model {
             sid
         ')
         ->where('parent_sid', $companySid)
-        ->group_start()
         ->where('active <>', 1)
-        ->where('general_status <>', 'active')
-        ->group_end()
         ->or_where('terminated_status <>', 0)
-        ->or_where('general_status', 'suspended')
         ->order_by('concat(first_name,last_name)', 'ASC', false)
         ->get('users');
         //

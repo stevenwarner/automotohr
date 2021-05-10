@@ -1290,21 +1290,26 @@ class Dashboard_model extends CI_Model
         //
         $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
         //
-        return $this->db
+        $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
         ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
         ->where('authorized_document_assigned_manager.company_sid', $company_id)
         ->where('documents_assigned.archive', 0)
-        ->where('documents_assigned.status', 1)
-        ->group_start()
-        ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
-        ->where_not_in('documents_assigned.user_type', 'employee')
-        ->group_end()
-        ->group_start()
-        ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
-        ->where_not_in('documents_assigned.user_type', 'applicant')
-        ->group_end()
-        ->group_start()
+        ->where('documents_assigned.status', 1);
+        //
+        if(!empty($inactive_employee_sid)){
+            $this->db->group_start()
+            ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
+            ->where_not_in('documents_assigned.user_type', 'employee')
+            ->group_end();
+        }
+        if(!empty($inactive_applicant_sid)){
+            $this->db->group_start()
+            ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
+            ->where_not_in('documents_assigned.user_type', 'applicant')
+            ->group_end();
+        }
+        return $this->db->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
         ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)
         ->group_end()
@@ -1319,12 +1324,8 @@ class Dashboard_model extends CI_Model
             sid
         ')
         ->where('parent_sid', $companySid)
-        ->group_start()
         ->where('active <>', 1)
-        ->where('general_status <>', 'active')
-        ->group_end()
         ->or_where('terminated_status <>', 0)
-        ->or_where('general_status', 'suspended')
         ->order_by('concat(first_name,last_name)', 'ASC', false)
         ->get('users');
         //
@@ -1355,22 +1356,29 @@ class Dashboard_model extends CI_Model
         //
         $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
         //
-        return $this->db
+        $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
         ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
         ->where('authorized_document_assigned_manager.company_sid', $company_id)
         ->where("assigned_by_date >= ", date('Y-m-d 00:00:00'))
         ->where("assigned_by_date <= ", date('Y-m-d 23:59:59'))
         ->where('documents_assigned.archive', 0)
-        ->where('documents_assigned.status', 1)
-        ->group_start()
-        ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
-        ->where_not_in('documents_assigned.user_type', 'employee')
-        ->group_end()
-        ->group_start()
-        ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
-        ->where_not_in('documents_assigned.user_type', 'applicant')
-        ->group_end()
+        ->where('documents_assigned.status', 1);
+        //
+        if(!empty($inactive_employee_sid)){
+            $this->db->group_start()
+            ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
+            ->where_not_in('documents_assigned.user_type', 'employee')
+            ->group_end();
+        }
+        //
+        if(!empty($inactive_applicant_sid)){
+            $this->db->group_start()
+            ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
+            ->where_not_in('documents_assigned.user_type', 'applicant')
+            ->group_end();
+        }
+        return $this->db
         ->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
         ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)
@@ -1388,20 +1396,27 @@ class Dashboard_model extends CI_Model
         //
         $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
         //
-        return $this->db
+        $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
         ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
         ->where('authorized_document_assigned_manager.company_sid', $company_id)
         ->where('documents_assigned.archive', 0)
-        ->where('documents_assigned.status', 1)
-        ->group_start()
-        ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
-        ->where_not_in('documents_assigned.user_type', 'employee')
-        ->group_end()
-        ->group_start()
-        ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
-        ->where_not_in('documents_assigned.user_type', 'applicant')
-        ->group_end()
+        ->where('documents_assigned.status', 1);
+        //
+        if(!empty($inactive_employee_sid)){
+            $this->db->group_start()
+            ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
+            ->where_not_in('documents_assigned.user_type', 'employee')
+            ->group_end();
+        }
+        //
+        if(!empty($inactive_applicant_sid)){
+            $this->db->group_start()
+            ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
+            ->where_not_in('documents_assigned.user_type', 'applicant')
+            ->group_end();
+        }
+        return $this->db
         ->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
         ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)
