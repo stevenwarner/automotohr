@@ -4799,13 +4799,13 @@ if (!function_exists('count_direct_deposit')) {
 
 if (!function_exists('count_learning_center')) {
 
-    function count_learning_center($user_sid, $company_sid)
+    function count_learning_center($user_sid, $company_sid, $user_type)
     {
         // Get online video count
-        $online_video_count = onlineVideoCount($company_sid, $user_sid, 'employee');
+        $online_video_count = onlineVideoCount($company_sid, $user_sid, $user_type);
         //
         // get training session count
-        $training_session_count = trainingSessionCount($company_sid, $user_sid, 'employee');
+        $training_session_count = trainingSessionCount($company_sid, $user_sid, $user_type);
         //
         $learning_center_count = $online_video_count + $training_session_count;
         //
