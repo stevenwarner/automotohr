@@ -4797,6 +4797,166 @@ if (!function_exists('count_direct_deposit')) {
     }
 }
 
+if (!function_exists('count_learning_center')) {
+
+    function count_learning_center($user_sid, $company_sid)
+    {
+        // Get online video count
+        $online_video_count = onlineVideoCount($company_sid, $user_sid, 'employee');
+        //
+        // get training session count
+        $training_session_count = trainingSessionCount($company_sid, $user_sid, 'employee');
+        //
+        $learning_center_count = $online_video_count + $training_session_count;
+        //
+        return $learning_center_count;
+    }
+}
+
+if (!function_exists('onlineVideoCount')) {
+    function onlineVideoCount ($company_sid, $user_sid, $user_type, $fromProfile = false) {
+        $CI = &get_instance();
+        //
+        $r = [];
+        //
+        if($user_type == 'employee'){
+            // Get all employees
+            $CI->db->select('sid, created_date, video_title, video_description, video_source, video_id, video_start_date, screening_questionnaire_sid')
+            ->select('learning_center_online_videos.video_start_date')
+            ->select('learning_center_online_videos.expired_start_date')
+            ->where('company_sid', $company_sid)
+            ->where('employees_assigned_to', 'all')
+            ->order_by('created_date', 'DESC');
+            //
+            if(!$fromProfile){
+                $CI->db
+                ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
+                ->group_start()
+                ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
+                ->or_where('expired_start_date IS NULL', NULL)
+                ->group_end();
+            }
+            //
+            $a = $CI->db->get('learning_center_online_videos');
+            $b = $a->result_array();
+            $a->free_result();
+            //
+            $ids = array();
+            //
+            if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+            //
+            $r = $b;
+        }
+        // Get specific employees
+        $CI->db->select('learning_center_online_videos.sid')
+        ->select('learning_center_online_videos.created_date')
+        ->select('learning_center_online_videos.video_title')
+        ->select('learning_center_online_videos.video_description')
+        ->select('learning_center_online_videos.video_source')
+        ->select('learning_center_online_videos.video_id')
+        ->select('learning_center_online_videos.video_start_date')
+        ->select('learning_center_online_videos.expired_start_date')
+        ->select('learning_center_online_videos.screening_questionnaire_sid')
+        ->select('learning_center_online_videos_assignments.learning_center_online_videos_sid')
+        ->where('learning_center_online_videos_assignments.user_type', $user_type)
+        ->where('learning_center_online_videos_assignments.user_sid', $user_sid)
+        ->where('learning_center_online_videos_assignments.status', 1)
+        ->order_by('learning_center_online_videos_assignments.date_assigned', 'DESC')
+        ->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid');
+        //
+        if(!$fromProfile){
+            $CI->db
+            ->where('learning_center_online_videos.video_start_date <= ', date('Y-m-d', strtotime('now')))
+            ->group_start()
+            ->where('learning_center_online_videos.expired_start_date >= ', date('Y-m-d', strtotime('now')))
+            ->or_where('learning_center_online_videos.expired_start_date IS NULL', NULL)
+            ->group_end();
+        }
+        //
+        $a = $CI->db->get('learning_center_online_videos_assignments');
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+        //
+        $r = array_merge($r, $b);
+        //
+         $current_date = date('Y-m-d');
+        $video_count = 0;
+        $screening_questionnaire_check = 1;
+        //
+        foreach ($r as $key => $single_r) {
+            $video_start_date = date('Y-m-d', strtotime($single_r['video_start_date']));
+
+            if ($video_start_date < $current_date) {
+                
+                $CI->db->select('watched,sid');
+                $CI->db->where('learning_center_online_videos_sid', $single_r['sid']);
+                $CI->db->where('user_sid', $user_sid);
+                $CI->db->where('user_type', $user_type);
+                $user_video_result = $CI->db->get('learning_center_online_videos_assignments')->row_array();
+
+                if (empty($user_video_result) || $user_video_result['watched'] == 0) {
+                    $video_count = $video_count + 1;
+                } else {
+                    if (!empty($single_r['screening_questionnaire_sid']) || $single_r['screening_questionnaire_sid'] != 0) {
+                        $CI->db->select('sid');
+                        $CI->db->where('video_assign_sid', $user_video_result['sid']);
+                        $CI->db->where('video_sid', $single_r['sid']);
+                        $user_video_questionnaire_result = $CI->db->get('learning_center_screening_questionnaire')->row_array();
+
+                        if (empty($user_video_questionnaire_result)) {
+                            $video_count = $video_count + 1;
+                        } 
+                    }
+                }
+            }
+        }
+
+        return $video_count;
+    }
+}    
+
+if (!function_exists('trainingSessionCount')) {
+    function trainingSessionCount ($company_sid, $user_sid, $user_type) {
+        $CI = &get_instance();
+        //
+        $result = $CI->db
+            ->select('
+            employees_assigned_to,
+            session_status,
+            sid as id
+        ', false)
+            ->from('learning_center_training_sessions')
+            ->where('company_sid', $company_sid)
+            ->get();
+        //
+        $result_arr = $result->result_array();
+        $result->free_result();
+        $trainingSessionCount = 0;
+        //
+        if (sizeof($result_arr)) {
+            foreach ($result_arr as $k0 => $v0) {
+                if ($v0['session_status'] != 'pending' && $v0['session_status'] != 'scheduled') continue;
+                //
+                if ($v0['employees_assigned_to'] == 'specific') {
+                    // Check if it is assigned to login employee
+                    if ($CI->db
+                        ->where('training_session_sid', $v0['id'])
+                        ->where('user_sid', $user_sid)
+                        ->where('user_type', $user_type)
+                        ->count_all_results('learning_center_training_sessions_assignments') == 0
+                    ) {
+                        continue;
+                    }
+                }
+                $trainingSessionCount++;
+            }
+        }
+        return $trainingSessionCount;
+    }
+}    
+
 if (!function_exists('count_e_signature')) {
 
     function count_e_signature($user_type, $users_sid)
