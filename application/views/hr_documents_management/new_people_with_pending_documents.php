@@ -195,7 +195,7 @@
                                                         $itext = '';
                                                         if(sizeof($employee['Documents'])){
                                                             foreach ($employee['Documents'] as $ke => $v) {
-                                                                $itext .= '<p>- '.( $v['Title'] ).' ('.( $v['Type'] ).')</p>';
+                                                                $itext .= '<p>- '.( $v['Title'] ).' ('.( $v['Type'] ).') - ('.$v['AssignedOn'].') - ('.$v['Days'].')</p>';
                                                             }
                                                         }
                                                         ?>

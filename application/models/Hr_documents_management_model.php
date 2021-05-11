@@ -1549,7 +1549,12 @@ class Hr_documents_management_model extends CI_Model {
                                unset($assigned_documents[$document_key]);
                             } else {
                                 $assigned_sids[] = $assigned_document['document_sid'];
-                                $employee_sids[$emp_key]['Documents'][] = array(  'ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']) );
+                                $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
+                                $now = time(); 
+                                $datediff = $now - strtotime($assigned_document['assigned_date']);
+                                $days = round($datediff / (60 * 60 * 24));
+
+                                $employee_sids[$emp_key]['Documents'][] = array(  'ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days);
                             }
                         } else {
                             unset($assigned_documents[$document_key]);
@@ -1579,26 +1584,38 @@ class Hr_documents_management_model extends CI_Model {
 
             // 
             if($pending_w4 != 0){
+                $w4_info = $this->get_w4_document_assign_date('employee', $employee_sid);
+                //
                 $employee_sids[$emp_key]['Documents'][] = array( 
                     'ID' => 0, 
                     'Title' => 'W4 Fillable', 
-                    'Type' => 'Verification' 
+                    'Type' => 'Verification', 
+                    'AssignedOn' => $w4_info['assigned_on'], 
+                    'Days' => $w4_info['days'] 
                 );
             }
 
             if($pending_w9 != 0){
+                $w9_info = $this->get_w9_document_assign_date('employee', $employee_sid);
+                //
                 $employee_sids[$emp_key]['Documents'][] = array( 
                     'ID' => 0, 
                     'Title' => 'W9 Fillable', 
-                    'Type' => 'Verification' 
+                    'Type' => 'Verification',
+                    'AssignedOn' => $w9_info['assigned_on'], 
+                    'Days' => $w9_info['days']  
                 );
             }
 
             if($pending_i9 != 0){
+                $i9_info = $this->get_i9_document_assign_date('employee', $employee_sid);
+                //
                 $employee_sids[$emp_key]['Documents'][] = array( 
                     'ID' => 0, 
                     'Title' => 'I9 Fillable', 
-                    'Type' => 'Verification' 
+                    'Type' => 'Verification',
+                    'AssignedOn' => $i9_info['assigned_on'], 
+                    'Days' => $i9_info['days']  
                 );
             }
 
@@ -1629,6 +1646,37 @@ class Hr_documents_management_model extends CI_Model {
         return $record_arr;
     }
 
+    function get_w4_document_assign_date ($user_type, $user_sid) {
+        $this->db->select('sent_date');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('employer_sid', $user_sid);
+        $this->db->group_start();
+        $this->db->where('user_consent ', 0);
+        $this->db->group_end();
+        $this->db->where('status', 1);
+
+        $this->db->from('form_w4_original');
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $assigned_on = date('M d Y, D h:i:s', strtotime($record_arr['sent_date']));
+            //
+            $now = time(); 
+            $datediff = $now - strtotime($record_arr['sent_date']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
+            $result['assigned_on'] = $assigned_on;
+            $result['days'] = $days;
+            //
+            return $result;
+        } else {
+            return array();
+        }
+    }
+
     function is_employee_w4_document_pending($user_type, $user_sid) {
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
@@ -1651,6 +1699,38 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+    function get_w9_document_assign_date ($user_type, $user_sid) {
+        $this->db->select('sent_date');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->group_start();
+        $this->db->where('user_consent ', 0);
+        $this->db->or_where('user_consent', NULL);
+        $this->db->group_end();
+        $this->db->where('status', 1);
+
+        $this->db->from('applicant_w9form');
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $assigned_on = date('M d Y, D h:i:s', strtotime($record_arr['sent_date']));
+            //
+            $now = time(); 
+            $datediff = $now - strtotime($record_arr['sent_date']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
+            $result['assigned_on'] = $assigned_on;
+            $result['days'] = $days;
+            //
+            return $result;
+        } else {
+            return array();
+        }
+    }
+
     function is_employee_w9_document_pending($user_type, $user_sid) {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -1670,6 +1750,37 @@ class Hr_documents_management_model extends CI_Model {
             return 1;
         } else {
             return 0;
+        }
+    }
+
+    function get_i9_document_assign_date ($user_type, $user_sid) {
+        $this->db->select('sent_date');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->group_start();
+        $this->db->where('user_consent ', 0);
+        $this->db->or_where('user_consent', NULL);
+        $this->db->group_end();
+        $this->db->where('status', 1);
+        $this->db->from('applicant_i9form');
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $assigned_on = date('M d Y, D h:i:s', strtotime($record_arr['sent_date']));
+            //
+            $now = time(); 
+            $datediff = $now - strtotime($record_arr['sent_date']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
+            $result['assigned_on'] = $assigned_on;
+            $result['days'] = $days;
+            //
+            return $result;
+        } else {
+            return array();
         }
     }
 
@@ -4617,10 +4728,18 @@ class Hr_documents_management_model extends CI_Model {
         if(!count($documents)) return;
         //
         foreach($documents as $document){
+            $assigned_on = date('M d Y, D h:i:s', strtotime($document['assigned_at']));
+            //
+            $now = time(); 
+            $datediff = $now - strtotime($document['assigned_at']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
             $to[] = array( 
                 'ID' => 0, 
                 'Title' => ucwords(str_replace('_', ' ', $document['document_type'])), 
-                'Type' => 'General'
+                'Type' => 'General',
+                'AssignedOn' => $assigned_on, 
+                'Days' => $days
             );
         }
     }
