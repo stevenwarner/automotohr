@@ -195,7 +195,15 @@
                                                         $itext = '';
                                                         if(sizeof($employee['Documents'])){
                                                             foreach ($employee['Documents'] as $ke => $v) {
-                                                                $itext .= '<p>- '.( $v['Title'] ).' ('.( $v['Type'] ).') - ('.$v['AssignedOn'].') - ('.$v['Days'].')</p>';
+                                                                //
+                                                                $assignedByText = '';
+                                                                //
+                                                                if(isset($v['AssignedBy'])){
+                                                                    $assignedBy = remakeEmployeename($employeesList[array_search($v['AssignedBy'], array_column($employeesList, 'sid'))]);
+                                                                    $assignedByText = '<br> <strong>Assigned By:</strong> '.( $assignedBy ).'';
+
+                                                                }
+                                                                $itext .= '<p>- '.( $v['Title'] ).' ('.( $v['Type'] ).') <br> <strong>Assigned On:</strong> '.$v['AssignedOn'].' ('.$v['Days'].' day'.($v['Days'] == 1 ? '' : 's').' ago)'.($assignedByText).'</p>';
                                                             }
                                                         }
                                                         ?>

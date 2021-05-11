@@ -1554,7 +1554,7 @@ class Hr_documents_management_model extends CI_Model {
                                 $datediff = $now - strtotime($assigned_document['assigned_date']);
                                 $days = round($datediff / (60 * 60 * 24));
 
-                                $employee_sids[$emp_key]['Documents'][] = array(  'ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days);
+                                $employee_sids[$emp_key]['Documents'][] = array(  'ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
                             }
                         } else {
                             unset($assigned_documents[$document_key]);
@@ -1564,7 +1564,7 @@ class Hr_documents_management_model extends CI_Model {
                     if($assigned_document['user_consent'] == 1){
                         unset($assigned_documents[$document_key]);
                     }else{
-                        $employee_sids[$emp_key]['Documents'][] = array( 'ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type'] == 'offer_letter' ? $assigned_document['offer_letter_type'] : $assigned_document['document_type']) );
+                        $employee_sids[$emp_key]['Documents'][] = array( 'ID' => $assigned_document['document_sid'], 'AssignedBy' => $assigned_document['assigned_by'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type'] == 'offer_letter' ? $assigned_document['offer_letter_type'] : $assigned_document['document_type']) );
                     }
                 }
             }
