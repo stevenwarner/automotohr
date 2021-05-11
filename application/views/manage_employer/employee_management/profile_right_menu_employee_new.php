@@ -503,7 +503,7 @@
                                 <h4>Learning Center</h4>
 
                                 <a href="<?php echo base_url('learning_center/my_learning_center/') . '/' . $employer["sid"]; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                <?php $learning_center_count = count_learning_center($employer["sid"], $employer['parent_sid']); ?>
+                                <?php $learning_center_count = count_learning_center($employer["sid"], $employer['parent_sid'], 'employee'); ?>
                                 <?php if(intval($learning_center_count) > 0) { ?>
                                     <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Direct Deposit Info Added" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                 <?php } else { ?>
