@@ -206,7 +206,8 @@
                                                                 $assignedByText = '';
                                                                 //
                                                                 if(isset($v['AssignedBy'])){
-                                                                    $assignedBy = remakeEmployeename($employeesList[array_search($v['AssignedBy'], array_column($employeesList, 'sid'))]);
+                                                                    $assignedBy = getUserNameBySID($v['AssignedBy']);
+                                                                    // $assignedBy = remakeEmployeename($employeesList[array_search($v['AssignedBy'], array_column($employeesList, 'sid'))]);
                                                                     $assignedByText = '<br /> <em>Assigned By: '.( $assignedBy ).'</em>';
 
                                                                 }

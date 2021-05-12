@@ -1564,7 +1564,14 @@ class Hr_documents_management_model extends CI_Model {
                     if($assigned_document['user_consent'] == 1){
                         unset($assigned_documents[$document_key]);
                     }else{
-                        $employee_sids[$emp_key]['Documents'][] = array( 'ID' => $assigned_document['document_sid'], 'AssignedBy' => $assigned_document['assigned_by'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type'] == 'offer_letter' ? $assigned_document['offer_letter_type'] : $assigned_document['document_type']) );
+                        $assigned_sids[] = $assigned_document['document_sid'];
+                        $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
+                        //
+                        $now = time(); 
+                        $datediff = $now - strtotime($assigned_document['assigned_date']);
+                        $days = round($datediff / (60 * 60 * 24));
+                        //
+                        $employee_sids[$emp_key]['Documents'][] = array( 'ID' => $assigned_document['document_sid'], 'AssignedBy' => $assigned_document['assigned_by'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type'] == 'offer_letter' ? $assigned_document['offer_letter_type'] : $assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
                     }
                 }
             }
@@ -4729,6 +4736,7 @@ class Hr_documents_management_model extends CI_Model {
         //
         foreach($documents as $document){
             $assigned_on = date('M d Y, D h:i:s', strtotime($document['assigned_at']));
+            $assigned_by = $this->getGeneralDocumentAssignedById($document['sid']);
             //
             $now = time(); 
             $datediff = $now - strtotime($document['assigned_at']);
@@ -4739,9 +4747,25 @@ class Hr_documents_management_model extends CI_Model {
                 'Title' => ucwords(str_replace('_', ' ', $document['document_type'])), 
                 'Type' => 'General',
                 'AssignedOn' => $assigned_on, 
-                'Days' => $days
+                'Days' => $days,
+                'AssignedBy' => $assigned_by
             );
         }
+    }
+
+    private function getGeneralDocumentAssignedById ($document_sid) {
+        $this->db->select('user_sid');
+        $this->db->where('documents_assigned_general_sid', $document_sid);
+        $record_obj = $this->db->get('documents_assigned_general_assigners');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr['user_sid'];
+        }
+
+        return $return_data;
     }
 
 
