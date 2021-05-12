@@ -197,10 +197,15 @@
                                                     </thead>
                                                     <tbody>
                                                     <?php
+                                                    function dateSorter($a, $b){
+                                                        return $a['AssignedOn'] < $b['AssignedOn'];
+                                                    }
                                                     foreach ($employees as $employee) {
                                                         $icount = sizeof($employee['Documents']);
                                                         $itext = '';
                                                         if(sizeof($employee['Documents'])){
+                                                            //
+                                                            usort($employee['Documents'], 'dateSorter');
                                                             foreach ($employee['Documents'] as $ke => $v) {
                                                                 //
                                                                 $assignedByText = '';
