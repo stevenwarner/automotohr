@@ -82,6 +82,13 @@
     max-height: 100px;
     overflow-y: auto;
 }
+
+.popover-content p{
+    padding: 10px;
+}
+.popover-content p:nth-child(odd){
+    background: #eee;
+}
 </style>
 
 <div class="main-content">
@@ -200,10 +207,18 @@
                                                                 //
                                                                 if(isset($v['AssignedBy'])){
                                                                     $assignedBy = remakeEmployeename($employeesList[array_search($v['AssignedBy'], array_column($employeesList, 'sid'))]);
-                                                                    $assignedByText = '<br> <strong>Assigned By:</strong> '.( $assignedBy ).'';
+                                                                    $assignedByText = '<br /> <em>Assigned By: '.( $assignedBy ).'</em>';
 
                                                                 }
-                                                                $itext .= '<p>- '.( $v['Title'] ).' ('.( $v['Type'] ).') <br> <strong>Assigned On:</strong> '.$v['AssignedOn'].' ('.$v['Days'].' day'.($v['Days'] == 1 ? '' : 's').' ago)'.($assignedByText).'</p>';
+                                                                $itext .= '<p>';
+                                                                $itext .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
+                                                                $itext .= ' <br /> <em>Assigned On: '.($v['AssignedOn']).'';
+                                                                if(!empty($v['Days'])){
+                                                                    $itext .= ' ('.$v['Days'].' day'.($v['Days'] == 1 ? '' : 's').' ago)';
+                                                                }
+                                                                $itext .= ' </em>';
+                                                                $itext .= $assignedByText;
+                                                                $itext .= '</p>';
                                                             }
                                                         }
                                                         ?>
@@ -211,7 +226,7 @@
                                                             <td><?=remakeEmployeeName($employee);?></td>
                                                             <td><?php echo $employee['email']; ?></td>
                                                             <td
-                                                                style="cursor: default"
+                                                                style="cursor: pointer"
                                                                     data-container="body" 
                                                                     data-toggle="cpopover"
                                                                     data-placement="left" 
@@ -416,7 +431,8 @@
 
         //
         $('[data-toggle="cpopover"]').popover({
-            trigger: 'hover',
+            trigger: 'hover click',
+            placement: 'left auto',
             html: true
         });
         //
