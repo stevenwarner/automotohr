@@ -21,97 +21,98 @@
  *                                                    with file and false when everything is okay.
  */
 
-(function($){
-    //
-    let instances = {};
-    //
-    let ADF = 0; //Already Defiend Flag
-    //
-    $.fn.mFileUploader = function(opt){
-        // Save the current instance
-        let _this = this.length > 1 ? this[0] : this;
+(function($) {
         //
-        if(typeof opt === 'string'){
-            switch(opt){
-                case "get": return instances[_this.selector];
-            }
-            return;
-        }
+        let instances = {};
         //
-        // console.log('start_check');  
-        // console.log(instances[_this.selector]);
-        // console.log('end check');
+        let ADF = 0; //Already Defiend Flag
         //
-        let 
-        oFile = {},
-        //
-        randKey = Math.ceil(Math.random() * 1000),
-        //
-        options = {};
-        //
-        instances[_this.selector] = oFile;
-        //
-        // console.log(instances);
-        // alert('please check console');
-        // return;
-        //
-        options['s3'] =  opt !== undefined && opt.s3 || `https://automotohrattachments.s3.amazonaws.com/`;
-        options['placeholderImage'] =  opt !== undefined && opt.placeholderImage || '';
-//        options['fileLimit'] =  opt !== undefined && opt.fileLimit || '2MB';
-		options['fileLimit'] =  -1;
-        options['allowedTypes'] = opt !== undefined && opt.allowedTypes || ['jpg','jpeg','png','gif','pdf','doc','docx','rtf','ppt','xls','xlsx','csv']
-        options['text'] = opt !== undefined && opt.text || `Click / Drag to upload`;
-        options['onSuccess'] = opt !== undefined && opt.onSuccess || function(){};
-        options['onError'] = opt !== undefined && opt.onError || function(){};
-        options['onClear'] = opt !== undefined && opt.onClear || function(){};
-        
-        //
-        options['mainDivName'] = `jsUploadArea${randKey}`;
-        options['mainImageViewer'] = `jsUploadedImageArea${randKey}`;
-        options['errorMSG'] = `jsUploadedAreaError${randKey}`;
-        options['jsMFUPreviewFile'] = `jsMFUPreviewFile${randKey}`;
-        options['jsMFUClearFile'] = `jsMFUClearFile${randKey}`;
-        options['jsMFUModal'] = `jsMFUModal${randKey}`;
-        options['jsMFUD'] = `jsMFUD${randKey}`;
-        
-        //
-        let errorCodes = {
-            size: `File size exceeded from ${options.fileLimit}`,
-            type: `Invalid file type.`
-        };
+        $.fn.mFileUploader = function(opt) {
+                // Save the current instance
+                let _this = this.length > 1 ? this[0] : this;
+                //
+                if (typeof opt === 'string') {
+                    switch (opt) {
+                        case "get":
+                            return instances[_this.selector];
+                    }
+                    return;
+                }
+                //
+                // console.log('start_check');  
+                // console.log(instances[_this.selector]);
+                // console.log('end check');
+                //
+                let
+                    oFile = {},
+                    //
+                    randKey = Math.ceil(Math.random() * 1000),
+                    //
+                    options = {};
+                //
+                instances[_this.selector] = oFile;
+                //
+                // console.log(instances);
+                // alert('please check console');
+                // return;
+                //
+                options['s3'] = opt !== undefined && opt.s3 || `https://automotohrattachments.s3.amazonaws.com/`;
+                options['placeholderImage'] = opt !== undefined && opt.placeholderImage || '';
+                //        options['fileLimit'] =  opt !== undefined && opt.fileLimit || '2MB';
+                options['fileLimit'] = $.inArray('mp4', opt.allowedTypes) === -1 ? -1 : opt.fileLimit;
+                options['allowedTypes'] = opt !== undefined && opt.allowedTypes || ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv']
+                options['text'] = opt !== undefined && opt.text || `Click / Drag to upload`;
+                options['onSuccess'] = opt !== undefined && opt.onSuccess || function() {};
+                options['onError'] = opt !== undefined && opt.onError || function() {};
+                options['onClear'] = opt !== undefined && opt.onClear || function() {};
 
-        // Remover
-        const destroyView = () => {
-            $(_this.selector).siblings('div.jsMainUploadAreaWrapper').remove();
-            $.fn.mFileUploader.__proto__.instances[_this.selector] = {};
-        };
+                //
+                options['mainDivName'] = `jsUploadArea${randKey}`;
+                options['mainImageViewer'] = `jsUploadedImageArea${randKey}`;
+                options['errorMSG'] = `jsUploadedAreaError${randKey}`;
+                options['jsMFUPreviewFile'] = `jsMFUPreviewFile${randKey}`;
+                options['jsMFUClearFile'] = `jsMFUClearFile${randKey}`;
+                options['jsMFUModal'] = `jsMFUModal${randKey}`;
+                options['jsMFUD'] = `jsMFUD${randKey}`;
 
-        // Remove any previous instance
-        destroyView();
+                //
+                let errorCodes = {
+                    size: `File size exceeded from ${options.fileLimit}`,
+                    type: `Invalid file type.`
+                };
 
-        // Setters
-        const distroyOldInstance = () => {
-            $(_this.selector).siblings('div.csUploadArea').remove();
-            $.fn.mFileUploader.__proto__.instances[_this.selector] = {};
-        };
+                // Remover
+                const destroyView = () => {
+                    $(_this.selector).siblings('div.jsMainUploadAreaWrapper').remove();
+                    $.fn.mFileUploader.__proto__.instances[_this.selector] = {};
+                };
 
-        if ($.fn.mFileUploader.instances[_this.selector] !== undefined) {
-            distroyOldInstance();
-        }
+                // Remove any previous instance
+                destroyView();
 
-        // Setters
-        const setMainView = () => {
-            $(_this).before(getWrapper());
-        };
+                // Setters
+                const distroyOldInstance = () => {
+                    $(_this.selector).siblings('div.csUploadArea').remove();
+                    $.fn.mFileUploader.__proto__.instances[_this.selector] = {};
+                };
 
-        // Consoler
-        const callLogger = (m) => {
-            console.log(m);
-        }
+                if ($.fn.mFileUploader.instances[_this.selector] !== undefined) {
+                    distroyOldInstance();
+                }
 
-        //
-        const generateModalHTML = (tag, filename) => {
-            return `
+                // Setters
+                const setMainView = () => {
+                    $(_this).before(getWrapper());
+                };
+
+                // Consoler
+                const callLogger = (m) => {
+                    console.log(m);
+                }
+
+                //
+                const generateModalHTML = (tag, filename) => {
+                    return `
             <!-- Modal -->
             <div class="modal fade" id="${options['jsMFUModal']}" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
@@ -130,11 +131,11 @@
                 </div>
             </div>
             `;
-        }
+                }
 
-        // Getters 
-        const getWrapper = () => {
-            return `
+                // Getters 
+                const getWrapper = () => {
+                        return `
             <div class="jsMainUploadAreaWrapper">
                 <div class="csUploadArea" id="${options.mainDivName}">
                     <div class="csUploadInnerArea">
@@ -209,20 +210,22 @@
                     e
                 );
                 oFile.hasError = true;
+                oFile.errorCode = errorCodes['type'];
                 //
                 instances[_this.selector] = oFile;
                 oFile = {};
                 return;
             }
-
+            
             // Check file size
             if(options.fileLimit !== -1 && oFile.size > getLimit()){
                 $(`#${options.errorMSG}`).text(errorCodes['size']).show();
                 options.onError(
                     errorCodes['size'],
                     e
-                );
-                oFile.hasError = true;
+                    );
+                    oFile.hasError = true;
+                    oFile.errorCode = errorCodes['size'];
                 //
                 instances[_this.selector] = oFile;
                 oFile = {};
@@ -340,6 +343,7 @@
                 //
                 if($.inArray(extension, ['xls', 'xlsx', 'ppt', 'pptx', 'doc', 'docx', 'rtf', 'csv']) !== -1) tag = `<iframe frameborder="0" width="100%" height="600" class="jsMFUIframe" src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURI(fullFileName)}"></iframe>`;
                 else if($.inArray(extension, ['png', 'jpg', 'jpeg', 'gif', 'svg']) !== -1) tag = `<img class="img-responsive" src="${fullFileName}" />`;
+                else if($.inArray(extension, ['mp4']) !== -1) tag = `<video class="img-responsive" src="${fullFileName}" controls></video>`;
                 else tag = `<iframe frameborder="0" width="100%" height="600" class="jsMFUIframe" src="https://docs.google.com/gview?url=${fullFileName}&embedded=true"></iframe>`;
             } else {
                 filename = oFile.name;
@@ -347,6 +351,7 @@
                 fullFileName = $(this).data('key');
                 //
                 if($.inArray(extension, ['png', 'jpg', 'jpeg', 'gif', 'svg']) !== -1) tag = `<img class="img-responsive" src="${fullFileName}" />`;
+                else if($.inArray(extension, ['mp4']) !== -1) tag = `<video class="img-responsive" src="${fullFileName}" controls></video>`;
                 else tag = `<iframe frameborder="0" width="100%" height="600" class="jsMFUIframe" src="${fullFileName}"></iframe>`;
             }
             // Geneate and load modal on dom

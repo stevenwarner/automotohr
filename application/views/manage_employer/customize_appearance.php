@@ -421,6 +421,13 @@ ul.select2-selection__rendered li{
                                         </div>
                                     </div>
                                 <?php } ?>
+
+                                <!--  -->
+                                <div class="row">
+                                    <div class="col-sm-12 col-xs-12">
+                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat magnam recusandae consequatur sequi voluptate iste quis eius, vero laudantium autem corrupti harum quam repellendus nesciunt quidem doloremque omnis adipisci dolores?
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -479,4 +486,58 @@ ul.select2-selection__rendered li{
     $(document).ready(function(){
         $('.jsSelect2').select2({ closeOnSelect: false});
     });
+</script>
+
+
+
+<script>
+alert('asdasd');
+    // Plugin for video uploader
+    (function(w, d){
+        $.fn.videoOpt = function(opt){
+            // Save the current instance
+            let _this = this.length > 1 ? this[0] : this;
+            //
+            if(typeof opt === 'string'){
+                switch(opt){
+                    case "get": return instances[_this.selector];
+                }
+                return;
+            }
+            //
+            var 
+            oFile = {},
+            //
+            randKey = Math.ceil(Math.random() * 1000),
+            //
+            options = {};
+            //
+            instances[_this.selector] = oFile;
+            //
+            options['s3'] =  opt !== undefined && opt.s3 || `https://automotohrattachments.s3.amazonaws.com/`;
+            options['placeholderImage'] =  opt !== undefined && opt.placeholderImage || '';
+            options['fileLimit'] =  -1;
+            options['allowedTypes'] = opt !== undefined && opt.allowedTypes || ['mp4']
+            options['text'] = opt !== undefined && opt.text || `Click / Drag to upload`;
+            options['onSuccess'] = opt !== undefined && opt.onSuccess || function(){};
+            options['onError'] = opt !== undefined && opt.onError || function(){};
+            options['onClear'] = opt !== undefined && opt.onClear || function(){};
+            
+            //
+            options['mainDivName'] = `jsUploadArea${randKey}`;
+            options['mainImageViewer'] = `jsUploadedImageArea${randKey}`;
+            options['errorMSG'] = `jsUploadedAreaError${randKey}`;
+            options['jsMFUPreviewFile'] = `jsMFUPreviewFile${randKey}`;
+            options['jsMFUClearFile'] = `jsMFUClearFile${randKey}`;
+            options['jsMFUModal'] = `jsMFUModal${randKey}`;
+            options['jsMFUD'] = `jsMFUD${randKey}`;
+            
+            //
+            let errorCodes = {
+                size: `File size exceeded from ${options.fileLimit}`,
+                type: `Invalid file type.`
+            };
+        };
+    })(window, document);
+
 </script>

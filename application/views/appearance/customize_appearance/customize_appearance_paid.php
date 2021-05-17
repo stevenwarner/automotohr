@@ -612,6 +612,8 @@ ul.select2-selection__rendered li{
 <!-- Testimonials Modal -->
 <script language="JavaScript" type="text/javascript" src="<?php echo base_url('assets'); ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo base_url('assets'); ?>/js/additional-methods.min.js"></script>
+<link rel="stylesheet" href="<?php echo base_url('assets'); ?>/mFileUploader/index.css">
+<script language="JavaScript" type="text/javascript" src="<?php echo base_url('assets'); ?>/mFileUploader/index.js"></script>
 
 <script>                                                                                     
     $(function () {
