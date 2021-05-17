@@ -13307,10 +13307,10 @@ if(!function_exists('getUserHint')){
             'team_reporting_manager_hint' => 'Please select the "Reporting Managers". Any employee belonging to this team will report to the selected reporting managers and the performance reviews will be submitted to them.',
         );
         //
-        $hints['video_watched_ems'] = 'It represents that you have watched the assigned video.';
-        $hints['questionnaire_watched_ems'] = 'It represents that you have completed the assigned questionnaire.';
-        $hints['video_not_watched_ems'] = 'It represents that you have not watched the assigned video.';
-        $hints['questionnaire_not_watched_ems'] = 'It represents that you have not completed the assigned questionnaire.';
+        $hints['video_watched_ems'] = 'You have watched the assigned video.';
+        $hints['questionnaire_watched_ems'] = 'You have completed the assigned questionnaire.';
+        $hints['video_not_watched_ems'] = 'You have not watched the assigned video.';
+        $hints['questionnaire_not_watched_ems'] = 'You have not completed the assigned questionnaire.';
 
         return isset($hints[$slug]) ? $hints[$slug] : '';
     }
