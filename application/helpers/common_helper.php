@@ -1798,8 +1798,8 @@ if (!function_exists('merge_arrays_override_key_values')) {
         }
 
         foreach ($arrayTwo as $key => $value) {
-            if ($key == 'title') {
-                $result[$key] = $value;
+            if ($key === 'title' && !empty($value)) {
+                $result[$key] = $value; 
             } else if ($value != '' || $value != 0 || $value != null) {
                 $result[$key] = $value;
             } else {
