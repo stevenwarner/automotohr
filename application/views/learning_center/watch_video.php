@@ -118,35 +118,7 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
                             </div>
                         </div>
                     </div>
-                    <?php 
-                    if(!empty($job_details)) {
-                        ?>
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                <div class="hr-box">
-                                    <div class="hr-innerpadding">
-                                        <div class="pull-left">
-                                            <strong style="font-size: 20px;">Video watch status: </strong><span style="font-size: 20px;" class=" <?php echo empty($assignment['watched']) || $assignment['watched'] == 0 ? "text-danger" : "text-success"; ?>"> <?php echo empty($assignment['watched']) || $assignment['watched'] == 0 ? "Pending" : "Watched"; ?></span>
-                                            <?php if (empty($assignment['date_watched']) && $assignment['watched'] != 0) { ?>
-                                                <button type="button" class="btn btn-success btn-block mb-2 disabled" disabled="disabled">Watched on <?php echo DateTime::createFromFormat('Y-m-d H:i:s', $assignment['date_watched'])->format('m-d-Y h:i A'); ?></button>
-                                            <?php } ?>
-                                            
-                                            <div class="clearfix"></div>
-                                        </div>
-                                        <div class="pull-right">
-                                            <strong style="font-size: 20px;">Questionnaire Result: </strong><span style="font-size: 20px;" class="<?= isset($questionnaire_result) && $questionnaire_result == 'Pass' ? 'text-success' : 'text-danger'; ?>"> <?php echo isset($questionnaire_result) && !empty($questionnaire_result) ? $questionnaire_result : 'Pending'; ?></span>
-                                            <?php if (isset($questionnaire_result) && !empty($questionnaire_result)) { ?>
-                                                <button type="button" class="btn btn-success btn-block" disabled="disabled">Attempted On <?php echo DateTime::createFromFormat('Y-m-d H:i:s', $attempted_questionnaire_timestamp)->format('m-d-Y h:i A'); ?></button>
-                                            <?php } ?>
-                                            <div class="clearfix"></div>
-                                        </div>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <?php if(!empty($supported_documents)) { ?>
+                    <?php if(!empty($supported_documents)) { ?>
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="panel panel-default ems-documents">
@@ -194,6 +166,11 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
                                                                     <?php } ?>
                                                                 </td>
                                                                 <td class="col-lg-1 text-center">
+                                                                <?php
+                                                                    $links = getUploadFileLinks($document['upload_file_name']);
+                                                                ?>
+                                                                        <a href="<?=$links['download'];?>" class="btn btn-success">Download</a>
+                                                                        <a href="<?=$links['print'];?>" target="_blank" class="btn btn-success">Print</a>
                                                                     <button class="btn btn-success"
                                                                         onclick="preview_latest_generic_function(this);"
                                                                         data-title="<?php echo $document['upload_file_title']; ?>"
@@ -210,6 +187,35 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
                                 </div>
                             </div>
                         <?php } ?>
+                    <?php 
+                    if(!empty($job_details)) {
+                        ?>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="hr-box">
+                                    <div class="hr-innerpadding">
+                                        <div class="pull-left">
+                                            <strong style="font-size: 20px;">Video watch status: </strong><span style="font-size: 20px;" class=" <?php echo empty($assignment['watched']) || $assignment['watched'] == 0 ? "text-danger" : "text-success"; ?>"> <?php echo empty($assignment['watched']) || $assignment['watched'] == 0 ? "Pending" : "Watched"; ?></span>
+                                            <?php if (empty($assignment['date_watched']) && $assignment['watched'] != 0) { ?>
+                                                <button type="button" class="btn btn-success btn-block mb-2 disabled" disabled="disabled">Watched on <?php echo DateTime::createFromFormat('Y-m-d H:i:s', $assignment['date_watched'])->format('m-d-Y h:i A'); ?></button>
+                                            <?php } ?>
+                                            
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="pull-right">
+                                            <strong style="font-size: 20px;">Questionnaire Result: </strong><span style="font-size: 20px;" class="<?= isset($questionnaire_result) && $questionnaire_result == 'Pass' ? 'text-success' : 'text-danger'; ?>"> <?php echo isset($questionnaire_result) && !empty($questionnaire_result) ? $questionnaire_result : 'Pending'; ?></span>
+                                            <?php if (isset($questionnaire_result) && !empty($questionnaire_result)) { ?>
+                                                <button type="button" class="btn btn-success btn-block" disabled="disabled">Attempted On <?php echo DateTime::createFromFormat('Y-m-d H:i:s', $attempted_questionnaire_timestamp)->format('m-d-Y h:i A'); ?></button>
+                                            <?php } ?>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                       
 
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">

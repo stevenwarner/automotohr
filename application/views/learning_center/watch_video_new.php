@@ -147,6 +147,11 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
                                                                     <?php } ?>
                                                                 </td>
                                                                 <td class="col-lg-1 text-center">
+                                                                <?php
+                                                                    $links = getUploadFileLinks($document['upload_file_name']);
+                                                                ?>
+                                                                        <a href="<?=$links['download'];?>" class="btn btn-info">Download</a>
+                                                                        <a href="<?=$links['print'];?>" target="_blank" class="btn btn-info">Print</a>
                                                                     <button class="btn btn-info"
                                                                         onclick="preview_latest_generic_function(this);"
                                                                         data-title="<?php echo $document['upload_file_title']; ?>"

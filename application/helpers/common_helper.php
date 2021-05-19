@@ -13355,3 +13355,62 @@ if(!function_exists('fixEmailAddress')) {
         return trim($newEmailAddress);
     }
 }
+
+
+if(!function_exists('getUploadFileLinks')){
+    function getUploadFileLinks($file_s3_name){
+        //
+        $tmp = explode('.', $file_s3_name);
+        //
+        $file_extension          = $tmp[count($tmp) -1];
+        //
+        unset($tmp[count($tmp) -1]);
+        $document_file_name      = implode('.', $tmp);
+        $document_extension      = strtolower($file_extension);
+
+        
+
+        switch (strtolower($file_extension)) {
+            case 'pdf':
+                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'. $document_file_name .'.pdf';
+                break;
+            case 'csv':
+                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'. $document_file_name .'.csv';
+                break;
+            case 'doc':
+                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'. $document_file_name .'%2Edoc&wdAccPdf=0';
+                break;
+            case 'docx':
+                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'. $document_file_name .'%2Edocx&wdAccPdf=0';
+                break;
+            case 'ppt':
+                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'. $document_file_name .'.ppt';
+                break;
+            case 'pptx':
+                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'. $document_file_name .'.pptx';
+                break;
+            case 'xls':
+                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'. $document_file_name .'%2Exls';
+                break;
+            case 'xlsx':
+                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'. $document_file_name .'%2Exlsx';
+                break;
+            case 'jpg':
+            case 'jpe':
+            case 'jpeg':
+            case 'png':
+            case 'gif':
+            case 'JPG':
+            case 'JPE':
+            case 'JPEG':
+            case 'PNG':
+            case 'GIF':
+                $document_print_url = base_url("hr_documents_management/print_s3_image").'/'.$file_s3_name;
+            break;
+        }
+
+        $document_download_url = base_url("hr_documents_management/download_upload_document").'/'.$file_s3_name;
+
+        return ['download' => $document_download_url, 'print' => $document_print_url];
+    }
+}
