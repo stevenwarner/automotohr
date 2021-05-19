@@ -24,7 +24,6 @@ if (isset($applicant)) {
     $delete_post_url = current_url();
     $save_post_url = current_url();
 } ?>
-
 <?php 
 function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue = '', $isSelect = false){
     //
@@ -591,7 +590,7 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
     function validate_form() {
         $("#register-form").validate();
     }
-
+    
     function preview_latest_generic_function (source) {
         var document_title = $(source).attr('data-title');
         
@@ -609,7 +608,7 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
         var file_extension          = file_s3_name.substr(file_s3_name.lastIndexOf('.') + 1, file_s3_name.length);
         var document_file_name      = file_s3_name.substr(0, file_s3_name.lastIndexOf('.'));
         var document_extension      = file_extension.toLowerCase();
-        
+
 
         switch (file_extension.toLowerCase()) {
             case 'pdf':
@@ -683,19 +682,19 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
                 .attr("src", preview_image_url);
         }
         
-
         $("#latest-iframe-holder").append(model_contant);
+        //
+        footer_content = '<a target="_blank" class="btn btn-<?=$load_view ? 'info' : 'success' ;?>" href="' + document_download_url + '">Download</a>';
+        footer_content += '<a target="_blank" class="btn btn-<?=$load_view ? 'info' : 'success' ;?>" href="' + document_print_url + '">Print</a>';
+        //
+        $("#latest_document_modal_footer").html(footer_content);
         //
         if (preview_document == 1) {
             loadIframe(
-                    preview_iframe_url,
-                    '#latest_document_iframe',
-                    true
-                );
+                preview_iframe_url,
+                '#latest_document_iframe',
+                true
+            );
         }
-
-        footer_content = '<a target="_blank" class="btn btn-success" href="' + document_print_url + '">Print</a>';
-        footer_content += '<a target="_blank" class="btn btn-success" href="' + document_download_url + '">Download</a>';
-        $("#latest_document_modal_footer").html(footer_content);
     }
 </script>
