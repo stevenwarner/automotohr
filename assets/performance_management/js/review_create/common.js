@@ -206,7 +206,8 @@ const
 //
 if (window.pm.review !== undefined) {
 
-    var trigger = 'reviewees';
+    var trigger = 'schedule';
+    // var trigger = 'reviewees';
     //
     reviewOBJ.id = window.pm.review.sid;
     reviewOBJ.setTitle(window.pm.review.review_title);
@@ -218,6 +219,29 @@ if (window.pm.review !== undefined) {
     reviewOBJ.setIndexValue('departments', window.pm.review.visibility_departments != '' ? window.pm.review.visibility_departments.split(',') : [], 'visibility');
     reviewOBJ.setIndexValue('teams', window.pm.review.visibility_teams != '' ? window.pm.review.visibility_teams.split(',') : [], 'visibility');
     reviewOBJ.setIndexValue('employees', window.pm.review.visibility_employees != '' ? window.pm.review.visibility_employees.split(',') : [], 'visibility');
+    //
+    if (window.pm.review.questions != '') {
+        var questions = JSON.parse(window.pm.review.questions);
+        questions.map(function(question) {
+            reviewOBJ.setQuestions(question, 'add');
+        });
+    }
+
+    //
+    if (reviewOBJ.schedule.frequency == 'onetime') {
+        setTimeout(function() {
+            $('.jsReviewFrequency[value="onetime"]').trigger('click');
+        }, 0);
+    } else if (reviewOBJ.schedule.frequency == 'repeat') {
+        setTimeout(function() {
+            $('.jsReviewFrequency[value="repeat"]').trigger('click');
+        }, 0);
+    } else {
+        setTimeout(function() {
+            $('.jsReviewFrequency[value="custom"]').trigger('click');
+        }, 0);
+    }
+
     //
     if (reviewOBJ.schedule.frequency != 'custom') {
         //
@@ -835,7 +859,8 @@ function convertVideoToUrl(base64, questionIndex) {
  */
 function checkAndSetObj() {
     //
-    if (pm.review === undefined) return;
+    return;
+    // if (pm.review === undefined) 
     //
     reviewOBJ.id = pm.review.sid;
     //
@@ -897,8 +922,25 @@ function setEmployees() {
         $('#jsReviewSpecificReviewers').html(options).select2({ closeOnSelect: false });
         $('#jsReviewVisibilityIndividuals').html(options).select2({ closeOnSelect: false });
         //
+        if (pm.review.included_employees) {
+            //
+            var inc = JSON.parse(pm.review.included_employees);
+            //
+            $('#jsFilterIndividuals').select2('val', inc);
+        }
+        //
+        if (pm.review.excluded_employees) {
+            //
+            var exc = JSON.parse(pm.review.excluded_employees);
+            //
+            $('#jsFilterExcludeEmployees').select2('val', exc);
+        }
+        //
+        if (reviewOBJ.visibility.individuals.length > 0) {
+            $('#jsReviewVisibilityIndividuals').select2('val', reviewOBJ.visibility.individuals);
+        }
+        //
         makeEmployeeView(true);
-
         //
         if (typeof(dnt) !== 'undefined') {
             pm.departments = {};
@@ -919,6 +961,13 @@ function setEmployees() {
                 });
             });
             //
+        }
+
+        //
+        if (window.pm.review.reviewers != '') {
+            var rev = JSON.parse(window.pm.review.reviewers);
+            reviewOBJ.reviewers = rev;
+            setReviewerCount();
         }
     }
 }

@@ -47,6 +47,20 @@ $(function() {
     $('#jsQuestionUseLabels').click(makeQuestionPreview);
     $('#jsQuestionIncludeNA').click(makeQuestionPreview);
 
+    //
+    //
+    if (reviewOBJ.visibility.roles.length) {
+        $('#jsReviewVisibilityRoles').select2('val', reviewOBJ.visibility.roles);
+    }
+    //
+    if (reviewOBJ.visibility.departments.length) {
+        $('#jsReviewVisibilityDepartments').select2('val', reviewOBJ.visibility.departments);
+    }
+    //
+    if (reviewOBJ.visibility.teams.length) {
+        $('#jsReviewVisibilityTeams').select2('val', reviewOBJ.visibility.teams);
+    }
+
     /**
      * Click
      * 
@@ -1173,6 +1187,9 @@ $(function() {
             $(`.jsRevieweeRow[data-id="${i}"]`).find('.jsExcludedCount').text(e.excluded.length);
         });
     }
+
+    //
+    window.setReviewerCount = setReviewerCount;
 
     // Hide loader
     ml(false, 'create_review');
