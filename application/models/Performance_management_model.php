@@ -773,7 +773,9 @@ class Performance_management_model extends CI_Model{
                     }
                 }
                 //
-                $b[$k]['reviewers'] = $newReviewers[$v['sid']];
+                if(isset($newReviewers[$v['sid']])){
+                    $b[$k]['reviewers'] = $newReviewers[$v['sid']];
+                }
             }
             //
             $b = array_values($b);

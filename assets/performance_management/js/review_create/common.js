@@ -61,6 +61,11 @@ const
             if (this.title == '') this.targets.finishLater.addClass('dn');
             else this.targets.finishLater.removeClass('dn');
         },
+        // Set review description
+        setDescription: function(description) {
+            this.description = description;
+            this.targets.reviewDescription.val(this.description);
+        },
         // Set review questions
         setQuestions: function(questions, type, id) {
             let index;
@@ -148,7 +153,6 @@ const
             //
             loadFonts();
         },
-
         // Setters
         setReviewers: function(revieweeId, field, obj) {
             //
@@ -198,6 +202,40 @@ const
         'reviewers': loadReviewerStep,
         'questions': loadQuestionStep
     };
+
+//
+if (window.pm.review !== undefined) {
+
+    var trigger = 'reviewees';
+    //
+    reviewOBJ.id = window.pm.review.sid;
+    reviewOBJ.setTitle(window.pm.review.review_title);
+    reviewOBJ.setDescription(window.pm.review.description);
+    // Recheck the roles tab
+    reviewOBJ.setIndexValue('frequency', window.pm.review.frequency, 'schedule');
+    //    
+    reviewOBJ.setIndexValue('roles', window.pm.review.visibility_roles != '' ? window.pm.review.visibility_roles.split(',') : [], 'visibility');
+    reviewOBJ.setIndexValue('departments', window.pm.review.visibility_departments != '' ? window.pm.review.visibility_departments.split(',') : [], 'visibility');
+    reviewOBJ.setIndexValue('teams', window.pm.review.visibility_teams != '' ? window.pm.review.visibility_teams.split(',') : [], 'visibility');
+    reviewOBJ.setIndexValue('employees', window.pm.review.visibility_employees != '' ? window.pm.review.visibility_employees.split(',') : [], 'visibility');
+    //
+    if (reviewOBJ.schedule.frequency != 'custom') {
+        //
+        var startDate = moment(window.pm.review.review_start_date, 'YYYY-MM-DD').format('MM/DD/YYYY');
+        var endDate = moment(window.pm.review.review_end_date, 'YYYY-MM-DD').format('MM/DD/YYYY');
+        //
+        reviewOBJ.setIndexValue('reviewStartDate', startDate, 'schedule');
+        reviewOBJ.setIndexValue('reviewEndDate', endDate, 'schedule');
+        //
+        $('#jsReviewStartDate').val(reviewOBJ.schedule.reviewStartDate);
+        $('#jsReviewEndDate').val(reviewOBJ.schedule.reviewEndDate);
+    }
+
+    //
+    setTimeout(function() {
+        $('.jsReviewStep[data-to="' + (trigger) + '"]').trigger('click');
+    }, 0);
+}
 
 
 
@@ -914,15 +952,6 @@ function makeQuestionPreview(type){
     //
     let questionId = reviewOBJ.questions.length + 1;
     let quesionTitle = $('#jsQuestionVal'+type).val();
-
-    //
-    console.log(questionId);
-    console.log(quesionTitle);
 }
-
-
-setEmployees();
-setEmployees();
-setEmployees();
-setEmployees();
+//
 setEmployees();

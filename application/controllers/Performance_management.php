@@ -862,7 +862,7 @@ class Performance_management extends Public_Controller{
                 $ins['review_end_date'] = !empty($params['schedule']['reviewEndDate']) ? $params['schedule']['reviewEndDate'] : NULL;
                 $ins['repeat_after'] = $params['schedule']['repeatVal'];
                 $ins['repeat_type'] = $params['schedule']['repeatType'];
-                $ins['review_runs'] = empty($params['schedule']['customRuns']) ? '{}' : json_encode($params['schedule']['customRuns']);
+                $ins['review_runs'] = !isset($params['schedule']['customRuns']) || empty($params['schedule']['customRuns']) ? '{}' : json_encode($params['schedule']['customRuns']);
                 $ins['repeat_review'] = $params['schedule']['continueReview'];
                 $ins['review_due'] = $params['schedule']['reviewDue'];
                 $ins['visibility_roles'] = empty($params['visibility']) ? '' : implode(',', $params['visibility']['roles']);
@@ -915,45 +915,48 @@ class Performance_management extends Public_Controller{
                 // For Schedule
                 if($params['step'] == 'schedule'){
                     //
-                    $ins = [];
-                    $ins['review_title'] = $params['title'];
-                    $ins['description'] = $params['description'];
-                    $ins['frequency'] = $params['schedule']['frequency'];
-                    $ins['review_start_date'] = !empty($params['schedule']['reviewStartDate']) ? $params['schedule']['reviewStartDate'] : NULL;
-                    $ins['review_end_date'] = !empty($params['schedule']['reviewEndDate']) ? $params['schedule']['reviewEndDate'] : NULL;
-                    $ins['repeat_after'] = $params['schedule']['repeatVal'];
-                    $ins['repeat_type'] = $params['schedule']['repeatType'];
-                    $ins['review_runs'] = json_encode($params['schedule']['customRuns']);
-                    $ins['repeat_review'] = $params['schedule']['continueReview'];
-                    $ins['review_due'] = $params['schedule']['reviewDue'];
-                    $ins['visibility_roles'] = implode(',', $params['visibility']['roles']);
-                    $ins['visibility_departments'] = implode(',', $params['visibility']['departments']);
-                    $ins['visibility_teams'] = implode(',', $params['visibility']['teams']);
-                    $ins['visibility_employees'] = implode(',', $params['visibility']['individuals']);
+                    $upd = [];
+                    $upd['review_title'] = $params['title'];
+                    $upd['description'] = $params['description'];
+                    $upd['frequency'] = $params['schedule']['frequency'];
+                    $upd['review_start_date'] = !empty($params['schedule']['reviewStartDate']) ? $params['schedule']['reviewStartDate'] : NULL;
+                    $upd['review_end_date'] = !empty($params['schedule']['reviewEndDate']) ? $params['schedule']['reviewEndDate'] : NULL;
+                    $upd['repeat_after'] = $params['schedule']['repeatVal'];
+                    $upd['repeat_type'] = $params['schedule']['repeatType'];
+                    $upd['review_runs'] = isset($params['schedule']['customRuns']) && !empty($params['schedule']['customRuns']) ? json_encode($params['schedule']['customRuns']) : '';
+                    $upd['repeat_review'] = $params['schedule']['continueReview'];
+                    $upd['review_due'] = $params['schedule']['reviewDue'];
+                    $upd['visibility_roles'] = isset($params['visibility']['roles']) && !empty($params['visibility']['roles']) ? implode(',', $params['visibility']['roles']) : '';
+                    $upd['visibility_departments'] = isset($params['visibility']['departments']) && !empty($params['visibility']['departments']) ? implode(',', $params['visibility']['departments']) : '';
+                    $upd['visibility_teams'] = isset($params['visibility']['teams']) && !empty($params['visibility']['teams']) ? implode(',', $params['visibility']['teams']) : '';
+                    $upd['visibility_employees'] = isset($params['visibility']['individuals']) && !empty($params['visibility']['individuals']) ? implode(',', $params['visibility']['individuals']) : '';
+
                     //
-                    if($ins['frequency'] == 'custom'){
-                        $ins['repeat_after'] = 0;
-                        $ins['review_start_date'] = 
-                        $ins['review_end_date'] = ''; 
-                        $ins['repeat_type'] = 'day';
+                    if($upd['frequency'] == 'custom'){
+                        $upd['repeat_after'] = 0;
+                        $upd['review_start_date'] = 
+                        $upd['review_end_date'] = ''; 
+                        $upd['repeat_type'] = 'day';
                     } else{
-                        $ins['review_due'] = 0;
-                        $ins['review_runs'] = '[]';
-                        $ins['repeat_review'] = 0;
+                        $upd['review_due'] = 0;
+                        $upd['review_runs'] = '[]';
+                        $upd['repeat_review'] = 0;
                     }
                     //
-                    if($ins['frequency'] == 'onetime'){
-                        $ins['repeat_after'] = 0;
-                        $ins['repeat_type'] = 'day';
+                    if($upd['frequency'] == 'onetime'){
+                        $upd['repeat_after'] = 0;
+                        $upd['repeat_type'] = 'day';
                     }
                     //
-                    if(!empty($ins['review_start_date'])){
-                        $ins['review_start_date'] = formatDateToDB($ins['review_start_date']);
-                        $ins['review_end_date'] = formatDateToDB($ins['review_end_date']);
+                    if(!empty($upd['review_start_date'])){
+                        $upd['review_start_date'] = formatDateToDB($upd['review_start_date']);
+                        $upd['review_end_date'] = formatDateToDB($upd['review_end_date']);
                     } else{
-                        unset($ins['review_start_date'], $ins['review_end_date']);
+                        unset($upd['review_start_date'], $upd['review_end_date']);
                     }
-                    $ins['last_updated_by'] = $pargs['employerId'];
+                    $upd['last_updated_by'] = $pargs['employerId'];
+
+                    $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
                 }
 
                 // For Reviewees
