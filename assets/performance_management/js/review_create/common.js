@@ -222,9 +222,12 @@ if (window.pm.review !== undefined) {
     //
     if (window.pm.review.questions != '') {
         var questions = JSON.parse(window.pm.review.questions);
-        questions.map(function(question) {
-            reviewOBJ.setQuestions(question, 'add');
-        });
+        if (questions != null) {
+
+            questions.map(function(question) {
+                reviewOBJ.setQuestions(question, 'add');
+            });
+        }
     }
 
     //
