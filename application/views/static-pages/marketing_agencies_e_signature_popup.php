@@ -421,7 +421,8 @@
     </div>
 </div>
 
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<script src="<?php echo base_url('assets/js/html2canvas.min.js'); ?>"></script>
 <script src="<?php echo base_url('assets/crop/fabric.js'); ?>"></script>
 <script src="<?php echo base_url('assets/crop/darkroom.js'); ?>"></script>
 <script type="text/javascript">
@@ -785,10 +786,10 @@
                 var blank_initial = isCanvasBlank(document.getElementById('init_can'));
 
                 if (blank_initial) {
-                    f_sign = false;
+                    f_init = false;
                     alertify.error("Please Draw Your Initial");
                 } else {
-                    f_sign = true;
+                    f_init = true;
                 }
             } else if ($('input[name="active_signature"]:checked').val() == 'typed') {
 
@@ -804,10 +805,10 @@
                 var blank_initial = $('#init_signature').val();
 
                 if (blank_initial == '') {
-                    f_sign = false;
+                    f_init = false;
                     alertify.error("Please Type Your Initial");
                 } else {
-                    f_sign = true;
+                    f_init = true;
                 }
             }
             
@@ -1025,6 +1026,16 @@
             success: function (data) {
                 if(data == false){
                     $('#E_Signature_Modal').modal('show');
+                    clearAreaInit();
+                    clearArea();
+                    $('#common_e_signature').val('');
+                    $('#init_signature').val('');
+                    $('#tergit').text('');
+                    $('#init_tergit').text('');
+                    $('#tergit').removeClass();
+                    $('#tergit').addClass('e_signature_type_fixed_p e_signature_font_family_5');
+                    $('#init_tergit').removeClass();
+                    $('#init_tergit').addClass('e_signature_type_fixed_p e_signature_font_family_5');
                 }else{
                     var obj = jQuery.parseJSON(data);
                     var signature_bas64_image = obj.signature_bas64_image;
