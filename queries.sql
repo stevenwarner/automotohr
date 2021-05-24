@@ -133,3 +133,8 @@ ALTER TABLE `timeoff_policy_history` ADD `off_days` VARCHAR(225) NULL DEFAULT NU
 -- Mubashir Ahmed
 -- 05/05/2021
 INSERT INTO `timeoff_policy_icons_info` (`sid`, `slug`, `info_content`, `sort_order`) VALUES (NULL, 'week_off_days_info', 'Week Off Day(s)', '1');
+
+
+-- Mubashir Ahmed
+-- 05/24/2021
+ALTER TABLE `documents_assigned_history` ADD `upload_document_consent` TINYINT(1) NOT NULL DEFAULT '0' AFTER `is_signature_required`, ADD `upload_document_consenr_signature` LONGBLOB NULL DEFAULT NULL AFTER `upload_document_consent`;

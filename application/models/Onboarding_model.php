@@ -2408,11 +2408,9 @@ class Onboarding_model extends CI_Model {
         $this->db->where('document_type', 'offer_letter');
         $this->db->where('status', 1);
         $this->db->where('user_consent', 1);
-        // TODO
-        // Check archive check as it was removed
-        // in staging but was available on production
-        // 25/01/2021
         $this->db->where('archive', 0);
+        $this->db->order_by('uploaded_date', 'DESC');
+        $this->db->order_by('signature_timestamp', 'DESC');
 
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
@@ -2452,7 +2450,8 @@ class Onboarding_model extends CI_Model {
         $this->db->where('document_type', 'offer_letter');
         $this->db->where('status', 1);
         $this->db->where('user_consent', 1);
-        $this->db->order_by('sid', 'DESC');
+        $this->db->order_by('uploaded_date', 'DESC');
+        $this->db->order_by('signature_timestamp', 'DESC');
 
         $record_obj = $this->db->get('documents_assigned_history');
         $record_arr = $record_obj->result_array();
