@@ -111,8 +111,9 @@
                                                     <tbody>
                                                         <?php $ggit = []; ?>
                                                         <?php if (!empty($offer_letters)) { ?>
-                                                            <?php foreach ($offer_letters as $of_key => $offer_letter) { 
-                                                                $ggit[$offer_letter['letter_status'] == 'Current' ? $offer_letter['letter_sid'] : $offer_letter['sid']] = $offer_letter['document_description'];
+                                                            <?php foreach ($offer_letters as $of_key => $offer_letter) {
+                                                                $offer_letter_description = isset($offer_letter['document_description']) ? $offer_letter['document_description'] : '';
+                                                                $ggit[$offer_letter['letter_status'] == 'Current' ? $offer_letter['letter_sid'] : $offer_letter['sid']] = $offer_letter_description;
                                                             ?>
                                                                 <?php 
                                                                     //
@@ -145,18 +146,15 @@
                                                                             }
 
                                                                             if (isset($offer_letter['assigned_date']) && $offer_letter['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                echo "<br><b>Assigned On: </b>" . date('M d Y, D H:i:s', strtotime($offer_letter['assigned_date']));
+                                                                                echo "<br><b>Assigned On: </b>" . date('M d Y, D', strtotime($offer_letter['assigned_date']));
                                                                             }
 
-                                                                            if($offer_letter['letter_type'] == 'uploaded'){
+                                                                            if (isset($offer_letter['signature_timestamp']) && $offer_letter['signature_timestamp'] != '0000-00-00 00:00:00') {
+                                                                                    echo "<br><b>Signed On: </b>" . date('M d Y, D', strtotime($offer_letter['signature_timestamp']));
+                                                                            } else if($offer_letter['letter_type'] == 'uploaded'){
 
                                                                                 if (isset($offer_letter['uploaded_date']) && $offer_letter['uploaded_date'] != '0000-00-00 00:00:00') {
-                                                                                    echo "<br><b>Signed On: </b>" . date('M d Y, D H:i:s', strtotime($offer_letter['uploaded_date']));
-                                                                                }
-                                                                            } else{
-
-                                                                                if (isset($offer_letter['signature_timestamp']) && $offer_letter['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                                    echo "<br><b>Signed On: </b>" . date('M d Y, D H:i:s', strtotime($offer_letter['signature_timestamp']));
+                                                                                    echo "<br><b>Signed On: </b>" . date('M d Y, D', strtotime($offer_letter['uploaded_date']));
                                                                                 }
                                                                             }
 

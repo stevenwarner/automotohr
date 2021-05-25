@@ -966,11 +966,11 @@
                                                                         }
 
                                                                         if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                            echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
+                                                                            echo "<br><b>Assigned On: </b>" . date('M d Y, D', strtotime($document['assigned_date']));
                                                                         }
 
                                                                         if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                            echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
+                                                                            echo "<br><b>Signed On: </b>" . date('M d Y, D', strtotime($document['signature_timestamp']));
                                                                         } else {
                                                                             echo "<br><b>Signed On: </b> N/A";
                                                                         }
