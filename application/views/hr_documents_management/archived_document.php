@@ -362,6 +362,96 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- All Archived Documents -->
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_all_archived_documents" >
+                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                        All Archived Documents
+                                                        <div class="pull-right total-records"><strong><?php echo 'Total: '.count($all_documents); ?></strong></div>
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapse_all_archived_documents" class="panel-collapse collapse">
+                                                <div class="table-responsive">
+                                                    <table class="table table-plane">
+                                                        <caption></caption>
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col" class="col-xs-7">Document Name</th>
+                                                                <th scope="col" class="col-xs-2">Date Created</th>
+                                                                <th scope="col" class="col-xs-3 text-center" colspan="4">Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php 
+                                                                if(!empty($all_documents)):
+                                                                    foreach($all_documents as $document):
+                                                                        ?>
+                                                                        <tr>
+                                                                            <td class="col-xs-7"><?php echo $document['document_title']; ?></td>
+                                                                            <td class="col-xs-2">
+                                                                                <?php                                                       if ($document['date_created'] != NULL || $document['date_created'] != '') {
+                                                                                    echo reset_datetime(array('datetime' => $document['date_created'], '_this' => $this));
+                                                                                } else {
+                                                                                    echo 'N/A';
+                                                                                } ?>
+                                                                            </td>
+                                                                            <td class="col-xs-1">
+                                                                                <?php                                                       if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document')) { ?>
+                                                                                    <a href="<?php echo base_url('hr_documents_management/edit_hr_document/' . $document['sid'] . '/archive'); ?>" class="btn btn-success btn-sm btn-block">Edit Info</a>
+                                                                                <?php                                                       } ?>
+                                                                            </td>
+                                                                            <td class="col-xs-1">
+                                                                                <?php if($document['document_type'] == 'hybrid_document') { ?>
+                                                                                            <button 
+                                                                                                data-id="<?=$document['sid'];?>"
+                                                                                                class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
+                                                                                        <?php } else if ($document['document_type'] == 'uploaded') {
+                                                                                    $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
+                                                                                    $document_file = pathinfo($document_filename);
+                                                                                    $name = explode(".", $document_filename);
+                                                                                    $url_segment_original = $name[0]; ?>
+
+                                                                                    <button class="btn btn-info btn-sm btn-block"
+                                                                                            onclick="fLaunchModal(this);"
+                                                                                            data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
+                                                                                            data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
+                                                                                            data-print-url="<?php echo $url_segment_original; ?>"
+                                                                                            data-document-sid="<?php echo $document['sid']; ?>"
+                                                                                            data-file-name="<?php echo $document['uploaded_document_original_name']; ?>"
+                                                                                            data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">Preview</button>
+                                                                                <?php                                                       } else { ?>
+                                                                                    <button onclick="func_get_generated_document_preview(<?php echo $document['sid']; ?>, 'generated', '<?php echo addslashes($document['document_title']); ?>');" class="btn btn-info btn-sm btn-block">Preview</button>
+                                                                                <?php                                                       } ?>
+                                                                            </td>
+                                                                            <td class="col-xs-1">
+                                                                                <form id="form_archive_hr_document_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="activate_uploaded_document" />
+                                                                                    <input type="hidden" id="document_type" name="document_type" value="<?= $document['document_type'] ?>" />
+                                                                                    <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                </form>
+                                                                                <button class="btn btn-default btn-sm btn-block" onclick="func_unarchive_uploaded_document(<?php echo $document['sid']; ?>)">Activate</button>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <?php
+                                                                    endforeach;
+                                                                else:
+                                                                    ?>
+                                                                    <tr>
+                                                                        <td colspan="4">
+                                                                            <p class="alert alert-info text-center">No archived documents found.</p>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <?php
+                                                                endif;
+                                                            ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
