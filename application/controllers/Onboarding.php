@@ -75,7 +75,7 @@ class Onboarding extends CI_Controller {
                     foreach ($groups_assign as $value) {
                         $system_document = $this->hr_documents_management_model->get_document_group($value['group_sid']);
 
-                        if ($system_document['w4'] == 1) {
+                        if (isset($system_document['w4']) && $system_document['w4'] == 1) {
                             $is_w4_assign = $this->hr_documents_management_model->check_w4_form_exist('applicant', $applicant_sid);
                             if (empty($is_w4_assign)) {
                                 $w4_data_to_insert = array();
@@ -89,7 +89,7 @@ class Onboarding extends CI_Controller {
                             }
                         }
 
-                        if ($system_document['w9'] == 1) {
+                        if (isset($system_document['w9']) && $system_document['w9'] == 1) {
                             $is_w9_assign = $this->hr_documents_management_model->check_w9_form_exist('applicant', $applicant_sid);
 
                             if (empty($is_w9_assign)) {
@@ -104,7 +104,7 @@ class Onboarding extends CI_Controller {
                             }
                         }
 
-                        if ($system_document['i9'] == 1) {
+                        if (isset($system_document['i9']) && $system_document['i9'] == 1) {
                             $is_i9_assign = $this->hr_documents_management_model->check_i9_exist('applicant', $applicant_sid);
 
                             if (empty($is_i9_assign)) {
@@ -707,6 +707,7 @@ class Onboarding extends CI_Controller {
                                 if ($document_info['signature_required'] == 0 && $document_info['user_consent'] == 0) {
                                     $data_to_update['user_consent'] = 1;
                                     $data_to_update['form_input_data'] = 's:2:"{}";';
+                                    $data_to_update['signature_timestamp'] = date('Y-m-d');
                                 }
 
                                 $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
@@ -724,6 +725,7 @@ class Onboarding extends CI_Controller {
                             if ($document_info['signature_required'] == 0 && $document_info['user_consent'] == 0) {
                                 $data_to_update['user_consent'] = 1;
                                 $data_to_update['form_input_data'] = 's:2:"{}";';
+                                $data_to_update['signature_timestamp'] = date('Y-m-d');
                             }
                             
                             $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
@@ -754,6 +756,7 @@ class Onboarding extends CI_Controller {
                             $data_to_update = array();
                             $data_to_update['uploaded'] = 1;
                             $data_to_update['uploaded_date'] = date('Y-m-d H:i:s');
+                            $data_to_update['signature_timestamp'] = date('Y-m-d');
                             $data_to_update['user_consent'] = 1;
                             $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
                         } else {
@@ -4012,17 +4015,17 @@ class Onboarding extends CI_Controller {
         $document = $this->onboarding_model->get_required_document_info($company_sid, $user_sid, $user_type, $document_sid);
 
         if ($document['document_type'] == 'offer_letter') {
-            $document_info = $this->onboarding_model->get_assign_offer_letter_info($document['document_sid']);
-
-            if (!empty($document_info) && ($document_info['acknowledgment_required'] == 1 && $document_info['download_required'] == 1)) {
+            // $document_info = $this->onboarding_model->get_assign_offer_letter_info($document['document_sid']);
+            if (!empty($document) && ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1)) {
                 if($document['acknowledged'] == 1) {
                     $data_to_update = array();
                     $data_to_update['downloaded'] = 1;
                     $data_to_update['downloaded_date'] = date('Y-m-d H:i:s');
 
-                    if ($document_info['signature_required'] == 0 && $document['user_consent'] == 0) {
+                    if ($document['signature_required'] == 0 && $document['user_consent'] == 0) {
                         $data_to_update['user_consent'] = 1;
                         $data_to_update['form_input_data'] = 's:2:"{}";';
+                        $data_to_update['signature_timestamp'] = date('Y-m-d');
                     }
                     
                     $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
@@ -4032,14 +4035,15 @@ class Onboarding extends CI_Controller {
                     $data_to_update['downloaded_date'] = date('Y-m-d H:i:s');
                     $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
                 }
-            } else if (!empty($document_info) && ($document_info['download_required'] == 1)) {
+            } else if (!empty($document) && ($document['download_required'] == 1)) {
                 $data_to_update = array();
                 $data_to_update['downloaded'] = 1;
                 $data_to_update['downloaded_date'] = date('Y-m-d H:i:s');
 
-                if ($document_info['signature_required'] == 0 && $document['user_consent'] == 0) {
+                if ($document['signature_required'] == 0 && $document['user_consent'] == 0) {
                     $data_to_update['user_consent'] = 1;
                     $data_to_update['form_input_data'] = 's:2:"{}";';
+                    $data_to_update['signature_timestamp'] = date('Y-m-d');
                 }
 
                 $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
