@@ -149,13 +149,10 @@
                                                                                 echo "<br><b>Assigned On: </b>" . date('M d Y, D', strtotime($offer_letter['assigned_date']));
                                                                             }
 
-                                                                            if (isset($offer_letter['signature_timestamp']) && $offer_letter['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                                    echo "<br><b>Signed On: </b>" . date('M d Y, D', strtotime($offer_letter['signature_timestamp']));
-                                                                            } else if($offer_letter['letter_type'] == 'uploaded'){
-
-                                                                                if (isset($offer_letter['uploaded_date']) && $offer_letter['uploaded_date'] != '0000-00-00 00:00:00') {
-                                                                                    echo "<br><b>Signed On: </b>" . date('M d Y, D', strtotime($offer_letter['uploaded_date']));
-                                                                                }
+                                                                            if (!empty($offer_letter['signed_on'])) {
+                                                                                    echo "<br><b>Signed On: </b>" . date('M d Y, D', strtotime($offer_letter['signed_on']));
+                                                                            } else {
+                                                                                echo "<br><b>Signed On: </b> N/A";
                                                                             }
 
                                                                         ?>

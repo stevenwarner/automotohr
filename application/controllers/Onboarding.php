@@ -5556,6 +5556,28 @@ class Onboarding extends CI_Controller {
             $data['user_type'] = $user_type;
             $data['job_list_sid'] = $job_list_sid;
 
+            //
+            if(count($applicant_offer_letters)){
+                foreach($applicant_offer_letters as $key => $letter){
+                    //
+                    $applicant_offer_letters[$key]['signed_on'] = '';
+                    //
+                    if (isset($letter['signature_timestamp']) && $letter['signature_timestamp'] != '0000-00-00 00:00:00') {
+                        $applicant_offer_letters[$key]['signed_on'] = $letter['signature_timestamp'];
+                    } else if($letter['letter_type'] == 'uploaded'){
+                        if (isset($letter['uploaded_date']) && $letter['uploaded_date'] != '0000-00-00 00:00:00') {
+                            $applicant_offer_letters[$key]['signed_on'] = $letter['uploaded_date'];
+                        }
+                    }
+                }
+                //
+                function r_sort($a, $b){
+                    return $a['signed_on'] >  $b['signed_on'];
+                }
+                //
+                usort($applicant_offer_letters, 'r_sort');
+            }
+
             if (empty($applicant_offer_letters)) {
                 $is_assign = $this->onboarding_model->is_offer_letter_assign($company_sid, $user_type, $user_sid);
                 $data['is_assign'] = $is_assign;
