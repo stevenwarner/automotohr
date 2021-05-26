@@ -5572,7 +5572,7 @@ class Onboarding extends CI_Controller {
                 }
                 //
                 function r_sort($a, $b){
-                    return $a['signed_on'] >  $b['signed_on'];
+                    return $a['signed_on'] < $b['signed_on'];
                 }
                 //
                 usort($applicant_offer_letters, 'r_sort');
