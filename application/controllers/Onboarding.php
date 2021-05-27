@@ -5451,6 +5451,10 @@ class Onboarding extends CI_Controller {
                     }
                 }
 
+                usort($applicant_offer_letters, function($a, $b) {
+                    return $a['signature_timestamp'] < $b['signature_timestamp'];
+                });
+
                 $data['user_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($user_sid, $user_type);
             } else if ($user_type == 'employee') {
                 $user_info = $this->onboarding_model->get_employee_info($company_sid, $user_sid);
@@ -5548,6 +5552,10 @@ class Onboarding extends CI_Controller {
                         }
                     }
                 }
+
+                usort($applicant_offer_letters, function($a, $b) {
+                    return $a['signature_timestamp'] < $b['signature_timestamp'];
+                });
             }
 
             $data['user_info'] = $user_info;

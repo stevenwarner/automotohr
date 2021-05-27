@@ -1368,16 +1368,24 @@
 			type = $(this).data('type');
 			//
 			if(value == 'uploaded'){
+				$('.jsAddOLTypeLabel_signature').text('Upload Required');
+				$('.jsAddOLTypeHint').text('Enable the Re-Upload Required option, if you need the Employee or Onboarding Candidate to complete and Sign the document with a pen, and then upload the completed document into the system.');
 				$('.js-for-uploaded').show(0);
 				$('.js-for-generated').hide(0);
 				$('.js-template-row').hide(0);
 			} else if( value == 'generated'){
+				$('.jsAddOLTypeLabel_signature').text('Signature Required');
+				$('.jsAddOLTypeHint').text('Enable the Signature Required option, if you need the Employee or Onboarding Candidate to complete and Sign the document with a pen, and then upload the completed document into the system.');
 				$('.js-for-generated').show(0);
 				$('.js-for-uploaded').hide(0);
 				$('.js-template-row').hide(0);
 			} else if( value == 'template' ){
+				$('.jsAddOLTypeLabel_signature').text('Signature Required');
+				$('.jsAddOLTypeHint').text('Enable the Signature Required option, if you need the Employee or Onboarding Candidate to complete and Sign the document with a pen, and then upload the completed document into the system.');
 				$('.js-template-row').show(0);
 			} else if( value == 'hybrid_document'){
+				$('.jsAddOLTypeLabel_signature').text('Signature Required');
+				$('.jsAddOLTypeHint').text('Enable the Signature Required option, if you need the Employee or Onboarding Candidate to complete and Sign the document with a pen, and then upload the completed document into the system.');
 				$('.js-for-uploaded').show(0);
 				$('.js-for-generated').show(0);
 				$('.js-template-row').hide(0);
