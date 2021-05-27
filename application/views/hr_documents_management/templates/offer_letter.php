@@ -101,14 +101,14 @@
 			</div>
 			<!-- 5 -->
 			<div class="form-group">
-				<label class="jsAddOLTypeLabel">Signature Required</label>
+				<label class="jsAddOLTypeLabel jsAddOLTypeLabel_signature">Upload Required</label>
 				<div class="hr-select-dropdown">
 					<select id="js-template-signature" class="form-control">
 						<option value="0">No</option>
 						<option value="1">Yes</option>
 					</select>
 				</div>
-				<p class="help-text jsAddOLTypeP">Enable the Signature Required option, if you need the Employee or Onboarding Candidate to complete and Sign the document with a pen, and then upload the completed document into the system.</p>
+				<p class="help-text jsAddOLTypeP jsAddOLTypeHint">Enable the Signature Required option, if you need the Employee or Onboarding Candidate to complete and Sign the document with a pen, and then upload the completed document into the system.</p>
 			</div>
 			<!-- 6 -->
 			<div class="form-group">

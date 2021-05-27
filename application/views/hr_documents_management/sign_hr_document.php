@@ -271,7 +271,8 @@
                                                                 echo convert_date_to_frontend_format($document['downloaded_date']);
                                                             } 
                                                         ?>
-                                                        <a target="_blank" href="<?php echo $download_button_action; ?>" id="download_btn_click" class="btn <?php echo $download_button_css; ?> pull-right" <?php if ($document_type == 'generated' || $document_type == 'offer_letter') { ?> onclick="save_print()" <?php } ?>>
+                                                        <?php echo $document_type; ?>
+                                                        <a target="_blank" href="<?php echo $download_button_action; ?>" id="download_btn_click" class="btn <?php echo $download_button_css; ?> pull-right" onclick="save_print()">
                                                             <?php echo $download_button_txt; ?>
                                                         </a>
                                                         <a target="_blank" href="<?php echo $print_button_action; ?>" class="btn pull-right <?php echo $download_button_css; ?>" style="margin-right: 10px;" id="print_btn_click">
