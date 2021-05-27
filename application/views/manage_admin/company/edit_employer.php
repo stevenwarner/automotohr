@@ -50,6 +50,7 @@
                                                 <li>
                                                     <?php echo form_label('email', 'E-Mail Address'); ?>
                                                     <div class="hr-fields-wrap">
+                                                        <button class="btn btn-xs btn-success jsToLowerCase" style="margin-bottom: 5px;" title="Convert the email address to lower case" placement="top">To Lower Case</button>
 <?php                                                   echo form_input('email', set_value('email', $data['email']), 'class="hr-form-fileds"');
                                                         echo form_error('email'); ?>
                                                     </div>
@@ -413,3 +414,23 @@
    .select2-container-multi .select2-choices .select2-search-field{ width: auto; }
    .select2-container-multi{ padding: 0 !important; }
 </style>
+
+<script>
+    $(function(){
+        //
+        $('.jsToLowerCase').popover({
+            trigger: 'hover',
+            placement: "right auto"
+        });
+        
+        //
+        $('.jsToLowerCase').click(function(event){
+            //
+            event.preventDefault();
+            //
+            $(this).parent().find('input').val(
+                $(this).parent().find('input').val().toLowerCase().trim()
+            )
+        });
+    });
+</script>
