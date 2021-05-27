@@ -910,26 +910,48 @@ class Copy_applicants_model extends CI_Model {
         //
         $this->db
         ->select('
-            portal_job_listings.sid as job_id,
+            if(
+                portal_applicant_jobs_list.job_sid = 0, 
+                portal_applicant_jobs_list.desired_job_title, 
+                portal_job_listings.Title
+            ) as job_title, 
+            portal_applicant_jobs_list.job_sid as job_id,
             portal_job_listings.Location_City as city,
             states.state_name as State, 
-            portal_job_listings.active as job_status, 
-            portal_job_listings.Title as job_title,
+            if(
+                portal_applicant_jobs_list.job_sid = 0, 
+                "1", 
+                portal_job_listings.active
+            ) as job_status, 
+            if(
+                portal_applicant_jobs_list.job_sid = 0, 
+                "approved", 
+                portal_job_listings.status
+            ) as status,
             portal_applicant_jobs_list.sid,
-            portal_job_listings.status,
             concat(portal_job_applications.first_name," ",portal_job_applications.last_name) as full_name,
             portal_job_applications.email,
-            portal_job_applications.sid as applicant_sid '
-        )
-        ->from('portal_job_listings')
-        ->order_by('portal_job_listings.Title', 'ASC')
-        ->where('portal_job_listings.user_sid', $companyId)
-        ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.job_sid = portal_job_listings.sid','inner')
+            portal_job_applications.sid as applicant_sid
+        ')
+        ->distinct()
+        ->from('portal_applicant_jobs_list')
         ->join('portal_job_applications', 'portal_job_applications.sid =portal_applicant_jobs_list.portal_job_applications_sid ','inner')
-        ->join('states', 'portal_job_listings.Location_State=states.sid','inner');
+        ->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid','left')
+        ->join('states', 'portal_job_listings.Location_State=states.sid','left')
+        ->where('portal_applicant_jobs_list.company_sid', $companyId)
+        ->where('portal_applicant_jobs_list.archived', 0)
+        ->order_by('Title', 'ASC');
         //
-        if($applicantsStatus != -1) $this->db->where('portal_job_listings.active', $applicantsStatus);
-        else $this->db->where_in('portal_job_listings.active', array(0,1));
+        if($applicantsStatus != -1) {$this->db->where('if(
+                portal_applicant_jobs_list.job_sid = 0, 
+                "1", 
+                portal_job_listings.active
+            )', $applicantsStatus);}
+        else {$this->db->where_in('if(
+                portal_applicant_jobs_list.job_sid = 0, 
+                "1", 
+                portal_job_listings.active
+            )', array(0,1));}
         //
         $result = $this->db
         ->limit($limit, $start)
@@ -937,24 +959,34 @@ class Copy_applicants_model extends CI_Model {
         //
         $applicants = $result->result_array();
         $result = $result->free_result();
-        $applicants_array=array();
         //
-        if(!sizeof($applicants)) return false;
-        // Loop through applicants
-       
+        if(!sizeof($applicants)) {return false;}
         //
-      
-        if($page != 1) return $applicants;
+        if($page != 1) {return $applicants;}
         //
-         $this->db
-                   ->from('portal_job_listings')
-                   ->order_by('portal_job_listings.Title', 'ASC')
-                   ->where('portal_job_listings.user_sid', $companyId)
-                   ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.job_sid = portal_job_listings.sid','inner')
-                   ->join('portal_job_applications', 'portal_job_applications.sid =portal_applicant_jobs_list.portal_job_applications_sid ','inner');
-                    if($applicantsStatus != -1) $this->db->where('portal_job_listings.active', $applicantsStatus);
-                    else $this->db->where_in('portal_job_listings.active', array(0,1));
-                    $applicantsCount= $this->db->count_all_results();
+        $this->db
+            ->select('portal_applicant_jobs_list.sid')
+            ->order_by('Title', 'ASC')
+            ->where('portal_applicant_jobs_list.company_sid', $companyId)
+            ->where('portal_applicant_jobs_list.archived', 0)
+            ->distinct()
+            ->from('portal_applicant_jobs_list')
+            ->join('portal_job_applications', 'portal_job_applications.sid =portal_applicant_jobs_list.portal_job_applications_sid','inner')
+            ->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid','left')
+            ->join('states', 'portal_job_listings.Location_State=states.sid','left');
+
+        if($applicantsStatus != -1) {$this->db->where('if(
+                portal_applicant_jobs_list.job_sid = 0, 
+                "1", 
+                portal_job_listings.active
+            )', $applicantsStatus);}
+        else {$this->db->where_in('if(
+                portal_applicant_jobs_list.job_sid = 0, 
+                "1", 
+                portal_job_listings.active
+            )', array(0,1));}
+        //
+        $applicantsCount = $this->db->count_all_results();
         //
         return array( 'Applicants' => $applicants, 'ApplicantsCount' => $applicantsCount );
 
