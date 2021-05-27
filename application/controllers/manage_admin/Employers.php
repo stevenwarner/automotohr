@@ -663,8 +663,17 @@ ini_set('display_errors', 1);
         $post = $this->input->post(NULL, TRUE);
         //
         $this->form_validation->set_message('email_check', 'The %s already exists.');
+        //
         if(!isset($email)){
             return false;
+        }
+        //
+        if(isset($post['sid'])){
+            $parent_sid = $this->db
+            ->select('parent_sid')
+            ->where('sid', $post['sid'])
+            ->get('users')
+            ->row_array()['parent_sid'];
         }
         //
         $this->db
@@ -672,7 +681,9 @@ ini_set('display_errors', 1);
         //
         if(isset($post['sid'])){
             $this->db->where('sid <> ', $post['sid']);
+            $this->db->where('parent_sid', $parent_sid);
         }
+        //
         if($this->db->count_all_results('users')){
             return false;
         }
