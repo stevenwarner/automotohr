@@ -297,7 +297,7 @@ class employers extends Admin_Controller {
         }
 
         if ($employer_detail[0]['email'] != $this->input->post('email')) {
-            $this->form_validation->set_rules('email', 'E-Mail Address', 'trim|xss_clean|valid_email|is_unique[users.email]');
+            $this->form_validation->set_rules('email', 'E-Mail Address', 'trim|xss_clean|valid_email|callback_email_check');
         } else {
             $this->form_validation->set_rules('email', 'E-Mail Address', 'trim|xss_clean|valid_email');
         }
@@ -655,5 +655,28 @@ ini_set('display_errors', 1);
         } else {
             echo 'error';
         }
+    }
+
+    //
+    function email_check($email){
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->form_validation->set_message('email_check', 'The %s already exists.');
+        if(!isset($email)){
+            return false;
+        }
+        //
+        $this->db
+        ->where('LOWER(email)', strtolower($email));
+        //
+        if(isset($post['sid'])){
+            $this->db->where('sid <> ', $post['sid']);
+        }
+        if($this->db->count_all_results('users')){
+            return false;
+        }
+        //
+        return true;
     }
 }
