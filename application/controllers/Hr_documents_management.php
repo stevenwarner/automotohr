@@ -8858,6 +8858,7 @@ ini_set('memory_limit', -1);
 
     // 
     function offer_letter_add(){
+
         //
         $resp = array(
             'Status' => FALSE,
@@ -8955,8 +8956,13 @@ ini_set('memory_limit', -1);
                     $t = explode('.', $a['document_s3_name']);
                     $a['document_extension'] = $t[sizeof($t) - 1];
                 }
-                $a['is_required'] = $post['isRequired'];
-                $a['is_signature_required'] = $post['isSignatureRequired'];
+                $a['acknowledgment_required'] = $post['acknowledgment'];
+                $a['download_required'] = $post['download'];
+                $a['signature_required'] = $post['signature'];
+                $a['is_required'] = 1;
+                // $a['is_required'] = $post['isRequired'];
+                $a['is_signature_required'] = 0;
+                // $a['is_signature_required'] = $post['isSignatureRequired'];
                 //
                 $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
                 //
