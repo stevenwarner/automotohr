@@ -5196,6 +5196,9 @@ class Onboarding extends CI_Controller {
             $data['assignedOfferLetter'] = sizeof($assigned_offer_letter) ? $assigned_offer_letter : [];
 
             $data['managers_list'] = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, $employer_sid);
+            // Get departments & teams
+            $data['departments'] = $this->hr_documents_management_model->getDepartments($company_sid);
+            $data['teams'] = $this->hr_documents_management_model->getTeams($company_sid, $data['departments']);
             $data['title'] = 'Assign Offer Letter / Pay Plan';
             $data['user_sid'] = $user_sid;
             $data['user_type'] = $user_type;
@@ -5227,9 +5230,12 @@ class Onboarding extends CI_Controller {
                 $letter_body = $this->input->post('letter_body');
                 $offer_letter_type = $this->input->post('letter_type');
 
+                $post = $this->input->post(NULL, TRUE);
+
+                
                 if (!empty($letter_body) || $offer_letter_type == "uploaded") {
                     $offer_letter_title = $this->hr_documents_management_model->get_assigned_offer_letter_title($offer_letter_sid);
-
+                    
                     $letter_name = $offer_letter_title;
                     $data_to_insert = array();
                     $data_to_insert['company_sid'] = $company_sid;
@@ -5292,6 +5298,29 @@ class Onboarding extends CI_Controller {
                     $verification_key = random_key(80);
                     $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
                     $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
+                    //
+                    $visibilityArray = [];
+                    //
+                    if(isset($post['selected_roles'])){
+                        $visibilityArray['is_available_for_na'] = $post['selected_roles'];
+                    }
+                    //
+                    if(isset($post['selected_employees'])){
+                        $visibilityArray['allowed_employees'] = $post['selected_employees'];
+                    }
+                    //
+                    if(isset($post['selected_department'])){
+                        $visibilityArray['allowed_departments'] = $post['selected_department'];
+                    }
+                    //
+                    if(isset($post['selected_teams'])){
+                        $visibilityArray['allowed_teams'] = $post['selected_teams'];
+                    }
+                    //
+                    if(!empty($visibilityArray)){
+                        //
+                        $this->hr_documents_management_model->updateOfferLetter($visibilityArray, $offer_letter_sid);
+                    }
                     //
                     $signers = $this->input->post('js-signers');
                     // Managers handling

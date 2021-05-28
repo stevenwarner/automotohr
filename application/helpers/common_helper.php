@@ -13414,3 +13414,64 @@ if(!function_exists('getUploadFileLinks')){
         return ['download' => $document_download_url, 'print' => $document_print_url];
     }
 }
+
+
+//
+if(!function_exists('has_approval')){
+    function has_approval($roles, $departments, $teams, $employees, $loggedin_user){
+        // Check for plus
+        if($loggedin_user['access_level_plus']){
+            return true;
+        }
+
+        // Check for roles
+        if(!empty($roles)){
+            if(in_array( stringToSlug($loggedin_user['access_level']), explode(',', $roles) )){
+                return true;
+            }
+        }
+
+       // Check for employee
+        if(!empty($employees)){
+            if(in_array( stringToSlug($loggedin_user['user_id']), explode(',', $employees) )){
+                return true;
+            }
+        }
+
+        // 
+        $CI = &get_instance();
+        //
+        if(!empty($departments)){
+            if(
+                $CI->db
+                ->from('departments_management')
+                ->where('FIND_IN_SET("'.($loggedin_user['user_id']).'", supervisor) > 0', NULL, NULL)
+                ->where_in('sid', explode(',', $departments))
+                ->where('status', 1)
+                ->where('is_deleted', 0)
+                ->count_all_results()
+            ){
+                return true;
+            }
+        }
+        
+        //
+        if(!empty($teams)){
+            if(
+                $CI->db
+                ->from('departments_team_management')
+                ->where('FIND_IN_SET("'.($loggedin_user['user_id']).'", team_lead) > 0', NULL, NULL)
+                ->where_in('sid', explode(',', $teams))
+                ->where('status', 1)
+                ->where('is_deleted', 0)
+                ->count_all_results()
+            ){
+                return true;
+            }
+        }
+
+        //
+        return false;
+
+    }
+}

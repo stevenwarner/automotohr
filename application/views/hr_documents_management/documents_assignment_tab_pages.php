@@ -225,7 +225,18 @@
                         </div>
                     <?php } ?>
                     <!--  -->
-                    <?php if (sizeof($uncompleted_offer_letter)) { ?>
+                    <?php if (sizeof($uncompleted_offer_letter) && 
+                        has_approval(
+                            $uncompleted_offer_letter[0]['is_available_for_na'],
+                            $uncompleted_offer_letter[0]['allowed_departments'],
+                            $uncompleted_offer_letter[0]['allowed_teams'],
+                            $uncompleted_offer_letter[0]['allowed_employees'], [
+                                'user_id' => $session['employer_detail']['sid'],
+                                'access_level_plus' => $session['employer_detail']['access_level_plus'],
+                                'access_level' => $session['employer_detail']['access_level']
+                            ]
+                        )
+                    ) {?>
                         <div class="row">
                             <div class="col-xs-12">
                                 <br />
@@ -924,7 +935,17 @@
                         <td colspan="7" class="col-lg-12 text-center"><b class="js-error">No Document(s) Found!</b></td>
                     <?php } ?>
 
-                    <?php if (sizeof($completed_offer_letter)) { ?>
+                    <?php if (sizeof($completed_offer_letter)  && 
+                        has_approval(
+                            $completed_offer_letter[0]['is_available_for_na'],
+                            $completed_offer_letter[0]['allowed_departments'],
+                            $completed_offer_letter[0]['allowed_teams'],
+                            $completed_offer_letter[0]['allowed_employees'], [
+                                'user_id' => $session['employer_detail']['sid'],
+                                'access_level_plus' => $session['employer_detail']['access_level_plus'],
+                                'access_level' => $session['employer_detail']['access_level']
+                            ]
+                        )) { ?>
                         <div class="row">
                             <div class="col-xs-12">
                                 <br />

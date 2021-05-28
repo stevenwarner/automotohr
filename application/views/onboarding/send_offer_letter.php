@@ -1,3 +1,15 @@
+<?php
+    $currentOfferLetter = [];
+    //
+    if(isset($assigned_offer_letter_sid)){
+        foreach($offer_letters as $l){
+            if($l['sid'] == $assigned_offer_letter_sid){
+                $currentOfferLetter = $l;
+                break;
+            }
+        }
+    }
+?>
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
@@ -139,6 +151,65 @@
                                                     </div>
                                                 </div>        
                                             </div>  
+                                            <!-- Visibility Block -->
+                                            <div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <label>Roles</label>
+                                                        <select name="selected_roles" id="jsRoles" multiple>
+                                                        <?php
+                                                            foreach(['hiring_manager' => "Hiring Manager", "manager" => "Manager", "admin" => "Admin"] as $k => $v){
+                                                                ?>
+                                                                <option value="<?=$k;?>" <?=in_array($k, empty($currentOfferLetter['is_available_for_na']) ? [] :  explode(',', $currentOfferLetter['is_available_for_na'])) ? 'selected' : '';?>><?=$v?></option>
+                                                                <?php
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <label>Departments</label>
+                                                        <select name="selected_departments" id="jsDepartment" multiple>
+                                                        <?php
+                                                            foreach($departments as $v){
+                                                                ?>
+                                                                <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], empty($currentOfferLetter['allowed_departments']) ? [] :  explode(',', $currentOfferLetter['allowed_departments'])) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                                                <?php
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <label>Teams</label>
+                                                        <select  name="selected_teams" id="jsTeams" multiple>
+                                                        <?php
+                                                            foreach($teams as $v){
+                                                                ?>
+                                                                <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], empty($currentOfferLetter['allowed_teams']) ? [] :  explode(',', $currentOfferLetter['allowed_teams'])) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                                                <?php
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <label>Employees</label>
+                                                        <select  name="selected_employees" id="jsEmployees" multiple>
+                                                        <?php
+                                                            foreach($managers_list as $emp){
+                                                                ?>
+                                                                <option value="<?=$emp['sid'];?>" <?=in_array($emp['sid'], empty($currentOfferLetter['allowed_employees']) ? [] :  explode(',', $currentOfferLetter['allowed_employees'])) ? 'selected' : '';?>><?=remakeEmployeeName($emp);?></option>
+                                                                <?php
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             <div id="generated_offer_letter" style="display: none">
                                                 <div class="row">
@@ -159,7 +230,7 @@
                                                                 <?php 
                                                                     if(sizeof($managers_list)){
                                                                         foreach ($managers_list as $key => $value) {
-                                                                            echo '<option value="'.( $value['sid'] ).'">'.( remakeEmployeeName($value) ).'</option>';
+                                                                            echo '<option value="'.( $value['sid'] ).'" '.( in_array($value['sid'], empty($currentOfferLetter['signers']) ? [] :  explode(',', $currentOfferLetter['signers'])) ? 'selected' : '' ).'>'.( remakeEmployeeName($value) ).'</option>';
                                                                         }
                                                                     }
                                                                 ?>
@@ -535,6 +606,15 @@
             });
     };
     
+
+
+    $(function(){
+        // 
+        $('#jsRoles').select2({closeOnSelect: false});
+        $('#jsDepartment').select2({closeOnSelect: false});
+        $('#jsTeams').select2({closeOnSelect: false});
+        $('#jsEmployees').select2({closeOnSelect: false});
+    });
 </script>
 <style>
     .select2-container--default .select2-selection--single{
