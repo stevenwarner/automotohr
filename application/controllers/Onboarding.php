@@ -687,6 +687,21 @@ class Onboarding extends CI_Controller {
             }
         } else {
             $perform_action = $this->input->post('perform_action');
+            $applicant_sid = $onboarding_details['applicant_sid'];
+            $company_info = $onboarding_details['company_info'];
+
+            $document = $this->hr_documents_management_model->get_assigned_document('applicant', $applicant_sid, $document_sid, $doc);
+
+            $is_authorized_document = 'no';
+
+            if (!empty($document['document_description'])) {
+                $magic_authorized_codes = array('{{authorized_signature}}', '{{authorized_signature_date}}');
+                $document_body = $document['document_description'];
+
+                if (str_replace($magic_authorized_codes, '', $document_body) != $document_body) {
+                    $is_authorized_document = 'yes';
+                }
+            }
 
             switch ($perform_action) {
                 case 'acknowledge_document':
@@ -708,9 +723,15 @@ class Onboarding extends CI_Controller {
                                     $data_to_update['user_consent'] = 1;
                                     $data_to_update['form_input_data'] = 's:2:"{}";';
                                     $data_to_update['signature_timestamp'] = date('Y-m-d');
+
+                                    if ($is_authorized_document == 'yes') {
+                                        $this->sendEmailToManager($document_sid, $user_sid, $company_info);
+                                    }
                                 }
 
                                 $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
+
+
                             } else{
                                 $data_to_update = array();
                                 $data_to_update['acknowledged'] = 1;
@@ -726,6 +747,10 @@ class Onboarding extends CI_Controller {
                                 $data_to_update['user_consent'] = 1;
                                 $data_to_update['form_input_data'] = 's:2:"{}";';
                                 $data_to_update['signature_timestamp'] = date('Y-m-d');
+
+                                if ($is_authorized_document == 'yes') {
+                                    $this->sendEmailToManager($document_sid, $applicant_sid, $company_info);
+                                }
                             }
                             
                             $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
@@ -759,6 +784,10 @@ class Onboarding extends CI_Controller {
                             $data_to_update['signature_timestamp'] = date('Y-m-d');
                             $data_to_update['user_consent'] = 1;
                             $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
+
+                            if ($is_authorized_document == 'yes') {
+                                $this->sendEmailToManager($document_sid, $applicant_sid, $company_info);
+                            }
                         } else {
                             $this->hr_documents_management_model->update_upload_status($company_sid, $user_type, $user_sid, $document_type, $document_sid, $uploaded_file);
                         }
@@ -811,9 +840,42 @@ class Onboarding extends CI_Controller {
                     $data_to_update['signature_timestamp'] = date('Y-m-d H:i:s');
                     $data_to_update['form_input_data'] = $save_input_values;
                     $this->hr_documents_management_model->update_assigned_documents($document_sid, $users_sid, $users_type, $data_to_update);
+
+                    if ($is_authorized_document == 'yes') {
+                        $this->sendEmailToManager($document_sid, $applicant_sid, $company_info);
+                    }
+
                     $this->session->set_flashdata('message', '<b>Success: </b> You Have Successfully Signed This Document!');
                     redirect('onboarding/sign_hr_document/' . $doc . '/' . $unique_sid . '/' . $document_sid, 'refresh');
                     break;
+            }
+        }
+    }
+
+    function sendEmailToManager($document_sid, $applicant_sid, $company_info){
+        $applicant_name = get_applicant_name($applicant_sid);
+        $company_name = $company_info['CompanyName'];
+        $company_sid = $company_info['sid'];
+        //
+        $assign_managers = $this->hr_documents_management_model->getAllAuthorizedAssignManagers($company_sid, $document_sid);
+
+        $employee_name = getUserNameBySID($employer_sid);
+
+        $email_template_id = $this->hr_documents_management_model->getAuthorizedManagerTemplate('Authorized Manager Notification');
+
+        $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('view_assigned_authorized_document/' . $document_sid) . '">Assign Authorized Document</a>';
+
+        if (!empty($assign_managers)) {
+            foreach ($assign_managers as $manager) {
+                $replacement_array['first_name'] = $manager['first_name'];
+                $replacement_array['last_name'] = $manager['last_name'];
+                $replacement_array['employee_name'] = $applicant_name;
+                $replacement_array['link'] = $link_html;
+                $to_email = $manager['email'];
+
+                $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
+
+                log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
             }
         }
     }
