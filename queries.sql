@@ -138,3 +138,6 @@ INSERT INTO `timeoff_policy_icons_info` (`sid`, `slug`, `info_content`, `sort_or
 -- Mubashir Ahmed
 -- 05/24/2021
 ALTER TABLE `documents_assigned_history` ADD `upload_document_consent` TINYINT(1) NOT NULL DEFAULT '0' AFTER `is_signature_required`, ADD `upload_document_consenr_signature` LONGBLOB NULL DEFAULT NULL AFTER `upload_document_consent`;
+
+
+INSERT INTO `email_templates` (`name`, `group`, `from_name`, `from_email`, `cc`, `subject`, `file`, `text`, `user_defined`, `template_code`, `status`) VALUES ('Authorized Manager Notification', 'other', 'AutomotoHr', 'accounts@automotohr.com', '', 'Assign Authorized Document Complete', NULL, '<p>Dear {{first_name}}, {{last_name}}</p>\r\n\r\n<p>This email is to inform you that<strong> {{employee_name}}  </strong>has completed and signed their assigned authorized document.</p>\r\n\r\n<p>You can review and signed to complete the process from their {{link}}.</p>\r\n\r\n<p>Thank you,</p>\r\n\r\n<p>The AutomotoHR Team</p>\r\n\r\n<p><strong>**This is an automated email, please do not reply**</strong></p>\r\n\r\n<p> </p>\r\n\r\n<p> </p>', '1', NULL, '1');

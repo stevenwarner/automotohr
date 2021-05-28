@@ -5882,4 +5882,34 @@ class Hr_documents_management_model extends CI_Model {
         
         $this->db->update('authorized_document_assigned_manager', $data_to_update);
     }
+
+     function getAllAuthorizedAssignManagers ($company_sid, $document_sid) {
+        $this->db->select('users.first_name, users.last_name, users.email');
+        $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
+        $this->db->where('authorized_document_assigned_manager.document_assigned_sid', $document_sid);
+        $this->db->join('users','users.sid = authorized_document_assigned_manager.assigned_to_sid','inner');
+        $record_obj = $this->db->get('authorized_document_assigned_manager');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+    function getAuthorizedManagerTemplate ($name) {
+        $this->db->select('sid');
+        $this->db->where('name', $name);
+        $record_obj = $this->db->get('email_templates');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr['sid'];
+        } else {
+            return array();
+        }
+    }
 }
