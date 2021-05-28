@@ -683,7 +683,12 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function get_assigned_offer_letter($company_sid, $user_type, $user_sid = null, $status = 1) {
-        $this->db->select('documents_assigned.*,offer_letter.acknowledgment_required,offer_letter.download_required,offer_letter.signature_required');
+        $this->db->select('documents_assigned.*,offer_letter.acknowledgment_required,offer_letter.download_required,offer_letter.signature_required, 
+        offer_letter.is_available_for_na,
+        offer_letter.allowed_teams,
+        offer_letter.allowed_departments,
+        offer_letter.allowed_employees,
+        offer_letter.signers');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('documents_assigned.user_type', $user_type);
         $this->db->where('documents_assigned.user_sid', $user_sid);
@@ -698,7 +703,13 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function get_assigned_offers($company_sid, $user_type, $user_sid = null, $status = 1) {
-        $this->db->select('documents_assigned.*,offer_letter.acknowledgment_required,offer_letter.download_required,offer_letter.signature_required');
+        $this->db->select('documents_assigned.*,offer_letter.acknowledgment_required,offer_letter.download_required,offer_letter.signature_required, 
+            offer_letter.is_available_for_na,
+            offer_letter.allowed_teams,
+            offer_letter.allowed_departments,
+            offer_letter.allowed_employees,
+            offer_letter.signers
+        ');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -717,7 +728,12 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function get_current_assigned_offer_letter($company_sid, $user_type, $user_sid = null, $status = 1) {
-        $this->db->select('documents_assigned.*,offer_letter.acknowledgment_required,offer_letter.download_required,offer_letter.signature_required, offer_letter.letter_type');
+        $this->db->select('documents_assigned.*,offer_letter.acknowledgment_required,offer_letter.download_required,offer_letter.signature_required, offer_letter.letter_type, 
+        offer_letter.is_available_for_na,
+        offer_letter.allowed_teams,
+        offer_letter.allowed_departments,
+        offer_letter.allowed_employees,
+        offer_letter.signers');
         if(ASSIGNEDOCIMPL) $this->db->select('documents_assigned.acknowledgment_required,documents_assigned.download_required,documents_assigned.signature_required');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -5881,5 +5897,30 @@ class Hr_documents_management_model extends CI_Model {
         }
         
         $this->db->update('authorized_document_assigned_manager', $data_to_update);
+    }
+
+
+    //
+    function getDocumentType($assignedDocumentId){
+        $a =
+        $this->db
+        ->select("offer_letter_type")
+        ->from("documents_assigned")
+        ->where("sid", $assignedDocumentId)
+        ->get()
+        ->row_array();
+        //
+        if(empty($a['offer_letter_type'])){
+            return 'document';
+        } else{
+            return 'offer_letter';
+        }
+    }
+
+    //
+    function updateOfferLetter($data, $id){
+        $this->db
+        ->where('sid', $id)
+        ->update('offer_letter', $data);
     }
 }

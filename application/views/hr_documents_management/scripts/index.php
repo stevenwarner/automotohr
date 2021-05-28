@@ -982,7 +982,66 @@
 				'<button class="btn btn-success js-save-offer-letter" data-value="save_assign">Save / Assign Offer Letter</button>',
 				'js-popup',
 				['js-template-body', 'js-template-guidence'],
-				['#js-template-signers', '#js-templates-add']
+				['#js-template-signers', '#js-templates-add'],
+				function(){
+					//
+					var 
+					rolesRows = '',
+					departmentRows = '',
+					teamsRows = '',
+					employeeRows = '';
+					//
+					$.each(rolesList, function(i, v){
+						//
+						rolesRows += '<option value="'+(i)+'">'+(v)+'</option>';
+					});
+					
+					//
+					departmentList.map(function(v){
+						//
+						departmentRows += '<option value="'+(v.sid)+'">'+(v.name)+'</option>';
+					});
+					
+					//
+					teamList.map(function(v){
+						//
+						teamsRows += '<option value="'+(v.sid)+'">'+(v.name)+'</option>';
+					});
+					
+					//
+					employeeList.map(function(v){
+						//
+						employeeRows += '<option value="'+(v.sid)+'">'+(remakeEmployeeName(v))+'</option>';
+					});
+					
+					//
+					$('#js-roles-offer-letter-add')
+					.html(rolesRows)
+					.select2({
+						closeOnSelect: false
+					});
+
+					//
+					$('#js-department-offer-letter-add')
+					.html(departmentRows)
+					.select2({
+						closeOnSelect: false
+					});
+
+					//
+					$('#js-teams-offer-letter-add')
+					.html(teamsRows)
+					.select2({
+						closeOnSelect: false
+					});
+
+					//
+					$('#js-employees-offer-letter-add')
+					.html(employeeRows)
+					.select2({
+						closeOnSelect: false
+					});
+				}
 			);
 			//
 			$('.js-template-type[value="uploaded"]').click();
@@ -1000,6 +1059,7 @@
 			e.preventDefault();
 			//
 			var d = getOfferLetter($(this).data('id'));
+			console.log(d);
 			var o = getOfferLetterBody('edit');
 			//
 			currentOfferLetter = d;
@@ -1016,6 +1076,70 @@
 					if(d.signers != null){
 						$('#js-template-signers-edit').select2('val', d.signers.split(','));
 					}
+					//
+					var 
+					rolesRows = '',
+					departmentRows = '',
+					teamsRows = '',
+					employeeRows = '';
+					//
+					$.each(rolesList, function(i, v){
+						//
+						rolesRows += '<option value="'+(i)+'">'+(v)+'</option>';
+					});
+					
+					//
+					departmentList.map(function(v){
+						//
+						departmentRows += '<option value="'+(v.sid)+'">'+(v.name)+'</option>';
+					});
+					
+					//
+					teamList.map(function(v){
+						//
+						teamsRows += '<option value="'+(v.sid)+'">'+(v.name)+'</option>';
+					});
+					
+					//
+					employeeList.map(function(v){
+						//
+						employeeRows += '<option value="'+(v.sid)+'">'+(remakeEmployeeName(v))+'</option>';
+					});
+					
+					//
+					$('#js-roles-offer-letter-edit')
+					.html(rolesRows)
+					.select2({
+						closeOnSelect: false
+					});
+
+					//
+					$('#js-department-offer-letter-edit')
+					.html(departmentRows)
+					.select2({
+						closeOnSelect: false
+					});
+
+					//
+					$('#js-teams-offer-letter-edit')
+					.html(teamsRows)
+					.select2({
+						closeOnSelect: false
+					});
+
+					//
+					$('#js-employees-offer-letter-edit')
+					.html(employeeRows)
+					.select2({
+						closeOnSelect: false
+					});
+					
+					// Set the predefault
+					$('#js-roles-offer-letter-edit').select2('val', d.is_available_for_na != '' || d.is_available_for_na == null ? d.is_available_for_na.split(',') : null);
+					$('#js-department-offer-letter-edit').select2('val', d.allowed_departments != '' || d.allowed_departments == null ? d.allowed_departments.split(',') : null);
+					$('#js-teams-offer-letter-edit').select2('val', d.allowed_teams != '' || d.allowed_teams == null ? d.allowed_teams.split(',') : null);
+					$('#js-employees-offer-letter-edit').select2('val', d.allowed != '' || d.allowed == null ? d.allowed.split(',') : null);
+
 				}
 			);
 			//
@@ -1044,11 +1168,16 @@
 			//
 			obj.title += '<i class="fa fa-file-text-o"></i>&nbsp;&nbsp;';
 			obj.title += 'Upload/Generate an Offer Letter / Pay Plan';
+			
 			//
-			if(type == 'add')
-			obj.body += `<?php $this->load->view('hr_documents_management/templates/offer_letter', ['offer_letters' => $offerLetters]); ?>`;
-			else if(type == 'edit')
-			obj.body += `<?php $this->load->view('hr_documents_management/templates/offer_letter_edit', ['offer_letters' => $offerLetters]); ?>`;
+			if(type == 'add'){
+				//
+				obj.body += `<?php $this->load->view('hr_documents_management/templates/offer_letter', ['offer_letters' => $offerLetters]); ?>`;
+				//
+			}
+			else if(type == 'edit'){
+				obj.body += `<?php $this->load->view('hr_documents_management/templates/offer_letter_edit', ['offer_letters' => $offerLetters]); ?>`;
+			}
 
 			return obj;
 		}
@@ -1096,7 +1225,12 @@
 				isRequired : $('.js-template-required:checked').val(),
 				isSignatureRequired : $('.js-template-signature-required:checked').val(),
 				assign : $(this).data('value'),
-				fromTemplate: false
+				fromTemplate: false,
+				// Visibility
+				roles : $('#js-roles-offer-letter-add').val(),
+				departments : $('#js-department-offer-letter-add').val(),
+				teams : $('#js-teams-offer-letter-add').val(),
+				employees : $('#js-employees-offer-letter-add').val()
 			};
 			//
 			if(o.type == 'template') {
@@ -1187,7 +1321,13 @@
 				acknowledgment : $('#js-template-acknowledgment-edit').val(),
 				isRequired : $('.js-template-required-edit:checked').val(),
 				isSignatureRequired : $('.js-template-signature-required-edit:checked').val(),
-				sortOrder : $('#js-template-sort-order-edit').val().trim()
+				sortOrder : $('#js-template-sort-order-edit').val().trim(),
+				
+				// Visibility
+				roles : $('#js-roles-offer-letter-edit').val(),
+				departments : $('#js-department-offer-letter-edit').val(),
+				teams : $('#js-teams-offer-letter-edit').val(),
+				employees : $('#js-employees-offer-letter-edit').val()
 			};
 			//
 			var proceed = true;

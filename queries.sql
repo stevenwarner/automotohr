@@ -138,3 +138,8 @@ INSERT INTO `timeoff_policy_icons_info` (`sid`, `slug`, `info_content`, `sort_or
 -- Mubashir Ahmed
 -- 05/24/2021
 ALTER TABLE `documents_assigned_history` ADD `upload_document_consent` TINYINT(1) NOT NULL DEFAULT '0' AFTER `is_signature_required`, ADD `upload_document_consenr_signature` LONGBLOB NULL DEFAULT NULL AFTER `upload_document_consent`;
+
+
+-- Mubashir Ahmed
+-- 05/28/2021
+ALTER TABLE `offer_letter` ADD `is_available_for_na` TEXT NULL AFTER `signers`, ADD `allowed_teams` TEXT NULL AFTER `is_available_for_na`, ADD `allowed_departments` TEXT NULL AFTER `allowed_teams`, ADD `allowed_employees` TEXT NULL AFTER `allowed_departments`;

@@ -90,6 +90,22 @@
 				<label>Sort Order</label>
 				<input type="text" class="form-control" id="js-template-sort-order-edit" />
 			</div>
+			<!-- 8 -->
+			<div class="form-group">
+				<label>Visibility</label>
+				<!--  -->
+				<label>Roles</label>
+				<select id="js-roles-offer-letter-edit" multiple></select>
+				<!--  -->
+				<label>Departments</label>
+				<select id="js-department-offer-letter-edit" multiple></select>
+				<!--  -->
+				<label>Teams</label>
+				<select id="js-teams-offer-letter-edit" multiple></select>
+				<!--  -->
+				<label>Individual Employees</label>
+				<select id="js-employees-offer-letter-edit" multiple></select>
+			</div>
 			<!-- 7 -->
 			<div class="form-group js-for-generated">
 				<label>Authorized Management Signers</label>

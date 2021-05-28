@@ -8907,6 +8907,12 @@ ini_set('memory_limit', -1);
             $ins['uploaded_document_s3_name'] = $s3Name;
             $ins['uploaded_document_original_name'] = $post['file']['name'];
         }
+        // Visibility
+        $ins['allowed_employees'] = isset($post['employees']) ? $post['employees'] : '';
+        $ins['allowed_departments'] = isset($post['departments']) ? $post['departments'] : '';
+        $ins['allowed_teams'] = isset($post['teams']) ? $post['teams'] : '';
+        $ins['is_available_for_na'] = isset($post['roles']) ? $post['roles'] : '';
+        $ins['signers'] = isset($post['signers']) ? $post['signers'] : '';
         //
         $insertId = $this->hr_documents_management_model->insertOfferLetterSpecific($ins);
         //
@@ -9062,6 +9068,11 @@ ini_set('memory_limit', -1);
             $ins['uploaded_document_s3_name'] = $s3Name;
             $ins['uploaded_document_original_name'] = $_FILES['file']['name'];
         }
+        // Visibility
+        $ins['allowed_employees'] = isset($post['employees']) ? $post['employees'] : '';
+        $ins['allowed_departments'] = isset($post['departments']) ? $post['departments'] : '';
+        $ins['allowed_teams'] = isset($post['teams']) ? $post['teams'] : '';
+        $ins['is_available_for_na'] = isset($post['roles']) ? $post['roles'] : '';
         //
         $this->hr_documents_management_model->updateOfferLetterSpecific($ins, $post['sid']);
         //
@@ -9957,14 +9968,28 @@ ini_set('memory_limit', -1);
                 $a['document_s3_name'] = $uploaded_document_s3_name;
             }
         }
+        // Get the document type
+        $documentType = $this->hr_documents_management_model->getDocumentType($post['documentSid']);
+
         //
-        $this->hr_documents_management_model->updateMainDocument([
-            'is_available_for_na' => $post['selected_roles'],
-            'allowed_employees' => $post['selected_employees'],
-            'allowed_departments' => $post['selected_departments'],
-            'allowed_teams' => $post['selected_teams'],
-            'visible_to_payroll' => $post['visible_to_payroll']
-        ], $post['mainDocumentId']);
+        if($documentType == 'offer_letter'){
+            //
+            $this->hr_documents_management_model->updateOfferLetter([
+                'is_available_for_na' => $post['selected_roles'],
+                'allowed_employees' => $post['selected_employees'],
+                'allowed_departments' => $post['selected_departments'],
+                'allowed_teams' => $post['selected_teams']
+            ], $post['mainDocumentId']);
+        } else{
+            //
+            $this->hr_documents_management_model->updateMainDocument([
+                'is_available_for_na' => $post['selected_roles'],
+                'allowed_employees' => $post['selected_employees'],
+                'allowed_departments' => $post['selected_departments'],
+                'allowed_teams' => $post['selected_teams'],
+                'visible_to_payroll' => $post['visible_to_payroll']
+            ], $post['mainDocumentId']);
+        }
 
         //
         $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update

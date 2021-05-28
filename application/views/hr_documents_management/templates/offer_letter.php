@@ -62,19 +62,7 @@
 			<!-- 3 -->
 			<div class="form-group js-for-uploaded">
 				<label>Browse Document<span class="staric">*</span></label>
-				<input style="display: none;" type="file" name="document" id="upload_document">
-                <!-- <div class="upload-file" style="height: 46px; border: 1px solid #ccc;">
-                    <input type="file" name="document" id="js-offer-letter-file-add" required />
-                    <div id="remove_image" class="profile-picture" style="display: none;">
-	                    <a href="javascript:;" class="action-btn js-show-current-document">
-	                        <i class="fa fa-lightbulb-o fa-2x"></i>
-	                        <span class="btn-tooltip">View Current Document</span>
-	                    </a>
-	                </div>
-                    <p class="cs-error" style="padding: 5px;">Allowed formats (doc, docx, xls, xlsx, pdf)</p>
-                    <p class="name_document"></p>
-                    <a href="javascript:;">Choose File</a>
-                </div> -->
+				<input style="display: none;" type="file" name="document" id="upload_document" />
                 <p class="cs-error js-error"></p>
 			</div>
 			<!-- 3 -->
@@ -115,11 +103,26 @@
 				<label>Sort Order</label>
 				<input type="text" class="form-control" id="js-template-sort-order" />
 			</div>
+			<!-- 8 -->
+			<div class="form-group">
+				<label>Visibility</label>
+				<!--  -->
+				<label>Roles</label>
+				<select id="js-roles-offer-letter-add" multiple></select>
+				<!--  -->
+				<label>Departments</label>
+				<select id="js-department-offer-letter-add" multiple></select>
+				<!--  -->
+				<label>Teams</label>
+				<select id="js-teams-offer-letter-add" multiple></select>
+				<!--  -->
+				<label>Individual Employees</label>
+				<select id="js-employees-offer-letter-add" multiple></select>
+			</div>
 			<!-- 7 -->
 			<div class="form-group js-for-generated">
 				<label>Authorized Management Signers</label>
 				<select id="js-template-signers" multiple="true">
-					<!-- <option value="all">All</option> -->
 					<?php 
 						if(sizeof($managers_list)){
 							foreach ($managers_list as $k => $v) {
