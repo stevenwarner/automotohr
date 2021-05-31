@@ -5930,4 +5930,20 @@ class Hr_documents_management_model extends CI_Model {
             return array();
         }
     }
+
+    //
+    function getAssignedDocumentColumn($assignedDocumentId, $columns = '*'){
+        $a = $this->db
+        ->select(''.( is_array($columns) ? implode(',', $columns) : $columns ).'')
+        ->where('sid', $assignedDocumentId)
+        ->get('documents_assigned');
+        //
+        $b = $a->row_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        return $b;
+    }
 }
