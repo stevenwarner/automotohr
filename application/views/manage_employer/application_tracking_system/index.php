@@ -536,7 +536,9 @@
                                                         class="pull-right <?= empty($resume_name) ? 'aplicant-documents' : 'aplicant-notes-span'; ?>" 
                                                         onclick="show_resume_popup(this);" 
                                                         data-preview-url="<?php echo $employer_job["resume_direct_link"]; ?>" 
-                                                        data-download-url="<?php echo base_url('hr_documents_management/download_upload_document').'/'.$employer_job['resume']; ?>" data-file-name="<?php echo $resume_name; ?>" 
+                                                        data-download-url="<?php echo base_url('hr_documents_management/download_upload_document').'/'.$employer_job['resume']; ?>" 
+                                                        data-fullname="<?php echo urldecode($upload_resume); ?>" 
+                                                        data-file-name="<?php echo urldecode($resume_name); ?>" 
                                                         data-file-ext="<?php echo $resume_extension; ?>" 
                                                         data-document-title="<?php echo 'Resume For '.$employer_job['job_title']; ?>" 
                                                         data-applicant-sid="<?php echo $employer_job['applicant_sid']; ?>" 
@@ -1820,6 +1822,9 @@
                     iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
                     document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'+document_file_name+'.pdf';
                     break;
+                default:
+                    iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
+                    document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'+document_file_name+'.pdf';
             }
 
             resume_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';

@@ -6424,6 +6424,8 @@ ini_set('memory_limit', -1);
             $data['employer_sid'] = $employer_sid;
 
             if ($this->form_validation->run() == false) {
+                //
+                $document_path = urldecode($document_path);
                 $temp_path = FCPATH . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'temp_files' . DIRECTORY_SEPARATOR;
                 $file_name = $document_path;
                 $temp_file_path = $temp_path . $file_name;

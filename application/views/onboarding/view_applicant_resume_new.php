@@ -111,11 +111,11 @@ if ($this->session->userdata('logged_in')) {
                                                                                 }
                                                                                 
                                                                             } else {
-                                                                                $iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $resume_url . '&embedded=true';
-                                                                                $print_url = '';
+                                                                                $iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL .(urldecode( $resume_url)) . '&embedded=true';
+                                                                                $print_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL .(urldecode( $resume_url)) . '&embedded=true';
                                                                             }
 
-                                                                            $download_url = base_url('hr_documents_management/download_upload_document'.'/'.$resume_url);
+                                                                            $download_url = base_url('hr_documents_management/download_upload_document'.'/'.(urldecode($resume_url)));
                                                                         ?>
                                                                         <tr>
                                                                             <td class="col-lg-8">
@@ -195,7 +195,7 @@ if ($this->session->userdata('logged_in')) {
                                                                         if (in_array($resume_extension, ['pdf', 'csv'])) { 
                                                                             $iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $resume_url . '&embedded=true';
                                                                             $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$resume_name.'.pdf';
-                                                                        } else if (in_array($resume_extension, ['doc', 'docx'])) {
+                                                                        } else if (in_array($resume_extension, ['doc', 'docx', 'ppt', 'pptx'])) {
                                                                             $iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $resume_url);
                                                                             if ($resume_extension == 'doc') {
                                                                             	$print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$resume_name.'%2Edoc&wdAccPdf=0';
@@ -204,11 +204,11 @@ if ($this->session->userdata('logged_in')) {
                                                                             }
                                                                             
                                                                         } else {
-                                                                            $iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $resume_url . '&embedded=true';
-                                                                            $print_url = '';
+                                                                            $iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (urldecode($resume_url)) . '&embedded=true';
+                                                                            $print_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (urldecode($resume_url)) . '&embedded=true';
                                                                         }
 
-                                                                        $download_url = base_url('hr_documents_management/download_upload_document'.'/'.$resume_url);
+                                                                        $download_url = base_url('hr_documents_management/download_upload_document'.'/'.(urldecode($resume_url)));
                                                                     ?>
                                                                     <tr>
                                                                         <td class="col-lg-8">
@@ -296,11 +296,11 @@ if ($this->session->userdata('logged_in')) {
                                                                         }
                                                                         
                                                                     } else {
-                                                                        $iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $resume_url . '&embedded=true';
-                                                                        $print_url = '';
+                                                                        $iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (urldecode($resume_url)) . '&embedded=true';
+                                                                        $print_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (urldecode($resume_url)) . '&embedded=true';
                                                                     }
 
-                                                                    $download_url = base_url('hr_documents_management/download_upload_document'.'/'.$resume_url);
+                                                                    $download_url = base_url('hr_documents_management/download_upload_document'.'/'.(urldecode($resume_url)));
                                                                 ?>
                                                                 <tr>
                                                                     <td class="col-lg-8">
