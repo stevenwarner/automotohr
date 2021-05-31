@@ -3842,6 +3842,24 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     //
+     function get_authorized_document_assign_manager ($company_sid, $document_sid) {
+        
+        $this->db->select('assigned_to_sid');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('document_assigned_sid', $document_sid);
+    
+        $record_obj = $this->db->get('authorized_document_assigned_manager');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+    //
     function getManagersByAssignedDocument(
         $sid
     ){
@@ -5916,11 +5934,56 @@ class Hr_documents_management_model extends CI_Model {
             return 'offer_letter';
         }
     }
+    
+    function getAllAuthorizedAssignManagers ($company_sid, $document_sid) {
+        $this->db->select('users.first_name, users.last_name, users.email');
+        $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
+        $this->db->where('authorized_document_assigned_manager.document_assigned_sid', $document_sid);
+        $this->db->join('users','users.sid = authorized_document_assigned_manager.assigned_to_sid','inner');
+        $record_obj = $this->db->get('authorized_document_assigned_manager');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+    function getAuthorizedManagerTemplate ($name) {
+        $this->db->select('sid');
+        $this->db->where('name', $name);
+        $record_obj = $this->db->get('email_templates');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr['sid'];
+        } else {
+            return array();
+        }
+    }
 
     //
     function updateOfferLetter($data, $id){
         $this->db
         ->where('sid', $id)
         ->update('offer_letter', $data);
+    }
+    
+    function getAssignedDocumentColumn($assignedDocumentId, $columns = '*'){
+        $a = $this->db
+        ->select(''.( is_array($columns) ? implode(',', $columns) : $columns ).'')
+        ->where('sid', $assignedDocumentId)
+        ->get('documents_assigned');
+        //
+        $b = $a->row_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        return $b;
     }
 }

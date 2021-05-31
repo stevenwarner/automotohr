@@ -3966,6 +3966,21 @@ ini_set('memory_limit', -1);
             $document_sid = $form_post['document_sid'];
             $assign_to = $form_post['assign_to'];
 
+            $previous_assign = $this->hr_documents_management_model->get_authorized_document_assign_manager($company_sid, $document_sid);
+
+            $new_assign_manger = array();
+            
+            if (!empty($previous_assign)) {
+                $previous_assign_sids = array_column($previous_assign, 'assigned_to_sid');
+                $new_assign_sids = explode(',', $assign_to);
+                
+                foreach ($new_assign_sids as $new_assign_sid) {
+                    if (!in_array($new_assign_sid, $previous_assign_sids)) {
+                        array_push($new_assign_manger, $new_assign_sid);
+                    }
+                }
+            }
+
             $this->hr_documents_management_model->addManagersToAssignedDocuments(
                 $assign_to,
                 $document_sid,
@@ -3981,64 +3996,37 @@ ini_set('memory_limit', -1);
 
             $this->hr_documents_management_model->update_documents($document_sid, $data_to_update, 'documents_assigned');
             
-
-            // $already_assigned = $this->hr_documents_management_model->check_authorized_document_already_assigned($company_sid, $document_sid, $assign_to);
-
-            // if (!empty($already_assigned)) {
-            //     $update_manager_info = array();
-            //     $update_manager_info['assigned_status'] = 1;
-
-            //     $this->hr_documents_management_model->deactivate_assign_authorized_documents($company_sid, $document_sid);
-            //     $this->hr_documents_management_model->reassign_authorized_document($already_assigned['sid'], $update_manager_info);
-
-            //     $data_to_update = array();
-            //     $data_to_update['authorized_signature'] = $already_assigned['assigned_to_signature'];
-            //     $data_to_update['authorized_signature_by'] = $assign_to;
-            //     $data_to_update['authorized_signature_date'] = date('Y-m-d H:i:s');
-
-            //     $this->hr_documents_management_model->update_documents($document_sid, $data_to_update, 'documents_assigned');
-            // } else {
-            //     $data_to_insert = array();
-            //     $data_to_insert['company_sid'] = $company_sid;
-            //     $data_to_insert['document_assigned_sid'] = $document_sid;
-            //     $data_to_insert['assigned_by_sid'] = $assigned_by_sid;
-            //     $data_to_insert['assigned_by_date'] = date('Y-m-d H:i:s');
-            //     $data_to_insert['assigned_to_sid'] = $assign_to;
-            //     $data_to_insert['assigned_status'] = 1;
-
-            //     $this->hr_documents_management_model->deactivate_assign_authorized_documents($company_sid, $document_sid);
-            //     $this->hr_documents_management_model->assign_authorized_document_to_user($data_to_insert);
-
-            //     $data_to_update = array();
-            //     $data_to_update['authorized_signature'] = NULL;
-            //     $data_to_update['authorized_signature_by'] = 0;
-            //     $data_to_update['authorized_signature_date'] = NULL;
-
-            //     $this->hr_documents_management_model->update_documents($document_sid, $data_to_update, 'documents_assigned');
-            // }  
-
             $hf = message_header_footer(
                 $company_sid,
-                $session['company_detail']['CompanyName']
+                ucwords($session['company_detail']['CompanyName'])
             );
-
             //
-            foreach (explode(',', $assign_to) as $k => $v) {
-                $assign_to_info  = db_get_employee_profile($v);
-                $assign_to_name  = $assign_to_info[0]['first_name'].' '.$assign_to_info[0]['last_name'];
-                $assign_to_email = $assign_to_info[0]['email'];
-
-                $assigned_by_info  = db_get_employee_profile($assigned_by_sid);
-                $assigned_by_name  = $assigned_by_info[0]['first_name'].' '.$assigned_by_info[0]['last_name'];
-
-                //Send Email
-                $replacement_array = array();
-                $replacement_array['baseurl']           = base_url();
-                $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
-                $replacement_array['company_name']  = ucwords($session['company_detail']['CompanyName']);
-                $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-                log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf);
+            $document = $this->hr_documents_management_model->getAssignedDocumentColumn($document_sid, '*');
+            // Check if document is completed
+            if(isDocumentCompletedCheck($document, true)){
+                //
+                $employee_name = getUserNameBySID($document['user_sid']);
+    
+                $email_template_id = $this->hr_documents_management_model->getAuthorizedManagerTemplate('Authorized Manager Notification');
+    
+                $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('view_assigned_authorized_document/' . $document_sid) . '">Assign Authorized Document</a>';
+                //
+                foreach ($new_assign_manger as $k => $v) {
+                    //
+                    $manager = db_get_employee_profile($v)[0];
+                    //
+                    $replacement_array['first_name'] = $manager['first_name'];
+                    $replacement_array['last_name'] = $manager['last_name'];
+                    $replacement_array['employee_name'] = $employee_name;
+                    $replacement_array['link'] = $link_html;
+                    //
+                    $to_email = $manager['email'];
+                    //
+                    log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $hf);
+                }
             }
+            //
+            echo 'success';
         }    
     }
 
@@ -4881,12 +4869,15 @@ ini_set('memory_limit', -1);
             $data['security_details'] = $security_details;
             //check_access_permissions($security_details, 'appearance', 'customize_appearance'); // no need to check in this Module as Dashboard will be available to all
             $company_sid = $data['session']['company_detail']['sid'];
+            $company_name = $data['session']['employer_detail']['CompanyName'];
             $employer_sid = $data['session']['employer_detail']['sid'];
             $data['title'] = 'Assigned Documents';
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
             $data['doc'] = $doc;
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required');
+
+            $is_authorized_document = 'no';
 
             if ($this->form_validation->run() == false) {
                 $document = $this->hr_documents_management_model->get_assigned_document('employee', $employer_sid, $document_sid, $doc);
@@ -4898,12 +4889,11 @@ ini_set('memory_limit', -1);
                     $data['attached_video'] = $attached_video;
                 }
 
-                $save_offer_letter_type = '';
-
                 if (!empty($document['document_description'])) {
                     $document_body = $document['document_description'];
                     $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
                     $magic_signature_codes = array('{{signature}}', '{{inital}}');
+                    $magic_authorized_codes = array('{{authorized_signature}}', '{{authorized_signature_date}}');
 
                     if (str_replace($magic_signature_codes, '', $document_body) != $document_body) {
                         $save_offer_letter_type = 'consent_only';
@@ -5147,6 +5137,20 @@ ini_set('memory_limit', -1);
                 $this->load->view('hr_documents_management/sign_hr_document');
                 $this->load->view('onboarding/on_boarding_footer');
             } else {
+
+                $document = $this->hr_documents_management_model->get_assigned_document('employee', $employer_sid, $document_sid, $doc);
+
+                $is_authorized_document = 'no';
+
+                if (!empty($document['document_description'])) {
+                    $magic_authorized_codes = array('{{authorized_signature}}', '{{authorized_signature_date}}');
+                    $document_body = $document['document_description'];
+
+                    if (str_replace($magic_authorized_codes, '', $document_body) != $document_body) {
+                        $is_authorized_document = 'yes';
+                    }
+                }
+
                 $perform_action = $this->input->post('perform_action');
                 //
                 $isCompleted = true;
@@ -5213,6 +5217,30 @@ ini_set('memory_limit', -1);
 
                         if($isCompleted){
                             $this->check_complete_document_send_email($company_sid, $employer_sid);
+
+                            if ($is_authorized_document == 'yes') {
+                                $assign_managers = $this->hr_documents_management_model->getAllAuthorizedAssignManagers($company_sid, $document_sid);
+                                
+                                $employee_name = getUserNameBySID($employer_sid);
+
+                                $email_template_id = $this->hr_documents_management_model->getAuthorizedManagerTemplate('Authorized Manager Notification');
+
+                                $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('view_assigned_authorized_document/' . $document_sid) . '">Assign Authorized Document</a>';
+
+                                if (!empty($assign_managers)) {
+                                    foreach ($assign_managers as $manager) {
+                                        $replacement_array['first_name'] = $manager['first_name'];
+                                        $replacement_array['last_name'] = $manager['last_name'];
+                                        $replacement_array['employee_name'] = $employee_name;
+                                        $replacement_array['link'] = $link_html;
+                                        $to_email = $manager['email'];
+
+                                        $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
+
+                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
+                                    }
+                                }
+                            }
                         }
 
                         $this->session->set_flashdata('message', '<strong>Success</strong> Document Acknowledged!');
@@ -5261,6 +5289,30 @@ ini_set('memory_limit', -1);
 
                         if($isCompleted){
                             $this->check_complete_document_send_email($company_sid, $employer_sid);
+
+                            if ($is_authorized_document == 'yes') {
+                                $assign_managers = $this->hr_documents_management_model->getAllAuthorizedAssignManagers($company_sid, $document_sid);
+
+                                $employee_name = getUserNameBySID($employer_sid);
+
+                                $email_template_id = $this->hr_documents_management_model->getAuthorizedManagerTemplate('Authorized Manager Notification');
+
+                                $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('view_assigned_authorized_document/' . $document_sid) . '">Assign Authorized Document</a>';
+
+                                if (!empty($assign_managers)) {
+                                    foreach ($assign_managers as $manager) {
+                                        $replacement_array['first_name'] = $manager['first_name'];
+                                        $replacement_array['last_name'] = $manager['last_name'];
+                                        $replacement_array['employee_name'] = $employee_name;
+                                        $replacement_array['link'] = $link_html;
+                                        $to_email = $manager['email'];
+
+                                        $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
+
+                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
+                                    }
+                                }
+                            }
                         }
 
                         redirect('hr_documents_management/sign_hr_document/' . $doc . '/' . $document_sid, 'refresh');
@@ -5322,6 +5374,30 @@ ini_set('memory_limit', -1);
 
                         if($isCompleted){
                             $this->check_complete_document_send_email($company_sid, $employer_sid);
+
+                            if ($is_authorized_document == 'yes') {
+                                $assign_managers = $this->hr_documents_management_model->getAllAuthorizedAssignManagers($company_sid, $document_sid);
+                                
+                                $employee_name = getUserNameBySID($employer_sid);
+
+                                $email_template_id = $this->hr_documents_management_model->getAuthorizedManagerTemplate('Authorized Manager Notification');
+
+                                $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('view_assigned_authorized_document/' . $document_sid) . '">Assign Authorized Document</a>';
+
+                                if (!empty($assign_managers)) {
+                                    foreach ($assign_managers as $manager) {
+                                        $replacement_array['first_name'] = $manager['first_name'];
+                                        $replacement_array['last_name'] = $manager['last_name'];
+                                        $replacement_array['employee_name'] = $employee_name;
+                                        $replacement_array['link'] = $link_html;
+                                        $to_email = $manager['email'];
+
+                                        $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
+
+                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
+                                    }
+                                }
+                            }
                         }
 
                         if ($user_type == 'employee') {
