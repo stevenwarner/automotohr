@@ -3158,6 +3158,12 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+    //
+    function deleteMovedLetter($documentAssignedId){
+        $this->db->where('sid', $documentAssignedId)
+        ->delete('documents_assigned');
+    }
+
     function disable_all_previous_letter ($company_sid, $user_type, $user_sid, $document_type) {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);

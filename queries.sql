@@ -143,3 +143,14 @@ ALTER TABLE `documents_assigned_history` ADD `upload_document_consent` TINYINT(1
 -- Mubashir Ahmed
 -- 05/28/2021
 ALTER TABLE `offer_letter` ADD `is_available_for_na` TEXT NULL AFTER `signers`, ADD `allowed_teams` TEXT NULL AFTER `is_available_for_na`, ADD `allowed_departments` TEXT NULL AFTER `allowed_teams`, ADD `allowed_employees` TEXT NULL AFTER `allowed_departments`;
+
+-- Mubashir Ahmed
+-- 05/31/2021
+ALTER TABLE `offer_letter` ADD `visible_to_payroll` TINYINT NOT NULL DEFAULT '0' AFTER `allowed_employees`;
+ALTER TABLE `offer_letter_history` ADD `visible_to_payroll` TINYINT NOT NULL DEFAULT '0' AFTER `allowed_employees`;
+ALTER TABLE `offer_letter_history` ADD `is_available_for_na` TEXT NULL AFTER `signers`, 
+ADD `allowed_teams` TEXT NULL AFTER `is_available_for_na`, 
+ADD `allowed_departments` TEXT NULL AFTER `allowed_teams`, 
+ADD `allowed_employees` TEXT NULL AFTER `allowed_departments`;
+ALTER TABLE `documents_assigned` ADD `allowed_roles` TEXT NULL AFTER `is_signature_required`, ADD `allowed_employees` TEXT NULL AFTER `allowed_roles`, ADD `allowed_departments` TEXT NULL AFTER `allowed_employees`, ADD `allowed_teams` TEXT NULL AFTER `allowed_departments`;
+ALTER TABLE `documents_assigned_history` ADD `allowed_roles` TEXT NULL AFTER `is_signature_required`, ADD `allowed_employees` TEXT NULL AFTER `allowed_roles`, ADD `allowed_departments` TEXT NULL AFTER `allowed_employees`, ADD `allowed_teams` TEXT NULL AFTER `allowed_departments`;

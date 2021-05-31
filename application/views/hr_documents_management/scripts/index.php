@@ -233,7 +233,6 @@
 			 	do_descpt;
 			//
 			selectedTemplate = d;
-			console.log(d);
 			//
 			do_upload = d.document_type == 'uploaded' || d.document_type == 'hybrid_document' || d.offer_letter_type == 'uploaded' || d.offer_letter_type == 'hybrid_document' ? true : false;
 			do_descpt = d.document_type == 'generated' || d.document_type == 'hybrid_document' || d.offer_letter_type == 'generated' || d.offer_letter_type == 'hybrid_document' ? true : false;
@@ -250,7 +249,7 @@
 			<?php } ?>
 			if(do_descpt) rows += getSigners('js-modify-assigned-document-signers');
 			//
-			rows += getVisibility();
+			rows += getVisibilty();
 			//
 			rows += getEmailContent();
 			//
@@ -261,7 +260,7 @@
 			rows += getSignatureRequiredRow();
 			if(do_descpt) rows += getTags();
 			//
-			let select2s = ['#js-modify-roles', '#js-modify-selected-employees', '#js-modify-selected-departments', '#js-modify-selected-teams'];
+			let select2s = ['#jsRoles', '#jsEmployees', '#jsDepartments', '#jsTeams'];
 			//
 			if(do_descpt){ 
 				select2s.push('#js-modify-assigned-document-signers');
@@ -281,17 +280,18 @@
 					$('#js-modify-assign-document-download option[value="'+( d.download_required )+'"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="'+( d.acknowledgment_required )+'"]').prop('selected', true);
 					do_descpt ? $('#js-modify-assigned-document-signers').select2('val', d.signers != null && d.signers != ''  ? d.signers.split(',') : null) : '';
-					$('#js-modify-roles').select2('val', []);
-					$('#js-modify-visible-to-payroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
 					$('.js-modify-assign-document-required[value="'+( selectedTemplate.is_required)+'"]').prop('checked', true);
 					$('.js-modify-assign-document-signature-required[value="'+( selectedTemplate.is_signature_required )+'"]').prop('checked', true);
-					$('#js-modify-selected-employees').select2('val', []);
-					$('#js-modify-selected-departments').select2('val', []);
-					$('#js-modify-selected-teams').select2('val', []);
-					if(d.is_available_for_na != '0' && d.is_available_for_na != null) $('#js-modify-roles').select2('val', d.is_available_for_na.split(',') );
-					if(d.allowed_employees != '0' && d.allowed_employees != null) $('#js-modify-selected-employees').select2('val', d.allowed_employees.split(',') );
-					if(d.allowed_departments != '0' && d.allowed_departments != null) $('#js-modify-selected-departments').select2('val', d.allowed_departments.split(',') );
-					if(d.allowed_teams != '0' && d.allowed_teams != null) $('#js-modify-selected-teams').select2('val', d.allowed_teams.split(',') );
+					
+					$('#jsVisibleToPayroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
+					$('#jsRoles').select2('val', []);
+					$('#jsEmployees').select2('val', []);
+					$('#jsDepartments').select2('val', []);
+					$('#jsTeams').select2('val', []);
+					if(d.is_available_for_na != '0' && d.is_available_for_na != null) $('#jsRoles').select2('val', d.is_available_for_na.split(',') );
+					if(d.allowed_employees != '0' && d.allowed_employees != null) $('#jsEmployees').select2('val', d.allowed_employees.split(',') );
+					if(d.allowed_departments != '0' && d.allowed_departments != null) $('#jsDepartments').select2('val', d.allowed_departments.split(',') );
+					if(d.allowed_teams != '0' && d.allowed_teams != null) $('#jsTeams').select2('val', d.allowed_teams.split(',') );
 					$('.modify-assigned-document-modal-loader').fadeOut(300);
 					$('[data-toggle="propover"]').popover({
 						trigger: 'hover',
@@ -392,6 +392,9 @@
 			 	do_upload,
 			 	do_descpt;
 			//
+			console.log(d);
+
+			//
 			selectedTemplate = d;
 			modelFor = 'offer_letter';
 			//
@@ -409,6 +412,7 @@
 			rows += getConsentTypes(do_descpt);
 			<?php } ?>
 			if(do_descpt) rows += getSigners('js-modify-assign-offer-letter-signers');
+			rows+= getVisibilty(d);
 			rows+= getEmailContent();
 			if(do_descpt) rows += getTags();
 			//
@@ -426,11 +430,112 @@
 					$('#js-modify-assign-offer-letter-download option[value="'+( d.download_required )+'"]').prop('selected', true);
 					$('#js-modify-assign-offer-letter-acknowledgment option[value="'+( d.acknowledgment_required )+'"]').prop('selected', true);
 					do_descpt ? $('#js-modify-assign-offer-letter-signers').select2('val', d.signers != null && d.signers != ''  ? d.signers.split(',') : null) : '';
+					//
+					$('#jsRoles').select2({ closeOnSelect: false});
+					$('#jsDepartments').select2({ closeOnSelect: false});
+					$('#jsTeams').select2({ closeOnSelect: false});
+					$('#jsEmployees').select2({ closeOnSelect: false});
+
+					//
+					if(d.visible_to_payroll){
+						$('#jsVisibleToPayroll').prop('checked', true);
+					}
+					//
+					if(d.is_available_for_na != ''){
+						$('#jsRoles').select2('val', d.is_available_for_na.split(','));
+					}
+					//
+					if(d.allowed_departments != ''){
+						$('#jsDepartments').select2('val', d.allowed_departments.split(','));
+					}
+					//
+					if(d.allowed_teams != ''){
+						$('#jsTeams').select2('val', d.allowed_teams.split(','));
+					}
+					//
+					if(d.allowed_employees != ''){
+						$('#jsEmployees').select2('val', d.allowed_employees.split(','));
+					}
 					$('.modify-assign-offer-letter-modal-loader').fadeOut(300);
 				}
 			);
 		}
 
+
+		// Visibility
+		function getVisibilty(data){
+			//
+			var html = '';
+			//
+			html +='<div class="row">';
+			html +='    <div class="col-sm-12">';
+			html +='        <div class="panel panel-default">';
+			html +='            <div class="panel-heading">';
+			html +='                <h5>';
+			html +='                    <strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true"  data-target="visibilty"></i>';
+			html +='                    <p class="jsHintBody" data-hint="visibilty"><br /><?=getUserHint('visibility_hint');?></p>';
+			html +='                </h5>';
+			html +='            </div>';
+			html +='            <div class="panel-body">';
+			html +='                <!-- Payroll -->';
+			html +='                <label class="control control--checkbox">';
+			html +='                    Visible To Payroll';
+			html +='                    <input type="checkbox" name="visible_to_payroll" id="jsVisibleToPayroll" />';
+			html +='                    <div class="control__indicator"></div>';
+			html +='                </label>';
+			html +='                <hr />';
+			html +='                <!-- Roles -->';
+			html +='                <label>Roles</label>';
+			html +='                <select name="roles[]" id="jsRoles" multiple>';
+			//
+			var roles = <?=json_encode(getRoles());?>;
+			//
+			if(Object.keys(roles).length){
+				$.each(roles, function(i, v){
+					html +=' <option value="'+( i )+'">'+( v )+'</option>';
+				});
+			}
+			html +='                </select>';
+			html +='                <br />';
+			html +='                <br />';
+			html +='                <!-- Departments -->';
+			html +='                <label>Departments</label>';
+			html +='                <select name="departments[]" id="jsDepartments" multiple>';
+			if(departmentList.length){
+				departmentList.map(function(v){
+					html +='<option value="'+(v['sid'])+'">'+(v['name'])+'</option>';
+				});
+			}
+			html +='                </select>';
+			html +='                <br />';
+			html +='                <br />';
+			html +='                <!-- Teams -->';
+			html +='                <label>Teams</label>';
+			html +='                <select name="teams[]" id="jsTeams" multiple>';
+			if(teamList.length){
+				teamList.map(function(v){
+					html +='<option value="'+(v['sid'])+'">'+(v['name'])+'</option>';
+				});
+			}
+			html +='                </select>';
+			html +='                <br />';
+			html +='                <br />';
+			html +='                <!-- Employees -->';
+			html +='                <label>Employees</label>';
+			html +='                <select name="employees[]" id="jsEmployees" multiple>';
+			if(employeeList.length){
+				employeeList.map(function(v){
+					html +='<option value="'+(v['sid'])+'">'+(remakeEmployeeName(v))+'</option>';
+				});
+			}
+			html +='                </select>';
+			html +='            </div>';
+			html +='        </div>';
+			html +='    </div>';
+			html +='</div>';
+			//
+			return html;
+		}
 
 		//
 		function getResetBox(){
@@ -561,14 +666,15 @@
 			obj.managerList = obj.managerList === undefined ? null : obj.managerList;
 			obj.reset = obj.reset === undefined ? null : obj.reset;
 			//
-			obj.selected_employees = $('#js-modify-selected-employees').val();
-			obj.selected_departments = $('#js-modify-selected-departments').val();
-			obj.selected_teams = $('#js-modify-selected-teams').val();
-			obj.selected_roles = $('#js-modify-roles').val();
-			obj.visible_to_payroll = $('#js-modify-visible-to-payroll').prop('checked') ? 1 : 0;
 			obj.mainDocumentId = selectedTemplate.document_sid;
 			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
 			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
+			// Visibility
+			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
+			obj.selected_roles = $('#jsRoles').val();
+			obj.selected_departments = $('#jsDepartments').val();
+			obj.selected_teams = $('#jsTeams').val();
+			obj.selected_employees = $('#jsEmployees').val();
 			//
 			var post = new FormData();
 			//
@@ -670,6 +776,11 @@
 				obj.file = file.name === undefined ? selectedTemplate.uploaded_document_s3_name : file;
 				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
 			}
+			// Visibility
+			obj.roles = $('#jsRoles').val() || '';
+			obj.departments = $('#jsDepartments').val() || '';
+			obj.teams = $('#jsTeams').val() || '';
+			obj.employees = $('#jsEmployees').val() || '';
 			//
 			var post = new FormData();
 			//

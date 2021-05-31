@@ -13311,6 +13311,8 @@ if(!function_exists('getUserHint')){
         $hints['questionnaire_watched_ems'] = 'You have completed the assigned questionnaire.';
         $hints['video_not_watched_ems'] = 'You have not watched the assigned video.';
         $hints['questionnaire_not_watched_ems'] = 'You have not completed the assigned questionnaire.';
+        $hints['visibility_hint'] = '<strong>Visible To Payroll:</strong> Payroll employees can manage this document.<br /><br />The selected roles, departments (Supervisors), teams (Team Leads), and employees will have access to this document.';
+        $hints['authorized_managers_hint'] = 'The selected manager will sign this document.';
 
         return isset($hints[$slug]) ? $hints[$slug] : '';
     }
@@ -13473,5 +13475,17 @@ if(!function_exists('has_approval')){
         //
         return false;
 
+    }
+}
+
+//
+if(!function_exists('getRoles')){
+    function getRoles(){
+        return [
+            'admin' => 'Admin',
+            'employee' => 'Employee',
+            'hiring_manager' => 'Hiring Manager',
+            'manager' => 'Manager'
+        ];
     }
 }
