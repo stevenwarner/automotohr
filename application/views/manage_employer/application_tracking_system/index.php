@@ -1823,8 +1823,8 @@
                     document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'+document_file_name+'.pdf';
                     break;
                 default:
-                    iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
-                    document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'+document_file_name+'.pdf';
+                    iframe_url = 'https://docs.google.com/gview?url=https://automotohrattachments.s3.amazonaws.com/' + $(source).attr('data-fullname') + '&embedded=true';
+                    document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'+ $(source).attr('data-fullname');
             }
 
             resume_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
