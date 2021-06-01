@@ -154,3 +154,6 @@ ADD `allowed_departments` TEXT NULL AFTER `allowed_teams`,
 ADD `allowed_employees` TEXT NULL AFTER `allowed_departments`;
 ALTER TABLE `documents_assigned` ADD `allowed_roles` TEXT NULL AFTER `is_signature_required`, ADD `allowed_employees` TEXT NULL AFTER `allowed_roles`, ADD `allowed_departments` TEXT NULL AFTER `allowed_employees`, ADD `allowed_teams` TEXT NULL AFTER `allowed_departments`;
 ALTER TABLE `documents_assigned_history` ADD `allowed_roles` TEXT NULL AFTER `is_signature_required`, ADD `allowed_employees` TEXT NULL AFTER `allowed_roles`, ADD `allowed_departments` TEXT NULL AFTER `allowed_employees`, ADD `allowed_teams` TEXT NULL AFTER `allowed_departments`;
+
+ALTER TABLE `offer_letter` ADD `allowed_roles` TEXT NULL DEFAULT NULL AFTER `signers`;
+ALTER TABLE `offer_letter_history` ADD `allowed_roles` TEXT NULL DEFAULT NULL AFTER `signers`;

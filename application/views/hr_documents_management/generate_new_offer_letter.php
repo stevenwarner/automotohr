@@ -151,7 +151,7 @@
                                                         <!-- Payroll -->
                                                         <label class="control control--checkbox">
                                                             Visible To Payroll
-                                                            <input type="checkbox" name="visible_to_payroll" <?=isset($document_info['visible_to_payroll']) && $document_info['visible_to_payroll'] ? 'checked' : '';?> />
+                                                            <input type="checkbox" name="visible_to_payroll" <?=isset($document_info['visible_to_payroll']) && $document_info['visible_to_payroll'] ? 'checked' : '';?> value="yes"/>
                                                             <div class="control__indicator"></div>
                                                         </label>
                                                         <hr />
