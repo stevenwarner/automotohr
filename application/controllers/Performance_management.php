@@ -55,6 +55,15 @@ class Performance_management extends Public_Controller{
         //
         $this->header = 'main/header';
         $this->footer = 'main/footer';
+        // test
+        // $this->pargs = [];
+        
+        // $this->checkLogin($this->pargs);
+        
+        // $employees = $this->pmm->getAllEmployees($this->pargs['session']['company_detail']['sid']);
+
+        //
+        // _e($employees, true, true);
     }
 
     /**
@@ -80,6 +89,34 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}dashboard");
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image'])
+                ];
+            }
+        }
+        // Get goals 
+        $this->pargs['goals'] = $this->pmm->getGoals($this->pargs['employerId']);
+        // Get Assigned Reviews 
+        $this->pargs['assignedReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'assigned');
+        $this->pargs['feedbackReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'feedback');
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // My goals
+
+        $this->load->view("main/header", $this->pargs);
+        $this->load->view("{$this->pp}header", $this->pargs);
+        $this->load->view("{$this->pp}{$this->mp}dashboard_new", $this->pargs);
+        $this->load->view("{$this->pp}footer", $this->pargs);
+        $this->load->view("main/footer");
     }
     
     
@@ -191,6 +228,95 @@ class Performance_management extends Public_Controller{
         $this->load->view($this->footer);
     }
 
+    
+    /**
+     * Review - Create Review
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/04/2021
+     * 
+     * @return Void
+     */
+    function create_review($id = 0){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Create a review';
+        // Set templates
+        $this->pargs['templates'] = [];
+        // Get personal templates
+        $this->pargs['templates']['personal'] = $this->pmm->getPersonalTemplates($this->pargs['companyId'], ['sid', 'name', 'questions']);
+        // Get company templates
+        $this->pargs['templates']['company'] = $this->pmm->getCompanyTemplates(['sid', 'name', 'questions']);
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // Get job titles
+        $this->pargs['jobTitles'] = $this->pmm->getCompanyJobTitles($this->pargs['companyId']);
+        //
+        if($id != 0){
+            $this->pargs['review'] = $this->pmm->getReviewById($id, '*', 0, ['is_draft' => 1]);
+        }
+
+        $this->load->view("main/header", $this->pargs);
+        $this->load->view("{$this->pp}header", $this->pargs);
+        $this->load->view("{$this->pp}reviews/{$this->mp}create_new", $this->pargs);
+        $this->load->view("{$this->pp}footer", $this->pargs);
+        $this->load->view("main/footer");
+    }
+    
+    /**
+     * Goals - Create Goal
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/04/2021
+     * 
+     * @return Void
+     */
+    function download(
+        $type,
+        $reviewId = 0,
+        $revieweeId = 0,
+        $reviewerId = 0
+    ){
+        // 
+        $this->checkLogin($this->pargs);
+        // Get department & teams list
+        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        //
+        if(!empty($employees)){
+            foreach($employees as $employee){
+                $this->pargs['employees'][$employee['Id']] = [
+                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+                    'role' => $employee['FullRole'],
+                    'img' => getImageURL($employee['Image']),
+                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
+                ];
+            }
+        }
+        //
+        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $revieweeId, $reviewerId);
+        $this->load->view("{$this->pp}reviews/download_q", $this->pargs);
+    }
+    
+    /**
+     * Goals - Create Goal
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/04/2021
+     * 
+     * @return Void
+     */
+    function create_goal(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Create a goal';
+        // Get employer role
+        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // Get department & teams list
+        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
 
     /**
      * Report

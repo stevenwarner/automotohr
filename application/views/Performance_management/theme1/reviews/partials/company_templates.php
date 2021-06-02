@@ -8,6 +8,11 @@
         </h3>
     </div>
     <div class="panel-body jsPageBody" data-page="company_templates">
+                <i class="fa fa-minus-circle csF20" aria-hidden="true"></i>
+            </span>
+        </h3>
+    </div>
+    <div class="panel-body">
         <!--  -->
         <?php if(!empty($templates['company'])): ?>
             <div class="row">
