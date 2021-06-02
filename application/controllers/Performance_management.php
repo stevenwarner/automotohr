@@ -70,6 +70,15 @@ class Performance_management extends Public_Controller{
             'Redirect' => TRUE,
             'Response' => 'Invalid request'
         ];
+        // test
+        // $this->pargs = [];
+        
+        // $this->checkLogin($this->pargs);
+        
+        // $employees = $this->pmm->getAllEmployees($this->pargs['session']['company_detail']['sid']);
+
+        //
+        // _e($employees, true, true);
     }
 
     /**
@@ -110,7 +119,7 @@ class Performance_management extends Public_Controller{
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}{$this->mp}dashboard", $this->pargs);
+        $this->load->view("{$this->pp}{$this->mp}dashboard_new", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
     }
@@ -374,9 +383,9 @@ class Performance_management extends Public_Controller{
         // Set templates
         $this->pargs['templates'] = [];
         // Get personal templates
-        $this->pargs['templates']['personal'] = $this->pmm->getPersonalTemplates($this->pargs['companyId'], ['sid', 'name']);
+        $this->pargs['templates']['personal'] = $this->pmm->getPersonalTemplates($this->pargs['companyId'], ['sid', 'name', 'questions']);
         // Get company templates
-        $this->pargs['templates']['company'] = $this->pmm->getCompanyTemplates(['sid', 'name']);
+        $this->pargs['templates']['company'] = $this->pmm->getCompanyTemplates(['sid', 'name', 'questions']);
         // Get employer role
         $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
         // Get department & teams list
@@ -390,7 +399,7 @@ class Performance_management extends Public_Controller{
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}reviews/{$this->mp}create", $this->pargs);
+        $this->load->view("{$this->pp}reviews/{$this->mp}create_new", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
     }

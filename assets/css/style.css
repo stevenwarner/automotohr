@@ -17812,3 +17812,31 @@ input[type='checkbox'].user_checkbox:checked:after {
 .csClickable {
     cursor: pointer !important;
 }
+
+.csPageBox.active {
+    background: #dd760033 !important;
+}
+
+.csTemplateWrap {
+    height: 300px;
+}
+
+.csTemplateWrap .csPageBoxHeader {
+    height: 50px;
+}
+
+.csTemplateWrap .csPageBoxBody {
+    height: 100px;
+}
+
+.csTemplateWrap .csPageBoxFooter {
+    height: 150px;
+}
+
+
+/*  */
+
+.csTemplateWrap:hover .csPageBoxBody,
+.csTemplateWrap:hover .csPageBoxFooter {
+    background: #dd760033 !important;
+}

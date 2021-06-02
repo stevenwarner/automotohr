@@ -1674,6 +1674,133 @@ class Performance_management_model extends CI_Model{
         ->get()
         ->result_array();
     }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    private $U = 'users';
+    private $DM = 'departments_management';
+    private $DTM = 'departments_team_management';
+    private $DE2T = 'departments_employee_2_team';
+
+    private $DbDateFormat = 'Y-m-d H:i:s';
+
+    private $DbDateFormatWithoutTime = 'Y-m-d';
+
+    private $SiteDateFormat = 'M d Y, D H:i:s';
+
+    function GetAllEmployees($CompanyId){
+        //
+        $a = $this->db
+        ->select("
+            {$this->U}.sid,
+            {$this->U}.first_name,
+            {$this->U}.last_name,
+            {$this->U}.email,
+            {$this->U}.PhoneNumber,
+            {$this->U}.job_title,
+            {$this->U}.dob,
+            IF({$this->U}.joined_at = null, {$this->U}.registration_date, {$this->U}.joined_at) as joined_at,
+            {$this->U}.profile_picture,
+            {$this->U}.access_level,
+            {$this->U}.access_level_plus,
+            {$this->U}.pay_plan_flag,
+            {$this->U}.is_executive_admin
+        ")
+        ->where("{$this->U}.parent_sid", $CompanyId)
+        ->where("{$this->U}.active", 1)
+        ->where("{$this->U}.terminated_status", 0)
+        ->order_by("{$this->U}.first_name", "ASC")
+        ->get($this->U);
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        if(!empty($b)){
+            //
+            $r = [];
+            //
+            foreach($b as $v){
+                $t = [
+                    'Id' => $v['sid'],
+                    'Name' => ucwords($v['first_name'].' '.$v['last_name']),
+                    'Role' => trim(remakeEmployeeName($v, false)),
+                    'Image' => AWS_S3_BUCKET_URL. (empty($v['profile_picture']) ? 'test.png' : $v['profile_picture']),
+                    'Email' => strtolower($v['email']),
+                    'Phone' => $v['PhoneNumber'],
+                    'DOB' => empty($v['dob']) || $v['dob'] == '0000-00-00' ? '' : DateTime::createfromformat($this->DbDateFormatWithoutTime, $v['dob'])->format($this->DbDateFormatWithoutTime),
+                    'JoinedDate' => empty($v['joined_at']) ? '' : DateTime::createfromformat($this->DbDateFormat, $v['joined_at'])->format($this->DbDateFormat)
+                ];
+
+                //
+                $r[] = $this->employeeDT($v['sid'], $t);
+            }
+            //
+            $b = $r;
+        }
+        //
+        return $b;
+    }
+
+
+    //
+    function getP($EmployeeId){
+
+    }
+
+    //
+    private function employeeDT($EmployeeId, $r){
+        //
+        $a =
+        $this->db
+        ->select("
+            {$this->DTM}.sid as team_id,
+            {$this->DTM}.team_lead,
+            {$this->DM}.sid as department_id,
+            {$this->DM}.supervisor
+        ")
+        ->join("{$this->DTM}", "{$this->DTM}.sid = {$this->DE2T}.team_sid")
+        ->join("{$this->DM}", "{$this->DM}.sid = {$this->DTM}.department_sid")
+        ->where("{$this->DM}.status", 1)
+        ->where("{$this->DM}.is_deleted", 0)
+        ->where("{$this->DTM}.status", 1)
+        ->where("{$this->DTM}.is_deleted", 0)
+        ->where("{$this->DE2T}.employee_sid", $EmployeeId)
+        ->get("{$this->DE2T}");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        if(!empty($b)){
+            //
+            $d = $t = $s = $l = [];
+            //
+            foreach($b as $v){
+                //
+                $d[] = $v['department_id'];
+                $t[] = $v['team_id'];
+                //
+                $s = array_merge($s, explode(',', $v['supervisor']));
+                $l = array_merge($l, explode(',', $v['team_id']));
+            }
+            //
+            $r['TeamLeads'] = $l;
+            $r['Supervisors'] = $s;
+            $r['Departments'] = $d;
+            $r['Teams'] = $t;
+        } else{
+            $r['TeamLeads'] = 
+            $r['Supervisors'] =
+            $r['Departments'] =
+            $r['Teams'] = [];
+        }
+        return $r;
+    }
 }
-
-

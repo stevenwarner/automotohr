@@ -81,7 +81,7 @@
                                                     <select name="supervisor[]" class="invoice-fields" id="supervisor_id" multiple="true">
                                                         <?php foreach ($employees as $key => $employee): ?>
                                                             <option value="<?php echo $employee['sid'] ?>" <?php echo isset($department['supervisor']) && in_array($employee['sid'], explode(',', $department['supervisor']))  ? 'selected="selected"' : ''; ?>>
-                                                                <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
+                                                                <?php echo remakeEmployeeName($employee); ?>
                                                             </option>
                                                         <?php endforeach ?>
                                                     </select>
@@ -98,7 +98,7 @@
                                                         <select name="approvers[]" class="invoice-fields" id="approvers_ids" multiple="true">
                                                             <?php foreach ($employees as $key => $employee): ?>
                                                                 <option value="<?php echo $employee['sid'] ?>" <?php echo isset($department['approvers']) && in_array($employee['sid'], explode(',', $department['approvers']))  ? 'selected="selected"' : ''; ?>>
-                                                                    <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
+                                                                    <?php echo remakeEmployeeName($employee); ?>
                                                                 </option>
                                                             <?php endforeach ?>
                                                         </select>
@@ -116,7 +116,7 @@
                                                         <select name="reporting_manager[]" class="invoice-fields" id="reporting_manager_ids" multiple="true">
                                                             <?php foreach ($employees as $key => $employee): ?>
                                                                 <option value="<?php echo $employee['sid'] ?>" <?php echo isset($department['reporting_managers']) && in_array($employee['sid'], explode(',', $department['reporting_managers']))  ? 'selected="selected"' : ''; ?>>
-                                                                    <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
+                                                                    <?php echo remakeEmployeeName($employee); ?>
                                                                 </option>
                                                             <?php endforeach ?>
                                                         </select>

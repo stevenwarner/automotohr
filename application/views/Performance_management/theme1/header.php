@@ -59,8 +59,8 @@
     $baseURL = purl();
     //
     foreach($tabs as $tab){
-            //
-            $lis .= '<li><a '.( isset($tab['props']) ? $tab['props'] : "").' class="csF18 '.(isset($tab['class']) ? $tab['class'] : '').' '.( $tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '' ).'" href="'.( $tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL.$tab['url'] ).'" ><i class="fa fa-'.( $tab['icon'] ).'"></i> '.( $tab['title'] ).'</a></li>';
+        //
+        $lis .= '<li><a '.( isset($tab['props']) ? $tab['props'] : "").' class="csF14 '.(isset($tab['class']) ? $tab['class'] : '').' '.( $tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '' ).'" href="'.( $tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL.$tab['url'] ).'" ><i class="fa fa-'.( $tab['icon'] ).'"></i> '.( $tab['title'] ).'</a></li>';
     }
 ?>
 <div class="clearfix"></div>
@@ -73,12 +73,17 @@
                     <div class="col-sm-12">
                         <!-- Web -->
                         <ul class="csWeb hidden-xs">
-                            <li class="pull-left">
-                                <a href="<?=base_url('dashboard');?>" class="csBackButton csRadius100 csF16"><i
+                            <li>
+                                <a href="<?=base_url('dashboard');?>" class="csBackButton csRadius100 csF14"><i
                                         class="fa fa-th" aria-hidden="true"></i>Go To Dashboard</a>
                             </li>
-                            <li><a href="javascript:void(0)" class="csF16">|</a></li>
+                            <li><a href="javascript:void(0)" class="csF14">|</a></li>
                             <?= $lis; ?>
+                            <li class="pull-right" style="margin-top: 5px; cursor: pointer;">
+                                <span class="csF18 csB9 jsIncreaseSize" title="Increase the font size" placement="bottom">A</span>&nbsp;
+                                <span class="csF16 jsDecreaseSize" title="Decrease the font size" placement="bottom">A</span>&nbsp;&nbsp;
+                                <span class="csF16 jsResetSize" title="Reset the font size to default" placement="bottom"><i class="fa fa-refresh" aria-hidden="true"></i></span>
+                            </li>
                         </ul>
                         <!-- Mobile -->
                         <div class="csMobile hidden-sm">
