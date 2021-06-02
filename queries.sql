@@ -157,3 +157,4 @@ ALTER TABLE `documents_assigned_history` ADD `allowed_roles` TEXT NULL AFTER `is
 
 ALTER TABLE `offer_letter` ADD `allowed_roles` TEXT NULL DEFAULT NULL AFTER `signers`;
 ALTER TABLE `offer_letter_history` ADD `allowed_roles` TEXT NULL DEFAULT NULL AFTER `signers`;
+ALTER TABLE `documents_assigned_history` ADD `is_available_for_na` TEXT NULL DEFAULT NULL AFTER `upload_document_consenr_signature`;

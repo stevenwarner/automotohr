@@ -5295,27 +5295,35 @@ class Onboarding extends CI_Controller {
                     $this->onboarding_model->disable_all_previous_letter($company_sid, $user_type, $user_sid, 'offer_letter');
                         
                     $data_to_insert['status'] = 1;
-                    $verification_key = random_key(80);
-                    $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
-                    $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
+                    //
+                    
                     //
                     $visibilityArray = [];
                     //
                     if(isset($post['selected_roles'])){
                         $visibilityArray['is_available_for_na'] = $post['selected_roles'];
+                        $data_to_insert['is_available_for_na'] = $post['selected_roles'];
                     }
                     //
                     if(isset($post['selected_employees'])){
                         $visibilityArray['allowed_employees'] = $post['selected_employees'];
+                        $data_to_insert['allowed_employees'] = $post['selected_employees'];
                     }
                     //
-                    if(isset($post['selected_department'])){
-                        $visibilityArray['allowed_departments'] = $post['selected_department'];
+                    if(isset($post['selected_departments'])){
+                        $visibilityArray['allowed_departments'] = $post['selected_departments'];
+                        $data_to_insert['allowed_departments'] = $post['selected_departments'];
                     }
                     //
                     if(isset($post['selected_teams'])){
                         $visibilityArray['allowed_teams'] = $post['selected_teams'];
+                        $data_to_insert['allowed_teams'] = $post['selected_teams'];
                     }
+                    //
+                 
+                    $verification_key = random_key(80);
+                    $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
+                    $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
                     //
                     if(!empty($visibilityArray)){
                         //
