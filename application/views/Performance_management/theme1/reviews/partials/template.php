@@ -22,8 +22,7 @@
         <br>
         <div class="row">
             <div class="col-sm-6 col-sm-offset-3 col-xs-12">
-                <p class="text-center csF18 csB9">----------------------- OR
-                    -----------------------</p>
+                <p class="text-center csF18 csB9">----------------------- OR -----------------------</p>
             </div>
         </div>
     </div>

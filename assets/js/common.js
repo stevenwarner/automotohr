@@ -35,3 +35,25 @@ $(document).on('click', '.jsHintBtn', function(event) {
     $('.jsHintBody[data-hint="' + ($(this).data('target')) + '"]').toggle();
 
 });
+// 
+$(document).on('click', '.jsPageBTN', function(event) {
+
+    //
+    event.preventDefault();
+    //
+    $(this).toggleClass('fa-minus-circle');
+    $(this).toggleClass('fa-plus-circle');
+    //
+    $('.jsPageBody[data-page="' + ($(this).data('target')) + '"]').toggle();
+
+});
+
+footer_fixer();
+//
+function footer_fixer() {
+    //
+    var wh = $(document).height() - $('.csPageWrap').height();
+    var fh = $('footer').height();
+    $('footer').css('margin-top', (wh - fh) + 'px')
+}
+>>>>>>> 76b576f2... minor chnages

@@ -3,11 +3,11 @@
         <h3 class="csF14 csB9 mt0 mb0">
             Default Template(s) - <?=count($templates['company']);?> templates found
             <span class="pull-right">
-                <i class="fa fa-minus-circle csF20" aria-hidden="true"></i>
+                <i class="fa fa-minus-circle csF20 jsPageBTN" data-target="company_templates" aria-hidden="true"></i>
             </span>
         </h3>
     </div>
-    <div class="panel-body">
+    <div class="panel-body jsPageBody" data-page="company_templates">
         <!--  -->
         <?php if(!empty($templates['company'])): ?>
             <div class="row">
