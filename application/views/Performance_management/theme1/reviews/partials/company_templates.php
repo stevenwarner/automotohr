@@ -12,7 +12,7 @@
             </span>
         </h3>
     </div>
-    <div class="panel-body">
+    <div class="panel-body jsPageBody" data-page="company_templates">
         <!--  -->
         <?php if(!empty($templates['company'])): ?>
             <div class="row">
