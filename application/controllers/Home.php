@@ -1950,4 +1950,73 @@ class Home extends CI_Controller {
         }
         $this->response($resp);
     }
+
+    //
+    function eeoc_form($token){
+        //
+        $this->load->library('encryption');
+        //
+        $id = $this->encryption->decrypt(str_replace(['$$ab$$', '$$ba$$'], ['/', '+'], $token));
+        //
+        if(empty($id)){
+            exit(0);
+        }
+        //
+        $this->load->model('hr_documents_management_model');
+        //
+        $document = $this->hr_documents_management_model->getEEOC($id);
+        //
+        $data = [];
+        if(empty($document)){
+            $data['expired'] = 1;
+            exit(0);
+        }
+        //
+        $data['session']['company_detail'] = $this->hr_documents_management_model->getCompanyInfo(57);
+        //
+        $data['company_sid'] = $data['session']['company_detail']['sid'];
+        $data['company_name'] = $data['session']['company_detail']['CompanyName'];
+        $data['id'] = $id;
+        $data['user_sid'] = $document['application_sid'];
+        $data['user_type'] = $document['users_type'];
+        $data['first_name'] = $document['user']['first_name'];
+        $data['last_name'] = $document['user']['last_name'];
+        $data['email'] = $document['user']['email'];
+        $data['eeo_form_info'] = $document;
+        //
+        $this->load->view('onboarding/applicant_boarding_header_public', $data);
+        $this->load->view('eeo/eeoc_view_public');
+        $this->load->view('onboarding/on_boarding_footer');
+    }
+    
+    
+    //
+    function eeoc_form_submit(){
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        if(empty($post)){
+            exit(0);
+        }
+        //
+        $this->load->model('hr_documents_management_model');
+        //
+        $this->hr_documents_management_model->updateEEOC(
+            [
+                'us_citizen' => $post['citizen'],
+                'group_status' => $post['group'],
+                'veteran' => $post['veteran'],
+                'disability' => $post['disability'],
+                'gender' => $post['gender'],
+                'last_sent_at' => date('Y-m-d H:i:s', strtotime('now')),
+                'is_expired' => 1
+            ], 
+            [
+                'sid' => $post['id']
+            ]
+        );
+        //
+        echo 'success';
+        exit(0);
+    }
 }

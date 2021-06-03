@@ -348,60 +348,46 @@
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>
-                                                        <?php if($user_type == 'applicant') { ?>
-                                                            <?php if($eeo_form_status == 'Yes' && !empty($eeo_form_info)){ ?>
-                                                                <tr>
-                                                                    <td class="col-lg-2">
-                                                                        EEOC FORM
-                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                                                    </td>
-                                                                    <td class="col-lg-1 text-center">
-                                                                        <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
-                                                                    </td>
-                                                                    <td class="col-lg-2 text-center">
-                                                                        <?php if (sizeof($i9_form) > 0 && $i9_form['status']) { ?>
-                                                                            <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
-                                                                            <div class="text-center">
-                                                                            <?=reset_datetime(array( 'datetime' => $i9_form['sent_date'], '_this' => $this));?>
-                                                                            </div>
-                                                                            <?php } else { ?>
+                                                        <?php if($EeocFormStatus) { ?>
+                                                            <tr>
+                                                                <td class="col-lg-2">
+                                                                    EEOC FORM
+                                                                    <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/'.( empty($eeo_form_info['gender']) ? 'off' : 'on'  ).'.gif'); ?>">
+                                                                </td>
+                                                                <td class="col-lg-1 text-center">
+                                                                    <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
+                                                                </td>
+                                                                <td class="col-lg-2 text-center">
+                                                                <?php 
+                                                                        if(empty($eeo_form_info)){
+                                                                            ?>
                                                                             <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
-                                                                        <?php } ?>
-                                                                    </td>
-                                                                    <td class="col-lg-6 text-center">
-                                                                        <!-- <form id="form_remove_eeoc" enctype="multipart/form-data" method="post" action="<?php //echo current_url(); ?>">
-                                                                                <input type="hidden" id="perform_action" name="perform_action" value="revoke_eeoc" />
-                                                                        </form>
-                                                                        <button onclick="func_remove_eeoc();" class="btn btn-danger">Revoke</button> -->
-                                                                        <a class="btn btn-success" data-toggle="modal" data-target="#eeoc_modal" href="javascript:void(0);">View Doc</a>
-                                                                    </td>
-                                                                </tr>
-                                                            <?php } ?>
-                                                        <?php } else if ($user_type == 'employee') { ?>
-                                                            <?php if(!empty($eeo_form_info)) { ?>
-                                                                <tr>
-                                                                    <td class="col-lg-2">
-                                                                        EEOC FORM
-                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                                                    </td>
-                                                                    <td class="col-lg-1 text-center">
-                                                                        <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
-                                                                    </td>
-                                                                    <td class="col-lg-2 text-center">
-                                                                        <?php if (sizeof($i9_form) > 0 && $i9_form['status']) { ?>
+                                                                            <?php
+                                                                        } else{
+                                                                            ?>
                                                                             <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
-                                                                            <div class="text-center">
-                                                                            <?=reset_datetime(array( 'datetime' => $i9_form['sent_date'], '_this' => $this));?>
-                                                                            </div>
-                                                                            <?php } else { ?>
-                                                                            <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
-                                                                        <?php } ?>
-                                                                    </td>
-                                                                    <td class="col-lg-6 text-center">
-                                                                        <a class="btn btn-success" data-toggle="modal" data-target="#eeoc_modal" href="javascript:void(0);">View Doc</a>
-                                                                    </td>
-                                                                </tr>
-                                                            <?php } ?>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                </td>
+                                                                <td class="col-lg-6 text-center">
+                                                                <?php 
+                                                                        if(!empty($eeo_form_info['gender'])){
+                                                                            ?>
+                                                                            <a class="btn btn-success" data-toggle="modal" data-target="#eeoc_modal" href="javascript:void(0);">View Form</a>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                    <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top"><?=empty($eeo_form_info) ? 'Send Form' : 'Re-send Form';?></a>
+                                                                    <?php 
+                                                                        if(!empty($eeo_form_info['last_sent_at'])){
+                                                                            ?>
+                                                                            <p>Last completed on <strong><?=DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');?></strong></p>
+                                                                            <?php
+                                                                        }
+                                                                    ?>
+                                                                </td>
+                                                            </tr>
                                                         <?php } ?>
                                                     </tbody>
                                                 </table>
@@ -2232,7 +2218,7 @@
 
 <?php
     if($user_type == 'applicant') {
-        if($eeo_form_status == 'Yes' && !empty($eeo_form_info)) {
+        if($EeocFormStatus && !empty($eeo_form_info)) {
 ?>
         <div id="eeoc_modal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg" role="document">
@@ -6095,5 +6081,36 @@
 <script>
     $('[data-toggle="tooltip"]').tooltip({
         trigger: "hover"
+    });
+
+    //
+    $(function(e){
+        //
+        $('.jsResendEEOC').click(function(event){
+            //
+            event.preventDefault();
+            //
+            alertify.confirm(
+                "Are you sure you want to send this document?",
+                function(){
+                    //
+                    $.post(
+                        "<?=base_url('send_eeoc_form');?>", {
+                            userId: <?=$user_sid;?>,
+                            userType: "<?=$user_type;?>",
+                            userJobId: "<?=$job_list_sid;?>"
+                        }
+                    ).done(function(resp){
+                        //
+                        if(resp == 'success'){
+                            alertify.alert('Success!','EEOC form has been sent.')
+                            return;
+                        }
+                        //
+                        alertify.alert('Error!', 'Something went wrong while resending the EEOC form.')
+                    });
+                }
+            ).setHeader('Confirm!');
+        });
     });
 </script>

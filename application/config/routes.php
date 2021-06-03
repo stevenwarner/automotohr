@@ -1300,3 +1300,9 @@ $route['get_send_reminder_email_body']['get'] = 'Common_ajax/get_send_reminder_e
 $route['send_reminder_email_by_type']['post'] = 'Common_ajax/send_reminder_email_by_type';
 $route['get_send_reminder_email_history/(:num)/(:any)']['get'] = 'Common_ajax/get_send_reminder_email_history/$1/$2';
 $route['auto_email_reminder/(:any)']['cli'] = 'Cron_common/auto_email_reminder/$1';
+
+
+// 
+$route['send_eeoc_form'] = 'Hr_documents_management/send_eeoc_form';
+$route['eeoc_form/(:any)']['get'] = 'Home/eeoc_form/$1';
+$route['eeoc_form_submit']['post'] = 'Home/eeoc_form_submit';

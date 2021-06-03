@@ -3478,7 +3478,9 @@ class Hr_documents_management extends Public_Controller {
             // _e($data['assigned_documents'], true, true);
             // ob_flush();
             // ob_start();
-ini_set('memory_limit', -1);
+            ini_set('memory_limit', -1);
+            // Set eeoc form status
+            $data['EeocFormStatus'] = $data['session']['portal_detail']['eeo_form_status'];
 			
             $data['pp_flag'] = $pp_flag;
             $this->load->view('main/header', $data);
@@ -11423,5 +11425,70 @@ ini_set('memory_limit', -1);
         $this->load->view('hr_documents_management/pending_varification_documents');
         $this->load->view('main/footer');
     }    
+
+
+    //
+    function send_eeoc_form(){
+        //
+        if(!strtolower($this->input->method()) == 'post' || empty($this->input->post(NULL, TRUE))){
+            exit(0);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        // 
+        $id = $this->hr_documents_management_model->getEEOCId($post['userId'], $post['userType'], $post['userJobId']);
+        //
+        $this->load->library('encryption');
+        //
+        $token = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($id)
+        );
+        //
+        if($post['userType'] == 'employee'){
+            $info = $this->hr_documents_management_model->getEmployeeInfo($post['userId']);
+        } else{
+            $info = $this->hr_documents_management_model->getApplicantInfo($post['userId']);
+        }
+        //
+        if(empty($info)){
+            echo 'inactive';
+            exit(0);
+        }
+        //
+        $hf = message_header_footer(
+            $this->session->userdata('logged_in')['company_detail']['sid'],
+            $this->session->userdata('logged_in')['company_detail']['CompanyName']
+        );
+        //
+        $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
+        //
+        $content = $template['text'];
+        //
+        replace([
+            '{{applicant_name}}' => $info['first_name'].' '.$info['last_name'],
+            '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('eeoc_form/'.( $token ).'') ).'">EEOC Form</a>',
+        ], $content);
+        //
+        replace([
+            '{{company_name}}' => $this->session->userdata('logged_in')['company_detail']['CompanyName']
+        ], $template['subject']);
+        //
+        $body = $hf['header'];
+        $body .= $content;
+        $body .= $hf['footer'];
+        //
+        log_and_sendEmail(
+            'notifications@automotohr.com',
+            $info['email'],
+            $template['subject'],
+            $body,
+            $this->session->userdata('logged_in')['company_detail']['CompanyName']
+        );
+        //
+        echo 'success';
+        exit(0);
+    }
 
 }

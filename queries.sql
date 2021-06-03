@@ -145,3 +145,9 @@ ALTER TABLE `documents_assigned_history` ADD `upload_document_consent` TINYINT(1
 ALTER TABLE `offer_letter` ADD `is_available_for_na` TEXT NULL AFTER `signers`, ADD `allowed_teams` TEXT NULL AFTER `is_available_for_na`, ADD `allowed_departments` TEXT NULL AFTER `allowed_teams`, ADD `allowed_employees` TEXT NULL AFTER `allowed_departments`;
 INSERT INTO `email_templates` (`sid`, `name`, `group`, `from_name`, `from_email`, `cc`, `subject`, `file`, `text`, `user_defined`, `template_code`, `status`) VALUES
 (410, 'Authorized Manager Notification', 'other', 'AutomotoHR', 'notifications@automotohr.com', '', '{{employee_name}} has completed a document,', NULL, '<p>Dear {{first_name}}&nbsp;{{last_name}},</p>\r\n\r\n<p>This email is to inform you that<strong> {{employee_name}} </strong>has completed a document and your signature is required.</p>\r\n\r\n<p>You can review and sign&nbsp;the document by clicking the following link.&nbsp;</p>\r\n\r\n<p>{{link}}</p>\r\n\r\n<p>Thank you,</p>\r\n\r\n<p>The AutomotoHR Team</p>\r\n\r\n<p><strong>**This is an automated email, please do not reply**</strong></p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>', 1, NULL, 1);
+
+
+-- Mubashir Ahmed
+-- 06/03/2021
+ALTER TABLE `portal_eeo_form` ADD `last_sent_at` DATETIME NULL AFTER `is_latest`;
+ALTER TABLE `portal_eeo_form` ADD `is_expired` TINYINT NOT NULL DEFAULT '1' AFTER `last_sent_at`;

@@ -1086,6 +1086,7 @@ class Hr_documents_management_model extends CI_Model {
     function get_eeo_form_info ($sid) {
         $this->db->select('*');
         $this->db->where('application_sid', $sid);
+        $this->db->order_by('sid', 'DESC');
         $result = $this->db->get('portal_eeo_form')->result_array();
         $return_data = array();
 
@@ -5985,5 +5986,117 @@ class Hr_documents_management_model extends CI_Model {
         unset($a);
         //
         return $b;
+    }
+
+    //
+    function getEEOCId($id, $type, $jobId){
+        $a = 
+        $this->db
+        ->select('sid')
+        ->where('application_sid', $id)
+        ->where('users_type', $type)
+        ->get('portal_eeo_form');
+        //
+        $b = $a->row_array();
+        //
+        unset($a);
+        //
+        if(empty($b)){
+            $this->db
+            ->insert("portal_eeo_form", [
+                'application_sid' => $id,
+                'users_type' => $type,
+                'portal_applicant_jobs_list_sid' => $jobId
+            ]);
+            //
+            $sid = $this->db->insert_id();
+        } else{
+            $sid = $b['sid'];
+        }
+        //
+        $this->db->where('sid', $sid)
+        ->update('portal_eeo_form', [
+            'is_expired' => 0
+        ]);
+        //
+        return $sid;
+    }
+
+    //
+    function getEmployeeInfo($id){
+        $a = 
+        $this->db
+        ->select('first_name, last_name, email')
+        ->where('sid', $id)
+        ->where('active', 1)
+        ->where('terminated_status', 0)
+        ->get('users');
+        //
+        $b = $a->row_array();
+        //
+        unset($a);
+        //
+        return $b;
+    }
+   
+    //
+    function getApplicantInfo($id){
+        $a = 
+        $this->db
+        ->select('first_name, last_name, email')
+        ->where('sid', $id)
+        ->get('portal_job_applications');
+        //
+        $b = $a->row_array();
+        //
+        unset($a);
+        //
+        return $b;
+    }
+
+
+    //
+    function getEEOC($id){
+        $a = 
+        $this->db
+        ->select('*')
+        ->where('sid', $id)
+        ->get('portal_eeo_form');
+        //
+        $b = $a->row_array();
+        //
+        unset($a);
+        //
+        if(empty($b)){
+            return [];
+        }
+        //
+        if($b['users_type'] == 'employee'){
+            $info = $this->getEmployeeInfo($b['application_sid']);
+        } else if($b['users_type'] == 'applicant'){
+            $info = $this->getApplicantInfo($b['application_sid']);
+        } else{
+            $info = $this->getEmployeeInfo($b['application_sid']);
+            $info2 = $this->getApplicantInfo($b['application_sid']);
+            //
+            if(!empty($info)){
+                $info = $info;
+            }
+            if(!empty($info2)){
+                $info = $info2;
+            }
+        }
+        //
+        $b['user'] = $info;
+        //
+        return $b;
+    }
+
+
+    //
+    function updateEEOC($data, $cond){
+        $this->db
+        ->where($cond)
+        ->update('portal_eeo_form', $data);
     }
 }
