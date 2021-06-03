@@ -5,7 +5,7 @@
     <body>
         <div class="container">
         <?php 
-            if(isset($is_expired)){
+            if($eeo_form_info['is_expired'] == 0){
                 ?>
                 <div>
             <section class="sheet padding-10mm">

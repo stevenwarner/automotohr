@@ -1968,7 +1968,6 @@ class Home extends CI_Controller {
         //
         $data = [];
         if(empty($document)){
-            $data['expired'] = 1;
             exit(0);
         }
         //

@@ -617,7 +617,7 @@ class Job_listings extends Public_Controller {
 
                 $formpost['sid'] = $jobId;
                 // Added on: 05-08-2019
-                $this->addUpdateXML( $formpost['sid'], $employer_id );
+                // $this->addUpdateXML( $formpost['sid'], $employer_id );
 
                 if ($formpost['action'] == "publish") {
                     redirect('add_listing_advertise/' . $jobId);
@@ -1363,7 +1363,7 @@ class Job_listings extends Public_Controller {
                         array_push($employeesArray, $logged_in_user_sid);
                     }
                     // Added on: 05-08-2019
-                    $this->addUpdateXML( $formpost['sid'], $employer_id, false );
+                    // $this->addUpdateXML( $formpost['sid'], $employer_id, false );
 
                     $this->job_listings_visibility_model->UpdateExistingVisibilityGroup($company_id, $id, $employeesArray); //Handle Visibility to Employees End
                     $this->session->set_flashdata('message', '<b>Success:</b> Job updated successfully');
