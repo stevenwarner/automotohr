@@ -67,13 +67,13 @@ class Varification_document_model extends CI_Model {
         if ($user_type == 'employee' && !empty($inactive_employee_sid)) {
             $this->db->group_start();
             $this->db->where_not_in('user_sid', $inactive_employee_sid);
-            $this->db->where_not_in('user_type', 'employee');
+            $this->db->where('user_type', 'employee');
             $this->db->group_end();
         } else {
             if(!empty($inactive_applicant_sid)){
                 $this->db->group_start();
                 $this->db->where_not_in('user_sid', $inactive_applicant_sid);
-                $this->db->where_not_in('user_type', 'applicant');
+                $this->db->where('user_type', 'applicant');
                 $this->db->group_end();
             }
         }
@@ -107,8 +107,9 @@ class Varification_document_model extends CI_Model {
             sid
         ')
         ->where('parent_sid', $companySid)
-        ->where('active <>', 1)
-        ->or_where('terminated_status <>', 0)
+        ->where('active', 0)
+        ->where('parent_sid <> ', 0)
+        ->or_where('terminated_status', 1)
         ->order_by('concat(first_name,last_name)', 'ASC', false)
         ->get('users');
         //

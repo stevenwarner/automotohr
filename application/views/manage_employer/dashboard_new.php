@@ -672,15 +672,15 @@
                                             <div class="dashboard-widget-box">
                                                 <figure><i class="fa fa-clipboard <?php echo !empty($totalPD) && $totalPD > 0 ? 'start_animation' : ''; ?>"></i></figure>
                                                 <h2 class="post-title" style="margin: 2px 0;">
-                                                    <a href="<?php echo base_url('authorized_document'); ?>">Verification Documents</a>
+                                                    <a href="<?php echo base_url('authorized_document'); ?>">Pending Employer Section</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
-                                                    <span class="green"><?=$totalPD;?> Total Pending Document(s)</span><br>
-                                                    <small style="font-size: 12px"><?=$employeeTotal;?> Employees Pending Document(s)</small><br>
-                                                    <small style="font-size: 12px"><?=$applicantTotal;?> Applicants Pending Document(s)</small>
+                                                    <span class="green"><?=$totalPD;?> Total</span><br>
+                                                    <small style="font-size: 12px"><?=$employeeTotal;?> Employee(s)</small><br>
+                                                    <small style="font-size: 12px"><?=$applicantTotal;?> Applicant(s)</small>
                                                 </div>
                                                 <div class="button-panel">
-                                                    <a href="<?php echo base_url('hr_documents_management/company_varification_document'); ?>" class="site-btn">View Verification Documents</a>
+                                                    <a href="<?php echo base_url('hr_documents_management/company_varification_document'); ?>" class="site-btn">Show Documents</a>
                                                 </div>
                                             </div>
                                         </div>
