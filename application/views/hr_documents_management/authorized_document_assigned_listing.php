@@ -105,7 +105,8 @@
                                                     <td class="col-lg-2">
                                                         <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
                                                         <?php $btn_text= empty($document['authorized_signature']) ?  'Sign Doc - Not Completed' : 'Sign Doc - Completed'; ?>
-                                                        <a class="<?php echo $btn_show; ?>" href="<?php echo  base_url('view_assigned_authorized_document' . '/' . $document['sid']); ?>">
+                                                        <?php $doc_type = $document['document_type'] == "offer_letter" ?  'o' : 's'; ?>
+                                                        <a class="<?php echo $btn_show; ?>" href="<?php echo  base_url('view_assigned_authorized_document' . '/' .$doc_type. '/' . $document['sid']); ?>">
                                                             <?php echo $btn_text; ?>
                                                         </a>
 
