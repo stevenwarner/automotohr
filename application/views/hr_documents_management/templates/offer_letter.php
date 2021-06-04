@@ -134,7 +134,7 @@
 			</div>
 			<!-- 8 -->
 			<div class="form-group">
-				<label>Sent an email notification?</label>
+				<label>Send an email notification?</label>
 				<br />
 				<label class="control control--radio">
 					<input type="radio" class="js-template-send-email" name="js-template-send-email" value="no" /> No &nbsp;
