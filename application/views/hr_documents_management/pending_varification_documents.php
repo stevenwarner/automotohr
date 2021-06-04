@@ -30,7 +30,7 @@
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <h4 class="alert alert-default" style="padding: 0">
-                                                    <strong>Employee / Applicant pending employer section for the verification documents.</strong>
+                                                    <strong>Employee / Applicant pending employer section.</strong>
                                                 </h4>
                                                 <hr>
                                             </div>

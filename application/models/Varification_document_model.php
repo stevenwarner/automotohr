@@ -101,6 +101,63 @@ class Varification_document_model extends CI_Model {
         return $return_data;
     }
 
+    //
+    function getPendingAuthDocs($company_sid, $user_type, $count = FALSE){
+        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+        //
+        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+        //
+        $this->db
+        ->from('documents_assigned')
+        ->where('company_sid', $company_sid)
+        ->where('user_type', $user_type)
+        ->where('archive', 0)
+        ->where('authorized_signature IS NULL', null)
+        ->like('document_description', '{{authorized_signature}}');
+        //
+        if(strtolower($user_type) == 'applicant' && !empty($inactive_applicant_sid)){
+            $this->db->where_not_in('user_sid', $inactive_applicant_sid);
+        }
+        //
+        if(strtolower($user_type) == 'employee' && !empty($inactive_employee_sid)){
+            $this->db->where_not_in('user_sid', $inactive_employee_sid);
+        }
+        //
+        if($count){
+            return $this->db->count_all_results();
+        }
+        // 
+        //
+        $this->db->select('
+            *,
+            assigned_date as sent_date,
+            document_title as document_name,
+            IF(
+                signature_timestamp is null or signature_timestamp = "",
+                IF(
+                    uploaded_date IS NULL or uploaded_date = "", 
+                    IF( 
+                        downloaded_date IS NULL or downloaded_date = "", 
+                        acknowledged_date, 
+                        downloaded_date 
+                    ), 
+                    uploaded_date 
+                ),
+                signature_timestamp
+            ) AS filled_date
+        ');
+        //
+        $a = $this->db->get();
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        return $b;
+    }
+
     function getAllCompanyInactiveEmployee($companySid) {
         $a = $this->db
         ->select('

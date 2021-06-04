@@ -11404,8 +11404,8 @@ class Hr_documents_management extends Public_Controller {
         $applicant_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'applicant');
         $applicant_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'applicant');
 
-        $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9);
-        $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9);
+        $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee'));
+        $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'applicant'));
         //
         function tempr($a, $b){
             return $a['filled_date'] < $b['filled_date'];

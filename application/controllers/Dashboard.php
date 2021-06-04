@@ -468,9 +468,11 @@ class Dashboard extends Public_Controller {
             $employeeTotal = 0;
             $employeeTotal = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'employee', TRUE);
             $employeeTotal += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'employee', TRUE);
+            $employeeTotal += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'employee', TRUE);
             $applicantTotal = 0;
             $applicantTotal = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'applicant', TRUE);
             $applicantTotal += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'applicant', TRUE);
+            $applicantTotal += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE);
 
             //
             $data['employeeTotal'] = $employeeTotal;
