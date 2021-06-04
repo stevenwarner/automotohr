@@ -1576,7 +1576,10 @@
 			//
 			$('body').append(rows);
 			//
-			$('#'+sid).modal();
+			$('#'+sid).modal({
+				backdrop: 'static',
+				keyboard: false
+			});
 			//
 			$('.jsModifyModalLoader').show();
 			//
