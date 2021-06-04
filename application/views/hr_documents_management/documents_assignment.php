@@ -4509,7 +4509,8 @@
     }
 
     function open_uploaded_model() {
-        $('#uploaded_document_modal').modal({show:true});
+        $('#uploaded_document_modal').modal({show:true, backdrop: 'static',
+				keyboard: false});
 
         $('#manual_document').mFileUploader({
             fileLimit: '2MB', // Default is '2MB', Use -1 for no limit (Optional)

@@ -133,11 +133,11 @@ class Varification_document_model extends CI_Model {
             assigned_date as sent_date,
             document_title as document_name,
             IF(
-                signature_timestamp is null or signature_timestamp = "",
+                signature_timestamp is null ,
                 IF(
-                    uploaded_date IS NULL or uploaded_date = "", 
+                    uploaded_date IS NULL, 
                     IF( 
-                        downloaded_date IS NULL or downloaded_date = "", 
+                        downloaded_date IS NULL, 
                         acknowledged_date, 
                         downloaded_date 
                     ), 
