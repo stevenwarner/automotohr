@@ -1286,36 +1286,18 @@ class Dashboard_model extends CI_Model
 
     function get_all_auth_documents_assigned_count($company_id, $employer_id)
     {
-        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_id);
-        //
-        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
-        //
-        $this->db
+        return  $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
         ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
         ->where('authorized_document_assigned_manager.company_sid', $company_id)
+        // ->where('authorized_document_assigned_manager.assigned_status', 1)
         ->where('documents_assigned.archive', 0)
-        ->where('documents_assigned.status', 1);
-        //
-        if(!empty($inactive_employee_sid)){
-            $this->db->group_start()
-            ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
-            ->where_not_in('documents_assigned.user_type', 'employee')
-            ->group_end();
-        }
-        if(!empty($inactive_applicant_sid)){
-            $this->db->group_start()
-            ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
-            ->where_not_in('documents_assigned.user_type', 'applicant')
-            ->group_end();
-        }
-        return $this->db->group_start()
+        ->where('documents_assigned.status', 1)
+        ->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
         ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)
         ->group_end()
         ->count_all_results('authorized_document_assigned_manager');
-
-
     }
 
     function getAllCompanyInactiveEmployee($companySid) {
@@ -1352,9 +1334,9 @@ class Dashboard_model extends CI_Model
 
     function get_all_auth_documents_assigned_today_count($company_id, $employer_id)
     {
-        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_id);
-        //
-        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
+        // $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_id);
+        // //
+        // $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
         //
         $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
@@ -1365,19 +1347,19 @@ class Dashboard_model extends CI_Model
         ->where('documents_assigned.archive', 0)
         ->where('documents_assigned.status', 1);
         //
-        if(!empty($inactive_employee_sid)){
-            $this->db->group_start()
-            ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
-            ->where_not_in('documents_assigned.user_type', 'employee')
-            ->group_end();
-        }
-        //
-        if(!empty($inactive_applicant_sid)){
-            $this->db->group_start()
-            ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
-            ->where_not_in('documents_assigned.user_type', 'applicant')
-            ->group_end();
-        }
+        // if(!empty($inactive_employee_sid)){
+        //     $this->db->group_start()
+        //     ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
+        //     ->where('documents_assigned.user_type', 'employee')
+        //     ->group_end();
+        // }
+        // //
+        // if(!empty($inactive_applicant_sid)){
+        //     $this->db->group_start()
+        //     ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
+        //     ->where('documents_assigned.user_type', 'applicant')
+        //     ->group_end();
+        // }
         return $this->db
         ->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
@@ -1403,19 +1385,19 @@ class Dashboard_model extends CI_Model
         ->where('documents_assigned.archive', 0)
         ->where('documents_assigned.status', 1);
         //
-        if(!empty($inactive_employee_sid)){
-            $this->db->group_start()
-            ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
-            ->where_not_in('documents_assigned.user_type', 'employee')
-            ->group_end();
-        }
-        //
-        if(!empty($inactive_applicant_sid)){
-            $this->db->group_start()
-            ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
-            ->where_not_in('documents_assigned.user_type', 'applicant')
-            ->group_end();
-        }
+        // if(!empty($inactive_employee_sid)){
+        //     $this->db->group_start()
+        //     ->where_not_in('documents_assigned.user_sid', $inactive_employee_sid)
+        //     ->where('documents_assigned.user_type', 'employee')
+        //     ->group_end();
+        // }
+        // //
+        // if(!empty($inactive_applicant_sid)){
+        //     $this->db->group_start()
+        //     ->where_not_in('documents_assigned.user_sid', $inactive_applicant_sid)
+        //     ->where('documents_assigned.user_type', 'applicant')
+        //     ->group_end();
+        // }
         return $this->db
         ->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
