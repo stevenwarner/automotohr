@@ -8,7 +8,7 @@ class Testing extends CI_Controller{
     public function __construct(){
         parent::__construct();
         //
-        $this->load->model('test_model', 'tm');
+        // $this->load->model('test_model', 'tm');
    }
 	
     //
@@ -71,5 +71,62 @@ class Testing extends CI_Controller{
         }
         echo "All done";
         exit(0);
+    }
+
+
+    //
+    function eeoc_fixer(){
+        //
+        $eeoc_forms = 
+        $this->db
+        ->select('sid, portal_applicant_jobs_list_sid, is_latest')
+        ->where('users_type', '')
+        ->get('portal_eeo_form')
+        ->result_array();
+
+        //
+        $s = $f = 0;
+        $fa = [];
+        //
+        if(!empty($eeoc_forms)){
+            foreach($eeoc_forms as $form){
+                // Get applicant id
+                $applicantId = $this->db
+                ->select('portal_job_applications_sid')
+                ->where('sid', $form['portal_applicant_jobs_list_sid'])
+                ->get('portal_applicant_jobs_list')
+                ->row_array()['portal_job_applications_sid'];
+                //
+                if(empty($applicantId)){
+                    $f++;
+                    $fa[] = $form;
+                    continue;
+                }
+                //
+                $s++;
+                //
+                $type = 'applicant';
+                //
+                if(
+                    $this->db
+                    ->where('applicant_sid', $applicantId)
+                    ->count_all_results('users')
+                ){
+                    $type = 'employee';
+                }
+                //
+                if($form['is_latest'] == 0){
+                    $type = 'applicant';
+                }
+                //
+                $this->db->where('sid', $form['sid'])
+                ->update('portal_eeo_form', ['users_type' => $type]);
+            }
+        }
+
+        //
+        _e('Success: '. $s, true);
+        _e('Failed: '. $f, true);
+        _e($fa, true);
     }
 }
