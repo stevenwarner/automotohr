@@ -9676,8 +9676,9 @@ class Timeoff_model extends CI_Model
         if(isset($post['isMine']) && $post['isMine'] == 1){
             $notIds = [];
             $this->db->where('timeoff_requests.employee_sid', $post['employeeId']);
+        }else{
+            if($post['level'] == 0 && empty($notIds)) return [];
         }
-        if($post['level'] == 0 && empty($notIds)) return [];
         //
         if(!empty($notIds)) $this->db->where_in('timeoff_requests.employee_sid', $notIds);
         else if($post['filter']['employees'] != 'all'){
