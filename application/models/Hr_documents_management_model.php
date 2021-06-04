@@ -369,7 +369,7 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function get_assign_authorized_document ($company_sid, $assign_document_sid) {
-        $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive,documents_management.visible_to_payroll');
+        $this->db->select('documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive,documents_management.visible_to_payroll');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('documents_assigned.sid', $assign_document_sid);
         $this->db->where('documents_assigned.archive', 0);
@@ -380,6 +380,26 @@ class Hr_documents_management_model extends CI_Model {
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
 
+        if (!empty($record_arr)) {
+            return $record_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+    function get_assign_authorized_offer_letter($company_sid, $assign_document_sid) {
+        $this->db->select('documents_assigned.*,offer_letter.acknowledgment_required,offer_letter.download_required,offer_letter.signature_required');
+        $this->db->where('documents_assigned.company_sid', $company_sid);
+        $this->db->where('documents_assigned.sid', $assign_document_sid);
+        $this->db->where('documents_assigned.archive', 0);
+        $this->db->where('status', 1);
+
+        $this->db->join('offer_letter','offer_letter.sid = documents_assigned.document_sid','left');
+
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {

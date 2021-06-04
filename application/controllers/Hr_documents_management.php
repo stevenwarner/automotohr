@@ -4154,7 +4154,7 @@ class Hr_documents_management extends Public_Controller {
         }
     }
 
-    public function view_assigned_authorized_document ($assign_document_sid) {
+    public function view_assigned_authorized_document ($doc_type, $assign_document_sid) {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -4176,7 +4176,13 @@ class Hr_documents_management extends Public_Controller {
                 );
 
                 //
-                $document = $this->hr_documents_management_model->get_assign_authorized_document($company_sid, $assign_document_sid);
+               
+                if ($doc_type == 'o') {
+                    $document = $this->hr_documents_management_model->get_assign_authorized_offer_letter($company_sid, $assign_document_sid);
+                } else {
+
+                    $document = $this->hr_documents_management_model->get_assign_authorized_document($company_sid, $assign_document_sid);
+                }
 
                 if (!empty($document)) {
                     if ($document['user_consent'] == 1 && !empty($document['form_input_data'])) {
