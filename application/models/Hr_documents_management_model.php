@@ -369,7 +369,7 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function get_assign_authorized_document ($company_sid, $assign_document_sid) {
-        $this->db->select('documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive,documents_management.visible_to_payroll');
+        $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive,documents_management.visible_to_payroll');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('documents_assigned.sid', $assign_document_sid);
         $this->db->where('documents_assigned.archive', 0);
