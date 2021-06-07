@@ -466,6 +466,7 @@
                 l.uploaded_document_s3_name = l.document_s3_name;
                 l.uploaded_document_original_name = l.document_original_name;
             }
+            console.log(l);
             //
             $('.jsVisibleToPayroll').prop('checked', l.visible_to_payroll);
             $('#jsRoles').select2('val', l.allowed_roles && l.allowed_roles != 'null' ? l.allowed_roles.split(',') :  null);

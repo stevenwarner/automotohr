@@ -2394,6 +2394,19 @@ class Onboarding_model extends CI_Model {
         $record_obj->free_result();
         
         if (!empty($record_arr)) {
+            $record_arr['signers'] = [];
+            //
+            $a = $this->db
+            ->select('group_concat(assigned_to_sid) as signers')
+            ->where('document_assigned_sid', $record_arr[0]['sid'])
+            ->get('authorized_document_assigned_manager');
+            //
+            $b = $a->row_array();
+            $a = $a->free_result();
+            //
+            if(!empty($b)){
+                $record_arr[0]['signers'] = $b['signers'];
+            } 
             return $record_arr[0];
         } else {
             return array();

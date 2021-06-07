@@ -260,6 +260,26 @@
 			rows += getSignatureRequiredRow();
 			if(do_descpt) rows += getTags();
 			//
+			if($('#jsRoles').data('select2')){
+				$('#jsRoles').data('select2').destroy()
+				$('#jsRoles').remove()
+			}
+			//
+			if($('#jsDepartments').data('select2')){
+				$('#jsDepartments').data('select2').destroy()
+				$('#jsDepartments').remove()
+			}
+			//
+			if($('#jsTeams').data('select2')){
+				$('#jsTeams').data('select2').destroy()
+				$('#jsTeams').remove()
+			}
+			//
+			if($('#jsEmployees').data('select2')){
+				$('#jsEmployees').data('select2').destroy()
+				$('#jsEmployees').remove()
+			}
+			//
 			let select2s = ['#jsRoles', '#jsEmployees', '#jsDepartments', '#jsTeams'];
 			//
 			if(do_descpt){ 
@@ -391,8 +411,6 @@
 			 	rows = '',
 			 	do_upload,
 			 	do_descpt;
-			//
-			console.log(d);
 
 			//
 			selectedTemplate = d;
@@ -416,6 +434,26 @@
 			rows+= getEmailContent();
 			if(do_descpt) rows += getTags();
 			//
+			if($('#jsRoles').data('select2')){
+				$('#jsRoles').data('select2').destroy()
+				$('#jsRoles').remove()
+			}
+			//
+			if($('#jsDepartments').data('select2')){
+				$('#jsDepartments').data('select2').destroy()
+				$('#jsDepartments').remove()
+			}
+			//
+			if($('#jsTeams').data('select2')){
+				$('#jsTeams').data('select2').destroy()
+				$('#jsTeams').remove()
+			}
+			//
+			if($('#jsEmployees').data('select2')){
+				$('#jsEmployees').data('select2').destroy()
+				$('#jsEmployees').remove()
+			}
+			//
 			Modal(
 				'Modify & Assign This Offer Letter / Pay Plan',
 				rows,
@@ -430,7 +468,7 @@
 					$('#js-modify-assign-offer-letter-download option[value="'+( d.download_required )+'"]').prop('selected', true);
 					$('#js-modify-assign-offer-letter-acknowledgment option[value="'+( d.acknowledgment_required )+'"]').prop('selected', true);
 					do_descpt ? $('#js-modify-assign-offer-letter-signers').select2('val', d.signers != null && d.signers != ''  ? d.signers.split(',') : null) : '';
-					//
+					
 					$('#jsRoles').select2({ closeOnSelect: false});
 					$('#jsDepartments').select2({ closeOnSelect: false});
 					$('#jsTeams').select2({ closeOnSelect: false});
