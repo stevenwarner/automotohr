@@ -550,6 +550,8 @@ define('DOCUMENT_COMPLETION_REPOSRT_TEMPLATE_SID', 391);
 define('TIMEOFF_CREATE_FOR_APPROVER', 392);
 define('TIMEOFF_UPDATE_FOR_APPROVER', 393);
 define('TIMEOFF_CREATE_FOR_EMPLOYEE', 394);
+define('APPROVER_TIMEOFF_REQUEST_UPDATE', 400);
+define('USER_TIMEOFF_REQUEST', 401);
 // Time off magic quotes
 define('TIMEOFF_MAGIC_QUOTES', implode(',', [
   'approver_first_name',

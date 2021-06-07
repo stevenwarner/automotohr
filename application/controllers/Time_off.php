@@ -3304,7 +3304,13 @@ class Time_off extends Public_Controller
                 //
                 $this->timeoff_model->insertHistory( $in, 'timeoff_request_timeline' );
                 // Send email notifications
-                if($post['sendEmailNotification'] == 1 || $post['sendEmailNotification'] == 'yes') $this->sendNotifications($post['requestId'], 'update');
+                if($post['sendEmailNotification'] == 1 || $post['sendEmailNotification'] == 'yes') {
+                    if ($post['status'] == "approved" || $post['status'] == "rejected") {
+                        $this->sendNotifications($post['requestId'], $post['status']);
+                    } else {
+                        $this->sendNotifications($post['requestId'], 'update');
+                    } 
+                } 
                 //
                 $this->res['Response'] = 'You have succesfully updated the time-off.';
                 $this->res['Status'] = TRUE;
@@ -5847,65 +5853,140 @@ class Time_off extends Public_Controller
                 $eRP['{{last_name}}'] = $request['history'][0]['last_name'];
             break;
         endswitch;
-            
-        // Send email to employee
-        if(!empty($employeeTemplate)){
-            //
-            log_and_sendEmail(
-                $employeeTemplate['FromEmail'],
-                $request['email'],
-                $employeeTemplate['Subject'],
-                $CHF['header'] . $employeeTemplate['Body'] . $CHF['footer'],
-                $employeeTemplate['FromName']
-            );
-        }
-        // Send Email to approver
-        if(!empty($approverTemplate) && !empty($request['approvers'])){
-            //
-            foreach($request['approvers'] as $approver){
-                //
-                $eRP['{{approver_first_name}}'] = $approver['first_name'];
-                $eRP['{{approver_last_name}}'] = $approver['last_name'];
-                
-                $eRP['{{approve_link}}'] = getButton(
-                    [
-                        '{{url}}'=> timeoffGetEncryptedLink([
-                            'companySid' => $request['company_sid'],
-                            'companyName' => $request['CompanyName'],
-                            'requestSid' => $request['sid'],
-                            'employerSid' => $approver['userId'],
-                            'typeSid' => 'approve'
-                        ]),
-                        '{{color}}' => '#28a745',
-                        '{{text}}' => 'Approve Request'
-                    ]
-                );
-                $eRP['{{reject_link}}'] = getButton(
-                    [
-                        '{{url}}'=> timeoffGetEncryptedLink([
-                            'companySid' => $request['company_sid'],
-                            'companyName' => $request['CompanyName'],
-                            'requestSid' => $request['sid'],
-                            'employerSid' => $approver['userId'],
-                            'typeSid' => 'reject'
-                        ]),
-                        '{{color}}' => '#dc3545',
-                        '{{text}}' => 'Reject Request'
-                    ]
-                );
-                //
-                $approverTemplateI = timeoffMagicQuotesReplace($approverTemplate, $eRP);
 
+        if ($type == "approved" || $type == "rejected") {
+            // Get approver template
+            $requesterTemplate = $this->timeoff_model->getEmailTemplate(USER_TIMEOFF_REQUEST);
+            $approversTemplate = $this->timeoff_model->getEmailTemplate(APPROVER_TIMEOFF_REQUEST_UPDATE);
+            //
+            $eRP['{{approver_or_rejecter_first_name}}'] = $request['history'][0]['first_name'];
+            $eRP['{{approver_or_rejecter_last_name}}'] = $request['history'][0]['last_name'];
+            $eRP['{{user_first_name}}'] = $request['first_name'];
+            $eRP['{{user_last_name}}'] = $request['last_name'];
+            $eRP['{{request_type}}'] = $type;
+            //
+            if(!empty($requesterTemplate)){
+                //
+                $requesterTemplateI = timeoffMagicQuotesReplace($requesterTemplate, $eRP);
                 //
                 log_and_sendEmail(
-                    $approverTemplateI['FromEmail'],
-                    $approver['email'],
-                    $approverTemplateI['Subject'],
-                    $CHF['header'] . $approverTemplateI['Body'] . $CHF['footer'],
-                    $approverTemplateI['FromName']
+                    $requesterTemplate['FromEmail'],
+                    $request['email'],
+                    $requesterTemplateI['Subject'],
+                    $CHF['header'] . $requesterTemplateI['Body'] . $CHF['footer'],
+                    $requesterTemplateI['FromName']
                 );
             }
+
+            // Send Email to approver
+            if(!empty($approversTemplate) && !empty($request['approvers'])){
+                //
+                foreach($request['approvers'] as $approver){
+                    //
+                    $eRP['{{approver_first_name}}'] = $approver['first_name'];
+                    $eRP['{{approver_last_name}}'] = $approver['last_name'];
+                    
+                    $eRP['{{approve_link}}'] = getButton(
+                        [
+                            '{{url}}'=> timeoffGetEncryptedLink([
+                                'companySid' => $request['company_sid'],
+                                'companyName' => $request['CompanyName'],
+                                'requestSid' => $request['sid'],
+                                'employerSid' => $approver['userId'],
+                                'typeSid' => 'approve'
+                            ]),
+                            '{{color}}' => '#28a745',
+                            '{{text}}' => 'Approve Request'
+                        ]
+                    );
+                    $eRP['{{reject_link}}'] = getButton(
+                        [
+                            '{{url}}'=> timeoffGetEncryptedLink([
+                                'companySid' => $request['company_sid'],
+                                'companyName' => $request['CompanyName'],
+                                'requestSid' => $request['sid'],
+                                'employerSid' => $approver['userId'],
+                                'typeSid' => 'reject'
+                            ]),
+                            '{{color}}' => '#dc3545',
+                            '{{text}}' => 'Reject Request'
+                        ]
+                    );
+                    //
+                    $approverTemplateI = timeoffMagicQuotesReplace($approversTemplate, $eRP);
+
+                    //
+                    log_and_sendEmail(
+                        $approverTemplateI['FromEmail'],
+                        $approver['email'],
+                        $approverTemplateI['Subject'],
+                        $CHF['header'] . $approverTemplateI['Body'] . $CHF['footer'],
+                        $approverTemplateI['FromName']
+                    );
+                }
+            }
+        } else {
+            // Send email to employee
+            if(!empty($employeeTemplate)){
+                //
+                log_and_sendEmail(
+                    $employeeTemplate['FromEmail'],
+                    $request['email'],
+                    $employeeTemplate['Subject'],
+                    $CHF['header'] . $employeeTemplate['Body'] . $CHF['footer'],
+                    $employeeTemplate['FromName']
+                );
+            }
+
+            // Send Email to approver
+            if(!empty($approverTemplate) && !empty($request['approvers'])){
+                //
+                foreach($request['approvers'] as $approver){
+                    //
+                    $eRP['{{approver_first_name}}'] = $approver['first_name'];
+                    $eRP['{{approver_last_name}}'] = $approver['last_name'];
+                    
+                    $eRP['{{approve_link}}'] = getButton(
+                        [
+                            '{{url}}'=> timeoffGetEncryptedLink([
+                                'companySid' => $request['company_sid'],
+                                'companyName' => $request['CompanyName'],
+                                'requestSid' => $request['sid'],
+                                'employerSid' => $approver['userId'],
+                                'typeSid' => 'approve'
+                            ]),
+                            '{{color}}' => '#28a745',
+                            '{{text}}' => 'Approve Request'
+                        ]
+                    );
+                    $eRP['{{reject_link}}'] = getButton(
+                        [
+                            '{{url}}'=> timeoffGetEncryptedLink([
+                                'companySid' => $request['company_sid'],
+                                'companyName' => $request['CompanyName'],
+                                'requestSid' => $request['sid'],
+                                'employerSid' => $approver['userId'],
+                                'typeSid' => 'reject'
+                            ]),
+                            '{{color}}' => '#dc3545',
+                            '{{text}}' => 'Reject Request'
+                        ]
+                    );
+                    //
+                    $approverTemplateI = timeoffMagicQuotesReplace($approverTemplate, $eRP);
+
+                    //
+                    log_and_sendEmail(
+                        $approverTemplateI['FromEmail'],
+                        $approver['email'],
+                        $approverTemplateI['Subject'],
+                        $CHF['header'] . $approverTemplateI['Body'] . $CHF['footer'],
+                        $approverTemplateI['FromName']
+                    );
+                }
+            }
         }
+        
     }
 
     //
