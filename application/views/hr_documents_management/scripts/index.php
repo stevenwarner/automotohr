@@ -288,7 +288,7 @@
 					$('#jsEmployees').select2('val', []);
 					$('#jsDepartments').select2('val', []);
 					$('#jsTeams').select2('val', []);
-					if(d.is_available_for_na != '0' && d.is_available_for_na != null) $('#jsRoles').select2('val', d.is_available_for_na.split(',') );
+					if(d.allowed_roles != '0' && d.allowed_roles != null) $('#jsRoles').select2('val', d.allowed_roles.split(',') );
 					if(d.allowed_employees != '0' && d.allowed_employees != null) $('#jsEmployees').select2('val', d.allowed_employees.split(',') );
 					if(d.allowed_departments != '0' && d.allowed_departments != null) $('#jsDepartments').select2('val', d.allowed_departments.split(',') );
 					if(d.allowed_teams != '0' && d.allowed_teams != null) $('#jsTeams').select2('val', d.allowed_teams.split(',') );
@@ -441,19 +441,19 @@
 						$('#jsVisibleToPayroll').prop('checked', true);
 					}
 					//
-					if(d.is_available_for_na != ''){
+					if(d.is_available_for_na){
 						$('#jsRoles').select2('val', d.is_available_for_na.split(','));
 					}
 					//
-					if(d.allowed_departments != ''){
+					if(d.allowed_departments){
 						$('#jsDepartments').select2('val', d.allowed_departments.split(','));
 					}
 					//
-					if(d.allowed_teams != ''){
+					if(d.allowed_teams){
 						$('#jsTeams').select2('val', d.allowed_teams.split(','));
 					}
 					//
-					if(d.allowed_employees != ''){
+					if(d.allowed_employees){
 						$('#jsEmployees').select2('val', d.allowed_employees.split(','));
 					}
 					$('.modify-assign-offer-letter-modal-loader').fadeOut(300);
@@ -1246,7 +1246,7 @@
 					});
 					
 					// Set the predefault
-					$('#js-roles-offer-letter-edit').select2('val', d.is_available_for_na != '' || d.is_available_for_na == null ? d.is_available_for_na.split(',') : null);
+					$('#js-roles-offer-letter-edit').select2('val', d.allowed_roles != '' || d.allowed_roles == null ? d.allowed_roles.split(',') : null);
 					$('#js-department-offer-letter-edit').select2('val', d.allowed_departments != '' || d.allowed_departments == null ? d.allowed_departments.split(',') : null);
 					$('#js-teams-offer-letter-edit').select2('val', d.allowed_teams != '' || d.allowed_teams == null ? d.allowed_teams.split(',') : null);
 					$('#js-employees-offer-letter-edit').select2('val', d.allowed != '' || d.allowed == null ? d.allowed.split(',') : null);

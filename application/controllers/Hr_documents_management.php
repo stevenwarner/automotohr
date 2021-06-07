@@ -1089,6 +1089,13 @@ class Hr_documents_management extends Public_Controller {
                             $offer_letter_data['sort_order'] = 1;
                         $offer_letter_data['created_date'] = date('Y-m-d H:i:s');
                         $offer_letter_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
+                        //
+                        $offer_letter_data['signers'] = $assign_manager;
+                        $offer_letter_data['allowed_teams'] = $assign_teams;
+                        $offer_letter_data['allowed_departments'] = $assign_department;
+                        $offer_letter_data['allowed_employees'] = $assign_employees;
+                        $offer_letter_data['is_available_for_na'] = $assign_roles;
+                        $offer_letter_data['visible_to_payroll'] = $visible_to_payroll;
                         $insert_id = $this->hr_documents_management_model->add_new_offer_letter($offer_letter_data);
 
                         // Tracking History For New Inserted Doc in new history table
@@ -1103,13 +1110,6 @@ class Hr_documents_management extends Public_Controller {
                         $new_history_data['download_required'] = $this->input->post('download_required');
                         $new_history_data['signature_required'] = $this->input->post('signature_required');
                         $new_history_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
-                        //
-                        $offer_letter_data['signers'] = $assign_manager;
-                        $offer_letter_data['allowed_teams'] = $assign_teams;
-                        $offer_letter_data['allowed_departments'] = $assign_department;
-                        $offer_letter_data['allowed_employees'] = $assign_employees;
-                        $offer_letter_data['is_available_for_na'] = $assign_roles;
-                        $offer_letter_data['visible_to_payroll'] = $visible_to_payroll;
                         //
                         $this->hr_documents_management_model->insert_offer_letter_history($new_history_data);
 
@@ -10009,10 +10009,11 @@ class Hr_documents_management extends Public_Controller {
         $a['document_sid'] = $post['documentSid'];
         $a['status'] = 1;
         $a['visible_to_payroll'] = $post['visibleToPayroll'];
-        $a['is_available_for_na'] = $post['roles'];
+        $a['allowed_roles'] = $post['roles'];
         $a['allowed_departments'] = $post['departments'];
         $a['allowed_teams'] = $post['teams'];
         $a['allowed_employees'] = $post['employees'];
+        //
         if(ASSIGNEDOCIMPL){
             $a['signature_required'] = $post['isSignature'];
             $a['download_required'] = $post['isDownload'];
@@ -10142,7 +10143,7 @@ class Hr_documents_management extends Public_Controller {
         $a['is_required'] = $post['isRequired'];
         $a['is_signature_required'] = $post['isSignatureRequired'];
         $a['visible_to_payroll'] = $post['visibleToPayroll'];
-        $a['is_available_for_na'] = $post['selected_roles'];
+        $a['allowed_roles'] = $post['selected_roles'];
         $a['allowed_employees'] = $post['selected_employees'];
         $a['allowed_departments'] = $post['selected_departments'];
         $a['allowed_teams'] = $post['selected_teams'];
