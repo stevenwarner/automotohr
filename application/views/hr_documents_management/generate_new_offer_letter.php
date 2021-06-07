@@ -105,6 +105,129 @@
 <!--                                                </div>-->
 <!--                                            </div>-->
 <!--                                        </div>-->
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h5>
+                                                            <strong>Authorized Managers</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true" data-target="managers"></i>
+                                                            <p class="jsHintBody" data-hint="managers"><br /><?=getUserHint('authorized_managers_hint');?></p>
+                                                        </h5>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <!-- Employees -->
+                                                        <label>Employees</label>
+                                                        <select name="managers[]" id="jsManagers" multiple>
+                                                        <?php 
+                                                            //
+                                                            $allowedOnes = empty($document_info['signers']) ? [] : explode(',', $document_info['signers']);
+                                                            //
+                                                            if(!empty($employeesList)){
+                                                                foreach($employeesList as $v){
+                                                                    ?>
+                                                                    <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=remakeEmployeeName($v);?></option>
+                                                                    <?php
+                                                                }
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Visibility  -->
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h5>
+                                                            <strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true"  data-target="visibilty"></i>
+                                                            <p class="jsHintBody" data-hint="visibilty"><br /><?=getUserHint('visibility_hint');?></p>
+                                                        </h5>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <!-- Payroll -->
+                                                        <label class="control control--checkbox">
+                                                            Visible To Payroll
+                                                            <input type="checkbox" name="visible_to_payroll" <?=isset($document_info['visible_to_payroll']) && $document_info['visible_to_payroll'] ? 'checked' : '';?> value="yes"/>
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                        <hr />
+                                                        <!-- Roles -->
+                                                        <label>Roles</label>
+                                                        <select name="roles[]" id="jsRoles" multiple>
+                                                        <?php
+                                                            //
+                                                            $allowedOnes = empty($document_info['is_available_for_na']) ? [] : explode(',', $document_info['is_available_for_na']);
+                                                            //
+                                                            foreach(getRoles() as $k => $v){
+                                                                ?>
+                                                                <option value="<?=$k;?>" <?=in_array($k, $allowedOnes) ? 'selected' : '';?>><?=$v;?></option>
+                                                                <?php
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                        <br />
+                                                        <br />
+                                                        <!-- Departments -->
+                                                        <label>Departments</label>
+                                                        <select name="departments[]" id="jsDepartments" multiple>
+                                                        <?php 
+                                                            //
+                                                            $allowedOnes = empty($document_info['allowed_departments']) ? [] : explode(',', $document_info['allowed_departments']);
+                                                            //
+                                                            if(!empty($departments)){
+                                                                foreach($departments as $v){
+                                                                    ?>
+                                                                    <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                                                    <?php
+                                                                }
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                        <br />
+                                                        <br />
+                                                        <!-- Teams -->
+                                                        <label>Teams</label>
+                                                        <select name="teams[]" id="jsTeams" multiple>
+                                                        <?php 
+                                                            //
+                                                            $allowedOnes = empty($document_info['allowed_teams']) ? [] : explode(',', $document_info['allowed_teams']);
+                                                            //
+                                                            if(!empty($teams)){
+                                                                foreach($teams as $v){
+                                                                    ?>
+                                                                    <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                                                    <?php
+                                                                }
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                        <br />
+                                                        <br />
+                                                        <!-- Employees -->
+                                                        <label>Employees</label>
+                                                        <select name="employees[]" id="jsEmployees" multiple>
+                                                        <?php 
+                                                            //
+                                                            $allowedOnes = empty($document_info['allowed_employees']) ? [] : explode(',', $document_info['allowed_employees']);
+                                                            //
+                                                            if(!empty($employeesList)){
+                                                                foreach($employeesList as $v){
+                                                                    ?>
+                                                                    <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=remakeEmployeeName($v);?></option>
+                                                                    <?php
+                                                                }
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <hr />
                                         <div class="row">
                                             <div class="col-xs-12">
@@ -194,4 +317,16 @@
             }
         });
     }
+
+    //
+    $(function(){
+        //
+        var config = { closeOnSelect: false };
+        //
+        $('#jsRoles').select2(config);
+        $('#jsDepartments').select2(config);
+        $('#jsTeams').select2(config);
+        $('#jsEmployees').select2(config);
+        $('#jsManagers').select2(config);
+    });
 </script>

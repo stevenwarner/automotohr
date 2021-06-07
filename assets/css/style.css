@@ -17805,3 +17805,10 @@ input[type='checkbox'].user_checkbox:checked:after {
     transform: translate(-50%, -50%);
     color: #fd7a2a;
 }
+
+
+/*  */
+
+.csClickable {
+    cursor: pointer !important;
+}

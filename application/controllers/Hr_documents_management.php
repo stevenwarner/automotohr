@@ -1021,6 +1021,13 @@ class Hr_documents_management extends Public_Controller {
             $data['title'] = 'New Offer Letter / Pay Plan Template';
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
+             //
+            $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
+            $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
+            //
+            $employeesList = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, $employer_sid);
+            $data['employeesList'] = $employeesList;
+            //
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
             if ($this->form_validation->run() == false) {
@@ -1033,6 +1040,34 @@ class Hr_documents_management extends Public_Controller {
 
                 switch ($perform_action) {
                     case 'generate_new_offer_letter':
+                        $assign_manager = '';
+                        $assign_department = '';
+                        $assign_teams = '';
+                        $assign_employees = '';
+                        $assign_roles = '';
+
+                        if (isset($_POST['managers']) && !empty($_POST['managers'])) {
+                            $assign_manager = implode(',', $_POST['managers']);
+                        }
+
+                        if (isset($_POST['roles']) && !empty($_POST['roles'])) {
+                            $assign_roles = implode(',', $_POST['roles']);
+                        }
+
+                        if (isset($_POST['departments']) && !empty($_POST['departments'])) {
+                            $assign_department = implode(',', $_POST['departments']);
+                        }
+
+                        if (isset($_POST['teams']) && !empty($_POST['teams'])) {
+                            $assign_teams = implode(',', $_POST['teams']);
+                        }
+
+                        if (isset($_POST['employees']) && !empty($_POST['employees'])) {
+                            $assign_employees = implode(',', $_POST['employees']);
+                        }
+
+                        $visible_to_payroll = isset($_POST['visible_to_payroll']) && $_POST['visible_to_payroll'] == 'yes' ? 1 : 0;
+                        //
                         $letter_name = $this->input->post('letter_name');
                         $letter_body = $this->input->post('letter_body');
                         $signature_required = $this->input->post('signature_required');
@@ -1054,6 +1089,13 @@ class Hr_documents_management extends Public_Controller {
                             $offer_letter_data['sort_order'] = 1;
                         $offer_letter_data['created_date'] = date('Y-m-d H:i:s');
                         $offer_letter_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
+                        //
+                        $offer_letter_data['signers'] = $assign_manager;
+                        $offer_letter_data['allowed_teams'] = $assign_teams;
+                        $offer_letter_data['allowed_departments'] = $assign_department;
+                        $offer_letter_data['allowed_employees'] = $assign_employees;
+                        $offer_letter_data['is_available_for_na'] = $assign_roles;
+                        $offer_letter_data['visible_to_payroll'] = $visible_to_payroll;
                         $insert_id = $this->hr_documents_management_model->add_new_offer_letter($offer_letter_data);
 
                         // Tracking History For New Inserted Doc in new history table
@@ -1068,6 +1110,7 @@ class Hr_documents_management extends Public_Controller {
                         $new_history_data['download_required'] = $this->input->post('download_required');
                         $new_history_data['signature_required'] = $this->input->post('signature_required');
                         $new_history_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
+                        //
                         $this->hr_documents_management_model->insert_offer_letter_history($new_history_data);
 
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Offer Letter Successfully Created!');
@@ -1387,6 +1430,13 @@ class Hr_documents_management extends Public_Controller {
             $employer_sid = $data['session']['employer_detail']['sid'];
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
+            //
+            $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
+            $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
+            //
+            $employeesList = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, $employer_sid);
+            $data['employeesList'] = $employeesList;
+            //
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
             $data['title'] = 'Modify an Offer Letter / Pay Plan';
 
@@ -1407,6 +1457,35 @@ class Hr_documents_management extends Public_Controller {
 
                 switch ($perform_action) {
                     case 'update_offer_letter':
+                        $assign_manager = '';
+                        $assign_department = '';
+                        $assign_teams = '';
+                        $assign_employees = '';
+                        $assign_roles = '';
+
+                        if (isset($_POST['managers']) && !empty($_POST['managers'])) {
+                            $assign_manager = implode(',', $_POST['managers']);
+                        }
+
+                        if (isset($_POST['roles']) && !empty($_POST['roles'])) {
+                            $assign_roles = implode(',', $_POST['roles']);
+                        }
+
+                        if (isset($_POST['departments']) && !empty($_POST['departments'])) {
+                            $assign_department = implode(',', $_POST['departments']);
+                        }
+
+                        if (isset($_POST['teams']) && !empty($_POST['teams'])) {
+                            $assign_teams = implode(',', $_POST['teams']);
+                        }
+
+                        if (isset($_POST['employees']) && !empty($_POST['employees'])) {
+                            $assign_employees = implode(',', $_POST['employees']);
+                        }
+
+                        $visible_to_payroll = isset($_POST['visible_to_payroll']) && $_POST['visible_to_payroll'] == 'yes' ? 1 : 0;
+                       
+
                         $letter_name = $this->input->post('letter_name');
                         $letter_body = $this->input->post('letter_body');
                         $signature_required = $this->input->post('signature_required');
@@ -1429,6 +1508,15 @@ class Hr_documents_management extends Public_Controller {
                         $offer_letter_data['signature_required'] = $signature_required;
                         $offer_letter_data['sort_order'] = $this->input->post('sort_order');
                         $offer_letter_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
+
+                        //
+                        $offer_letter_data['signers'] = $assign_manager;
+                        $offer_letter_data['allowed_teams'] = $assign_teams;
+                        $offer_letter_data['allowed_departments'] = $assign_department;
+                        $offer_letter_data['allowed_employees'] = $assign_employees;
+                        $offer_letter_data['is_available_for_na'] = $assign_roles;
+                        $offer_letter_data['visible_to_payroll'] = $visible_to_payroll;
+                        //
                         $this->hr_documents_management_model->update_documents($sid, $offer_letter_data, 'offer_letter');
 
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Offer Letter Successfully Updated!');
@@ -3971,11 +4059,11 @@ class Hr_documents_management extends Public_Controller {
             $previous_assign = $this->hr_documents_management_model->get_authorized_document_assign_manager($company_sid, $document_sid);
 
             $new_assign_manger = array();
-            
+
             if (!empty($previous_assign)) {
                 $previous_assign_sids = array_column($previous_assign, 'assigned_to_sid');
                 $new_assign_sids = explode(',', $assign_to);
-                
+
                 foreach ($new_assign_sids as $new_assign_sid) {
                     if (!in_array($new_assign_sid, $previous_assign_sids)) {
                         array_push($new_assign_manger, $new_assign_sid);
@@ -4003,29 +4091,22 @@ class Hr_documents_management extends Public_Controller {
                 ucwords($session['company_detail']['CompanyName'])
             );
             //
-            $document = $this->hr_documents_management_model->getAssignedDocumentColumn($document_sid, '*');
-            // Check if document is completed
-            if(isDocumentCompletedCheck($document, true)){
-                //
-                $employee_name = getUserNameBySID($document['user_sid']);
-    
-                $email_template_id = $this->hr_documents_management_model->getAuthorizedManagerTemplate('Authorized Manager Notification');
-    
-                $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('view_assigned_authorized_document/' . $document_sid) . '">Assign Authorized Document</a>';
-                //
-                foreach ($new_assign_manger as $k => $v) {
-                    //
-                    $manager = db_get_employee_profile($v)[0];
-                    //
-                    $replacement_array['first_name'] = $manager['first_name'];
-                    $replacement_array['last_name'] = $manager['last_name'];
-                    $replacement_array['employee_name'] = $employee_name;
-                    $replacement_array['link'] = $link_html;
-                    //
-                    $to_email = $manager['email'];
-                    //
-                    log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $hf);
-                }
+            // foreach (explode(',', $assign_to) as $k => $v) {
+            foreach ($new_assign_manger as $k => $v) {
+                $assign_to_info  = db_get_employee_profile($v);
+                $assign_to_name  = $assign_to_info[0]['first_name'].' '.$assign_to_info[0]['last_name'];
+                $assign_to_email = $assign_to_info[0]['email'];
+
+                $assigned_by_info  = db_get_employee_profile($assigned_by_sid);
+                $assigned_by_name  = $assigned_by_info[0]['first_name'].' '.$assigned_by_info[0]['last_name'];
+
+                //Send Email
+                $replacement_array = array();
+                $replacement_array['baseurl']           = base_url();
+                $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
+                $replacement_array['company_name']  = ucwords($session['company_detail']['CompanyName']);
+                $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
+                log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf);
             }
             //
             echo 'success';
@@ -8954,7 +9035,7 @@ class Hr_documents_management extends Public_Controller {
         if(!isset($_POST) || !sizeof($_POST)) $this->res($resp);
         //
         $post = $_POST;
-        //
+        //    
         if(isset($post['file'])) {
             $post['file'] =    json_decode($post['file'], true) ;   
         }
@@ -8993,12 +9074,6 @@ class Hr_documents_management extends Public_Controller {
             $ins['uploaded_document_s3_name'] = $s3Name;
             $ins['uploaded_document_original_name'] = $post['file']['name'];
         }
-        // Visibility
-        $ins['allowed_employees'] = isset($post['employees']) ? $post['employees'] : '';
-        $ins['allowed_departments'] = isset($post['departments']) ? $post['departments'] : '';
-        $ins['allowed_teams'] = isset($post['teams']) ? $post['teams'] : '';
-        $ins['is_available_for_na'] = isset($post['roles']) ? $post['roles'] : '';
-        $ins['signers'] = isset($post['signers']) ? $post['signers'] : '';
         //
         $insertId = $this->hr_documents_management_model->insertOfferLetterSpecific($ins);
         //
@@ -9055,6 +9130,11 @@ class Hr_documents_management extends Public_Controller {
                 // $a['is_required'] = $post['isRequired'];
                 $a['is_signature_required'] = 0;
                 // $a['is_signature_required'] = $post['isSignatureRequired'];
+                // $a['visible_to_payroll'] = $post['visibleToPayroll'];
+                $a['is_available_for_na'] = $post['roles'];
+                $a['allowed_departments'] = $post['departments'];
+                $a['allowed_teams'] = $post['teams'];
+                $a['allowed_employees'] = $post['employees'];
                 //
                 $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
                 //
@@ -9154,11 +9234,6 @@ class Hr_documents_management extends Public_Controller {
             $ins['uploaded_document_s3_name'] = $s3Name;
             $ins['uploaded_document_original_name'] = $_FILES['file']['name'];
         }
-        // Visibility
-        $ins['allowed_employees'] = isset($post['employees']) ? $post['employees'] : '';
-        $ins['allowed_departments'] = isset($post['departments']) ? $post['departments'] : '';
-        $ins['allowed_teams'] = isset($post['teams']) ? $post['teams'] : '';
-        $ins['is_available_for_na'] = isset($post['roles']) ? $post['roles'] : '';
         //
         $this->hr_documents_management_model->updateOfferLetterSpecific($ins, $post['sid']);
         //
@@ -9861,6 +9936,9 @@ class Hr_documents_management extends Public_Controller {
         ];
         //
         $post = $this->input->post(NULL, TRUE);
+        // echo '<pre>';
+        // print_r($post);
+        // die();
         $desc = $this->input->post('desc');
         $already_assigned = $this->hr_documents_management_model->check_applicant_offer_letter_exist($post['CompanySid'], $post['Type'], $post['EmployeeSid'], 'offer_letter');
 
@@ -9882,12 +9960,12 @@ class Hr_documents_management extends Public_Controller {
         $this->hr_documents_management_model->set_offer_letter_verification_key($post['EmployeeSid'], $verification_key, $post['Type']);
 
         // Managers handling
-        $this->hr_documents_management_model->addManagersToAssignedDocuments(
-            $this->input->post('gen_offer_letter_signers'),
-            $assignOfferLetterId,
-            $post['CompanySid'],
-            $employer_sid
-        );
+        // $this->hr_documents_management_model->addManagersToAssignedDocuments(
+        //     $this->input->post('managerList'),
+        //     $assignOfferLetterId,
+        //     $post['CompanySid'],
+        //     $employer_sid
+        // );
         //
         $assignInsertId = null;
 
@@ -9906,6 +9984,11 @@ class Hr_documents_management extends Public_Controller {
         $a['document_sid'] = $post['documentSid'];
         $a['status'] = 1;
         $a['visible_to_payroll'] = $post['visibleToPayroll'];
+        $a['allowed_roles'] = $post['roles'];
+        $a['allowed_departments'] = $post['departments'];
+        $a['allowed_teams'] = $post['teams'];
+        $a['allowed_employees'] = $post['employees'];
+        //
         if(ASSIGNEDOCIMPL){
             $a['signature_required'] = $post['isSignature'];
             $a['download_required'] = $post['isDownload'];
@@ -10000,6 +10083,7 @@ class Hr_documents_management extends Public_Controller {
 
         echo 'success';        
     }
+    
 
     /**
      * Steps
@@ -10019,6 +10103,7 @@ class Hr_documents_management extends Public_Controller {
         ];
         //
         $post = $this->input->post(NULL, TRUE);
+        //
         $desc = $this->input->post('desc');
         //
         $assignInsertId = $post['documentSid'];
@@ -10032,6 +10117,11 @@ class Hr_documents_management extends Public_Controller {
         $a['acknowledgment_required'] = $post['isAcknowledged'];
         $a['is_required'] = $post['isRequired'];
         $a['is_signature_required'] = $post['isSignatureRequired'];
+        $a['visible_to_payroll'] = $post['visibleToPayroll'];
+        $a['allowed_roles'] = $post['selected_roles'];
+        $a['allowed_employees'] = $post['selected_employees'];
+        $a['allowed_departments'] = $post['selected_departments'];
+        $a['allowed_teams'] = $post['selected_teams'];
         //
         if(isset($post['file'])){
             $a['document_s3_name'] = $post['file'];
@@ -10054,28 +10144,14 @@ class Hr_documents_management extends Public_Controller {
                 $a['document_s3_name'] = $uploaded_document_s3_name;
             }
         }
-        // Get the document type
-        $documentType = $this->hr_documents_management_model->getDocumentType($post['documentSid']);
-
         //
-        if($documentType == 'offer_letter'){
-            //
-            $this->hr_documents_management_model->updateOfferLetter([
-                'is_available_for_na' => $post['selected_roles'],
-                'allowed_employees' => $post['selected_employees'],
-                'allowed_departments' => $post['selected_departments'],
-                'allowed_teams' => $post['selected_teams']
-            ], $post['mainDocumentId']);
-        } else{
-            //
-            $this->hr_documents_management_model->updateMainDocument([
-                'is_available_for_na' => $post['selected_roles'],
-                'allowed_employees' => $post['selected_employees'],
-                'allowed_departments' => $post['selected_departments'],
-                'allowed_teams' => $post['selected_teams'],
-                'visible_to_payroll' => $post['visible_to_payroll']
-            ], $post['mainDocumentId']);
-        }
+        // $this->hr_documents_management_model->updateMainDocument([
+        //     'is_available_for_na' => $post['selected_roles'],
+        //     'allowed_employees' => $post['selected_employees'],
+        //     'allowed_departments' => $post['selected_departments'],
+        //     'allowed_teams' => $post['selected_teams'],
+        //     'visible_to_payroll' => $post['visible_to_payroll']
+        // ], $post['mainDocumentId']);
 
         //
         $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
