@@ -592,7 +592,7 @@
                                             </li>
                                             <li>
                                                 <span><?=$AuthorizedDocuments['Total'];?></span>
-                                                <span>0 Total Document(s)</span>
+                                                <span>Total Document(s)</span>
                                             </li>
                                         </ul>
                                         <div class="status-panel">
