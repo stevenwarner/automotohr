@@ -9,56 +9,54 @@
     ];
 ?>
 
-<!-- Visibility to Roles and Employees -->
 <div class="row">
-    <div class="col-xs-12">
-        <div class="hr-box">
-            <div class="hr-box-header">
-                <strong>Visibility</strong>
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5>
+                    <strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true"  data-target="visibilty"></i>
+                    <p class="jsHintBody" data-hint="visibilty"><br /><?=getUserHint('visibility_hint');?></p>
+                </h5>
             </div>
-            <div class="hr-box-innerpadding">
+            <div class="panel-body">
+                <!-- Payroll -->
+                <label class="control control--checkbox">
+                    Visible To Payroll
+                    <input type="checkbox" name="visible_to_payroll" class="js-payroll-offer-letter-add" <?php echo isset($document_info['visible_to_payroll']) && $document_info['visible_to_payroll'] == 1 ? 'checked="checked"' : ''; ?> value="1"/>
+                    <div class="control__indicator"></div>
+                </label>
+                <hr />
                 <!-- Roles -->
-                <div class="col-xs-12">
-                    <br />
-                    <label>Select Roles <i class="fa fa-question-circle" data-toggle="propover" title="Note" data-content="This document will be visible to the selected Roles."></i></label>
-                    <select multiple="true" id="js-roles" name="selected_roles[]">
-                        <?php foreach($roles as $key => $role) { ?>
-                            <option value="<?=$key;?>" <?=in_array($key, $selectedRoles) ? 'selected="true"' : '';?>><?=$role;?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-                <!-- Employees -->
-                <div class="col-xs-12">
-                    <label>Select Specific Employee(s) <i class="fa fa-question-circle" data-toggle="propover" title="Note" data-content="This document will be visible to the selected Employee(s)."></i></label>
-                    <select multiple="true" id="js-specific-employee-visibility" name="selected_employees[]">
-                        <?php foreach($employeesList as $key => $employee) { ?>
-                            <?php if($employee['access_level_plus'] == 1 || $employee['access_level'] == 'Manager' || $employee['access_level'] == 'Employee') continue; ?>
-                            <option value="<?=$employee['sid'];?>" <?=in_array($employee['sid'], $selectedEmployees) ? 'selected="true"' : '';?>><?=remakeEmployeeName($employee);?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-
+                <label>Roles</label>
+                <select multiple="true" id="js-roles" name="selected_roles[]">
+                    <?php foreach(getRoles() as $key => $role) { ?>
+                        <option value="<?=$key;?>" <?=in_array($key, $selectedRoles) ? 'selected="true"' : '';?>><?=$role;?></option>
+                    <?php } ?>
+                </select>
+                <br />
                 <!-- Departments -->
-                <div class="col-xs-12">
-                    <label>Select Department(s) <i class="fa fa-question-circle" data-toggle="propover" title="Note" data-content="This document will be visible to the selected departments(s)."></i></label>
-                    <select multiple="true" id="js-specific-department-visibility" name="selected_departments[]">
-                        <option value="-1">All</option>
-                        <?php foreach($departments as $key => $department) { ?>
-                            <option value="<?=$department['sid'];?>" <?=in_array($department['sid'], $selectedDepartments) ? 'selected="true"' : '';?>><?=$department['name'];?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-
+                <label>Departments</label>
+                <select multiple="true" id="js-specific-department-visibility" name="selected_departments[]">
+                    <?php foreach($departments as $key => $department) { ?>
+                        <option value="<?=$department['sid'];?>" <?=in_array($department['sid'], $selectedDepartments) ? 'selected="true"' : '';?>><?=$department['name'];?></option>
+                    <?php } ?>
+                </select>
+                <br />
                 <!-- Teams -->
-                <div class="col-xs-12">
-                    <label>Select Team(s) <i class="fa fa-question-circle" data-toggle="propover" title="Note" data-content="This document will be visible to the selected teams(s)."></i></label>
-                    <select multiple="true" id="js-specific-team-visibility" name="selected_teams[]">
-                        <option value="-1">All</option>
-                        <?php foreach($teams as $key => $team) { ?>
-                            <option value="<?=$team['sid'];?>" <?=in_array($team['sid'], $selectedTeams) ? 'selected="true"' : '';?>><?=$team['name'];?></option>
-                        <?php } ?>
-                    </select>
-                </div>
+                <label>Teams</label>
+                <select multiple="true" id="js-specific-team-visibility" name="selected_teams[]">
+                    <?php foreach($teams as $key => $team) { ?>
+                        <option value="<?=$team['sid'];?>" <?=in_array($team['sid'], $selectedTeams) ? 'selected="true"' : '';?>><?=$team['name'];?></option>
+                    <?php } ?>
+                </select>
+                <br />
+                <!-- Employees -->
+                <label>Employees</label>
+                <select multiple="true" id="js-specific-employee-visibility" name="selected_employees[]">
+                    <?php foreach($employeesList as $key => $employee) { ?>
+                        <option value="<?=$employee['sid'];?>" <?=in_array($employee['sid'], $selectedEmployees) ? 'selected="true"' : '';?>><?=remakeEmployeeName($employee);?></option>
+                    <?php } ?>
+                </select>
             </div>
         </div>
     </div>
