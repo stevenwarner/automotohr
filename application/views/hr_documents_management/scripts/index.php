@@ -1376,6 +1376,7 @@
 				assign : $(this).data('value'),
 				fromTemplate: false,
 				// Visibility
+				payroll : $('#js-payroll-offer-letter-add').prop('checked'),
 				roles : $('#js-roles-offer-letter-add').val(),
 				departments : $('#js-department-offer-letter-add').val(),
 				teams : $('#js-teams-offer-letter-add').val(),
@@ -1473,6 +1474,7 @@
 				sortOrder : $('#js-template-sort-order-edit').val().trim(),
 				
 				// Visibility
+				payroll : $('#js-payroll-offer-letter-edit').prop('checked'),
 				roles : $('#js-roles-offer-letter-edit').val(),
 				departments : $('#js-department-offer-letter-edit').val(),
 				teams : $('#js-teams-offer-letter-edit').val(),

@@ -104,20 +104,48 @@
 				<input type="text" class="form-control" id="js-template-sort-order" />
 			</div>
 			<!-- 8 -->
-			<div class="form-group">
-				<label>Visibility</label>
-				<!--  -->
-				<label>Roles</label>
-				<select id="js-roles-offer-letter-add" multiple></select>
-				<!--  -->
-				<label>Departments</label>
-				<select id="js-department-offer-letter-add" multiple></select>
-				<!--  -->
-				<label>Teams</label>
-				<select id="js-teams-offer-letter-add" multiple></select>
-				<!--  -->
-				<label>Individual Employees</label>
-				<select id="js-employees-offer-letter-add" multiple></select>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h5>
+								<strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true"  data-target="visibilty"></i>
+								<p class="jsHintBody" data-hint="visibilty"><br /><?=getUserHint('visibility_hint');?></p>
+							</h5>
+						</div>
+						<div class="panel-body">
+							<!-- Payroll -->
+							<label class="control control--checkbox">
+								Visible To Payroll
+								<input type="checkbox" name="visible_to_payroll" class="js-payroll-offer-letter-add" value="1"/>
+								<div class="control__indicator"></div>
+							</label>
+							<hr />
+							<!-- Roles -->
+							<label>Roles</label>
+							<select name="roles[]" id="js-roles-offer-letter-add" multiple>
+							</select>
+							<br />
+							<br />
+							<!-- Departments -->
+							<label>Departments</label>
+							<select name="departments[]" id="js-department-offer-letter-add" multiple>
+							</select>
+							<br />
+							<br />
+							<!-- Teams -->
+							<label>Teams</label>
+							<select name="teams[]" id="js-teams-offer-letter-add" multiple>
+							</select>
+							<br />
+							<br />
+							<!-- Employees -->
+							<label>Employees</label>
+							<select name="employees[]" id="js-employees-offer-letter-add" multiple>
+							</select>
+						</div>
+					</div>
+				</div>
 			</div>
 			<!-- 7 -->
 			<div class="form-group js-for-generated">

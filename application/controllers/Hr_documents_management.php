@@ -9130,8 +9130,8 @@ class Hr_documents_management extends Public_Controller {
                 // $a['is_required'] = $post['isRequired'];
                 $a['is_signature_required'] = 0;
                 // $a['is_signature_required'] = $post['isSignatureRequired'];
-                // $a['visible_to_payroll'] = $post['visibleToPayroll'];
-                $a['is_available_for_na'] = $post['roles'];
+                $a['visible_to_payroll'] = $post['payroll'];
+                $a['allowed_roles'] = $post['roles'];
                 $a['allowed_departments'] = $post['departments'];
                 $a['allowed_teams'] = $post['teams'];
                 $a['allowed_employees'] = $post['employees'];
@@ -9183,7 +9183,7 @@ class Hr_documents_management extends Public_Controller {
                 }
 
                 // Check if it's Authorize document
-                if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $ins['signers'] != null && str_replace('{{authorized_signature}}', '', $ins['letter_body']) != $ins['letter_body']){
+                if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $ins['signers'] != null){
                      // Managers handling
                     $this->hr_documents_management_model->addManagersToAssignedDocuments(
                         $ins['signers'],
