@@ -152,64 +152,89 @@
                                                 </div>        
                                             </div>  
                                             <!-- Visibility Block -->
-                                            <div>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <label>Roles</label>
-                                                        <select name="selected_roles" id="jsRoles" multiple>
-                                                        <?php
-                                                            foreach(['hiring_manager' => "Hiring Manager", "manager" => "Manager", "admin" => "Admin"] as $k => $v){
-                                                                ?>
-                                                                <option value="<?=$k;?>" <?=in_array($k, empty($currentOfferLetter['is_available_for_na']) ? [] :  explode(',', $currentOfferLetter['is_available_for_na'])) ? 'selected' : '';?>><?=$v?></option>
-                                                                <?php
-                                                            }
-                                                        ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <label>Departments</label>
-                                                        <select name="selected_departments" id="jsDepartment" multiple>
-                                                        <?php
-                                                            foreach($departments as $v){
-                                                                ?>
-                                                                <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], empty($currentOfferLetter['allowed_departments']) ? [] :  explode(',', $currentOfferLetter['allowed_departments'])) ? 'selected' : '';?>><?=$v['name'];?></option>
-                                                                <?php
-                                                            }
-                                                        ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <label>Teams</label>
-                                                        <select  name="selected_teams" id="jsTeams" multiple>
-                                                        <?php
-                                                            foreach($teams as $v){
-                                                                ?>
-                                                                <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], empty($currentOfferLetter['allowed_teams']) ? [] :  explode(',', $currentOfferLetter['allowed_teams'])) ? 'selected' : '';?>><?=$v['name'];?></option>
-                                                                <?php
-                                                            }
-                                                        ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <label>Employees</label>
-                                                        <select  name="selected_employees" id="jsEmployees" multiple>
-                                                        <?php
-                                                            foreach($managers_list as $emp){
-                                                                ?>
-                                                                <option value="<?=$emp['sid'];?>" <?=in_array($emp['sid'], empty($currentOfferLetter['allowed_employees']) ? [] :  explode(',', $currentOfferLetter['allowed_employees'])) ? 'selected' : '';?>><?=remakeEmployeeName($emp);?></option>
-                                                                <?php
-                                                            }
-                                                        ?>
-                                                        </select>
+                                            <br />
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">
+                                                            <h5>
+                                                                <strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true"  data-target="visibilty"></i>
+                                                                <p class="jsHintBody" data-hint="visibilty"><br /><?=getUserHint('visibility_hint');?></p>
+                                                            </h5>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            <!-- Payroll -->
+                                                            <label class="control control--checkbox">
+                                                                Visible To Payroll
+                                                                <input type="checkbox" name="visible_to_payroll" class="jsVisibleToPayroll" value="1"/>
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                            <hr />
+                                                            <!-- Roles -->
+                                                            <label>Roles</label>
+                                                            <select name="roles[]" id="jsRoles" multiple>
+                                                            <?php
+                                                                //
+                                                                foreach(getRoles() as $k => $v){
+                                                                    ?>
+                                                                    <option value="<?=$k;?>"><?=$v;?></option>
+                                                                    <?php
+                                                                }
+                                                            ?>
+                                                            </select>
+                                                            <br />
+                                                            <br />
+                                                            <!-- Departments -->
+                                                            <label>Departments</label>
+                                                            <select name="departments[]" id="jsDepartment" multiple>
+                                                            <?php 
+                                                                //
+                                                                if(!empty($departments)){
+                                                                    foreach($departments as $v){
+                                                                        ?>
+                                                                        <option value="<?=$v['sid'];?>"><?=$v['name'];?></option>
+                                                                        <?php
+                                                                    }
+                                                                }
+                                                            ?>
+                                                            </select>
+                                                            <br />
+                                                            <br />
+                                                            <!-- Teams -->
+                                                            <label>Teams</label>
+                                                            <select name="teams[]" id="jsTeams" multiple>
+                                                            <?php 
+                                                                //
+                                                                if(!empty($teams)){
+                                                                    foreach($teams as $v){
+                                                                        ?>
+                                                                        <option value="<?=$v['sid'];?>"><?=$v['name'];?></option>
+                                                                        <?php
+                                                                    }
+                                                                }
+                                                            ?>
+                                                            </select>
+                                                            <br />
+                                                            <br />
+                                                            <!-- Employees -->
+                                                            <label>Employees</label>
+                                                            <select name="employees[]" id="jsEmployees" multiple>
+                                                            <?php 
+                                                                //
+                                                                if(!empty($managers_list)){
+                                                                    foreach($managers_list as $v){
+                                                                        ?>
+                                                                        <option value="<?=$v['sid'];?>"><?=remakeEmployeeName($v);?></option>
+                                                                        <?php
+                                                                    }
+                                                                }
+                                                            ?>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            
 
                                             <div id="generated_offer_letter" style="display: none">
                                                 <div class="row">
@@ -441,6 +466,12 @@
                 l.uploaded_document_s3_name = l.document_s3_name;
                 l.uploaded_document_original_name = l.document_original_name;
             }
+            //
+            $('.jsVisibleToPayroll').prop('checked', l.visible_to_payroll);
+            $('#jsRoles').select2('val', l.allowed_roles && l.allowed_roles != 'null' ? l.allowed_roles.split(',') :  null);
+            $('#jsDepartment').select2('val', l.allowed_departments && l.allowed_departments != 'null' ? l.allowed_departments.split(',') :  null);
+            $('#jsTeams').select2('val', l.allowed_teams && l.allowed_teams != 'null' ? l.allowed_teams.split(',') :  null);
+            $('#jsEmployees').select2('val', l.allowed_employees && l.allowed_employees != 'null' ? l.allowed_employees.split(',') :  null);
             //
             $('#js-signers').select2({
                 closeOnSelect: false

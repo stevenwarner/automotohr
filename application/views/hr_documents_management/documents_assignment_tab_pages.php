@@ -227,14 +227,16 @@
                     <!--  -->
                     <?php if (sizeof($uncompleted_offer_letter) && 
                         has_approval(
-                            $uncompleted_offer_letter[0]['is_available_for_na'],
+                            $uncompleted_offer_letter[0]['allowed_roles'],
                             $uncompleted_offer_letter[0]['allowed_departments'],
                             $uncompleted_offer_letter[0]['allowed_teams'],
                             $uncompleted_offer_letter[0]['allowed_employees'], [
                                 'user_id' => $session['employer_detail']['sid'],
                                 'access_level_plus' => $session['employer_detail']['access_level_plus'],
+                                'pay_plan_flag' => $session['employer_detail']['pay_plan_flag'],
                                 'access_level' => $session['employer_detail']['access_level']
-                            ]
+                            ],
+                            $uncompleted_offer_letter[0]['visible_to_payroll']
                         )
                     ) {?>
                         <div class="row">
@@ -937,14 +939,17 @@
 
                     <?php if (sizeof($completed_offer_letter)  && 
                         has_approval(
-                            $completed_offer_letter[0]['is_available_for_na'],
+                            $completed_offer_letter[0]['allowed_roles'],
                             $completed_offer_letter[0]['allowed_departments'],
                             $completed_offer_letter[0]['allowed_teams'],
-                            $completed_offer_letter[0]['allowed_employees'], [
+                            $completed_offer_letter[0]['allowed_employees'], 
+                            [
                                 'user_id' => $session['employer_detail']['sid'],
                                 'access_level_plus' => $session['employer_detail']['access_level_plus'],
+                                'pay_plan_flag' => $session['employer_detail']['pay_plan_flag'],
                                 'access_level' => $session['employer_detail']['access_level']
-                            ]
+                            ],
+                            $completed_offer_letter[0]['visible_to_payroll']
                         )) { ?>
                         <div class="row">
                             <div class="col-xs-12">

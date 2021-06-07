@@ -13420,7 +13420,7 @@ if(!function_exists('getUploadFileLinks')){
 
 //
 if(!function_exists('has_approval')){
-    function has_approval($roles, $departments, $teams, $employees, $loggedin_user){
+    function has_approval($roles, $departments, $teams, $employees, $loggedin_user, $payroll = 0){
         // Check for plus
         if($loggedin_user['access_level_plus']){
             return true;
@@ -13433,11 +13433,16 @@ if(!function_exists('has_approval')){
             }
         }
 
-       // Check for employee
+        // Check for employee
         if(!empty($employees)){
             if(in_array( stringToSlug($loggedin_user['user_id']), explode(',', $employees) )){
                 return true;
             }
+        }
+        
+        // Check for payroll
+        if($payroll == $loggedin_user['pay_plan_flag']){
+            return true;
         }
 
         // 

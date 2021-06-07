@@ -2842,4 +2842,11 @@ class Onboarding_model extends CI_Model {
         }
     }
 
+    //
+    function delete_from_oirignal_table($sid){
+        $this->db
+        ->where('sid', $sid)
+        ->delete('documents_assigned');
+    }
+
 }

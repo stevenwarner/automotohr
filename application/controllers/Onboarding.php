@@ -5242,6 +5242,7 @@ class Onboarding extends CI_Controller {
                         }
                     }
                 }
+                // _e($assigned_offer_letter, true, true);
 
                 $data = employee_right_nav($user_sid);
                 $employee_info = $this->onboarding_model->get_employee_information($company_sid, $user_sid);
@@ -5351,46 +5352,39 @@ class Onboarding extends CI_Controller {
                                 unset($previous_offer_letter['sid']);
                                 $this->onboarding_model->insert_documents_assignment_record_history($previous_offer_letter);
                             }
+                            //
+                            $this->onboarding_model->delete_from_oirignal_table($previous_assigned_sid);
                         }
                     } 
-
+                    //
                     $this->onboarding_model->disable_all_previous_letter($company_sid, $user_type, $user_sid, 'offer_letter');
                         
                     $data_to_insert['status'] = 1;
                     //
-                    
-                    //
-                    $visibilityArray = [];
-                    //
-                    if(isset($post['selected_roles'])){
-                        $visibilityArray['is_available_for_na'] = $post['selected_roles'];
-                        $data_to_insert['is_available_for_na'] = $post['selected_roles'];
+                    if(isset($post['visible_to_payroll'])){
+                        $data_to_insert['visible_to_payroll'] = $post['visible_to_payroll'];
                     }
                     //
-                    if(isset($post['selected_employees'])){
-                        $visibilityArray['allowed_employees'] = $post['selected_employees'];
-                        $data_to_insert['allowed_employees'] = $post['selected_employees'];
+                    if(isset($post['roles'])){
+                        $data_to_insert['allowed_roles'] = implode(',', $post['roles']);
                     }
                     //
-                    if(isset($post['selected_departments'])){
-                        $visibilityArray['allowed_departments'] = $post['selected_departments'];
-                        $data_to_insert['allowed_departments'] = $post['selected_departments'];
+                    if(isset($post['employees'])){
+                        $data_to_insert['allowed_employees'] = implode(',', $post['employees']);
                     }
                     //
-                    if(isset($post['selected_teams'])){
-                        $visibilityArray['allowed_teams'] = $post['selected_teams'];
-                        $data_to_insert['allowed_teams'] = $post['selected_teams'];
+                    if(isset($post['departments'])){
+                        $data_to_insert['allowed_departments'] = implode(',', $post['departments']);
+                    }
+                    //
+                    if(isset($post['teams'])){
+                        $data_to_insert['allowed_teams'] = implode(',', $post['teams']);
                     }
                     //
                  
                     $verification_key = random_key(80);
                     $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
                     $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
-                    //
-                    if(!empty($visibilityArray)){
-                        //
-                        $this->hr_documents_management_model->updateOfferLetter($visibilityArray, $offer_letter_sid);
-                    }
                     //
                     $signers = $this->input->post('js-signers');
                     // Managers handling
