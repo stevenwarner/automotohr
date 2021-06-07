@@ -393,6 +393,8 @@ $blue_panel_modules[] = 'general_info';
 $blue_panel_modules[] = 'add_ems_notification';
 $blue_panel_modules[] = 'edit_ems_notification';
 $blue_panel_modules[] = 'complynet';
+// 
+$blue_panel_modules[] = 'authorized_document';
 define('BLUE_PANEL_MODULES', implode(',', $blue_panel_modules));
 
 $public_modules = array();

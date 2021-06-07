@@ -573,7 +573,36 @@
                         </div>
                         <?php } ?>
 
-                        
+                        <!-- Authorised Signature  -->
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                            <a href="<?=base_url('authorized_document');?>">
+                                <div class="widget-box">
+                                    <div class="link-box bg-redish full-width">
+                                        <h2 class="text-blue">Assigned Documents</h2>
+                                        <ul class="pto-box">
+                                            <li>
+                                                <span><?=$AuthorizedDocuments['Today'];?></span>
+                                                <span>Assigned Document(s) Today</span>
+                                             
+                                            </li>
+                                            <li>
+                                                <span><?=$AuthorizedDocuments['Pending'];?></span>
+                                                <span>Pending Document(s)</span>
+                                             
+                                            </li>
+                                            <li>
+                                                <span><?=$AuthorizedDocuments['Total'];?></span>
+                                                <span>0 Total Document(s)</span>
+                                            </li>
+                                        </ul>
+                                        <div class="status-panel">
+                                            <h3>View Document(s)</h3>
+                                            <span>Show</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
 
                         <?php if (checkIfAppIsEnabled('performance_review')) { ?>
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6" id="js-to-box">
@@ -640,6 +669,8 @@
                             </a>
                         </div>
                         <?php } ?>
+
+                        
                     </div>
                 </div>
             </div>

@@ -4227,9 +4227,19 @@ class Hr_documents_management extends Public_Controller {
             $data['employer']       = $employers_details;
             $data['documents_list'] = $documents_list;
             $data['links']          = $links;
+            //
+            $data['employee'] = $data['session']['employer_detail'];
+            //
+            $data['load_view'] = 'old';
+            //
             $this->load->view('main/header', $data);
-            $this->load->view('hr_documents_management/authorized_document_assigned_listing');
+            if(!$data['load_view']){
+                $this->load->view('hr_documents_management/authorized_document_assigned_listing');
+            } else{
+                $this->load->view('hr_documents_management/authorized_document_assigned_listing_ems');
+            }
             $this->load->view('main/footer');
+            
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -4264,7 +4274,6 @@ class Hr_documents_management extends Public_Controller {
 
                     $document = $this->hr_documents_management_model->get_assign_authorized_document($company_sid, $assign_document_sid);
                 }
-
                 if (!empty($document)) {
                     if ($document['user_consent'] == 1 && !empty($document['form_input_data'])) {
 
@@ -4368,9 +4377,17 @@ class Hr_documents_management extends Public_Controller {
             $data['assign_doc_user_type']   = $user_type;
             $data['assign_doc_user_name']   = $user_name;
 
-
+            //
+            $data['employee'] = $data['session']['employer_detail'];
+            //
+            $data['load_view'] = 'old';
+            //
             $this->load->view('main/header', $data);
-            $this->load->view('hr_documents_management/assigned_authorized_document');
+            if(!$data['load_view']){
+                $this->load->view('hr_documents_management/assigned_authorized_document');
+            } else{
+                $this->load->view('hr_documents_management/assigned_authorized_document_ems');
+            }
             $this->load->view('main/footer');
         } else {
             redirect('login', 'refresh');
@@ -7738,7 +7755,6 @@ class Hr_documents_management extends Public_Controller {
             } else {
                 $authorized_signature_image = '------------------------------(Authorized Signature Required)';
             }
-
             if (!empty($document['authorized_signature_date'])) {
                 $authorized_signature_date = '<p><strong>'.date_with_time($document['authorized_signature_date']).'</strong></p>';
             } else {
@@ -7768,7 +7784,6 @@ class Hr_documents_management extends Public_Controller {
 
             $form_input_data = json_encode(json_decode('assigned'));  
         }
-
 
         $data = array();
         $data['file_name'] = $file_name;

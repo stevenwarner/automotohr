@@ -478,6 +478,12 @@ class Dashboard extends Public_Controller {
             $data['employeeTotal'] = $employeeTotal;
             $data['applicantTotal'] = $applicantTotal;
             $data['totalPD'] = $applicantTotal + $employeeTotal;
+
+            // Authorized Check
+            $data['AuthorizedDocuments'] = [];
+            $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
+            $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
+            $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
             
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
@@ -787,6 +793,12 @@ class Dashboard extends Public_Controller {
             //
             $this->load->model('performance_management_model', 'pmm');
             $data['goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
+
+            // Authorized Check
+            $data['AuthorizedDocuments'] = [];
+            $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
+            $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
+            $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
 
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');

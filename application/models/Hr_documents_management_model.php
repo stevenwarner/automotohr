@@ -342,7 +342,7 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->join('documents_assigned','documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid','inner');
         // 
         $this->db->order_by('documents_assigned.authorized_signature', 'ASC', false);
-        $this->db->order_by('assigned_by_date', 'ASC', false);
+        $this->db->order_by('assigned_by_date', 'DESC', false);
         //
 
         $record_obj = $this->db->get('authorized_document_assigned_manager');
