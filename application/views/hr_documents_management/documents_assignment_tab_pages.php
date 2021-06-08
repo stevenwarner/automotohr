@@ -94,6 +94,7 @@
                                                                 <?php if ($document['document_sid'] != 0) { ?>
                                                                     <td class="col-lg-1">
                                                                         <?php
+                                                                        $document_sid = $document['document_sid'];
                                                                         $document_filename = $document['document_s3_name'];
                                                                         $document_file = pathinfo($document_filename);
                                                                         $document_extension = $document_file['extension'];

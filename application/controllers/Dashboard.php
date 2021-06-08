@@ -465,25 +465,24 @@ class Dashboard extends Public_Controller {
 
             //
             $this->load->model('varification_document_model');
-            $employeeTotal = 0;
-            $employeeTotal = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'employee', TRUE);
-            $employeeTotal += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'employee', TRUE);
-            $employeeTotal += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'employee', TRUE);
-            $applicantTotal = 0;
-            $applicantTotal = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'applicant', TRUE);
-            $applicantTotal += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'applicant', TRUE);
-            $applicantTotal += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE);
-
-            //
-            $data['employeeTotal'] = $employeeTotal;
-            $data['applicantTotal'] = $applicantTotal;
-            $data['totalPD'] = $applicantTotal + $employeeTotal;
 
             // Authorized Check
             $data['AuthorizedDocuments'] = [];
             $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
             $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
             $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
+            
+            // Pending Employer Sections
+            $data['PendingEmployerSection'] = [];
+            $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'employee', TRUE, $data['session']['employer_detail']);
+            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'employee', TRUE, $data['session']['employer_detail']);
+            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'employee', TRUE, $data['session']['employer_detail']);
+            //
+            $data['PendingEmployerSection']['Applicant'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail']);
+            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail']);
+            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail']);
+            //
+            $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
             
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
@@ -792,6 +791,7 @@ class Dashboard extends Public_Controller {
 
             //
             $this->load->model('performance_management_model', 'pmm');
+            $this->load->model('varification_document_model');
             $data['goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
 
             // Authorized Check
@@ -799,6 +799,25 @@ class Dashboard extends Public_Controller {
             $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
             $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
             $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
+
+            // Pending Employer Sections
+            $data['PendingEmployerSection'] = [];
+            //
+            $data['PendingEmployerSection']['Employee'] = 0;
+            if($data['session']['employer_detail']['access_level_plus']){
+                $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($company_id, 'employee', TRUE, $data['session']['employer_detail']);
+                $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->get_all_users_pending_i9($company_id, 'employee', TRUE, $data['session']['employer_detail']);
+            }
+            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->getPendingAuthDocs($company_id, 'employee', TRUE, $data['session']['employer_detail']);
+            //
+            $data['PendingEmployerSection']['Applicant'] = 0;
+            if($data['session']['employer_detail']['access_level_plus']){
+                $data['PendingEmployerSection']['Applicant'] = $this->varification_document_model->get_all_users_pending_w4($company_id, 'applicant', TRUE, $data['session']['employer_detail']);
+                $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->get_all_users_pending_i9($company_id, 'applicant', TRUE, $data['session']['employer_detail']);
+            }
+            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($company_id, 'applicant', TRUE, $data['session']['employer_detail']);
+            //
+            $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
 
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');

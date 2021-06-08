@@ -1610,6 +1610,7 @@
                                                                                         <?php } else if ($document['document_type'] == 'uploaded') {?>
                                                                                             <td class="col-lg-1">
                                                                                                 <?php
+                                                                                                $document_sid = $document['sid'];
                                                                                                 $document_filename = $document['uploaded_document_s3_name'];
                                                                                                 $document_file = pathinfo($document_filename);
                                                                                                 $document_extension = $document_file['extension'];

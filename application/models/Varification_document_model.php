@@ -102,10 +102,34 @@ class Varification_document_model extends CI_Model {
     }
 
     //
-    function getPendingAuthDocs($company_sid, $user_type, $count = FALSE){
+    function getPendingAuthDocs($company_sid, $user_type, $count = FALSE, $employer = []){
         $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
         //
         $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+        //
+        if(!empty($employer)){
+            //
+            $access_level = str_replace('-', '_', stringToSlug($employer['access_level']));
+            //
+            if(!$employer['access_level_plus'] && !in_array($access_level, ['admin'])){
+                //
+                $departmentIds = $this->getMyDepartmentIds($employer['sid']);
+                $teamIds = $this->getMyTeamIds($employer['sid']);
+                //
+                $this->db->group_start();
+                $this->db->where('find_in_set("'.($access_level).'", allowed_roles) > 0', false, false);
+                $this->db->or_where('find_in_set("'.($employer['sid']).'", allowed_employees) > 0', false, false);
+                //
+                if(!empty($departmentIds)){
+                    $this->db->or_where('find_in_set("'.($employer['sid']).'", allowed_departments) > 0', false, false);
+                }
+                //
+                if(!empty($teamIds)){
+                    $this->db->or_where('find_in_set("'.($employer['sid']).'", allowed_teams) > 0', false, false);
+                }
+                $this->db->group_end();
+            }
+        }
         //
         $this->db
         ->from('documents_assigned')
@@ -126,7 +150,6 @@ class Varification_document_model extends CI_Model {
         if($count){
             return $this->db->count_all_results();
         }
-        // 
         //
         $this->db->select('
             *,
@@ -189,6 +212,38 @@ class Varification_document_model extends CI_Model {
         $a = $a->free_result();
 
         return array_column($b, 'sid');
+    }
+
+    //
+    function getMyDepartmentIds($employeId){
+        $a = 
+        $this->db->select('sid')
+        ->where("find_in_set($employeId, supervisor) > 0", false, false)
+        ->where('status', 1)
+        ->where('is_deleted', 0)
+        ->get("departments_management");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        return !empty($b) ? array_column($b, 'sid') : [];
+    }
+    
+    //
+    function getMyTeamIds($employeId){
+        $a = 
+        $this->db->select('sid')
+        ->where("find_in_set($employeId, team_lead) > 0", false, false)
+        ->where('status', 1)
+        ->where('is_deleted', 0)
+        ->get("departments_team_management");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        return !empty($b) ? array_column($b, 'sid') : [];
     }
 
 }

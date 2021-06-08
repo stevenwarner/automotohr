@@ -249,7 +249,7 @@
 			<?php } ?>
 			if(do_descpt) rows += getSigners('js-modify-assigned-document-signers');
 			//
-			rows += getVisibilty();
+			rows += getVisibilty(do_descpt);
 			//
 			rows += getEmailContent();
 			//
@@ -260,24 +260,26 @@
 			rows += getSignatureRequiredRow();
 			if(do_descpt) rows += getTags();
 			//
-			if($('#jsRoles').data('select2')){
-				$('#jsRoles').data('select2').destroy()
-				$('#jsRoles').remove()
-			}
-			//
-			if($('#jsDepartments').data('select2')){
-				$('#jsDepartments').data('select2').destroy()
-				$('#jsDepartments').remove()
-			}
-			//
-			if($('#jsTeams').data('select2')){
-				$('#jsTeams').data('select2').destroy()
-				$('#jsTeams').remove()
-			}
-			//
-			if($('#jsEmployees').data('select2')){
-				$('#jsEmployees').data('select2').destroy()
-				$('#jsEmployees').remove()
+			if(do_descpt){
+				if($('#jsRoles').data('select2')){
+					$('#jsRoles').data('select2').destroy()
+					$('#jsRoles').remove()
+				}
+				//
+				if($('#jsDepartments').data('select2')){
+					$('#jsDepartments').data('select2').destroy()
+					$('#jsDepartments').remove()
+				}
+				//
+				if($('#jsTeams').data('select2')){
+					$('#jsTeams').data('select2').destroy()
+					$('#jsTeams').remove()
+				}
+				//
+				if($('#jsEmployees').data('select2')){
+					$('#jsEmployees').data('select2').destroy()
+					$('#jsEmployees').remove()
+				}
 			}
 			//
 			let select2s = ['#jsRoles', '#jsEmployees', '#jsDepartments', '#jsTeams'];
@@ -304,14 +306,16 @@
 					$('.js-modify-assign-document-signature-required[value="'+( selectedTemplate.is_signature_required )+'"]').prop('checked', true);
 					
 					$('#jsVisibleToPayroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
-					$('#jsRoles').select2('val', []);
-					$('#jsEmployees').select2('val', []);
-					$('#jsDepartments').select2('val', []);
-					$('#jsTeams').select2('val', []);
-					if(d.allowed_roles != '0' && d.allowed_roles != null) $('#jsRoles').select2('val', d.allowed_roles.split(',') );
-					if(d.allowed_employees != '0' && d.allowed_employees != null) $('#jsEmployees').select2('val', d.allowed_employees.split(',') );
-					if(d.allowed_departments != '0' && d.allowed_departments != null) $('#jsDepartments').select2('val', d.allowed_departments.split(',') );
-					if(d.allowed_teams != '0' && d.allowed_teams != null) $('#jsTeams').select2('val', d.allowed_teams.split(',') );
+					if(do_descpt){
+						$('#jsRoles').select2('val', []);
+						$('#jsEmployees').select2('val', []);
+						$('#jsDepartments').select2('val', []);
+						$('#jsTeams').select2('val', []);
+						if(d.allowed_roles != '0' && d.allowed_roles != null) $('#jsRoles').select2('val', d.allowed_roles.split(',') );
+						if(d.allowed_employees != '0' && d.allowed_employees != null) $('#jsEmployees').select2('val', d.allowed_employees.split(',') );
+						if(d.allowed_departments != '0' && d.allowed_departments != null) $('#jsDepartments').select2('val', d.allowed_departments.split(',') );
+						if(d.allowed_teams != '0' && d.allowed_teams != null) $('#jsTeams').select2('val', d.allowed_teams.split(',') );
+					}
 					$('.modify-assigned-document-modal-loader').fadeOut(300);
 					$('[data-toggle="propover"]').popover({
 						trigger: 'hover',
@@ -368,10 +372,33 @@
 			rows += getConsentTypes(do_descpt);
 			<?php } ?>
 			if(do_descpt) rows += getSigners();
+			rows += getVisibilty(do_descpt);
 			rows+= getEmailContent();
 			rows += getRequiredRow();
 			rows += getSignatureRequiredRow();
 			if(do_descpt) rows += getTags();
+			if(do_descpt) {
+				//
+				if($('#jsRoles').data('select2')){
+					$('#jsRoles').data('select2').destroy()
+					$('#jsRoles').remove()
+				}
+				//
+				if($('#jsDepartments').data('select2')){
+					$('#jsDepartments').data('select2').destroy()
+					$('#jsDepartments').remove()
+				}
+				//
+				if($('#jsTeams').data('select2')){
+					$('#jsTeams').data('select2').destroy()
+					$('#jsTeams').remove()
+				}
+				//
+				if($('#jsEmployees').data('select2')){
+					$('#jsEmployees').data('select2').destroy()
+					$('#jsEmployees').remove()
+				}
+			}
 			//
 			Modal(
 				'Modify & Assign This Document',
@@ -387,6 +414,36 @@
 					$('#js-modify-assign-document-download option[value="'+( d.download_required )+'"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="'+( d.acknowledgment_required )+'"]').prop('selected', true);
 					do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.signers != null && d.signers != ''  ? d.signers.split(',') : null) : '';
+
+					//
+					if(d.visible_to_payroll){
+						$('#jsVisibleToPayroll').prop('checked', true);
+					}
+					//
+					if(do_descpt) {
+						$('#jsRoles').select2({ closeOnSelect: false});
+						$('#jsDepartments').select2({ closeOnSelect: false});
+						$('#jsTeams').select2({ closeOnSelect: false});
+						$('#jsEmployees').select2({ closeOnSelect: false});
+	
+						if(d.is_available_for_na){
+							$('#jsRoles').select2('val', d.is_available_for_na.split(','));
+						}
+						//
+						if(d.allowed_departments){
+							$('#jsDepartments').select2('val', d.allowed_departments.split(','));
+						}
+						//
+						if(d.allowed_teams){
+							$('#jsTeams').select2('val', d.allowed_teams.split(','));
+						}
+						//
+						if(d.allowed_employees){
+							$('#jsEmployees').select2('val', d.allowed_employees.split(','));
+						}
+					}
+
+
 					$('.jsModifyModalLoader').fadeOut(300);
 
 					$('#modify_assign_document').mFileUploader({
@@ -430,28 +487,31 @@
 			rows += getConsentTypes(do_descpt);
 			<?php } ?>
 			if(do_descpt) rows += getSigners('js-modify-assign-offer-letter-signers');
-			rows+= getVisibilty(d);
+			rows+= getVisibilty(do_descpt);
 			rows+= getEmailContent();
 			if(do_descpt) rows += getTags();
 			//
-			if($('#jsRoles').data('select2')){
-				$('#jsRoles').data('select2').destroy()
-				$('#jsRoles').remove()
-			}
-			//
-			if($('#jsDepartments').data('select2')){
-				$('#jsDepartments').data('select2').destroy()
-				$('#jsDepartments').remove()
-			}
-			//
-			if($('#jsTeams').data('select2')){
-				$('#jsTeams').data('select2').destroy()
-				$('#jsTeams').remove()
-			}
-			//
-			if($('#jsEmployees').data('select2')){
-				$('#jsEmployees').data('select2').destroy()
-				$('#jsEmployees').remove()
+			if(do_descpt){
+				//
+				if($('#jsRoles').data('select2')){
+					$('#jsRoles').data('select2').destroy()
+					$('#jsRoles').remove()
+				}
+				//
+				if($('#jsDepartments').data('select2')){
+					$('#jsDepartments').data('select2').destroy()
+					$('#jsDepartments').remove()
+				}
+				//
+				if($('#jsTeams').data('select2')){
+					$('#jsTeams').data('select2').destroy()
+					$('#jsTeams').remove()
+				}
+				//
+				if($('#jsEmployees').data('select2')){
+					$('#jsEmployees').data('select2').destroy()
+					$('#jsEmployees').remove()
+				}
 			}
 			//
 			Modal(
@@ -468,32 +528,36 @@
 					$('#js-modify-assign-offer-letter-download option[value="'+( d.download_required )+'"]').prop('selected', true);
 					$('#js-modify-assign-offer-letter-acknowledgment option[value="'+( d.acknowledgment_required )+'"]').prop('selected', true);
 					do_descpt ? $('#js-modify-assign-offer-letter-signers').select2('val', d.signers != null && d.signers != ''  ? d.signers.split(',') : null) : '';
-					
-					$('#jsRoles').select2({ closeOnSelect: false});
-					$('#jsDepartments').select2({ closeOnSelect: false});
-					$('#jsTeams').select2({ closeOnSelect: false});
-					$('#jsEmployees').select2({ closeOnSelect: false});
 
 					//
 					if(d.visible_to_payroll){
 						$('#jsVisibleToPayroll').prop('checked', true);
 					}
 					//
-					if(d.is_available_for_na){
-						$('#jsRoles').select2('val', d.is_available_for_na.split(','));
+					if(do_descpt){
+						$('#jsRoles').select2({ closeOnSelect: false});
+						$('#jsDepartments').select2({ closeOnSelect: false});
+						$('#jsTeams').select2({ closeOnSelect: false});
+						$('#jsEmployees').select2({ closeOnSelect: false});
+	
+						//
+						if(d.is_available_for_na){
+							$('#jsRoles').select2('val', d.is_available_for_na.split(','));
+						}
+						//
+						if(d.allowed_departments){
+							$('#jsDepartments').select2('val', d.allowed_departments.split(','));
+						}
+						//
+						if(d.allowed_teams){
+							$('#jsTeams').select2('val', d.allowed_teams.split(','));
+						}
+						//
+						if(d.allowed_employees){
+							$('#jsEmployees').select2('val', d.allowed_employees.split(','));
+						}
 					}
-					//
-					if(d.allowed_departments){
-						$('#jsDepartments').select2('val', d.allowed_departments.split(','));
-					}
-					//
-					if(d.allowed_teams){
-						$('#jsTeams').select2('val', d.allowed_teams.split(','));
-					}
-					//
-					if(d.allowed_employees){
-						$('#jsEmployees').select2('val', d.allowed_employees.split(','));
-					}
+					
 					$('.modify-assign-offer-letter-modal-loader').fadeOut(300);
 				}
 			);
@@ -501,7 +565,7 @@
 
 
 		// Visibility
-		function getVisibilty(data){
+		function getVisibilty(is_generated){
 			//
 			var html = '';
 			//
@@ -521,53 +585,56 @@
 			html +='                    <input type="checkbox" name="visible_to_payroll" id="jsVisibleToPayroll" />';
 			html +='                    <div class="control__indicator"></div>';
 			html +='                </label>';
-			html +='                <hr />';
-			html +='                <!-- Roles -->';
-			html +='                <label>Roles</label>';
-			html +='                <select name="roles[]" id="jsRoles" multiple>';
-			//
-			var roles = <?=json_encode(getRoles());?>;
-			//
-			if(Object.keys(roles).length){
-				$.each(roles, function(i, v){
-					html +=' <option value="'+( i )+'">'+( v )+'</option>';
-				});
+			if(is_generated){
+
+				html +='                <hr />';
+				html +='                <!-- Roles -->';
+				html +='                <label>Roles</label>';
+				html +='                <select name="roles[]" id="jsRoles" multiple>';
+				//
+				var roles = <?=json_encode(getRoles());?>;
+				//
+				if(Object.keys(roles).length){
+					$.each(roles, function(i, v){
+						html +=' <option value="'+( i )+'">'+( v )+'</option>';
+					});
+				}
+				html +='                </select>';
+				html +='                <br />';
+				html +='                <br />';
+				html +='                <!-- Departments -->';
+				html +='                <label>Departments</label>';
+				html +='                <select name="departments[]" id="jsDepartments" multiple>';
+				if(departmentList.length){
+					departmentList.map(function(v){
+						html +='<option value="'+(v['sid'])+'">'+(v['name'])+'</option>';
+					});
+				}
+				html +='                </select>';
+				html +='                <br />';
+				html +='                <br />';
+				html +='                <!-- Teams -->';
+				html +='                <label>Teams</label>';
+				html +='                <select name="teams[]" id="jsTeams" multiple>';
+				if(teamList.length){
+					teamList.map(function(v){
+						html +='<option value="'+(v['sid'])+'">'+(v['name'])+'</option>';
+					});
+				}
+				html +='                </select>';
+				html +='                <br />';
+				html +='                <br />';
+				html +='                <!-- Employees -->';
+				html +='                <label>Employees</label>';
+				html +='                <select name="employees[]" id="jsEmployees" multiple>';
+				if(employeeList.length){
+					employeeList.map(function(v){
+						html +='<option value="'+(v['sid'])+'">'+(remakeEmployeeName(v))+'</option>';
+					});
+				}
+				html +='                </select>';
 			}
-			html +='                </select>';
-			html +='                <br />';
-			html +='                <br />';
-			html +='                <!-- Departments -->';
-			html +='                <label>Departments</label>';
-			html +='                <select name="departments[]" id="jsDepartments" multiple>';
-			if(departmentList.length){
-				departmentList.map(function(v){
-					html +='<option value="'+(v['sid'])+'">'+(v['name'])+'</option>';
-				});
-			}
-			html +='                </select>';
-			html +='                <br />';
-			html +='                <br />';
-			html +='                <!-- Teams -->';
-			html +='                <label>Teams</label>';
-			html +='                <select name="teams[]" id="jsTeams" multiple>';
-			if(teamList.length){
-				teamList.map(function(v){
-					html +='<option value="'+(v['sid'])+'">'+(v['name'])+'</option>';
-				});
-			}
-			html +='                </select>';
-			html +='                <br />';
-			html +='                <br />';
-			html +='                <!-- Employees -->';
-			html +='                <label>Employees</label>';
-			html +='                <select name="employees[]" id="jsEmployees" multiple>';
-			if(employeeList.length){
-				employeeList.map(function(v){
-					html +='<option value="'+(v['sid'])+'">'+(remakeEmployeeName(v))+'</option>';
-				});
-			}
-			html +='                </select>';
-			html +='            </div>';
+			html +='            </div>'; 
 			html +='        </div>';
 			html +='    </div>';
 			html +='</div>';
@@ -709,10 +776,10 @@
 			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
 			// Visibility
 			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
-			obj.selected_roles = $('#jsRoles').val();
-			obj.selected_departments = $('#jsDepartments').val();
-			obj.selected_teams = $('#jsTeams').val();
-			obj.selected_employees = $('#jsEmployees').val();
+			obj.selected_roles = $('#jsRoles').val() || '';
+			obj.selected_departments = $('#jsDepartments').val() || '';
+			obj.selected_teams = $('#jsTeams').val() || '';
+			obj.selected_employees = $('#jsEmployees').val() || '';
 			//
 			var post = new FormData();
 			//
@@ -765,6 +832,12 @@
 				obj.file = file.name === undefined ? selectedTemplate.uploaded_document_s3_name : file;
 				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
 			}
+			// Visibility
+			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
+			obj.roles = $('#jsRoles').val() || '';
+			obj.departments = $('#jsDepartments').val() || '';
+			obj.teams = $('#jsTeams').val() || '';
+			obj.employees = $('#jsEmployees').val() || '';
 			//
 			var post = new FormData();
 			//

@@ -519,8 +519,8 @@ class Hr_documents_management_model extends CI_Model {
         $documents_management_sids = $payroll_sids['documents_management_sids'];
         $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
 
-        $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive,documents_management.visible_to_payroll, documents_management.is_available_for_na, documents_management.allowed_employees, documents_management.allowed_departments, documents_management.allowed_teams,  documents_management.is_specific');
-        if(ASSIGNEDOCIMPL) $this->db->select('documents_assigned.acknowledgment_required,documents_assigned.download_required,documents_assigned.signature_required, documents_management.is_available_for_na, documents_management.allowed_employees,  documents_management.allowed_departments, documents_management.allowed_teams');
+        $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive,documents_management.visible_to_payroll, documents_management.is_available_for_na,  documents_management.is_specific');
+        if(ASSIGNEDOCIMPL) $this->db->select('documents_assigned.acknowledgment_required,documents_assigned.download_required,documents_assigned.signature_required, documents_management.is_available_for_na');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);

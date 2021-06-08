@@ -9823,6 +9823,12 @@ class Hr_documents_management extends Public_Controller {
             $a['download_required'] = $post['isDownload'];
             $a['acknowledgment_required'] = $post['isAcknowledged'];
         }
+        // Visibility
+        if(isset($post['roles'])){ $a['allowed_roles'] = $post['roles']; }
+        if(isset($post['departments'])){ $a['allowed_departments'] = $post['departments']; }
+        if(isset($post['teams'])){ $a['allowed_teams'] = $post['teams']; }
+        if(isset($post['employees'])){ $a['allowed_employees'] = $post['employees']; }
+
         //
         if(isset($post['file'])){
             $a['document_s3_name'] = $_SERVER['HTTP_HOST'] != 'localhost' ? putFileOnAWSBase64( $post['file'] ) : '0057-test_latest_uploaded_document-58-Yo2.pdf';
@@ -9844,7 +9850,6 @@ class Hr_documents_management extends Public_Controller {
                 $a['document_s3_name'] = $uploaded_document_s3_name;
             }
         }
-       
         //
         if($assignInsertId == null)
         $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
@@ -11488,21 +11493,24 @@ class Hr_documents_management extends Public_Controller {
         if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
 
         $session = $this->session->userdata('logged_in');
-        //
-        if($session['employer_detail']['access_level'] != 'Admin' && (!$session['employer_detail']['access_level_plus'] && !$session['employer_detail']['pay_plan_plus'])){
-           redirect('dashboard', 'refresh');
-        }
         $company_sid = $session['company_detail']['sid'];
         $security_sid = $session['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);
         //
-        $employee_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'employee');
-        $employee_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'employee');
-        $applicant_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'applicant');
-        $applicant_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'applicant');
+        $employee_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'employee', false, $session['employer_detail']);
+        $employee_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'employee', false, $session['employer_detail']);
+        $applicant_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'applicant', false, $session['employer_detail']);
+        $applicant_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'applicant', false, $session['employer_detail']);
 
-        $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee'));
-        $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'applicant'));
+        //
+        if($session['employer_detail']['access_level_plus'] || $session['employer_detail'] == 'Admin'){
+            $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, $session['employer_detail']));
+            $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'applicant', false, $session['employer_detail']));
+        } else{
+            $employee_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, $session['employer_detail']);
+            $applicant_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'applicant', false, $session['employer_detail']);
+        }
+
         //
         function tempr($a, $b){
             return $a['filled_date'] < $b['filled_date'];
@@ -11517,9 +11525,16 @@ class Hr_documents_management extends Public_Controller {
         $data['title'] = 'Pending Employer Section For Verificastion Documents';
         $data['employee_pending'] = $employee_pending;
         $data['applicant_pending'] = $applicant_pending;
+        $data['load_view'] = check_blue_panel_status(false, 'self');
+        //
+        $data['employee'] = $session['employer_detail'];
         //
         $this->load->view('main/header', $data);
-        $this->load->view('hr_documents_management/pending_varification_documents');
+        if($data['load_view']){
+            $this->load->view('hr_documents_management/pending_varification_documents_ems');
+        } else{
+            $this->load->view('hr_documents_management/pending_varification_documents');
+        }
         $this->load->view('main/footer');
     }    
 

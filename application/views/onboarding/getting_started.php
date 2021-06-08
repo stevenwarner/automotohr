@@ -578,7 +578,7 @@
                             <a href="<?=base_url('authorized_document');?>">
                                 <div class="widget-box">
                                     <div class="link-box bg-redish full-width">
-                                        <h2 class="text-blue">Assigned Documents</h2>
+                                        <h2 class="text-blue">Assigned Document(s)</h2>
                                         <ul class="pto-box">
                                             <li>
                                                 <span><?=$AuthorizedDocuments['Today'];?></span>
@@ -593,6 +593,35 @@
                                             <li>
                                                 <span><?=$AuthorizedDocuments['Total'];?></span>
                                                 <span>Total Document(s)</span>
+                                            </li>
+                                        </ul>
+                                        <div class="status-panel">
+                                            <h3>View Document(s)</h3>
+                                            <span>Show</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Employers Section  -->
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                            <a href="<?=base_url('hr_documents_management/company_varification_document');?>">
+                                <div class="widget-box">
+                                    <div class="link-box bg-info full-width">
+                                        <h2 class="text-blue">Employer Section(s)</h2>
+                                        <ul class="pto-box">
+                                            <li>
+                                                <span><?=$PendingEmployerSection['Total'];?></span>
+                                                <span>Total</span>
+                                            </li>
+                                            <li>
+                                                <span><?=$PendingEmployerSection['Applicant'];?></span>
+                                                <span>Applicant(s)</span>
+                                            </li>
+                                            <li>
+                                                <span><?=$PendingEmployerSection['Employee'];?></span>
+                                                <span>Employee(s)</span>
                                             </li>
                                         </ul>
                                         <div class="status-panel">
