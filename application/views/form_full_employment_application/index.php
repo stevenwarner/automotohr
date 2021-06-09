@@ -137,7 +137,7 @@
                                                                     $no_selected = true; 
                                                                 }
                                                             ?>
-                                                            <label class="autoheight">Have you ever been employed with our company or our Affiliate companies?</label>
+                                                            <label class="autoheight">Have you ever been employed with our company or our Affiliate companies?<?=$affiliate ? ' <span class="staric">*</span>' : '';?></label>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> class="check_value" id="is_already_employed_yes" value="Yes" name="is_already_employed" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="is_already_employed_yes">Yes</label>
@@ -151,7 +151,7 @@
                                                         <li class="form-col-100 autoheight">
 <?php $key = 'previous_company_name'; ?>
 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-                                                            <small class="autoheight">If yes, position held/what company or Affiliate company?</small>
+                                                            <small class="autoheight">If yes, position held/what company or Affiliate company?<?=$affiliate ? ' <span class="staric">*</span>' : '';?></small>
                                                             <div class="comment-area">
                                                                 <textarea <?php echo $readonly_check; ?> name="previous_company_name" id="previous_company_name" maxlength="512" onkeyup="check_length('previous_company_name')" class="form-col-100 invoice-fields"><?php echo set_value($key, $def_value); ?></textarea>
                                                                 <div id="show_specific_error" style="color:red"></div>
@@ -598,7 +598,7 @@
                                                 <div class="bg-color-v2">
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
-                                                            <label class="autoheight">Are you 18 years or older?</label>
+                                                            <label class="autoheight">Are you 18 years or older?<?=$eight_plus ? ' <span class="staric">*</span>' : '';?></label>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -718,7 +718,7 @@
 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
 <?php $yes_selected = ( $def_value == 'Yes'  || sizeof($drivers_license_details) ? true : false ); ?>
 <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
-                                                        <label class="autoheight">Driver's License: A valid driver's license may be a requirement for the position for which you have applied. If so, do you currently have a valid driver's license?</label>
+                                                        <label class="autoheight">Driver's License: A valid driver's license may be a requirement for the position for which you have applied. If so, do you currently have a valid driver's license?<?=$d_license ? '<span class="staric">*</span>' : '';?></label>
                                                         <div class="hr-radio-btns">
                                                             <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> id="RadioButtonListDriversLicenseQuestion_0" value="Yes" name="RadioButtonListDriversLicenseQuestion" type="radio" <?php echo $disabled_check; ?>>
                                                             <label for="RadioButtonListDriversLicenseQuestion_0">Yes</label>
@@ -734,7 +734,7 @@
                                                     <li>
                                                         <?php $key = 'TextBoxDriversLicenseNumber'; ?>
 <?php $def_value = (isset($user_info[$key]) ? ($user_info[$key]) : (isset($drivers_license_details['license_number']) ? $drivers_license_details['license_number'] : '') ); ?>
-                                                        <label>Driver's license number:</label>
+                                                        <label>Driver's license number:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxDriversLicenseNumber" value="<?php echo set_value($key, $def_value); ?>" type="text">
 <?php echo form_error($key); ?>
                                                     </li>
@@ -744,8 +744,8 @@
                                                     <li>
                                                         <?php $key = 'TextBoxDriversLicenseExpiration'; ?>
 <?php $def_value = (isset($user_info[$key]) ? ($user_info[$key]) : (isset($drivers_license_details['license_expiration_date']) ? $drivers_license_details['license_expiration_date'] : '') ); ?>
-                                                        <label>Expiration date:</label>
-                                                        <input <?php echo $readonly_check; ?> name="TextBoxDriversLicenseExpiration" class="invoice-fields startdate" value="<?php echo set_value($key, $def_value); ?>" id="dp1474003792804" type="text">
+                                                        <label>Expiration date:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
+                                                        <input readonly <?php echo $readonly_check; ?> name="TextBoxDriversLicenseExpiration" class="invoice-fields startdate" value="<?php echo set_value($key, $def_value); ?>" id="dp1474003792804" type="text">
 <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -755,7 +755,7 @@
 <?php $key = 'DropDownListDriversCountry'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? ($user_info[$key]) : (sizeof($drivers_license_details) ? ($LC) : 0) ); ?>
                                                             <?php $country_id = $def_value ?>
-                                                        <label>Country:</label>
+                                                        <label>Country:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
                                                         <select class="invoice-fields" id="country_dl" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_dl')">
                                                             <option value="">Please Select</option>
                                                         <?php foreach ($active_countries as $active_country) { ?>
@@ -772,7 +772,7 @@
                                                             <?php $key = 'DropDownListDriversState'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? $user_info[$key] : $LS ); ?>
                                                             <?php $state_id = $def_value ?>
-                                                        <label>State:</label>
+                                                        <label>State:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
                                                         <select class="invoice-fields" name="<?php echo $key; ?>" id="state_dl">
                                                             <?php if (empty($country_id)) { ?>
                                                                 <option value="">Select State</option> <?php

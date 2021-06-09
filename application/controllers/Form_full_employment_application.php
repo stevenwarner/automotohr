@@ -21,6 +21,7 @@ class Form_full_employment_application extends CI_Controller {
                 $user_type = $request_details['user_type'];
                 $user_sid = $request_details['user_sid'];
                 $company_details = $this->form_full_employment_application_model->get_company_details($company_sid);
+                
                 $user_info = $this->form_full_employment_application_model->get_user_information($company_sid, $user_type, $user_sid);
                 $field_names = array();
 
@@ -101,7 +102,7 @@ class Form_full_employment_application extends CI_Controller {
                         }
                     }
 
-                    $form_data = sizeof(unserialize($user_info['full_employment_application'])) ? unserialize($user_info['full_employment_application']) : array();
+                    $form_data = !empty(unserialize($user_info['full_employment_application'])) ? unserialize($user_info['full_employment_application']) : array();
                     $user_info = array_merge($filtered_user_fields, $form_data);
 
 //                echo '<pre>';print_r($user_info);die();
@@ -275,7 +276,43 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('CheckBoxAgreement1786', 'CheckBoxAgreement1786', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('CheckBoxAgree', 'Acknowledge Agree', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('CheckBoxTerms', 'Terms of Acceptance', 'required|trim|xss_clean');
-
+                
+                //
+                $ei = unserialize($company_details['extra_info']);
+                //
+                $data['eight_plus'] = 0;
+                $data['affiliate'] = 0;
+                $data['d_license'] = 0;
+                
+                if(isset($ei['affiliate'])){
+                    $data['affiliate'] = $ei['affiliate'];
+                }
+                if(isset($ei['18_plus'])){
+                    $data['eight_plus'] = $ei['18_plus'];
+                }
+                if(isset($ei['d_license'])){
+                    $data['d_license'] = $ei['d_license'];
+                }
+                
+                //
+                if($data['d_license']){
+                    $this->form_validation->set_rules('TextBoxDriversLicenseNumber', 'License Number', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxDriversLicenseExpiration', 'License Expiration Date', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
+                }
+               
+                //
+                if($data['eight_plus']){
+                    $this->form_validation->set_rules('RadioButtonListWorkOver18', '18 years', 'required|trim|xss_clean');
+                }
+                
+                //
+                if($data['affiliate']){
+                    $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('previous_company_name', 'Company name', 'required|trim|xss_clean');
+                }
+                
                 if ($this->form_validation->run() == false) {
                     $data['states'] = db_get_active_states(227);
                     $data['starting_year_loop'] = 1930;

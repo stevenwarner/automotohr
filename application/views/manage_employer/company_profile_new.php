@@ -180,11 +180,45 @@
                                     </label>
                                 </div>
                             </div>
+                            <!--  -->
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <div class="form-group autoheight">
                                     <label class="control control--checkbox">
                                         Make Date Of Birth Mandatory<small class="help_text">Make Date Of Birth Mandatory</small>
                                         <input class="" type="checkbox" id="onboarding_dob_status" name="onboarding_dob_status" value="1" <?php echo (isset($portal['dob_required']) && $portal['dob_required'] == 1 ? 'checked="checked" ' : '' ); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <h3>Full Employment Form <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
+                                    <p>Make the following selected options mandatory on the full employment form.</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                        Are you 18 years or older?<small class="help_text">Make Mandatory</small>
+                                        <input class="" type="checkbox" id="18_plus" name="18_plus" value="1" <?php echo (isset($eight_plus) && $eight_plus == 1 ? 'checked="checked" ' : '' ); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                    Have you ever been employed with our company or our Affiliate companies?<small class="help_text">Make Mandatory</small>
+                                        <input class="" type="checkbox" id="affiliate" name="affiliate" value="1" <?php echo (isset($affiliate) && $affiliate == 1 ? 'checked="checked" ' : '' ); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                        Driver's License<small class="help_text">Make Mandatory</small>
+                                        <input class="" type="checkbox" id="d_license" name="d_license" value="1" <?php echo (isset($d_license) && $d_license == 1 ? 'checked="checked" ' : '' ); ?> />
                                         <div class="control__indicator"></div>
                                     </label>
                                 </div>

@@ -311,10 +311,16 @@ class Settings extends Public_Controller
             if (empty($company['extra_info'])) {
                 $data['onboarding_eeo_form_status'] = 1;
                 $data['safety_sheet'] = 1;
+                $data['eight_plus'] = 0;
+                $data['affiliate'] = 0;
+                $data['d_license'] = 0;
             } else {
                 $serializedata = unserialize($company['extra_info']);
                 $data['onboarding_eeo_form_status'] = $serializedata['EEO'];
                 $data['safety_sheet'] = $serializedata['safety_sheet'];
+                $data['eight_plus'] = isset($serializedata['18_plus']) ? $serializedata['18_plus'] : 0;
+                $data['affiliate'] = isset($serializedata['affiliate']) ? $serializedata['affiliate'] : 0;
+                $data['d_license'] = isset($serializedata['d_license']) ? $serializedata['d_license'] : 0;
             }
 
             $serializedata = unserialize($company['extra_info']);
@@ -383,6 +389,9 @@ class Settings extends Public_Controller
                 $CompanyDescription = $this->input->post('CompanyDescription');
                 $complynet_link = $access_level_plus ? $this->input->post('complynet_link') : '';
 
+                //
+                $post = $this->input->post(NULL, TRUE);
+                //
                 if (isset($onboarding_eeo) || isset($safety_sheet)) {
                     $company_extra_info = array(
                         'EEO' => (isset($onboarding_eeo) && !empty($onboarding_eeo)) ? $onboarding_eeo : 0,
@@ -395,6 +404,16 @@ class Settings extends Public_Controller
                     );
                 }
 
+                // Full employment form required
+                if(isset($post['18_plus'])){
+                    $company_extra_info['18_plus'] = $post['18_plus'];
+                }
+                if(isset($post['affiliate'])){
+                    $company_extra_info['affiliate'] = $post['affiliate'];
+                }
+                if(isset($post['d_license'])){
+                    $company_extra_info['d_license'] = $post['d_license'];
+                }
                 $extra_info = serialize($company_extra_info);
                 $video_id = '';
                 $remove_flag;
