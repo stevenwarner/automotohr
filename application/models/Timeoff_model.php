@@ -9648,9 +9648,23 @@ class Timeoff_model extends CI_Model
     ){
         //
         $notIds = [];
+        $approvers = [];
         //
         if($post['level'] != 1){
             $notIds = $this->getEmployeeTeamMemberIds($post['employerId']);
+            $subordinateIds = $this->getEmployeeSubordinateIds($post['employerId']);
+            // $subordinateIds = array();
+
+            if (!empty($notIds)) {
+                $approvers = $notIds;
+            }
+
+            // if (!empty($notIds) && !empty($subordinateIds)) {
+                $combine_employees = array_merge($notIds,$subordinateIds);
+                $notIds = array_unique($combine_employees);
+            // }
+
+            
         }
         //
         $this->db
@@ -9677,6 +9691,7 @@ class Timeoff_model extends CI_Model
             $notIds = [];
             $this->db->where('timeoff_requests.employee_sid', $post['employeeId']);
         }
+        //
         if($post['level'] == 0 && empty($notIds)) return [];
         //
         if(!empty($notIds)) $this->db->where_in('timeoff_requests.employee_sid', $notIds);
@@ -9722,6 +9737,12 @@ class Timeoff_model extends CI_Model
             $settings = $this->getSettings($post['companyId']);
             //
             foreach($requests as $k => $request){
+                if (in_array($request['employee_sid'], $approvers)) {
+                    $requests[$k]['allow_update'] = 'yes';
+                } else {
+                    $requests[$k]['allow_update'] = 'no';
+                }
+
                 $requests[$k]['breakdown'] = get_array_from_minutes(
                     $request['requested_time'],
                     (($request['user_shift_hours'] * 60) + $request['user_shift_minutes']) / 60,
@@ -9735,7 +9756,123 @@ class Timeoff_model extends CI_Model
             }
         }
         //
+        // echo '<pre>';
+        // print_r($requests);
+        // die();
         return $requests;
+    }
+
+    function getEmployeeSubordinateIds ($employerId) {
+        $myTeams = $this->getMyTeams($employerId);
+        //
+        $result = array();
+        //
+        if (!empty($myTeams['teams'])) {
+            $all_employees = $this->get_all_employees_to_team($myTeams['teams']);
+
+            if (!empty($all_employees)) {
+                $subordinateIds = array_column($all_employees, 'employee_sid');
+                $uniqueSubordinateIds = array_unique($subordinateIds);
+                $result = $uniqueSubordinateIds;
+            }
+            
+        }
+        
+        return $result;
+    }
+
+    function get_all_employees_to_team($team_sids) {
+        $this->db->select('employee_sid');
+        $this->db->where_in('team_sid', $team_sids);
+        $record_obj = $this->db->get('departments_employee_2_team');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+    function getMyTeams(
+        $sid
+    ){
+        //
+        $departments = $this->db
+        ->select('sid')
+        ->where('departments_management.is_deleted', 0)
+        ->where('departments_management.status', 1)
+        ->where('FIND_IN_SET('.($sid).', supervisor)', NULL, FALSE)
+        ->get('departments_management')
+        ->result_array();
+        //
+        if(!empty($departments)){
+            $departments = array_column($departments, 'sid');
+            //
+            $newDept = [];
+            //
+            foreach($departments as $dept){
+                //
+                $t = explode(',', $dept);
+                //
+                $newDept = array_merge($t, $newDept);
+            }
+            //
+            $departments = $newDept;
+        }
+        //
+
+        if (!empty($departments)) {
+            $teams = $this->db
+                ->select('
+                    departments_team_management.sid
+                ')
+                ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+                ->where('departments_management.is_deleted', 0)
+                ->where('departments_management.status', 1)
+                ->where('departments_team_management.is_deleted', 0)
+                ->where('departments_team_management.status', 1)
+                ->group_start()
+                ->where_in('departments_team_management.department_sid', $departments)
+                ->or_where('FIND_IN_SET('.($sid).', team_lead)', NULL, FALSE)
+                ->group_end()
+                ->get('departments_team_management')
+                ->result_array();
+        } else { 
+            $teams = $this->db
+                ->select('
+                    departments_team_management.sid
+                ')
+                ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+                ->where('departments_management.is_deleted', 0)
+                ->where('departments_management.status', 1)
+                ->where('departments_team_management.is_deleted', 0)
+                ->where('departments_team_management.status', 1)
+                ->where('FIND_IN_SET('.($sid).', team_lead)', NULL, FALSE)
+                ->get('departments_team_management')
+                ->result_array();
+        }
+        
+        //
+        if(!empty($teams)){
+            //
+            $teams = array_column($teams, 'sid');
+            //
+            $newDept = [];
+            //
+            foreach($teams as $dept){
+                //
+                $t = explode(',', $dept);
+                //
+                $newDept = array_merge($t, $newDept);
+            }
+            //
+            $teams = $newDept;
+        }
+        //
+        // return ['departments' => $departments, 'teams' => $teams];
+        return [ 'teams' => $teams];
     }
 
     //

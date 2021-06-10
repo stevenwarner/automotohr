@@ -181,6 +181,7 @@ $(function() {
                 //
                 $.each(resp.Data, function(i, v) {
                             //
+                            let allow_update = v.allow_update;
                             let userRow = getUserById(
                                 v.employee_sid,
                                 window.timeoff.employees,
@@ -277,20 +278,24 @@ $(function() {
                         Action
                         <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="right:0; left: auto;">
-                        <li><a href="#" class="jsEditTimeOff">Edit Time-off</a></li>
-                        ${
-                          v.status == "cancelled"
-                            ? ""
-                            : `<li><a href="#" class="${
-                                v.archive == 1
-                                  ? "jsActiveTimeOff"
-                                  : "jsArchiveTimeOff"
-                              }">${
-                                v.archive == 1 ? "Activate" : "Archive"
-                              }</a></li>`
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="right:0; left: auto;">`;
+                        if (allow_update == 'yes') {
+                            rows += `<li><a href="#" class="jsEditTimeOff">Edit Time-off</a></li>`;
                         }
-                        <li><a href="#" class="jsHistoryTimeOff">View History</a></li>
+                        if (allow_update == 'yes') {
+                            rows += ` ${
+                              v.status == "cancelled"
+                                ? ""
+                                : `<li><a href="#" class="${
+                                    v.archive == 1
+                                      ? "jsActiveTimeOff"
+                                      : "jsArchiveTimeOff"
+                                  }">${
+                                    v.archive == 1 ? "Activate" : "Archive"
+                                  }</a></li>`
+                            }`;
+                        }    
+                        rows += `<li><a href="#" class="jsHistoryTimeOff">View History</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="${baseURL}timeoff/print/requests/${
         v.sid
