@@ -2655,10 +2655,7 @@
             }
         }
 
-        function validate_form() {
-            $("#fullemploymentapplication").validate({
-                ignore: ":hidden:not(select)",
-                rules: {
+        var rules = {
                     first_name: {
                         required: true,
                         pattern: /^[a-zA-Z0-9\ '-]+$/
@@ -2712,8 +2709,8 @@
                     CheckBoxTerms: {
                         required: true
                     }
-                },
-                messages: {
+                };
+        var messages = {
                     first_name: {
                         required: 'First Name is required',
                         pattern: 'invalid first name'
@@ -2765,7 +2762,69 @@
                     CheckBoxTerms: {
                         required: 'Please read our Terms of Acceptance'
                     }
-                },
+                };
+
+                //
+    if("<?=$eight_plus?>" == 1){
+        rules['RadioButtonListWorkOver18'] = { required: true };
+        messages['RadioButtonListWorkOver18'] = { required: "This field is required." };
+    }
+    
+    //
+    if("<?=$affiliate?>" == 1){
+        rules['previous_company_name'] = { required: true };
+        messages['previous_company_name'] = { required: "This field is required." };
+    }
+    
+    //
+    if("<?=$d_license?>" == 1){
+        rules['TextBoxDriversLicenseNumber'] = { required: true };
+        rules['TextBoxDriversLicenseExpiration'] = { required: true };
+        rules['DropDownListDriversCountry'] = { required: true };
+        rules['DropDownListDriversState'] = { required: true };
+        rules['license_guilty_details'] = { required: true };
+        messages['TextBoxDriversLicenseNumber'] = { required: "This field is required." };
+        messages['TextBoxDriversLicenseExpiration'] = { required: "This field is required." };
+        messages['DropDownListDriversCountry'] = { required: "This field is required." };
+        messages['DropDownListDriversState'] = { required: "This field is required." };
+        messages['license_guilty_details'] = { required: "This field is required." };
+    }
+    
+    //
+    if("<?=$l_employment?>" == 1){
+        rules['TextBoxEmploymentEmployerName1'] = { required: true };
+        rules['TextBoxEmploymentEmployerPosition1'] = { required: true };
+        rules['TextBoxEmploymentEmployerAddress1'] = { required: true };
+        rules['DropDownListEmploymentEmployerCountry1'] = { required: true };
+        rules['DropDownListEmploymentEmployerState1'] = { required: true };
+        rules['TextBoxEmploymentEmployerCity1'] = { required: true };
+        rules['TextBoxEmploymentEmployerPhoneNumber1'] = { required: true };
+        rules['DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1'] = { required: true };
+        rules['DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'] = { required: true };
+        rules['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'] = { required: true };
+        rules['DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'] = { required: true };
+        rules['TextBoxEmploymentEmployerSupervisor1'] = { required: true };
+        rules['TextBoxEmploymentEmployerReasonLeave1'] = { required: true };
+        messages['TextBoxEmploymentEmployerName1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerPosition1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerAddress1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerCountry1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerState1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerCity1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerPhoneNumber1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerSupervisor1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerReasonLeave1'] = { required: "This field is required." };
+    }
+
+        function validate_form() {
+            $("#fullemploymentapplication").validate({
+                ignore: ":hidden:not(select)",
+                rules: rules,
+                messages: messages,
                 submitHandler: function (form) {
                    var check_radio= $('input[name=is_already_employed]:checked').val();
 

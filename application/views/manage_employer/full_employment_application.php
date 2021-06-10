@@ -224,7 +224,7 @@
                                                                     $no_selected = true; 
                                                                 }
                                                             ?>
-                                                            <label class="autoheight">Have you ever been employed with our company or our Affiliate companies?<?=$affiliate ?  ' <span class="staric"></span>' : ''; ?></label>
+                                                            <label class="autoheight">Have you ever been employed with our company or our Affiliate companies?<?=$affiliate ?  ' <span class="staric">*</span>' : ''; ?></label>
                                                             <div class="hr-radio-btns">
                                                                 <input type="radio" id="is_already_employed_yes" class="check_value" value="Yes" name="is_already_employed"
                                                                 <?php
@@ -772,13 +772,13 @@
                                                 <div class="bg-color-v2">
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
-                                                            <label class="autoheight">Are you 18 years or older?<?=$eight_plus ?  ' <span class="staric"></span>' : ''; ?></label>
+                                                            <label class="autoheight">Are you 18 years or older?<?=$eight_plus ?  ' <span class="staric">*</span>' : ''; ?></label>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
                                                             <div class="hr-radio-btns">
-                                                                <input type="radio" value="Yes" id="RadioButtonListWorkOver18_0" name="RadioButtonListWorkOver18"
+                                                                <input type="radio" value="Yes" id="RadioButtonListWorkOver18_0"  name="RadioButtonListWorkOver18"
                                                                 <?php
                                                                 if (isset($formpost['RadioButtonListWorkOver18'])) {
                                                                     if($formpost['RadioButtonListWorkOver18'] == 'Yes') echo " checked";
@@ -939,7 +939,7 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <li>
                                                         <label>Driver's license number:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
-                                                        <input type="text"  class="invoice-fields" name="TextBoxDriversLicenseNumber" value="<?php
+                                                        <input type="text"  class="invoice-fields" name="TextBoxDriversLicenseNumber" id="TextBoxDriversLicenseNumber" value="<?php
                                                         if (isset($formpost['TextBoxDriversLicenseNumber']) && !empty($formpost['TextBoxDriversLicenseNumber']) && $formpost['TextBoxDriversLicenseNumber'] != NULL) {
                                                             echo $formpost['TextBoxDriversLicenseNumber'];
                                                         }elseif(isset($drivers_license_details['license_number'])){
@@ -952,7 +952,7 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <li>
                                                         <label>Expiration date:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
-                                                        <input type="text"  name="TextBoxDriversLicenseExpiration" class="invoice-fields startdate" value="<?php
+                                                        <input type="text" id="TextBoxDriversLicenseExpiration"  name="TextBoxDriversLicenseExpiration" class="invoice-fields startdate" value="<?php
                                                         if (isset($formpost['TextBoxDriversLicenseExpiration']) && !empty($formpost['TextBoxDriversLicenseExpiration']) && $formpost['TextBoxDriversLicenseExpiration'] != NULL) {
                                                             echo $formpost['TextBoxDriversLicenseExpiration'];
                                                         }elseif(isset($drivers_license_details['license_expiration_date'])){
@@ -965,10 +965,10 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 DropDownListDriversCountry">
                                                     <li>
                                                         <?php $country_id = (isset($formpost['DropDownListDriversCountry']) && !empty($formpost['DropDownListDriversCountry']) ? ($formpost['DropDownListDriversCountry']) : (sizeof($drivers_license_details) ? ($LC) : 0)); ?>
-                                                        <label>Country:</label>
+                                                        <label>Country:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
                                                         <div class="hr-select-dropdown">
-                                                            <select  class="invoice-fields" id="former3_country" name="DropDownListDriversCountry" onchange="getStates(this.value, <?php echo $states; ?>, 'dl_state')">
-                                                                <option value="">Please Select<?=$d_license ? ' <span class="staric">*</span>' : '';?></option>
+                                                            <select  class="invoice-fields" id="DropDownListDriversCountry" name="DropDownListDriversCountry" onchange="getStates(this.value, <?php echo $states; ?>, 'DropDownListDriversState')">
+                                                                <option value="">Please Select</option>
                                                                 <?php foreach ($active_countries as $active_country) { ?>
                                                                     <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
                                                                     <option <?php echo set_select('DropDownListDriversCountry', $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
@@ -982,11 +982,11 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 DropDownListDriversState">
                                                     <li>
 <?php $state_id = isset($formpost['DropDownListDriversState']) && !empty($formpost['DropDownListDriversState']) ? $formpost['DropDownListDriversState'] : $LS; ?>
-                                                        <label>State:</label>
+                                                        <label>State:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
                                                         <div class="hr-select-dropdown">
-                                                            <select  class="invoice-fields" name="DropDownListDriversState" id="dl_state">
+                                                            <select  class="invoice-fields" name="DropDownListDriversState" id="DropDownListDriversState">
                                                                 <?php if (empty($country_id)) { ?>
-                                                                    <option value="">Select State<?=$d_license ? ' <span class="staric">*</span>' : '';?></option> <?php
+                                                                    <option value="">Select State</option> <?php
                                                                 } else {
                                                                     foreach ($active_states[$country_id] as $active_state) {
                                                                         ?>
@@ -1005,7 +1005,7 @@
                                                 <div class="bg-color">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100 autoheight">
-                                                            <label class="autoheight">Within the last 5 years, have you ever plead Guilty, No Contest, or been Convicted of any traffic violation(s)?</label>
+                                                            <label class="autoheight">Within the last 5 years, have you ever plead Guilty, No Contest, or been Convicted of any traffic violation(s)?<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
                                                             <div class="hr-radio-btns">
                                                                 <input type="radio" id="RadioButtonListDriversLicenseTraffic" value="Yes" name="RadioButtonListDriversLicenseTraffic" 
                                                                 <?php
@@ -1044,7 +1044,7 @@
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100">
                                                             <label>Education - High School</label>
-                                                            <input type="text" class="invoice-fields" name="TextBoxEducationHighSchoolName" value="<?php
+                                                            <input type="text" class="invoice-fields" id="TextBoxEducationHighSchoolName" name="TextBoxEducationHighSchoolName" value="<?php
                                                             if (isset($formpost['TextBoxEducationHighSchoolName'])) {
                                                                 echo $formpost['TextBoxEducationHighSchoolName'];
                                                             }
@@ -1957,8 +1957,8 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                 <div class="form-col-100">
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li>
-                                                            <label>Employment Current / Most Recent Employer</label>
-                                                            <input type="text" class="invoice-fields" name="TextBoxEmploymentEmployerName1" value="<?php
+                                                            <label>Employment Current / Most Recent Employer<?=$l_employment ? ' <span class="staric">*</span>' : '';?></label>
+                                                            <input type="text" class="invoice-fields" id="TextBoxEmploymentEmployerName1" name="TextBoxEmploymentEmployerName1" value="<?php
                                                                 if (isset($formpost['TextBoxEmploymentEmployerName1']) && !empty($formpost['TextBoxEmploymentEmployerName1'])) {
                                                                     echo $formpost['TextBoxEmploymentEmployerName1'];
                                                                 }elseif(isset($from_cntrl) && $from_cntrl == 'emp'){
@@ -1969,8 +1969,8 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li>
-                                                            <label>Position/Title</label>
-                                                            <input type="text" class="invoice-fields" name="TextBoxEmploymentEmployerPosition1" value="<?php
+                                                            <label>Position/Title<?=$l_employment ? ' <span class="staric">*</span>' : '';?></label>
+                                                            <input type="text" class="invoice-fields" id="TextBoxEmploymentEmployerPosition1" name="TextBoxEmploymentEmployerPosition1" value="<?php
                                                                 if (isset($formpost['TextBoxEmploymentEmployerPosition1']) && !empty($formpost['TextBoxEmploymentEmployerPosition1'])) {
                                                                     echo $formpost['TextBoxEmploymentEmployerPosition1'];
                                                                 }elseif(isset($from_cntrl) && $from_cntrl == 'emp'){
@@ -1983,8 +1983,8 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                 <div class="form-col-100">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li>
-                                                            <label>Address</label>
-                                                            <input type="text" class="invoice-fields" name="TextBoxEmploymentEmployerAddress1" value="<?php
+                                                            <label>Address<?=$l_employment ? ' <span class="staric">*</span>' : '';?></label>
+                                                            <input type="text" class="invoice-fields" id="TextBoxEmploymentEmployerAddress1" name="TextBoxEmploymentEmployerAddress1" value="<?php
                                                                 if (isset($formpost['TextBoxEmploymentEmployerAddress1']) && !empty($formpost['TextBoxEmploymentEmployerAddress1'])) {
                                                                     echo $formpost['TextBoxEmploymentEmployerAddress1'];
                                                                 }elseif(isset($from_cntrl) && $from_cntrl == 'emp'){
@@ -1997,9 +1997,9 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 DropDownListEmploymentEmployerCountry1">
                                                         <li>
                                                                     <?php $country_id = isset($formpost['DropDownListEmploymentEmployerCountry1']) && !empty($formpost['DropDownListEmploymentEmployerCountry1']) ? ($formpost['DropDownListEmploymentEmployerCountry1']) : (isset($from_cntrl) && $from_cntrl == 'emp' ? $employee['Location_Country'] : 0); ?>
-                                                            <label>Country:</label>
+                                                            <label>Country:<?=$l_employment ? ' <span class="staric">*</span>' : '';?></label>
                                                             <div class="hr-select-dropdown">
-                                                                <select class="invoice-fields" id="ee1_country" name="DropDownListEmploymentEmployerCountry1" onchange="getStates(this.value, <?php echo $states; ?>, 'ee1_state')">
+                                                                <select class="invoice-fields" id="DropDownListEmploymentEmployerCountry1" name="DropDownListEmploymentEmployerCountry1" onchange="getStates(this.value, <?php echo $states; ?>, 'DropDownListEmploymentEmployerState1')">
                                                                     <option value="">Please Select</option>
                                                             <?php foreach ($active_countries as $active_country) { ?>
     <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
@@ -2014,9 +2014,9 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 DropDownListEmploymentEmployerState1">
                                                         <li>
                                                                     <?php $state_id = isset($formpost['DropDownListEmploymentEmployerState1']) && !empty($formpost['DropDownListEmploymentEmployerState1']) ? ($formpost['DropDownListEmploymentEmployerState1']) : (isset($from_cntrl) && $from_cntrl == 'emp' ? $employee['Location_State'] : 0); ?>
-                                                            <label>State:</label>
+                                                            <label>State:<?=$l_employment ? ' <span class="staric">*</span>' : '';?></label>
                                                             <div class="hr-select-dropdown">
-                                                                <select class="invoice-fields" name="DropDownListEmploymentEmployerState1" id="ee1_state">
+                                                                <select class="invoice-fields" name="DropDownListEmploymentEmployerState1" id="DropDownListEmploymentEmployerState1">
                                                                     <?php if (empty($country_id)) { ?>
                                                                         <option value="">Select State</option> <?php
                                                                 } else {
@@ -2034,8 +2034,8 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
 
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                         <li>
-                                                            <label>City</label>
-                                                            <input type="text" class="invoice-fields" name="TextBoxEmploymentEmployerCity1" value="<?php
+                                                            <label>City<?=$l_employment ? ' <span class="staric">*</span>' : '';?></label>
+                                                            <input type="text" class="invoice-fields" id="TextBoxEmploymentEmployerCity1" name="TextBoxEmploymentEmployerCity1" value="<?php
                                                             if (isset($formpost['TextBoxEmploymentEmployerCity1']) && !empty($formpost['TextBoxEmploymentEmployerCity1'])) {
                                                                 echo $formpost['TextBoxEmploymentEmployerCity1'];
                                                             }elseif(isset($from_cntrl) && $from_cntrl == 'emp'){
@@ -2049,16 +2049,17 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                 <div class="form-col-100">
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6">
                                                         <li>
-                                                            <label>Telephone</label>
+                                                            <label>Telephone<?=$l_employment ? ' <span class="staric">*</span>' : '';?></label>
                                                             <div class="input-group">
-                                                            <input type="text" class="invoice-fields" name="TextBoxEmploymentEmployerPhoneNumber1" value="<?php echo isset($formpost['TextBoxEmploymentEmployerPhoneNumber1']) && !empty($formpost['TextBoxEmploymentEmployerPhoneNumber1']) ? ($formpost['TextBoxEmploymentEmployerPhoneNumber1']) : (isset($from_cntrl) && $from_cntrl == 'emp' ? $employee['PhoneNumber'] : '');?>" />
+                                                            <input type="text" class="invoice-fields" id="TextBoxEmploymentEmployerPhoneNumber1" name="TextBoxEmploymentEmployerPhoneNumber1" value="<?php echo isset($formpost['TextBoxEmploymentEmployerPhoneNumber1']) && !empty($formpost['TextBoxEmploymentEmployerPhoneNumber1']) ? ($formpost['TextBoxEmploymentEmployerPhoneNumber1']) : (isset($from_cntrl) && $from_cntrl == 'emp' ? $employee['PhoneNumber'] : '');?>" />
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                         <li>
-                                                            <label>Dates of Employment</label>
+                                                            <label>Dates of Employment<?=$l_employment ? ' <span class="staric">*</span>' : '';?></label>
                                                             <div class="hr-select-dropdown">
-                                                                <select class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1">
+                                                                <select class="invoice-fields" 
+                                                                id="DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1" name="DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1">
                                                                     <option vlaue="January" <?php
                                                                     if ((isset($formpost['DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1']) && $formpost['DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1'] == 'January') || (isset($from_cntrl) && $from_cntrl == 'emp' && $month == 'January')) {
                                                                         echo "selected";
@@ -2127,7 +2128,7 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                         <li>
                                                             <label></label>
                                                             <div class="hr-select-dropdown">
-                                                                <select class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1">
+                                                                <select class="invoice-fields" id="DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1" name="DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1">
                                                                     <?php for ($i = $starting_year_loop; $i <= date('Y'); $i++) { ?>
                                                                         <option value="<?php echo $i; ?>"
     <?php if ((isset($formpost['DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1']) && $formpost['DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'] == $i) || (isset($from_cntrl) && $from_cntrl == 'emp' && $year == $i)) { ?>
@@ -2147,7 +2148,7 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                         <li>
                                                             <label></label>
                                                             <div class="hr-select-dropdown">
-                                                                <select class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1">
+                                                                <select class="invoice-fields" id="DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1" name="DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1">
                                                                     <option vlaue="January" <?php
                                                                     if ((isset($formpost['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1']) && $formpost['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'] == 'January') || (isset($from_cntrl) && $from_cntrl == 'emp' && $cur_month == 'January')) {
                                                                         echo "selected";
@@ -2216,7 +2217,7 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                         <li>
                                                             <label></label>
                                                             <div class="hr-select-dropdown">
-                                                                <select class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1">
+                                                                <select class="invoice-fields" id="DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1" name="DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1">
                                                                     <?php for ($i = $starting_year_loop; $i <= date('Y'); $i++) { ?>
                                                                         <option value="<?php echo $i; ?>"
     <?php if ((isset($formpost['DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1']) && $formpost['DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'] == $i) || (isset($from_cntrl) && $from_cntrl == 'emp' && $cur_year == $i)) { ?>
@@ -2254,7 +2255,7 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li>
                                                             <label>Supervisor</label>
-                                                            <input type="text" class="invoice-fields" name="TextBoxEmploymentEmployerSupervisor1" value="<?php
+                                                            <input type="text" class="invoice-fields" id="TextBoxEmploymentEmployerSupervisor1" name="TextBoxEmploymentEmployerSupervisor1" value="<?php
                                                             if (isset($formpost['TextBoxEmploymentEmployerSupervisor1'])) {
                                                                 echo $formpost['TextBoxEmploymentEmployerSupervisor1'];
                                                             }
@@ -2265,7 +2266,7 @@ if (isset($formpost['TextBoxEducationProfessionalLicenseNumber'])) {
                                                 <div class="form-col-100">
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-5">
                                                         <li class="autoheight">
-                                                            <label>Reason for Leaving</label>
+                                                            <label>Reason for Leaving<?=$l_employment ? ' <span class="staric">*</span>' : '';?></label>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-7">
@@ -2293,7 +2294,7 @@ if (isset($formpost['RadioButtonListEmploymentEmployerContact1_0']) && $formpost
                                                     </div>
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100 autoheight">
-                                                            <input type="text" class="invoice-fields" name="TextBoxEmploymentEmployerReasonLeave1" value="<?php
+                                                            <input type="text" class="invoice-fields" id="TextBoxEmploymentEmployerReasonLeave1" name="TextBoxEmploymentEmployerReasonLeave1" value="<?php
 if (isset($formpost['TextBoxEmploymentEmployerReasonLeave1'])) {
     echo $formpost['TextBoxEmploymentEmployerReasonLeave1'];
 }
@@ -3628,10 +3629,8 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
             }
         }
 
-        function validate_form() {
-            $("#fullemploymentapplication").validate({
-                ignore: ":hidden:not(select)",
-                rules: {
+        //
+        var rules = {
                     first_name: {
                         required: true,
                         pattern: /^[a-zA-Z0-9\ '-]+$/
@@ -3685,8 +3684,8 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
                     CheckBoxTerms: {
                         required: true
                     }
-                },
-                messages: {
+                };
+        var messages = {
                     first_name: {
                         required: 'First Name is required',
                         pattern: 'invalid first name'
@@ -3738,7 +3737,69 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
                     CheckBoxTerms: {
                         required: 'Please read our Terms of Acceptance'
                     }
-                },
+                };
+
+    //
+    if("<?=$eight_plus?>" == 1){
+        rules['RadioButtonListWorkOver18'] = { required: true };
+        messages['RadioButtonListWorkOver18'] = { required: "This field is required." };
+    }
+    
+    //
+    if("<?=$affiliate?>" == 1){
+        rules['previous_company_name'] = { required: true };
+        messages['previous_company_name'] = { required: "This field is required." };
+    }
+    
+    //
+    if("<?=$d_license?>" == 1){
+        rules['TextBoxDriversLicenseNumber'] = { required: true };
+        rules['TextBoxDriversLicenseExpiration'] = { required: true };
+        rules['DropDownListDriversCountry'] = { required: true };
+        rules['DropDownListDriversState'] = { required: true };
+        rules['license_guilty_details'] = { required: true };
+        messages['TextBoxDriversLicenseNumber'] = { required: "This field is required." };
+        messages['TextBoxDriversLicenseExpiration'] = { required: "This field is required." };
+        messages['DropDownListDriversCountry'] = { required: "This field is required." };
+        messages['DropDownListDriversState'] = { required: "This field is required." };
+        messages['license_guilty_details'] = { required: "This field is required." };
+    }
+    
+    //
+    if("<?=$l_employment?>" == 1){
+        rules['TextBoxEmploymentEmployerName1'] = { required: true };
+        rules['TextBoxEmploymentEmployerPosition1'] = { required: true };
+        rules['TextBoxEmploymentEmployerAddress1'] = { required: true };
+        rules['DropDownListEmploymentEmployerCountry1'] = { required: true };
+        rules['DropDownListEmploymentEmployerState1'] = { required: true };
+        rules['TextBoxEmploymentEmployerCity1'] = { required: true };
+        rules['TextBoxEmploymentEmployerPhoneNumber1'] = { required: true };
+        rules['DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1'] = { required: true };
+        rules['DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'] = { required: true };
+        rules['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'] = { required: true };
+        rules['DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'] = { required: true };
+        rules['TextBoxEmploymentEmployerSupervisor1'] = { required: true };
+        rules['TextBoxEmploymentEmployerReasonLeave1'] = { required: true };
+        messages['TextBoxEmploymentEmployerName1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerPosition1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerAddress1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerCountry1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerState1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerCity1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerPhoneNumber1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'] = { required: "This field is required." };
+        messages['DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerSupervisor1'] = { required: "This field is required." };
+        messages['TextBoxEmploymentEmployerReasonLeave1'] = { required: "This field is required." };
+    }
+
+        function validate_form() {
+            $("#fullemploymentapplication").validate({
+                ignore: ":hidden:not(select)",
+                rules: rules,
+                messages: messages,
                 submitHandler: function (form) {
                    
                     var check_radio=$('input[name=is_already_employed]:checked').val();

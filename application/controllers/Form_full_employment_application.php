@@ -283,6 +283,7 @@ class Form_full_employment_application extends CI_Controller {
                 $data['eight_plus'] = 0;
                 $data['affiliate'] = 0;
                 $data['d_license'] = 0;
+                $data['l_employment'] = 0;
                 
                 if(isset($ei['affiliate'])){
                     $data['affiliate'] = $ei['affiliate'];
@@ -293,6 +294,9 @@ class Form_full_employment_application extends CI_Controller {
                 if(isset($ei['d_license'])){
                     $data['d_license'] = $ei['d_license'];
                 }
+                if(isset($ei['l_employment'])){
+                    $data['l_employment'] = $ei['l_employment'];
+                }
                 
                 //
                 if($data['d_license']){
@@ -300,6 +304,23 @@ class Form_full_employment_application extends CI_Controller {
                     $this->form_validation->set_rules('TextBoxDriversLicenseExpiration', 'License Expiration Date', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
+                }
+                //
+                if($data['l_employment']){
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerName1', 'Employment Type', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerPosition1', 'Position', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerAddress1', 'Address', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerCountry1', 'Country', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerState1', 'State', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerCity1', 'City', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerPhoneNumber1', 'Telephone', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1', 'Employment Start Month', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1', 'Employment Start Year', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1', 'Employment End Month', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1', 'Employment End Year', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerSupervisor1', 'Supervisor', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact1_0', 'Contact', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave1', 'Reason', 'required|trim|xss_clean');
                 }
                
                 //

@@ -223,6 +223,15 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                        Employment Current / Most Recent Employer<small class="help_text">Make Mandatory</small>
+                                        <input class="" type="checkbox" id="l_employment" name="l_employment" value="1" <?php echo (isset($l_employment) && $l_employment == 1 ? 'checked="checked" ' : '' ); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
+                            </div>
                             <?php if(IS_TIMEZONE_ACTIVE) { ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-timezone-row">
                                 <div class="form-group autoheight">

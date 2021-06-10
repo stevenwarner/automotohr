@@ -3047,4 +3047,21 @@ class Dashboard_model extends CI_Model
         $this->db->where('sid', $sid);
         $this->db->update('portal_job_applications', $data);
     }
+
+    //
+    function get_drivers_license($userId, $userType = 'employee'){
+        $a =
+        $this->db
+        ->where('users_sid', $userId)
+        ->where('users_type', $userType)
+        ->get('license_information');
+        //
+        $b = $a->row_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        return $b;
+    }
 }

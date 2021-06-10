@@ -314,6 +314,7 @@ class Settings extends Public_Controller
                 $data['eight_plus'] = 0;
                 $data['affiliate'] = 0;
                 $data['d_license'] = 0;
+                $data['l_employment'] = 0;
             } else {
                 $serializedata = unserialize($company['extra_info']);
                 $data['onboarding_eeo_form_status'] = $serializedata['EEO'];
@@ -321,6 +322,7 @@ class Settings extends Public_Controller
                 $data['eight_plus'] = isset($serializedata['18_plus']) ? $serializedata['18_plus'] : 0;
                 $data['affiliate'] = isset($serializedata['affiliate']) ? $serializedata['affiliate'] : 0;
                 $data['d_license'] = isset($serializedata['d_license']) ? $serializedata['d_license'] : 0;
+                $data['l_employment'] = isset($serializedata['l_employment']) ? $serializedata['l_employment'] : 0;
             }
 
             $serializedata = unserialize($company['extra_info']);
@@ -413,6 +415,9 @@ class Settings extends Public_Controller
                 }
                 if(isset($post['d_license'])){
                     $company_extra_info['d_license'] = $post['d_license'];
+                }
+                if(isset($post['l_employment'])){
+                    $company_extra_info['l_employment'] = $post['l_employment'];
                 }
                 $extra_info = serialize($company_extra_info);
                 $video_id = '';
@@ -1359,6 +1364,7 @@ class Settings extends Public_Controller
             $data['eight_plus'] = 0;
             $data['affiliate'] = 0;
             $data['d_license'] = 0;
+            $data['l_employment'] = 0;
             
             if(isset($ei['affiliate'])){
                 $data['affiliate'] = $ei['affiliate'];
@@ -1369,6 +1375,9 @@ class Settings extends Public_Controller
             if(isset($ei['d_license'])){
                 $data['d_license'] = $ei['d_license'];
             }
+            if(isset($ei['l_employment'])){
+                $data['l_employment'] = $ei['l_employment'];
+            }
             
             //
             if($data['d_license']){
@@ -1376,6 +1385,25 @@ class Settings extends Public_Controller
                 $this->form_validation->set_rules('TextBoxDriversLicenseExpiration', 'License Expiration Date', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('RadioButtonListDriversLicenseTraffic', 'guilty', 'required|trim|xss_clean');
+            }
+            
+            //
+            if($data['l_employment']){
+                $this->form_validation->set_rules('TextBoxEmploymentEmployerName1', 'Employment Type', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('TextBoxEmploymentEmployerPosition1', 'Position', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('TextBoxEmploymentEmployerAddress1', 'Address', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('DropDownListEmploymentEmployerCountry1', 'Country', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('DropDownListEmploymentEmployerState1', 'State', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('TextBoxEmploymentEmployerCity1', 'City', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('TextBoxEmploymentEmployerPhoneNumber1', 'Telephone', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1', 'Employment Start Month', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1', 'Employment Start Year', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1', 'Employment End Month', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1', 'Employment End Year', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('TextBoxEmploymentEmployerSupervisor1', 'Supervisor', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact1_0', 'Contact', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave1', 'Reason', 'required|trim|xss_clean');
             }
            
             //
@@ -1391,6 +1419,8 @@ class Settings extends Public_Controller
 
             //
             $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
+
+           
 
             if ($this->form_validation->run() === FALSE) {
                 $data_countries = db_get_active_countries(); //Get Countries and States - Start
@@ -1487,6 +1517,16 @@ class Settings extends Public_Controller
                 );
 
                 $this->dashboard_model->update_user($id, $data);
+
+                // Check the drivers license sync
+                $license = $this->dashboard_model->get_drivers_license($sid, 'employee');
+                //
+                // if(empty($license))
+                // _e($this->input->post(NULL, TRUE), true);
+                // _e($license, true, true);
+                
+
+
                 $this->session->set_flashdata('message', '<b>Success:</b> Full employment form updated successfully');
                 redirect($reload_location, "location");
             }
