@@ -3054,6 +3054,7 @@ class Dashboard_model extends CI_Model
         $this->db
         ->where('users_sid', $userId)
         ->where('users_type', $userType)
+        ->where('license_type', 'drivers')
         ->get('license_information');
         //
         $b = $a->row_array();
@@ -3063,5 +3064,11 @@ class Dashboard_model extends CI_Model
         unset($a);
         //
         return $b;
+    }
+
+    //
+    function addLicense($data){
+        $this->db->insert('license_information', $data);
+        return $this->db->insert_id();
     }
 }

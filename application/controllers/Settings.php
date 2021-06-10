@@ -1517,16 +1517,6 @@ class Settings extends Public_Controller
                 );
 
                 $this->dashboard_model->update_user($id, $data);
-
-                // Check the drivers license sync
-                $license = $this->dashboard_model->get_drivers_license($sid, 'employee');
-                //
-                // if(empty($license))
-                // _e($this->input->post(NULL, TRUE), true);
-                // _e($license, true, true);
-                
-
-
                 $this->session->set_flashdata('message', '<b>Success:</b> Full employment form updated successfully');
                 redirect($reload_location, "location");
             }
