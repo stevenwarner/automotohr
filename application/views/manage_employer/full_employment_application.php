@@ -12,7 +12,7 @@
         $dob = $dob != '' ? ssvReplace($dob, true) : $dob;
         //
         if(isset($drivers_license_details['license_number'])) $drivers_license_details['license_number'] =  ssvReplace($drivers_license_details['license_number']);
-        // if(isset($drivers_license_details['license_expiration_date'])) $drivers_license_details['license_expiration_date'] = ssvReplace($drivers_license_details['license_expiration_date'], true);
+        // if(isset($drivers_license_details['license_expiration_date'])) $drivers_license_details['license_expiration_date'] = ssvReplace($drivers_license_details['license_expiration_dat0'], true);
         // When EF is saved
         if(isset($formpost['TextBoxDOB'])) $formpost['TextBoxDOB'] = ssvReplace($formpost['TextBoxDOB'], true);
         if(isset($formpost['TextBoxSSN'])) $formpost['TextBoxSSN'] = ssvReplace($formpost['TextBoxSSN']);
@@ -224,7 +224,7 @@
                                                                     $no_selected = true; 
                                                                 }
                                                             ?>
-                                                            <label class="autoheight">Have you ever been employed with our company or our Affiliate companies?</label>
+                                                            <label class="autoheight">Have you ever been employed with our company or our Affiliate companies?<?=$affiliate ?  ' <span class="staric"></span>' : ''; ?></label>
                                                             <div class="hr-radio-btns">
                                                                 <input type="radio" id="is_already_employed_yes" class="check_value" value="Yes" name="is_already_employed"
                                                                 <?php
@@ -772,7 +772,7 @@
                                                 <div class="bg-color-v2">
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
-                                                            <label class="autoheight">Are you 18 years or older?</label>
+                                                            <label class="autoheight">Are you 18 years or older?<?=$eight_plus ?  ' <span class="staric"></span>' : ''; ?></label>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -915,7 +915,7 @@
                                                 -->
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <li class="form-col-100 autoheight">
-                                                        <label class="autoheight">Driver's License: A valid driver's license may be a requirement for the position for which you have applied. If so, do you currently have a valid driver's license?</label>
+                                                        <label class="autoheight">Driver's License: A valid driver's license may be a requirement for the position for which you have applied. If so, do you currently have a valid driver's license?<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
                                                         <div class="hr-radio-btns">
                                                             <input type="radio" id="RadioButtonListDriversLicenseQuestion_0" value="Yes" name="RadioButtonListDriversLicenseQuestion"
                                                             <?php
@@ -938,7 +938,7 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <li>
-                                                        <label>Driver's license number:</label>
+                                                        <label>Driver's license number:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
                                                         <input type="text"  class="invoice-fields" name="TextBoxDriversLicenseNumber" value="<?php
                                                         if (isset($formpost['TextBoxDriversLicenseNumber']) && !empty($formpost['TextBoxDriversLicenseNumber']) && $formpost['TextBoxDriversLicenseNumber'] != NULL) {
                                                             echo $formpost['TextBoxDriversLicenseNumber'];
@@ -951,7 +951,7 @@
 
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <li>
-                                                        <label>Expiration date:</label>
+                                                        <label>Expiration date:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
                                                         <input type="text"  name="TextBoxDriversLicenseExpiration" class="invoice-fields startdate" value="<?php
                                                         if (isset($formpost['TextBoxDriversLicenseExpiration']) && !empty($formpost['TextBoxDriversLicenseExpiration']) && $formpost['TextBoxDriversLicenseExpiration'] != NULL) {
                                                             echo $formpost['TextBoxDriversLicenseExpiration'];
@@ -968,7 +968,7 @@
                                                         <label>Country:</label>
                                                         <div class="hr-select-dropdown">
                                                             <select  class="invoice-fields" id="former3_country" name="DropDownListDriversCountry" onchange="getStates(this.value, <?php echo $states; ?>, 'dl_state')">
-                                                                <option value="">Please Select</option>
+                                                                <option value="">Please Select<?=$d_license ? ' <span class="staric">*</span>' : '';?></option>
                                                                 <?php foreach ($active_countries as $active_country) { ?>
                                                                     <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
                                                                     <option <?php echo set_select('DropDownListDriversCountry', $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
@@ -986,7 +986,7 @@
                                                         <div class="hr-select-dropdown">
                                                             <select  class="invoice-fields" name="DropDownListDriversState" id="dl_state">
                                                                 <?php if (empty($country_id)) { ?>
-                                                                    <option value="">Select State</option> <?php
+                                                                    <option value="">Select State<?=$d_license ? ' <span class="staric">*</span>' : '';?></option> <?php
                                                                 } else {
                                                                     foreach ($active_states[$country_id] as $active_state) {
                                                                         ?>

@@ -310,7 +310,6 @@ class Form_full_employment_application extends CI_Controller {
                 //
                 if($data['affiliate']){
                     $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
-                    $this->form_validation->set_rules('previous_company_name', 'Company name', 'required|trim|xss_clean');
                 }
                 
                 if ($this->form_validation->run() == false) {

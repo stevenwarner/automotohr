@@ -1353,6 +1353,40 @@ class Settings extends Public_Controller
             $this->form_validation->set_rules('TextBoxAdditionalInfoWorkConsideration', 'Additional Work Consideration Information', 'trim|xss_clean');
             $this->form_validation->set_rules('CheckBoxAgreement1786', 'CheckBoxAgreement1786', 'required|trim|xss_clean');
             $this->form_validation->set_rules('CheckBoxAgree', 'Acknowledge Agree', 'required|trim|xss_clean');
+            //
+            $ei = unserialize($data['session']['company_detail']['extra_info']);
+            //
+            $data['eight_plus'] = 0;
+            $data['affiliate'] = 0;
+            $data['d_license'] = 0;
+            
+            if(isset($ei['affiliate'])){
+                $data['affiliate'] = $ei['affiliate'];
+            }
+            if(isset($ei['18_plus'])){
+                $data['eight_plus'] = $ei['18_plus'];
+            }
+            if(isset($ei['d_license'])){
+                $data['d_license'] = $ei['d_license'];
+            }
+            
+            //
+            if($data['d_license']){
+                $this->form_validation->set_rules('TextBoxDriversLicenseNumber', 'License Number', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('TextBoxDriversLicenseExpiration', 'License Expiration Date', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
+            }
+           
+            //
+            if($data['eight_plus']){
+                $this->form_validation->set_rules('RadioButtonListWorkOver18', '18 years', 'required|trim|xss_clean');
+            }
+            
+            //
+            if($data['affiliate']){
+                $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
+            }
             $this->load->model('manage_admin/documents_model');
 
             //
