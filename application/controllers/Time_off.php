@@ -3045,11 +3045,17 @@ class Time_off extends Public_Controller
                 $in['reason'] = $post['reason'];
                 $in['timeoff_days'] = json_encode($post['dateRows']);
                 //
+                $canApprove = $this->timeoff_model->getEmployerApprovalStatus($post['employerId']);
+                //
                 if($post['fromAdmin'] == 1){
                     $in['level_status'] = $post['status'];
                     //
-                    $canApprove = $this->timeoff_model->getEmployerApprovalStatus($post['employerId']);
+                    
                     if($canApprove === 1) $in['status'] = $post['status'];
+                }
+
+                if($canApprove != 1 && ($post['status'] == "approved" || $post['status'] == "rejected")) {
+                    $this->sendEmailOtherApprovers($post);
                 }
                 //
                 $this->timeoff_model->updateTable($in, $post['requestId'], 'timeoff_requests');
@@ -3078,7 +3084,13 @@ class Time_off extends Public_Controller
                 //
                 $this->timeoff_model->insertHistory( $in, 'timeoff_request_timeline' );
                 // Send email notifications
-                if($post['sendEmailNotification'] == 1 || $post['sendEmailNotification'] == 'yes') $this->sendNotifications($post['requestId'], 'update');
+                if($post['sendEmailNotification'] == 1 || $post['sendEmailNotification'] == 'yes') {
+                    if ($post['status'] == "approved" || $post['status'] == "rejected") {
+                        $this->sendNotifications($post['requestId'], $post['status']);
+                    } else {
+                        $this->sendNotifications($post['requestId'], 'update');
+                    } 
+                } 
                 //
                 $this->res['Response'] = 'You have succesfully updated the time-off.';
                 $this->res['Status'] = TRUE;
@@ -3285,7 +3297,13 @@ class Time_off extends Public_Controller
                 $in['level_status'] = $post['status'];
                 //
                 $canApprove = $this->timeoff_model->getEmployerApprovalStatus($post['employerId']);
-                if($canApprove === 1) $in['status'] = $post['status'];
+                if($canApprove === 1) {
+                    $in['status'] = $post['status'];
+                } else {
+                    if ($post['status'] == "approved" || $post['status'] == "rejected") {
+                        $this->sendEmailOtherApprovers($post);
+                    }
+                }
                 //
                 $this->timeoff_model->updateTable($in, $post['requestId'], 'timeoff_requests');
                 //
@@ -5315,6 +5333,81 @@ class Time_off extends Public_Controller
      PRIVATE FUNCTIONS
     *******************************************************************************************
     */
+
+    //
+    private function sendEmailOtherApprovers($post)
+    {
+        $request = $this->timeoff_model->getRequestById($post['requestId']);
+        $approver_sid = $post['employerId'];
+        $approver_name = getUserNameBySID($approver_sid);
+        $other_approvers = $this->timeoff_model->getEmployeeApprovers($request['company_sid'], $request['employee_sid']);
+        //
+        $approverTemplate = $this->timeoff_model->getEmailTemplate(APPROVER_TIMEOFF_REQUEST);
+        $CHF = message_header_footer($request['company_sid'], $request['CompanyName']);
+        //;
+        // echo '<pre>';
+        // print_r($request);
+        // print_r($post);
+        // print_r($approverTemplate);die('stop');
+        foreach($other_approvers as $approver){
+            if ($approver['userId'] != $approver_sid) {
+                //
+                $eRP['{{approver_first_name}}'] = $approver['first_name'];
+                $eRP['{{approver_last_name}}'] = $approver['last_name'];
+                $eRP['{{approver_name}}'] = $approver_name;
+
+                $eRP['{{reason}}'] = $request['reason'];
+                $eRP['{{policy_name}}'] = $request['title'];
+                $eRP['{{requested_date}}'] =  $request['request_from_date'] == $request['request_to_date'] ? 
+                DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('M d Y, D') : 
+                    DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('M d Y, D').' - '.DateTime::createfromformat('Y-m-d', $request['request_to_date'])->format('M d Y, D');
+
+                if ($post['status'] == "approved") {
+                    $eRP['{{request_type}}'] = 'Approved';
+                    $eRP['{{public_link}}'] = getButton(
+                        [
+                            '{{url}}'=> timeoffGetEncryptedLink([
+                                'companySid' => $request['company_sid'],
+                                'companyName' => $request['CompanyName'],
+                                'requestSid' => $request['sid'],
+                                'employerSid' => $approver['userId'],
+                                'typeSid' => 'approve'
+                            ]),
+                            '{{color}}' => '#28a745',
+                            '{{text}}' => 'Approve Request'
+                        ]
+                    );
+                } else if ($post['status'] == "rejected") {
+                    $eRP['{{request_type}}'] = 'Rejected';
+                    $eRP['{{public_link}}'] = getButton(
+                        [
+                            '{{url}}'=> timeoffGetEncryptedLink([
+                                'companySid' => $request['company_sid'],
+                                'companyName' => $request['CompanyName'],
+                                'requestSid' => $request['sid'],
+                                'employerSid' => $approver['userId'],
+                                'typeSid' => 'reject'
+                            ]),
+                            '{{color}}' => '#dc3545',
+                            '{{text}}' => 'Reject Request'
+                        ]
+                    );
+                }
+                
+                //
+                $approverTemplateI = timeoffMagicQuotesReplace($approverTemplate, $eRP);
+
+                //
+                log_and_sendEmail(
+                    $approverTemplateI['FromEmail'],
+                    $approver['email'],
+                    $approverTemplateI['Subject'],
+                    $CHF['header'] . $approverTemplateI['Body'] . $CHF['footer'],
+                    $approverTemplateI['FromName']
+                );
+            }    
+        }
+    }
 
     //
     private function sendEmailToTlsAndRequester($formpost, $data)

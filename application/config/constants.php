@@ -550,8 +550,6 @@ define('DOCUMENT_COMPLETION_REPOSRT_TEMPLATE_SID', 391);
 define('TIMEOFF_CREATE_FOR_APPROVER', 392);
 define('TIMEOFF_UPDATE_FOR_APPROVER', 393);
 define('TIMEOFF_CREATE_FOR_EMPLOYEE', 394);
-define('APPROVER_TIMEOFF_REQUEST_UPDATE', 400);
-define('USER_TIMEOFF_REQUEST', 401);
 // Time off magic quotes
 define('TIMEOFF_MAGIC_QUOTES', implode(',', [
   'approver_first_name',
@@ -583,3 +581,8 @@ define('REVIEW_EXPIRING', 400);
 define('GOAL_CREATED_BY_ADMIN', 401);
 define('GOAL_EXPIRY_7', 402);
 define('PM_ASSIGNED', 403);
+
+// Time off email template code
+define('APPROVER_TIMEOFF_REQUEST_UPDATE', 404);
+define('USER_TIMEOFF_REQUEST', 405);
+define('APPROVER_TIMEOFF_REQUEST', 406);
