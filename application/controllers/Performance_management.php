@@ -63,7 +63,8 @@ class Performance_management extends Public_Controller{
         // $employees = $this->pmm->getAllEmployees($this->pargs['session']['company_detail']['sid']);
 
         //
-        // _e($employees, true, true);
+        $this->header = 'main/header';
+        $this->footer = 'main/footer';
     }
 
     /**
@@ -90,26 +91,25 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
         // Get department & teams list
-        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
-        //
-        if(!empty($employees)){
-            foreach($employees as $employee){
-                $this->pargs['employees'][$employee['Id']] = [
-                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
-                    'role' => $employee['FullRole'],
-                    'img' => getImageURL($employee['Image'])
-                ];
-            }
-        }
+        // $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        // //
+        // if(!empty($employees)){
+        //     foreach($employees as $employee){
+        //         $this->pargs['employees'][$employee['Id']] = [
+        //             'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
+        //             'role' => $employee['FullRole'],
+        //             'img' => getImageURL($employee['Image'])
+        //         ];
+        //     }
+        // }
         // Get goals 
-        $this->pargs['goals'] = $this->pmm->getGoals($this->pargs['employerId']);
-        // Get Assigned Reviews 
-        $this->pargs['assignedReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'assigned');
-        $this->pargs['feedbackReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'feedback');
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // $this->pargs['goals'] = $this->pmm->getGoals($this->pargs['employerId']);
+        // // Get Assigned Reviews 
+        // $this->pargs['assignedReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'assigned');
+        // $this->pargs['feedbackReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'feedback');
+        // // Get employer role
+        // $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
+        // // Get department & teams list
         // My goals
 
         $this->load->view("main/header", $this->pargs);
@@ -375,6 +375,12 @@ class Performance_management extends Public_Controller{
 
         //
         $this->load->view($this->pp.'template_questions_view', ['questions' => json_decode($template['questions'])]);
+
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}dashboard");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
     }
     
 

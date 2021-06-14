@@ -1013,4 +1013,34 @@ class Performance_management_model extends CI_Model{
         }
         return $r;
     }
+
+
+    /**
+     * 
+     */
+    function getMyDepartmentAndTeams($companyId, $employeeId){
+        $a =
+        $this->db
+        ->select("
+            {$this->DTM}.name as team_name,
+            {$this->DM}.name as department_name
+        ")
+        ->join("{$this->DTM}", "{$this->DTM}.sid = {$this->DE2T}.team_sid")
+        ->join("{$this->DM}", "{$this->DM}.sid = {$this->DTM}.department_sid")
+        ->where("{$this->DM}.status", 1)
+        ->where("{$this->DM}.is_deleted", 0)
+        ->where("{$this->DTM}.status", 1)
+        ->where("{$this->DTM}.is_deleted", 0)
+        ->where("{$this->DE2T}.employee_sid", $employeeId)
+        ->get("{$this->DE2T}");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        return $b;
+    }
+
 }

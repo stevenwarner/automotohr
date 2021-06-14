@@ -28,6 +28,8 @@
         companyId: <?=$companyId;?>,
         companyName: "<?=$session['company_detail']['CompanyName'];?>",
         companyLogo: "<?=$session['company_detail']['Logo'];?>",
+        companyName: "<?=$companyDetails['CompanyName'];?>",
+        companyLogo: "<?=$companyDetails['Logo'];?>",
         employerId: <?=$employerId;?>,
         employee: {
             id: <?=isset($employeeId) ? $employeeId : 0;?>,
@@ -62,3 +64,19 @@
         <?php
     }
 ?>
+        },
+        page: "<?=isset($page) ? $page : ''?>",
+        Id: <?=isset($pid) ? $pid : 0; ?>,
+        Pem: <?=isset($pem) ? $pem : 0; ?>
+    };
+</script>
+
+<script type="text/javascript" src="<?=base_url('assets/select2/select2.min.js');?>"></script>
+<script type="text/javascript" src="<?=base_url('assets/js/pagination.min.js');?>"></script>
+<script type="text/javascript" src="<?=base_url('assets/js/moment.min.js');?>"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script type="text/javascript" src="<?=base_url('assets/lodash/loadash.min.js');?>"></script>
+
+<!-- Common functions -->
+<script src="<?=base_url('assets/performance_management/js/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+<script src="<?=base_url('assets/performance_management/js/goals/create'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
