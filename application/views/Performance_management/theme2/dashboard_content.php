@@ -12,7 +12,10 @@
                 <div class="col-md-3 col-sm-12">
                     <span class="pull-right">
                         <a href="" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
+<<<<<<< HEAD
                         <a href="" class="btn btn-orange"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
+=======
+>>>>>>> d5bced39... Added creatae review step 1 on blue screen
                             Review(s)</a>
                     </span>
                 </div>
@@ -62,10 +65,14 @@
                 <div class="col-md-3 col-sm-12">
                     <span class="pull-right">
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <a href="" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
 =======
                         <a href="" class="btn btn-orange"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
 >>>>>>> 33699f26... Added overview blue screen
+=======
+                        <a href="" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
+>>>>>>> d5bced39... Added creatae review step 1 on blue screen
                             Review(s)</a>
                     </span>
                 </div>
@@ -83,12 +90,18 @@
         <div class="panel-body">
             <div class="row">
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> d5bced39... Added creatae review step 1 on blue screen
                 <p class="csF26 csB7 text-center">
                     <i class="fa fa-check csF40" aria-hidden="true"></i><br />
                     You are all caught up
                 </p>
+<<<<<<< HEAD
 =======
 >>>>>>> 33699f26... Added overview blue screen
+=======
+>>>>>>> d5bced39... Added creatae review step 1 on blue screen
             </div>
         </div>
     </div>

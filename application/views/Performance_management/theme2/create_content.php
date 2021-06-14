@@ -58,6 +58,7 @@
             <!--  -->
             <br>
             <div class="jsPageContainer p10">
+<<<<<<< HEAD
                 <!-- Step 1 -->
                 <div class="jsPageSection" data-page="getting_started">
                     <!-- Template -->
@@ -75,6 +76,9 @@
                     <!-- Reviewees -->
                     <?php $this->load->view("{$pp}reviewees"); ?>
                 </div>
+=======
+                <?php $this->load->view("{$pp}template"); ?>
+>>>>>>> d5bced39... Added creatae review step 1 on blue screen
             </div>
         </div>
     </div>

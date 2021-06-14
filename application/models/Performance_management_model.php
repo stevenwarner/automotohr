@@ -893,13 +893,24 @@ class Performance_management_model extends CI_Model{
     private $DM = 'departments_management';
     private $DTM = 'departments_team_management';
     private $DE2T = 'departments_employee_2_team';
+    private $PMT = 'performance_management_templates';
+    private $PMCT = 'performance_management_company_templates';
 
     private $DbDateFormat = 'Y-m-d H:i:s';
 
     private $DbDateFormatWithoutTime = 'Y-m-d';
 
     private $SiteDateFormat = 'M d Y, D H:i:s';
+    /**
+     * 
+     */
+    function __construct(){
+        parent::__construct();
+    }
 
+    /**
+     * 
+     */
     function GetAllEmployees($CompanyId){
         //
         $a = $this->db
@@ -956,13 +967,190 @@ class Performance_management_model extends CI_Model{
         return $b;
     }
 
-
-    //
-    function getP($EmployeeId){
-
+    /**
+     * 
+     */
+    function GetMyDepartmentAndTeams($CompanyId, $EmployeeId){
+        $a =
+        $this->db
+        ->select("
+            {$this->DTM}.name as team_name,
+            {$this->DM}.name as department_name
+        ")
+        ->join("{$this->DTM}", "{$this->DTM}.sid = {$this->DE2T}.team_sid")
+        ->join("{$this->DM}", "{$this->DM}.sid = {$this->DTM}.department_sid")
+        ->where("{$this->DM}.status", 1)
+        ->where("{$this->DM}.is_deleted", 0)
+        ->where("{$this->DTM}.status", 1)
+        ->where("{$this->DTM}.is_deleted", 0)
+        ->where("{$this->DE2T}.employee_sid", $EmployeeId)
+        ->where("{$this->DTM}.company_sid", $CompanyId)
+        ->where("{$this->DM}.company_sid", $CompanyId)
+        ->get("{$this->DE2T}");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        return $b;
+    }
+    
+    /**
+     * 
+     */
+    function GetCompanyDepartmentAndTeams($CompanyId){
+        $a =
+        $this->db
+        ->select("
+            {$this->DTM}.sid as team_id,
+            {$this->DTM}.name as team_name,
+            {$this->DM}.sid as department_id,
+            {$this->DM}.name as department_name,
+            {$this->DE2T}.employee_sid
+        ")
+        ->join("{$this->DTM}", "{$this->DTM}.sid = {$this->DE2T}.team_sid")
+        ->join("{$this->DM}", "{$this->DM}.sid = {$this->DTM}.department_sid")
+        ->where("{$this->DM}.status", 1)
+        ->where("{$this->DM}.is_deleted", 0)
+        ->where("{$this->DTM}.status", 1)
+        ->where("{$this->DTM}.is_deleted", 0)
+        ->where("{$this->DTM}.company_sid", $CompanyId)
+        ->where("{$this->DM}.company_sid", $CompanyId)
+        ->order_by("{$this->DM}.name", "ASC")
+        ->order_by("{$this->DTM}.name", "ASC")
+        ->get("{$this->DE2T}");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        if(!empty($b)){
+            //
+            $r = [];
+            $r['Teams'] = [];
+            $r['Departments'] = [];
+            //
+            foreach($b as $dt){
+                //
+                if(!isset($r['Teams'][$dt['team_id']])){
+                    //
+                    $r['Teams'][$dt['team_id']] = [
+                        "Id" => $dt['team_id'],
+                        "Name" => $dt['team_name'],
+                        "DepartmentId" => $dt['department_id'],
+                        "DepartmentName" => $dt['department_name'],
+                        "EmployeeIds" => []
+                    ];
+                }
+                //
+                $r['Teams'][$dt['team_id']]['EmployeeIds'][] = $dt['employee_sid'];
+                //
+                if(!isset($r['Departments'][$dt['department_id']])){
+                    //
+                    $r['Departments'][$dt['department_id']] = [
+                        "Id" => $dt['department_id'],
+                        "Name" => $dt['department_name'],
+                        "EmployeeIds" => []
+                    ];
+                }
+                //
+                $r['Departments'][$dt['department_id']]['EmployeeIds'][] = $dt['employee_sid'];
+            }
+            //
+            $b = $r;
+        }
+        //
+        return $b;
     }
 
-    //
+    /**
+     * Get company templates
+     * 
+     * @param Array|String $columns
+     *                     Default is '*'
+     * @param Booleon      $archived 
+     *                     Default is '0'
+     * 
+     * @return Array
+     */
+    function GetCompanyTemplates(
+        $columns = '*', 
+        $archived = 0
+    ){
+        $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where('is_archived', $archived)
+        ->order_by('name', 'ASC');
+        //
+        $a = $this->db->get($this->PMT);
+        $b = $a->result_array();
+        // Free result
+        $a->free_result();
+        //
+        return $b;        
+    }
+
+    /**
+     * Get personal templates
+     * 
+     * @employee Mubashir Ahmed
+     * @date     02/09/2021
+     * 
+     * @param Integer      $companyId
+     * @param Array|String $columns
+     *                     Default is '*'
+     * @param Booleon      $archived 
+     *                     Default is '0'
+     * @param Integer      $page 
+     *                     Default is '0'
+     * @param Integer      $limit 
+     *                     Default is '100'
+     * 
+     * @return Array
+     */
+    function GetPersonalTemplates(
+        $companyId, 
+        $columns = '*', 
+        $archived = 0,
+        $page = 0,
+        $limit = 100
+    ){
+        $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where('is_archived', $archived)
+        ->order_by('name', 'ASC');
+        // For pagination
+        if($page != 0){
+            $inset = 0;
+            $offset = 0;
+            $this->db->limit($inset, $offset);
+        }
+        //
+        $a = $this->db->get($this->PMCT);
+        $b = $a->result_array();
+        // Free result
+        $a->free_result();
+        //
+        if($page == 1){
+            return [
+                'Records' => $b,
+                'Count' => $this->db->where('is_archived', $archived)->count_all_results($this->PMCT)
+            ];
+        }
+        //
+        return $b;        
+    }
+
+
+    /*------------------------------------------------- Private -------------------------------------------------/*
+
+    /**
+     * 
+     */
     private function employeeDT($EmployeeId, $r){
         //
         $a =
@@ -1014,33 +1202,5 @@ class Performance_management_model extends CI_Model{
         return $r;
     }
 
-
-    /**
-     * 
-     */
-    function getMyDepartmentAndTeams($companyId, $employeeId){
-        $a =
-        $this->db
-        ->select("
-            {$this->DTM}.name as team_name,
-            {$this->DM}.name as department_name
-        ")
-        ->join("{$this->DTM}", "{$this->DTM}.sid = {$this->DE2T}.team_sid")
-        ->join("{$this->DM}", "{$this->DM}.sid = {$this->DTM}.department_sid")
-        ->where("{$this->DM}.status", 1)
-        ->where("{$this->DM}.is_deleted", 0)
-        ->where("{$this->DTM}.status", 1)
-        ->where("{$this->DTM}.is_deleted", 0)
-        ->where("{$this->DE2T}.employee_sid", $employeeId)
-        ->get("{$this->DE2T}");
-        //
-        $b = $a->result_array();
-        //
-        $a->free_result();
-        //
-        unset($a);
-        //
-        return $b;
-    }
-
+    
 }

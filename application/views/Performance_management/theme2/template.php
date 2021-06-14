@@ -3,7 +3,11 @@
 <div class="row">
     <div class="col-md-12">
         <br>
+<<<<<<< HEAD
         <p class="csF16 csB7"><i class="fa fa-info-circle csF18 csB7" aria-hidden="true"></i>&nbsp;<em>Craft a new review from the ground up or pick a template with insightful questions.</em></p>
+=======
+        <p class="csF16 csB7">Craft a new review from the ground up or pick a template with insightful questions.</p>
+>>>>>>> d5bced39... Added creatae review step 1 on blue screen
     </div>
 </div>
 <div class="row">

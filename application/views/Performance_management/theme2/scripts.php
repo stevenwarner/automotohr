@@ -36,6 +36,7 @@
             name: "<?=isset($employeeName) ? $employeeName : '';?>",
             level: <?=$level;?>
         }
+<<<<<<< HEAD
     };
 </script>
 
@@ -68,6 +69,8 @@
         page: "<?=isset($page) ? $page : ''?>",
         Id: <?=isset($pid) ? $pid : 0; ?>,
         Pem: <?=isset($pem) ? $pem : 0; ?>
+=======
+>>>>>>> d5bced39... Added creatae review step 1 on blue screen
     };
 </script>
 
@@ -79,4 +82,15 @@
 
 <!-- Common functions -->
 <script src="<?=base_url('assets/performance_management/js/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+<<<<<<< HEAD
 <script src="<?=base_url('assets/performance_management/js/goals/create'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+=======
+
+<?php 
+    if(strpos($this->uri->uri_string(), 'review/create') !== false){
+        ?>
+        <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/create'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+        <?php
+    }
+?>
+>>>>>>> d5bced39... Added creatae review step 1 on blue screen

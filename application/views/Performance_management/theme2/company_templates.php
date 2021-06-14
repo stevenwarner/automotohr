@@ -36,6 +36,7 @@
                                 </li>
                                 <li>
                                     <button class="btn btn-black btn-xs jsTemplateQuestionsSelect" title="Use this template for review." placement="top"><i class="fa fa-check-circle csF16" aria-hidden="true"></i></button>
+                                    <button class="btn btn-black btn-xs" title="Use this template for review." placement="top"><i class="fa fa-check-circle csF16" aria-hidden="true"></i></button>
                                 </li>
                             </ul>
                         </div>

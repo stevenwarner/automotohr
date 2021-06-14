@@ -1,5 +1,6 @@
 // 
 $(function() {
+<<<<<<< HEAD
     //
     $('.jsTemplateQuestionsView').click(function(event) {
         //
@@ -36,4 +37,8 @@ $(function() {
             ml(false, 'jsTemplateQuestionViewLoader');
         });
     }
+=======
+
+    $('.')
+>>>>>>> d5bced39... Added creatae review step 1 on blue screen
 });
