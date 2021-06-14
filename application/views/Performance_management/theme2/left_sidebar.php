@@ -1,9 +1,9 @@
 <div class="col-md-3 col-sm-12">
     <div class="csSidebar csRadius5">
         <!-- Sidebar head -->
-        <div class="csSidebarHead csRadius5 csRadiusBL0 csRadiusBR0">
+        <div class="csSidebarHead csRadius5 csRadiusBL0 csRadiusBR0 pa0">
             <figure>
-                <img src="<?=getImageURL($employee['profile_picture']);?>" class="csRadius50" alt=""/>
+                <img src="<?=getImageURL($employee['profile_picture']);?>" class="csFWI" alt=""/>
                 <div class="csTextBox">
                     <p class="csF16 csB7"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
                     <p class="csTextSmall csF14"> <?=remakeEmployeeName($employee, false);?></p>
@@ -11,8 +11,8 @@
                     <p class="csTextSmall csF14"><?=$employee['email'];?></p>
                 </div>
                 <div class="csFixBox">
-                    <a href="<?=base_url("my_profile");?>" class="btn btn-orange csRadius50" title=""
-                        placement="top" data-original-title="Edit my profile"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                    <a href="<?=base_url("my_profile");?>" class="btn btn-orange csF16" title=""
+                        placement="top" data-original-title="Edit my profile"><i class="fa fa-pencil" aria-hidden="true"></i> My Profile</a>
                 </div>
             </figure>
             <div class="clearfix"></div>

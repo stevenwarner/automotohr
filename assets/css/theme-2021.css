@@ -783,6 +783,10 @@
         padding: 10px !important;
     }
     
+    .pa0 {
+        padding-top: 0 !important;
+    }
+    
     .pa10 {
         padding-top: 10px !important;
     }
@@ -1310,6 +1314,10 @@
     .csF26 {
         font-size: 26px !important;
     }
+    
+    .csF40 {
+        font-size: 40px !important;
+    }
     /* Weights */
     
     .csB1 {
@@ -1521,4 +1529,16 @@
     .csEmployeeBox .csTextBox {
         display: inline-block;
         width: 70%;
+    }
+    
+    .csFWI {
+        width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .panel-theme .panel-heading {
+        background-color: #3554DC;
+        color: #fff !important;
     }

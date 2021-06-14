@@ -22,8 +22,6 @@ class Performance_management extends Public_Controller{
     private $pargs;
     //
     private $resp = [];
-    //
-    private $tables = [];
 
     /**
      * Contructor
@@ -35,27 +33,11 @@ class Performance_management extends Public_Controller{
         //
         parent::__construct();
         //
-        $this->tables = [
-            'PM' => 'performance_management',
-            'PMT' => 'performance_management_templates',
-            'PMCT' => 'performance_management_company_templates',
-            'USER' => 'users',
-            'DM' => 'departments_management',
-            'DTM' => 'departments_team_management',
-            'DME' => 'departments_employee_2_team',
-            'PMR' => 'performance_management_reviewees',
-            'PMRV' => 'performance_management_reviewers',
-            'PMQ' => 'performance_management_review_questions',
-            'G' => 'goals',
-            'GC' => 'goal_comments',
-            'GH' => 'goal_history',
-        ];
-        //
         $this->pargs = [];
         // Load helper
         $this->load->helper('performance_management');
         // Load modal
-        $this->load->model('performance_management_model', 'pmm', TRUE, $this->tables);
+        $this->load->model('performance_management_model', 'pmm');
         // Load user agent
         $this->load->library('user_agent');
         //
@@ -88,28 +70,6 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Dashboard';
-        // Get department & teams list
-        // $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
-        // //
-        // if(!empty($employees)){
-        //     foreach($employees as $employee){
-        //         $this->pargs['employees'][$employee['Id']] = [
-        //             'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
-        //             'role' => $employee['FullRole'],
-        //             'img' => getImageURL($employee['Image'])
-        //         ];
-        //     }
-        // }
-        // Get goals 
-        // $this->pargs['goals'] = $this->pmm->getGoals($this->pargs['employerId']);
-        // // Get Assigned Reviews 
-        // $this->pargs['assignedReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'assigned');
-        // $this->pargs['feedbackReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'feedback');
-        // // Get employer role
-        // $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // // Get department & teams list
-        // My goals
-
         // Set logged in employee departments and teams
         $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
         // Set employee information for the blue screen
@@ -118,6 +78,39 @@ class Performance_management extends Public_Controller{
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}dashboard");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    /**
+     * Dashboard
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function create_review(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Dashboard';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->GetMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        // Set company department and teams
+        $this->pargs['company_dt'] = $this->pmm->GetCompanyDepartmentAndTeams($this->pargs['companyId']);
+        // Set system provided templates
+        $this->pargs['system_templates'] = $this->pmm->GetCompanyTemplates();
+        // Set company generated templates
+        $this->pargs['company_templates'] = $this->pmm->GetPersonalTemplates($this->pargs['companyId']);
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}create");
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
