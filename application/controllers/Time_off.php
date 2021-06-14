@@ -5366,7 +5366,7 @@ class Time_off extends Public_Controller
                     $eRP['{{request_type}}'] = 'Approved';
                     $eRP['{{public_link}}'] = getButton(
                         [
-                            '{{url}}'=> timeoffGetEncryptedLink([
+                            '{{url}}'=> timeoffGetApproverEncryptedLink([
                                 'companySid' => $request['company_sid'],
                                 'companyName' => $request['CompanyName'],
                                 'requestSid' => $request['sid'],
@@ -5381,7 +5381,7 @@ class Time_off extends Public_Controller
                     $eRP['{{request_type}}'] = 'Rejected';
                     $eRP['{{public_link}}'] = getButton(
                         [
-                            '{{url}}'=> timeoffGetEncryptedLink([
+                            '{{url}}'=> timeoffGetApproverEncryptedLink([
                                 'companySid' => $request['company_sid'],
                                 'companyName' => $request['CompanyName'],
                                 'requestSid' => $request['sid'],
@@ -5407,6 +5407,51 @@ class Time_off extends Public_Controller
                 );
             }    
         }
+    }
+
+    function approver_public ($varification_key) {
+        $decrypted_key = timeoffDecryptLink($varification_key);
+        // echo '<pre>';
+        // print_r($decrypted_key);
+        //
+        $request_id = $decrypted_key['requestSid'];
+        $company_sid = $decrypted_key['companySid'];
+        $companyName = $decrypted_key['companyName'];
+        $employeeName = getUserNameBySID($decrypted_key['employerSid']);
+        $employee_info = get_employee_profile_info($decrypted_key['employerSid']);
+        $data['download'] = 'no';
+        //
+        // print_r($employee_info);
+        $data = array();
+        $data['user_first_name']    = $employee_info['first_name'];
+        $data['user_last_name']     = $employee_info['last_name'];
+        $data['user_email']         = $employee_info['email'];
+        $data['user_phone']         = $employee_info['PhoneNumber'];
+        $data['user_picture']       = $employee_info['profile_picture'];
+        $data['company_sid']        = $company_sid;
+        $data['company_name']       = $companyName;
+        $data['title'] = 'Time-off';
+        $data['page_title'] = 'Time-off';
+        $data['file_name'] = 'timeoff_requests';
+        $data['companyName'] = $companyName;
+        $data['employeeName'] = $employeeName;
+        //
+        $page = '';
+        
+        $request = $this->timeoff_model->getRequestById($request_id);
+        $data['request'] = $request;
+        $data['policies'] = $this->timeoff_model->getEmployeePoliciesById($company_sid,$data['request']['employee_sid']);
+        $approvers = $this->timeoff_model->getEmployeeApprovers($company_sid, $request['userId']);
+        $data['approvers'] = $approvers;
+        //
+        $page = 'request';
+        // print_r($approvers);
+
+        // $this->load->view('onboarding/upload_resume');
+        $this->load->view('onboarding/onboarding_public_header', $data);
+        $this->load->view('timeoff/approver_public_link');
+        $this->load->view('onboarding/onboarding_public_footer');
+       
     }
 
     //

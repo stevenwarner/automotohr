@@ -9736,12 +9736,24 @@ class Timeoff_model extends CI_Model
             //
             $settings = $this->getSettings($post['companyId']);
             //
+            $is_access_level_plus = 'no';
+            $employee_info = db_get_employee_profile($post['employerId']);
+            //
+            if ($employee_info[0]['access_level_plus'] == 1) {
+                $is_access_level_plus = 'yes';
+            }
+            //
             foreach($requests as $k => $request){
-                if (in_array($request['employee_sid'], $approvers)) {
+                if ($is_access_level_plus == 'yes') {
                     $requests[$k]['allow_update'] = 'yes';
-                } else {
-                    $requests[$k]['allow_update'] = 'no';
-                }
+                } else {    
+
+                    if (in_array($request['employee_sid'], $approvers)) {
+                        $requests[$k]['allow_update'] = 'yes';
+                    } else {
+                        $requests[$k]['allow_update'] = 'no';
+                    }
+                }    
 
                 $requests[$k]['breakdown'] = get_array_from_minutes(
                     $request['requested_time'],
@@ -9757,7 +9769,8 @@ class Timeoff_model extends CI_Model
         }
         //
         // echo '<pre>';
-        // print_r($requests);
+        // print_r(db_get_employee_profile($post['employerId']));
+        // print_r($post);
         // die();
         return $requests;
     }

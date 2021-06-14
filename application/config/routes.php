@@ -134,6 +134,7 @@ $route['timeoff/report/(:any)'] = 'Time_off/report/$1';
 $route['timeoff/balance'] = 'Time_off/balance';
 $route['timeoff/balance/(:any)'] = 'Time_off/balance/$1';
 // Approvers
+$route['timeoff/approver/public/(:any)'] = 'Time_off/approver_public/$1';
 $route['timeoff/approvers'] = 'Time_off/approvers';
 $route['timeoff/approvers/(:any)'] = 'Time_off/approvers/$1';
 $route['timeoff/approvers/(:any)/(:any)'] = 'Time_off/approvers/$1/$2';
