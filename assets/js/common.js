@@ -1,9 +1,9 @@
 //
 function loadTitles() {
-    $('[title][placement="left"]').tooltip({ placement: 'left', trigger: "hover" });
-    $('[title][placement="right"]').tooltip({ placement: 'right', trigger: "hover" });
-    $('[title][placement="top"]').tooltip({ placement: 'top', trigger: "hover" });
-    $('[title]').tooltip({ placement: 'bottom', trigger: "hover" });
+    $('[title][placement="left"]').tooltip({ placement: 'left auto', trigger: "hover" });
+    $('[title][placement="right"]').tooltip({ placement: 'right auto', trigger: "hover" });
+    $('[title][placement="top"]').tooltip({ placement: 'top auto', trigger: "hover" });
+    $('[title]').tooltip({ placement: 'bottom auto', trigger: "hover" });
 }
 
 
@@ -56,4 +56,3 @@ function footer_fixer() {
     var fh = $('footer').height();
     $('footer').css('margin-top', (wh - fh) + 'px')
 }
->>>>>>> 76b576f2... minor chnages

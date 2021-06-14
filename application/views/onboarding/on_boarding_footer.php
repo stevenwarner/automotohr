@@ -286,6 +286,10 @@
     if($class == 'time_off' || in_array('employee_management_system', $this->uri->segment_array()) || in_array('dashboard', $this->uri->segment_array())) { ?>
         <?php $this->load->view('timeoff/scripts'); ?>
     <?php } ?>
+    <?php
+    if($class == 'performance_management') { ?>
+        <?php $this->load->view("{$pp}scripts"); ?>
+    <?php } ?>
     
 
      <!--  -->
@@ -323,6 +327,49 @@
                 });
             }
         });
+
+        // 
+        $(document).on('click', '.jsPageBTN', function(event) {
+
+            //
+            event.preventDefault();
+            //
+            $(this).toggleClass('fa-minus-circle');
+            $(this).toggleClass('fa-plus-circle');
+            //
+            $('.jsPageBody[data-page="' + ($(this).data('target')) + '"]').toggle();
+
+        });
+
+        footer_fixer();
+            //
+        function footer_fixer() {
+            //
+            var wh = $(document).height() - $('.csPageWrap').height();
+            var fh = $('footer').height();
+            $('footer').css('margin-top', (wh - fh) + 'px')
+        }
+
+        //
+        $(document).on('click', '.jsToggleHelp', function(event) {
+            //
+            event.preventDefault();
+            //
+            $('.jsToggleHelpArea[data-help="' + ($(this).data('target')) + '"]').toggle();
+        });
+
+
+        //
+function loadTitles() {
+    $('[title][placement="left"]').tooltip({ placement: 'left auto', trigger: "hover" });
+    $('[title][placement="right"]').tooltip({ placement: 'right auto', trigger: "hover" });
+    $('[title][placement="top"]').tooltip({ placement: 'top auto', trigger: "hover" });
+    $('[title]').tooltip({ placement: 'bottom auto', trigger: "hover" });
+}
+
+
+$(document).ready(loadTitles);
+
     </script>
     <style>
     .notification-bell {

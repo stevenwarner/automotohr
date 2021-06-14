@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/alertifyjs/css/themes/default.min.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/jquery.datetimepicker.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/select2.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/theme-2021.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/style.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/responsive.css') ?>">
 
@@ -33,6 +34,14 @@
             <?php $this->load->view('timeoff/style'); ?>
             <link rel="stylesheet" href="<?=base_url('assets/timeoff/css/blue'.($GLOBALS['minified_version']).'.css?v='.( ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0').'');?>" />
         <?php }?>
+    
+    <!--  -->
+    <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
+            <?php $this->load->view("{$pp}styles"); ?>
+        <?php }?>
+
+        
+
     
     <script src="<?php echo base_url('assets/bootstrap-filestyle/js/bootstrap-filestyle.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/js/select2.js') ?>"></script>
@@ -312,7 +321,7 @@
             </header>
             <!-- Header End -->
 
-            <div class="emp-info-strip <?=in_array('iframe', $this->uri->segment_array()) ? 'hidden' : '';?>">
+            <div class="emp-info-strip <?=in_array('iframe', $this->uri->segment_array()) ? 'hidden' : '';?> <?=isset($hide_employer_section) ? 'hidden' : ''; ?>">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-12">
