@@ -1555,10 +1555,13 @@
         background-color: #3554DC;
         color: #fff !important;
 <<<<<<< HEAD
+<<<<<<< HEAD
     }
     
     .panel-theme {
         border: 1px solid #ccc;
+=======
+>>>>>>> 2798fc44... Added review part of Perfoemance management
     }
     
     .csRatingScale ul {
@@ -1599,6 +1602,7 @@
     
     .csInfo {
         color: #b4052c !important;
+<<<<<<< HEAD
     }
     
     .daterangepicker td.active,
@@ -1686,4 +1690,6 @@
         color: #333;
 =======
 >>>>>>> d5bced39... Added creatae review step 1 on blue screen
+=======
+>>>>>>> 2798fc44... Added review part of Perfoemance management
     }

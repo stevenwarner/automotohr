@@ -1,6 +1,9 @@
 // 
 $(function() {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2798fc44... Added review part of Perfoemance management
     //
     $('.jsTemplateQuestionsView').click(function(event) {
         //
@@ -17,6 +20,7 @@ $(function() {
             Body: '<div id="jsTemplateQuestionViewBody"></div>'
         }, loadTemplateQuestions.bind(this, 'jsTemplateQuestionView', data.type, data.id));
     });
+<<<<<<< HEAD
 
     //
     $('.jsTemplateQuestionsSelect').click(function(event) {
@@ -41,4 +45,26 @@ $(function() {
 
     $('.')
 >>>>>>> d5bced39... Added creatae review step 1 on blue screen
+=======
+
+    //
+    $('.jsTemplateQuestionsSelect').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        $('.csTemplateWrap').removeClass('active');
+        //
+        $(this).closest('.csTemplateWrap').addClass('active');
+    });
+
+
+    //
+    function loadTemplateQuestions(targetId, type, id) {
+        //
+        $.get(pm.urls.pbase + 'get-template-questions/' + type + '/' + id, function(resp) {
+            $('#' + targetId + 'Body').html(resp);
+            ml(false, 'jsTemplateQuestionViewLoader');
+        });
+    }
+>>>>>>> 2798fc44... Added review part of Perfoemance management
 });

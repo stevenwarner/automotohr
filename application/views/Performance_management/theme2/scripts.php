@@ -28,8 +28,11 @@
         companyId: <?=$companyId;?>,
         companyName: "<?=$session['company_detail']['CompanyName'];?>",
         companyLogo: "<?=$session['company_detail']['Logo'];?>",
+<<<<<<< HEAD
         companyName: "<?=$companyDetails['CompanyName'];?>",
         companyLogo: "<?=$companyDetails['Logo'];?>",
+=======
+>>>>>>> 2798fc44... Added review part of Perfoemance management
         employerId: <?=$employerId;?>,
         employee: {
             id: <?=isset($employeeId) ? $employeeId : 0;?>,

@@ -59,6 +59,9 @@
             <br>
             <div class="jsPageContainer p10">
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2798fc44... Added review part of Perfoemance management
                 <!-- Step 1 -->
                 <div class="jsPageSection" data-page="getting_started">
                     <!-- Template -->
@@ -76,9 +79,12 @@
                     <!-- Reviewees -->
                     <?php $this->load->view("{$pp}reviewees"); ?>
                 </div>
+<<<<<<< HEAD
 =======
                 <?php $this->load->view("{$pp}template"); ?>
 >>>>>>> d5bced39... Added creatae review step 1 on blue screen
+=======
+>>>>>>> 2798fc44... Added review part of Perfoemance management
             </div>
         </div>
     </div>

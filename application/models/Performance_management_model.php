@@ -318,6 +318,7 @@ class Performance_management_model extends CI_Model{
         //
         return $b;        
     }
+<<<<<<< HEAD
 
 
     /*------------------------------------------------- Private -------------------------------------------------/*
@@ -1144,6 +1145,8 @@ class Performance_management_model extends CI_Model{
         //
         return $b;        
     }
+=======
+>>>>>>> 2798fc44... Added review part of Perfoemance management
 
 
     /*------------------------------------------------- Private -------------------------------------------------/*

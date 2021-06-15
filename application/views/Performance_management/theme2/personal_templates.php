@@ -36,10 +36,14 @@
                                 </li>
                                 <li>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                     <button class="btn btn-black btn-xs jsTemplateQuestionsSelect" title="Use this template for review." placement="top"><i class="fa fa-check-circle csF16" aria-hidden="true"></i></button>
 =======
                                     <button class="btn btn-black btn-xs" title="Use this template for review." placement="top"><i class="fa fa-check-circle csF16" aria-hidden="true"></i></button>
 >>>>>>> d5bced39... Added creatae review step 1 on blue screen
+=======
+                                    <button class="btn btn-black btn-xs jsTemplateQuestionsSelect" title="Use this template for review." placement="top"><i class="fa fa-check-circle csF16" aria-hidden="true"></i></button>
+>>>>>>> 2798fc44... Added review part of Perfoemance management
                                 </li>
                             </ul>
                         </div>
