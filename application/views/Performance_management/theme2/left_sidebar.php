@@ -3,7 +3,7 @@
         <!-- Sidebar head -->
         <div class="csSidebarHead csRadius5 csRadiusBL0 csRadiusBR0 pa0">
             <figure>
-                <img src="<?=getImageURL($employee['profile_picture']);?>" class="csFWI" alt=""/>
+                <img src="<?=getImageURL($employee['profile_picture']);?>" class="" alt=""/>
                 <div class="csTextBox">
                     <p class="csF16 csB7"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
                     <p class="csTextSmall csF14"> <?=remakeEmployeeName($employee, false);?></p>

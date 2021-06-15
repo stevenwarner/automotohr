@@ -26,8 +26,8 @@
             mdyt: 'MMM DD YYYY, ddd hh:mm a'
         },
         companyId: <?=$companyId;?>,
-        companyName: "<?=$companyDetails['CompanyName'];?>",
-        companyLogo: "<?=$companyDetails['Logo'];?>",
+        companyName: "<?=$session['company_detail']['CompanyName'];?>",
+        companyLogo: "<?=$session['company_detail']['Logo'];?>",
         employerId: <?=$employerId;?>,
         employee: {
             id: <?=isset($employeeId) ? $employeeId : 0;?>,

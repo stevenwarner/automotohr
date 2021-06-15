@@ -114,6 +114,32 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
+
+    // AJAX REQUESTS
+
+    /**
+     * 
+     */
+    function template_questions($id, $type){
+        //
+        if( !$this->input->is_ajax_request() ){
+            // $this->res([], true);
+        }
+        //
+        if($type == 'company'){
+            // Set system provided templates
+            $template = $this->pmm->GetSingleCompanyTemplates($id, 'questions');
+            // Set company generated templates
+        } else if($type == 'personal'){
+            $template = $this->pmm->GetSinglePersonalTemplates($id, 'questions');
+            
+        } else{
+            $this->res([], true);
+        }
+
+        //
+        $this->load->view($this->pp.'template_questions_view', ['questions' => json_decode($template['questions'])]);
+    }
     
 
     /**
@@ -173,5 +199,14 @@ class Performance_management extends Public_Controller{
             return strip_tags(trim($i));
         }, $r);
         return $r;
+    }
+
+    /**
+     * 
+     */
+    private function res($resp = [], $isError = false){
+        header("Content-Type: application/json");
+        echo json_encode($isError ? ["Error" => "Invalid request"] : $resp);
+        exit(0);
     }
 }

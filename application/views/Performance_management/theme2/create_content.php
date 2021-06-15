@@ -58,7 +58,23 @@
             <!--  -->
             <br>
             <div class="jsPageContainer p10">
-                <?php $this->load->view("{$pp}template"); ?>
+                <!-- Step 1 -->
+                <div class="jsPageSection" data-page="getting_started">
+                    <!-- Template -->
+                    <div class="jsPageSection dn" data-page="template">
+                        <?php $this->load->view("{$pp}template"); ?>
+                    </div>
+                    <!-- Basic -->
+                    <div class="jsPageSection dn" data-page="schedule">
+                        <?php $this->load->view("{$pp}schedule"); ?>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="jsPageSection" data-page="reviewees">
+                    <!-- Reviewees -->
+                    <?php $this->load->view("{$pp}reviewees"); ?>
+                </div>
             </div>
         </div>
     </div>

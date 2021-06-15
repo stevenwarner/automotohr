@@ -257,6 +257,67 @@ class Performance_management_model extends CI_Model{
         //
         return $b;        
     }
+    
+    /**
+     * Get single company templates
+     * 
+     * @param Array|String $columns
+     *                     Default is '*'
+     * @param Booleon      $archived 
+     *                     Default is '0'
+     * 
+     * @return Array
+     */
+    function GetSingleCompanyTemplates(
+        $id,
+        $columns = '*', 
+        $archived = 0
+    ){
+        $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where('sid', $id)
+        ->where('is_archived', $archived)
+        ->order_by('name', 'ASC');
+        //
+        $a = $this->db->get($this->PMT);
+        $b = $a->row_array();
+        // Free result
+        $a->free_result();
+        //
+        return $b;        
+    }
+
+    /**
+     * Get single personal templates
+     * 
+     * @employee Mubashir Ahmed
+     * @date     02/09/2021
+     * 
+     * @param Integer      $id
+     * @param Array|String $columns
+     *                     Default is '*'
+     * @param Booleon      $archived 
+     *                     Default is '0'
+     * @return Array
+     */
+    function GetSinglePersonalTemplates(
+        $id, 
+        $columns = '*', 
+        $archived = 0
+    ){
+        $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where('is_archived', $archived)
+        ->where('sid', $id)
+        ->order_by('name', 'ASC');
+        //
+        $a = $this->db->get($this->PMCT);
+        $b = $a->row_array();
+        // Free result
+        $a->free_result();
+        //
+        return $b;        
+    }
 
 
     /*------------------------------------------------- Private -------------------------------------------------/*
