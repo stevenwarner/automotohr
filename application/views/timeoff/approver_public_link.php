@@ -1,9 +1,9 @@
 
-    <meta charset="utf-8">
+   <!--  <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/css/bootstrap.css'); ?>">
-    <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/css/style.css'); ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/css/style.css'); ?>"> -->
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/timeoff/css/theme2021.css'); ?>">
     <title><?php echo $page_title; ?></title>
     <style>
@@ -237,12 +237,26 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <label>Action</label>
-                                        <?php if ($request['status'] == 'rejected') { ?>
-                                            <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i>Approve Time Off Request</button>
-                                        <?php } else { ?>
-                                            <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i>Reject Time Off Request</button>
-                                        <?php } ?>
+                                        <?php if ($allow_update == 'no') { ?>  
+                                            <label>Message</label>
+                                            <p>The Request is already submitted</p>
+                                        <?php } else { ?>  
+                                            <form action="" method="POST">
+                                                <input type="hidden" name="company_sid" value="<?php echo $company_sid; ?>">
+                                                <input type="hidden" name="employer_sid" value="<?php echo $employerId; ?>">
+                                                <input type="hidden" name="employee_sid" value="<?php echo $employee_sid; ?>">
+                                                <input type="hidden" name="request_sid" value="<?php echo $requestId; ?>">
+                                                <input type="hidden" name="status" value="<?php echo $request_status; ?>">
+                                                <label>Comment</label>
+                                                <textarea class="ckeditor" id="jsCommentEdit" name="comment" style="margin-bottom: 10px;"></textarea>
+                                                <?php echo form_error("comment"); ?>
+                                                <?php if ($request['status'] == 'rejected') { ?>
+                                                    <button style="margin-top: 10px" type="submit" class="btn btn-orange form-control jsRequestBtn"><i class="fa fa-clock-o"></i>Approve Time Off Request</button>
+                                                <?php } else { ?>
+                                                    <button style="margin-top: 10px" type="submit" class="btn alert-danger btn-theme form-control jsRequestBtn"><i class="fa fa-times-circle-o"></i>Reject Time Off Request</button>
+                                                <?php } ?>
+                                            </form>
+                                        <?php } ?>  
                                     </div>
                                 </div>
                                 <hr />
@@ -494,7 +508,10 @@
             </div>
         </div>
     </div>
-
     <script type="text/javascript" src="<?= base_url() ?>assets/js/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
+    <script>
+        CKEDITOR.config.toolbar = [
+            ['Bold', 'Italic', 'Underline']
+        ];
+    </script>
 
