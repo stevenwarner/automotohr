@@ -5355,16 +5355,33 @@ class Time_off extends Public_Controller
     {
         $request = $this->timeoff_model->getRequestById($post['requestId']);
         $approver_sid = $post['employerId'];
-        $approver_name = getUserNameBySID($approver_sid);
+        $approver_arr = getUserNameBySID($approver_sid, false);
+        $approver_name = ucwords($approver_arr[0]['first_name'].' '.$approver_arr[0]['last_name']);
         $other_approvers = $this->timeoff_model->getEmployeeApprovers($request['company_sid'], $request['employee_sid']);
         //
         $approverTemplate = $this->timeoff_model->getEmailTemplate(APPROVER_TIMEOFF_REQUEST);
         $CHF = message_header_footer($request['company_sid'], $request['CompanyName']);
         //
-        // echo '<pre>';
-        // print_r($other_approvers);
-        // print_r($post);
-        // die('stop');
+        $lastApprover = [];
+        //
+        if(!empty($request['history'])){
+            foreach($request['history'] as $ap){
+                //
+                if(!empty($lastApprover)){
+                    continue;
+                }
+                //
+                $det = json_decode($ap['note']);
+                //
+                if($det->canApprove){
+                    $lastApprover = [
+                        'Id' => $ap['userId'],
+                        'Name' => ucwords($ap['first_name'].' '.$ap['last_name']),
+                        'Comment' => $det->comment
+                    ];
+                }
+            }
+        }
         // 
         foreach($other_approvers as $approver){
             if ($approver['approver_percentage'] == 1) {
@@ -5379,8 +5396,15 @@ class Time_off extends Public_Controller
                 DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('M d Y, D') : 
                     DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('M d Y, D').' - '.DateTime::createfromformat('Y-m-d', $request['request_to_date'])->format('M d Y, D');
 
+                $eRP['{{last_approver}}'] = $lastApprover['Name'];
+                $eRP['{{company_name}}'] = $request['CompanyName'];
+                $eRP['{{approvers_comment}}'] = '<br><p><strong>Comment from '.($eRP['{{approver_name}}']).':</strong> '.( $post['comment'] ).'</p>';
+                $eRP['{{approver_comment}}'] = '<br><p><strong>Comment from '.($eRP['{{last_approver}}']).':</strong> '.( $lastApprover['Comment'] ).'</p>';
+                $eRP['{{requester_name}}'] = ucwords($request['first_name'].' '.$request['last_name']);
+                //
                 if ($post['status'] == "approved") {
-                    $eRP['{{request_type}}'] = 'Approved';
+                    $eRP['{{previous_status}}'] = 'Rejected';
+                    $eRP['{{new_status}}'] = 'Approve';
                     $eRP['{{public_link}}'] = getButton(
                         [
                             '{{url}}'=> timeoffGetApproverEncryptedLink([
@@ -5391,11 +5415,12 @@ class Time_off extends Public_Controller
                                 'typeSid' => 'approved'
                             ]),
                             '{{color}}' => '#28a745',
-                            '{{text}}' => 'Approve Request'
+                            '{{text}}' => 'View Detail'
                         ]
                     );
                 } else if ($post['status'] == "rejected") {
-                    $eRP['{{request_type}}'] = 'Rejected';
+                    $eRP['{{previous_status}}'] = 'Approved';
+                    $eRP['{{new_status}}'] = 'Reject';
                     $eRP['{{public_link}}'] = getButton(
                         [
                             '{{url}}'=> timeoffGetApproverEncryptedLink([
@@ -5410,7 +5435,7 @@ class Time_off extends Public_Controller
                         ]
                     );
                 }
-                
+
                 //
                 $approverTemplateI = timeoffMagicQuotesReplace($approverTemplate, $eRP);
 
@@ -6070,6 +6095,7 @@ class Time_off extends Public_Controller
             break;
         endswitch;
 
+        _e($request, true, true);
         if ($type == "approved" || $type == "rejected") {
             // Get approver template
             $requesterTemplate = $this->timeoff_model->getEmailTemplate(USER_TIMEOFF_REQUEST);

@@ -546,10 +546,6 @@ define("DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE", 390);
 // 
 define('DOCUMENT_COMPLETION_REPOSRT_TEMPLATE_SID', 391);
 
-// Time off email template code
-define('TIMEOFF_CREATE_FOR_APPROVER', 392);
-define('TIMEOFF_UPDATE_FOR_APPROVER', 393);
-define('TIMEOFF_CREATE_FOR_EMPLOYEE', 394);
 // Time off magic quotes
 define('TIMEOFF_MAGIC_QUOTES', implode(',', [
   'approver_first_name',
@@ -583,6 +579,10 @@ define('GOAL_EXPIRY_7', 402);
 define('PM_ASSIGNED', 403);
 
 // Time off email template code
-define('APPROVER_TIMEOFF_REQUEST_UPDATE', 404);
-define('USER_TIMEOFF_REQUEST', 405);
-define('APPROVER_TIMEOFF_REQUEST', 406);
+define('TIMEOFF_CREATE_FOR_EMPLOYEE', 394); // on request creation to employee
+define('TIMEOFF_CREATE_FOR_APPROVER', 392); // when the request was created
+define('TIMEOFF_UPDATE_FOR_APPROVER', 393); // when the requestw as updated
+// Time off email template code
+define('USER_TIMEOFF_REQUEST', 414); // Send approve email to employee
+define('APPROVER_TIMEOFF_REQUEST_UPDATE', 412); // Send approve/reject email to approvers
+define('APPROVER_TIMEOFF_REQUEST', 413); // Send request email

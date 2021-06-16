@@ -4,11 +4,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 //
 if(!function_exists('getUserNameBySID')){
-    function getUserNameBySID($sid){
+    function getUserNameBySID($sid, $remake = true){
         $user_info = db_get_employee_profile($sid);
 
         if (!empty($user_info)) {
-            return remakeEmployeeName([
+            return $remake ? remakeEmployeeName([
                 'first_name' => $user_info[0]['first_name'],
                 'last_name' => $user_info[0]['last_name'],
                 'access_level' => $user_info[0]['access_level'],
@@ -16,7 +16,7 @@ if(!function_exists('getUserNameBySID')){
                 'is_executive_admin' => $user_info[0]['is_executive_admin'],
                 'pay_plan_flag' => $user_info[0]['pay_plan_flag'],
                 'job_title' => $user_info[0]['job_title'],
-            ]);
+            ]) : $user_info;
         } else {
             return '';
         }
