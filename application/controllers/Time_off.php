@@ -910,12 +910,48 @@ class Time_off extends Public_Controller
         $data = array();
         $this->check_login($data);
         //
+        if ($_POST) {
+            $start_date = $_POST['reportStartDate'];
+            $end_date  = $_POST['reportEndDate'];
+        } else {
+            $start_date = date('m/01/Y');
+            $end_date  = date('m/t/Y');
+        }
+        
+        //
         $data['page'] = 'view';
         $data['title'] = 'Report::time-off';
         //
-        $data['company_employees'] = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($data['company_sid']);
+        $empTimeoff = $this->timeoff_model->getEmployeesWithTimeoffRequest($data['company_sid'], 'employees_only', $start_date, $end_date);
+        $timeoffRequests = $this->timeoff_model->getEmployeesWithTimeoffRequest($data['company_sid'], 'records_only', $start_date, $end_date);
+        $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($data['company_sid']);
+        //
+        foreach ($company_employees as $ekey => $employee) {
+            if (!in_array($employee['sid'], $empTimeoff)) {
+                unset($company_employees[$ekey]);
+            } else {
+                foreach ($timeoffRequests as $tkey => $request) {
+                    if ($employee['sid'] == $request['employee_sid']) {
+                        $policy_sid = $request['timeoff_policy_sid'];
+                        $request['policy_name'] = $this->timeoff_model->getEPolicyName($policy_sid);
+                        $company_employees[$ekey]['timeoffs'][$tkey] = $request;
+                    }
+                }
+            }
+        }
+        //
+        // echo '<pre>';
+        // print_r($company_employees);
+        // die();
+        //
+        
+        //
+        $data['company_employees'] = $company_employees;
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;
+        //
+        $data['start_date'] = $start_date;
+        $data['end_date'] = $end_date;
         //
         $this->load->view('main/header', $data);
         $this->load->view('timeoff/report');

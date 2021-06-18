@@ -11916,4 +11916,50 @@ class Timeoff_model extends CI_Model
         ->result_array();
     }
 
+    function getEmployeesWithTimeoffRequest($company_sid, $type, $start_date, $end_date) {
+        //
+        if ($type == 'employees_only') {
+            $this->db->select('employee_sid');
+        } else if ($type == 'records_only') {
+            $this->db->select('employee_sid, timeoff_policy_sid, requested_time, allowed_timeoff, request_from_date, request_to_date, status');
+        }
+        //
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('request_from_date >=', date('Y-m-d', strtotime($start_date)));
+        $this->db->where('request_to_date <=', date('Y-m-d', strtotime($end_date)));
+        $records_obj = $this->db->get('timeoff_requests');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            if ($type == 'employees_only') {
+                $return_data = array_unique(array_column($records_arr, 'employee_sid'));
+            } else if ($type == 'records_only') {
+                $return_data = $records_arr;
+            }
+        }
+
+        return $return_data;
+    }
+
+    function getEPolicyName($policy_sid) {
+        //
+        $this->db->select('title');
+        //
+        $this->db->where('sid', $policy_sid);
+        $records_obj = $this->db->get('timeoff_policies');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        $return_data = 'Unknown';
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr['title'];
+        }
+
+        return $return_data;
+    }
+
 }
