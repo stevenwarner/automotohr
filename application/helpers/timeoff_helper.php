@@ -652,6 +652,31 @@ if(!function_exists('timeoffGetEncryptedLink')){
 }
 
 /**
+ * Make an encrypted link
+ * 
+ * @employee Aleem Shaukat
+ * @date     14/06/2021
+ * 
+ * @param Array @args
+ * 
+ * @return String
+ */
+if(!function_exists('timeoffGetApproverEncryptedLink')){
+    function timeoffGetApproverEncryptedLink($args){
+        // Get CI instance
+        $_this = &get_instance();
+        // Load encryption library
+        $_this->load->library('encryption');
+        //
+        $params = '';
+        //
+        foreach($args as $k => $v) $params .= "{$k}={$v}/";
+        //
+        return base_url('timeoff/approver/public/'.( str_replace(['-', '/', '='], ['$2B', '$3B', '$4B'], $_this->encryption->encrypt(rtrim($params, '/'))) ).'');
+    }
+}
+
+/**
  * Decrypt a link
  * 
  * @employee Mubashir Ahmed

@@ -564,10 +564,11 @@ $(function() {
     let allComments;
     //
     function setTable(resp) {
+        console.log(resp.Data);
         //
         let rows = "";
         //
-        if (resp.Data.length == 0) {
+        if (resp.Data == undefined ||resp.Data.length == 0) {
             $(".csContentWrap").html(
                 `<p class="alert alert-info text-center">No time-offs found.</p>`
             );
@@ -624,7 +625,7 @@ $(function() {
             let rows = '<ul>';
             //
             allComments[$(this).closest('.jsBox').data('id')][0].map(function(li) {
-                rows += `<li><strong>${li.msg}</strong> <br /> ${li.employeeName} ${li.employeeRole} <br /> ${moment(li.time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</li>`;
+                rows += `<li><strong>${li.msg}</strong> <br /> ${li.employeeName} ${li.employeeRole} <br /> ${moment(li.time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)} <br /> ${li.employeeCanApprove}</li>`;
             });
             //
             rows += '</ul>';
@@ -689,6 +690,7 @@ $(function() {
         let rows = '';
         //
         let expired = 0;
+        let allow_update = v.allow_update;
         //
         if (callOBJ.Requests.Main.isMine == 1) {
             if (moment() > moment(v.request_from_date)) expired = 1;
@@ -703,21 +705,25 @@ $(function() {
         rows += `        <!-- Box Header -->`;
         rows += `        <div class="csBoxHeader csBoxHeaderBlue csRadius5 csRadiusBL0 csRadiusBR0">`;
         rows += `            <span class="pull-right">`;
-        if (callOBJ.Requests.Main.isMine == 0) {
-            rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsEditTimeOff" title="Edit"><i class="fa fa-pencil"></i></span>`;
-        } else {
-            if (expired == 0) rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsEditTimeOff" title="Edit"><i class="fa fa-pencil"></i></span>`;
-        }
+        if (allow_update == "yes") {
+            if (callOBJ.Requests.Main.isMine == 0) {
+                rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsEditTimeOff" title="Edit"><i class="fa fa-pencil"></i></span>`;
+            } else {
+                if (expired == 0) rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsEditTimeOff" title="Edit"><i class="fa fa-pencil"></i></span>`;
+            }
+        }    
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsHistoryTimeOff" title="Show History"><i class="fa fa-history"></i></span>`;
         rows += `                <a href="${baseURL}timeoff/print/requests/${v.sid}" target="_blank" style="color: #eee" class="csCircleBtn csRadius50 jsTooltip" title="Print"><i class="fa fa-print"></i></a>`;
         rows += `                <a href="${baseURL}timeoff/download/requests/${v.sid}" target="_blank" style="color: #eee" class="csCircleBtn csRadius50 jsTooltip" title="Download"><i class="fa fa-download"></i></a>`;
-        if (callOBJ.Requests.Main.isMine == 0) {
-            if (v.archive == 0) {
-                rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsArchiveTimeOff" title="Archive"><i class="fa fa-archive"></i></span>`;
-            } else {
-                rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsActiveTimeOff" title="Activate"><i class="fa fa-sign-in"></i></span>`;
+        if (allow_update == "yes") {
+            if (callOBJ.Requests.Main.isMine == 0) {
+                if (v.archive == 0) {
+                    rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsArchiveTimeOff" title="Archive"><i class="fa fa-archive"></i></span>`;
+                } else {
+                    rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsActiveTimeOff" title="Activate"><i class="fa fa-sign-in"></i></span>`;
+                }
             }
-        }
+        }    
 
         rows += `            </span>`;
         rows += `            <div class="clearfix"></div>`;
@@ -816,39 +822,41 @@ $(function() {
             }
         } else {
             //
-            if (v.archive == 1) {
-                rows += `            <div class="col-sm-12">`;
-                rows += `                <button class="btn btn-orange form-control"><i class="fa fa-eye"></i> View</button>`;
-                rows += `            </div>`;
-            } else {
-                if (v.status == 'pending') {
-                    rows += `            <div class="col-sm-6 pl0 pr0">`;
-                    rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i> Approve</button>`;
-                    rows += `            </div>`;
-                    rows += `            <div class="col-sm-6 pr0">`;
-                    rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i> Reject</button>`;
-                    rows += `            </div>`;
-                } else if (v.status == 'approved') {
+            if (allow_update == "yes") {
+                if (v.archive == 1) {
                     rows += `            <div class="col-sm-12">`;
-                    rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i> Reject</button>`;
-                    rows += `            </div>`;
-                } else if (v.status == 'rejected') {
-                    rows += `            <div class="col-sm-12">`;
-                    rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i> Approve</button>`;
-                    rows += `            </div>`;
-                } else if (v.status == 'cancelled') {
-                    rows += `            <div class="col-sm-6 pl0 pr0">`;
-                    rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i> Approve</button>`;
-                    rows += `            </div>`;
-                    rows += `            <div class="col-sm-6 pr0">`;
-                    rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i> Reject</button>`;
+                    rows += `                <button class="btn btn-orange form-control"><i class="fa fa-eye"></i> View</button>`;
                     rows += `            </div>`;
                 } else {
-                    rows += `            <div class="col-sm-12">`;
-                    rows += `                <button class="btn btn-orange btn-theme form-control"><i class="fa fa-eye"></i> View</button>`;
-                    rows += `            </div>`;
+                    if (v.status == 'pending') {
+                        rows += `            <div class="col-sm-6 pl0 pr0">`;
+                        rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i> Approve</button>`;
+                        rows += `            </div>`;
+                        rows += `            <div class="col-sm-6 pr0">`;
+                        rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i> Reject</button>`;
+                        rows += `            </div>`;
+                    } else if (v.status == 'approved') {
+                        rows += `            <div class="col-sm-12">`;
+                        rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i> Reject</button>`;
+                        rows += `            </div>`;
+                    } else if (v.status == 'rejected') {
+                        rows += `            <div class="col-sm-12">`;
+                        rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i> Approve</button>`;
+                        rows += `            </div>`;
+                    } else if (v.status == 'cancelled') {
+                        rows += `            <div class="col-sm-6 pl0 pr0">`;
+                        rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i> Approve</button>`;
+                        rows += `            </div>`;
+                        rows += `            <div class="col-sm-6 pr0">`;
+                        rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i> Reject</button>`;
+                        rows += `            </div>`;
+                    } else {
+                        rows += `            <div class="col-sm-12">`;
+                        rows += `                <button class="btn btn-orange btn-theme form-control"><i class="fa fa-eye"></i> View</button>`;
+                        rows += `            </div>`;
+                    }
                 }
-            }
+            }    
         }
         rows += `        </div>`;
         rows += `    </div>`;
@@ -905,7 +913,17 @@ $(function() {
             //
             let action = JSON.parse(his.note);
             //
-            if (action.canApprove == undefined) return;
+            let approvel_rights = '';
+            //
+            if (action.canApprove == undefined) {
+                return;
+            } else {
+                if (action.canApprove == 1) {
+                    approvel_rights = 'Time-off approved 100%';
+                } else if (action.canApprove == 0) {
+                    approvel_rights = 'Time-off approved 50%';
+                } 
+            } 
             //
             let
                 obj = {
@@ -914,7 +932,8 @@ $(function() {
                     time: his.created_at,
                     employeeName: `${his.first_name} ${his.last_name}`,
                     employeeRole: remakeEmployeeName(his, false),
-                    employeeImage: his.image == null || his.image == "" ? awsURL + "test_file_01.png" : awsURL + his.image
+                    employeeImage: his.image == null || his.image == "" ? awsURL + "test_file_01.png" : awsURL + his.image,
+                    employeeCanApprove: approvel_rights
                 };
             //
             if (action.status == "pending") return;
