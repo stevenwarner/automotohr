@@ -5476,14 +5476,10 @@ class Time_off extends Public_Controller
             }
             else
             {
-                // echo '<pre>';
-                // print_r($_POST);
-                // die();
-
                 //
                 $in = [];
                 //
-                $in['level_status'] = $_POST['status'];
+                $in['status'] = $_POST['status'];
                 //
                 $this->timeoff_model->updateTable($in, $_POST['request_sid'], 'timeoff_requests');
                 //
@@ -5494,7 +5490,7 @@ class Time_off extends Public_Controller
                 $in['comment'] = $_POST['comment'];
                 $in['note'] = json_encode([
                     'status' => $_POST['status'], 
-                    'canApprove' => 0, 
+                    'canApprove' => 1, 
                     'comment' => $_POST['comment'],
                     'details' => [
                     ]
@@ -6095,7 +6091,6 @@ class Time_off extends Public_Controller
             break;
         endswitch;
 
-        _e($request, true, true);
         if ($type == "approved" || $type == "rejected") {
             // Get approver template
             $requesterTemplate = $this->timeoff_model->getEmailTemplate(USER_TIMEOFF_REQUEST);
