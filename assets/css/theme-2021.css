@@ -1603,6 +1603,9 @@
     .csInfo {
         color: #b4052c !important;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fee239a4... Added PM report for blue screen
     }
     
     .daterangepicker td.active,
@@ -1648,6 +1651,7 @@
     
     .highcharts-credits {
         display: none;
+<<<<<<< HEAD
     }
     
     .panel-success .panel-heading {
@@ -1692,4 +1696,6 @@
 >>>>>>> d5bced39... Added creatae review step 1 on blue screen
 =======
 >>>>>>> 2798fc44... Added review part of Perfoemance management
+=======
+>>>>>>> fee239a4... Added PM report for blue screen
     }

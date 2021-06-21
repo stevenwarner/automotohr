@@ -77,12 +77,10 @@
     };
 </script>
 
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script type="text/javascript" src="<?=base_url('assets/select2/select2.min.js');?>"></script>
-<script type="text/javascript" src="<?=base_url('assets/js/pagination.min.js');?>"></script>
 <script type="text/javascript" src="<?=base_url('assets/js/moment.min.js');?>"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
-<script type="text/javascript" src="<?=base_url('assets/lodash/loadash.min.js');?>"></script>
-
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <!-- Common functions -->
 <script src="<?=base_url('assets/performance_management/js/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
 <<<<<<< HEAD
@@ -96,4 +94,18 @@
         <?php
     }
 ?>
+<<<<<<< HEAD
 >>>>>>> d5bced39... Added creatae review step 1 on blue screen
+=======
+
+<!-- Report -->
+<?php 
+    if(strpos($this->uri->uri_string(), 'report') !== false){
+        ?>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/report'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+        <?php
+    }
+?>
+>>>>>>> fee239a4... Added PM report for blue screen

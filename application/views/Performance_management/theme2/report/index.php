@@ -11,6 +11,9 @@
         <?php
     } else{
         // Load green view
+<<<<<<< HEAD
         $this->load->view("{$pp}report/gp_report");
+=======
+>>>>>>> fee239a4... Added PM report for blue screen
     }
 ?>

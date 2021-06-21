@@ -384,7 +384,7 @@ class Performance_management extends Public_Controller{
     }
 
     /**
-     * Dashboard
+     * Create Review
      * 
      * @employee Mubashir Ahmed 
      * @date     02/01/2021
@@ -412,6 +412,40 @@ class Performance_management extends Public_Controller{
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}create");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+
+    /**
+     * Report
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function report(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Dashboard';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->GetMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        // Set company department and teams
+        $this->pargs['company_dt'] = $this->pmm->GetCompanyDepartmentAndTeams($this->pargs['companyId']);
+        // Set system provided templates
+        $this->pargs['system_templates'] = $this->pmm->GetCompanyTemplates();
+        // Set company generated templates
+        $this->pargs['company_templates'] = $this->pmm->GetPersonalTemplates($this->pargs['companyId']);
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}report/index");
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
