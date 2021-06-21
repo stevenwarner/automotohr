@@ -229,7 +229,7 @@
             </div>
         <?php } else if ( isset($employee)) { ?>
             <header class="header <?=in_array('iframe', $this->uri->segment_array()) ? 'hidden' : '';?>">
-                <div class="container">
+                <div class="container<?=strtolower($this->router->fetch_class()) == 'performance_management' ? '-fluid' : '';?>">
                     <div class="row">
                         <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
                             <div class="logo">
