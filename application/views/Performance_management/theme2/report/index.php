@@ -12,8 +12,12 @@
     } else{
         // Load green view
 <<<<<<< HEAD
+<<<<<<< HEAD
         $this->load->view("{$pp}report/gp_report");
 =======
 >>>>>>> fee239a4... Added PM report for blue screen
+=======
+        $this->load->view("{$pp}report/gp_report");
+>>>>>>> 822d4f11... Added green panel report
     }
 ?>

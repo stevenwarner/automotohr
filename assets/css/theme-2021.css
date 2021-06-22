@@ -1652,10 +1652,14 @@
     .highcharts-credits {
         display: none;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 822d4f11... Added green panel report
     }
     
     .panel-success .panel-heading {
         background-color: #81b431;
+<<<<<<< HEAD
     }
     
     .csSidebarGP {
@@ -1698,4 +1702,6 @@
 >>>>>>> 2798fc44... Added review part of Perfoemance management
 =======
 >>>>>>> fee239a4... Added PM report for blue screen
+=======
+>>>>>>> 822d4f11... Added green panel report
     }
