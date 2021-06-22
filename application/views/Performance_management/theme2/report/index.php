@@ -11,5 +11,6 @@
         <?php
     } else{
         // Load green view
+        $this->load->view("{$pp}report/gp_report");
     }
 ?>

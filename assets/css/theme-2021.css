@@ -1633,3 +1633,7 @@
     .highcharts-credits {
         display: none;
     }
+    
+    .panel-success .panel-heading {
+        background-color: #81b431;
+    }

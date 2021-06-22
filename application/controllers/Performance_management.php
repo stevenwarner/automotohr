@@ -206,6 +206,7 @@ class Performance_management extends Public_Controller{
         $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 || $data['session']['employer_detail']['pay_plan_flag'] == 1 ? 1 : 0;
         $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
         $data['load_view'] = $data['session']['company_detail']['ems_status'];
+        $data['load_view'] = 0;
         $data['hide_employer_section'] = 1;
         //
         if ($return) {
