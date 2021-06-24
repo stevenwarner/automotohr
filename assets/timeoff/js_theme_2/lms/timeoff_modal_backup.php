@@ -9648,9 +9648,23 @@ class Timeoff_model extends CI_Model
     ){
         //
         $notIds = [];
+        $approvers = [];
         //
         if($post['level'] != 1){
             $notIds = $this->getEmployeeTeamMemberIds($post['employerId']);
+            $subordinateIds = $this->getEmployeeSubordinateIds($post['employerId']);
+            // $subordinateIds = array();
+
+            if (!empty($notIds)) {
+                $approvers = $notIds;
+            }
+
+            // if (!empty($notIds) && !empty($subordinateIds)) {
+                $combine_employees = array_merge($notIds,$subordinateIds);
+                $notIds = array_unique($combine_employees);
+            // }
+
+            
         }
         //
         $this->db
@@ -9677,6 +9691,7 @@ class Timeoff_model extends CI_Model
             $notIds = [];
             $this->db->where('timeoff_requests.employee_sid', $post['employeeId']);
         }
+        //
         if($post['level'] == 0 && empty($notIds)) return [];
         //
         if(!empty($notIds)) $this->db->where_in('timeoff_requests.employee_sid', $notIds);
@@ -9721,7 +9736,25 @@ class Timeoff_model extends CI_Model
             //
             $settings = $this->getSettings($post['companyId']);
             //
+            $is_access_level_plus = 'no';
+            $employee_info = db_get_employee_profile($post['employerId']);
+            //
+            if ($employee_info[0]['access_level_plus'] == 1) {
+                $is_access_level_plus = 'yes';
+            }
+            //
             foreach($requests as $k => $request){
+                if ($is_access_level_plus == 'yes') {
+                    $requests[$k]['allow_update'] = 'yes';
+                } else {    
+
+                    if (in_array($request['employee_sid'], $approvers)) {
+                        $requests[$k]['allow_update'] = 'yes';
+                    } else {
+                        $requests[$k]['allow_update'] = 'no';
+                    }
+                }    
+
                 $requests[$k]['breakdown'] = get_array_from_minutes(
                     $request['requested_time'],
                     (($request['user_shift_hours'] * 60) + $request['user_shift_minutes']) / 60,
@@ -9735,11 +9768,15 @@ class Timeoff_model extends CI_Model
             }
         }
         //
+        // echo '<pre>';
+        // print_r(db_get_employee_profile($post['employerId']));
+        // print_r($post);
+        // die();
         return $requests;
     }
 
     function getEmployeeSubordinateIds ($employerId) {
-        $myTeams = $this->getMyTeams($employerId, 'teams');
+        $myTeams = $this->getMyTeams($employerId);
         //
         $result = array();
         //
@@ -9758,10 +9795,6 @@ class Timeoff_model extends CI_Model
     }
 
     function get_all_employees_to_team($team_sids) {
-        if(empty($team_sids)) {
-            return array();
-        }
-        
         $this->db->select('employee_sid');
         $this->db->where_in('team_sid', $team_sids);
         $record_obj = $this->db->get('departments_employee_2_team');
@@ -9776,7 +9809,7 @@ class Timeoff_model extends CI_Model
     }
 
     function getMyTeams(
-        $sid, $type = 'all'
+        $sid
     ){
         //
         $departments = $this->db
@@ -9851,48 +9884,9 @@ class Timeoff_model extends CI_Model
             $teams = $newDept;
         }
         //
-        if ($type == 'all') {
-            return ['departments' => $departments, 'teams' => $teams];
-        } else {
-            return [ 'teams' => $teams];
-        }
-        // 
-        
+        // return ['departments' => $departments, 'teams' => $teams];
+        return [ 'teams' => $teams];
     }
-
-    function get_all_departments($company_sid) {
-        $this->db->select('sid');
-        $this->db->where('company_sid', $company_sid);
-        $this->db->where('is_deleted', 0);
-        $this->db->where('status', 1);
-        $this->db->order_by('sort_order', 'asc');
-        $record_obj = $this->db->get('departments_management');
-        $record_arr = $record_obj->result_array();
-        $record_obj->free_result();
-        
-        if (!empty($record_arr)) {
-            return array_column($record_arr, 'sid');
-        } else {
-            return array();
-        }
-    }
-
-    function get_all_teams ($company_sid) {
-        $this->db->select('sid');
-        $this->db->where('company_sid', $company_sid);
-        $this->db->where('is_deleted', 0);
-        $this->db->where('status', 1);
-        $this->db->order_by('sort_order', 'asc');
-        $record_obj = $this->db->get('departments_team_management');
-        $record_arr = $record_obj->result_array();
-        $record_obj->free_result();
-        
-        if (!empty($record_arr)) {
-            return array_column($record_arr, 'sid');
-        } else {
-            return array();
-        }    
-    }    
 
     //
     function getMyEmployees($post)
@@ -11846,23 +11840,9 @@ class Timeoff_model extends CI_Model
         ];
     }
 
-    function getAssignDepartmentAndTeams ($employee_sid) {
-        $myTeams = $this->getMyTeams($employee_sid);
-        $all_employees = $this->get_all_employees_to_team($myTeams['teams']);
-        $assign_employees = array_column($all_employees, 'employee_sid');
-        $unique_employees = array_unique($assign_employees);
-        //
-        $data_to_return = array();
-        $data_to_return['departments'] = $myTeams['departments'];
-        $data_to_return['teams'] = $myTeams['teams'];
-        $data_to_return['employees'] = $unique_employees;
-
-        return $data_to_return;
-    }
-
 
     //
-    function getEmployeesWithDepartmentAndTeams($companyId, $employees = 'all', $departments = 'all', $teams = 'all'){
+    function getEmployeesWithDepartmentAndTeams($companyId){
         //
         $this->db->select('
             sid,
@@ -11878,30 +11858,11 @@ class Timeoff_model extends CI_Model
             employee_number,
             joined_at,
             registration_date
-        ');
-
-        // echo '<pre>';
-        // print_r($employees);
-        // print_r($departments);
-        // print_r($teams);
-        // die();
-
-        if ($employees != 'all') {
-            $this->db->or_where_in('sid', $employees);
-        }
-
-        if ($departments != 'all') {
-            $this->db->or_where_in('department_sid', $departments);
-        }
-
-        if ($teams != 'all') {
-            $this->db->or_where_in('team_sid', $teams);
-        }
-        
-        $this->db->where('parent_sid', $companyId);
-        $this->db->where('active', 1);
-        $this->db->where('terminated_status', 0);
-        $this->db->order_by('first_name', 'ASC');
+        ')
+        ->where('parent_sid', $companyId)
+        ->where('active', 1)
+        ->where('terminated_status', 0)
+        ->order_by('first_name', 'ASC');
         // Get employees
         $a = $this->db->get('users');
         $employees = $a->result_array();
@@ -11975,7 +11936,6 @@ class Timeoff_model extends CI_Model
             tr.reason,
             tr.created_at,
             tr.timeoff_days,
-            tr.status,
             u.first_name,
             u.sid as employeeId,
             u.job_title,
@@ -11994,6 +11954,7 @@ class Timeoff_model extends CI_Model
         ->where('tr.company_sid', $companyId)
         ->where('tr.archive', 0)
         ->where('tr.is_draft', 0)
+        ->where('tr.status', 'approved')
         ->order_by('tr.request_from_date', 'ASC');
         //
         if($employeeIds != 'all'){
@@ -12007,6 +11968,7 @@ class Timeoff_model extends CI_Model
         if($endDate && $endDate != 'all'){
             $this->db->where('tr.request_from_date <= ', DateTime::createfromformat('m/d/Y', $endDate)->format('Y-m-d'));
         }
+
         //
         $a = $this->db->get();
         //
@@ -12102,59 +12064,6 @@ class Timeoff_model extends CI_Model
         ->order_by('timeoff_requests.request_from_date', 'ASC')
         ->get('timeoff_requests')
         ->result_array();
-    }
-
-    function getEmployeesWithTimeoffRequest($company_sid, $type, $start_date, $end_date, $get_employees = false) {
-        //
-        
-        if ($type == 'employees_only') {
-            $this->db->select('employee_sid');
-        } else if ($type == 'records_only') {
-            $this->db->select('employee_sid, timeoff_policy_sid, requested_time, allowed_timeoff, request_from_date, request_to_date, status');
-        }
-        //
-        $this->db->where('company_sid', $company_sid);
-        $this->db->where('request_from_date >=', date('Y-m-d', strtotime($start_date)));
-        $this->db->where('request_from_date <=', date('Y-m-d', strtotime($end_date)));
-        $this->db->where('archive', 0);
-        $this->db->where('is_draft', 0);
-        if ($get_employees) {
-            $this->db->select(getUserFields());
-            $this->db->join('users', 'users.sid = timeoff_requests.employee_sid');
-        }
-        $records_obj = $this->db->get('timeoff_requests');
-        $records_arr = $records_obj->result_array();
-        $records_obj->free_result();
-
-        $return_data = array();
-
-        if (!empty($records_arr)) {
-            if ($type == 'employees_only') {
-                $return_data = array_unique(array_column($records_arr, 'employee_sid'));
-            } else if ($type == 'records_only') {
-                $return_data = $records_arr;
-            }
-        }
-
-        return $return_data;
-    }
-
-    function getEPolicyName($policy_sid) {
-        //
-        $this->db->select('title');
-        //
-        $this->db->where('sid', $policy_sid);
-        $records_obj = $this->db->get('timeoff_policies');
-        $records_arr = $records_obj->row_array();
-        $records_obj->free_result();
-
-        $return_data = 'Unknown';
-
-        if (!empty($records_arr)) {
-            $return_data = $records_arr['title'];
-        }
-
-        return $return_data;
     }
 
 }

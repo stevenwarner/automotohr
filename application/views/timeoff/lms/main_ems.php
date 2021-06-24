@@ -14,11 +14,11 @@
                     <li><a href="" class="btn btn-orange jsCreateRequest" id="jsCreateTimeOffForEmployee" title="Create a time off" placement="top"><i
                                 aria-hidden="true" class="fa fa-plus-circle"></i> Create a time off</a></li>
                     <?php } ?>
-                <li><a href="" class="btn btn-orange jsReport" title="Download Report" placement="top"><i
+                <li><a href="" class="btn btn-orange jsReport" title="Download Report" placement="top" id="report_btn" data-action="my"><i
                                 aria-hidden="true" class="fa fa-area-chart"></i> Report</a></li>
-                    <li class="toRight" style="margin-right: 5px;"><a href="" class="csTabAnchor jsTeamShiftTab"
+                    <li class="toRight" style="margin-right: 5px;"><a href="" id="all_time_off" class="csTabAnchor jsTeamShiftTab"
                             title="Show time offs for my team members" placement="top" data-key="0">All Time-off</a></li>
-                    <li class="toRight"><a href="" class="csTabAnchor jsTeamShiftTab active" title="Show my time offs"
+                    <li class="toRight"><a href="" id="my_time_off" class="csTabAnchor jsTeamShiftTab active" title="Show my time offs"
                             placement="top"  data-key="1">My Time-off</a></li>
                 </ul>
                 <div class="clearfix"></div>
@@ -36,3 +36,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    $("#all_time_off").on("click", function () {
+        $("#report_btn").attr('data-action', 'all');
+    });
+
+    $("#my_time_off").on("click", function () {
+        $("#report_btn").attr('data-action', 'my');
+    });
+</script>

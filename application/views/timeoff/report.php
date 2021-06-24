@@ -14,13 +14,26 @@
     }
 
     .timeoff_count{
-        width: 40px;
-        height: 40px;
-        background: #000;
-        padding: 4px;
+        cursor: pointer;
+        text-decoration: underline;
+        color: #3554DC;
+    }
+
+  /*  .timeoff_count:hover{
+        border-bottom: 2px solid #00BFFF;
+    }*/
+
+    .td_setting{
+        vertical-align: middle !important;
+    }
+
+    .subheader{
+        background-color: #444444;
         color: #fff;
-        line-height: 15px;
-        border-radius: 100%;
+    }
+
+    .subheader th{
+        font-size: 16px !important;
     }
 </style>
 
@@ -98,83 +111,91 @@
                                             <label><strong>Filter Employees</strong></label>
                                         </div>
                                         <!--  -->
-                                        <div class="form-group">
-                                            <label>Individual Employees</label>
-                                            <select id="jsIndividualEmployees" multiple="true"><?=$employees;?></select>
-                                        </div>
+                                        <form action="" method="GET" id="form_filter">
+                                            <div class="form-group">
+                                                <label>Individual Employee(s)</label>
+                                                <select multiple="true" id="filter_employees">
+                                                    <?php if (!empty($assign_employees)) { ?>
+                                                        <?php foreach ($assign_employees as $sid) { ?>
+                                                            <option value="<?php echo $sid; ?>" <?php $filter_employees != 'all' && in_array($sid, $filter_employees) ? 'selected="seleccted"' : ''; ?>><?php echo getUserNameBySID($sid); ?></option>
+                                                        <?php } ?>
+                                                    <?php } else { ?>
+                                                        <option value="0">No Employee Found!</option>
+                                                    <?php } ?>
+                                                        
+                                                </select>
+                                            </div>
+                                            <!--  -->
+                                            <div class="form-group">
+                                                <label>Department(s)</label>
+                                                <select multiple="true" id="filter_departments">
+                                                    <?php if (!empty($assign_departments)) { ?>
+                                                        <?php foreach ($assign_departments as $sid) { ?>
+                                                            <option value="<?php echo $sid; ?>"><?php echo getDepartmentNameBySID($sid); ?></option>
+                                                        <?php } ?>
+                                                    <?php } else { ?>
+                                                        <option value="0">No Department Found!</option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <!--  -->
+                                            <div class="form-group">
+                                                <label>Team(s)</label>
+                                                <select multiple="true" id="filter_teams">
+                                                    <?php if (!empty($assign_teams)) { ?>
+                                                        <?php foreach ($assign_teams as $sid) { ?>
+                                                            <option value="<?php echo $sid; ?>"><?php echo getTeamNameBySID($sid); ?></option>
+                                                        <?php } ?>
+                                                    <?php } else { ?>
+                                                        <option value="0">No Team Found!</option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <!--  -->
+                                            <div class="form-group">
+                                                <label>Job Title(s)</label>
+                                                <select id="jsJobTitles" multiple="true">
+                                                <?php 
+                                                if(!empty($jobTitles)){
+                                                    foreach($jobTitles as $job){ ?>
+                                                    <option value="<?=$job[0];?>"><?=$job[1];?></option>
+                                                <?php }    
+                                                } ?>
+                                                </select>
+                                            </div>
+                                            <!--  -->
+                                            <div class="form-group">
+                                                <label>Employment Type(s)</label>
+                                                <select id="jsEmploymentTypes" multiple="true">
+                                                    <option value="fulltime">Full-time</option>
+                                                    <option value="parttime">Part-time</option>
+                                                </select>
+                                            </div>
+                                            <!--  -->
+                                            <div class="form-group">
+                                                <label>Start Date</label>
+                                                <?php $sfd = !empty($start_date) ? $start_date : ''; ?>
+                                                <input type="text" readonly="true" class="form-control" name="startDate" id="jsReportStartDate" value="<?php echo $sfd; ?>"/>
+                                            </div>
+                                            <!--  -->
+                                            <div class="form-group">
+                                                <label>End Date</label>
+                                                <?php $efd = !empty($end_date) ? $end_date : ''; ?>
+                                                <input type="text" readonly="true" class="form-control" name="endDate" id="jsReportEndDate" value="<?php echo $efd; ?>"/>
+                                            </div>
+                                            <input type="hidden" name="token" id="session_key">
+                                            <div class="form-group">
+                                                <button class="btn btn-success form-control" id="apply_filter">Apply Filter</button>
+                                            </div>
+                                        </form>    
                                         <!--  -->
                                         <div class="form-group">
-                                            <label>Departments</label>
-                                            <select id="jsDepartments" multiple="true"><?=$departments;?></select>
-                                        </div>
-                                        <!--  -->
-                                        <div class="form-group">
-                                            <label>Teams</label>
-                                            <select id="jsTeams" multiple="true"><?=$teams;?></select>
-                                        </div>
-                                        <!--  -->
-                                        <div class="form-group">
-                                            <label>Job Titles</label>
-                                            <select id="jsJobTitles" multiple="true">
-                                            <?php 
-                                            if(!empty($jobTitles)){
-                                                foreach($jobTitles as $job){ ?>
-                                                <option value="<?=$job[0];?>"><?=$job[1];?></option>
-                                            <?php }    
-                                            } ?>
-                                            </select>
-                                        </div>
-                                        <!--  -->
-                                        <div class="form-group">
-                                            <label>Employment Types</label>
-                                            <select id="jsEmploymentTypes" multiple="true">
-                                                <option value="fulltime">Full-time</option>
-                                                <option value="parttime">Part-time</option>
-                                            </select>
-                                        </div>
-                                        <!--  -->
-                                        <div class="form-group">
-                                            <label>New Hires</label>
-                                            <select id="jsNewHires">
-                                                <option value="0">[Select]</option>
-                                                <option value="30">Up to 30 days from hire date</option>
-                                                <option value="60">Up to 60 days from hire date</option>
-                                                <option value="90">Up to 90 days from hire date</option>
-                                            </select>
-                                        </div>
-                                        <!--  -->
-                                        <div class="form-group">
-                                            <button class="btn btn-black form-control" id="jsReportClearFilter">Clear Filter</button>
+                                            <a href="<?php echo base_url('timeoff/report'); ?>" class="btn btn-black form-control">Clear Filter</a>
                                         </div>
                                     </div>
                                     <!-- Employee listing area -->
                                     <div class="col-sm-9 col-xs-12">
                                         <!--  -->
-                                        <div class="form-group">
-                                            <label>Select Period</label>
-                                            <div class="row">
-                                                <form action="" method="POST">
-                                                    <div class="col-sm-3 col-xs-12">
-                                                        <?php $sfd = !empty($start_date) ? $start_date : ''; ?>
-                                                        <input type="text" readonly="true" class="form-control" name="reportStartDate" id="jsReportStartDate" value="<?php echo $sfd; ?>"/>
-                                                    </div>
-                                                    <div class="col-sm-1 hidden-xs">
-                                                        <p class="ma10" style="text-align: center;"><i class="fa fa-minus" aria-hidden="true"></i></p>
-                                                    </div>
-                                                    <div class="col-sm-3 col-xs-12">
-                                                        <?php $efd = !empty($end_date) ? $end_date : ''; ?>
-                                                        <input type="text" readonly="true" class="form-control" name="reportEndDate" id="jsReportEndDate" value="<?php echo $efd; ?>"/>
-                                                    </div>
-                                                    <div class="col-sm-2 col-xs-12">
-                                                        <button class="btn btn-success form-control">Apply Filter</button>
-                                                    </div>
-                                                </form>
-                                                
-                                                <div class="col-sm-2 col-xs-12">
-                                                    <a href="<?php echo base_url('timeoff/report'); ?>" class="btn btn-black form-control">Clear Filter</a>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <!--  -->
                                         <div class="table-responsive">
                                             <table class="table table-striped table-condensed">
@@ -184,7 +205,7 @@
                                                         <th scope="col">Employee Name / Role / ID</th>
                                                         <th scope="col">Department</th>
                                                         <th scope="col">Team</th>
-                                                        <th scope="col">Time Off</th>
+                                                        <th scope="col"># of Requests</th>
                                                         <th scope="col">Actions</th>
                                                     </tr>
                                                 </thead>
@@ -198,7 +219,7 @@
                                                             <br /><?=remakeEmployeeName($emp, false);?>
                                                             <br><?=!empty($emp['employee_number']) ? $emp['employee_number'] : $emp['sid'];?>
                                                         </td>
-                                                        <td>
+                                                        <td class="td_setting">
                                                             <?php 
                                                                 if(!empty($emp['DepartmentIds'])){
                                                                     //
@@ -213,7 +234,7 @@
                                                                 }
                                                             ?>
                                                         </td>
-                                                        <td>
+                                                        <td class="td_setting">
                                                             <?php 
                                                                 if(!empty($emp['TeamIds'])){
                                                                     //
@@ -228,42 +249,55 @@
                                                                 }
                                                             ?>
                                                         </td>
-                                                        <td>
-                                                            <span class="timeoff_count" data-status="hide" data-id="timeoff_<?php echo $emp['sid']; ?>" data-toggle="tooltip" data-placement="top" title="<?php echo count($emp['timeoffs']).' Time off'; ?>"><?php echo count($emp['timeoffs']); ?></span>
+                                                        <td class="td_setting">
+                                                            <span class="timeoff_count" data-status="hide" data-id="timeoff_<?php echo $emp['sid']; ?>" data-toggle="tooltip" data-placement="top" title="Click to see request!">
+                                                                <?php 
+                                                                    $count = count($emp['timeoffs']); 
+                                                                    echo $count .' Request(s)';
+                                                                ?>
+                                                            </span>
                                                         </td>
-                                                        <td>
+                                                        <td class="td_setting">
                                                             <a class="btn btn-success jsReportLink" target="_blank" href="<?=base_url("timeoff/report/print/".( $emp['sid'] )."");?>">
-                                                                <i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print Report
+                                                                <i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print
                                                             </a>
                                                             <a class="btn btn-success jsReportLink" target="_blank" href="<?=base_url("timeoff/report/download/".( $emp['sid'] )."");?>">
-                                                                <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download Report
+                                                                <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download
                                                             </a>
                                                         </td>
                                                     </tr>
                                                     <?php if (!empty($emp['timeoffs'])) { ?>
                                                         <!-- <div class="row" > -->
-                                                            <tr class="timeoff_<?php echo $emp['sid']; ?>" style="display: none;">
-                                                                <th>Policy Name</th>
-                                                                <th>Request Time</th>
-                                                                <th>Start Time</th>
-                                                                <th>End Time</th>
-                                                                <th>Request Status</th>
+                                                            <tr class="timeoff_<?php echo $emp['sid']; ?> subheader" style="display: none;">
+                                                                <th style="font-size: 14px !important;">Policy</th>
+                                                                <th style="font-size: 14px !important;">Time Taken</th>
+                                                                <th style="font-size: 14px !important;">Start Date</th>
+                                                                <th style="font-size: 14px !important;">End Date</th>
+                                                                <th style="font-size: 14px !important;">Status</th>
                                                             </tr>
                                                             <?php foreach ($emp['timeoffs'] as $timeoff) { ?>
                                                                 <tr class="timeoff_<?php echo $emp['sid']; ?>" style="display: none;">
                                                                     <td><?php echo $timeoff['policy_name']; ?></td>
                                                                     <?php 
                                                                         $hours = floor($timeoff['requested_time'] / 60); 
-                                                                        if ($hours > 1) {
-                                                                            $hours = $hours.' Hours';
-                                                                        } else {
-                                                                            $hours = $hours.' Hour';
-                                                                        }
+                                                                        $hours = $hours.' Hour(s)';
                                                                     ?>
                                                                     <td><?php echo $hours; ?></td>
                                                                     <td><?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_from_date'])->format('m/d/Y'); ?></td>
                                                                     <td><?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_to_date'])->format('m/d/Y'); ?></td>
-                                                                    <td><?php echo $timeoff['status']; ?></td>
+                                                                    <td>
+                                                                        <?php 
+                                                                            $status = $timeoff['status']; 
+
+                                                                            if ($status == 'approved') {
+                                                                                echo '<p class="text-success"><b>APPROVED</b></p>';
+                                                                            } else if ($status == 'rejected') {
+                                                                                echo '<p class="text-danger"><b>REJECTED</b></p>';
+                                                                            } else if ($status == 'pending') {
+                                                                                echo '<p class="text-warning"><b>PENDING</b></p>';
+                                                                            }
+                                                                        ?>  
+                                                                    </td>
                                                                 </tr>
                                                             <?php } ?>
                                                         <!-- </div>    -->
@@ -294,88 +328,103 @@
             </div>
             <div class="modal-body" style="float: none;">
                 <div class="row">
-            <div class="col-xs-6">
-                <p>Company: <strong><?=$session['company_detail']['CompanyName'];?></strong></p>
-                <p>Employee Name: <strong><?=ucwords($session['employer_detail']['first_name'].' '.$session['employer_detail']['last_name']);?> <?=remakeEmployeeName($session['employer_detail'], false);?></strong></p>
-                <p>Report Period: <strong>
-                <?php 
-                    if($this->input->get('start', true) && $this->input->get('end', true)){
-                        echo $this->input->get('start', true).' - '.$this->input->get('end', true);
-                    } else if($this->input->get('start', true)){
-                        echo $this->input->get('start', true).' - N/A';
-                    } else if($this->input->get('end', true)){
-                        echo 'N/A - '.$this->input->get('end', true);
-                    } else{
-                        echo 'N/A';
-                    }
-                    ?>
-                </strong>
-                <p>
-            </div>
-            <div class="col-xs-6">
-               <p class="text-right">Report Date <strong><?=date('m/d/Y H:i', strtotime('now'));?></strong></p>
-            </div>
-            <hr />
-        </div>
-        <table class="table table-striped table-condensed table-bordered">
-            <caption></caption>
-            <thead>
-                <tr>
-                    <th scope="col">Employee</th>
-                    <th scope="col">Policy</th>
-                    <th scope="col">Time Taken</th>
-                    <th scope="col">Start Date</th>
-                    <th scope="col">End Date</th>
-                    <th scope="col">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($company_employees)) { ?>
-                    <?php foreach($company_employees as $employee) { ?>
-                        
-                            <?php 
-                                $employee_name = ucwords($employee['first_name'].' '.$employee['last_name']);
-                                $employee_role = remakeEmployeeName($employee, false);
-                                $employee_no = !empty($employee['employee_number']) ? $employee['employee_number'] : $employee['sid'];
+                    <div class="col-xs-6">
+                        <p>Company: <strong><?=$session['company_detail']['CompanyName'];?></strong></p>
+                        <p>Employee Name: <strong><?=ucwords($session['employer_detail']['first_name'].' '.$session['employer_detail']['last_name']);?> <?=remakeEmployeeName($session['employer_detail'], false);?></strong></p>
+                        <p>Report Period: <strong>
+                        <?php 
+                            if ($this->input->get('start', true) && $this->input->get('end', true)) {
+                                echo $this->input->get('start', true).' - '.$this->input->get('end', true);
+                            } else if ($this->input->get('start', true)) {
+                                echo $this->input->get('start', true).' - N/A';
+                            } else if ($this->input->get('end', true)) {
+                                echo 'N/A - '.$this->input->get('end', true);
+                            } else {
+                                echo 'N/A';
+                            }
                             ?>
-                            <? foreach ($employee['timeoffs'] as $timeoff) { ?>
-                                <tr>
-                                    <td>
-                                        <strong>
-                                            <?php echo $employee_name; ?>
-                                        </strong>   
-                                        <br>
-                                        <?php echo $employee_role; ?>
-                                        <br>
-                                        <?php echo $employee_no; ?>
-                                    </td>
-                                    <td><?php echo $timeoff['policy_name']; ?></td>
+                        </strong>
+                        <p>
+                    </div>
+                    <div class="col-xs-6">
+                        <p class="text-right">Report Date <strong><?=date('m/d/Y H:i', strtotime('now'));?></strong></p>
+                    </div>
+                    <hr />
+                    <div class="col-xs-12 text-right">
+                        <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?=base_url("timeoff/report/print");?>"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print Report</a>
+                        <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?=base_url("timeoff/report/download");?>"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download Report</a>
+                    </div>
+                </div>
+                <table class="table table-striped table-condensed table-bordered">
+                    <caption></caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Policy</th>
+                            <th scope="col">Time Taken</th>
+                            <th scope="col">Start Date</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($company_employees)) { ?>
+                            <?php foreach($company_employees as $employee) { ?>
+                                
                                     <?php 
-                                        $hours = floor($timeoff['requested_time'] / 60); 
-                                        if ($hours > 1) {
-                                            $hours = $hours.' Hours';
-                                        } else {
-                                            $hours = $hours.' Hour';
-                                        }
+                                        $employee_name = ucwords($employee['first_name'].' '.$employee['last_name']);
+                                        $employee_role = remakeEmployeeName($employee, false);
+                                        $employee_no = !empty($employee['employee_number']) ? $employee['employee_number'] : $employee['sid'];
                                     ?>
-                                    <td><?php echo $hours; ?></td>
-                                    <td>
-                                        <?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_from_date'])->format('m/d/Y'); ?>
-                                    </td>
-                                    <td>
-                                        <?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_to_date'])->format('m/d/Y'); ?>
-                                    </td>
-                                    <td><?php echo $timeoff['status']; ?></td>
-                                </tr>
+                                    <? foreach ($employee['timeoffs'] as $timeoff) { ?>
+                                        <tr>
+                                            <td>
+                                                <strong>
+                                                    <?php echo $employee_name; ?>
+                                                </strong>   
+                                                <br>
+                                                <?php echo $employee_role; ?>
+                                                <br>
+                                                <?php echo $employee_no; ?>
+                                            </td>
+                                            <td><?php echo $timeoff['policy_name']; ?></td>
+                                            <?php 
+                                                $hours = floor($timeoff['requested_time'] / 60); 
+                                                if ($hours > 1) {
+                                                    $hours = $hours.' Hours';
+                                                } else {
+                                                    $hours = $hours.' Hour';
+                                                }
+                                            ?>
+                                            <td><?php echo $hours; ?></td>
+                                            <td>
+                                                <?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_from_date'])->format('m/d/Y'); ?>
+                                            </td>
+                                            <td>
+                                                <?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_to_date'])->format('m/d/Y'); ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                    $status = $timeoff['status']; 
+
+                                                    if ($status == 'approved') {
+                                                        echo '<p class="text-success"><b>APPROVED</b></p>';
+                                                    } else if ($status == 'rejected') {
+                                                        echo '<p class="text-danger"><b>REJECTED</b></p>';
+                                                    } else if ($status == 'pending') {
+                                                        echo '<p class="text-warning"><b>PENDING</b></p>';
+                                                    }
+                                                ?> 
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                
                             <?php } ?>
-                        
-                    <?php } ?>
-                <?php } else { ?>
-                    <tr><td colspan="5">Sorry, no records found.</td></tr>;
-                <?php } ?>
-            </tbody>
-        </table>
-                
+                        <?php } else { ?>
+                            <tr><td colspan="5">Sorry, no records found.</td></tr>;
+                        <?php } ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -384,6 +433,9 @@
 <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 <script>
     //
+    $('#filter_employees').select2({ closeOnSelect: false });
+    $('#filter_departments').select2({ closeOnSelect: false });
+    $('#filter_teams').select2({ closeOnSelect: false });
     let employeeList = <?=json_encode($company_employees);?>;
 
     $('#view_report').on("click", function () {
@@ -402,5 +454,38 @@
             $(this).attr('data-status', 'hide');
         }
         
+    });
+
+    $("#apply_filter").on("click", function (event) {
+        event.preventDefault();
+        var employees = $("#filter_employees").val();
+        var departments = $("#filter_departments").val();
+        var teams = $("#filter_teams").val();
+
+        var form_data = new FormData();
+        form_data.append('employees', employees);
+        form_data.append('departments', departments);
+        form_data.append('teams', teams);
+        form_data.append('action', 'generate_session');
+
+         ml(true, 'report');
+        $.ajax({
+            url: '<?= base_url('timeoff/generateFilterSession') ?>',
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'post',
+            data: form_data,
+            success: function (resp) {
+                 ml(false, 'report');
+                 if (resp.status == 'success') {
+                    $("#session_key").val(resp.token);
+                    $("#form_filter").submit();
+                 }
+                
+            },
+            error: function () {
+            }
+        });
     })
 </script>

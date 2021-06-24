@@ -910,24 +910,48 @@ class Time_off extends Public_Controller
         $data = array();
         $this->check_login($data);
         //
-        if ($_POST) {
-            $start_date = $_POST['reportStartDate'];
-            $end_date  = $_POST['reportEndDate'];
+        if ($_GET) {
+            // $filter_session = $this->session->flashdata($_GET['token']);
+            $filter_session = $this->session->userdata($_GET['token']);
+            $filter_employees = $filter_session['employees'] != null ? explode(',', $filter_session['employees']) : 'all';
+            $filter_departments =  $filter_session['departments'] != 'null' ? explode(',', $filter_session['departments']) : 'all';
+            $filter_teams = $filter_session['teams'] != null ? explode(',', $filter_session['teams']) : 'all';
+        
+            $start_date = $_GET['startDate'];
+            $end_date  = $_GET['endDate'];
         } else {
             $start_date = date('m/01/Y');
             $end_date  = date('m/t/Y');
+            $filter_employees = "all";
+            $filter_departments = "all";
+            $filter_teams = "all";
         }
-        
         //
         $data['page'] = 'view';
         $data['title'] = 'Report::time-off';
         //
         $empTimeoff = $this->timeoff_model->getEmployeesWithTimeoffRequest($data['company_sid'], 'employees_only', $start_date, $end_date);
         $timeoffRequests = $this->timeoff_model->getEmployeesWithTimeoffRequest($data['company_sid'], 'records_only', $start_date, $end_date);
-        $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($data['company_sid']);
+        $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($data['company_sid'], $filter_employees, $filter_departments, $filter_teams);
+        //
+        $access_level_plus = $data['session']['employer_detail']['access_level_plus'];
+        $employee_sid = $data['session']['employer_detail']['sid'];
+        //
+        if ($access_level_plus == 0) {
+            $getEmployeeDepartmentsTeams = $this->timeoff_model->getAssignDepartmentAndTeams($employee_sid);
+            $data['assign_departments'] = $getEmployeeDepartmentsTeams['departments'];
+            $data['assign_teams'] = $getEmployeeDepartmentsTeams['teams'];
+            $data['assign_employees'] = $getEmployeeDepartmentsTeams['employees'];
+        } else if ($access_level_plus == 1) {
+            $company_employees_filter = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($data['company_sid']);
+            $data['assign_departments'] = $this->timeoff_model->get_all_departments($data['company_sid']);
+            $data['assign_teams'] = $this->timeoff_model->get_all_teams($data['company_sid']);
+            $data['assign_employees'] = array_column($company_employees_filter, 'sid');
+        }
+        
         //
         foreach ($company_employees as $ekey => $employee) {
-            if (!in_array($employee['sid'], $empTimeoff)) {
+            if (!in_array($employee['sid'], $empTimeoff) || !in_array($employee['sid'], $data['assign_employees'])) {
                 unset($company_employees[$ekey]);
             } else {
                 foreach ($timeoffRequests as $tkey => $request) {
@@ -940,9 +964,11 @@ class Time_off extends Public_Controller
             }
         }
         //
+        
         // echo '<pre>';
-        // print_r($company_employees);
-        // die();
+        // echo print_r($data['assign_departments']);
+        // echo print_r($data['assign_teams']);
+        // die('stop');
         //
         
         //
@@ -952,10 +978,224 @@ class Time_off extends Public_Controller
         //
         $data['start_date'] = $start_date;
         $data['end_date'] = $end_date;
+        $data['filter_employees'] = $filter_employees;
+        $data['filter_departments'] = $filter_departments;
+        $data['filter_teams'] = $filter_teams;
         //
         $this->load->view('main/header', $data);
         $this->load->view('timeoff/report');
         $this->load->view('main/footer');
+    }
+
+    public function generateFilterSession()
+    {
+        $session = $this->session->userdata('logged_in');
+        $token = date('Y_m_d_H_i_s').'_'.$session['company_detail']['sid'];
+        // $this->session->set_flashdata($token, $_POST);
+        $this->session->set_userdata($token, $_POST);
+        $this->res['Response'] = 'Token generated.';
+        $this->res['token'] = $token;
+        $this->res['status'] = 'success';
+        $this->resp();
+        exit();
+    }
+
+    public function get_employee_status ($employee_sid) {
+        $session = $this->session->userdata('logged_in');
+        $company_sid = $session['company_detail']['sid'];
+        $access_level_plus = $session['employer_detail']['access_level_plus'];
+
+        $allow_access = 'no';
+
+        if ($access_level_plus == 0) {
+            $getEmployeeDepartmentsTeams = $this->timeoff_model->getAssignDepartmentAndTeams($employee_sid);
+            $this->res['assign_departments'] = $getEmployeeDepartmentsTeams['departments'];
+            $this->res['assign_teams'] = $getEmployeeDepartmentsTeams['teams'];
+            $this->res['assign_employees'] = $getEmployeeDepartmentsTeams['employees'];
+
+            if (!empty($getEmployeeDepartmentsTeams['employees'])) {
+                $allow_access = 'yes';
+            }
+        } else if ($access_level_plus == 1) {
+            $company_employees_filter = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($company_sid);
+            $this->res['assign_departments'] = $this->timeoff_model->get_all_departments($company_sid);
+            $this->res['assign_teams'] = $this->timeoff_model->get_all_teams($company_sid);
+            $this->res['assign_employees'] = array_column($company_employees_filter, 'sid');
+            $allow_access = 'yes';
+        }
+
+        $this->res['allow_access'] = $allow_access;
+        $this->res['status'] = 'success';
+        $this->resp();
+        exit();
+    }
+
+    public function get_report($employee_sid) {
+        $session = $this->session->userdata('logged_in');
+        $company_sid = $session['company_detail']['sid'];
+        $access_level_plus = $session['employer_detail']['access_level_plus'];
+
+        if ($_GET) {
+            $filter_employees = isset($_GET['employees']) ? explode(',', $_GET['employees']) : 'all';
+            $filter_departments =  isset($_GET['departments']) ? explode(',', $_GET['departments']) : 'all';
+            $filter_teams = isset($_GET['teams']) ? explode(',', $_GET['teams']) : 'all';
+        
+            $start_date = $_GET['startDate'];
+            $end_date  = $_GET['endDate'];
+        } else {
+            $start_date = date('m/01/Y');
+            $end_date  = date('m/t/Y');
+            $filter_employees = "all";
+            $filter_departments = "all";
+            $filter_teams = "all";
+        }
+        //
+        $data['page'] = 'view';
+        $data['title'] = 'Report::time-off';
+        //
+        $empTimeoff = $this->timeoff_model->getEmployeesWithTimeoffRequest($company_sid, 'employees_only', $start_date, $end_date);
+        $timeoffRequests = $this->timeoff_model->getEmployeesWithTimeoffRequest($company_sid, 'records_only', $start_date, $end_date);
+        $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($company_sid, $filter_employees, $filter_departments, $filter_teams);
+        //
+        
+        //
+        if ($access_level_plus == 0) {
+            $getEmployeeDepartmentsTeams = $this->timeoff_model->getAssignDepartmentAndTeams($employee_sid);
+            $data['assign_departments'] = $getEmployeeDepartmentsTeams['departments'];
+            $data['assign_teams'] = $getEmployeeDepartmentsTeams['teams'];
+            $data['assign_employees'] = !empty($getEmployeeDepartmentsTeams['employees']) ? $getEmployeeDepartmentsTeams['employees'] : [$employee_sid];
+        } else if ($access_level_plus == 1) {
+            $company_employees_filter = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($company_sid);
+            $data['assign_departments'] = $this->timeoff_model->get_all_departments($company_sid);
+            $data['assign_teams'] = $this->timeoff_model->get_all_teams($company_sid);
+            $data['assign_employees'] = array_column($company_employees_filter, 'sid');
+        }
+        
+        //
+        foreach ($company_employees as $ekey => $employee) {
+            if (!in_array($employee['sid'], $empTimeoff) || !in_array($employee['sid'], $data['assign_employees'])) {
+                unset($company_employees[$ekey]);
+            } else {
+                foreach ($timeoffRequests as $tkey => $request) {
+                    if ($employee['sid'] == $request['employee_sid']) {
+                        $policy_sid = $request['timeoff_policy_sid'];
+                        $request['policy_name'] = $this->timeoff_model->getEPolicyName($policy_sid);
+                        $company_employees[$ekey]['timeoffs'][$tkey] = $request;
+                    }
+                }
+            }
+        }
+        //
+        
+        // echo '<pre>';
+        // echo print_r($data['assign_departments']);
+        // echo print_r($data['assign_teams']);
+        // die('stop');
+        //
+        $modal = '';
+        if(!empty($company_employees)) { 
+            foreach($company_employees as $emp) { 
+                $modal.='<tr class="jsReportEmployeeRow" data-id="'.$emp["sid"].'">';
+                $modal.=    '<td>';
+                $modal.=        '<strong>'.ucwords($emp["first_name"].' '.$emp["last_name"]).'</strong>';
+                $modal.=            '<br />'.remakeEmployeeName($emp, false);
+                $modal.=            '<br>'. !empty($emp['employee_number']) ? $emp['employee_number'] : $emp['sid'];
+                $modal.=    '</td>';
+                $modal.=    '<td class="td_setting">' ;
+                        if(!empty($emp['DepartmentIds'])){
+                            //
+                            $t = '';
+                            foreach($emp['DepartmentIds'] as $v){
+                                $t .= getDepartmentNameBySID($v).', ';
+                            }
+                            //
+                $modal.=            rtrim($t, ', ');
+                        } else{
+                $modal.=            'N/A';
+                        }
+                $modal.=    '</td>';
+                $modal.=    '<td class="td_setting">';
+                                                            
+                        if(!empty($emp['TeamIds'])){
+                            //
+                            $t = '';
+                            foreach($emp['TeamIds'] as $v){
+                                $t .= getTeamNameBySID($v).', ';
+                            }
+                            //
+                $modal.=            rtrim($t, ', ');
+                        } else{
+                $modal.=            'N/A';
+                        }
+                $modal.=    '</td>';
+                $modal.=    '<td class="td_setting">';
+                $modal.=        '<span class="timeoff_count" data-status="hide" data-id="timeoff_'.$emp['sid'].'" data-toggle="tooltip" data-placement="top" title="Click to see request!">';
+                            $count = count($emp['timeoffs']); 
+                $modal.=            $count .' Request(s)';
+                $modal.=        '</span>';
+                $modal.=    '</td>';
+                $modal.=    '<td class="td_setting">';
+                $print_url = base_url('timeoff/report/print/'.$emp["sid"]);
+                $download_url = base_url('timeoff/report/download/'.$emp["sid"]);
+                $modal.=        '<a class="btn btn-success jsReportLink" target="_blank" href="'. $print_url .'">';
+                $modal.=            '<i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print';
+                $modal.=        '</a>';
+                $modal.=        '<a class="btn btn-success jsReportLink" target="_blank" href="'. $download_url .'">';
+                $modal.=            '<i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download';
+                $modal.=        '</a>';
+                $modal.=    '</td>';
+                $modal.='</tr>';
+                if (!empty($emp['timeoffs'])) { 
+                                                        
+                $modal.=    '<tr class="timeoff_'.$emp["sid"].' subheader" style="display: none;">';
+                $modal.=       '<th style="font-size: 14px !important;">Policy</th>';
+                $modal.=        '<th style="font-size: 14px !important;">Time Taken</th>';
+                $modal.=        '<th style="font-size: 14px !important;">Start Date</th>';
+                $modal.=        '<th style="font-size: 14px !important;">End Date</th>';
+                $modal.=        '<th style="font-size: 14px !important;">Status</th>';
+                $modal.=    '</tr>';
+                    foreach ($emp['timeoffs'] as $timeoff) {
+                $modal.=        '<tr class="timeoff_'.$emp['sid'].'" style="display: none;">';
+                $modal.=            '<td>'.$timeoff['policy_name'].'</td>';
+                            
+                                $hours = floor($timeoff['requested_time'] / 60); 
+                                $hours = $hours.' Hour(s)';
+                            
+                $modal.=            '<td>'.$hours.'</td>';
+                $modal.=            '<td>'. DateTime::createfromformat('Y-m-d', $timeoff['request_from_date'])->format('m/d/Y').'</td>';
+                $modal.=            '<td>'. DateTime::createfromformat('Y-m-d', $timeoff['request_to_date'])->format('m/d/Y').'</td>';
+                $modal.=            '<td>';
+                                $status = $timeoff['status']; 
+
+                                if ($status == 'approved') {
+                $modal.=                    '<p class="text-success"><b>APPROVED</b></p>';
+                                } else if ($status == 'rejected') {
+                $modal.=                   '<p class="text-danger"><b>REJECTED</b></p>';
+                                } else if ($status == 'pending') {
+                $modal.=                    '<p class="text-warning"><b>PENDING</b></p>';
+                                }
+                $modal.=           '</td>';
+                $modal.=        '</tr>';
+                    }                                
+                }
+            }
+        }        
+        
+        //
+        $this->res['company_employees'] = $company_employees;
+        //
+        $this->res['start_date'] = $start_date;
+        $this->res['end_date'] = $end_date;
+        $this->res['filter_employees'] = $filter_employees;
+        $this->res['filter_departments'] = $filter_departments;
+        $this->res['filter_teams'] = $filter_teams;
+        $this->res['modal'] = $modal;
+
+
+        $this->res['data'] = $company_employees;
+        $this->res['Response'] = 'Proceed.';
+        $this->resp();
+        exit();
     }
     
     
@@ -976,6 +1216,8 @@ class Time_off extends Public_Controller
             $this->input->get('start', true),
             $this->input->get('end', true)
         );
+        // echo DateTime::createfromformat('m/d/Y', $this->input->get('start', true))->format('Y-m-d').'<br>';
+        // echo DateTime::createfromformat('m/d/Y', $this->input->get('end', true))->format('Y-m-d').'<br>';
         //
         $this->load->view('timeoff/'.(strtolower(trim($action))).'_report', $data);
     }
