@@ -793,6 +793,10 @@
         padding-top: 0 !important;
     }
     
+    .pb0 {
+        padding-bottom: 0 !important;
+    }
+    
     .pa10 {
         padding-top: 10px !important;
     }
@@ -1400,7 +1404,7 @@
     }
     
     .csRatingBar li:not(.active):hover {
-        background-color: #444;
+        background-color: #fd7b5b;
     }
     
     .csRatingBar li:not(.active):hover p {
@@ -1549,6 +1553,10 @@
         color: #fff !important;
     }
     
+    .panel-theme {
+        border: 1px solid #ccc;
+    }
+    
     .csRatingScale ul {
         list-style: none;
         margin: 10px 0;
@@ -1636,4 +1644,40 @@
     
     .panel-success .panel-heading {
         background-color: #81b431;
+    }
+    
+    .csSidebarGP {
+        background-color: #ffffff !important;
+    }
+    
+    .csSidebarGP p {
+        color: #000 !important;
+    }
+    
+    @media only screen and (max-width: 600px) {
+        .csRatingBar li {
+            display: block;
+            width: 99%;
+        }
+    }
+    
+    .csTabMenu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .csTabMenu li {
+        display: inline-block;
+        background-color: #81b431;
+        color: #fff;
+        padding: 10px;
+        padding-bottom: 20px;
+        margin: 0;
+    }
+    
+    .csTabMenu li.active,
+    .csTabMenu li:hover {
+        background-color: #ffffff;
+        color: #333;
     }

@@ -39,4 +39,7 @@
             </ul>
         </div>
     </div>
+    <!--  -->
+    <?php $this->load->view("{$pp}review_sidebar_bl"); ?>
+    <?php //$this->load->view("{$pp}left_sidebar_feedback_blue"); ?>
 </div>

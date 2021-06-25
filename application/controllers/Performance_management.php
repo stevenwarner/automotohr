@@ -81,6 +81,82 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
+    
+    
+    /**
+     * Dashboard
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function feedback(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Feedback';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}feedback");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+   
+    /**
+     * Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function reviews(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Feedback';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}reviews");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+    
+    /**
+     * Review
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function review(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Feedback';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}review");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
 
     /**
      * Create Review
@@ -206,7 +282,7 @@ class Performance_management extends Public_Controller{
         $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 || $data['session']['employer_detail']['pay_plan_flag'] == 1 ? 1 : 0;
         $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
         $data['load_view'] = $data['session']['company_detail']['ems_status'];
-        $data['load_view'] = 0;
+        // $data['load_view'] = 0;
         $data['hide_employer_section'] = 1;
         //
         if ($return) {
