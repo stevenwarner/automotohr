@@ -1314,9 +1314,15 @@ $route['eeoc_form_submit']['post'] = 'Home/eeoc_form_submit';
 
 // 
 <<<<<<< HEAD
+<<<<<<< HEAD
 $route['performance-management/get-template-questions/(:any)/(:num)']['get'] = 'Performance_management/template_questions/$2/$1';
 $route['performance-management/feedback']['get'] = 'Performance_management/feedback';
 $route['performance-management/review']['get'] = 'Performance_management/review';
 =======
 $route['performance-management/get-template-questions/(:any)/(:num)']['get'] = 'Performance_management/template_questions/$2/$1';
 >>>>>>> 2798fc44... Added review part of Perfoemance management
+=======
+$route['performance-management/get-template-questions/(:any)/(:num)']['get'] = 'Performance_management/template_questions/$2/$1';
+$route['performance-management/feedback']['get'] = 'Performance_management/feedback';
+$route['performance-management/review']['get'] = 'Performance_management/review';
+>>>>>>> 45220c87... Updated reviews, single review, and review list designs
