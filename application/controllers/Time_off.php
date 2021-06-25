@@ -1009,19 +1009,52 @@ class Time_off extends Public_Controller
 
         if ($access_level_plus == 0) {
             $getEmployeeDepartmentsTeams = $this->timeoff_model->getAssignDepartmentAndTeams($employee_sid);
-            $this->res['assign_departments'] = $getEmployeeDepartmentsTeams['departments'];
-            $this->res['assign_teams'] = $getEmployeeDepartmentsTeams['teams'];
-            $this->res['assign_employees'] = $getEmployeeDepartmentsTeams['employees'];
+            $assign_departments = $getEmployeeDepartmentsTeams['departments'];
+            $assign_teams = $getEmployeeDepartmentsTeams['teams'];
+            $assign_employees = $getEmployeeDepartmentsTeams['employees'];
 
             if (!empty($getEmployeeDepartmentsTeams['employees'])) {
                 $allow_access = 'yes';
             }
         } else if ($access_level_plus == 1) {
             $company_employees_filter = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($company_sid);
-            $this->res['assign_departments'] = $this->timeoff_model->get_all_departments($company_sid);
-            $this->res['assign_teams'] = $this->timeoff_model->get_all_teams($company_sid);
-            $this->res['assign_employees'] = array_column($company_employees_filter, 'sid');
+            $assign_departments = $this->timeoff_model->get_all_departments($company_sid);
+            $assign_teams = $this->timeoff_model->get_all_teams($company_sid);
+            $assign_employees = array_column($company_employees_filter, 'sid');
             $allow_access = 'yes';
+        }
+
+        if ($allow_access == 'yes') {
+            
+            $department_option = '';
+
+            if (!empty($assign_departments)) {
+                foreach ($assign_departments as $department) {
+                    $department_option .= '<option value="'.$department.'">'.getDepartmentNameBySID($department).'</option>';
+                }
+            }
+            
+            $this->res['department'] = $department_option;
+
+            $team_option = '';
+
+            if (!empty($assign_teams)) {
+                foreach ($assign_teams as $team) {
+                    $team_option .= '<option value="'.$team.'">'.getTeamNameBySID($team).'</option>';
+                }
+            }
+            
+            $this->res['team'] = $team_option;
+
+            $employees_option = '';
+
+            if (!empty($assign_employees)) {
+                foreach ($assign_employees as $employee) {
+                    $employees_option .= '<option value="'.$employee.'">'.getUserNameBySID($employee).'</option>';
+                }
+            }
+            
+            $this->res['employee'] = $employees_option;
         }
 
         $this->res['allow_access'] = $allow_access;
@@ -1040,14 +1073,16 @@ class Time_off extends Public_Controller
             $filter_departments =  isset($_GET['departments']) ? explode(',', $_GET['departments']) : 'all';
             $filter_teams = isset($_GET['teams']) ? explode(',', $_GET['teams']) : 'all';
         
-            $start_date = $_GET['startDate'];
-            $end_date  = $_GET['endDate'];
+            $start_date = isset($_GET['startDate']) ? $_GET['startDate'] : date('m/01/Y');
+            $end_date = isset($_GET['endDate']) ? $_GET['endDate'] : date('m/t/Y');
+            $request_type = isset($_GET['request_type']) ? $_GET['request_type'] : 'my';
         } else {
             $start_date = date('m/01/Y');
             $end_date  = date('m/t/Y');
             $filter_employees = "all";
             $filter_departments = "all";
             $filter_teams = "all";
+            $request_type = 'my';
         }
         //
         $data['page'] = 'view';
@@ -1073,14 +1108,28 @@ class Time_off extends Public_Controller
         
         //
         foreach ($company_employees as $ekey => $employee) {
-            if (!in_array($employee['sid'], $empTimeoff) || !in_array($employee['sid'], $data['assign_employees'])) {
-                unset($company_employees[$ekey]);
+            if ($request_type == 'my') {
+                if ($employee_sid != $employee['sid']) {
+                    unset($company_employees[$ekey]);
+                } else {
+                    foreach ($timeoffRequests as $tkey => $request) {
+                        if ($employee['sid'] == $request['employee_sid']) {
+                            $policy_sid = $request['timeoff_policy_sid'];
+                            $request['policy_name'] = $this->timeoff_model->getEPolicyName($policy_sid);
+                            $company_employees[$ekey]['timeoffs'][$tkey] = $request;
+                        }
+                    }
+                }
             } else {
-                foreach ($timeoffRequests as $tkey => $request) {
-                    if ($employee['sid'] == $request['employee_sid']) {
-                        $policy_sid = $request['timeoff_policy_sid'];
-                        $request['policy_name'] = $this->timeoff_model->getEPolicyName($policy_sid);
-                        $company_employees[$ekey]['timeoffs'][$tkey] = $request;
+                if (!in_array($employee['sid'], $empTimeoff) || !in_array($employee['sid'], $data['assign_employees'])) {
+                    unset($company_employees[$ekey]);
+                } else {
+                    foreach ($timeoffRequests as $tkey => $request) {
+                        if ($employee['sid'] == $request['employee_sid']) {
+                            $policy_sid = $request['timeoff_policy_sid'];
+                            $request['policy_name'] = $this->timeoff_model->getEPolicyName($policy_sid);
+                            $company_employees[$ekey]['timeoffs'][$tkey] = $request;
+                        }
                     }
                 }
             }

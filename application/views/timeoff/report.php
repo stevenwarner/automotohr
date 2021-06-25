@@ -108,12 +108,12 @@
                                     <div class="col-sm-3 col-xs-12">
                                         <!--  -->
                                         <div class="form-group bbb">
-                                            <label><strong>Filter Employees</strong></label>
+                                            <label><strong>Filter</strong></label>
                                         </div>
                                         <!--  -->
                                         <form action="" method="GET" id="form_filter">
                                             <div class="form-group">
-                                                <label>Individual Employee(s)</label>
+                                                <label>Employee(s)</label>
                                                 <select multiple="true" id="filter_employees">
                                                     <?php if (!empty($assign_employees)) { ?>
                                                         <?php foreach ($assign_employees as $sid) { ?>
@@ -202,10 +202,10 @@
                                                 <caption></caption>
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col">Employee Name / Role / ID</th>
-                                                        <th scope="col">Department</th>
-                                                        <th scope="col">Team</th>
-                                                        <th scope="col"># of Requests</th>
+                                                        <th scope="col">Employee Name</th>
+                                                        <th scope="col">Department(s)</th>
+                                                        <th scope="col">Team(s)</th>
+                                                        <th scope="col"># of Request(s)</th>
                                                         <th scope="col">Actions</th>
                                                     </tr>
                                                 </thead>
@@ -217,7 +217,6 @@
                                                         <td>
                                                             <strong><?=ucwords($emp['first_name'].' '.$emp['last_name']);?></strong>
                                                             <br /><?=remakeEmployeeName($emp, false);?>
-                                                            <br><?=!empty($emp['employee_number']) ? $emp['employee_number'] : $emp['sid'];?>
                                                         </td>
                                                         <td class="td_setting">
                                                             <?php 
