@@ -179,3 +179,18 @@ INSERT INTO `email_templates` (`sid`, `name`, `group`, `from_name`, `from_email`
 
 INSERT INTO `email_templates` (`sid`, `name`, `group`, `from_name`, `from_email`, `cc`, `subject`, `file`, `text`, `user_defined`, `template_code`, `status`) VALUES
 (406, 'Time-off notification for approvers', 'alerts', '{{company_name}}', 'no-reply@automotohr.com', '', '{{approver_name}} has {{request_type}} a time-off for {{requested_date}}.', NULL, '<p>Dear <strong>{{approver_first_name}} {{approver_last_name}}</strong>,</p>\r\n\r\n<p>{{approver_name}} has {{request_type}} a time-off request with the following details.</p>\r\n\r\n<p><strong>Policy:</strong> {{policy_name}}</p>\r\n\r\n<p><strong>Time-off Date:</strong> {{requested_date}}</p>\r\n\r\n<p><strong>Reason:</strong> {{reason}}</p>\r\n\r\n<p>{{public_link}}</p>', 1, 'time-off-update-notification-for-approvers', 1);
+
+CREATE TABLE `applicant_merge_employee_record` (
+  `sid` int(11) NOT NULL,
+  `portal_job_applications_sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL,
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_revert` tinyint(1) NOT NULL DEFAULT '0',
+  `data_update` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `applicant_merge_employee_record`
+  ADD PRIMARY KEY (`sid`);
+
+ALTER TABLE `applicant_merge_employee_record`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
