@@ -166,3 +166,18 @@ ALTER TABLE `documents_assigned_history` ADD `allowed_roles` TEXT NULL AFTER `is
 ALTER TABLE `offer_letter` ADD `allowed_roles` TEXT NULL DEFAULT NULL AFTER `signers`;
 ALTER TABLE `offer_letter_history` ADD `allowed_roles` TEXT NULL DEFAULT NULL AFTER `signers`;
 ALTER TABLE `documents_assigned_history` ADD `is_available_for_na` TEXT NULL DEFAULT NULL AFTER `upload_document_consenr_signature`;
+
+CREATE TABLE `applicant_merge_employee_record` (
+  `sid` int(11) NOT NULL,
+  `portal_job_applications_sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL,
+  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_revert` tinyint(1) NOT NULL DEFAULT '0',
+  `data_update` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `applicant_merge_employee_record`
+  ADD PRIMARY KEY (`sid`);
+
+ALTER TABLE `applicant_merge_employee_record`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;

@@ -453,6 +453,21 @@ class Hire_onboarding_applicant extends CI_Controller
         if((empty($employee_profile_info['full_employment_application']) || $employee_profile_info['full_employment_application'] == NULL) && !empty($applicant_profile_info['full_employment_application'])){
             $employer_data['full_employment_application'] = $applicant_profile_info['full_employment_application'];
             $update_flag = 1;
+        }else if(!empty($employee_profile_info['full_employment_application']) && !empty($applicant_profile_info['full_employment_application'])){
+            //
+            $fef = unserialize($employee_profile_info['full_employment_application']);
+            $faf = unserialize($applicant_profile_info['full_employment_application']);
+            //
+            foreach($faf as $k => $v){
+                //
+                if(!isset($fef[$k]) || empty($fef[$k])){
+                    $fef[$k] = $v;
+                }
+            }
+            //
+            $employer_data['full_employment_application'] = serialize($fef);
+            //
+            $update_flag = 1;
         }
 
         //
