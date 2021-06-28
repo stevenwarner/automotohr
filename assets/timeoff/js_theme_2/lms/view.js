@@ -946,8 +946,8 @@ $(function() {
                     <div class="row">
                         
                         <div class="col-sm-6 col-xs-12 text-right" >
-                            <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/print/'+(employeeId)+''}"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print</button>
-                            <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/download/'+(employeeId)+''}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download</button>
+                            <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/print/all'}"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print</button>
+                            <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/download/all'}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download</button>
                         </div>
                     </div>
                     <div class="row">
@@ -968,7 +968,7 @@ $(function() {
                             <!--  -->
                             <form action="" method="GET" id="form_filter">
                                 <div class="form-group" id="filter_employees_section">
-                                    <label>Individual Employee(s)</label>
+                                    <label>Employee(s)</label>
                                     <?php print_r($filter_employees); ?>
                                     <select multiple="true" name="employees" id="filter_employees">
                                         
@@ -1015,6 +1015,7 @@ $(function() {
                                 </div>
                                 <input type="hidden" name="user_allow" id="user_allow">
                                 <input type="hidden" name="request_type" id="request_type">
+                                <input type="hidden" name="request_token" id="request_token">
                                 <div class="form-group">
                                     <button class="btn btn-success form-control jsGetReport" data-href="${baseURL+'timeoff/get_report/'+(employeeId)+''}">Apply Filter</button>
                                 </div>
@@ -1030,7 +1031,7 @@ $(function() {
                                     <caption></caption>
                                     <thead>
                                         <tr style="background: #444444; color:#fff;">
-                                            <th scope="col">Employee Name / Role / ID</th>
+                                            <th scope="col">Employee Name</th>
                                             <th scope="col">Department</th>
                                             <th scope="col">Team</th>
                                             <th scope="col"># of Requests</th>
@@ -1163,11 +1164,9 @@ $(function() {
                     success: function (resp) {
                         ml(false, 'jsReportModalLoader');
                         //
-                        console.log(resp.modal)
+                        $('#request_token').val(resp.session_token);
                         $('#timeoff_container').html(resp.modal)
-                        // $.each(resp.data,function(index,employee_data){
-                        //     console.log(employee_data)
-                        // })
+                       
                     },
                     error: function () {
                     }
@@ -1178,9 +1177,10 @@ $(function() {
                 //
                 c.preventDefault();
                 let startDate = $('#jsReportStartDate').val() ||'all',
-                endDate = $('#jsReportEndDate').val() || 'all';
+                endDate = $('#jsReportEndDate').val() || 'all',
+                token = $('#request_token').val();
                 //
-                window.open($(this).data('href')+'?start='+(startDate)+'&end='+(endDate)+'');
+                window.open($(this).data('href')+'?start='+(startDate)+'&end='+(endDate)+'&token='+(token));
             });
         });
     });
@@ -1228,7 +1228,6 @@ $(function() {
         //
         ml(true, 'jsReportModalLoader');
         //
-        // var URL = $(this).data('href');
         var URL = baseURL+'timeoff/get_report/'+(employeeId);;
         var formData = $("#form_filter").serialize();
         //
@@ -1243,6 +1242,11 @@ $(function() {
                 ml(false, 'jsReportModalLoader');
                 //
                 $('#timeoff_container').html(resp.modal);
+                $('#request_token').val(resp.session_token);
+                //
+                if (resp.main_action_button == 'no') {
+                    $('.jsReportLink').hide();
+                } 
             },
             error: function () {
             }

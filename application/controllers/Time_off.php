@@ -1105,6 +1105,8 @@ class Time_off extends Public_Controller
             $data['assign_teams'] = $this->timeoff_model->get_all_teams($company_sid);
             $data['assign_employees'] = array_column($company_employees_filter, 'sid');
         }
+        //
+        $session_token = '';
         
         //
         foreach ($company_employees as $ekey => $employee) {
@@ -1112,12 +1114,25 @@ class Time_off extends Public_Controller
                 if ($employee_sid != $employee['sid']) {
                     unset($company_employees[$ekey]);
                 } else {
+                    $check_timeoff_flag = 0;
                     foreach ($timeoffRequests as $tkey => $request) {
                         if ($employee['sid'] == $request['employee_sid']) {
+                            $check_timeoff_flag = 1;
                             $policy_sid = $request['timeoff_policy_sid'];
                             $request['policy_name'] = $this->timeoff_model->getEPolicyName($policy_sid);
                             $company_employees[$ekey]['timeoffs'][$tkey] = $request;
+                        } else {
+                            // unset($company_employees[$ekey]);
                         }
+                    }
+
+                    if ($check_timeoff_flag == 0) {
+                        $company_employees = array();
+                    } else {
+                        $filter_array['employees'] = array_column($company_employees, 'sid');
+                        $token = date('Y_m_d_H_i_s').'_'.$company_sid;
+                        $this->session->set_userdata($token, $filter_array);
+                        $session_token = $token;
                     }
                 }
             } else {
@@ -1131,6 +1146,14 @@ class Time_off extends Public_Controller
                             $company_employees[$ekey]['timeoffs'][$tkey] = $request;
                         }
                     }
+
+                    
+                    // $filter_array['employees'] = !empty($filter_employees) && $filter_employees != 'all' ? $filter_employees : array_column($company_employees, 'sid');
+                    $filter_array['employees'] = array_column($company_employees, 'sid');
+                    $token = date('Y_m_d_H_i_s').'_'.$company_sid;
+                    
+                    $this->session->set_userdata($token, $filter_array['employees']);
+                    $session_token = $token;
                 }
             }
         }
@@ -1138,7 +1161,7 @@ class Time_off extends Public_Controller
         
         // echo '<pre>';
         // echo print_r($data['assign_departments']);
-        // echo print_r($data['assign_teams']);
+        // print_r($company_employees);
         // die('stop');
         //
         $modal = '';
@@ -1178,15 +1201,15 @@ class Time_off extends Public_Controller
                         }
                 $modal.=    '</td>';
                 $modal.=    '<td class="td_setting">';
-                $modal.=        '<span class="timeoff_count" data-status="hide" data-id="timeoff_'.$emp['sid'].'" data-toggle="tooltip" data-placement="top" title="Click to see request!">';
+                $modal.=        '<span class="timeoff_count" data-status="hide" data-id="timeoff_'.$emp['sid'].'" data-toggle="tooltip" data-placement="top" title="Click to see request!" style="cursor: pointer; text-decoration: underline; color: #3554DC;">';
                             $count = count($emp['timeoffs']); 
                 $modal.=            $count .' Request(s)';
                 $modal.=        '</span>';
                 $modal.=    '</td>';
                 $modal.=    '<td class="td_setting">';
-                $print_url = base_url('timeoff/report/print/'.$emp["sid"]);
-                $download_url = base_url('timeoff/report/download/'.$emp["sid"]);
-                $modal.=        '<a class="btn btn-success jsReportLink" target="_blank" href="'. $print_url .'">';
+                $print_url = base_url('timeoff/report/print/'.$emp["sid"]).'?start='.$start_date .'&end='.$end_date;
+                $download_url = base_url('timeoff/report/download/'.$emp["sid"]).'?start='.$start_date .'&end='.$end_date;
+                $modal.=        '<a class="btn btn-success jsReportLink" style="margin-right: 5px;" target="_blank" href="'. $print_url .'">';
                 $modal.=            '<i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print';
                 $modal.=        '</a>';
                 $modal.=        '<a class="btn btn-success jsReportLink" target="_blank" href="'. $download_url .'">';
@@ -1196,7 +1219,7 @@ class Time_off extends Public_Controller
                 $modal.='</tr>';
                 if (!empty($emp['timeoffs'])) { 
                                                         
-                $modal.=    '<tr class="timeoff_'.$emp["sid"].' subheader" style="display: none;">';
+                $modal.=    '<tr class="timeoff_'.$emp["sid"].' subheader" style="display: none; background: #444444; color:#fff;">';
                 $modal.=       '<th style="font-size: 14px !important;">Policy</th>';
                 $modal.=        '<th style="font-size: 14px !important;">Time Taken</th>';
                 $modal.=        '<th style="font-size: 14px !important;">Start Date</th>';
@@ -1228,7 +1251,18 @@ class Time_off extends Public_Controller
                     }                                
                 }
             }
-        }        
+
+            $this->res['main_action_button'] = 'yes';
+            
+        } else {
+            $modal.='<tr>';
+            $modal.=    '<td style="text-align: center;" colspan="5">';
+            $modal.=    'No Record Found';
+            $modal.=    '</td>';
+            $modal.='</tr>';
+
+            $this->res['main_action_button'] = 'no';
+        }       
         
         //
         $this->res['company_employees'] = $company_employees;
@@ -1239,7 +1273,7 @@ class Time_off extends Public_Controller
         $this->res['filter_departments'] = $filter_departments;
         $this->res['filter_teams'] = $filter_teams;
         $this->res['modal'] = $modal;
-
+        $this->res['session_token'] =$session_token;
 
         $this->res['data'] = $company_employees;
         $this->res['Response'] = 'Proceed.';
@@ -1258,6 +1292,18 @@ class Time_off extends Public_Controller
         //
         $data['title'] = 'Report::time-off';
         $data['theme'] = $this->theme;
+        if (isset($_GET['token']) && !empty($_GET['token'])) {
+            // echo 'pakis<br><pre>';
+            $filter_session = $this->session->userdata($_GET['token']);
+            // print_r($this->session->userdata('2021_06_27_18_04_06_57'));
+            // echo '<br>';
+            // print_r($filter_session);
+            $employeeId = $filter_session != null ? implode(',', $filter_session) : $employeeId; 
+        }
+        // echo"<br>";
+        // print_r($_GET['token']);
+        // echo"<br>";
+        // echo $employeeId; die();
         //
         $data['data'] = $this->timeoff_model->getEmployeesTimeOff(
             $data['company_sid'],

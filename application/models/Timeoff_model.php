@@ -11848,14 +11848,12 @@ class Timeoff_model extends CI_Model
 
     function getAssignDepartmentAndTeams ($employee_sid) {
         $myTeams = $this->getMyTeams($employee_sid);
-        $all_employees = $this->get_all_employees_to_team($myTeams['teams']);
-        $assign_employees = array_column($all_employees, 'employee_sid');
-        $unique_employees = array_unique($assign_employees);
+        $assign_employees = array_column($this->get_all_employees_to_team($myTeams['teams']), 'employee_sid');
         //
         $data_to_return = array();
         $data_to_return['departments'] = $myTeams['departments'];
         $data_to_return['teams'] = $myTeams['teams'];
-        $data_to_return['employees'] = $unique_employees;
+        $data_to_return['employees'] = !empty($assign_employees) ? array_unique($assign_employees) : array();
 
         return $data_to_return;
     }
