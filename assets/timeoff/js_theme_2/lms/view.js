@@ -929,7 +929,8 @@ $(function() {
         //
         return comments;
     }
-
+    //
+    var RTOT = 'my';
      //
     $('.jsReport').click(function(e){
         //
@@ -937,39 +938,26 @@ $(function() {
         //
         Modal({
             Id: "jsReportModal",
-            Title: "My time-off Report",
+            Title: "Time-off Report",
             Loader: "jsReportModalLoader",
             Body: `<div class="row">
             <div class="col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label>Select Report Type</label>
-                    <div class="row">
-                        
-                        <div class="col-sm-6 col-xs-12 text-right" >
-                            <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/print/all'}"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print</button>
-                            <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/download/all'}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download</button>
-                        </div>
-                    </div>
                     <div class="row">
                         <div class="col-sm-3 col-xs-12">
-                            <div class="panel-heading col-sm-12 col-xs-12" id="tab_filter" style="background-color: #3554DC !important; color: #fff;">
-                                <div class="col-sm-6 col-xs-12">
-                                    <a href="javascript:;" style="display: inline-block; padding: 11px" class="" id="all_tf_btn" placement="top" data-key="0" data-original-title="Show time offs for my team members">All Time-off</a>
-                                </div>
-                                <div class="col-sm-6 col-xs-12">
-                                    <a href="javascript:;" style="display: inline-block; padding: 11px" class="" id="my_tf_btn" placement="top" data-key="0" data-original-title="Show time offs for my team members">My Time-off</a>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                            <!--  -->
-                            <div class="form-group bbb">
-                                <label><strong>Filter Employees</strong></label>
+                            <div class="panel-heading col-sm-12 col-xs-12" id="tab_filter" style="background-color: #3554DC !important; color: #fff; padding-bottom: 0; padding-left: 5px;">
+                            <span>
+                            <a href="javascript:;" style="display: inline-block; padding: 11px" class="" id="my_tf_btn" placement="top" data-key="0" data-original-title="Show time offs for my team members">My Time-off</a>
+                            </span>
+                            <span>
+                                <a href="javascript:;" style="display: inline-block; padding: 11px" class="" id="all_tf_btn" placement="top" data-key="0" data-original-title="Show time offs for my team members">All Time-off</a>
+                            </span>
+                            <div class="clearfix"></div>
                             </div>
                             <!--  -->
                             <form action="" method="GET" id="form_filter">
                                 <div class="form-group" id="filter_employees_section">
                                     <label>Employee(s)</label>
-                                    <?php print_r($filter_employees); ?>
                                     <select multiple="true" name="employees" id="filter_employees">
                                         
                                     </select>
@@ -1026,6 +1014,11 @@ $(function() {
                             </div>
                         </div>
                         <div class="col-sm-9 col-xs-12">
+                            <span class="pull-right">
+                                <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/print/all'}"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print</button>
+                                <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/download/all'}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download</button>
+                            </span>
+                            <div class="clearfix"></div>
                             <div class="table-responsive">
                                 <table class="table table-striped table-condensed">
                                     <caption></caption>
@@ -1038,9 +1031,7 @@ $(function() {
                                             <th scope="col">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="timeoff_container">
-                                        
-                                    </tbody>
+                                    <tbody id="timeoff_container"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -1102,15 +1093,18 @@ $(function() {
                 $("#request_type").val('all');
                 $("#my_tf_btn").css(disable);
                 $("#all_tf_btn").css(enable);
-
+                RTOT = 'all';
+                
                 $('#filter_employees_section').show();
                 $('#filter_departments_section').show();
                 $('#filter_teams_section').show();
                 $('#filter_jobtitle_section').show();
                 $('#filter_employeetype_section').show();
+                get_timeoff_report()
             });
-
+            
             $("#my_tf_btn").on("click", function () {   
+                RTOT = 'my';
                 $("#request_type").val('my'); 
                 $("#my_tf_btn").css(enable);
                 $("#all_tf_btn").css(disable);
@@ -1120,6 +1114,7 @@ $(function() {
                 $('#filter_teams_section').hide();
                 $('#filter_jobtitle_section').hide();
                 $('#filter_employeetype_section').hide();
+                get_timeoff_report()
             });
             //
             $('#jsReportEndDate').datepicker({
@@ -1128,19 +1123,8 @@ $(function() {
                 changeYear: true
             });
             //
-            // $('.timeoff_count').on('click', function(){alert('kkk')
              $(document).on('click', '.timeoff_count', function() {    
-                var id = $(this).attr('data-id');
-                var status = $(this).attr('data-status');
-
-                if (status == 'hide') {
-                    $('.'+id).show();
-                    $(this).attr('data-status', 'show');
-                } else {
-                    $('.'+id).hide();
-                    $(this).attr('data-status', 'hide');
-                }
-                
+                $('.'+$(this).data('id')).toggle();
             });
             //
             $(".jsGetReport").click(function(c){
@@ -1162,11 +1146,11 @@ $(function() {
                     type: 'GET',
                     data: formData,
                     success: function (resp) {
-                        ml(false, 'jsReportModalLoader');
                         //
                         $('#request_token').val(resp.session_token);
                         $('#timeoff_container').html(resp.modal)
-                       
+                        //
+                        ml(false, 'jsReportModalLoader');
                     },
                     error: function () {
                     }
@@ -1243,6 +1227,13 @@ $(function() {
                 //
                 $('#timeoff_container').html(resp.modal);
                 $('#request_token').val(resp.session_token);
+                //
+                if(RTOT == 'my'){
+                    console.log(RTOT);
+                    $("tr").filter(function(){
+                        return this.className.match(/timeoff_/);
+                    }).show();
+                }
                 //
                 if (resp.main_action_button == 'no') {
                     $('.jsReportLink').hide();

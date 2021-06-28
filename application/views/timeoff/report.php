@@ -1,5 +1,4 @@
 <?php $this->load->view('timeoff/includes/header'); ?>
-
 <style>
     .form-group label{
         font-size: 16px !important;
@@ -375,7 +374,7 @@
                                         $employee_role = remakeEmployeeName($employee, false);
                                         $employee_no = !empty($employee['employee_number']) ? $employee['employee_number'] : $employee['sid'];
                                     ?>
-                                    <? foreach ($employee['timeoffs'] as $timeoff) { ?>
+                                    <?php foreach ($employee['timeoffs'] as $timeoff): ?>
                                         <tr>
                                             <td>
                                                 <strong>
@@ -416,11 +415,11 @@
                                                 ?> 
                                             </td>
                                         </tr>
-                                    <?php } ?>
+                                    <?php endforeach; ?>
                                 
                             <?php } ?>
                         <?php } else { ?>
-                            <tr><td colspan="5">Sorry, no records found.</td></tr>;
+                            <tr><td colspan="5">Sorry, no records found.</td></tr>
                         <?php } ?>
                     </tbody>
                 </table>

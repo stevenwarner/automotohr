@@ -1171,7 +1171,6 @@ class Time_off extends Public_Controller
                 $modal.=    '<td>';
                 $modal.=        '<strong>'.ucwords($emp["first_name"].' '.$emp["last_name"]).'</strong>';
                 $modal.=            '<br />'.remakeEmployeeName($emp, false);
-                $modal.=            '<br>'. !empty($emp['employee_number']) ? $emp['employee_number'] : $emp['sid'];
                 $modal.=    '</td>';
                 $modal.=    '<td class="td_setting">' ;
                         if(!empty($emp['DepartmentIds'])){
@@ -1201,7 +1200,7 @@ class Time_off extends Public_Controller
                         }
                 $modal.=    '</td>';
                 $modal.=    '<td class="td_setting">';
-                $modal.=        '<span class="timeoff_count" data-status="hide" data-id="timeoff_'.$emp['sid'].'" data-toggle="tooltip" data-placement="top" title="Click to see request!" style="cursor: pointer; text-decoration: underline; color: #3554DC;">';
+                $modal.=        '<span class="timeoff_count" data-status="hide" data-id="timeoff_'.$emp['sid'].'" data-toggle="tooltip" data-placement="top" title="Click to see request!" style="cursor: pointer; text-decoration: underline; color: #3554DC; font-wight: 700;">';
                             $count = count($emp['timeoffs']); 
                 $modal.=            $count .' Request(s)';
                 $modal.=        '</span>';
