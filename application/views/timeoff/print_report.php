@@ -47,6 +47,7 @@
                     <th scope="col">Time Taken</th>
                     <th scope="col">Start Date</th>
                     <th scope="col">End Date</th>
+                    <th scope="col">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,6 +60,15 @@
                         echo '  <td>'.( $row['consumed_time'] ).'</td>';
                         echo '  <td>'.( DateTime::createfromformat('Y-m-d', $row['request_from_date'])->format('m/d/Y') ).'</td>';
                         echo '  <td>'.( DateTime::createfromformat('Y-m-d', $row['request_to_date'])->format('m/d/Y') ).'</td>';
+                        $status = $row['status']; 
+
+                        if ($status == 'approved') {
+                            echo '<td><p class="text-success"><b>APPROVED</b></p></td>';
+                        } else if ($status == 'rejected') {
+                            echo '<td><p class="text-danger"><b>REJECTED</b></p></td>';
+                        } else if ($status == 'pending') {
+                            echo '<td><p class="text-warning"><b>PENDING</b></p></td>';
+                        }
                         echo '</tr>';
                     }
                 } else{

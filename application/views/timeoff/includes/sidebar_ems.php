@@ -4,7 +4,12 @@
         <!-- Sidebar head -->
         <div class="csSidebarHead csRadius5 csRadiusBL0 csRadiusBR0">
             <figure>
-                <img src="https://automotohrattachments.s3.amazonaws.com/test_file_01.png" class="csRadius50" />
+                
+                <?php 
+                    $emp_info = get_employee_profile_info($employee['sid']); 
+                    $profile_pic = !empty($emp_info['profile_picture']) ? $emp_info['profile_picture'] : 'test_file_01.png';
+                ?>
+                <img src="https://automotohrattachments.s3.amazonaws.com/<?php echo $profile_pic; ?>" class="csRadius50" />
                 <div class="csTextBox">
                     <p><?=$employee['first_name'] . ' ' . $employee['last_name'];?></p>
                     <p class="csTextSmall"><?=remakeEmployeeName($employee, false);?></p>
@@ -29,6 +34,10 @@
             <ul>
                 <?php foreach($approvers as $approver): ?>
                 <li  <?php echo $this->agent->is_mobile() ? 'style="display: block;"' : '';?>>
+                    <?php 
+                        $approver_info = get_employee_profile_info($approver['userId']); 
+                        $profile_pic = !empty($approver_info['profile_picture']) ? $approver_info['profile_picture'] : 'test_file_01.png';
+                    ?>
                     <a
                         href="<?=base_url('employee_profile/'.($approver['userId']).'');?>"
                         target="_blank"
@@ -40,7 +49,7 @@
                         <?php echo $this->agent->is_mobile() ? 'style="display: inline-block; height: auto;"' : '';?>
                     >
                         <img 
-                        src="<?=AWS_S3_BUCKET_URL.(!empty($approver['picture']) ? $approver['picture'] : 'test_file_01.png');?>" 
+                        src="<?=AWS_S3_BUCKET_URL.$profile_pic;?>" 
                         class="csRadius50" 
                         />
                     </a>

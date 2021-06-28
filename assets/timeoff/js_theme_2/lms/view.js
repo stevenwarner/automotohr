@@ -948,39 +948,154 @@ $(function() {
         //
         return comments;
     }
-
+    //
+    var RTOT = 'my';
      //
-     $('.jsReport').click(function(e){
+    $('.jsReport').click(function(e){
         //
         e.preventDefault();
         //
         Modal({
             Id: "jsReportModal",
-            Title: "My time-off Report",
+            Title: "Time-off Report",
             Loader: "jsReportModalLoader",
             Body: `<div class="row">
             <div class="col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label>Select Period</label>
                     <div class="row">
-                        <div class="col-sm-2 col-xs-12">
-                            <input type="text" id="jsReportStartDate" class="form-control" readonly />
+                        <div class="col-sm-3 col-xs-12">
+                            <div class="panel-heading col-sm-12 col-xs-12" id="tab_filter" style="background-color: #3554DC !important; color: #fff; padding-bottom: 0; padding-left: 5px;">
+                            <span>
+                            <a href="javascript:;" style="display: inline-block; padding: 11px" class="" id="my_tf_btn" placement="top" data-key="0" data-original-title="Show time offs for my team members">My Time-off</a>
+                            </span>
+                            <span>
+                                <a href="javascript:;" style="display: inline-block; padding: 11px" class="" id="all_tf_btn" placement="top" data-key="0" data-original-title="Show time offs for my team members">All Time-off</a>
+                            </span>
+                            <div class="clearfix"></div>
+                            </div>
+                            <!--  -->
+                            <form action="" method="GET" id="form_filter">
+                                <div class="form-group" id="filter_employees_section">
+                                    <label>Employee(s)</label>
+                                    <select multiple="true" name="employees" id="filter_employees">
+                                        
+                                    </select>
+                                </div>
+                                <!--  -->
+                                <div class="form-group" id="filter_departments_section">
+                                    <label>Department(s)</label>
+                                    <select multiple="true" name="departments" id="filter_departments">
+                                        
+                                    </select>
+                                </div>
+                                <!--  -->
+                                <div class="form-group" id="filter_teams_section">
+                                    <label>Team(s)</label>
+                                    <select multiple="true" name="teams" id="filter_teams">
+                                        
+                                    </select>
+                                </div>
+                                <!--  -->
+                                <div class="form-group" id="filter_jobtitle_section">
+                                    <label>Job Title(s)</label>
+                                    <select id="jsJobTitles" multiple="true">
+                                    
+                                    </select>
+                                </div>
+                                <!--  -->
+                                <div class="form-group" id="filter_employeetype_section">
+                                    <label>Employment Type(s)</label>
+                                    <select id="jsEmploymentTypes" multiple="true">
+                                        <option value="fulltime">Full-time</option>
+                                        <option value="parttime">Part-time</option>
+                                    </select>
+                                </div>
+                                <!--  -->
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <input type="text" id="jsReportStartDate" name="startDate" class="form-control" readonly />
+                                </div>
+                                <!--  -->
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <input type="text" id="jsReportEndDate" name="endDate" class="form-control" readonly />
+                                </div>
+                                <input type="hidden" name="user_allow" id="user_allow">
+                                <input type="hidden" name="request_type" id="request_type">
+                                <input type="hidden" name="request_token" id="request_token">
+                                <div class="form-group">
+                                    <button class="btn btn-success form-control jsGetReport" data-href="${baseURL+'timeoff/get_report/'+(employeeId)+''}">Apply Filter</button>
+                                </div>
+                            </form>    
+                            <!--  -->
+                            <div class="form-group">
+                                <a href="<?php echo base_url('timeoff/report'); ?>" class="btn btn-black form-control">Clear Filter</a>
+                            </div>
                         </div>
-                        <div class="col-sm-1 col-xs-12 hidden-xs">
-                            <p class="text-center"><i class="fa fa-minus" aria-hidden="true"></i></p>
-                        </div>
-                        <div class="col-sm-2 col-xs-12">
-                            <input type="text" id="jsReportEndDate" class="form-control" readonly />
-                        </div>
-                        <div class="col-sm-5 col-xs-12">
-                            <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/print/'+(employeeId)+''}"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print</button>
-                            <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/download/'+(employeeId)+''}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download</button>
+                        <div class="col-sm-9 col-xs-12">
+                            <span class="pull-right">
+                                <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/print/all'}"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print</button>
+                                <button class="btn btn-success jsReportLink" data-href="${baseURL+'timeoff/report/download/all'}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download</button>
+                            </span>
+                            <div class="clearfix"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-condensed">
+                                    <caption></caption>
+                                    <thead>
+                                        <tr style="background: #444444; color:#fff;">
+                                            <th scope="col">Employee Name</th>
+                                            <th scope="col">Department</th>
+                                            <th scope="col">Team</th>
+                                            <th scope="col"># of Requests</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="timeoff_container"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>`
         }, function(){
+            var date = new Date();
+            var y = date.getFullYear();
+            var m = date.getMonth();
+            var firstDay = new Date(y, m, 1);
+            var lastDay = new Date(y, m + 1, 0);
+            var type = $('.jsReport').attr('data-action');
+            var enable = {
+                backgroundColor : "#fd7a2a",
+                color: "#fff"
+                };
+
+            var disable = {
+                backgroundColor : "#fff",
+                color: "#000"
+                };
+
+            get_user_access_level();
+
+
+            $('#filter_employees').select2({ closeOnSelect: false });
+            $('#filter_departments').select2({ closeOnSelect: false });
+            $('#filter_teams').select2({ closeOnSelect: false });
+            $('#jsJobTitles').select2({ closeOnSelect: false });
+            $('#jsEmploymentTypes').select2({ closeOnSelect: false });
+
+            $("#my_tf_btn").css(enable);
+            $("#all_tf_btn").css(disable);
+            $("#request_type").val('my');
+            //
+            $('#filter_employees_section').hide();
+            $('#filter_departments_section').hide();
+            $('#filter_teams_section').hide();
+            $('#filter_jobtitle_section').hide();
+            $('#filter_employeetype_section').hide();
+
+            $("#jsReportStartDate").val($.datepicker.formatDate('mm/dd/yy', firstDay));
+            $("#jsReportEndDate").val($.datepicker.formatDate('mm/dd/yy', lastDay));
             //
             ml(false, 'jsReportModalLoader');
             //
@@ -993,20 +1108,159 @@ $(function() {
                 }
             });
             //
+            $("#all_tf_btn").on("click", function () {
+                $("#request_type").val('all');
+                $("#my_tf_btn").css(disable);
+                $("#all_tf_btn").css(enable);
+                RTOT = 'all';
+                
+                $('#filter_employees_section').show();
+                $('#filter_departments_section').show();
+                $('#filter_teams_section').show();
+                $('#filter_jobtitle_section').show();
+                $('#filter_employeetype_section').show();
+                get_timeoff_report()
+            });
+            
+            $("#my_tf_btn").on("click", function () {   
+                RTOT = 'my';
+                $("#request_type").val('my'); 
+                $("#my_tf_btn").css(enable);
+                $("#all_tf_btn").css(disable);
+
+                $('#filter_employees_section').hide();
+                $('#filter_departments_section').hide();
+                $('#filter_teams_section').hide();
+                $('#filter_jobtitle_section').hide();
+                $('#filter_employeetype_section').hide();
+                get_timeoff_report()
+            });
+            //
             $('#jsReportEndDate').datepicker({
                 format: 'm/d/y',
                 changeMonth: true,
                 changeYear: true
             });
             //
-            $('.jsReportLink').click(function(c){
+             $(document).on('click', '.timeoff_count', function() {    
+                $('.'+$(this).data('id')).toggle();
+            });
+            //
+            $(".jsGetReport").click(function(c){
                 //
                 c.preventDefault();
                 let startDate = $('#jsReportStartDate').val() ||'all',
                 endDate = $('#jsReportEndDate').val() || 'all';
                 //
-                window.open($(this).data('href')+'?start='+(startDate)+'&end='+(endDate)+'');
+                ml(true, 'jsReportModalLoader');
+                //
+                var URL = $(this).data('href');
+                var formData = $("#form_filter").serialize();
+                //
+                $.ajax({
+                    url: URL,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'GET',
+                    data: formData,
+                    success: function (resp) {
+                        //
+                        $('#request_token').val(resp.session_token);
+                        $('#timeoff_container').html(resp.modal)
+                        //
+                        ml(false, 'jsReportModalLoader');
+                    },
+                    error: function () {
+                    }
+                });
+            });
+            //
+            $('.jsReportLink').click(function(c){
+                //
+                c.preventDefault();
+                let startDate = $('#jsReportStartDate').val() ||'all',
+                endDate = $('#jsReportEndDate').val() || 'all',
+                token = $('#request_token').val();
+                //
+                window.open($(this).data('href')+'?start='+(startDate)+'&end='+(endDate)+'&token='+(token));
             });
         });
     });
+
+    function get_user_access_level () {
+        ml(true, 'jsReportModalLoader');
+        var my_url = baseURL+'timeoff/get_employee_status/'+(employeeId);
+
+        $.ajax({
+            url: my_url,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'get',
+            success: function (resp) {
+                ml(false, 'jsReportModalLoader');
+                //
+                
+                if (resp.allow_access == 'no') {
+                    $('#filter_employees_section').hide();
+                    $('#filter_departments_section').hide();
+                    $('#filter_teams_section').hide();
+                    $('#filter_jobtitle_section').hide();
+                    $('#filter_employeetype_section').hide();
+                    $('#user_allow').val('no');
+                    $('#tab_filter').hide();
+
+                } else {
+                    $('#filter_employees').html(resp.employee);
+                    $('#filter_departments').html(resp.department);
+                    $('#filter_teams').html(resp.team);
+                   
+                    $('#user_allow').val('yes');
+                    $('#tab_filter').show();
+                }
+
+                get_timeoff_report();
+            },
+            error: function () {
+            }
+        });
+    }
+
+    function get_timeoff_report () {
+        //
+        ml(true, 'jsReportModalLoader');
+        //
+        var URL = baseURL+'timeoff/get_report/'+(employeeId);;
+        var formData = $("#form_filter").serialize();
+        //
+        $.ajax({
+            url: URL,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'GET',
+            data: formData,
+            success: function (resp) {
+                ml(false, 'jsReportModalLoader');
+                //
+                $('#timeoff_container').html(resp.modal);
+                $('#request_token').val(resp.session_token);
+                //
+                if(RTOT == 'my'){
+                    console.log(RTOT);
+                    $("tr").filter(function(){
+                        return this.className.match(/timeoff_/);
+                    }).show();
+                }
+                //
+                if (resp.main_action_button == 'no') {
+                    $('.jsReportLink').hide();
+                } 
+            },
+            error: function () {
+            }
+        });
+    }
+    
 });

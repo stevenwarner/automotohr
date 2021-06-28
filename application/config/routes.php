@@ -99,6 +99,8 @@ $route['incident_reporting_system/handler'] = 'Incident_reporting_system/handler
 // Blue Panel
 // Create Time off
 $route['timeoff/lms'] = 'Time_off/timeoff_lms';
+$route['timeoff/generateFilterSession'] = 'Time_off/generateFilterSession';
+$route['timeoff/get_employee_status/(:any)'] = 'Time_off/get_employee_status/$1';
 $route['timeoff/get_time_with_format/(:any)/(:any)/(:any)'] = 'Time_off/get_time_with_format/$1/$2/$3';
 // Green panel routes
 $route['timeoff/import'] = 'Time_off/import';
@@ -129,6 +131,7 @@ $route['timeoff/policy-overwrite/edit/(:num)'] = 'Time_off/policy_overwrite/edit
 $route['timeoff/policy-overwrite/view/(:any)'] = 'Time_off/policy_overwrite/view/null/$1';
 // Report
 $route['timeoff/report'] = 'Time_off/report';
+$route['timeoff/get_report/(:any)'] = 'Time_off/get_report/$1';
 $route['timeoff/report/(:any)'] = 'Time_off/report/$1';
 // Balance
 $route['timeoff/balance'] = 'Time_off/balance';

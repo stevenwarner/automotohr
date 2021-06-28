@@ -25,6 +25,16 @@ if(!function_exists('getUserNameBySID')){
     }
 }
 
+if (!function_exists('get_employee_profile_info')) {
+    function get_employee_profile_info($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('first_name,last_name,email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, profile_picture');
+        $CI->db->where('sid', $emp_id);
+        return $CI->db->get('users')->row_array();
+    }
+}
+
 if (!function_exists('getCompanyNameBySid')) {
     function getCompanyNameBySid($company_sid)
     {
@@ -13492,5 +13502,49 @@ if(!function_exists('getRoles')){
             'hiring_manager' => 'Hiring Manager',
             'manager' => 'Manager'
         ];
+    }
+}
+
+if (!function_exists('getDepartmentNameBySID')) {
+    function getDepartmentNameBySID($sid)
+    {
+        $departmentName = '';
+        if (!empty($sid)) {
+            
+            $CI = &get_instance();
+            $CI->db->select('name');
+            $CI->db->where('sid', $sid);
+            //
+            $department_info = $CI->db->get('departments_management')->row_array();
+
+            if (!empty($department_info)) {
+                $departmentName = $department_info['name'];
+            }   
+
+        } 
+
+        return $departmentName;
+    }
+}
+
+if (!function_exists('getTeamNameBySID')) {
+    function getTeamNameBySID($sid)
+    {
+        $teamName = '';
+        if (!empty($sid)) {
+            
+            $CI = &get_instance();
+            $CI->db->select('name');
+            $CI->db->where('sid', $sid);
+            //
+            $team_info = $CI->db->get('departments_team_management')->row_array();
+
+            if (!empty($team_info)) {
+                $teamName = $team_info['name'];
+            }   
+
+        } 
+
+        return $teamName;
     }
 }
