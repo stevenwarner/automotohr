@@ -10989,8 +10989,13 @@ if (!function_exists('getFileData')) {
 if (!function_exists('remakeEmployeeName')) {
     function remakeEmployeeName($o, $i = TRUE)
     {
+        // echo '<pre>';
+        // print_r($o);
         //
-        $r = $i ? $o['first_name'] . ' ' . $o['last_name'] : '';
+        $first_name = isset($o['first_name']) ? $o['first_name'] : (isset($o['to_first_name']) ? $o['to_first_name'] : '');
+        $last_name = isset($o['last_name']) ? $o['last_name'] : (isset($o['to_last_name']) ? $o['to_last_name'] : '');
+        //
+        $r = $i ? $first_name . ' ' . $last_name : '';
         //
         if (!isset($o['job_title'])) return $r;
         //
@@ -10999,6 +11004,62 @@ if (!function_exists('remakeEmployeeName')) {
         $r .= ' [' . remakeAccessLevel($o) . ']';
         //
         return $r;
+    }
+}
+
+if (!function_exists('getEmployerAssignJobs')) {
+    function getEmployerAssignJobs ($employer_sid, $user_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('job_sid');
+        $CI->db->where('employer_sid', $employer_sid);
+
+        $record_obj = $CI->db->get('portal_job_listings_visibility');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        $assign_job = false;
+
+        if (!empty($record_arr)) {
+            $assign_jobs = array_column($record_arr, 'job_sid');
+
+            $CI->db->select('job_sid');
+            $CI->db->where('portal_job_applications_sid', $user_sid);
+            $CI->db->where_in('job_sid', $assign_jobs);
+
+            $record_obj = $CI->db->get('portal_applicant_jobs_list');
+            $jobs_arr = $record_obj->result_array();
+            $record_obj->free_result();
+
+            if (!empty($jobs_arr)) {
+                $assign_job = true;
+            }
+
+        } 
+
+        return $assign_job;
+    }
+}
+
+if (!function_exists('getEmployerAssignApplicant')) {
+    function getEmployerAssignApplicant ($employer_sid, $user_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('sid');
+        $CI->db->where('employer_sid', $employer_sid);
+        $CI->db->where('applicant_sid', $user_sid);
+
+        $record_obj = $CI->db->get('assignment_management');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        $assign_applicant = false;
+
+        if (!empty($record_arr)) {
+           $assign_applicant = true;
+        } 
+
+        return $assign_applicant;
     }
 }
 //

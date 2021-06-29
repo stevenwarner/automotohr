@@ -11,6 +11,7 @@ class Form_full_employment_application extends CI_Controller {
     public function index($verification_key = null) {
       
         if ($verification_key != null) {
+
             $request_details = $this->form_full_employment_application_model->get_form_request($verification_key);
 
             if (!empty($request_details)) {
@@ -452,52 +453,75 @@ class Form_full_employment_application extends CI_Controller {
                     if ($applicant_notifications_status == 1) {
 
                         $applicant_notification_contacts = get_notification_email_contacts($company_sid, 'employment_application', 0);
+                        
 
                         if (!empty($applicant_notification_contacts)) {
                             foreach ($applicant_notification_contacts as $contact) {
-                                $sms_notify = 0;
-                                $contact_no = 0;
-                                if($company_sms_notification_status){
-                                    if($contact['employer_sid'] != 0){
-                                        $notify_by = get_employee_sms_status($this, $contact['employer_sid']);
-                                        if(strpos($notify_by['notified_by'],'sms') !== false){
-                                            $contact_no = $notify_by['PhoneNumber'];
-                                            $sms_notify = 1;
-                                        }
-                                    }else{
-                                        if(!empty($contact['contact_no'])){
-                                            $contact_no = $contact['contact_no'];
-                                            $sms_notify = 1;
+                                //
+                                $employer_sid = $contact['employer_sid'];
+                                $send_notification_flag = 0;
+                                //
+                                if ($employer_sid != 0 && $user_type == 'applicant') {
+                                    $is_job_assign = getEmployerAssignJobs($employer_sid, $user_sid);
+                                    //
+                                    if ($is_job_assign) {
+                                        $send_notification_flag = 1;
+                                    } else {
+                                        $is_applicant_assign = getEmployerAssignApplicant($employer_sid, $user_sid);
+                                        //
+                                        if ($is_applicant_assign) {
+                                            $send_notification_flag = 1;
                                         }
                                     }
-                                    if($sms_notify){
-                                        $this->load->library('Twilioapp');
-                                        // Send SMS
-                                        $sms_template = get_company_sms_template($this,$company_sid,'employment_application');
-                                        $replacement_sms_array = array(); //Send Payment Notification to admin.
-                                        $replacement_sms_array['applicant_name'] = $applicant_profile['first_name']. ' '. $applicant_profile['last_name'];
-                                        $replacement_sms_array['contact_name'] = ucwords(strtolower($contact['contact_name']));
-                                        $sms_body = 'This sms is to inform you that '.$applicant_profile['first_name']. ' '. $applicant_profile['last_name'].'�has completed and signed their full employment application.';
-                                        if(sizeof($sms_template)>0){
-                                            $sms_body = replace_sms_body($sms_template['sms_body'],$replacement_sms_array);
-                                        }
-                                        sendSMS(
-                                            $contact_no,
-                                            $sms_body,
-                                            trim(ucwords(strtolower($contact['contact_name']))),
-                                            $contact['email'],
-                                            $this,
-                                            $sms_notify,
-                                            $company_sid
-                                        );
-                                    }
+                                } else if ($user_type != 'applicant') {
+                                    $send_notification_flag = 1;
                                 }
-                                $replacement_array['firstname'] = $applicant_profile['first_name'];
-                                $replacement_array['lastname'] = $applicant_profile['last_name'];
-                                $replacement_array['email'] = $applicant_profile['email'];
-                                $applicant_link = $profile_link;
-                                $replacement_array['link'] = $applicant_link;
-                                log_and_send_templated_email(FULL_EMPLOYMENT_APPLICATION_SIGNED, $contact['email'], $replacement_array);
+                                //
+                                if ($send_notification_flag == 1) {    
+                                    $sms_notify = 0;
+                                    $contact_no = 0;
+                                    if($company_sms_notification_status){
+                                        if($contact['employer_sid'] != 0){
+                                            $notify_by = get_employee_sms_status($this, $contact['employer_sid']);
+                                            if(strpos($notify_by['notified_by'],'sms') !== false){
+                                                $contact_no = $notify_by['PhoneNumber'];
+                                                $sms_notify = 1;
+                                            }
+                                        }else{
+                                            if(!empty($contact['contact_no'])){
+                                                $contact_no = $contact['contact_no'];
+                                                $sms_notify = 1;
+                                            }
+                                        }
+                                        if($sms_notify){
+                                            $this->load->library('Twilioapp');
+                                            // Send SMS
+                                            $sms_template = get_company_sms_template($this,$company_sid,'employment_application');
+                                            $replacement_sms_array = array(); //Send Payment Notification to admin.
+                                            $replacement_sms_array['applicant_name'] = $applicant_profile['first_name']. ' '. $applicant_profile['last_name'];
+                                            $replacement_sms_array['contact_name'] = ucwords(strtolower($contact['contact_name']));
+                                            $sms_body = 'This sms is to inform you that '.$applicant_profile['first_name']. ' '. $applicant_profile['last_name'].'�has completed and signed their full employment application.';
+                                            if(sizeof($sms_template)>0){
+                                                $sms_body = replace_sms_body($sms_template['sms_body'],$replacement_sms_array);
+                                            }
+                                            sendSMS(
+                                                $contact_no,
+                                                $sms_body,
+                                                trim(ucwords(strtolower($contact['contact_name']))),
+                                                $contact['email'],
+                                                $this,
+                                                $sms_notify,
+                                                $company_sid
+                                            );
+                                        }
+                                    }
+                                    $replacement_array['firstname'] = $applicant_profile['first_name'];
+                                    $replacement_array['lastname'] = $applicant_profile['last_name'];
+                                    $replacement_array['email'] = $applicant_profile['email'];
+                                    $applicant_link = $profile_link;
+                                    $replacement_array['link'] = $applicant_link;
+                                    log_and_send_templated_email(FULL_EMPLOYMENT_APPLICATION_SIGNED, $contact['email'], $replacement_array);
+                                }    
                                 //mail('ahassan.egenie@gmail.com', 'Company notification for: ' . $company_name, 'applicant_email: ' . $applicant_email . ' Send Mail to: ' . $contact['email']);
                             }
                         }
