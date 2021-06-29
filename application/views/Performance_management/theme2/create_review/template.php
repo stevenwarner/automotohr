@@ -1,6 +1,7 @@
 <!--  -->
 <!-- Choose a template -->
 <div class="row">
+<<<<<<< HEAD:application/views/Performance_management/theme2/template.php
     <div class="col-md-12">
         <br>
 <<<<<<< HEAD
@@ -15,11 +16,13 @@
     </div>
 </div>
 <div class="row">
+=======
+>>>>>>> 11cb2d4e... Added create page route:application/views/Performance_management/theme2/create_review/template.php
     <div class="col-md-6 col-md-offset-3 col-sm-12">
         <br>
         <br>
         <br>
-        <button class="btn btn-orange csF16 text-center form-control"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;I want to create a review from scratch</button>
+        <button class="btn btn-orange csF16 text-center form-control" id="jsReviewCreateNewBtn"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;I want to create a review from scratch</button>
         <br>
         <br>
         <p class="text-center csF16 csB7">------------------- OR -------------------</p>

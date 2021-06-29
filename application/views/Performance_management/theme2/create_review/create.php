@@ -6,7 +6,7 @@
             <!-- Left Sidebar -->
             <?php $this->load->view("{$pp}left_sidebar"); ?>
             <!-- Right Content Area -->
-            <?php $this->load->view("{$pp}create_content"); ?>
+            <?php $this->load->view("{$pp}create_review/create_content"); ?>
         </div>
         <?php
     } else{

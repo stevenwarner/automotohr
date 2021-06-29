@@ -18,7 +18,7 @@
         <!-- Info -->
         <div class="row">
             <div class="col-xs-12">
-                <p class="csF16"><i class="fa fa-info-circle csF18 csB7" aria-hidden="true"></i>&nbsp;<em class="csInfo">Use the Rule Settings to define which workers are included (or excluded) from this review</em>.</p>
+                <p class="csF16 pl10"><i class="fa fa-info-circle csF18 csB7" aria-hidden="true"></i>&nbsp;<em class="csInfo">Use the Rule Settings to define which workers are included (or excluded) from this review</em>.</p>
             </div>
         </div>
         

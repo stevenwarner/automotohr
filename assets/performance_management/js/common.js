@@ -170,14 +170,18 @@ function remakeEmployeeName(o, d) {
  * 
  * @param  {Boolean} doShow 
  * @param  {String}  p 
+ * @param  {String}  msg
  * @return {Void}
  */
-function ml(doShow, p) {
+function ml(doShow, p, msg) {
     //
     p = p === undefined ? `.jsIPLoader` : `.jsIPLoader[data-page="${p}"]`;
     //
     if (doShow === undefined || doShow === false) $(p).hide();
-    else $(p).show();
+    else {
+        $(p).show();
+        $(p).find('.jsIPLoaderBox p > span').html(msg === undefined ? 'Please wait while we are processing your request.' : msg);
+    }
 }
 
 /**
@@ -189,35 +193,34 @@ function ml(doShow, p) {
  */
 function Modal(options, cb) {
     //
-    let html = `
-    <!-- Custom Modal -->
-    <div class="csModal" id="${options.Id}">
-        <div class="container">
-            <div class="csModalHeader">
-                <h3 class="csModalHeaderTitle csF20 csB7">
-                    ${options.Title}
-                    <span class="csModalButtonWrap">
-                    ${ options.Buttons !== undefined && options.Buttons.length !== 0 ? options.Buttons.join('') : '' }
-                        <button class="btn btn-black btn-lg jsModalCancel csF16" title="Close this window"><em class="fa fa-times-circle csF16"></em> Cancel</button>
-                    </span>
-                    <div class="clearfix"></div>
-                </h3>
-            </div>
-            <div class="csModalBody">
-                <div class="csIPLoader jsIPLoader" data-page="${options.Loader}"><i class="fa fa-circle-o-notch fa-spin"></i></div>
-                ${options.Body}
-            </div>
-            <div class="clearfix"></div>
-        </div>
-    </div>
-    `;
+    var html = '';
+    html += '<!-- Custom Modal -->';
+    html += '<div class="csModal" id="' + (options.Id) + '">';
+    html += '    <div class="container">';
+    html += '        <div class="csModalHeader">';
+    html += '            <h3 class="csModalHeaderTitle csF20 csB7">';
+    html += options.Title;
+    html += '                <span class="csModalButtonWrap">';
+    html += options.Buttons !== undefined && options.Buttons.length !== 0 ? options.Buttons.join('') : '';
+    html += '                    <button class="btn btn-black btn-lg jsModalCancel csF16"><em class="fa fa-times-circle csF16"></em> ' + (options.Cancel ? options.Cancel : 'Cancel') + '</button>';
+    html += '                </span>';
+    html += '                <div class="clearfix"></div>';
+    html += '            </h3>';
+    html += '        </div>';
+    html += '        <div class="csModalBody">';
+    html += '            <div class="csIPLoader jsIPLoader" data-page="' + (options.Loader) + '"><i class="fa fa-circle-o-notch fa-spin"></i></div>';
+    html += options.Body;
+    html += '        </div>';
+    html += '        <div class="clearfix"></div>';
+    html += '    </div>';
+    html += '</div>';
     //
     $('.csModal').remove();
     $('.csPageWrap').append(html);
-    $(`#${options.Id}`).fadeIn(300);
+    $("#" + (options.Id) + "").fadeIn(300);
     //
     $('body').css('overflow-y', 'hidden');
-    $(`#${options.Id} .csModalBody`).css('top', $(`#${options.Id} .csModalHeader`).height() + 50);
+    $("#" + (options.Id) + " .csModalBody").css('top', $("#" + (options.Id) + " .csModalHeader").height() + 50);
     if (typeof(cb) === 'function') cb();
 }
 
@@ -527,6 +530,10 @@ $('.jsResetSize').click(function(event) {
     //
     loadFonts();
 });
+
+$('.select2').select2({
+    placeholder: "Please select"
+})
 
 //
 function getFontList() {

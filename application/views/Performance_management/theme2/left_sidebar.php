@@ -9,7 +9,7 @@
 =======
 >>>>>>> d5bced39... Added creatae review step 1 on blue screen
             <figure>
-                <img src="<?=getImageURL($employee['profile_picture']);?>" class="" alt=""/>
+                <img src="<?=getImageURL($employee['profile_picture']);?>" alt=""/>
                 <div class="csTextBox">
                     <p class="csF16 csB7"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
                     <p class="csTextSmall csF14"> <?=remakeEmployeeName($employee, false);?></p>
@@ -51,6 +51,5 @@
         </div>
     </div>
     <!--  -->
-    <?php $this->load->view("{$pp}review_sidebar_bl"); ?>
-    <?php //$this->load->view("{$pp}left_sidebar_feedback_blue"); ?>
+    <?php $this->load->view("{$pp}help_box"); ?>
 </div>

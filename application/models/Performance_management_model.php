@@ -8,21 +8,22 @@ class Performance_management_model extends CI_Model{
     private $DE2T = 'departments_employee_2_team';
     private $PMT = 'performance_management_templates';
     private $PMCT = 'performance_management_company_templates';
-
+    //
     private $DbDateFormat = 'Y-m-d H:i:s';
-
+    //
     private $DbDateFormatWithoutTime = 'Y-m-d';
-
+    //
     private $SiteDateFormat = 'M d Y, D H:i:s';
     /**
      * 
      */
-    function __construct(){
-        parent::__construct();
-    }
+    function __construct(){ parent::__construct(); }
 
     /**
+     * Get company all active employees
      * 
+     * @param  Integer $CompanyId
+     * @return Array
      */
     function GetAllEmployees($CompanyId){
         //
@@ -67,7 +68,7 @@ class Performance_management_model extends CI_Model{
                     'Email' => strtolower($v['email']),
                     'Phone' => $v['PhoneNumber'],
                     'DOB' => empty($v['dob']) || $v['dob'] == '0000-00-00' ? '' : DateTime::createfromformat($this->DbDateFormatWithoutTime, $v['dob'])->format($this->DbDateFormatWithoutTime),
-                    'JoinedDate' => empty($v['joined_at']) ? '' : DateTime::createfromformat($this->DbDateFormat, $v['joined_at'])->format($this->DbDateFormat)
+                    'JoinedDate' => empty($v['joined_at']) ? '' : DateTime::createfromformat($this->DbDateFormat, $v['joined_at'])->format($this->DbDateFormatWithoutTime)
                 ];
 
                 //
@@ -1148,6 +1149,11 @@ class Performance_management_model extends CI_Model{
 =======
 >>>>>>> 2798fc44... Added review part of Perfoemance management
 
+
+    //
+    function getMyGoals(){
+        return [];
+    }
 
     /*------------------------------------------------- Private -------------------------------------------------/*
 

@@ -487,7 +487,7 @@ class Performance_management extends Public_Controller{
         //
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
-        $this->load->view("{$this->pp}create");
+        $this->load->view("{$this->pp}create_review/create");
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
@@ -534,7 +534,7 @@ class Performance_management extends Public_Controller{
     function template_questions($id, $type){
         //
         if( !$this->input->is_ajax_request() ){
-            // $this->res([], true);
+            $this->res([], true);
         }
         //
         if($type == 'company'){
@@ -549,7 +549,32 @@ class Performance_management extends Public_Controller{
         }
 
         //
-        $this->load->view($this->pp.'template_questions_view', ['questions' => json_decode($template['questions'])]);
+        $this->load->view($this->pp.'create_review/template_questions_view', ['questions' => json_decode($template['questions'])]);
+    }
+
+    /**
+     * 
+     */
+    function single_template($id, $type){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        if($type == 'company'){
+            // Set system provided templates
+            $template = $this->pmm->GetSingleCompanyTemplates($id, ['name', 'questions']);
+            // Set company generated templates
+        } else if($type == 'personal'){
+            $template = $this->pmm->GetSinglePersonalTemplates($id, ['name', 'questions']);
+        } else{
+            $this->res([], true);
+        }
+        //
+        $template['questions'] = json_decode($template['questions'], true);
+
+        //
+        $this->res(['data' => $template]);
     }
     
 

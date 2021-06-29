@@ -72,7 +72,7 @@
 ?>
 <div class="clearfix"></div>
 <div class="csPageWrap">
-    <div class="csPageNav csSticky">
+    <div class="csPageNav">
         <nav class="csNavBar ">
             <div class="container-fluid">
                 <div class="row">

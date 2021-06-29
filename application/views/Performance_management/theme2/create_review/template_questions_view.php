@@ -22,7 +22,7 @@
                                 <div class="clearfix"></div>
                             </div>
                         </div>
-                        <div class="panel-body pl0 pr0 jsPageBody" style="background-color: #fff;" data-page="question_<?=$i;?>">
+                        <div class="panel-body jsPageBody" style="background-color: #fff;" data-page="question_<?=$i;?>">
                             <?php 
                                 if(!empty($question->description)){
                                     ?>

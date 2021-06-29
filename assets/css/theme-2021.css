@@ -1118,13 +1118,28 @@
         z-index: 1;
     }
     
-    .csIPLoader i {
+    .csIPLoader>i {
         position: relative;
         top: 50%;
         left: 50%;
         font-size: 50px;
         color: #fd7a2a;
         transform: translate(-50%, -50%);
+    }
+    
+    .csIPLoader div {
+        position: relative;
+        top: 100px;
+    }
+    
+    .csIPLoader div p {
+        color: #333;
+        text-align: center;
+    }
+    
+    .csIPLoader div p i {
+        font-size: 50px;
+        color: #fd7a2a;
     }
     /*  */
     
@@ -1695,8 +1710,7 @@
         margin: 0;
         padding: 0;
     }
-    
-    .csTabMenu li {
+    /* .csTabMenu li {
         display: inline-block;
         background-color: #81b431;
         color: #fff;
@@ -1710,6 +1724,7 @@
         background-color: #ffffff;
         color: #333;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> d5bced39... Added creatae review step 1 on blue screen
 =======
@@ -1720,4 +1735,11 @@
 >>>>>>> 822d4f11... Added green panel report
 =======
 >>>>>>> 45220c87... Updated reviews, single review, and review list designs
+=======
+    } */
+    /* INFO */
+    
+    .csInfoTxt {
+        color: #cc0000;
+>>>>>>> 11cb2d4e... Added create page route
     }

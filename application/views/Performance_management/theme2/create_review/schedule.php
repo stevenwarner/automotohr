@@ -13,7 +13,7 @@
             <div class="clearfix"></div>
         </div>
     </div>
-    <div class="panel-body pl0 pr0 jsPageBody" data-page="basic">
+    <div class="panel-body jsPageBody" data-page="basic">
         <!-- Name -->
         <div class="row">
             <div class="col-sm-4 col-xs-12">
@@ -21,7 +21,7 @@
                 <p class="csF14 jsHintBody" data-hint="title">What the review will be called. e.g. "Quarterly Review"</p>
             </div>
             <div class="col-sm-8 col-xs-12">
-                <input type="text" class="form-control" placeholder="Quarterly Review" />
+                <input type="text" class="form-control" id="jsReviewTitleInp" placeholder="Quarterly Review" />
             </div>
         </div>
         
@@ -33,7 +33,7 @@
                 <p class="csF14 jsHintBody" data-hint="title">What this review is about.</p>
             </div>
             <div class="col-sm-8 col-xs-12">
-                <textarea class="form-control" rows="5" placeholder="Creating a Quarterly Review for Sales department."></textarea>
+                <textarea class="form-control" rows="5" id="jsReviewDescriptionInp" placeholder="Creating a Quarterly Review for Sales department."></textarea>
             </div>
         </div>
     </div>
@@ -54,7 +54,7 @@
             <div class="clearfix"></div>
         </div>
     </div>
-    <div class="panel-body pl0 pr0 jsPageBody" data-page="schedule">
+    <div class="panel-body jsPageBody" data-page="schedule">
         <!-- Frequency -->
         <div class="row">
             <div class="col-sm-4 col-xs-12">
@@ -64,17 +64,17 @@
             <div class="col-sm-8 col-xs-12">
                 <label class="control control--radio csF16 csB1">
                     One-time Only
-                    <input type="radio" name="1" />
+                    <input type="radio" id="jsReviewFrequencyInp" name="jsReviewFrequency" checked />
                     <div class="control__indicator"></div>
                 </label><br/>
                 <label class="control control--radio csF16 csB1">
                     Recurring
-                    <input type="radio" name="1" />
+                    <input type="radio" id="jsReviewFrequencyInp" name="jsReviewFrequency" />
                     <div class="control__indicator"></div>
                 </label><br/>
                 <label class="control control--radio csF16 csB1">
                     Custom Schedule
-                    <input type="radio" name="1" />
+                    <input type="radio" id="jsReviewFrequencyInp" name="jsReviewFrequency" />
                     <div class="control__indicator"></div>
                 </label>
             </div>
@@ -90,18 +90,18 @@
             <div class="col-md-8 col-xs-12">
                 <div class="row">
                     <div class="col-md-5 col-xs-12">
-                        <input type="text" readonly class="form-control" />
+                        <input type="text" id="jsReviewStartDateInp" readonly class="form-control" placeholder="MM/DD/YYYY" />
                     </div>
                     <div class="col-md-1 col-xs-12"><p class="text-center csF22 csB9">-</p></div>
                     <div class="col-md-5 col-xs-12">
-                        <input type="text" readonly class="form-control" />
+                        <input type="text" id="jsReviewEndDateInp" readonly class="form-control" placeholder="MM/DD/YYYY" />
                     </div>
                 </div>
             </div>
         </div>
         
         <!-- Recur -->
-        <div class="row">
+        <div class="row dn">
             <br />
             <div class="col-md-4 col-xs-12">
                 <label class="csF16 csB7">Recur Every <span class="csRequired"></span> <i class="fa fa-question-circle-o jsHintBtn"  data-target="title" aria-hidden="true"></i></label>
@@ -120,7 +120,7 @@
         </div>
         
         <!-- Custom Run -->
-        <div class="row">
+        <div class="row dn">
             <br />
             <div class="col-md-12 col-xs-12">
                 <p class="csF16"><i class="fa fa-info-circle csF18 csB7" aria-hidden="true"></i>&nbsp;<em class="csInfo">You can create custom occurrences for this review based on reviewees' start date, and continuing on a regular schedule. For instance, you may wish to run a performance review for new employees 30 days after their start date, and then every 6 months thereafter</em>.</p>
@@ -128,7 +128,7 @@
         </div>
 
         <!-- Custom Run -->
-        <div class="row">
+        <div class="row dn">
             <br />
             <div class="col-md-4 col-xs-12">
                 <label class="csF16 csB7">Custom Review Runs <span class="csRequired"></span> <i class="fa fa-question-circle-o jsHintBtn"  data-target="title" aria-hidden="true"></i></label>
@@ -153,7 +153,7 @@
         </div>
         
         <!-- Custom Run -->
-        <div class="row">
+        <div class="row dn">
             <br />
             <div class="col-md-4 col-xs-12">
                 <label class="csF16 csB7">Continue Review <i class="fa fa-question-circle-o jsHintBtn"  data-target="title" aria-hidden="true"></i></label>
@@ -169,7 +169,7 @@
         </div>
 
         <!-- Custom Run -->
-        <div class="row">
+        <div class="row dn">
             <br />
             <div class="col-md-4 col-xs-12">
                 <label class="csF16 csB7">When is review due? <span class="csRequired"></span> <i class="fa fa-question-circle-o jsHintBtn"  data-target="title" aria-hidden="true"></i></label>
@@ -208,7 +208,7 @@
             <div class="clearfix"></div>
         </div>
     </div>
-    <div class="panel-body pl0 pr0 jsPageBody" data-page="visibility">
+    <div class="panel-body jsPageBody" data-page="visibility">
         <!-- Roles -->
         <div class="row">
             <div class="col-sm-4 col-xs-12">
@@ -216,7 +216,7 @@
                 <p class="csF14 jsHintBody" data-hint="title">The selected Role(s) can manage this review.</p>
             </div>
             <div class="col-sm-8 col-xs-12">
-                <select class="select2" multiple></select>
+                <select class="select2" id="jsReviewRolesInp" multiple></select>
             </div>
         </div>
 
@@ -228,7 +228,7 @@
                 <p class="csF14 jsHintBody" data-hint="title">The selected Department(s) supervisors can manage this review.</p>
             </div>
             <div class="col-sm-8 col-xs-12">
-                <select class="select2" multiple></select>
+                <select class="select2" id="jsReviewDepartmentsInp" multiple></select>
             </div>
         </div>
 
@@ -240,7 +240,7 @@
                 <p class="csF14 jsHintBody" data-hint="title">The selected Team(s) team leads can manage this review.</p>
             </div>
             <div class="col-sm-8 col-xs-12">
-                <select class="select2" multiple></select>
+                <select class="select2" id="jsReviewTeamsInp" multiple></select>
             </div>
         </div>
 
@@ -252,7 +252,7 @@
                 <p class="csF14 jsHintBody" data-hint="title">The selected Employee(s) can manage this review.</p>
             </div>
             <div class="col-sm-8 col-xs-12">
-                <select class="select2" multiple></select>
+                <select class="select2" id="jsReviewEmployeesInp" multiple></select>
             </div>
         </div>
     </div>
@@ -262,16 +262,13 @@
     <div class="col-sm-12">
         <div class="bbb"></div>
         <br />
+        <!--  -->
+        <button class="btn btn-black csF16 jsPageSectionBtn" data-to="template"><i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Back To Templates</button>
+        <!--  -->
         <span class="pull-right">
-            <button class="btn btn-orange csF16"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>&nbsp; Save & Next</button>
-            <button class="btn btn-black csF16"><i class="fa fa-archive" aria-hidden="true"></i>&nbsp; Finish Later</button>
+            <button class="btn btn-orange csF16" id="jsReviewScheduleSaveBtn"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>&nbsp;Save & Next</button>
+            <button class="btn btn-black csF16"><i class="fa fa-archive" aria-hidden="true"></i>&nbsp;Finish Later</button>
         </span>
     </div>
     <div class="clearfix"></div>
 </div>
-
-
-
-<script>$('.select2').select2({
-    placeholder: "Please select"
-});</script>

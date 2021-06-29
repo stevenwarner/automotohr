@@ -1316,6 +1316,7 @@ $route['eeoc_form_submit']['post'] = 'Home/eeoc_form_submit';
 <<<<<<< HEAD
 <<<<<<< HEAD
 $route['performance-management/get-template-questions/(:any)/(:num)']['get'] = 'Performance_management/template_questions/$2/$1';
+$route['performance-management/get-single-template/(:any)/(:num)']['get'] = 'Performance_management/single_template/$2/$1';
 $route['performance-management/feedback']['get'] = 'Performance_management/feedback';
 $route['performance-management/review']['get'] = 'Performance_management/review';
 =======
