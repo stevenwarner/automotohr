@@ -5183,6 +5183,7 @@ if (!function_exists('get_notification_email_contacts')) {
         if ($job_sid > 0) {
             $CI->db->select('users.active as userActive');
             $CI->db->select('users.terminated_status');
+            $CI->db->select('users.access_level');
             $CI->db->select('portal_job_listings_visibility.employer_sid');
             $CI->db->select('notifications_emails_management.employer_sid as nem_employer_sid');
             $CI->db->select('notifications_emails_management.email as email');
@@ -5198,7 +5199,8 @@ if (!function_exists('get_notification_email_contacts')) {
             $CI->db->select('
                 notifications_emails_management.*,
                 users.active as userActive,
-                users.terminated_status
+                users.terminated_status,
+                users.access_level
             ');
             $CI->db->where('notifications_emails_management.company_sid', $company_sid);
             $CI->db->where('notifications_emails_management.notifications_type', $notification_type);
@@ -5208,7 +5210,7 @@ if (!function_exists('get_notification_email_contacts')) {
         }
 
         $all_none_employee_contacts = array();
-        $CI->db->select('*');
+        $CI->db->select('*, "tmp" as access_level');
         $CI->db->where('company_sid', $company_sid);
         $CI->db->where('employer_sid', 0);
         $CI->db->where('notifications_type', $notification_type);
@@ -11018,50 +11020,32 @@ if (!function_exists('getEmployerAssignJobs')) {
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
 
-        $assign_job = false;
-
+        // For job visibility
         if (!empty($record_arr)) {
-            $assign_jobs = array_column($record_arr, 'job_sid');
-
+            //
             $CI->db->select('job_sid');
             $CI->db->where('portal_job_applications_sid', $user_sid);
-            $CI->db->where_in('job_sid', $assign_jobs);
-
-            $record_obj = $CI->db->get('portal_applicant_jobs_list');
-            $jobs_arr = $record_obj->result_array();
-            $record_obj->free_result();
-
-            if (!empty($jobs_arr)) {
-                $assign_job = true;
+            $CI->db->where_in('job_sid', array_column($record_arr, 'job_sid'));
+            //
+            if($CI->db->count_all_results('portal_applicant_jobs_list')){
+                return true;
             }
-
         } 
 
-        return $assign_job;
-    }
-}
-
-if (!function_exists('getEmployerAssignApplicant')) {
-    function getEmployerAssignApplicant ($employer_sid, $user_sid)
-    {
-        $CI = &get_instance();
+        // For candidate
         $CI->db->select('sid');
         $CI->db->where('employer_sid', $employer_sid);
         $CI->db->where('applicant_sid', $user_sid);
+        $CI->db->where('status', 'assigned');
+        //
+        if($CI->db->count_all_results('assignment_management')){
+            return true;
+        }
 
-        $record_obj = $CI->db->get('assignment_management');
-        $record_arr = $record_obj->result_array();
-        $record_obj->free_result();
-
-        $assign_applicant = false;
-
-        if (!empty($record_arr)) {
-           $assign_applicant = true;
-        } 
-
-        return $assign_applicant;
+        return false;
     }
 }
+
 //
 if (!function_exists('getTimeOffCompaniesForyearly')) {
     function getTimeOffCompaniesForyearly(
