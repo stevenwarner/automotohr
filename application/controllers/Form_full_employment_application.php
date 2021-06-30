@@ -462,7 +462,7 @@ class Form_full_employment_application extends CI_Controller {
                                 if(
                                     $user_type == 'applicant' && // User type must be applicant
                                     !empty($contact['employer_sid']) && // Has to be an employer
-                                    in_array(strtolower($contact['access_level']), ['hiring manager', 'manager']) && // Role should be hiring manager or maanger
+                                    in_array(strtolower(trim($contact['access_level'])), ['hiring manager', 'manager']) && // Role should be hiring manager or manager
                                     !getEmployerAssignJobs($contact['employer_sid'], $user_sid) // Has the job or candidate visibility
                                 ){
                                     continue;

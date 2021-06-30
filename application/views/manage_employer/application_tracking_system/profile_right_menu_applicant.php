@@ -10,7 +10,7 @@ if ($this->session->userdata('logged_in')) {
     $applicant_sid = $applicant_info['sid'];
     $form_full_application_flag = 0;
 
-    if ($employer_access_level == 1 || !in_array(strtolower($session['employer_detail']['access_level']), ['hiring manager', 'manager'])) {
+    if ($employer_access_level == 1 || !in_array(strtolower(trim($session['employer_detail']['access_level'])), ['hiring manager', 'manager'])) {
         $form_full_application_flag = 1;
     } else {
         $is_job_assign = getEmployerAssignJobs($employer_sid, $applicant_sid);
