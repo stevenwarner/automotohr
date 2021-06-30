@@ -5193,6 +5193,7 @@ if (!function_exists('get_notification_email_contacts')) {
         if ($job_sid > 0) {
             $CI->db->select('users.active as userActive');
             $CI->db->select('users.terminated_status');
+            $CI->db->select('users.access_level');
             $CI->db->select('portal_job_listings_visibility.employer_sid');
             $CI->db->select('notifications_emails_management.employer_sid as nem_employer_sid');
             $CI->db->select('notifications_emails_management.email as email');
@@ -5208,7 +5209,8 @@ if (!function_exists('get_notification_email_contacts')) {
             $CI->db->select('
                 notifications_emails_management.*,
                 users.active as userActive,
-                users.terminated_status
+                users.terminated_status,
+                users.access_level
             ');
             $CI->db->where('notifications_emails_management.company_sid', $company_sid);
             $CI->db->where('notifications_emails_management.notifications_type', $notification_type);
@@ -5218,7 +5220,7 @@ if (!function_exists('get_notification_email_contacts')) {
         }
 
         $all_none_employee_contacts = array();
-        $CI->db->select('*');
+        $CI->db->select('*, "tmp" as access_level');
         $CI->db->where('company_sid', $company_sid);
         $CI->db->where('employer_sid', 0);
         $CI->db->where('notifications_type', $notification_type);
@@ -10999,8 +11001,13 @@ if (!function_exists('getFileData')) {
 if (!function_exists('remakeEmployeeName')) {
     function remakeEmployeeName($o, $i = TRUE)
     {
+        // echo '<pre>';
+        // print_r($o);
         //
-        $r = $i ? $o['first_name'] . ' ' . $o['last_name'] : '';
+        $first_name = isset($o['first_name']) ? $o['first_name'] : (isset($o['to_first_name']) ? $o['to_first_name'] : '');
+        $last_name = isset($o['last_name']) ? $o['last_name'] : (isset($o['to_last_name']) ? $o['to_last_name'] : '');
+        //
+        $r = $i ? $first_name . ' ' . $last_name : '';
         //
         if (!isset($o['job_title'])) return $r;
         //
@@ -11011,6 +11018,44 @@ if (!function_exists('remakeEmployeeName')) {
         return $r;
     }
 }
+
+if (!function_exists('getEmployerAssignJobs')) {
+    function getEmployerAssignJobs ($employer_sid, $user_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('job_sid');
+        $CI->db->where('employer_sid', $employer_sid);
+
+        $record_obj = $CI->db->get('portal_job_listings_visibility');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        // For job visibility
+        if (!empty($record_arr)) {
+            //
+            $CI->db->select('job_sid');
+            $CI->db->where('portal_job_applications_sid', $user_sid);
+            $CI->db->where_in('job_sid', array_column($record_arr, 'job_sid'));
+            //
+            if($CI->db->count_all_results('portal_applicant_jobs_list')){
+                return true;
+            }
+        } 
+
+        // For candidate
+        $CI->db->select('sid');
+        $CI->db->where('employer_sid', $employer_sid);
+        $CI->db->where('applicant_sid', $user_sid);
+        $CI->db->where('status', 'assigned');
+        //
+        if($CI->db->count_all_results('assignment_management')){
+            return true;
+        }
+
+        return false;
+    }
+}
+
 //
 if (!function_exists('getTimeOffCompaniesForyearly')) {
     function getTimeOffCompaniesForyearly(

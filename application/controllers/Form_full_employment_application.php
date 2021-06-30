@@ -11,6 +11,7 @@ class Form_full_employment_application extends CI_Controller {
     public function index($verification_key = null) {
       
         if ($verification_key != null) {
+
             $request_details = $this->form_full_employment_application_model->get_form_request($verification_key);
 
             if (!empty($request_details)) {
@@ -452,9 +453,21 @@ class Form_full_employment_application extends CI_Controller {
                     if ($applicant_notifications_status == 1) {
 
                         $applicant_notification_contacts = get_notification_email_contacts($company_sid, 'employment_application', 0);
-
+                        
                         if (!empty($applicant_notification_contacts)) {
                             foreach ($applicant_notification_contacts as $contact) {
+                                //
+                                $employer_sid = $contact['employer_sid'];
+                                // For applicant
+                                if(
+                                    $user_type == 'applicant' && // User type must be applicant
+                                    !empty($contact['employer_sid']) && // Has to be an employer
+                                    in_array(strtolower($contact['access_level']), ['hiring manager', 'manager']) && // Role should be hiring manager or maanger
+                                    !getEmployerAssignJobs($contact['employer_sid'], $user_sid) // Has the job or candidate visibility
+                                ){
+                                    continue;
+                                }
+                                //
                                 $sms_notify = 0;
                                 $contact_no = 0;
                                 if($company_sms_notification_status){
@@ -498,14 +511,10 @@ class Form_full_employment_application extends CI_Controller {
                                 $applicant_link = $profile_link;
                                 $replacement_array['link'] = $applicant_link;
                                 log_and_send_templated_email(FULL_EMPLOYMENT_APPLICATION_SIGNED, $contact['email'], $replacement_array);
-                                //mail('ahassan.egenie@gmail.com', 'Company notification for: ' . $company_name, 'applicant_email: ' . $applicant_email . ' Send Mail to: ' . $contact['email']);
                             }
                         }
                     }
 
-//                    $data = array(
-//                        'phone_number' => $formpost['PhoneNumber']
-//                    );
                     $data['extra_info']['other_email'] = $formpost['TextBoxAddressStreetFormer3'];
                     $data['extra_info']['other_PhoneNumber'] = $formpost['TextBoxTelephoneOther'];
 

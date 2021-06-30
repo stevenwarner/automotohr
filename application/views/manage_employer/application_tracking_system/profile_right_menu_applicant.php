@@ -5,8 +5,20 @@ if ($this->session->userdata('logged_in')) {
     if(!isset($applicant_jobs)){
         $applicant_jobs = $this->application_tracking_system_model->get_single_applicant_all_jobs($id, $company_sid);
     } 
-    // echo "appliid = ".$id." = company _sid = ".$company_sid;
-    // echo "<pre>"; print_r($applicant_jobs); exit; 
+    $employer_sid = $session['employer_detail']['sid'];
+    $employer_access_level = $session['employer_detail']['access_level_plus'];
+    $applicant_sid = $applicant_info['sid'];
+    $form_full_application_flag = 0;
+
+    if ($employer_access_level == 1 || !in_array(strtolower($session['employer_detail']['access_level']), ['hiring manager', 'manager'])) {
+        $form_full_application_flag = 1;
+    } else {
+        $is_job_assign = getEmployerAssignJobs($employer_sid, $applicant_sid);
+        //
+        if ($is_job_assign) {
+            $form_full_application_flag = 1;
+        }
+    }
 }
 
 ?>
@@ -295,50 +307,52 @@ if ($this->session->userdata('logged_in')) {
             <div class="hr-widget">
                 <div class="browse-attachments">
                     <ul>
-                        <?php if(check_access_permissions_for_view($security_details, 'send_applicant_full_employment_application')) { ?>
-                            <li>
-                                <span class="left-addon">
-                                    <i aria-hidden="true" class="fa fa-file-text"></i>
-                                </span>
-                                <h4>Full Employment Application</h4>
-                                <?php $full_emp_form_status = get_full_emp_app_form_status($applicant_info['sid'],'applicant'); ?>
-                                    <form id="form_send_full_employment_application" enctype="multipart/form-data" method="post" action="<?php echo base_url('form_full_employment_application/send_form'); ?>">
-                                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $applicant_info['employer_sid']; ?>" />
-                                    <input type="hidden" id="user_type" name="user_type" value="applicant" />
-                                    <input type="hidden" id="user_sid" name="user_sid" value="<?php echo $applicant_info['sid']; ?>" />
-                                    <input type="hidden" name="list_sid" value="<?php echo $job_list_sid; ?>" />
-                                </form>
-                                <div <?= $full_emp_form_status == 'sent' || $full_emp_form_status == 'signed' ? 'class="view-btn"':''?>>
-                                    <a href="javascript:void(0);" onclick="fSendFullEmploymentForm();"><?= $full_emp_form_status == 'sent' || $full_emp_form_status == 'signed' ? 'Resend' :'Send';?><i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                    <!-- Light Bulb Code - Start -->
+                        <?php if ($form_full_application_flag == 1) { ?>
+                            <?php if(check_access_permissions_for_view($security_details, 'send_applicant_full_employment_application')) { ?>
+                                <li>
+                                    <span class="left-addon">
+                                        <i aria-hidden="true" class="fa fa-file-text"></i>
+                                    </span>
+                                    <h4>Full Employment Application</h4>
+                                    <?php $full_emp_form_status = get_full_emp_app_form_status($applicant_info['sid'],'applicant'); ?>
+                                        <form id="form_send_full_employment_application" enctype="multipart/form-data" method="post" action="<?php echo base_url('form_full_employment_application/send_form'); ?>">
+                                        <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $applicant_info['employer_sid']; ?>" />
+                                        <input type="hidden" id="user_type" name="user_type" value="applicant" />
+                                        <input type="hidden" id="user_sid" name="user_sid" value="<?php echo $applicant_info['sid']; ?>" />
+                                        <input type="hidden" name="list_sid" value="<?php echo $job_list_sid; ?>" />
+                                    </form>
+                                    <div <?= $full_emp_form_status == 'sent' || $full_emp_form_status == 'signed' ? 'class="view-btn"':''?>>
+                                        <a href="javascript:void(0);" onclick="fSendFullEmploymentForm();"><?= $full_emp_form_status == 'sent' || $full_emp_form_status == 'signed' ? 'Resend' :'Send';?><i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                        <!-- Light Bulb Code - Start -->
 
-                                    <?php if($full_emp_form_status == 'sent' || $full_emp_form_status == 'signed') { ?>
-                                            <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Sent" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                        <?php if($full_emp_form_status == 'sent' || $full_emp_form_status == 'signed') { ?>
+                                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Sent" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                        <?php } else { ?>
+                                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Not Sent" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                        <?php } ?>
+                                    </div>
+                                    <!-- Light Bulb Code - End -->
+                                </li>
+                            <?php } ?>
+                            <?php if(check_access_permissions_for_view($security_details, 'view_applicant_full_employment_application')) { ?>
+                                <li>
+                                    <span class="left-addon">
+                                        <i aria-hidden="true" class="fa fa-file-text"></i>
+                                    </span>
+                                    <h4>Full Employment Application</h4>
+                                    <a href="<?php echo base_url('applicant_full_employment_application') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                    <!-- --><?php //$full_employment_application_status = get_full_employment_application_status($applicant_info['sid'], 'applicant'); ?>
+                                    <?php $full_employment_application_status = get_full_emp_app_form_status($applicant_info['sid'],'applicant'); ?>
+
+                                    <?php if($full_employment_application_status == 'signed') { ?>
+                                            <img title="Signed" style="width: 22px; height: 22px; margin-right:5px;" data-toggle="tooltip" data-placement="top" class="img-responsive pull-right" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                     <?php } else { ?>
-                                            <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Not Sent" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                            <img title="Unsigned" style="width: 22px; height: 22px; margin-right:5px;" data-toggle="tooltip" data-placement="top" class="img-responsive pull-right" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                                     <?php } ?>
-                                </div>
-                                <!-- Light Bulb Code - End -->
-                            </li>
-                        <?php } ?>
-                        <?php if(check_access_permissions_for_view($security_details, 'view_applicant_full_employment_application')) { ?>
-                            <li>
-                                <span class="left-addon">
-                                    <i aria-hidden="true" class="fa fa-file-text"></i>
-                                </span>
-                                <h4>Full Employment Application</h4>
-                                <a href="<?php echo base_url('applicant_full_employment_application') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-<!--                                --><?php //$full_employment_application_status = get_full_employment_application_status($applicant_info['sid'], 'applicant'); ?>
-                                <?php $full_employment_application_status = get_full_emp_app_form_status($applicant_info['sid'],'applicant'); ?>
 
-                                <?php if($full_employment_application_status == 'signed') { ?>
-                                        <img title="Signed" style="width: 22px; height: 22px; margin-right:5px;" data-toggle="tooltip" data-placement="top" class="img-responsive pull-right" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                <?php } else { ?>
-                                        <img title="Unsigned" style="width: 22px; height: 22px; margin-right:5px;" data-toggle="tooltip" data-placement="top" class="img-responsive pull-right" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
-                                <?php } ?>
-
-                            </li>
-                        <?php } ?>
+                                </li>
+                            <?php } ?>
+                        <?php } ?>    
 
                         <?php $w4_form = get_fillable_info('w4','applicant',$applicant_info['sid']);
                         if(sizeof($w4_form)>0) { ?>
