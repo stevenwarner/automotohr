@@ -401,7 +401,8 @@ class Background_check_model extends CI_Model {
                 $result = $result->free_result();
                 if(sizeof($result2_arr)) $result_arr[$k0]['user_first_name'] = $v0['user_first_name'] = ucwords($result2_arr['full_name']);
                 //
-                $result_arr[$k0]['product_name'] = $v0['product_name'] = preg_replace('/[^0-9a-zA-Z\s-_]+/', ' ', utf8_encode($v0['product_name']));
+                $result_arr[$k0]['product_name'] = 
+                 $v0['product_name'] = sc_remove($v0['product_name']);
                 // $result_arr[$k0]['product_name'] = $v0['product_name'] = str_replace(['?Ã¡'], '', utf8_encode($v0['product_name']));
                 $result_arr[$k0]['product_type'] = $v0['product_type'] = ucwords(str_replace('-', ' ', $v0['product_type']));
                 unset($result_arr[$k0]['order_response']);
@@ -418,7 +419,7 @@ class Background_check_model extends CI_Model {
                 $rows .= '    <td>'.$v0['first_name'].' '.$v0['last_name'].'</td>';
                 $rows .= '    <td>'.$v0['user_first_name'].'</td>';
                 $rows .= '    <td>'.ucfirst($v0['users_type']).'</td>';
-                $rows .= '    <td>'.$v0['product_name'].'</td>';
+                $rows .= '    <td>'. $v0['product_name'] .'</td>';
                 $rows .= '    <td>'.$v0['product_type'].'</td>';
                 $rows .= '    <td>'.ucwords($v0['cname']).'</td>';
                 $rows .= '    <td '.$status_color.'>'.($v0['status'] == 'Draft' ? 'Awaiting Candidate Input' : ($v0['status'] == '' || $v0['status'] == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $v0['status']))).'</td>';

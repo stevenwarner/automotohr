@@ -345,6 +345,8 @@ class Accurate_background_model extends CI_Model
             'awaiting_candidate_input' => array()
         );
 
+          //  _e($result_arr, true, true);
+
 
         foreach ($result_arr as $k0 => $v0) {
             $tmp_array = @unserialize($v0['order_response']);
@@ -355,6 +357,8 @@ class Accurate_background_model extends CI_Model
                 $in_status = strtolower($tmp_array['orderStatus']['status']);
 
             $in_status = $in_status == 'draft' ? 'awaiting_candidate_input' : $in_status;
+
+
 
             if ($do_count) $status_array[$in_status][] = $v0['order_sid'];
 
@@ -374,8 +378,12 @@ class Accurate_background_model extends CI_Model
                 $result2_arr = $result->row_array();
                 $result = $result->free_result();
                 if (sizeof($result2_arr)) $result_arr[$k0]['user_first_name'] = $v0['user_first_name'] = ucwords($result2_arr['full_name']);
+
                 //
-                $result_arr[$k0]['product_name'] = $v0['product_name'] = str_replace(['?Ã¡'], '', utf8_encode($v0['product_name']));
+                 $result_arr[$k0]['product_name'] = 
+                 $v0['product_name'] = sc_remove($v0['product_name']);
+
+                //$result_arr[$k0]['product_name'] = $v0['product_name'] = str_replace(['?Ã¡'], '', utf8_encode($v0['product_name']));
                 $result_arr[$k0]['product_type'] = $v0['product_type'] = ucwords(str_replace('-', ' ', $v0['product_type']));
                 //
                 unset($result_arr[$k0]['order_response']);
@@ -402,6 +410,8 @@ class Accurate_background_model extends CI_Model
                 $rows .= '</tr>';
             }
         }
+
+       // die('asdasd');
 
         if ($export) return $result_arr;
         return $do_count ? array('TotalRecords' => count($result_arr), 'StatusArray' => $status_array) : $rows;
