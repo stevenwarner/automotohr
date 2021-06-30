@@ -913,9 +913,9 @@ class Time_off extends Public_Controller
         if ($_GET) {
             // $filter_session = $this->session->flashdata($_GET['token']);
             $filter_session = $this->session->userdata($_GET['token']);
-            $filter_employees = $filter_session['employees'] != null ? explode(',', $filter_session['employees']) : 'all';
+            $filter_employees = $filter_session['employees'] != 'null' ? explode(',', $filter_session['employees']) : 'all';
             $filter_departments =  $filter_session['departments'] != 'null' ? explode(',', $filter_session['departments']) : 'all';
-            $filter_teams = $filter_session['teams'] != null ? explode(',', $filter_session['teams']) : 'all';
+            $filter_teams = $filter_session['teams'] != 'null' ? explode(',', $filter_session['teams']) : 'all';
         
             $start_date = $_GET['startDate'];
             $end_date  = $_GET['endDate'];
