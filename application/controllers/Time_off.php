@@ -1653,6 +1653,50 @@ class Time_off extends Public_Controller
         log_and_send_templated_email(NEW_PTO_REQUESTED, $SupervisorDetails['email'], $replacement_array, $message_hf);
     }
 
+    public function requests_status ($companyId, $request_sid, $request_type)
+    {
+        //
+        $request_info = $this->timeoff_model->fetchRequestHistoryInfo($request_sid);
+        $result = array();
+        //
+        if(!empty($request_info) && $request_info['action'] == "update"){
+            $note = json_decode($request_info['note'],true);
+            $old_status = $note['status'];
+            $desire_status = ''; 
+            //
+            if ($request_type == 'reject') {
+                $desire_status = 'rejected';
+            } else {
+               $desire_status = 'approved'; 
+            }
+            //
+            if ($old_status != $desire_status) {
+                $msg = '';
+                $employee_name = getUserNameBySID($request_info['employee_sid']);
+                $date = date('M d Y, D', strtotime($request_info['created_at']));
+
+                if ($old_status == 'rejected') {
+                    $msg = $employee_name.' has rejected the time-off at '.$date;
+                } else if ($old_status == 'approved') {
+                    $msg = $employee_name.' has approved the time-off at '.$date;
+                }
+
+                $result['Status'] = true;
+                $result['message'] = $msg;
+            } else {
+                $result['Status'] = false;
+                $result['message'] = '';
+            }
+        } else { 
+            $result['Status'] = false;
+            $result['message'] = '';
+        }
+        
+        header('Content-type: application/json');
+        echo json_encode($result);
+        exit(0);
+    }
+
     /*
     *******************************************************************************************
      AJAX HANDLER

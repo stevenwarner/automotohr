@@ -516,6 +516,8 @@ resp.Response
     //
     $(document).on('click', '.jsRequestBtn', function() {
         //
+       
+        let tab = $(this).data('tab');
         let obj = {
             action: 'request_status',
             companyId: companyId,
@@ -526,7 +528,51 @@ resp.Response
             status: $(this).data('type') == 'approve' ? 'approved' : 'rejected',
             comment: $(this).closest('.jsBox').find('.jsRequestCommentTxt').val()
         };
-        //
+
+        if (tab == 'pending') {
+            let request_sid = $(this).closest('.jsBox').data('id');
+            let request_type = $(this).data('type');
+            ml(true, `request${request_sid}`);
+            
+            let myurl = handlerURL+"/requests_status/"+companyId+"/"+request_sid+"/"+request_type;
+           
+            $.ajax({
+                type: "GET",
+                url: myurl,
+                async : false,
+                success: function (resp) {
+                    ml(false, `request${request_sid}`);
+                    if (resp.Status === true) {
+                        alertify.confirm(
+                            'Please Confirm',
+                            'Are you sure you want to '+request_type+' time-off request, '+resp.message,
+                            function () {
+                                //
+                                sendUpdateStatusRequest(obj);
+                            }, function () {
+                                alertify.warning('Cancelled!');
+                            }).set({
+                                'labels': {
+                                    'ok': 'Yes!'
+                                }
+                            });
+                    } else {
+                        //
+                        sendUpdateStatusRequest(obj); 
+                    }
+                },
+                error: function (resp) {
+
+                }   
+            });
+        } else {
+            //
+            sendUpdateStatusRequest(obj);
+        }
+
+    });
+
+    function sendUpdateStatusRequest (obj) {
         ml(true, `request${obj.requestId}`);
         //
         $.post(
@@ -543,7 +589,7 @@ resp.Response
                 )
             }
         );
-    });
+    }
 
     //
     function getApproverLisiting(history) {
@@ -634,11 +680,61 @@ resp.Response
         return comments;
     }
 
+    function getUpdateStatus(history) {
+        //
+        let msg = '';
+        let status = 'pending';
+        //
+        if (history.length == 0) return status;
+        //
+        
+        //
+        history.map((his) => {
+            let action = JSON.parse(his.note);
+            
+            if(his.action == 'update'){
+                msg += `${remakeEmployeeName(his)}`;
+                if (action.status == "approved") {
+                    status = 'approved';
+                    msg += ` has approved the time-off at ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
+                } else if (action.status == "rejected") {
+                    status = 'rejected';
+                    msg += ` has rejected the time-off at ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
+                }
+            }
+            
+        });
+
+        let
+            obj = {
+                status: status,
+                message: msg
+            };
+        //
+        return obj;
+    }
+
+
     //
     function getRequestBox(v, userRow) {
         //
         let progressStatus = v.status == "pending" ? (v.level_status != "pending" ? 50 : 0) : 100;
         let comments = getComments(v.history);
+        let request_info = getUpdateStatus(v.history);
+        let tab_status = v.status;
+        //
+        let bgStatusColor = '';
+        let status_button = '';
+        if (tab_status == "pending") {
+            if (request_info.status == 'approved') {
+                bgStatusColor = 'background: rgba(129, 180, 49, .2)';
+                status_button = '<span class="pull-left jsTooltip btn btn-warning btn-xs csF14 csB7" title="${'+request_info.message+'}">Approved <i class="fa fa-info-circle"></i></span>';
+            } else if (request_info.status == 'rejected') {
+                bgStatusColor = 'background: rgba(242, 222, 222, .5)';
+                status_button = '<span class="pull-left jsTooltip btn btn-warning btn-xs csF14 csB7" title="${'+request_info.message+'}">Rejected <i class="fa fa-info-circle"></i></span>';
+            }
+        }
+
         let rows = '';
         rows += `<div class="col-sm-3 col-xs-12">`;
         rows += `    <div class="csBox csShadow csRadius5 p0 jsBox" data-id="${v.sid}"  data-status="${v.status}" data-userid="${v.employee_sid}" data-name="${userRow.first_name} ${userRow.last_name}" >`;
@@ -646,6 +742,7 @@ resp.Response
         rows += `        <div class="csIPLoader jsIPLoader dn" data-page="request${v.sid}"><i class="fa fa-circle-o-notch fa-spin"></i></div>`;
         rows += `        <!-- Box Header -->`;
         rows += `        <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">`;
+        rows += `            ${status_button}`;
         rows += `            <span class="pull-right">`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsEditTimeOff" title="Edit"><i class="fa fa-pencil"></i></span>`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsHistoryTimeOff" title="Show History"><i class="fa fa-history"></i></span>`;
@@ -660,12 +757,12 @@ resp.Response
         rows += `            <div class="clearfix"></div>`;
         rows += `        </div>`;
         rows += `        <!-- Box Content -->`;
-        rows += `        <div class="csBoxContent">`;
+        rows += `        <div class="csBoxContent" style="${bgStatusColor}">`;
         rows += `            <!-- Section 1 -->`;
         rows += `            <div class="csBoxContentDateSection">`;
         rows += `                <div class="col-sm-5 col-xs-5">`;
         rows += `                    <h3>${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatB)}</h3>`;
-        rows += `                    <p>${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatBD)}</p>`;
+        rows += `                    <p>vvv${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatBD)}</p>`;
         rows += `                </div>`;
         rows += `                <div class="col-sm-2 col-xs-2 pl0 pr0">`;
         rows += `                    <strong class="text-center">`;
@@ -748,25 +845,25 @@ resp.Response
         } else {
             if (v.status == 'pending') {
                 rows += `            <div class="col-sm-6 pl0 pr0">`;
-                rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i>Approve</button>`;
+                rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve" data-tab="pending"><i class="fa fa-clock-o"></i>Approve</button>`;
                 rows += `            </div>`;
                 rows += `            <div class="col-sm-6 pr0">`;
-                rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i>Reject</button>`;
+                rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject" data-tab="pending"><i class="fa fa-times-circle-o"></i>Reject</button>`;
                 rows += `            </div>`;
             } else if (v.status == 'approved') {
                 rows += `            <div class="col-sm-12">`;
-                rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i>Reject</button>`;
+                rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject" data-tab="approved"><i class="fa fa-times-circle-o"></i>Reject</button>`;
                 rows += `            </div>`;
             } else if (v.status == 'rejected') {
                 rows += `            <div class="col-sm-12">`;
-                rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i>Approve</button>`;
+                rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve" data-tab="rejected"><i class="fa fa-clock-o"></i>Approve</button>`;
                 rows += `            </div>`;
             } else if (v.status == 'cancelled') {
                 rows += `            <div class="col-sm-6 pl0 pr0">`;
-                rows += `                <button class="btn btn-orange btn-lg form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i>Approve</button>`;
+                rows += `                <button class="btn btn-orange btn-lg form-control jsRequestBtn" data-type="approve" data-tab="cancelled"><i class="fa fa-clock-o"></i>Approve</button>`;
                 rows += `            </div>`;
                 rows += `            <div class="col-sm-6 pr0">`;
-                rows += `                <button class="btn alert-danger btn-lg btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i>Reject</button>`;
+                rows += `                <button class="btn alert-danger btn-lg btn-theme form-control jsRequestBtn" data-type="reject" data-tab="cancelled"><i class="fa fa-times-circle-o"></i>Reject</button>`;
                 rows += `            </div>`;
             } else {
                 rows += `            <div class="col-sm-12">`;

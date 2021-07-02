@@ -100,6 +100,7 @@ $route['incident_reporting_system/handler'] = 'Incident_reporting_system/handler
 // Create Time off
 $route['timeoff/lms'] = 'Time_off/timeoff_lms';
 $route['timeoff/get_time_with_format/(:any)/(:any)/(:any)'] = 'Time_off/get_time_with_format/$1/$2/$3';
+$route['timeoff/handler/requests_status/(:any)/(:any)/(:any)'] = 'Time_off/requests_status/$1/$2/$3';
 // Green panel routes
 $route['timeoff/import'] = 'Time_off/import';
 $route['timeoff/action/(:any)'] = 'Time_off/action/$1';

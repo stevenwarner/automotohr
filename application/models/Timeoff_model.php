@@ -8280,6 +8280,24 @@ class Timeoff_model extends CI_Model
         ->get($tbl)
         ->result_array();
     }
+
+    function fetchRequestHistoryInfo ($request_sid) {
+        $this->db->select('employee_sid ,note, action, created_at');
+        $this->db->where("request_sid", $request_sid);
+        $this->db->order_by('sid',"desc");
+        $this->db->limit(1);
+        $records_obj = $this->db->get('timeoff_request_timeline');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }    
+        // return $this->db->select('*')->order_by('sid',"desc")->where("request_sid", $request_sid)->limit(1)->get('timeoff_request_timeline')->row_array();
     
     /**
      * Update table
