@@ -153,7 +153,8 @@ $(function() {
                                 alertify.warning('Cancelled!');
                             }).set({
                                 'labels': {
-                                    'ok': 'Yes!'
+                                    'ok' : 'Yes',
+                                    'cancel' : 'No'
                                 }
                             });
                     } else {
