@@ -1664,11 +1664,15 @@ class Time_off extends Public_Controller
             $old_status = $note['status'];
             $desire_status = ''; 
             //
+            
             if ($request_type == 'reject') {
                 $desire_status = 'rejected';
-            } else {
+            } else if ($request_type == 'approve') {
                $desire_status = 'approved'; 
+            } else {
+                $desire_status = $request_type; 
             }
+            
             //
             if ($old_status != $desire_status) {
                 $msg = '';
