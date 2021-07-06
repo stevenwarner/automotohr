@@ -1683,11 +1683,17 @@ class Time_off extends Public_Controller
 
 
                 if ($old_status == 'rejected') {
-                    $msg = '<div>This request has been rejected by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>"'.$old_comment.'"<br>Do you want to approve this request?</div>';
-                    // $msg = $employee_name.' has rejected the time-off on '.$date;
+                    if (empty($old_comment)) {
+                        $msg = '<div>This request has been rejected by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>Do you want to approve this request?</div>';
+                    } else {
+                        $msg = '<div>This request has been rejected by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>"'.$old_comment.'"<br>Do you want to approve this request?</div>';
+                    }
                 } else if ($old_status == 'approved') {
-                    $msg = '<div>This request has been approved by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>"'.$old_comment.'"<br>Do you want to reject this request?</div>';
-                    // $msg = $employee_name.' has approved the time-off on '.$date;
+                    if (empty($old_comment)) {
+                        $msg = '<div>This request has been approved by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>Do you want to reject this request?</div>';
+                    } else {
+                        $msg = '<div>This request has been approved by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>"'.$old_comment.'"<br>Do you want to reject this request?</div>';
+                    }
                 }
 
                 $result['Status'] = true;

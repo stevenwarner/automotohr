@@ -819,8 +819,15 @@ resp.Response
             rows += `                    <p class="csBoxContentComentName">${comments[0].employeeName}</p>`;
             rows += `                    <p class="csBoxContentComentTag"> ${comments[0].employeeRole}</p>`;
             rows += `                    <p class="csBoxContentComentTag">${moment(comments[0].time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</p>`;
+            if(comments[0].msg.length != 0){   
             rows += `                    <div>"${strip_tags(comments[0].msg).substr(0, 25)}"</div>`;
-            rows += `                    <div><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
+            } 
+            if(comments[0].status == 'approved'){
+                rows += `                    <div class="text-success"><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
+            } else {
+                rows += `                    <div class="text-warning"><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
+            }
+            
                 if (allComments[v.sid] === undefined) allComments[v.sid] = [];
                 allComments[v.sid].push(comments);
                 rows += `                    <span class="jsCommentsPopover" title="p">`;
