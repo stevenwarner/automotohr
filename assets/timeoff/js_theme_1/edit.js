@@ -145,12 +145,13 @@ $(function() {
                     if (resp.Status === true) {
                         alertify.confirm(
                             'Please Confirm',
-                            'Are you sure you want to '+request_type+' time-off request, '+resp.message,
+                            resp.message,
+                            // 'Are you sure you want to '+request_type+' time-off request, '+resp.message,
                             function () {
                                 //
                                 sendUpdateStatusRequest(cOBJ);
                             }, function () {
-                                alertify.warning('Cancelled!');
+                                ml(false, 'editModalLoader');
                             }).set({
                                 'labels': {
                                     'ok' : 'Yes',

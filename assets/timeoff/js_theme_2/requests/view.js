@@ -545,15 +545,17 @@ resp.Response
                     if (resp.Status === true) {
                         alertify.confirm(
                             'Please Confirm',
-                            'Are you sure you want to '+request_type+' time-off request, '+resp.message,
+                            resp.message,
+                            // 'Are you sure you want to '+request_type+' time-off request, '+resp.message,
                             function () {
                                 //
                                 sendUpdateStatusRequest(obj);
                             }, function () {
-                                alertify.warning('Cancelled!');
+                                ml(true, 'editModalLoader');
                             }).set({
                                 'labels': {
-                                    'ok': 'Yes!'
+                                    'ok' : 'Yes',
+                                    'cancel' : 'No'
                                 }
                             });
                     } else {
@@ -696,10 +698,10 @@ resp.Response
                 msg += `${remakeEmployeeName(his)}`;
                 if (action.status == "approved") {
                     status = 'approved';
-                    msg += ` has approved the time-off at ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
+                    msg += ` has approved the time-off on ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
                 } else if (action.status == "rejected") {
                     status = 'rejected';
-                    msg += ` has rejected the time-off at ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
+                    msg += ` has rejected the time-off on ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
                 }
             }
             
@@ -724,15 +726,19 @@ resp.Response
         let tab_status = v.status;
         //
         let bgStatusColor = '';
-        let status_button = '';
+        let bgOldStatusColor = '';
+        //
         if (tab_status == "pending") {
+            $("#request_status_info").show();
             if (request_info.status == 'approved') {
                 bgStatusColor = 'background: rgba(129, 180, 49, .2)';
-                status_button = '<span class="pull-left jsTooltip btn btn-warning btn-xs csF14 csB7" title="${'+request_info.message+'}">Approved <i class="fa fa-info-circle"></i></span>';
+                bgOldStatusColor = 'background: none';
             } else if (request_info.status == 'rejected') {
                 bgStatusColor = 'background: rgba(242, 222, 222, .5)';
-                status_button = '<span class="pull-left jsTooltip btn btn-warning btn-xs csF14 csB7" title="${'+request_info.message+'}">Rejected <i class="fa fa-info-circle"></i></span>';
+                bgOldStatusColor = 'background: none';
             }
+        } else {
+            $("#request_status_info").hide();
         }
 
         let rows = '';
@@ -742,7 +748,6 @@ resp.Response
         rows += `        <div class="csIPLoader jsIPLoader dn" data-page="request${v.sid}"><i class="fa fa-circle-o-notch fa-spin"></i></div>`;
         rows += `        <!-- Box Header -->`;
         rows += `        <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">`;
-        rows += `            ${status_button}`;
         rows += `            <span class="pull-right">`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsEditTimeOff" title="Edit"><i class="fa fa-pencil"></i></span>`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsHistoryTimeOff" title="Show History"><i class="fa fa-history"></i></span>`;
@@ -762,7 +767,7 @@ resp.Response
         rows += `            <div class="csBoxContentDateSection">`;
         rows += `                <div class="col-sm-5 col-xs-5">`;
         rows += `                    <h3>${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatB)}</h3>`;
-        rows += `                    <p>vvv${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatBD)}</p>`;
+        rows += `                    <p>${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatBD)}</p>`;
         rows += `                </div>`;
         rows += `                <div class="col-sm-2 col-xs-2 pl0 pr0">`;
         rows += `                    <strong class="text-center">`;
@@ -784,7 +789,7 @@ resp.Response
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;
         rows += `            <!-- Section 3 -->`;
-        rows += `            <div class="csBoxContentEmpSection">`;
+        rows += `            <div class="csBoxContentEmpSection" style="${bgOldStatusColor}">`;
         rows += `                <div class="col-sm-3 col-xs-3">`;
         rows += `                    <img src="${getImageURL(userRow.image)}" class="csRoundImg"  />`;
         rows += `                </div>`;
@@ -794,7 +799,7 @@ resp.Response
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;
         rows += `            <!-- Section 4 -->`;
-        rows += `            <div class="csBoxContentProgressSection">`;
+        rows += `            <div class="csBoxContentProgressSection" style="${bgOldStatusColor}">`;
         rows += `                <div class="col-sm-12">`;
         rows += `                    <div class="progress csRadius100">`;
         rows += `                        <div class="progress-bar progress-bar-success csRadius100" role="progressbar" aria-valuenow="${progressStatus}" aria-valuemin="0" aria-valuemax="100" style="width: ${progressStatus}% ;">`;
@@ -806,15 +811,16 @@ resp.Response
         rows += `            </div>`;
         if (comments.length > 0) {
             rows += `            <!-- Section 5 -->`;
-            rows += `            <div class="csBoxContentComentSection">`;
+            rows += `            <div class="csBoxContentComentSection" style="${bgOldStatusColor}">`;
             rows += `                <div class="col-sm-3 col-xs-3">`;
             rows += `                    <img src="${comments[0].employeeImage}" class="csRoundImg" />`;
             rows += `                </div>`;
             rows += `                <div class="col-sm-9 col-xs-9 pr0">`;
-            rows += `                    <div><strong>${strip_tags(comments[0].msg).substr(0, 25)}</strong></div>`;
             rows += `                    <p class="csBoxContentComentName">${comments[0].employeeName}</p>`;
             rows += `                    <p class="csBoxContentComentTag"> ${comments[0].employeeRole}</p>`;
             rows += `                    <p class="csBoxContentComentTag">${moment(comments[0].time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</p>`;
+            rows += `                    <div>"${strip_tags(comments[0].msg).substr(0, 25)}"</div>`;
+            rows += `                    <div><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
                 if (allComments[v.sid] === undefined) allComments[v.sid] = [];
                 allComments[v.sid].push(comments);
                 rows += `                    <span class="jsCommentsPopover" title="p">`;
@@ -826,11 +832,12 @@ resp.Response
         }
         rows += `            <!-- Section 6 -->`;
         rows += `            <div class="csBoxContentComent2Section">`;
-        rows += `                <div class="col-sm-2 col-xs-2">`;
-        rows += `                    <i class="fa fa-comment-o"></i>`;
-        rows += `                </div>`;
-        rows += `                <div class="col-sm-10 col-xs-10">`;
-        rows += `                    <textarea class="form-control jsRequestCommentTxt" rows="1"></textarea>`;
+        // rows += `                <div class="col-sm-2 col-xs-2">`;
+        // rows += `                    <i class="fa fa-comment-o"></i>`;
+        // rows += `                </div>`;
+        // rows += `                <div class="col-sm-10 col-xs-10">`;
+        rows += `                <div class="col-sm-12 col-xs-12 textarea_parent_div">`;
+        rows += `                    <textarea class="form-control jsRequestCommentTxt" rows="4" placeholder="Comment Here..."></textarea>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;

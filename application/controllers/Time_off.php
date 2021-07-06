@@ -1662,6 +1662,7 @@ class Time_off extends Public_Controller
         if(!empty($request_info) && $request_info['action'] == "update"){
             $note = json_decode($request_info['note'],true);
             $old_status = $note['status'];
+            $old_comment = $note['comment'];
             $desire_status = ''; 
             //
             
@@ -1679,10 +1680,14 @@ class Time_off extends Public_Controller
                 $employee_name = getUserNameBySID($request_info['employee_sid']);
                 $date = date('M d Y, D', strtotime($request_info['created_at']));
 
+
+
                 if ($old_status == 'rejected') {
-                    $msg = $employee_name.' has rejected the time-off at '.$date;
+                    $msg = '<div>This request has been rejected by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>"'.$old_comment.'"<br>Do you want to approve this request?</div>';
+                    // $msg = $employee_name.' has rejected the time-off on '.$date;
                 } else if ($old_status == 'approved') {
-                    $msg = $employee_name.' has approved the time-off at '.$date;
+                    $msg = '<div>This request has been approved by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>"'.$old_comment.'"<br>Do you want to reject this request?</div>';
+                    // $msg = $employee_name.' has approved the time-off on '.$date;
                 }
 
                 $result['Status'] = true;
