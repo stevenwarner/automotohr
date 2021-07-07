@@ -105,11 +105,11 @@
             <div class="csTabContent">
                 <div class="row" id="request_status_info">
                     <div class="col-lg-6">
-                        <div class="row" style="margin: 5px 0px;">
+                        <div class="row" style="margin: 5px 5px;">
                             <div class="col-lg-2" style="background: rgba(129, 180, 49, .2); padding: 16px;"></div>
                             <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The time-off request is approved by the 50% approver.</div>
                         </div>
-                        <div class="row" style="margin: 5px 0px;">
+                        <div class="row" style="margin: 5px 5px;">
                             <div class="col-lg-2" style="background: rgba(242, 222, 222, .5); padding: 16px;"></div>
                             <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The time-off request is rejected by the 50% approver.</div>
                         </div>

@@ -1663,7 +1663,9 @@ class Time_off extends Public_Controller
             $note = json_decode($request_info['note'],true);
             $old_status = $note['status'];
             $old_comment = $note['comment'];
+            $canApprove = $note['canApprove'];
             $desire_status = ''; 
+            $approve_status = ''; 
             //
             
             if ($request_type == 'reject') {
@@ -1673,26 +1675,32 @@ class Time_off extends Public_Controller
             } else {
                 $desire_status = $request_type; 
             }
-            
+
+            if ($canApprove == 1) {
+                $approve_status = '100% approver';
+            } else if ($canApprove == 0) {
+                $approve_status = '50% approver';
+            }
+           
             //
             if ($old_status != $desire_status) {
                 $msg = '';
-                $employee_name = getUserNameBySID($request_info['employee_sid']);
-                $date = date('M d Y, D', strtotime($request_info['created_at']));
+                $employee_name = getUserNameBySID($request_info['employee_sid']) .' - '. $approve_status;
+                $date = date('M d, Y, D', strtotime($request_info['created_at']));
 
 
 
                 if ($old_status == 'rejected') {
                     if (empty($old_comment)) {
-                        $msg = '<div>This request has been rejected by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>Do you want to approve this request?</div>';
+                        $msg = '<div>This time off has been rejected by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br><hr>Do you want to approve this time off?</div>';
                     } else {
-                        $msg = '<div>This request has been rejected by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>"'.$old_comment.'"<br>Do you want to approve this request?</div>';
+                        $msg = '<div>This time off has been rejected by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br><hr>"'.$old_comment.'"<br><hr>Do you want to approve this time off?</div>';
                     }
                 } else if ($old_status == 'approved') {
                     if (empty($old_comment)) {
-                        $msg = '<div>This request has been approved by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>Do you want to reject this request?</div>';
+                        $msg = '<div>This time off has been approved by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br><hr>Do you want to reject this time off?</div>';
                     } else {
-                        $msg = '<div>This request has been approved by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br>"'.$old_comment.'"<br>Do you want to reject this request?</div>';
+                        $msg = '<div>This time off has been approved by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br><hr>"'.$old_comment.'"<br><hr>Do you want to reject this time off?</div>';
                     }
                 }
 

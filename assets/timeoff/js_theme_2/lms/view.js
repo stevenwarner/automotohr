@@ -558,6 +558,12 @@ $(function() {
                 return;
             }
             //
+            if(callOBJ.Requests.Main.isMine == 0) {
+                $("#request_status_info").show();
+            } else {
+                $("#request_status_info").hide();
+            }
+            //
             setTable(resp);
         });
     }
@@ -680,12 +686,72 @@ $(function() {
         //
         return rows;
     }
+    //
+
+    function getUpdateStatus(history) {
+        //
+        let msg = '';
+        let status = 'pending';
+        //
+        if (history.length == 0) return status;
+        //
+        
+        //
+        history.map((his, i) => {
+            let action = JSON.parse(his.note);
+            
+            if(his.action == 'update' && i == 0){
+                msg += `${remakeEmployeeName(his)}`;
+                if (action.status == "approved") {
+                    status = 'approved';
+                    msg += ` has approved the time-off on ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
+                } else if (action.status == "rejected") {
+                    status = 'rejected';
+                    msg += ` has rejected the time-off on ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
+                }
+            }
+            
+        });
+
+        let
+            obj = {
+                status: status,
+                message: msg
+            };
+        //
+        return obj;
+    }
 
     //
     function getRequestBox(v, userRow) {
         //
         let progressStatus = v.status == "pending" ? (v.level_status != "pending" ? 50 : 0) : 100;
         let comments = getComments(v.history);
+        let request_info = getUpdateStatus(v.history);
+        //
+        let bgStatusColor = '';
+        let bgOldStatusColor = '';
+        //
+        if(callOBJ.Requests.Main.isMine == 0) {
+            let tab_status = v.status;
+            //
+            if (tab_status == "pending") {
+                $("#request_status_info").show();
+                if (request_info.status == 'approved') {
+                    bgStatusColor = 'background: rgba(129, 180, 49, .2)';
+                    bgOldStatusColor = 'background: none';
+                } else if (request_info.status == 'rejected') {
+                    bgStatusColor = 'background: rgba(242, 222, 222, .5)';
+                    bgOldStatusColor = 'background: none';
+                }
+            } else {
+                $("#request_status_info").hide();
+            }
+        } else {
+            $("#request_status_info").hide();
+        }
+        
+        //
         let rows = '';
         //
         let expired = 0;
@@ -723,7 +789,7 @@ $(function() {
         rows += `            <div class="clearfix"></div>`;
         rows += `        </div>`;
         rows += `        <!-- Box Content -->`;
-        rows += `        <div class="csBoxContent">`;
+        rows += `        <div class="csBoxContent" style="${bgStatusColor}">`;
         rows += `            <!-- Section 1 -->`;
         rows += `            <div class="csBoxContentDateSection">`;
         rows += `                <div class="col-sm-5 col-xs-5">`;
@@ -754,13 +820,13 @@ $(function() {
         rows += `                <div class="col-sm-2 col-xs-2">`;
         rows += `                    <img src="${getImageURL(userRow.image)}" class="csRoundImg"  />`;
         rows += `                </div>`;
-        rows += `                <div class="col-sm-10 col-xs-10 pr0">`;
+        rows += `                <div class="col-sm-10 col-xs-10 pr0" style="padding-left: 26px;">`;
         rows += `                    <p><strong>${userRow.first_name} ${userRow.last_name}</strong> ${remakeEmployeeName(userRow, false)}</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;
         rows += `            <!-- Section 4 -->`;
-        rows += `            <div class="csBoxContentProgressSection">`;
+        rows += `            <div class="csBoxContentProgressSection" style="${bgOldStatusColor}">`;
         rows += `                <div class="col-sm-12">`;
         rows += `                    <div class="progress csRadius100">`;
         rows += `                        <div class="progress-bar progress-bar-success csRadius100" role="progressbar" aria-valuenow="${progressStatus}" aria-valuemin="0" aria-valuemax="100" style="width: ${progressStatus}% ;">`;
@@ -773,14 +839,16 @@ $(function() {
         if (callOBJ.Requests.Main.isMine == 0 && v.archive == 0) {
             if (comments.length > 0) {
                 rows += `            <!-- Section 5 -->`;
-                rows += `            <div class="csBoxContentComentSection">`;
+                rows += `            <div class="csBoxContentComentSection" style="${bgOldStatusColor}">`;
                 rows += `                <div class="col-sm-2 col-xs-2">`;
                 rows += `                    <img src="${comments[0].employeeImage}" class="csRoundImg" />`;
                 rows += `                </div>`;
-                rows += `                <div class="col-sm-10 col-xs-10 pr0">`;
-                rows += `                    <div><strong>${strip_tags(comments[0].msg).substr(0, 25)}</strong></div>`;
+                rows += `                <div class="col-sm-10 col-xs-10 pr0" style="padding-left: 26px;">`;
                 rows += `                    <p class="csBoxContentComentName">${comments[0].employeeName} ${comments[0].employeeRole}</p>`;
                 rows += `                    <p class="csBoxContentComentTag">${moment(comments[0].time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</p>`;
+                if(comments[0].msg.length != 0){   
+                rows += `                    <div>"${strip_tags(comments[0].msg).substr(0, 25)}"</div>`;
+                } 
                 if (allComments[v.sid] === undefined) allComments[v.sid] = [];
                 allComments[v.sid].push(comments);
                 rows += `                    <span class="jsCommentsPopover" title="p">`;
@@ -792,11 +860,11 @@ $(function() {
             }
             rows += `            <!-- Section 6 -->`;
             rows += `            <div class="csBoxContentComent2Section">`;
-            rows += `                <div class="col-sm-2 col-xs-2">`;
-            rows += `                    <i class="fa fa-comment-o"></i>`;
-            rows += `                </div>`;
-            rows += `                <div class="col-sm-10 col-xs-10">`;
-            rows += `                    <textarea class="form-control jsRequestCommentTxt" rows="1"></textarea>`;
+            // rows += `                <div class="col-sm-2 col-xs-2">`;
+            // rows += `                    <i class="fa fa-comment-o"></i>`;
+            // rows += `                </div>`;
+            rows += `                <div class="col-sm-12 col-xs-12 textarea_parent_div">`;
+            rows += `                    <textarea class="form-control jsRequestCommentTxt" rows="4" placeholder="Why are you approving/rejecting this time off?"></textarea>`;
             rows += `                </div>`;
             rows += `                <div class="clearfix"></div>`;
             rows += `            </div>`;
@@ -823,25 +891,25 @@ $(function() {
             } else {
                 if (v.status == 'pending') {
                     rows += `            <div class="col-sm-6 pl0 pr0">`;
-                    rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i> Approve</button>`;
+                    rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve" data-tab="pending"><i class="fa fa-clock-o"></i> Approve</button>`;
                     rows += `            </div>`;
                     rows += `            <div class="col-sm-6 pr0">`;
-                    rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i> Reject</button>`;
+                    rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject" data-tab="pending"><i class="fa fa-times-circle-o"></i> Reject</button>`;
                     rows += `            </div>`;
                 } else if (v.status == 'approved') {
                     rows += `            <div class="col-sm-12">`;
-                    rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i> Reject</button>`;
+                    rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject" data-tab="approved"><i class="fa fa-times-circle-o"></i> Reject</button>`;
                     rows += `            </div>`;
                 } else if (v.status == 'rejected') {
                     rows += `            <div class="col-sm-12">`;
-                    rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i> Approve</button>`;
+                    rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve" data-tab="rejected"><i class="fa fa-clock-o"></i> Approve</button>`;
                     rows += `            </div>`;
                 } else if (v.status == 'cancelled') {
                     rows += `            <div class="col-sm-6 pl0 pr0">`;
-                    rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve"><i class="fa fa-clock-o"></i> Approve</button>`;
+                    rows += `                <button class="btn btn-orange form-control jsRequestBtn" data-type="approve" data-tab="cancelled"><i class="fa fa-clock-o"></i> Approve</button>`;
                     rows += `            </div>`;
                     rows += `            <div class="col-sm-6 pr0">`;
-                    rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject"><i class="fa fa-times-circle-o"></i> Reject</button>`;
+                    rows += `                <button class="btn alert-danger btn-theme form-control jsRequestBtn" data-type="reject" data-tab="cancelled"><i class="fa fa-times-circle-o"></i> Reject</button>`;
                     rows += `            </div>`;
                 } else {
                     rows += `            <div class="col-sm-12">`;
@@ -860,6 +928,8 @@ $(function() {
     //
     $(document).on('click', '.jsRequestBtn', function() {
         //
+        let tab = $(this).data('tab');
+        //
         let obj = {
             action: 'request_status',
             companyId: companyId,
@@ -870,6 +940,51 @@ $(function() {
             status: $(this).data('type') == 'approve' ? 'approved' : 'rejected',
             comment: $(this).closest('.jsBox').find('.jsRequestCommentTxt').val()
         };
+
+        if (tab == 'pending') {
+            let request_sid = $(this).closest('.jsBox').data('id');
+            let request_type = $(this).data('type');
+            ml(true, `request${request_sid}`);
+            
+            let myurl = handlerURL+"/requests_status/"+companyId+"/"+request_sid+"/"+request_type;
+           
+            $.ajax({
+                type: "GET",
+                url: myurl,
+                async : false,
+                success: function (resp) {
+                    ml(false, `request${request_sid}`);
+                    if (resp.Status === true) {
+                        alertify.confirm(
+                            'Please Confirm',
+                            resp.message,
+                            function () {
+                                //
+                                sendUpdateStatusRequest(obj);
+                            }, function () {
+                                ml(true, 'editModalLoader');
+                            }).set({
+                                'labels': {
+                                    'ok' : 'Yes',
+                                    'cancel' : 'No'
+                                }
+                            });
+                    } else {
+                        //
+                        sendUpdateStatusRequest(obj); 
+                    }
+                },
+                error: function (resp) {
+
+                }   
+            });
+        } else {
+            //
+            sendUpdateStatusRequest(obj);
+        }
+    });
+
+    function sendUpdateStatusRequest (obj) {
         //
         ml(true, `request${obj.requestId}`);
         //
@@ -887,7 +1002,7 @@ $(function() {
                 )
             }
         );
-    });
+    }
 
 
     //

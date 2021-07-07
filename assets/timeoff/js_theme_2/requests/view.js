@@ -689,12 +689,10 @@ resp.Response
         //
         if (history.length == 0) return status;
         //
-        
-        //
-        history.map((his) => {
+        history.map((his,i) => {
             let action = JSON.parse(his.note);
             
-            if(his.action == 'update'){
+            if(his.action == 'update' && i == 0){
                 msg += `${remakeEmployeeName(his)}`;
                 if (action.status == "approved") {
                     status = 'approved';
@@ -844,7 +842,7 @@ resp.Response
         // rows += `                </div>`;
         // rows += `                <div class="col-sm-10 col-xs-10">`;
         rows += `                <div class="col-sm-12 col-xs-12 textarea_parent_div">`;
-        rows += `                    <textarea class="form-control jsRequestCommentTxt" rows="4" placeholder="Comment Here..."></textarea>`;
+        rows += `                    <textarea class="form-control jsRequestCommentTxt" rows="4" placeholder="Why are you approving/rejecting this time off?"></textarea>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;
