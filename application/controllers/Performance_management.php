@@ -55,16 +55,6 @@ class Performance_management extends Public_Controller{
         //
         $this->header = 'main/header';
         $this->footer = 'main/footer';
-        // test
-        // $this->pargs = [];
-        
-        // $this->checkLogin($this->pargs);
-        
-        // $employees = $this->pmm->getAllEmployees($this->pargs['session']['company_detail']['sid']);
-
-        //
-        $this->header = 'main/header';
-        $this->footer = 'main/footer';
     }
 
     /**
@@ -203,7 +193,7 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function create_review(){
+    function create_review($id = 0){
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -220,6 +210,16 @@ class Performance_management extends Public_Controller{
         $this->pargs['system_templates'] = $this->pmm->GetCompanyTemplates();
         // Set company generated templates
         $this->pargs['company_templates'] = $this->pmm->GetPersonalTemplates($this->pargs['companyId']);
+        // Get Review
+        $this->pargs['review'] = $this->pmm->GetReviewRowById($id, $this->pargs['companyId']);
+        // Set Job titles
+        $this->pargs['job_titles'] = array_filter(array_unique(array_column($this->pargs['company_employees'], 'JobTitle')), function($job){
+            if(!empty($job)) {
+                return 1;
+            }
+        });
+        //
+        sort($this->pargs['job_titles']);
         //
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
@@ -281,6 +281,136 @@ class Performance_management extends Public_Controller{
         $this->res(['data' => $template]);
     }
     
+    /**
+     * 
+     */
+    function SaveReviewStep(){
+        //
+        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        $pargs = [];
+        //
+        $this->checkLogin($pargs);
+        //
+        switch($post['step']):
+            case "ReviewStep1":
+                    // Set data array
+                    $data_array = [];
+                    //
+                    if(empty($post['data']['title'])){
+                        //
+                        $resp['Msg'] = "The review title is missing.";
+                        $this->res($resp);
+                    }
+                    //
+                    if(empty($post['data']['frequency_type'])){
+                        //
+                        $resp['Msg'] = "The frequency is missing.";
+                        $this->res($resp);
+                    }
+                    //
+                    if(
+                        ($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring') &&
+                        (empty($post['data']['start_date']) || empty($post['data']['end_date']))
+                    ){
+                        //
+                        $resp['Msg'] = "The review start and end dates are missing.";
+                        $this->res($resp);
+                    }
+                    //
+                    if(
+                        $post['data']['frequency_type'] == 'recurring' &&
+                        (empty($post['data']['recur_value']) || $post['data']['recur_value'] == 0)
+                    ){
+                        //
+                        $resp['Msg'] = "The recur value is missing.";
+                        $this->res($resp);
+                    }
+                    //
+                    if(
+                        $post['data']['frequency_type'] == 'custom' &&
+                        (empty($post['data']['review_due_value']) || $post['data']['review_due_value'] == 0)
+                    ){
+                        //
+                        $resp['Msg'] = "The review due value is missing.";
+                        $this->res($resp);
+                    }
+                    //
+                    if(
+                        $post['data']['frequency_type'] == 'custom' &&
+                        empty($post['data']['custom_runs']) 
+                    ){
+                        //
+                        $resp['Msg'] = "Please add at least one custom run.";
+                        $this->res($resp);
+                    }
+                    //
+                    if($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring'){
+                        $data_array['review_start_date'] = formatDateToDB($post['data']['start_date']);
+                        $data_array['review_end_date'] = formatDateToDB($post['data']['end_date']);
+                    }
+                    //
+                    if($post['data']['frequency_type'] == 'recurring'){
+                        $data_array['repeat_after'] = $post['data']['recur_value'];
+                        $data_array['repeat_type'] = $post['data']['recur_type'];
+                    }
+                    //
+                    if($post['data']['frequency_type'] == 'custom'){
+                        $data_array['review_due_type'] = $post['data']['review_due_type'];
+                        $data_array['review_due'] = $post['data']['review_due_value'];
+                        $data_array['repeat_review'] = $post['data']['repeat_review'];
+                        $data_array['review_runs'] = json_encode($post['data']['custom_runs']);
+                    }
+                    //
+                    $data_array['review_title'] = $post['data']['title'];
+                    $data_array['description'] = $post['data']['description'];
+                    $data_array['frequency'] = $post['data']['frequency_type'];
+                    //
+                    if(isset($post['data']['roles'])){
+                        $data_array['visibility_roles'] = implode(',', $post['data']['roles']);
+                    }
+                    if(isset($post['data']['departments'])){
+                        $data_array['visibility_departments'] = implode(',', $post['data']['departments']);
+                    }
+                    if(isset($post['data']['teams'])){
+                        $data_array['visibility_teams'] = implode(',', $post['data']['teams']);
+                    }
+                    if(isset($post['data']['employees'])){
+                        $data_array['visibility_employees'] = implode(',', $post['data']['employees']);
+                    }
+                    //
+                    if(!isset($post['id'])){
+                        $data_array['company_sid']  = $pargs['companyId'];
+                        $data_array['is_draft'] = 1;
+                        $data_array['status'] = 'pending';
+                        $data_array['created_at'] = date("Y-m-d H:i:s", strtotime("now"));
+
+                        //
+                        $reviewId = $this->pmm->InsertReview($data_array);
+                    } else{
+                        $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
+                    }
+                    //
+                    $resp['Status'] = true;
+                    $resp['Msg'] = 'Review added.';
+                    $resp['Id'] = $reviewId;
+                    //
+                    $this->res($resp);
+                break;
+        endswitch;
+        //
+        _e($post, true, true);
+
+        //
+        $this->res(['data' => $template]);
+    }
+    
 
     /**
      * Check user session and set data
@@ -312,7 +442,7 @@ class Performance_management extends Public_Controller{
         $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 || $data['session']['employer_detail']['pay_plan_flag'] == 1 ? 1 : 0;
         $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
         $data['load_view'] = $data['session']['company_detail']['ems_status'];
-        $data['load_view'] = 0;
+        // $data['load_view'] = 1;
         $data['hide_employer_section'] = 1;
         //
         if ($return) {

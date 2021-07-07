@@ -57,8 +57,8 @@
             </div>
             <!--  -->
             <br>
+            <?php $this->load->view("{$pp}loader", ['key' => 'review']); ?>
             <div class="jsPageContainer p10" style="position: relative">
-                <?php $this->load->view("{$pp}loader", ['key' => 'review']); ?>
                 <!-- Step 1 -->
                 <!-- Template -->
                 <div class="jsPageSection" data-page="template">
@@ -74,7 +74,6 @@
                     <!-- Reviewees -->
                     <?php $this->load->view("{$pp}create_review/reviewees"); ?>
                 </div>
-                <?php $this->load->view("{$pp}template"); ?>
             </div>
         </div>
     </div>

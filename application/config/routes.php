@@ -1317,3 +1317,4 @@ $route['performance-management/get-template-questions/(:any)/(:num)']['get'] = '
 $route['performance-management/get-single-template/(:any)/(:num)']['get'] = 'Performance_management/single_template/$2/$1';
 $route['performance-management/feedback']['get'] = 'Performance_management/feedback';
 $route['performance-management/review']['get'] = 'Performance_management/review';
+$route['performance-management/save_review_step']['post'] = 'Performance_management/SaveReviewStep';

@@ -571,3 +571,8 @@ function loadFonts() {
 }
 // Load default fonts
 loadFonts();
+
+//
+function getRandomId() {
+    return Math.ceil(Math.random(1, 5000) * 1000000);
+}

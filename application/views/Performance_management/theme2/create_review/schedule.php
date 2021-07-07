@@ -64,24 +64,24 @@
             <div class="col-sm-8 col-xs-12">
                 <label class="control control--radio csF16 csB1">
                     One-time Only
-                    <input type="radio" id="jsReviewFrequencyInp" name="jsReviewFrequency" checked />
+                    <input type="radio" class="jsReviewFrequencyInp" value="onetime" name="jsReviewFrequency" checked />
                     <div class="control__indicator"></div>
                 </label><br/>
                 <label class="control control--radio csF16 csB1">
                     Recurring
-                    <input type="radio" id="jsReviewFrequencyInp" name="jsReviewFrequency" />
+                    <input type="radio" class="jsReviewFrequencyInp" value="recurring" name="jsReviewFrequency" />
                     <div class="control__indicator"></div>
                 </label><br/>
                 <label class="control control--radio csF16 csB1">
                     Custom Schedule
-                    <input type="radio" id="jsReviewFrequencyInp" name="jsReviewFrequency" />
+                    <input type="radio" class="jsReviewFrequencyInp" value="custom" name="jsReviewFrequency" />
                     <div class="control__indicator"></div>
                 </label>
             </div>
         </div>
 
         <!-- Period -->
-        <div class="row">
+        <div class="row jsReviewFrequencyRowOne jsReviewFrequencyRowRecur">
             <br />
             <div class="col-md-4 col-xs-12">
                 <label class="csF16 csB7">Review Period <span class="csRequired"></span> <i class="fa fa-question-circle-o jsHintBtn"  data-target="title" aria-hidden="true"></i></label>
@@ -101,7 +101,7 @@
         </div>
         
         <!-- Recur -->
-        <div class="row dn">
+        <div class="row dn jsReviewFrequencyRowRecur">
             <br />
             <div class="col-md-4 col-xs-12">
                 <label class="csF16 csB7">Recur Every <span class="csRequired"></span> <i class="fa fa-question-circle-o jsHintBtn"  data-target="title" aria-hidden="true"></i></label>
@@ -110,17 +110,21 @@
             <div class="col-md-8 col-xs-12">
                 <div class="row">
                     <div class="col-md-2 col-xs-12">
-                        <input type="text" class="form-control" />
+                        <input type="text" class="form-control" id="jsReviewRecurValue" placeholder="5" />
                     </div>
                     <div class="col-md-6 col-xs-12">
-                        <select class="select2"></select>
+                        <select id="jsReviewRecurType">
+                            <option value="days">Day(s)</option>
+                            <option value="weeks">Week(s)</option>
+                            <option value="months">Month(s)</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
         
         <!-- Custom Run -->
-        <div class="row dn">
+        <div class="row dn jsReviewFrequencyRowCustom">
             <br />
             <div class="col-md-12 col-xs-12">
                 <p class="csF16"><i class="fa fa-info-circle csF18 csB7" aria-hidden="true"></i>&nbsp;<em class="csInfo">You can create custom occurrences for this review based on reviewees' start date, and continuing on a regular schedule. For instance, you may wish to run a performance review for new employees 30 days after their start date, and then every 6 months thereafter</em>.</p>
@@ -128,32 +132,45 @@
         </div>
 
         <!-- Custom Run -->
-        <div class="row dn">
+        <div class="row dn jsReviewFrequencyRowCustom">
             <br />
             <div class="col-md-4 col-xs-12">
                 <label class="csF16 csB7">Custom Review Runs <span class="csRequired"></span> <i class="fa fa-question-circle-o jsHintBtn"  data-target="title" aria-hidden="true"></i></label>
                 <p class="csF14 jsHintBody" data-hint="title">The review will run after the selected time from the employee's hire date.</p>
             </div>
             <div class="col-md-8 col-xs-12">
+                <div id="jsReviewCustomRunContainer">
+                    <!-- Row 1 -->
+                    <div class="row jsReviewCustomRunRow" data-id="1">
+                        <div class="col-md-2 col-xs-3">
+                            <input type="text" class="form-control jsReviewCustomRunValue"  placeholder="5" id="jsReviewCustomRunValue"/>
+                        </div>
+                        <div class="col-md-4 col-xs-4">
+                            <select class="jsReviewCustomRunType" id="jsReviewCustomRunType">
+                                <option value="days">Day(s)</option>
+                                <option value="weeks">Week(s)</option>
+                                <option value="months">Month(s)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-xs-4">
+                            <p class="csF16">After Employee's (Reviewee's) Hire Date</p>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!--  -->
                 <div class="row">
-                    <div class="col-md-2 col-xs-3">
-                        <input type="text" class="form-control"  placeholder="5"/>
-                    </div>
-                    <div class="col-md-4 col-xs-4">
-                        <select class="select2"></select>
-                    </div>
-                    <div class="col-md-4 col-xs-4">
-                        <p class="csF16">After Employee's (Reviewee's) Hire Date</p>
-                    </div>
-                    <div class="col-md-1 col-xs-1">
-                        <i class="fa fa-trash-o csF18 csB7 csCP" aria-hidden="true" title="Delete this custom run" placement="top"></i>
+                    <div class="col-sm-12">
+                        <button class="btn btn-orange btn-xs csCP jsReviewAddCustomRun">
+                            <i class="fa fa-plus-circle csF18 csB7 csCP" aria-hidden="true" title="Add a new custom run" placement="top"></i>&nbsp;Add a new custom run
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
         
         <!-- Custom Run -->
-        <div class="row dn">
+        <div class="row dn jsReviewFrequencyRowCustom">
             <br />
             <div class="col-md-4 col-xs-12">
                 <label class="csF16 csB7">Continue Review <i class="fa fa-question-circle-o jsHintBtn"  data-target="title" aria-hidden="true"></i></label>
@@ -162,14 +179,14 @@
             <div class="col-md-8 col-xs-12">
                 <label class="control control--checkbox csF16 csB1">
                     Yes, after the last custom run, recur the review on a regular schedule
-                    <input type="checkbox" />
+                    <input type="checkbox" id="jsReviewCustomRunEveryYear" />
                     <div class="control__indicator"></div>
                 </label>
             </div>
         </div>
 
         <!-- Custom Run -->
-        <div class="row dn">
+        <div class="row dn jsReviewFrequencyRowCustom">
             <br />
             <div class="col-md-4 col-xs-12">
                 <label class="csF16 csB7">When is review due? <span class="csRequired"></span> <i class="fa fa-question-circle-o jsHintBtn"  data-target="title" aria-hidden="true"></i></label>
@@ -178,10 +195,14 @@
             <div class="col-md-8 col-xs-12">
                 <div class="row">
                     <div class="col-md-2 col-xs-3">
-                        <input type="text" class="form-control" placeholder="5" />
+                        <input type="text" class="form-control" placeholder="5" id="jsReviewCustomRunDueValue" />
                     </div>
                     <div class="col-md-4 col-xs-4">
-                        <select class="select2"></select>
+                        <select id="jsReviewCustomRunDueType">
+                            <option value="days">Day(s)</option>
+                            <option value="weeks">Week(s)</option>
+                            <option value="months">Month(s)</option>
+                        </select>
                     </div>
                     <div class="col-md-4 col-xs-4">
                         <p class="csF16">after the review starts.</p>
@@ -216,7 +237,11 @@
                 <p class="csF14 jsHintBody" data-hint="title">The selected Role(s) can manage this review.</p>
             </div>
             <div class="col-sm-8 col-xs-12">
-                <select class="select2" id="jsReviewRolesInp" multiple></select>
+                <select id="jsReviewRolesInp" multiple>
+                    <?php   foreach(getRoles() as $index => $role): ?>
+                        <option value="<?=$index;?>"><?=$role;?></option>
+                    <?php   endforeach; ?>
+                </select>
             </div>
         </div>
 
@@ -228,7 +253,13 @@
                 <p class="csF14 jsHintBody" data-hint="title">The selected Department(s) supervisors can manage this review.</p>
             </div>
             <div class="col-sm-8 col-xs-12">
-                <select class="select2" id="jsReviewDepartmentsInp" multiple></select>
+                <select id="jsReviewDepartmentsInp" multiple>
+                    <?php if(!empty($company_dt['Departments'])): ?>
+                    <?php   foreach($company_dt['Departments'] as $department): ?>
+                        <option value="<?=$department['Id'];?>"><?=$department['Name'];?></option>
+                    <?php   endforeach; ?>
+                    <?php endif; ?>
+                </select>
             </div>
         </div>
 
@@ -240,11 +271,17 @@
                 <p class="csF14 jsHintBody" data-hint="title">The selected Team(s) team leads can manage this review.</p>
             </div>
             <div class="col-sm-8 col-xs-12">
-                <select class="select2" id="jsReviewTeamsInp" multiple></select>
+                <select id="jsReviewTeamsInp" multiple>
+                    <?php if(!empty($company_dt['Teams'])): ?>
+                    <?php   foreach($company_dt['Teams'] as $team): ?>
+                        <option value="<?=$team['Id'];?>"><?=$team['Name'];?></option>
+                    <?php   endforeach; ?>
+                    <?php endif; ?>
+                </select>
             </div>
         </div>
 
-        <!-- Departments -->
+        <!-- Employees -->
         <div class="row">
         <br />
             <div class="col-sm-4 col-xs-12">
@@ -252,7 +289,13 @@
                 <p class="csF14 jsHintBody" data-hint="title">The selected Employee(s) can manage this review.</p>
             </div>
             <div class="col-sm-8 col-xs-12">
-                <select class="select2" id="jsReviewEmployeesInp" multiple></select>
+                <select id="jsReviewEmployeesInp" multiple>
+                    <?php if(!empty($company_employees)): ?>
+                    <?php   foreach($company_employees as $employee): ?>
+                        <option value="<?=$employee['Id'];?>"><?=$employee['Name'];?> <?=$employee['Role'];?></option>
+                    <?php   endforeach; ?>
+                    <?php endif; ?>
+                </select>
             </div>
         </div>
     </div>

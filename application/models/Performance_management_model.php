@@ -8,6 +8,7 @@ class Performance_management_model extends CI_Model{
     private $DE2T = 'departments_employee_2_team';
     private $PMT = 'performance_management_templates';
     private $PMCT = 'performance_management_company_templates';
+    private $R = 'pm_reviews';
     //
     private $DbDateFormat = 'Y-m-d H:i:s';
     //
@@ -38,6 +39,7 @@ class Performance_management_model extends CI_Model{
             {$this->U}.dob,
             IF({$this->U}.joined_at = null, {$this->U}.registration_date, {$this->U}.joined_at) as joined_at,
             {$this->U}.profile_picture,
+            {$this->U}.employee_type,
             {$this->U}.access_level,
             {$this->U}.access_level_plus,
             {$this->U}.pay_plan_flag,
@@ -63,9 +65,12 @@ class Performance_management_model extends CI_Model{
                 $t = [
                     'Id' => $v['sid'],
                     'Name' => ucwords($v['first_name'].' '.$v['last_name']),
+                    'BasicRole' => $v['access_level'],
                     'Role' => trim(remakeEmployeeName($v, false)),
                     'Image' => AWS_S3_BUCKET_URL. (empty($v['profile_picture']) ? 'test.png' : $v['profile_picture']),
                     'Email' => strtolower($v['email']),
+                    'EmploymentType' => strtolower($v['employee_type']),
+                    'JobTitle' => ucwords(strtolower($v['job_title'])),
                     'Phone' => $v['PhoneNumber'],
                     'DOB' => empty($v['dob']) || $v['dob'] == '0000-00-00' ? '' : DateTime::createfromformat($this->DbDateFormatWithoutTime, $v['dob'])->format($this->DbDateFormatWithoutTime),
                     'JoinedDate' => empty($v['joined_at']) ? '' : DateTime::createfromformat($this->DbDateFormat, $v['joined_at'])->format($this->DbDateFormatWithoutTime)
@@ -318,6 +323,66 @@ class Performance_management_model extends CI_Model{
         $a->free_result();
         //
         return $b;        
+    }
+
+    /**
+     * 
+     */
+    function GetReviewRowById($reviewId, $company_sid){
+        //
+        if($reviewId == 0){
+            return [];
+        }
+        //
+        $query = $this->db
+        ->select("
+            sid as reviewId,
+            review_title as title,
+            description,
+            frequency as frequency_type,
+            review_start_date as start_date,
+            review_end_date as end_date,
+            visibility_employees as employees,
+            repeat_after as recur_value,
+            repeat_type as recur_type,
+            repeat_type as recur_type,
+            review_due as review_due_value,
+            review_due_type,
+            repeat_review,
+            review_runs as custom_runs,
+            visibility_roles as roles,
+            visibility_departments as departments,
+            visibility_teams as teams
+        ")
+        ->where('sid', $reviewId)
+        ->where('company_sid', $company_sid)
+        ->get($this->R);
+        //
+        $review = $query->row_array();
+        //
+        $query->free_result();
+        //
+        return $review;
+    }
+
+
+    /**
+     * 
+     */
+    function InsertReview($data){
+        $this->db->insert($this->R, $data);
+        return $this->db->insert_id();
+    }
+    
+    /**
+     * 
+     */
+    function UpdateReview($data, $id){
+        $this->db
+        ->where('sid', $id)
+        ->update($this->R, $data);
+        //
+        return $id;
     }
 
 
