@@ -57,16 +57,8 @@
             </div>
             <!--  -->
             <br>
-<<<<<<< HEAD:application/views/Performance_management/theme2/create_content.php
-            <div class="jsPageContainer p10">
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 2798fc44... Added review part of Perfoemance management
-=======
             <div class="jsPageContainer p10" style="position: relative">
                 <?php $this->load->view("{$pp}loader", ['key' => 'review']); ?>
->>>>>>> 11cb2d4e... Added create page route:application/views/Performance_management/theme2/create_review/create_content.php
                 <!-- Step 1 -->
                 <!-- Template -->
                 <div class="jsPageSection" data-page="template">
@@ -82,12 +74,7 @@
                     <!-- Reviewees -->
                     <?php $this->load->view("{$pp}create_review/reviewees"); ?>
                 </div>
-<<<<<<< HEAD
-=======
                 <?php $this->load->view("{$pp}template"); ?>
->>>>>>> d5bced39... Added creatae review step 1 on blue screen
-=======
->>>>>>> 2798fc44... Added review part of Perfoemance management
             </div>
         </div>
     </div>

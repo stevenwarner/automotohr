@@ -793,19 +793,10 @@
         padding-top: 0 !important;
     }
     
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 45220c87... Updated reviews, single review, and review list designs
     .pb0 {
         padding-bottom: 0 !important;
     }
     
-<<<<<<< HEAD
-=======
->>>>>>> d5bced39... Added creatae review step 1 on blue screen
-=======
->>>>>>> 45220c87... Updated reviews, single review, and review list designs
     .pa10 {
         padding-top: 10px !important;
     }
@@ -1575,14 +1566,6 @@
     .panel-theme .panel-heading {
         background-color: #3554DC;
         color: #fff !important;
-<<<<<<< HEAD
-<<<<<<< HEAD
-    }
-    
-    .panel-theme {
-        border: 1px solid #ccc;
-=======
->>>>>>> 2798fc44... Added review part of Perfoemance management
     }
     
     .panel-theme {
@@ -1627,10 +1610,6 @@
     
     .csInfo {
         color: #b4052c !important;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> fee239a4... Added PM report for blue screen
     }
     
     .daterangepicker td.active,
@@ -1676,18 +1655,10 @@
     
     .highcharts-credits {
         display: none;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 822d4f11... Added green panel report
     }
     
     .panel-success .panel-heading {
         background-color: #81b431;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 45220c87... Updated reviews, single review, and review list designs
     }
     
     .csSidebarGP {
@@ -1723,23 +1694,9 @@
     .csTabMenu li:hover {
         background-color: #ffffff;
         color: #333;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d5bced39... Added creatae review step 1 on blue screen
-=======
->>>>>>> 2798fc44... Added review part of Perfoemance management
-=======
->>>>>>> fee239a4... Added PM report for blue screen
-=======
->>>>>>> 822d4f11... Added green panel report
-=======
->>>>>>> 45220c87... Updated reviews, single review, and review list designs
-=======
     } */
     /* INFO */
     
     .csInfoTxt {
         color: #cc0000;
->>>>>>> 11cb2d4e... Added create page route
     }

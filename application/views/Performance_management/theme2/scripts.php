@@ -28,18 +28,12 @@
         companyId: <?=$companyId;?>,
         companyName: "<?=$session['company_detail']['CompanyName'];?>",
         companyLogo: "<?=$session['company_detail']['Logo'];?>",
-<<<<<<< HEAD
-        companyName: "<?=$companyDetails['CompanyName'];?>",
-        companyLogo: "<?=$companyDetails['Logo'];?>",
-=======
->>>>>>> 2798fc44... Added review part of Perfoemance management
         employerId: <?=$employerId;?>,
         employee: {
             id: <?=isset($employeeId) ? $employeeId : 0;?>,
             name: "<?=isset($employeeName) ? $employeeName : '';?>",
             level: <?=$level;?>
         }
-<<<<<<< HEAD
     };
 </script>
 
@@ -68,13 +62,6 @@
         <?php
     }
 ?>
-        },
-        page: "<?=isset($page) ? $page : ''?>",
-        Id: <?=isset($pid) ? $pid : 0; ?>,
-        Pem: <?=isset($pem) ? $pem : 0; ?>
-=======
->>>>>>> d5bced39... Added creatae review step 1 on blue screen
-    };
 </script>
 
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -83,9 +70,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <!-- Common functions -->
 <script src="<?=base_url('assets/performance_management/js/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
-<<<<<<< HEAD
 <script src="<?=base_url('assets/performance_management/js/goals/create'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
-=======
 
 <?php 
     if(strpos($this->uri->uri_string(), 'review/create') !== false){
@@ -94,9 +79,6 @@
         <?php
     }
 ?>
-<<<<<<< HEAD
->>>>>>> d5bced39... Added creatae review step 1 on blue screen
-=======
 
 <!-- Report -->
 <?php 
@@ -108,4 +90,3 @@
         <?php
     }
 ?>
->>>>>>> fee239a4... Added PM report for blue screen
