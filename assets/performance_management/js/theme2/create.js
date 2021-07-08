@@ -25,8 +25,8 @@ $(function() {
             excluded: []
         },
         Reviewers: {
-            reviewer_type: 'reporting_manager',
-            reviwees: {}
+            reviewer_type: null,
+            reviewees: {}
         },
         Questions: {},
         Share_feedback: true
@@ -51,6 +51,12 @@ $(function() {
     $('#jsReviewRevieweeFilterType').select2({ minimumResultsForSearch: -1 });
     $('#jsReviewRevieweeFilterExcludeEmployees').select2({ closeOnSelect: false });
     $('#jsReviewRevieweeFilterExcludeFrame').select2({ minimumResultsForSearch: -1 });
+    //
+    $('.jsReviewRevieweesRow').map(function() {
+        obj.Reviewees.included.push($(this).data().id);
+    });
+    //
+    $('#jsReviewReviewerFilterEmployees').select2({ closeOnSelect: false });
 
     //
     $('#jsReviewStartDateInp').datepicker({
@@ -272,7 +278,7 @@ $(function() {
             step: 'ReviewStep1',
             data: o,
             id: obj.Id
-        }, (resp) => {
+        }, function(resp) {
             //
             if (!resp.Status) {
                 handleError(resp.Msg);
@@ -283,6 +289,90 @@ $(function() {
         });
 
     });
+
+    /**
+     * 
+     */
+    $('#jsReviewReviewersSaveBtn').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        if (obj.Reviewers.reviewer_type === null) {
+            handleError("Please select a reviewer type.");
+            return;
+        }
+        //
+        if (Object.keys(obj.Reviewers.reviewees).length === 0) {
+            handleError("Please add reviewer against all reviewees.");
+            return;
+        }
+        //
+        var isError = false;
+        //
+        $.each(obj.Reviewers.reviewees, function(index, employee) {
+            if (Object.keys(employee.included).length === 0) {
+                isError = true;
+                handleError("Please add reviewer against all reviewees.");
+                return;
+            }
+        });
+        //
+        if (isError) {
+            return false;
+        }
+        //
+        ml(true, 'review');
+        //
+        $.post(pm.urls.pbase + 'save_review_step', {
+            step: 'ReviewStep3',
+            data: obj.Reviewers,
+            id: obj.Id
+        }, function(resp) {
+            //
+            if (!resp.Status) {
+                handleError(resp.Msg);
+                return;
+            }
+            //
+            // loadReviewers();
+        });
+
+    });
+
+
+    /**
+     * 
+     */
+    $('#jsReviewRevieweesSaveBtn').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        if (obj.Reviewees.included.length === 0) {
+            handleError("Please add at least one reviewee..");
+            return;
+        }
+        //
+        ml(true, 'review');
+        //
+        $.post(pm.urls.pbase + 'save_review_step', {
+            step: 'ReviewStep2',
+            data: {
+                included: obj.Reviewees.included || [],
+                excluded: obj.Reviewees.excluded || []
+            },
+            id: obj.Id
+        }, function(resp) {
+            //
+            if (!resp.Status) {
+                handleError(resp.Msg);
+                return;
+            }
+            //
+            loadReviewers();
+        });
+
+    });
+
 
     /**
      * 
@@ -328,7 +418,209 @@ $(function() {
         obj.Reviewees.included = [];
         obj.Reviewees.excluded = [];
         //
+        $('.jsReviewRevieweesRow').map(function() {
+            obj.Reviewees.included.push($(this).data('id'));
+        });
+        //
         $('#jsReviewRevieweesCount').text($('.jsReviewRevieweesRow').length);
+    });
+
+    /**
+     * 
+     */
+    $('.jsReviewReviewerCountBtn').click(function(event) {
+        // 
+        event.preventDefault();
+        //
+        $('.jsReviewReviewerCountBtn').removeClass('dn');
+        $('.jsReviewReviewerCountBtn').parent().find('.jsReviewReviewerSelectBox').addClass('dn');
+        //
+        $(this).addClass('dn');
+        $(this).parent().find('.jsReviewReviewerSelectBox').removeClass('dn');
+    });
+
+    /**
+     * 
+     */
+    $('.jsReviewReviewerBackCountBtn').click(function(event) {
+        // 
+        event.preventDefault();
+        //
+        $(this).closest('.jsReviewReviewerCountBox').find('.jsReviewReviewerCountBtn').removeClass('dn');
+        $(this).closest('.jsReviewReviewerCountBox').find('.jsReviewReviewerSelectBox').addClass('dn');
+    });
+
+
+    /**
+     * 
+     * @param {*} targetId 
+     * @param {*} type 
+     * @param {*} id 
+     */
+    $('.jsReviewReviewerType').change(function() {
+        //
+        obj.Reviewers.reviewer_type = $(this).val();
+        //
+        obj.Reviewees.reviewees = {};
+        //
+        $('.jsReviewReviewerSpecificReviewers').addClass('dn');
+        $('#jsReviewReviewerFilterEmployees').select2('val', null);
+        //
+        switch (obj.Reviewers.reviewer_type) {
+            case "reporting_manager":
+                //
+                obj.Reviewees.included.map(function(employeeId) {
+                    //
+                    employeeId = employeeId.toString();
+                    //
+                    var employee = getEmployee(employeeId);
+                    //
+                    obj.Reviewers.reviewees[employee.Id] = {
+                        included: employee.ReportingManagers,
+                        excluded: []
+                    };
+                    //
+                    $('.jsReviewReviewersRow[data-id="' + (employee.Id) + '"] .select2').select2('val', null);
+                    $('.jsReviewReviewersRow[data-id="' + (employee.Id) + '"] .select2:nth-child(1)').select2('val', obj.Reviewers.reviewees[employee.Id].included);
+                    $('.jsReviewReviewersRow[data-id="' + (employee.Id) + '"] .jsReviewReviewerCount').text(obj.Reviewers.reviewees[employee.Id].included.length);
+                });
+                break;
+            case "self_review":
+                //
+                obj.Reviewees.included.map(function(employeeId) {
+                    //
+                    obj.Reviewers.reviewees[employeeId] = {
+                        included: [employeeId],
+                        excluded: []
+                    };
+                    //
+                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"] .select2').select2('val', null);
+                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.select2:nth-child(1)').select2('val', obj.Reviewers.reviewees[employeeId].included);
+                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerCount').text(obj.Reviewers.reviewees[employeeId].included.length);
+                });
+                break;
+            case "peers":
+                //
+                obj.Reviewees.included.map(function(employeeId) {
+                    //
+                    var employee = getEmployee(employeeId);
+                    //
+                    obj.Reviewers.reviewees[employeeId] = {
+                        included: getMyPeers(employeeId, employee.Teams),
+                        excluded: []
+                    };
+                    //
+                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"] .select2').select2('val', null);
+                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.select2:nth-child(1)').select2('val', obj.Reviewers.reviewees[employeeId].included);
+                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerCount').text(obj.Reviewers.reviewees[employeeId].included.length);
+                });
+                break;
+            case "specific_reviewers":
+                $('.jsReviewReviewerSpecificReviewers').removeClass('dn');
+                break;
+        }
+    });
+
+    /**
+     * 
+     * @param {*} targetId 
+     * @param {*} type 
+     * @param {*} id 
+     */
+    $('#jsReviewReviewerFilterEmployees').change(function() {
+        //
+        var reviewers = $(this).val() || [];
+        //
+        obj.Reviewees.included.map(function(employeeId) {
+            //
+            if (obj.Reviewers.reviewees[employeeId] === undefined) {
+                obj.Reviewers.reviewees[employeeId] = {
+                    included: [],
+                    excluded: []
+                }
+            }
+            //
+            obj.Reviewers.reviewees[employeeId].included = _.uniq(_.concat(reviewers, obj.Reviewers.reviewees[employeeId].included));
+            //
+            var newInc = _.filter(obj.Reviewers.reviewees[employeeId].included, function(i) {
+                if ($.inArray(i, obj.Reviewers.reviewees[employeeId].excluded) !== -1) {
+                    return false;
+                }
+                return true;
+            });
+            //
+            $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"] .select2').select2('val', null);
+            $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.select2:nth-child(1)').select2('val', newInc);
+            $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerCount').text(newInc.length);
+        });
+    });
+
+    /**
+     * 
+     * @param {*} targetId 
+     * @param {*} type 
+     * @param {*} id 
+     */
+    $('.jsReviewReviewerSelectBoxIncluded').on('select2:select', function() {
+        //
+        var reviewers = $(this).val() || [];
+        //
+        var employeeId = $(this).closest('.jsReviewReviewersRow').data('id');
+        //
+        //
+        if (obj.Reviewers.reviewees[employeeId] === undefined) {
+            obj.Reviewers.reviewees[employeeId] = {
+                included: [],
+                excluded: []
+            }
+        }
+        //
+        obj.Reviewers.reviewees[employeeId].included = _.uniq(_.concat(reviewers, obj.Reviewers.reviewees[employeeId].included));
+        //
+        var newInc = _.filter(obj.Reviewers.reviewees[employeeId].included, function(i) {
+            if ($.inArray(i, obj.Reviewers.reviewees[employeeId].excluded) !== -1) {
+                return false;
+            }
+            return true;
+        });
+        //
+        $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"] .select2').select2('val', null);
+        $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.select2:nth-child(1)').select2('val', newInc);
+        $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerCount').text(newInc.length);
+    });
+
+    /**
+     * 
+     * @param {*} targetId 
+     * @param {*} type 
+     * @param {*} id 
+     */
+    $('.jsReviewReviewerSelectBoxExcluded').on('select2:select', function() {
+        //
+        var reviewers = $(this).val() || [];
+        //
+        var employeeId = $(this).closest('.jsReviewReviewersRow').data('id');
+        //
+        //
+        if (obj.Reviewers.reviewees[employeeId] === undefined) {
+            obj.Reviewers.reviewees[employeeId] = {
+                included: [],
+                excluded: []
+            }
+        }
+        //
+        obj.Reviewers.reviewees[employeeId]['excluded'] = _.uniq(_.concat(reviewers, obj.Reviewers.reviewees[employeeId].excluded));
+        //
+        var newInc = _.filter(obj.Reviewers.reviewees[employeeId].included, function(i) {
+            if ($.inArray(i, obj.Reviewers.reviewees[employeeId].excluded) !== -1) {
+                return false;
+            }
+            return true;
+        });
+        //
+        $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"] .select2').select2('val', null);
+        $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.select2:nth-child(1)').select2('val', newInc);
+        $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerCount').text(newInc.length);
     });
 
     // Functions
@@ -403,33 +695,66 @@ $(function() {
             obj.Reviewees.included = [];
             obj.Reviewees.excluded = [];
             //
+            $('.jsReviewRevieweesRow').map(function() {
+                obj.Reviewees.included.push($(this).data().id);
+            });
             $('#jsReviewRevieweesCount').text(obj.Reviewees.included.length);
             $('.jsReviewRevieweesRow').show(0);
             return;
         }
-        //
-        $('.jsReviewRevieweesRow').hide(0);
+
+        var tmpIncluded = [];
+
         // For exluded
         $('.jsReviewRevieweesRow').map(function() {
+            //
             var data = $(this).data();
+            data.id = data.id.toString();
+            //
             // Check for exclude
-            if (filter.excluded_employees && $.inArray(data.id, filter.excluded_employees) !== -1) {
+            if (filter.excluded_employees.length > 0 && $.inArray(data.id, filter.excluded_employees) !== -1) {
+                //
+                $(this).hide(0);
                 obj.Reviewees.excluded.push(data.id);
                 return;
             }
             // Join Date
             if (filter.frame != 0 && moment(data.join, "YYYY-MM-DD").add(filter.frame, 'days').format('YYYY-MM-DD') <= moment().format("YYYY-MM-DD")) {
+                $(this).hide(0);
                 obj.Reviewees.excluded.push(data.id);
                 return;
             }
-
+            //
+            tmpIncluded.push(data.id);
         });
+        //
+        if (
+            filter.roles.length == 0 &&
+            filter.departments.length == 0 &&
+            filter.teams.length == 0 &&
+            filter.employees.length == 0 &&
+            filter.jobs.length == 0 &&
+            filter.type.length == 0
+        ) {
+            //
+            obj.Reviewees.included = tmpIncluded;
+            //
+            $('#jsReviewRevieweesCount').text(obj.Reviewees.included.length);
+            return;
+        }
+        //
+        $('.jsReviewRevieweesRow').hide(0);
         // For Included
         $('.jsReviewRevieweesRow').map(function() {
             //
             var data = $(this).data();
+            //
+            if ($.inArray(data.id, obj.Reviewees.excluded) !== -1) {
+                return;
+            }
             data.departments = data.departments.toString();
             data.teams = data.teams.toString();
+            data.id = data.id.toString();
             // Role check 
             if (filter.roles.length > 0 && $.inArray(data['role'], filter.roles) !== -1) {
                 obj.Reviewees.included.push(data.id);
@@ -466,11 +791,33 @@ $(function() {
                 $(this).show();
                 return;
             }
+            //
+            obj.Reviewees.excluded.push(data.id);
         });
 
         //
         $('#jsReviewRevieweesCount').text(obj.Reviewees.included.length);
 
+    }
+
+    /**
+     * 
+     * @returns 
+     */
+    function loadReviewers() {
+        //
+        $('.jsReviewReviewersRow').hide(0);
+        $('.jsReviewReviewerCount').text(0);
+        $('.jsReviewReviewersRow .select2').select2('val', null);
+        $('.jsReviewReviewerType').prop('checked', false);
+        //
+        obj.Reviewers.reviewer_type = null;
+        //
+        obj.Reviewees.included.map(function(id) {
+            $('.jsReviewReviewersRow[data-id="' + (id) + '"]').show(0);
+        });
+        //
+        stepMover("reviewers");
     }
 
     //
@@ -482,6 +829,32 @@ $(function() {
         }
         //
         var step = 'schedule';
+
+        //
+        if (pm.review.reviewers) {
+            //
+            var tmp = JSON.parse(pm.review.reviewers);
+            //
+            obj.Reviewers = JSON.parse(pm.review.reviewers);
+
+            return;
+        }
+
+        //
+        if (pm.review.excluded) {
+            obj.Reviewees.excluded = pm.review.excluded.split(',');
+            $('#jsReviewRevieweeFilterExcludeEmployees').select2('val', obj.Reviewees.excluded);
+        }
+
+        //
+        if (pm.review.included) {
+            obj.Reviewees.included = pm.review.included.split(',');
+            loadReviewees();
+            //
+            step = 'reviewers';
+            loadReviewers();
+            return;
+        }
         // STEP 1
         // 
         if (pm.review.reviewId) {
@@ -603,9 +976,41 @@ $(function() {
             $('#jsReviewEmployeesInp').select2('val', obj.Visibility.employees);
         }
 
+
+
+
         //
-        step = "reviewees";
+        step = "reviewers";
         stepMover(step);
 
+    }
+
+    //
+    function getEmployee(employeeId) {
+        //
+        var i = 0,
+            il = pm.employees.length;
+        //
+        for (i; i < il; i++) {
+            if (employeeId == pm.employees[i]['Id']) {
+                return pm.employees[i];
+            }
+        }
+    }
+
+    //
+    function getMyPeers(employeeId, teamIds) {
+        //
+        var i = 0,
+            il = pm.employees.length,
+            eIds = [];
+        //
+        for (i; i < il; i++) {
+            if (employeeId != pm.employees[i]['Id'] && _.intersection(teamIds, pm.employees[i]['Teams']).length > 0) {
+                eIds.push(pm.employees[i]['Id']);
+            }
+        }
+        //
+        return eIds;
     }
 });

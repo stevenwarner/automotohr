@@ -39,6 +39,11 @@
     <?php if(isset($review)):?>
         window.pm.review = <?=json_encode($review);?>;
     <?php endif; ?>
+    
+    <?php if(isset($review)):?>
+        // Employees
+        window.pm.employees = <?=json_encode($company_employees);?>;
+    <?php endif; ?>
 </script>
 
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />

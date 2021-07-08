@@ -74,6 +74,12 @@
                     <!-- Reviewees -->
                     <?php $this->load->view("{$pp}create_review/reviewees"); ?>
                 </div>
+                
+                <!-- Step 3 -->
+                <div class="jsPageSection" data-page="reviewers">
+                    <!-- Reviewees -->
+                    <?php $this->load->view("{$pp}create_review/reviewers"); ?>
+                </div>
             </div>
         </div>
     </div>

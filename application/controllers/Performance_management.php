@@ -300,115 +300,160 @@ class Performance_management extends Public_Controller{
         //
         switch($post['step']):
             case "ReviewStep1":
-                    // Set data array
-                    $data_array = [];
+                // Set data array
+                $data_array = [];
+                //
+                if(empty($post['data']['title'])){
                     //
-                    if(empty($post['data']['title'])){
-                        //
-                        $resp['Msg'] = "The review title is missing.";
-                        $this->res($resp);
-                    }
-                    //
-                    if(empty($post['data']['frequency_type'])){
-                        //
-                        $resp['Msg'] = "The frequency is missing.";
-                        $this->res($resp);
-                    }
-                    //
-                    if(
-                        ($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring') &&
-                        (empty($post['data']['start_date']) || empty($post['data']['end_date']))
-                    ){
-                        //
-                        $resp['Msg'] = "The review start and end dates are missing.";
-                        $this->res($resp);
-                    }
-                    //
-                    if(
-                        $post['data']['frequency_type'] == 'recurring' &&
-                        (empty($post['data']['recur_value']) || $post['data']['recur_value'] == 0)
-                    ){
-                        //
-                        $resp['Msg'] = "The recur value is missing.";
-                        $this->res($resp);
-                    }
-                    //
-                    if(
-                        $post['data']['frequency_type'] == 'custom' &&
-                        (empty($post['data']['review_due_value']) || $post['data']['review_due_value'] == 0)
-                    ){
-                        //
-                        $resp['Msg'] = "The review due value is missing.";
-                        $this->res($resp);
-                    }
-                    //
-                    if(
-                        $post['data']['frequency_type'] == 'custom' &&
-                        empty($post['data']['custom_runs']) 
-                    ){
-                        //
-                        $resp['Msg'] = "Please add at least one custom run.";
-                        $this->res($resp);
-                    }
-                    //
-                    if($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring'){
-                        $data_array['review_start_date'] = formatDateToDB($post['data']['start_date']);
-                        $data_array['review_end_date'] = formatDateToDB($post['data']['end_date']);
-                    }
-                    //
-                    if($post['data']['frequency_type'] == 'recurring'){
-                        $data_array['repeat_after'] = $post['data']['recur_value'];
-                        $data_array['repeat_type'] = $post['data']['recur_type'];
-                    }
-                    //
-                    if($post['data']['frequency_type'] == 'custom'){
-                        $data_array['review_due_type'] = $post['data']['review_due_type'];
-                        $data_array['review_due'] = $post['data']['review_due_value'];
-                        $data_array['repeat_review'] = $post['data']['repeat_review'];
-                        $data_array['review_runs'] = json_encode($post['data']['custom_runs']);
-                    }
-                    //
-                    $data_array['review_title'] = $post['data']['title'];
-                    $data_array['description'] = $post['data']['description'];
-                    $data_array['frequency'] = $post['data']['frequency_type'];
-                    //
-                    if(isset($post['data']['roles'])){
-                        $data_array['visibility_roles'] = implode(',', $post['data']['roles']);
-                    }
-                    if(isset($post['data']['departments'])){
-                        $data_array['visibility_departments'] = implode(',', $post['data']['departments']);
-                    }
-                    if(isset($post['data']['teams'])){
-                        $data_array['visibility_teams'] = implode(',', $post['data']['teams']);
-                    }
-                    if(isset($post['data']['employees'])){
-                        $data_array['visibility_employees'] = implode(',', $post['data']['employees']);
-                    }
-                    //
-                    if(!isset($post['id'])){
-                        $data_array['company_sid']  = $pargs['companyId'];
-                        $data_array['is_draft'] = 1;
-                        $data_array['status'] = 'pending';
-                        $data_array['created_at'] = date("Y-m-d H:i:s", strtotime("now"));
-
-                        //
-                        $reviewId = $this->pmm->InsertReview($data_array);
-                    } else{
-                        $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
-                    }
-                    //
-                    $resp['Status'] = true;
-                    $resp['Msg'] = 'Review added.';
-                    $resp['Id'] = $reviewId;
-                    //
+                    $resp['Msg'] = "The review title is missing.";
                     $this->res($resp);
-                break;
-        endswitch;
-        //
-        _e($post, true, true);
+                }
+                //
+                if(empty($post['data']['frequency_type'])){
+                    //
+                    $resp['Msg'] = "The frequency is missing.";
+                    $this->res($resp);
+                }
+                //
+                if(
+                    ($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring') &&
+                    (empty($post['data']['start_date']) || empty($post['data']['end_date']))
+                ){
+                    //
+                    $resp['Msg'] = "The review start and end dates are missing.";
+                    $this->res($resp);
+                }
+                //
+                if(
+                    $post['data']['frequency_type'] == 'recurring' &&
+                    (empty($post['data']['recur_value']) || $post['data']['recur_value'] == 0)
+                ){
+                    //
+                    $resp['Msg'] = "The recur value is missing.";
+                    $this->res($resp);
+                }
+                //
+                if(
+                    $post['data']['frequency_type'] == 'custom' &&
+                    (empty($post['data']['review_due_value']) || $post['data']['review_due_value'] == 0)
+                ){
+                    //
+                    $resp['Msg'] = "The review due value is missing.";
+                    $this->res($resp);
+                }
+                //
+                if(
+                    $post['data']['frequency_type'] == 'custom' &&
+                    empty($post['data']['custom_runs']) 
+                ){
+                    //
+                    $resp['Msg'] = "Please add at least one custom run.";
+                    $this->res($resp);
+                }
+                //
+                if($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring'){
+                    $data_array['review_start_date'] = formatDateToDB($post['data']['start_date']);
+                    $data_array['review_end_date'] = formatDateToDB($post['data']['end_date']);
+                }
+                //
+                if($post['data']['frequency_type'] == 'recurring'){
+                    $data_array['repeat_after'] = $post['data']['recur_value'];
+                    $data_array['repeat_type'] = $post['data']['recur_type'];
+                }
+                //
+                if($post['data']['frequency_type'] == 'custom'){
+                    $data_array['review_due_type'] = $post['data']['review_due_type'];
+                    $data_array['review_due'] = $post['data']['review_due_value'];
+                    $data_array['repeat_review'] = $post['data']['repeat_review'];
+                    $data_array['review_runs'] = json_encode($post['data']['custom_runs']);
+                }
+                //
+                $data_array['review_title'] = $post['data']['title'];
+                $data_array['description'] = $post['data']['description'];
+                $data_array['frequency'] = $post['data']['frequency_type'];
+                //
+                if(isset($post['data']['roles'])){
+                    $data_array['visibility_roles'] = implode(',', $post['data']['roles']);
+                }
+                if(isset($post['data']['departments'])){
+                    $data_array['visibility_departments'] = implode(',', $post['data']['departments']);
+                }
+                if(isset($post['data']['teams'])){
+                    $data_array['visibility_teams'] = implode(',', $post['data']['teams']);
+                }
+                if(isset($post['data']['employees'])){
+                    $data_array['visibility_employees'] = implode(',', $post['data']['employees']);
+                }
+                //
+                if(!isset($post['id'])){
+                    $data_array['company_sid']  = $pargs['companyId'];
+                    $data_array['is_draft'] = 1;
+                    $data_array['status'] = 'pending';
+                    $data_array['created_at'] = date("Y-m-d H:i:s", strtotime("now"));
 
-        //
-        $this->res(['data' => $template]);
+                    //
+                    $reviewId = $this->pmm->InsertReview($data_array);
+                } else{
+                    $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
+                }
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Review added.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "ReviewStep2":
+                // Set data array
+                $data_array = [];
+                //
+                if(empty($post['data']['included'])){
+                    //
+                    $resp['Msg'] = "Please select at least one reviewee.";
+                    $this->res($resp);
+                }
+                //
+                $data_array['included_employees'] = implode(',', $post['data']['included']);
+                //
+                if(isset($post['data']['excluded'])){
+                    $data_array['excluded_employees'] = implode(',', $post['data']['excluded']);
+                }
+                
+                $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Reviewee added.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "ReviewStep3":
+                // Set data array
+                $data_array = [];
+                //
+                if(empty($post['data']['reviewer_type'])){
+                    //
+                    $resp['Msg'] = "Please select the reviewer type.";
+                    $this->res($resp);
+                }
+                //
+                if(empty($post['data']['reviewees'])){
+                    //
+                    $resp['Msg'] = "Please add reviewers to reviewees.";
+                    $this->res($resp);
+                }
+
+                $data_array['reviewers'] = json_encode($post['data']);
+                
+                $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Reviewer added.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+        endswitch;
     }
     
 

@@ -286,9 +286,9 @@
     <div class="col-sm-12">
         <div class="bbb"></div>
         <br />
-        <button class="btn btn-black csF16"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp; Back To Schedule</button>
+        <button class="btn btn-black csF16 jsPageSectionBtn" data-to="schedule"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp; Back To Schedule</button>
         <span class="pull-right">
-            <button class="btn btn-orange csF16"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>&nbsp; Save & Next</button>
+            <button class="btn btn-orange csF16" id="jsReviewRevieweesSaveBtn"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>&nbsp; Save & Next</button>
             <button class="btn btn-black csF16"><i class="fa fa-archive" aria-hidden="true"></i>&nbsp; Finish Later</button>
         </span>
     </div>

@@ -352,7 +352,10 @@ class Performance_management_model extends CI_Model{
             review_runs as custom_runs,
             visibility_roles as roles,
             visibility_departments as departments,
-            visibility_teams as teams
+            visibility_teams as teams,
+            included_employees as included,
+            excluded_employees as excluded,
+            reviewers,
         ")
         ->where('sid', $reviewId)
         ->where('company_sid', $company_sid)
@@ -398,7 +401,9 @@ class Performance_management_model extends CI_Model{
         ->select("
             {$this->DTM}.sid as team_id,
             {$this->DTM}.team_lead,
+            {$this->DTM}.reporting_managers,
             {$this->DM}.sid as department_id,
+            {$this->DM}.reporting_managers as reporting_managers_2,
             {$this->DM}.supervisor
         ")
         ->join("{$this->DTM}", "{$this->DTM}.sid = {$this->DE2T}.team_sid")
@@ -418,7 +423,7 @@ class Performance_management_model extends CI_Model{
         //
         if(!empty($b)){
             //
-            $d = $t = $s = $l = [];
+            $d = $t = $s = $l = $rm = [];
             //
             foreach($b as $v){
                 //
@@ -427,16 +432,21 @@ class Performance_management_model extends CI_Model{
                 //
                 $s = array_merge($s, explode(',', $v['supervisor']));
                 $l = array_merge($l, explode(',', $v['team_id']));
+                //
+                $rm = array_merge($rm, !empty( $v['reporting_managers']) ? explode(',', $v['reporting_managers']) : []);
+                $rm = array_merge($rm, !empty( $v['reporting_managers_2']) ? explode(',', $v['reporting_managers_2']) : []);
             }
             //
             $r['TeamLeads'] = $l;
             $r['Supervisors'] = $s;
             $r['Departments'] = $d;
             $r['Teams'] = $t;
+            $r['ReportingManagers'] = $rm;
         } else{
             $r['TeamLeads'] = 
             $r['Supervisors'] =
             $r['Departments'] =
+            $r['ReportingManagers'] =
             $r['Teams'] = [];
         }
         return $r;
