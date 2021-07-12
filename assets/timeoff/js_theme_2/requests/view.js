@@ -517,7 +517,7 @@ resp.Response
     $(document).on('click', '.jsRequestBtn', function() {
         //
        
-        let tab = $(this).data('tab');
+        let tab = callOBJ.Requests.Main.type;
         let obj = {
             action: 'request_status',
             companyId: companyId,
@@ -551,12 +551,7 @@ resp.Response
                                 //
                                 sendUpdateStatusRequest(obj);
                             }, function () {
-                                ml(true, 'editModalLoader');
-                            }).set({
-                                'labels': {
-                                    'ok' : 'Yes',
-                                    'cancel' : 'No'
-                                }
+                                // ml(true, 'editModalLoader');
                             });
                     } else {
                         //
@@ -840,7 +835,7 @@ resp.Response
             if(comments[0].status == 'approved'){
                 rows += `                    <div class="text-success"><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
             } else {
-                rows += `                    <div class="text-warning"><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
+                rows += `                    <div class="text-danger"><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
             }
             
                 if (allComments[v.sid] === undefined) allComments[v.sid] = [];
