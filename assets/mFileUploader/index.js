@@ -35,13 +35,11 @@
                     switch (opt) {
                         case "get":
                             return instances[_this.selector];
+                        case "clear":
+                            return delete instances[_this.selector];
                     }
                     return;
                 }
-                //
-                // console.log('start_check');  
-                // console.log(instances[_this.selector]);
-                // console.log('end check');
                 //
                 let
                     oFile = {},
@@ -52,13 +50,8 @@
                 //
                 instances[_this.selector] = oFile;
                 //
-                // console.log(instances);
-                // alert('please check console');
-                // return;
-                //
                 options['s3'] = opt !== undefined && opt.s3 || `https://automotohrattachments.s3.amazonaws.com/`;
                 options['placeholderImage'] = opt !== undefined && opt.placeholderImage || '';
-                //        options['fileLimit'] =  opt !== undefined && opt.fileLimit || '2MB';
                 options['fileLimit'] = $.inArray('mp4', opt.allowedTypes) === -1 ? -1 : opt.fileLimit;
                 options['allowedTypes'] = opt !== undefined && opt.allowedTypes || ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv']
                 options['text'] = opt !== undefined && opt.text || `Click / Drag to upload`;

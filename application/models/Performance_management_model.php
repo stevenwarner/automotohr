@@ -328,14 +328,14 @@ class Performance_management_model extends CI_Model{
     /**
      * 
      */
-    function GetReviewRowById($reviewId, $company_sid){
+    function GetReviewRowById($reviewId, $company_sid, $columns = null){
         //
         if($reviewId == 0){
             return [];
         }
         //
         $query = $this->db
-        ->select("
+        ->select($columns === null ? "
             sid as reviewId,
             review_title as title,
             description,
@@ -356,7 +356,8 @@ class Performance_management_model extends CI_Model{
             included_employees as included,
             excluded_employees as excluded,
             reviewers,
-        ")
+            questions,
+        ": implode(',', $columns))
         ->where('sid', $reviewId)
         ->where('company_sid', $company_sid)
         ->get($this->R);

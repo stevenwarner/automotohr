@@ -384,6 +384,19 @@ class Performance_management extends Public_Controller{
                 if(isset($post['data']['employees'])){
                     $data_array['visibility_employees'] = implode(',', $post['data']['employees']);
                 }
+                
+                if(isset($post['data']['questions'])){
+                    //
+                    $questions = [];
+                    //
+                    foreach($post['data']['questions'] as $question){
+                        //
+                        if(!isset($question['id'])){
+                            $questions[] = array_merge($question, ['id' => generateRandomString(10)]);
+                        }
+                    }
+                    $data_array['questions'] = json_encode($questions);
+                }
                 //
                 if(!isset($post['id'])){
                     $data_array['company_sid']  = $pargs['companyId'];
@@ -452,6 +465,58 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $reviewId;
                 //
                 $this->res($resp);
+            break;
+            case "SaveQuestion":
+                // Set data array
+                $data_array = [];
+                // Get old 
+                $questions = $this->pmm->GetReviewRowById($post['id'], $pargs['companyId'], ['questions'])['questions'];
+                //
+                if(!empty($questions) && $questions != null && $questions != 'null'){
+                    $questions = json_decode($questions, true);
+                    $questions = array_merge($questions, [$post['data']]);
+                } else{
+                    $questions[] = $post['data'];
+                }
+                //
+                $data_array['questions'] = json_encode($questions);
+                //
+                $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Questions added.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "SaveVideo":
+                //
+                if(empty($_FILES)){
+                    //
+                    $resp['Msg'] = "Please record/upload a video.";
+                    $this->res($resp);
+                }
+                //
+                $path = APPPATH.'../assets/performance_management/videos/'.$post['reviewId'].'/';
+                //
+                if(!is_dir($path)){
+                    mkdir($path, DIR_WRITE_MODE, true);
+                }
+                //
+                $idd = time().generateRandomString(7);
+                //
+                $newName = $idd.'.'.(explode('.', $_FILES['file']['name'])[1]);
+                //
+                if(!move_uploaded_file($_FILES['file']['tmp_name'], $path.$newName)){
+                    //
+                    $resp['Msg'] = "Failed to save video.";
+                    $this->res($resp);
+                } else{
+                    $resp['Msg'] = "Video is uploaded";
+                    $resp['Id'] = $idd;
+                    $resp['Status'] = true;
+                    $this->res($resp);
+                }
             break;
         endswitch;
     }

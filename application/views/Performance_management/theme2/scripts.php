@@ -57,6 +57,9 @@
 <?php 
     if(strpos($this->uri->uri_string(), 'review/create') !== false){
         ?>
+        <link rel="stylesheet" type="text/css" href="<?=base_url('assets/mFileUploader/index.css');?>" />
+        <script type="text/javascript" src="<?=base_url('assets/mFileUploader/index.js');?>"></script>
+        <script src="<?=base_url('assets/performance_management/js/video_record'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
         <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/create'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
         <?php
     }

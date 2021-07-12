@@ -32,6 +32,9 @@ $(function() {
         Share_feedback: true
     };
 
+    //
+    var questionFile = null;
+
     window.REVIEW = obj;
     //
     $('#jsReviewCustomRunDueType').select2({ minimumResultsForSearch: -1 });
@@ -70,6 +73,30 @@ $(function() {
     $('#jsReviewEndDateInp').datepicker({
         changeYear: true,
         changeMonth: true,
+    });
+    //
+    $('#jsReviewQuestionAddQuestionType').select2({ minimumResultsForSearch: -1 });
+    //
+    $('#jsReviewQuestionAddVideoUploadInp').mFileUploader({
+        allowedTypes: ['mp4', 'webm'],
+        fileLimit: '2mb',
+        onSuccess: function(o) {
+            questionFile = o;
+            updatePreview();
+        },
+        onClear: function(e) {
+            questionFile = null;
+        },
+    });
+    //
+    var cp = new mVideoRecorder({
+        recorderPlayer: 'jsVideoRecorder',
+        previewPlayer: 'jsVideoPreview',
+        recordButton: 'jsVideoRecordButton',
+        playRecordedVideoBTN: 'jsVideoPlayVideo',
+        removeRecordedVideoBTN: 'jsVideoRemoveButton',
+        pauseRecordedVideoBTN: 'jsVideoPauseButton',
+        resumeRecordedVideoBTN: 'jsVideoResumeButton',
     });
 
     //
@@ -238,7 +265,8 @@ $(function() {
             review_due_type: $('#jsReviewCustomRunDueType').val() || 'days',
             review_due_value: $('#jsReviewCustomRunDueValue').val() || 0,
             repeat_review: $('#jsReviewCustomRunEveryYear').val() || false,
-            custom_runs: getCustomRuns()
+            custom_runs: getCustomRuns(),
+            questions: obj.Questions
         };
         //
         if (o.title == '') {
@@ -334,7 +362,7 @@ $(function() {
                 return;
             }
             //
-            // loadReviewers();
+            loadQuestions();
         });
 
     });
@@ -369,6 +397,8 @@ $(function() {
             }
             //
             loadReviewers();
+            //
+            stepMover("reviewers");
         });
 
     });
@@ -376,9 +406,6 @@ $(function() {
 
     /**
      * 
-     * @param {*} targetId 
-     * @param {*} type 
-     * @param {*} id 
      */
     $('.jsReviewRevieweeSearchBtn').click(function(event) {
         //
@@ -389,9 +416,6 @@ $(function() {
 
     /**
      * 
-     * @param {*} targetId 
-     * @param {*} type 
-     * @param {*} id 
      */
     $('.jsReviewRevieweeResetBtn').click(function(event) {
         //
@@ -623,6 +647,216 @@ $(function() {
         $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerCount').text(newInc.length);
     });
 
+    /**
+     * 
+     */
+    $('#jsReviewQuestionAddBtn').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        $('#jsReviewQuestionListBox').addClass('dn');
+        $('#jsReviewQuestionAddBox').removeClass('dn');
+        //
+        $('#jsReviewQuestionAddPreviewTextBox').addClass('dn');
+        $('#jsReviewQuestionAddPreviewMultipleChoiceBox').addClass('dn');
+        $('#jsReviewQuestionAddPreviewRatingBox').addClass('dn');
+        //
+        $('#jsReviewQuestionAddPreviewVideo').hide();
+        $('#jsReviewQuestionAddPreviewVideo').html('');
+        //
+        $('#jsReviewQuestionAddPreviewTitle').text('');
+        $('#jsReviewQuestionAddPreviewDescription').text('');
+        //
+        $('#jsReviewQuestionAddTitle, #jsReviewQuestionAddDescription').text('');
+        $('#jsReviewQuestionAddQuestionType').select2('val', 'text');
+        //
+        $('.jsReviewQuestionAddVideoType[value="none"]').prop('checked', 'true').trigger('click');
+        //
+        questionFile = null;
+        //
+        $('#jsReviewQuestionAddVideoUploadInp').mFileUploader('clear');
+        //
+        cp.close();
+    });
+
+    /**
+     * 
+     */
+    $('#jsReviewQuestionToList').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        $('#jsReviewQuestionListBox').removeClass('dn');
+        $('#jsReviewQuestionAddBox').addClass('dn');
+    });
+
+    /**
+     * 
+     */
+    $('.jsReviewQuestionAddVideoType').click(function() {
+        //
+        $('#jsReviewQuestionAddVideoRecord').addClass('dn');
+        $('#jsReviewQuestionAddVideoUpload').addClass('dn');
+        //
+        cp.close();
+        //
+        switch ($(this).val()) {
+            case "record":
+                $('#jsReviewQuestionAddVideoRecord').removeClass('dn');
+                cp.init();
+                break;
+            case "upload":
+                $('#jsReviewQuestionAddVideoUpload').removeClass('dn');
+                break;
+        }
+        //
+        updatePreview();
+    });
+
+    /**
+     * 
+     */
+    $('#jsReviewQuestionAddTitle, #jsReviewQuestionAddDescription').keyup(function() {
+        updatePreview();
+    });
+
+    /**
+     * 
+     */
+    $('#jsReviewQuestionAddQuestionType').change(function() {
+        updatePreview();
+    });
+
+    /**
+     * 
+     */
+    $('#jsReviewQuestionSaveBtn').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        var question = {
+            id: getRandomId(),
+            title: $('#jsReviewQuestionAddTitle').val().trim(),
+            description: $('#jsReviewQuestionAddDescription').val().trim(),
+            video_help: $('.jsReviewQuestionAddVideoType:checked').val(),
+            video: "",
+            sort_order: "1",
+            not_applicable: "0",
+            question_type: $('#jsReviewQuestionAddQuestionType').val()
+        };
+        //
+        if (question.title == '') {
+            handleError("Please add the question title");
+            return;
+        }
+        //
+        if (questionFile !== null) {
+            ml(true, 'review', 'Please wait, while we are uploading the video.');
+            uploadVideo(question, questionFile);
+        } else {
+            saveQuestion(question);
+        }
+
+    });
+
+    //
+    function uploadVideo(question, video) {
+        //
+        var fd = new FormData();
+        fd.append('file', video);
+        fd.append('reviewId', obj.Id);
+        fd.append('step', 'SaveVideo');
+        //
+        $.ajax({
+            url: pm.urls.pbase + 'save_review_step',
+            type: 'post',
+            data: fd,
+            contentType: false,
+            processData: false,
+        }).done(function(resp) {
+            //
+            if (resp.Status === false) {
+                handleError('Failed to save video.');
+                return false;
+            }
+            //
+            question.video = resp.Id;
+            //
+            saveQuestion(question);
+        });
+    }
+
+    //
+    function saveQuestion(question) {
+        //
+        ml(true, 'review', 'Please wait, while we are saving the question.');
+        //
+        $.post(pm.urls.pbase + 'save_review_step', {
+            step: 'SaveQuestion',
+            data: question,
+            id: obj.Id
+        }).done(function(resp) {
+            //
+            if (resp.Status === false) {
+                handleError('Failed to save question.');
+                return false;
+            }
+            //
+            handleSuccess('You have successfully added a question.', function() {
+                //
+                loadQuestions();
+                //
+                $('#jsReviewQuestionListBox').removeClass('dn');
+                $('#jsReviewQuestionAddBox').addClass('dn');
+            });
+        });
+    }
+
+
+    function updatePreview() {
+        //
+        var question = {
+            title: $('#jsReviewQuestionAddTitle').val().trim(),
+            description: $('#jsReviewQuestionAddDescription').val().trim(),
+            video_help: $('.jsReviewQuestionAddVideoType:checked').val(),
+            type: $('#jsReviewQuestionAddQuestionType').val(),
+            file: questionFile
+        };
+        //
+        $('#jsReviewQuestionAddPreviewTextBox').addClass('dn');
+        $('#jsReviewQuestionAddPreviewMultipleChoiceBox').addClass('dn');
+        $('#jsReviewQuestionAddPreviewRatingBox').addClass('dn');
+        //
+        $('#jsReviewQuestionAddPreviewVideo').hide();
+        $('#jsReviewQuestionAddPreviewVideo').html('');
+        //
+        $('#jsReviewQuestionAddPreviewTitle').text(question.title);
+        $('#jsReviewQuestionAddPreviewDescription').text(question.description);
+        //
+        if (question.file != null) {
+            $('#jsReviewQuestionAddPreviewVideo').show();
+            //
+            var video = '';
+            video += '<video controls style="width: 100%">';
+            video += '  <source src="' + (URL.createObjectURL(question.file)) + '" type="video/mp4"></source>';
+            video += '</video>';
+            $('#jsReviewQuestionAddPreviewVideo').append(video);
+        }
+
+        //
+        if (question.type.match(/multiple/ig) !== null) {
+            $('#jsReviewQuestionAddPreviewMultipleChoiceBox').removeClass('dn');
+        }
+        //
+        if (question.type.match(/rating/ig) !== null) {
+            $('#jsReviewQuestionAddPreviewRatingBox').removeClass('dn');
+        }
+        //
+        if (question.type.match(/text/ig) !== null) {
+            $('#jsReviewQuestionAddPreviewTextBox').removeClass('dn');
+        }
+    }
+
     // Functions
     //
     function loadTemplateQuestions(targetId, type, id) {
@@ -816,8 +1050,6 @@ $(function() {
         obj.Reviewees.included.map(function(id) {
             $('.jsReviewReviewersRow[data-id="' + (id) + '"]').show(0);
         });
-        //
-        stepMover("reviewers");
     }
 
     //
@@ -830,31 +1062,6 @@ $(function() {
         //
         var step = 'schedule';
 
-        //
-        if (pm.review.reviewers) {
-            //
-            var tmp = JSON.parse(pm.review.reviewers);
-            //
-            obj.Reviewers = JSON.parse(pm.review.reviewers);
-
-            return;
-        }
-
-        //
-        if (pm.review.excluded) {
-            obj.Reviewees.excluded = pm.review.excluded.split(',');
-            $('#jsReviewRevieweeFilterExcludeEmployees').select2('val', obj.Reviewees.excluded);
-        }
-
-        //
-        if (pm.review.included) {
-            obj.Reviewees.included = pm.review.included.split(',');
-            loadReviewees();
-            //
-            step = 'reviewers';
-            loadReviewers();
-            return;
-        }
         // STEP 1
         // 
         if (pm.review.reviewId) {
@@ -975,12 +1182,70 @@ $(function() {
             obj.Visibility.employees = pm.review.employees.split(',');
             $('#jsReviewEmployeesInp').select2('val', obj.Visibility.employees);
         }
+        //
+        if (pm.review.questions) {
+            //
+            obj.Questions = JSON.parse(pm.review.questions);
+        }
 
 
-
+        // Reviewees
+        //
+        if (pm.review.excluded) {
+            obj.Reviewees.excluded = pm.review.excluded.split(',');
+            $('#jsReviewRevieweeFilterExcludeEmployees').select2('val', obj.Reviewees.excluded);
+        }
 
         //
-        step = "reviewers";
+        if (pm.review.included) {
+            obj.Reviewees.included = pm.review.included.split(',');
+            loadReviewees();
+            //
+            loadReviewers();
+            //
+            step = "reviewers";
+        }
+
+        // Reviewers
+        //
+        if (pm.review.reviewers) {
+            //
+            var tmp = JSON.parse(pm.review.reviewers);
+            //
+            obj.Reviewers = tmp;
+            //
+            $('.jsReviewReviewerType[value="' + (obj.Reviewers.reviewer_type) + '"]').prop('checked', true);
+            //
+            $('.jsReviewReviewersRow').hide(0);
+            //
+            $.each(obj.Reviewers.reviewees, function(employeeId) {
+                //
+                var newInc = _.filter(obj.Reviewers.reviewees[employeeId].included, function(i) {
+                    if ($.inArray(i, obj.Reviewers.reviewees[employeeId].excluded) !== -1) {
+                        return false;
+                    }
+                    return true;
+                });
+                //
+                $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').show(0);
+                $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"] .select2').select2('val', null);
+                $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.select2:nth-child(1)').select2('val', newInc);
+                $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerCount').text(newInc.length);
+                //
+                if (obj.Reviewers.reviewees[employeeId].excluded) {
+                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerSelectBoxExcluded').select2('val', obj.Reviewers.reviewees[employeeId].excluded);
+                }
+            });
+            //
+            step = 'questions';
+        }
+
+        //
+        if (step == 'questions') {
+            loadQuestions();
+        }
+
+        //
         stepMover(step);
 
     }
@@ -1012,5 +1277,116 @@ $(function() {
         }
         //
         return eIds;
+    }
+
+    //
+    function loadQuestions() {
+        //
+        if (!obj.Questions || obj.Questions.length === 0) {
+            return;
+        }
+        //
+        var html = '',
+            il = obj.Questions.length;
+        //
+        obj.Questions.map(function(question, index) {
+            //
+            html += '<!-- Question Row -->';
+            html += '<div class="' + (index % 2 === 0 ? 'csGB' : '') + '" data-id="' + (index) + '">';
+            html += '    <div class="row">';
+            html += '        <div class="col-xs-12">';
+            html += '            <div class="p10">';
+            html += '                <h5 class="csF14 csB7">';
+            html += '                    Q' + (++index) + ': ' + question.title;
+            html += '                    <span class="pull-right">';
+            html += '                        <i class="fa fa-edit csF18 csB7 csCP" title="Edit the question" placemment="top" aria-hidden="true"></i>&nbsp;&nbsp;';
+            if (index !== 0) {
+                html += '                        <i class="fa fa-arrow-circle-up csF18 csB7 csCP" title="Move question one level up" placemment="top" aria-hidden="true"></i>';
+            }
+            if (index !== il) {
+                html += '                        <i class="fa fa-arrow-circle-down csF18 csB7 csCP" title="Move question one level down" placemment="top" aria-hidden="true"></i>';
+            }
+            html += '                        <i class="fa fa-times-circle csF18 csB7 csCP" title="Remove this question from the list" placemment="top" aria-hidden="true"></i>';
+            html += '                    </span>';
+            html += '                </h5>';
+            html += '                <!-- Description -->';
+            html += '                <div class="row">';
+            html += '                    <div class="col-md-8 col-xs-12">';
+            html += '                        <p class="csF14">' + (question.description) + '</p>';
+            html += '                    </div>';
+            html += '                    <div class="col-md-4 col-xs-12">';
+            if (question.video_help) {
+                html += '                        <video controls style="width: 100%;">';
+                html += '                           <source src="' + (pm.urls.base + 'assets/performance_management/videos/' + (obj.Id) + '/' + question.video) + '.mp4" type="video/mp4"></source>';
+                html += '                        </video>';
+            }
+            html += '                    </div>';
+            html += '                </div>';
+            //
+            if (question.question_type.match(/multiple/ig) !== null) {
+                html += '                <!-- Multiple Choice -->';
+                html += '                <div class="row">';
+                html += '                    <br />';
+                html += '                    <div class="col-xs-12">';
+                html += '                        <label class="control control--radio csF14">';
+                html += '                            <input type="radio" name="1" /> Yes';
+                html += '                            <span class="control__indicator"></span>';
+                html += '                        </label> <br />';
+                html += '                        <label class="control control--radio csF14">';
+                html += '                            <input type="radio" name="1" /> No';
+                html += '                            <span class="control__indicator"></span>';
+                html += '                        </label>';
+                html += '                    </div>';
+                html += '                </div>';
+            }
+
+            //
+            if (question.question_type.match(/rating/ig) !== null) {
+                html += '                <!-- Rating -->';
+                html += '                <div class="row">';
+                html += '                    <br />';
+                html += '                    <ul class="csRatingBar pl10 pr10">';
+                html += '                        <li>';
+                html += '                            <p class="csF20 csB9">1</p>';
+                html += '                            <p class="csF14 csB6">Strongly Agree</p>';
+                html += '                        </li>';
+                html += '                        <li>';
+                html += '                            <p class="csF20 csB9">2</p>';
+                html += '                            <p class="csF14 csB6">Agree</p>';
+                html += '                        </li>';
+                html += '                        <li>';
+                html += '                            <p class="csF20 csB9">3</p>';
+                html += '                            <p class="csF14 csB6">Neutral</p>';
+                html += '                        </li>';
+                html += '                        <li>';
+                html += '                            <p class="csF20 csB9">4</p>';
+                html += '                            <p class="csF14 csB6">Disagree</p>';
+                html += '                        </li>';
+                html += '                        <li>';
+                html += '                            <p class="csF20 csB9">5</p>';
+                html += '                            <p class="csF14 csB6">Strongly Disagree</p>';
+                html += '                        </li>';
+                html += '                    </ul>';
+                html += '                </div>';
+            }
+            //
+            if (question.question_type.match(/text/ig) !== null) {
+                html += '                <!-- Text -->';
+                html += '                <div class="row">';
+                html += '                    <br />';
+                html += '                    <div class="col-xs-12">';
+                html += '                        <p class="csF14 csB7">Feedback (Elaborate)</p>';
+                html += '                        <textarea rows="5" class="form-control"></textarea>';
+                html += '                    </div>';
+                html += '                </div>';
+            }
+            html += '            </div>';
+            html += '        </div>';
+            html += '    </div>';
+            html += '</div>';
+        });
+        //
+        $('#jsReviewQuestionListArea').html(html);
+
     }
 });

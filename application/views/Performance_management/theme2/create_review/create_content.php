@@ -80,6 +80,12 @@
                     <!-- Reviewees -->
                     <?php $this->load->view("{$pp}create_review/reviewers"); ?>
                 </div>
+                
+                <!-- Step 4 -->
+                <div class="jsPageSection" data-page="questions">
+                    <!-- Reviewees -->
+                    <?php $this->load->view("{$pp}create_review/questions"); ?>
+                </div>
             </div>
         </div>
     </div>
