@@ -479,7 +479,7 @@ function remakeRangeRows(
         let sd = moment(startDate).add(i, 'days');
         if ($.inArray(sd.format('MM-DD-YYYY'), holidayDates) === -1 && $.inArray(sd.format('dddd').toString().toLowerCase(), policyDayOffs) === -1) {
             rows += '<tr data-id="' + (i) + '" data-date="' + (sd.format('MM-DD-YYYY')) + '">';
-            rows += '    <th style="vertical-align: middle">' + (sd.format('MMMM Do, YYYY')) + '</th>';
+            rows += '    <th style="vertical-align: middle">' + (sd.format('MMMM Do, YYYY - dddd')) + '</th>';
             rows += '    <th style="vertical-align: middle">';
             rows += '        <div>';
             rows += '            <label class="control control--radio">';

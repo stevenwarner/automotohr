@@ -516,6 +516,8 @@ resp.Response
     //
     $(document).on('click', '.jsRequestBtn', function() {
         //
+       
+        let tab = $(this).data('tab');
         let obj = {
             action: 'request_status',
             companyId: companyId,
@@ -526,7 +528,53 @@ resp.Response
             status: $(this).data('type') == 'approve' ? 'approved' : 'rejected',
             comment: $(this).closest('.jsBox').find('.jsRequestCommentTxt').val()
         };
-        //
+
+        if (tab == 'pending') {
+            let request_sid = $(this).closest('.jsBox').data('id');
+            let request_type = $(this).data('type');
+            ml(true, `request${request_sid}`);
+            
+            let myurl = handlerURL+"/requests_status/"+companyId+"/"+request_sid+"/"+request_type;
+           
+            $.ajax({
+                type: "GET",
+                url: myurl,
+                async : false,
+                success: function (resp) {
+                    ml(false, `request${request_sid}`);
+                    if (resp.Status === true) {
+                        alertify.confirm(
+                            'Please Confirm',
+                            resp.message,
+                            // 'Are you sure you want to '+request_type+' time-off request, '+resp.message,
+                            function () {
+                                //
+                                sendUpdateStatusRequest(obj);
+                            }, function () {
+                                ml(true, 'editModalLoader');
+                            }).set({
+                                'labels': {
+                                    'ok' : 'Yes',
+                                    'cancel' : 'No'
+                                }
+                            });
+                    } else {
+                        //
+                        sendUpdateStatusRequest(obj); 
+                    }
+                },
+                error: function (resp) {
+
+                }   
+            });
+        } else {
+            //
+            sendUpdateStatusRequest(obj);
+        }
+
+    });
+
+    function sendUpdateStatusRequest (obj) {
         ml(true, `request${obj.requestId}`);
         //
         $.post(
@@ -543,7 +591,7 @@ resp.Response
                 )
             }
         );
-    });
+    }
 
     //
     function getApproverLisiting(history) {
@@ -645,11 +693,63 @@ resp.Response
         return comments;
     }
 
+    function getUpdateStatus(history) {
+        //
+        let msg = '';
+        let status = 'pending';
+        //
+        if (history.length == 0) return status;
+        //
+        history.map((his,i) => {
+            let action = JSON.parse(his.note);
+            
+            if(his.action == 'update' && i == 0){
+                msg += `${remakeEmployeeName(his)}`;
+                if (action.status == "approved") {
+                    status = 'approved';
+                    msg += ` has approved the time-off on ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
+                } else if (action.status == "rejected") {
+                    status = 'rejected';
+                    msg += ` has rejected the time-off on ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
+                }
+            }
+            
+        });
+
+        let
+            obj = {
+                status: status,
+                message: msg
+            };
+        //
+        return obj;
+    }
+
+
     //
     function getRequestBox(v, userRow) {
         //
         let progressStatus = v.status == "pending" ? (v.level_status != "pending" ? 50 : 0) : 100;
         let comments = getComments(v.history);
+        let request_info = getUpdateStatus(v.history);
+        let tab_status = v.status;
+        //
+        let bgStatusColor = '';
+        let bgOldStatusColor = '';
+        //
+        if (tab_status == "pending") {
+            $("#request_status_info").show();
+            if (request_info.status == 'approved') {
+                bgStatusColor = 'background: rgba(129, 180, 49, .2)';
+                bgOldStatusColor = 'background: none';
+            } else if (request_info.status == 'rejected') {
+                bgStatusColor = 'background: rgba(242, 222, 222, .5)';
+                bgOldStatusColor = 'background: none';
+            }
+        } else {
+            $("#request_status_info").hide();
+        }
+
         let rows = '';
         let allow_update = v.allow_update;
         //
@@ -677,7 +777,7 @@ resp.Response
         rows += `            <div class="clearfix"></div>`;
         rows += `        </div>`;
         rows += `        <!-- Box Content -->`;
-        rows += `        <div class="csBoxContent">`;
+        rows += `        <div class="csBoxContent" style="${bgStatusColor}">`;
         rows += `            <!-- Section 1 -->`;
         rows += `            <div class="csBoxContentDateSection">`;
         rows += `                <div class="col-sm-5 col-xs-5">`;
@@ -704,7 +804,7 @@ resp.Response
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;
         rows += `            <!-- Section 3 -->`;
-        rows += `            <div class="csBoxContentEmpSection">`;
+        rows += `            <div class="csBoxContentEmpSection" style="${bgOldStatusColor}">`;
         rows += `                <div class="col-sm-3 col-xs-3">`;
         rows += `                    <img src="${getImageURL(userRow.image)}" class="csRoundImg"  />`;
         rows += `                </div>`;
@@ -714,7 +814,7 @@ resp.Response
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;
         rows += `            <!-- Section 4 -->`;
-        rows += `            <div class="csBoxContentProgressSection">`;
+        rows += `            <div class="csBoxContentProgressSection" style="${bgOldStatusColor}">`;
         rows += `                <div class="col-sm-12">`;
         rows += `                    <div class="progress csRadius100">`;
         rows += `                        <div class="progress-bar progress-bar-success csRadius100" role="progressbar" aria-valuenow="${progressStatus}" aria-valuemin="0" aria-valuemax="100" style="width: ${progressStatus}% ;">`;
@@ -726,15 +826,23 @@ resp.Response
         rows += `            </div>`;
         if (comments.length > 0) {
             rows += `            <!-- Section 5 -->`;
-            rows += `            <div class="csBoxContentComentSection">`;
+            rows += `            <div class="csBoxContentComentSection" style="${bgOldStatusColor}">`;
             rows += `                <div class="col-sm-3 col-xs-3">`;
             rows += `                    <img src="${comments[0].employeeImage}" class="csRoundImg" />`;
             rows += `                </div>`;
             rows += `                <div class="col-sm-9 col-xs-9 pr0">`;
-            rows += `                    <div><strong>${strip_tags(comments[0].msg).substr(0, 25)}</strong></div>`;
             rows += `                    <p class="csBoxContentComentName">${comments[0].employeeName}</p>`;
             rows += `                    <p class="csBoxContentComentTag"> ${comments[0].employeeRole}</p>`;
             rows += `                    <p class="csBoxContentComentTag">${moment(comments[0].time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</p>`;
+            if(comments[0].msg.length != 0){   
+            rows += `                    <div>"${strip_tags(comments[0].msg).substr(0, 25)}"</div>`;
+            } 
+            if(comments[0].status == 'approved'){
+                rows += `                    <div class="text-success"><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
+            } else {
+                rows += `                    <div class="text-warning"><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
+            }
+            
                 if (allComments[v.sid] === undefined) allComments[v.sid] = [];
                 // comments[0].v.history
                 allComments[v.sid].push(comments);
@@ -747,11 +855,12 @@ resp.Response
         }
         rows += `            <!-- Section 6 -->`;
         rows += `            <div class="csBoxContentComent2Section">`;
-        rows += `                <div class="col-sm-2 col-xs-2">`;
-        rows += `                    <i class="fa fa-comment-o"></i>`;
-        rows += `                </div>`;
-        rows += `                <div class="col-sm-10 col-xs-10">`;
-        rows += `                    <textarea class="form-control jsRequestCommentTxt" rows="1"></textarea>`;
+        // rows += `                <div class="col-sm-2 col-xs-2">`;
+        // rows += `                    <i class="fa fa-comment-o"></i>`;
+        // rows += `                </div>`;
+        // rows += `                <div class="col-sm-10 col-xs-10">`;
+        rows += `                <div class="col-sm-12 col-xs-12 textarea_parent_div">`;
+        rows += `                    <textarea class="form-control jsRequestCommentTxt" rows="4" placeholder="Why are you approving/rejecting this time off?"></textarea>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;

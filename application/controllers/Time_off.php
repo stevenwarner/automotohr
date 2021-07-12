@@ -2025,6 +2025,73 @@ class Time_off extends Public_Controller
         log_and_send_templated_email(NEW_PTO_REQUESTED, $SupervisorDetails['email'], $replacement_array, $message_hf);
     }
 
+    public function requests_status ($companyId, $request_sid, $request_type)
+    {
+        //
+        $request_info = $this->timeoff_model->fetchRequestHistoryInfo($request_sid);
+        $result = array();
+        //
+        if(!empty($request_info) && $request_info['action'] == "update"){
+            $note = json_decode($request_info['note'],true);
+            $old_status = $note['status'];
+            $old_comment = $note['comment'];
+            $canApprove = $note['canApprove'];
+            $desire_status = ''; 
+            $approve_status = ''; 
+            //
+            
+            if ($request_type == 'reject') {
+                $desire_status = 'rejected';
+            } else if ($request_type == 'approve') {
+               $desire_status = 'approved'; 
+            } else {
+                $desire_status = $request_type; 
+            }
+
+            if ($canApprove == 1) {
+                $approve_status = '100% approver';
+            } else if ($canApprove == 0) {
+                $approve_status = '50% approver';
+            }
+           
+            //
+            if ($old_status != $desire_status) {
+                $msg = '';
+                $employee_name = getUserNameBySID($request_info['employee_sid']) .' - '. $approve_status;
+                $date = date('M d, Y, D', strtotime($request_info['created_at']));
+
+
+
+                if ($old_status == 'rejected') {
+                    if (empty($old_comment)) {
+                        $msg = '<div>This time off has been rejected by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br><hr>Do you want to approve this time off?</div>';
+                    } else {
+                        $msg = '<div>This time off has been rejected by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br><hr>"'.$old_comment.'"<br><hr>Do you want to approve this time off?</div>';
+                    }
+                } else if ($old_status == 'approved') {
+                    if (empty($old_comment)) {
+                        $msg = '<div>This time off has been approved by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br><hr>Do you want to reject this time off?</div>';
+                    } else {
+                        $msg = '<div>This time off has been approved by <b>'.$employee_name.'</b> on <b>'.$date.'</b><br><hr>"'.$old_comment.'"<br><hr>Do you want to reject this time off?</div>';
+                    }
+                }
+
+                $result['Status'] = true;
+                $result['message'] = $msg;
+            } else {
+                $result['Status'] = false;
+                $result['message'] = '';
+            }
+        } else { 
+            $result['Status'] = false;
+            $result['message'] = '';
+        }
+        
+        header('Content-type: application/json');
+        echo json_encode($result);
+        exit(0);
+    }
+
     /*
     *******************************************************************************************
      AJAX HANDLER

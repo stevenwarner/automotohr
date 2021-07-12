@@ -448,7 +448,7 @@ canvas {
 /* Box */
 
 .csBox {
-    height: 550px;
+    height: 600px;
     color: #fff;
     background-color: #fff;
     position: relative;
@@ -1659,4 +1659,16 @@ button.btn-black:focus {
     font-weight: normal;
     font-size: 14px;
     margin: 0;
+}
+
+.jsRequestCommentTxt{
+    min-height: unset !important;
+    max-height: unset !important;
+    height: 100% !important;
+}
+
+.textarea_parent_div {
+    position: absolute;
+    bottom: 52px;
+    left: 0px;
 }

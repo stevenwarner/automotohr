@@ -189,7 +189,21 @@ $(function() {
                             );
                             if (Object.keys(userRow).length == 0) return;
                             //
-                            rows += `<tr data-id="${v.sid}" data-status="${v.status}" data-userid="${v.employee_sid}" data-name="${userRow.first_name} ${userRow.last_name}">`;
+                            let tab_status = callOBJ.Requests.Main.type;
+                            let bgStatusColor = '';
+                            //
+                            if (tab_status == "pending") {
+                                $("#request_status_info").show();
+                                if (v.level_status == 'approved') {
+                                    bgStatusColor = 'background: rgba(129, 180, 49, .2)';
+                                } else if (v.level_status == 'rejected') {
+                                    bgStatusColor = 'background: rgba(242, 222, 222, .5)';
+                                }
+                            } else {
+                                $("#request_status_info").hide();
+                            }
+                            //
+                            rows += `<tr data-id="${v.sid}" style="${bgStatusColor}" data-status="${v.status}" data-userid="${v.employee_sid}" data-name="${userRow.first_name} ${userRow.last_name}">`;
                             rows += '    <td scope="row">';
                             rows += '        <div class="employee-info">';
                             rows += "            <figure>";

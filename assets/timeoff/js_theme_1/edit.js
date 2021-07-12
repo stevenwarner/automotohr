@@ -3,6 +3,8 @@ $(function() {
         selectedRequestId = 0,
         selectedEmployeeId = 0,
         oldTime = 0,
+        oldStatus = '',
+        to_request_id = 0,
         cOBJ = {
             policyId: 0,
             startDate: 0,
@@ -83,7 +85,7 @@ $(function() {
                 //
                 alertify.alert(
                     'WARNING!',
-                    'Please either approve/reject the time off.',
+                    'Please either approve/reject the time off.ss',
                     () => {}
                 );
                 //
@@ -123,8 +125,55 @@ $(function() {
         }
         cOBJ.requestId = selectedRequestId;
         //
+        
+        //
         ml(true, 'editModalLoader');
         //
+        if (oldStatus == 'pending') {
+            let request_sid = to_request_id;
+            let request_type = cOBJ.status;
+            console.log(cOBJ.status)
+            
+            let myurl = handlerURL+"/requests_status/"+companyId+"/"+request_sid+"/"+request_type;
+           
+            $.ajax({
+                type: "GET",
+                url: myurl,
+                async : false,
+                success: function (resp) {
+                   
+                    if (resp.Status === true) {
+                        alertify.confirm(
+                            'Please Confirm',
+                            resp.message,
+                            // 'Are you sure you want to '+request_type+' time-off request, '+resp.message,
+                            function () {
+                                //
+                                sendUpdateStatusRequest(cOBJ);
+                            }, function () {
+                                ml(false, 'editModalLoader');
+                            }).set({
+                                'labels': {
+                                    'ok' : 'Yes',
+                                    'cancel' : 'No'
+                                }
+                            });
+                    } else {
+                        //
+                        sendUpdateStatusRequest(cOBJ); 
+                    }
+                },
+                error: function (resp) {
+
+                }   
+            });
+        } else {
+            sendUpdateStatusRequest(cOBJ);
+        }
+        
+    });
+
+    function sendUpdateStatusRequest (cOBJ) {
         $.post(
             handlerURL, Object.assign({
                 action: 'update_timeoff',
@@ -150,7 +199,7 @@ $(function() {
                 return;
             }
         );
-    });
+    }
 
     // 
     $(document).on('click', '.jsEditTimeOff', function(e) {
@@ -586,6 +635,9 @@ $(function() {
                 },
                 (resp) => {
                     res(resp);
+                    oldStatus = resp.Data.status;
+                    to_request_id = resp.Data.sid;
+                    console.log(resp.Data.sid)
                 }
             );
         });
