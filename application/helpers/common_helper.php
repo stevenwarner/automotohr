@@ -12774,6 +12774,35 @@ if (!function_exists('concertBase64ToPDF')) {
     }
 }
 
+if(!function_exists('replace_select_html_tag')){
+    function replace_select_html_tag($body) {
+        //
+        $new_body = preg_replace('/<select(.*?)>(.*?)<\/select>/i', '{{select}}', $body); 
+        //
+        return $new_body;
+    }
+}
+
+if(!function_exists('document_description_tags')){
+    function document_description_tags($type) {
+        //
+        $all_magic_codes = array();
+        $simple_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', '{{select}}');
+        $signature_codes = array('{{signature}}', '{{inital}}');
+        $authorized_codes = array('{{authorized_signature}}', '{{authorized_signature_date}}');
+        //
+        if ($type == 'all') {
+            return array_merge($simple_codes, $signature_codes, $authorized_codes);
+        } else if ($type == 'signature') {
+            return $signature_codes;
+        } else if ($type == 'authorized') {
+            return $authorized_codes;
+        } else if ($type == 'simple') {
+            return $simple_codes;
+        }
+    }
+}    
+
 if(!function_exists('isDocumentCompletedCheck')){
     function isDocumentCompletedCheck(
         &$document,
@@ -12819,9 +12848,11 @@ if(!function_exists('isDocumentCompletedCheck')){
             // Check document Type
             if($type == 'generated'){
                 // 
-                $authorizedCodes = array('{{authorized_signature}}', '{{authorized_signature_date}}');
-                $magicCodes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
-                $magicSignatureCodes = array('{{signature}}', '{{inital}}');
+                $magic_keys = document_description_tags('all');
+                //
+                $authorizedCodes = document_description_tags('authorized');
+                $magicCodes = document_description_tags('simple');
+                $magicSignatureCodes = document_description_tags('signature');
                 //
                 $withoutSignMC = str_replace($magicSignatureCodes, '', $body); 
                 $withoutMC = str_replace($magicCodes, '', $body); 

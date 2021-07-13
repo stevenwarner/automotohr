@@ -18,6 +18,7 @@ class Hr_documents_management extends Public_Controller {
     }
 
     public function index() {
+        
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -256,6 +257,7 @@ class Hr_documents_management extends Public_Controller {
 
                                 $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             }
+
                             //
                             if($doSendEmails == 'no') continue;
                             
@@ -280,31 +282,36 @@ class Hr_documents_management extends Public_Controller {
 
                                     if(empty($user_info['document_sent_on']) || $user_info['document_sent_on'] == NULL || date('Y-m-d H:i:s') > date('Y-m-d H:i:s',strtotime('+'.DOCUMENT_SEND_DURATION.' hours',strtotime($user_info['document_sent_on'])))){
 
-                                        if($company_sms_notification_status){
-                                            $notify_by = get_employee_sms_status($this, $user_info['sid']);
-                                            $sms_notify = 0 ;
-                                            if(strpos($notify_by['notified_by'],'sms') !== false){
-                                                $contact_no = $notify_by['PhoneNumber'];
-                                                $sms_notify = 1;
+                                        $is_manual = get_document_type($assignment_sid);
+                                        //
+                                        if ($is_manual == 'no') {
+                                            if($company_sms_notification_status){
+                                                $notify_by = get_employee_sms_status($this, $user_info['sid']);
+                                                $sms_notify = 0 ;
+                                                if(strpos($notify_by['notified_by'],'sms') !== false){
+                                                    $contact_no = $notify_by['PhoneNumber'];
+                                                    $sms_notify = 1;
+                                                }
+                                                if($sms_notify){
+                                                    $this->load->library('Twilioapp');
+                                                    // Send SMS
+                                                    $sms_template = get_company_sms_template($this,$company_sid,'hr_document_notification');
+                                                    $sms_body = replace_sms_body($sms_template['sms_body'],$replacement_array);
+                                                    sendSMS(
+                                                        $contact_no,
+                                                        $sms_body,
+                                                        trim(ucwords(strtolower($replacement_array['company_name']))),
+                                                        $user_info['email'],
+                                                        $this,
+                                                        $sms_notify,
+                                                        $company_sid
+                                                    );
+                                                }
                                             }
-                                            if($sms_notify){
-                                                $this->load->library('Twilioapp');
-                                                // Send SMS
-                                                $sms_template = get_company_sms_template($this,$company_sid,'hr_document_notification');
-                                                $sms_body = replace_sms_body($sms_template['sms_body'],$replacement_array);
-                                                sendSMS(
-                                                    $contact_no,
-                                                    $sms_body,
-                                                    trim(ucwords(strtolower($replacement_array['company_name']))),
-                                                    $user_info['email'],
-                                                    $this,
-                                                    $sms_notify,
-                                                    $company_sid
-                                                );
-                                            }
+                                            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                                            $this->hr_documents_management_model->update_employee($emp, array('document_sent_on' => date('Y-m-d H:i:s')));
                                         }
-                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
-                                        $this->hr_documents_management_model->update_employee($emp, array('document_sent_on' => date('Y-m-d H:i:s')));
+                                        
                                     }
                                     break;
                                 case 'applicant':
@@ -1571,7 +1578,6 @@ class Hr_documents_management extends Public_Controller {
     }
 
     public function documents_assignment($user_type = NULL, $user_sid = NULL, $jobs_listing = NULL) {
-
         if ($this->session->userdata('logged_in')) {
 
             $data['session'] = $this->session->userdata('logged_in');
@@ -1827,8 +1833,13 @@ class Hr_documents_management extends Public_Controller {
                                             );
                                         }
                                     }
-                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
-                                    $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
+                                    $is_manual = get_document_type($assignment_sid);
+                                    //
+                                    if ($is_manual == 'no') {
+                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+
+                                        $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
+                                    }
                                 }
                             }
                             //
@@ -2482,8 +2493,9 @@ class Hr_documents_management extends Public_Controller {
                             }
 
                             $insert_id = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                            //
                             $this->hr_documents_management_model->add_update_categories_2_documents($insert_id,$this->input->post('categories'),"documents_assigned");
-
+                            //
                             if(!isset($_POST['accessable']) && $user_type == 'employee'){
                                 //Send Email and SMS
                                 $replacement_array = array();
@@ -2497,32 +2509,39 @@ class Hr_documents_management extends Public_Controller {
                                 $replacement_array['url'] = base_url('hr_documents_management/my_documents');
                                 if(empty($user_info['document_sent_on']) || $user_info['document_sent_on'] == NULL || date('Y-m-d H:i:s') > date('Y-m-d H:i:s',strtotime('+'.DOCUMENT_SEND_DURATION.' hours',strtotime($user_info['document_sent_on'])))){
                                     //SMS Start
-                                    $company_sms_notification_status = get_company_sms_status($this, $company_sid);
-                                    if($company_sms_notification_status){
-                                        $notify_by = get_employee_sms_status($this, $user_info['sid']);
-                                        $sms_notify = 0 ;
-                                        if(strpos($notify_by['notified_by'],'sms') !== false){
-                                            $contact_no = $notify_by['PhoneNumber'];
-                                            $sms_notify = 1;
+                                    $is_manual = get_document_type($insert_id);
+                                    //
+                                    if ($is_manual == 'no') {
+
+                                        $company_sms_notification_status = get_company_sms_status($this, $company_sid);
+                                        if($company_sms_notification_status){
+                                            $notify_by = get_employee_sms_status($this, $user_info['sid']);
+                                            $sms_notify = 0 ;
+                                            if(strpos($notify_by['notified_by'],'sms') !== false){
+                                                $contact_no = $notify_by['PhoneNumber'];
+                                                $sms_notify = 1;
+                                            }
+                                            if($sms_notify){
+                                                $this->load->library('Twilioapp');
+                                                // Send SMS
+                                                $sms_template = get_company_sms_template($this,$company_sid,'hr_document_notification');
+                                                $sms_body = replace_sms_body($sms_template['sms_body'],$replacement_array);
+                                                sendSMS(
+                                                    $contact_no,
+                                                    $sms_body,
+                                                    trim(ucwords(strtolower($replacement_array['company_name']))),
+                                                    $user_info['email'],
+                                                    $this,
+                                                    $sms_notify,
+                                                    $company_sid
+                                                );
+                                            }
                                         }
-                                        if($sms_notify){
-                                            $this->load->library('Twilioapp');
-                                            // Send SMS
-                                            $sms_template = get_company_sms_template($this,$company_sid,'hr_document_notification');
-                                            $sms_body = replace_sms_body($sms_template['sms_body'],$replacement_array);
-                                            sendSMS(
-                                                $contact_no,
-                                                $sms_body,
-                                                trim(ucwords(strtolower($replacement_array['company_name']))),
-                                                $user_info['email'],
-                                                $this,
-                                                $sms_notify,
-                                                $company_sid
-                                            );
-                                        }
-                                    }
-                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
-                                    $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
+
+                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                        $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
+                                    }    
+
                                 }
 
                             }
@@ -9007,7 +9026,9 @@ ini_set('memory_limit', -1);
                         break;
                     }
                     //
-                    if(sizeof($replacement_array)) log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                    $is_manual = get_document_type($assignInsertId);
+                    //
+                    if(sizeof($replacement_array) && $is_manual == 'no') log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
                 }
 
                 // Check if it's Authorize document
@@ -9377,7 +9398,9 @@ ini_set('memory_limit', -1);
                             //
                             $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
                             //
-                            if(sizeof($replacement_array)) log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                            $is_manual = get_document_type($assignInsertId);
+                            //
+                            if(sizeof($replacement_array) && $is_manual == 'no') log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
                         break;
 
                         case 'applicant':
@@ -9663,8 +9686,11 @@ ini_set('memory_limit', -1);
         $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
         else
         $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
+
+        $is_manual = get_document_type($assignInsertId);
+       
         // For email
-        if($post['sendEmail'] == 'yes'){
+        if($post['sendEmail'] == 'yes' && $is_manual == 'no'){
             // 
             $hf = message_header_footer_domain( $post['CompanySid'], $post['CompanyName'] );
             // Send Email and SMS
@@ -9684,6 +9710,7 @@ ini_set('memory_limit', -1);
                     $replacement_array['url'] = base_url('hr_documents_management/my_documents');
                     //
                     $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
+                    //
                     if(sizeof($replacement_array)) log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
                 break;
 
@@ -9991,7 +10018,9 @@ ini_set('memory_limit', -1);
                     //
                     $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
                     //
-                    if(sizeof($replacement_array)) log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                    $is_manual = get_document_type($assignInsertId);
+                    //
+                    if(sizeof($replacement_array) && $is_manual == 'no') log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
                 break;
 
                 case 'applicant':
@@ -11026,7 +11055,6 @@ ini_set('memory_limit', -1);
         //
         echo 'success';   
     }
-
 
     //
     function set_schedule_document(){

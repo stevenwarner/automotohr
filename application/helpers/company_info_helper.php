@@ -63,6 +63,40 @@ if (!function_exists('get_fillable_info')) {
     }
 }
 
+if (!function_exists('get_document_type')) {
+
+    function get_document_type($document_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('document_description, acknowledgment_required, download_required, signature_required');
+        $CI->db->where('sid', $document_sid);
+        $CI->db->where('archive', 0);
+        $CI->db->from('documents_assigned');
+        $CI->db->limit(1);
+        $assigned_document = $CI->db->get()->row_array();
+
+        $is_magic_tag_exist = 0;
+        $is_document_completed = 0;
+
+        if (!empty($assigned_document['document_description'])) {
+           
+            $document_description = $assigned_document['document_description'];
+            $document_body = replace_select_html_tag($document_description);
+            $magic_codes = document_description_tags('all');
+
+            if (str_replace($magic_codes, '', $document_body) != $document_body) {
+                $is_magic_tag_exist = 1;
+            }
+        }
+        
+        if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist)) {
+            return 'no';
+        } else { // nothing is required so it is "No Action Required Document"
+            return 'yes';
+        }
+    }
+}    
+
 if (!function_exists('get_form_view')) {
 
     function get_form_view($form,$form_data)
