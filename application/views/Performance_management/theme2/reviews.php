@@ -20,7 +20,7 @@
             <!-- Left Sidebar -->
             <?php $this->load->view("{$pp}left_sidebar"); ?>
             <!-- Right Content Area -->
-            <?php $this->load->view("{$pp}feedback_content_blue"); ?>
+            <?php $this->load->view("{$pp}reviews_list_blue"); ?>
         </div>
         <?php
     } else{

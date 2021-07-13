@@ -52,6 +52,9 @@ footer_fixer();
 //
 function footer_fixer() {
     //
+    if ($('.csPageWrap').length === 0) {
+        return;
+    }
     var wh = $(document).height() - $('.csPageWrap').height();
     var fh = $('footer').height();
     $('footer').css('margin-top', (wh - fh) + 'px')

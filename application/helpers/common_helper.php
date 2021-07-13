@@ -13593,3 +13593,16 @@ if (!function_exists('getTeamNameBySID')) {
         return $teamName;
     }
 }
+
+
+if(!function_exists('addTimeToDate')){
+    function addTimeToDate(
+        $date,
+        $add,
+        $format = 'Y-m-d'
+    ){
+        $date = new DateTime($date);
+        $date->add(new DateInterval("P{$add}"));
+        return $date->format($format);
+    }
+}

@@ -147,11 +147,15 @@ class Performance_management extends Public_Controller{
         // 
         $this->checkLogin($this->pargs);
         // Set title
-        $this->pargs['title'] = 'Performance Management - Feedback';
+        $this->pargs['title'] = 'Performance Management - Reviews';
         // Set logged in employee departments and teams
         $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
         // Set employee information for the blue screen
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        //
+        $this->pargs['reviews'] = $this->pmm->GetAllReviews($this->pargs['employerId'], $this->pargs['employerRole'], $this->pargs['level'], $this->pargs['companyId']);
+        // Check and assign
+        $this->pmm->CheckAndAssign($this->pargs['companyId']);
 
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
@@ -212,6 +216,11 @@ class Performance_management extends Public_Controller{
         $this->pargs['company_templates'] = $this->pmm->GetPersonalTemplates($this->pargs['companyId']);
         // Get Review
         $this->pargs['review'] = $this->pmm->GetReviewRowById($id, $this->pargs['companyId']);
+        //
+        if($this->pargs['review']['is_draft'] == 0){
+            redirect('performance-management/reviews','refresh');
+            return;
+        }
         // Set Job titles
         $this->pargs['job_titles'] = array_filter(array_unique(array_column($this->pargs['company_employees'], 'JobTitle')), function($job){
             if(!empty($job)) {
@@ -553,6 +562,117 @@ class Performance_management extends Public_Controller{
                 //
                 $this->res($resp);
             break;
+            case "ReviewStep4":
+                //
+                $reviewId = $this->pmm->UpdateReview(['questions' => json_encode(array_values($post['questions']))], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Question added.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "UpdateQuestion":
+                // Get the question
+                $questions = json_decode($this->pmm->GetReviewRowById($post['id'], $pargs['companyId'], ['questions'])['questions'], true);
+                //
+                foreach($questions as $index => $question){
+                    if($question['id'] == $post['data']['id']){
+                        //
+                        $questions[$index] = $post['data'];
+                    }
+                }
+                //
+                $reviewId = $this->pmm->UpdateReview(['questions' => json_encode(array_values($questions))], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Question updated.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "ReviewStep5":
+                //
+                $now = date('Y-m-d H:i:s', strtotime('now'));
+                // Get the review
+                $review = $this->pmm->GetReviewRowById($post['id'], $pargs['companyId']);
+
+                // Set the questions
+                $questions = json_decode($review['questions'], true);
+                //
+                $ins = [];
+                //
+                foreach($questions as $question){
+                    //
+                    $ins[] = [
+                        'review_sid' => $review['reviewId'],
+                        'question_type' => $question['question_type'],
+                        'question' => json_encode($question),
+                        'created_at' => $now
+                    ];
+                }
+                //
+                $this->pmm->insertReviewQuestions($ins);
+
+                // Set reviwees
+                //
+                $ins = [];
+                //
+                $reviewees = explode(',', $review['included']);
+                //
+                foreach($reviewees as $reviewee){
+                    //
+                    $ins[] = [
+                        'review_sid' => $review['reviewId'],
+                        'reviewee_sid' => $reviewee,
+                        'start_date' => $review['start_date'],
+                        'end_date' => $review['end_date'],
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'is_started' => 0
+                    ];
+                }
+                //
+                $this->pmm->insertReviewReviewees($ins);
+
+
+                // Set reviwers
+                //
+                $ins = [];
+                //
+                $reviewers = json_decode($review['reviewers'], true);
+                //
+                foreach($reviewers['reviewees'] as $reviewee => $reviewer){
+                    //
+                    $newReviewers = array_diff($reviewer['included'], isset($reviewer['excluded']) ? $reviewer['excluded'] : []);
+                    //
+                    foreach($newReviewers as $newReviewer){
+                        //
+                        $ins[] = [
+                            'review_sid' => $review['reviewId'],
+                            'reviewee_sid' => $reviewee,
+                            'reviewer_sid' => $newReviewer,
+                            'added_by' => $pargs['employerId'],
+                            'created_at' => $now,
+                            'is_manager' => $this->pmm->isManager($reviewee, $newReviewer, $pargs['companyId']),
+                            'is_completed' => 0
+                        ];
+                    }
+                }
+                //
+                $this->pmm->insertReviewReviewers($ins);
+                // 
+                $reviewId = $this->pmm->UpdateReview([
+                    'share_feedback' => $post['feedback'], 
+                    'is_draft' => 0
+                ], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Review updated.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
         endswitch;
     }
     
@@ -584,7 +704,7 @@ class Performance_management extends Public_Controller{
         $data['employerId'] = $data['session']['employer_detail']['sid'];
         $data['employerName'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
         $data['isSuperAdmin'] = $data['session']['employer_detail']['access_level_plus'];
-        $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 || $data['session']['employer_detail']['pay_plan_flag'] == 1 ? 1 : 0;
+        $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 ? 1 : 0;
         $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
         $data['load_view'] = $data['session']['company_detail']['ems_status'];
         // $data['load_view'] = 1;

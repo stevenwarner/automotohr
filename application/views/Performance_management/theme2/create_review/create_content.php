@@ -86,6 +86,12 @@
                     <!-- Reviewees -->
                     <?php $this->load->view("{$pp}create_review/questions"); ?>
                 </div>
+                
+                <!-- Step 5 -->
+                <div class="jsPageSection" data-page="feedback">
+                    <!-- Reviewees -->
+                    <?php $this->load->view("{$pp}create_review/feedback"); ?>
+                </div>
             </div>
         </div>
     </div>

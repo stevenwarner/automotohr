@@ -35,6 +35,8 @@ $(function() {
     //
     var questionFile = null;
 
+    window.questionFile = questionFile;
+
     window.REVIEW = obj;
     //
     $('#jsReviewCustomRunDueType').select2({ minimumResultsForSearch: -1 });
@@ -126,6 +128,12 @@ $(function() {
             .done(function(resp) {
                 //
                 obj.Questions = resp.data.questions;
+                //
+                if (obj.Questions.length > 0) {
+                    obj.Questions.map(function(question, index) {
+                        obj.Questions[index]['sort_order'] = index;
+                    });
+                }
                 obj.Title = resp.data.name;
                 //
                 $('#jsReviewTitleTxt').text(': ' + obj.Title);
@@ -643,6 +651,9 @@ $(function() {
         //
         event.preventDefault();
         //
+        $('#jsReviewQuestionSaveBtn').removeClass('dn');
+        $('#jsReviewQuestionEditBtn').addClass('dn');
+        //
         $('#jsReviewQuestionListBox').addClass('dn');
         $('#jsReviewQuestionAddBox').removeClass('dn');
         //
@@ -687,6 +698,9 @@ $(function() {
         event.preventDefault();
         //
         var question = obj.Questions[$(this).closest('.jsReviewQuestionRow').data('index')];
+        //
+        $('#jsReviewQuestionSaveBtn').addClass('dn');
+        $('#jsReviewQuestionEditBtn').removeClass('dn');
         //
         $('#jsReviewQuestionListBox').addClass('dn');
         $('#jsReviewQuestionAddBox').removeClass('dn');
@@ -734,6 +748,7 @@ $(function() {
                 placeholderImage: pm.urls.base + 'assets/performance_management/videos/' + obj.id + '/' + questionFile
             });
         }
+        $('#jsReviewQuestionEditBtn').data('index', $(this).closest('.jsReviewQuestionRow').data('index'));
     });
 
     /**
@@ -833,6 +848,48 @@ $(function() {
     /**
      * 
      */
+    $('#jsReviewQuestionEditBtn').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        var question = obj.Questions[$(this).data('index')];
+        //
+        question.title = $('#jsReviewQuestionAddTitle').val().trim();
+        question.description = $('#jsReviewQuestionAddDescription').val().trim();
+        question.video_help = $('.jsReviewQuestionAddVideoType:checked').val();
+        question.question_type = $('#jsReviewQuestionAddQuestionType').val();
+        //
+        if (question.title == '') {
+            handleError("Please add the question title");
+            return;
+        }
+
+        // 
+        if (question.video_help == 'record' && questionFile != null) { // Upload Recorded Video
+            //
+            uploadRecordedVideo(question);
+            return;
+        } else if (question.video_help == 'upload' && questionFile != null) { // Upload video
+            //
+            if (Object.keys(questionFile).length === 0 || questionFile.error) {
+                handleError("Please upload a video.");
+                return;
+            }
+            //
+            ml(true, 'review', 'Please wait, while we are uploading the video.');
+            //
+            uploadVideo(question, questionFile);
+            return;
+        } else if (question.video_help == 'record' || question.video_help == 'upload') {
+            question.video = questionFile;
+        }
+        //
+        updateQuestion(question);
+    });
+
+    /**
+     * 
+     */
     $(document).on('click', '.jsReviewRemoveQuestion', function(event) {
         //
         event.preventDefault();
@@ -848,6 +905,56 @@ $(function() {
                 removeQuestion(id);
             }
         );
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsReviewQuestionUp', function(event) {
+        //
+        event.preventDefault();
+        //
+        shiftQuestion($(this).closest('.jsReviewQuestionRow').data('id'), 'up');
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsReviewQuestionDown', function(event) {
+        //
+        event.preventDefault();
+        //
+        shiftQuestion($(this).closest('.jsReviewQuestionRow').data('id'), 'down');
+    });
+
+    /**
+     * 
+     */
+    $('#jsReviewQuestionsSaveBtn').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        if (obj.Questions.length === 0) {
+            handleError("Please add at least one question.");
+            return;
+        }
+        //
+        saveQuestions();
+    });
+
+    /**
+     * 
+     */
+    $('#jsReviewSaveBtn').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        if ($('.jsReviewShareFeedback:checked').val() === undefined) {
+            handleError("Please slect how the reporting managers will share their report.");
+            return;
+        }
+        //
+        saveReview();
     });
 
     //
@@ -897,7 +1004,6 @@ $(function() {
             );
     }
 
-
     //
     function uploadVideo(question, video) {
         //
@@ -945,7 +1051,40 @@ $(function() {
             //
             handleSuccess('You have successfully added a question.', function() {
                 //
-                obj.Questions[question.id] = question;
+                cp.close();
+                //
+                obj.Questions[obj.Questions.length] = question;
+                //
+                loadQuestions();
+                //
+                $('#jsReviewQuestionListBox').removeClass('dn');
+                $('#jsReviewQuestionAddBox').addClass('dn');
+            });
+        });
+    }
+
+    //
+    function updateQuestion(question) {
+        //
+        ml(true, 'review', 'Please wait, while we are updating the question.');
+        //
+        $.post(pm.urls.pbase + 'save_review_step', {
+            step: 'UpdateQuestion',
+            data: question,
+            id: obj.Id
+        }).done(function(resp) {
+            ml(false, 'review');
+            //
+            if (resp.Status === false) {
+                handleError('Failed to update question.');
+                return false;
+            }
+            //
+            handleSuccess('You have successfully updated a question.', function() {
+                //
+                cp.close();
+                //
+                obj.Questions[question.sort_order] = question;
                 //
                 loadQuestions();
                 //
@@ -980,6 +1119,79 @@ $(function() {
         });
     }
 
+    //
+    function shiftQuestion(questionId, direction) {
+        //
+        ml(true, 'review');
+        //
+        var currentIndex, currentQuestion, tmp;
+        //
+        obj.Questions.map(function(question, index) {
+            if (question.id == questionId) {
+                currentIndex = index;
+                currentQuestion = question;
+            }
+        });
+        //
+        if (direction == 'down') {
+            //
+            tmp = obj.Questions[currentIndex + 1]; // Get the next index
+            tmp['sort_order']--; // Decrease it by 1
+            currentQuestion['sort_order']++; // Increase it by 1
+            obj.Questions[currentIndex + 1] = currentQuestion; // Move the question to the next index
+            obj.Questions[currentIndex] = tmp; // Move the next index question to current index
+        } else if (direction == 'up') {
+            //
+            tmp = obj.Questions[currentIndex - 1]; // Get the next index
+            tmp['sort_order']++; // Decrease it by 1
+            currentQuestion['sort_order']--; // Increase it by 1
+            obj.Questions[currentIndex - 1] = currentQuestion; // Move the question to the next index
+            obj.Questions[currentIndex] = tmp; // Move the next index question to current index
+        }
+        //
+        $.post(pm.urls.pbase + 'save_review_step', {
+            step: 'ReviewStep4',
+            questions: obj.Questions,
+            id: obj.Id
+        }).done(function(resp) {
+            //
+            ml(false, 'review');
+            //
+            loadQuestions();
+        });
+    }
+
+    //
+    function saveQuestions() {
+        //
+        ml(true, 'review');
+        //
+        $.post(pm.urls.pbase + 'save_review_step', {
+            step: 'ReviewStep4',
+            questions: obj.Questions,
+            id: obj.Id
+        }).done(function(resp) {
+            //
+            ml(false, 'review');
+            //
+            stepMover('feedback');
+        });
+    }
+
+    //
+    function saveReview() {
+        //
+        ml(true, 'review', "Please wait, while we are saving the review. This might take a few minutes.");
+        //
+        $.post(pm.urls.pbase + 'save_review_step', {
+            step: 'ReviewStep5',
+            feedback: $('.jsReviewShareFeedback:checked').val(),
+            id: obj.Id
+        }).done(function() {
+            window.location.reload();
+        });
+    }
+
 
     function updatePreview() {
         //
@@ -1003,9 +1215,21 @@ $(function() {
         if (question.file != null) {
             $('#jsReviewQuestionAddPreviewVideo').removeClass('dn');
             //
+            var
+                videoURL,
+                videoType;
+            //
+            if (typeof(question.file) === 'object') {
+                videoURL = URL.createObjectURL(question.file);
+                videoType = question.type;
+            } else {
+                videoURL = pm.urls.base + 'assets/performance_management/videos/' + (obj.Id) + '/' + question.file;
+                videoType = getVideoType(question.file);
+            }
+            //
             var video = '';
             video += '<video controls style="width: 100%">';
-            video += '  <source src="' + (URL.createObjectURL(question.file)) + '" type="' + (question.type) + '"></source>';
+            video += '  <source src="' + (videoURL) + '" type="' + (videoType) + '"></source>';
             video += '</video>';
             $('#jsReviewQuestionAddPreviewVideo').append(video);
         }
@@ -1409,6 +1633,10 @@ $(function() {
 
         //
         if (step == 'questions') {
+            //
+            if (obj.Questions.length > 0) {
+                step = 'feedback';
+            }
             loadQuestions();
         }
 
@@ -1458,6 +1686,8 @@ $(function() {
         //
         obj.Questions.map(function(question, index) {
             //
+            obj.Questions[index]['sort_order'] = index;
+            //
             html += '<!-- Question Row -->';
             html += '<div class="' + (index % 2 === 0 ? 'csGB' : '') + ' jsReviewQuestionRow" data-id="' + (question.id) + '" data-index="' + (index) + '">';
             html += '    <div class="row">';
@@ -1468,10 +1698,10 @@ $(function() {
             html += '                    <span class="pull-right">';
             html += '                        <i class="fa fa-edit csF18 csB7 csCP csReviewQuestionEdit" title="Edit the question" placemment="top" aria-hidden="true"></i>&nbsp;&nbsp;';
             if (index !== 0) {
-                html += '                        <i class="fa fa-arrow-circle-up csF18 csB7 csCP" title="Move question one level up" placemment="top" aria-hidden="true"></i>';
+                html += '                        <i class="fa fa-arrow-circle-up csF18 csB7 csCP jsReviewQuestionUp" title="Move question one level up" placemment="top" aria-hidden="true"></i>';
             }
             if (index !== il) {
-                html += '                        <i class="fa fa-arrow-circle-down csF18 csB7 csCP" title="Move question one level down" placemment="top" aria-hidden="true"></i>';
+                html += '                        <i class="fa fa-arrow-circle-down csF18 csB7 csCP jsReviewQuestionDown" title="Move question one level down" placemment="top" aria-hidden="true"></i>';
             }
             html += '                        <i class="fa fa-times-circle csF18 csB7 csCP csInfo jsReviewRemoveQuestion" title="Remove this question from the list" placemment="top" aria-hidden="true"></i>';
             html += '                    </span>';

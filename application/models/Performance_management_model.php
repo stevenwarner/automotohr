@@ -9,6 +9,10 @@ class Performance_management_model extends CI_Model{
     private $PMT = 'performance_management_templates';
     private $PMCT = 'performance_management_company_templates';
     private $R = 'pm_reviews';
+    private $PRQ = 'pm_review_questions';
+    private $PRA = 'pm_review_answers';
+    private $PRR = 'pm_review_reviewees';
+    private $PRRS = 'pm_review_reviewers';
     //
     private $DbDateFormat = 'Y-m-d H:i:s';
     //
@@ -349,6 +353,7 @@ class Performance_management_model extends CI_Model{
             review_due as review_due_value,
             review_due_type,
             repeat_review,
+            is_draft,
             review_runs as custom_runs,
             visibility_roles as roles,
             visibility_departments as departments,
@@ -388,6 +393,194 @@ class Performance_management_model extends CI_Model{
         //
         return $id;
     }
+
+    /**
+     * 
+     */
+    function insertReviewQuestions($data){
+        $this->db->insert_batch($this->PRQ, $data);
+    }
+   
+    /**
+     * 
+     */
+    function insertReviewReviewees($data){
+        $this->db->insert_batch($this->PRR, $data);
+    }
+    
+    /**
+     * 
+     */
+    function insertReviewReviewers($data){
+        $this->db->insert_batch($this->PRRS, $data);
+    }
+
+    /**
+     * 
+     */
+    function isManager($reviewee, $reviewer, $companyId){
+        //
+        $revieweeDT = [];
+        //
+        $revieweeDT = $this->employeeDT($reviewee, $revieweeDT);
+        //
+        if(in_array($reviewer, $revieweeDT['ReportingManagers'])){
+            return 1;
+        } else{
+            return 0;
+        }
+    } 
+
+    /**
+     * 
+     */
+    function GetAllReviews($employeeId, $employeeRole, $plus, $companyId, $columns = null){
+        //
+        if(!$plus){
+            $dt = $this->employeeDT($employeeId, []);
+        }
+
+        $this->db
+        ->select(
+            $columns ? $columns : "
+            sid,
+            review_title,
+            description,
+            share_feedback,
+            review_start_date,
+            review_end_date,
+            review_end_date,
+            created_at,
+            updated_at,
+            status
+        ")
+        ->where('is_archived', 0)
+        ->where('company_sid', $companyId);
+
+        //
+        if(!$plus){
+            //
+            $employeeRole = stringToSlug($employeeRole);
+            //
+            $this->db->group_start();
+            $this->db->where("FIND_IN_SET('{$employeeRole}', visibility_roles) > 0", null, null);
+            $this->db->or_where("FIND_IN_SET({$employeeId}, visibility_employees) > 0", null, null);
+            //
+            if(!empty($dt['Departments'])){
+                foreach($dt['Departments'] as $department){
+                    $this->db->or_where("FIND_IN_SET({$department}, visibility_departments) > 0", null, null);
+                }
+            }
+            //
+            if(!empty($dt['Teams'])){
+                foreach($dt['Teams'] as $team){
+                    $this->db->or_where("FIND_IN_SET({$team}, visibility_teams) > 0", null, null);
+                }
+            }
+            //
+            $this->db->group_end();
+        }
+
+        $query = $this->db->get($this->R);
+        //
+        $reviews = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(!empty($reviews)){
+            foreach($reviews as $index => $review){
+                $reviews[$index]['created_at'] = formatDateToDB($review['created_at'], 'Y-m-d H:i:s', 'M d Y, D H:i:s');
+                $reviews[$index]['updated_at'] = formatDateToDB($review['updated_at'], 'Y-m-d H:i:s', 'M d Y, D H:i:s');
+                $reviews[$index]['Reviewees'] = $this->GetReviewRevieews($review['sid']);
+            }
+        }
+        //
+        return $reviews;
+    }
+
+
+    /**
+     * 
+     */
+    function CheckAndAssign($companyId){
+        //
+        $reviews = $this->GetAllReviews(0, 0, 1, $companyId, 
+        "
+            sid,
+            review_start_date,
+            review_end_date,
+            frequency,
+            repeat_after,
+            repeat_type,
+            review_runs,
+            repeat_review,
+            review_due,
+            review_due_type,
+            created_at,
+            updated_at,
+        ");
+        //
+        if(!empty($reviews)){
+            foreach($reviews as $review){
+                //
+                if($review['frequency'] == 'onetime'){
+                    continue;
+                }
+                //
+                if($review['frequency'] == 'custom'){
+                    $customRuns = array_values(json_decode($review['review_runs'], true));
+                    $doRepeat = $review['repeat_review'];
+                    $reviewEnd = $review['review_due'];
+                    $reviewEndType = $review['review_due_type'];
+                    //
+                    $reviewees = array_keys($review['Reviewees']);
+                    //
+                    $reviewees = $this->GetEmployeeColumns($reviewees, ['sid', 'joined_at']);
+                    //
+                    $runRe = [];
+                    //
+                    foreach($reviewees as $reviewee){
+                        //
+                        $compareDate = addTimeToDate($reviewee['joined_at'], );
+                    }
+                      
+                }
+                _e($customRuns, true);
+                _e($doRepeat, true);
+                _e($reviewEnd, true);
+                _e($reviewEndType, true);
+                _e($employees, true);
+                _e($reviewees, true, true);
+
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    function GetEmployeeColumns($employeeIds, $columns = '*'){
+        //
+        $query = $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where_in('sid', $employeeIds)
+        ->get($this->U);
+        //
+        $employees = $query->result_array();
+        //
+        $query->free_result();
+        //
+        return $employees;
+        
+    }
+
+    
+
+     //
+    function getMyGoals(){
+        return [];
+    }
+
 
 
     /*------------------------------------------------- Private -------------------------------------------------/*
@@ -453,9 +646,168 @@ class Performance_management_model extends CI_Model{
         return $r;
     }
 
-    //
-    function getMyGoals(){
-        return [];
+
+    /**
+     * 
+     */
+    private function GetReviewRevieews($reviewId){
+        //
+        $query =
+        $this->db
+        ->select("
+            {$this->PRR}.reviewee_sid,
+            {$this->PRR}.start_date,
+            {$this->PRR}.end_date,
+            {$this->PRR}.is_started,
+            {$this->PRRS}.reviewer_sid,
+            {$this->PRRS}.is_manager,
+            {$this->PRRS}.is_completed
+        ")
+        ->join($this->PRRS, "{$this->PRRS}.reviewee_sid = {$this->PRR}.reviewee_sid", "inner")
+        ->where("{$this->PRR}.review_sid", $reviewId)
+        ->where("{$this->PRRS}.review_sid", $reviewId)
+        ->get($this->PRR);
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(!empty($result)){
+            //
+            $t = [];
+            //
+            foreach($result as $row){
+                //
+                if(!isset($t[$row['reviewee_sid']])){
+                    $t[$row['reviewee_sid']] = [
+                        "reviewee_sid" => $row['reviewee_sid'],
+                        "start_date" => $row['start_date'],
+                        "end_date" => $row['end_date'],
+                        "is_started" => $row['is_started'],
+                        "reviewers" => []
+                    ];
+                }
+                //
+                $t[$row['reviewee_sid']]['reviewers'][$row['reviewer_sid']] = [
+                    "reviewer_sid" => $row['reviewer_sid'],
+                    "is_manager" => $row['is_manager'],
+                    "is_completed" => $row['is_completed']
+                ];
+            }
+            //
+            $result = $t;
+            //
+            unset($t);
+            //
+            foreach($result as $index => $row){
+               //
+               foreach($row['reviewers'] as $index2 => $reviewer){
+                    //
+                    $result[$index]['reviewers'][$index2] = array_merge($result[$index]['reviewers'][$index2], $this->GetReviewerAnswers($reviewId, $row['reviewee_sid'], $reviewer['reviewer_sid']));
+               }
+            }
+        }
+        //
+        return $result;
     }
-    
+
+    /**
+     * 
+     */
+    private function GetReviewerAnswers($reviewId, $revieweeId, $reviewerId){
+        //
+        $ra = ['QA' => [], 'Feedback' => []];
+        //
+        $query = 
+        $this->db
+        ->select("
+            {$this->PRQ}.question,
+            {$this->PRA}.multiple_choice,
+            {$this->PRA}.text_answer,
+            {$this->PRA}.rating,
+            {$this->PRA}.is_modified,
+            {$this->PRA}.updated_at
+        ")
+        ->from($this->PRQ)
+        ->join($this->PRA, "
+            {$this->PRQ}.sid = {$this->PRA}.question_sid AND 
+            {$this->PRA}.reviewer_sid = {$reviewerId} AND 
+            {$this->PRA}.reviewee_sid = {$revieweeId} AND 
+            {$this->PRA}.review_sid = {$reviewId}
+        ", "left")
+        ->where("{$this->PRQ}.review_sid", $reviewId)
+        ->get();
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(!empty($result)){
+            //
+            $t = [];
+            //
+            foreach($result as $row){
+                //
+                $question = json_decode($row['question'], true);
+                //
+                unset(
+                    $question['id'],
+                    $question['not_applicable'],
+                    $question['video_help']
+                );
+                //
+                $t[] = [
+                    'question' => $question,
+                    'answer' => [
+                        'multiple_choice' => $row['multiple_choice'],
+                        'rating' => $row['rating'],
+                        'text' => $row['text_answer'],
+                        'is_modified' => $row['is_modified'],
+                        'updated_at' => $row['updated_at']
+                    ]
+                ];
+            }
+            //
+            $ra['QA'] = $t;
+        } else{
+            $ra['QA'] = [];
+        }
+        //
+        $query = 
+        $this->db
+        ->select("
+            {$this->PRA}.multiple_choice,
+            {$this->PRA}.text_answer,
+            {$this->PRA}.rating,
+            {$this->PRA}.is_modified,
+            {$this->PRA}.updated_at
+        ")
+        ->where("{$this->PRA}.review_sid", $reviewId)
+        ->where("{$this->PRA}.reviewee_sid", $revieweeId)
+        ->where("{$this->PRA}.reviewer_sid", $reviewerId)
+        ->where("{$this->PRA}.question_sid", 0)
+        ->get($this->PRA);
+        //
+        $feedback = $query->row_array();
+        //
+        if(!empty($feedback)){
+            $ra['Feedback'] = [
+                'multiple_choice' => $feedback['multiple_choice'],
+                'rating' => $feedback['rating'],
+                'text' => $feedback['text_answer'],
+                'is_modified' => $feedback['is_modified'],
+                'updated_at' => $feedback['updated_at']
+            ];
+        } else{
+            $ra['Feedback'] = [
+                'multiple_choice' => '',
+                'rating' => '',
+                'text' => '',
+                'is_modified' => '',
+                'updated_at' => ''
+            ];
+        }
+        //
+        return $ra;
+    }
 }

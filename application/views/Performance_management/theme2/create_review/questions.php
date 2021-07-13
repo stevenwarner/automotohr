@@ -198,7 +198,9 @@
                 <button class="btn btn-black csF16" id="jsReviewQuestionToList"><i class="fa fa-arrow-circle-o-left"
                         aria-hidden="true"></i>&nbsp; Back To Questions</button>
                 <button class="btn btn-orange csF16" id="jsReviewQuestionSaveBtn"><i class="fa fa-arrow-circle-o-right"
-                        aria-hidden="true"></i>&nbsp; Save Question</button>
+                    aria-hidden="true"></i>&nbsp; Save Question</button>
+                <button class="btn btn-orange csF16 dn" id="jsReviewQuestionEditBtn"><i class="fa fa-arrow-circle-o-right"
+                    aria-hidden="true"></i>&nbsp; Update Question</button>
             </span>
         </div>
         <div class="clearfix"></div>

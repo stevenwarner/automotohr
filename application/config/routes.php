@@ -1258,7 +1258,7 @@ $route['timeoff/public/(:any)'] = 'Time_off/public_action/$1';
  * @date     02/02/2021
  */
 $route['performance-management/dashboard'] = 'Performance_management/dashboard';
-$route['performance-management/reviews'] = 'Performance_management/reviews';
+
 $route['performance-management/review/(:num)'] = 'Performance_management/review/$1';
 $route['performance-management/feedback/(:num)/(:num)'] = 'Performance_management/feedback/$1/$2';
 $route['performance-management/reviewer_feedback/(:num)/(:num)'] = 'Performance_management/reviewer_feedback/$1/$2';
@@ -1318,3 +1318,5 @@ $route['performance-management/get-single-template/(:any)/(:num)']['get'] = 'Per
 $route['performance-management/feedback']['get'] = 'Performance_management/feedback';
 $route['performance-management/review']['get'] = 'Performance_management/review';
 $route['performance-management/save_review_step']['post'] = 'Performance_management/SaveReviewStep';
+
+$route['performance-management/reviews'] = 'Performance_management/reviews';
