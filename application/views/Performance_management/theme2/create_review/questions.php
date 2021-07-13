@@ -63,16 +63,17 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="jsVideoRecorderBox">
-                            <p class="alert alert-danger csF16"><strong>To use this
+                            <p class="csF16 csB7 csInfo"><i class="fa fa-info-circle csF18" aria-hidden="true"></i>&nbsp;To use this
                                     feature, please, make sure you have allowed
-                                    microphone and camera access.</strong></p>
+                                    microphone and camera access.</p>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-xs-12">
+                    <div class="col-sm-12 col-xs-12">
                         <div class="jsVideoRecorderBox">
                             <video id="jsVideoRecorder" width="100%"></video>
                             <!--  -->
-                            <button class="btn btn-orange btn-lg csF16 dn" id="jsVideoRecordButton">Start
+                            <button class="btn btn-orange btn-lg csF16 dn" id="jsVideoRecordButton"><i aria-hidden="true"
+                                    class="fa fa-stop csF16"></i> Start
                                 Recording</button>
                             <!--  -->
                             <button class="btn btn-black btn-lg  csF16 dn" id="jsVideoPauseButton"><i aria-hidden="true"
@@ -80,17 +81,6 @@
                             <!--  -->
                             <button class="btn btn-black btn-lg csF16 dn" id="jsVideoResumeButton"><i aria-hidden="true"
                                     class="fa fa-play-circle csF16"></i> Resume Recording</button>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="jsVideoPreviewBox">
-                            <video id="jsVideoPreview" width="100%"></video>
-                            <button class="btn btn-orange btn-lg csF16" id="jsVideoPlayVideo"><i aria-hidden="true"
-                                    class="fa fa-play csF16"></i>
-                                Play Video</button>
-                            <button class="btn btn-black btn-lg csF16" id="jsVideoRemoveButton"><i
-                                    class="fa fa-times-circle csF16" aria-hidden="true"></i> Remove
-                                Video</button>
                         </div>
                     </div>
                 </div>
@@ -136,7 +126,11 @@
                                 <div class="col-md-8 col-xs-12">
                                     <p class="csF14" id="jsReviewQuestionAddPreviewDescription"></p>
                                 </div>
-                                <div class="col-md-4 col-xs-12" id="jsReviewQuestionAddPreviewVideo"></div>
+                                <div class="col-md-4 col-xs-12" id="jsReviewQuestionAddPreviewVideo">
+                                    <div class="jsVideoPreviewBox">
+                                        <video id="jsVideoPreview" width="100%"></video>
+                                    </div>
+                                </div>
                             </div>
                             <!-- Multiple Choice -->
                             <div class="row dn" id="jsReviewQuestionAddPreviewMultipleChoiceBox">

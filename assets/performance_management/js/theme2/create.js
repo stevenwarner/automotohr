@@ -76,18 +76,7 @@ $(function() {
     });
     //
     $('#jsReviewQuestionAddQuestionType').select2({ minimumResultsForSearch: -1 });
-    //
-    $('#jsReviewQuestionAddVideoUploadInp').mFileUploader({
-        allowedTypes: ['mp4', 'webm'],
-        fileLimit: '2mb',
-        onSuccess: function(o) {
-            questionFile = o;
-            updatePreview();
-        },
-        onClear: function(e) {
-            questionFile = null;
-        },
-    });
+
     //
     var cp = new mVideoRecorder({
         recorderPlayer: 'jsVideoRecorder',
@@ -661,13 +650,58 @@ $(function() {
         $('#jsReviewQuestionAddPreviewMultipleChoiceBox').addClass('dn');
         $('#jsReviewQuestionAddPreviewRatingBox').addClass('dn');
         //
-        $('#jsReviewQuestionAddPreviewVideo').hide();
-        $('#jsReviewQuestionAddPreviewVideo').html('');
+        $('#jsReviewQuestionAddPreviewVideo').addClass('dn');
+        $('#jsVideoPreviewBox').next('video').remove();
         //
         $('#jsReviewQuestionAddPreviewTitle').text('');
         $('#jsReviewQuestionAddPreviewDescription').text('');
         //
-        $('#jsReviewQuestionAddTitle, #jsReviewQuestionAddDescription').text('');
+        $('#jsReviewQuestionAddTitle, #jsReviewQuestionAddDescription').val('');
+        $('#jsReviewQuestionAddQuestionType').select2('val', 'text');
+        //
+        $('.jsReviewQuestionAddVideoType[value="none"]').prop('checked', 'true').trigger('click');
+        //
+        questionFile = null;
+        //
+        $('#jsReviewQuestionAddVideoUploadInp').mFileUploader({
+            allowedTypes: ['mp4', 'webm'],
+            fileLimit: '2mb',
+            onSuccess: function(o) {
+                questionFile = o;
+                updatePreview();
+            },
+            onClear: function(e) {
+                questionFile = null;
+                updatePreview();
+            },
+        });
+        //
+        cp.close();
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.csReviewQuestionEdit', function(event) {
+        //
+        event.preventDefault();
+        //
+        var question = obj.Questions[$(this).closest('.jsReviewQuestionRow').data('index')];
+        //
+        $('#jsReviewQuestionListBox').addClass('dn');
+        $('#jsReviewQuestionAddBox').removeClass('dn');
+        //
+        $('#jsReviewQuestionAddPreviewTextBox').addClass('dn');
+        $('#jsReviewQuestionAddPreviewMultipleChoiceBox').addClass('dn');
+        $('#jsReviewQuestionAddPreviewRatingBox').addClass('dn');
+        //
+        $('#jsReviewQuestionAddPreviewVideo').addClass('dn');
+        $('#jsVideoPreviewBox').next('video').remove();
+        //
+        $('#jsReviewQuestionAddPreviewTitle').text('');
+        $('#jsReviewQuestionAddPreviewDescription').text('');
+        //
+        $('#jsReviewQuestionAddTitle, #jsReviewQuestionAddDescription').val('');
         $('#jsReviewQuestionAddQuestionType').select2('val', 'text');
         //
         $('.jsReviewQuestionAddVideoType[value="none"]').prop('checked', 'true').trigger('click');
@@ -677,6 +711,29 @@ $(function() {
         $('#jsReviewQuestionAddVideoUploadInp').mFileUploader('clear');
         //
         cp.close();
+        //
+        $('#jsReviewQuestionAddTitle').val(question.title);
+        $('#jsReviewQuestionAddDescription').val(question.description);
+        $('.jsReviewQuestionAddVideoType[value="' + (question.video_help) + '"]').prop('checked', 'true').trigger('click');
+        $('#jsReviewQuestionAddQuestionType').select2('val', question.question_type);
+        //
+        if (question.video_help == 'upload') {
+            questionFile = question.video;
+            $('#jsReviewQuestionAddVideoUploadInp').mFileUploader({
+                allowedTypes: ['mp4', 'webm'],
+                fileLimit: '2mb',
+                onSuccess: function(o) {
+                    questionFile = o;
+                    updatePreview();
+                },
+                onClear: function(e) {
+                    questionFile = null;
+                    updatePreview();
+                },
+                path: false,
+                placeholderImage: pm.urls.base + 'assets/performance_management/videos/' + obj.id + '/' + questionFile
+            });
+        }
     });
 
     /**
@@ -697,6 +754,8 @@ $(function() {
         //
         $('#jsReviewQuestionAddVideoRecord').addClass('dn');
         $('#jsReviewQuestionAddVideoUpload').addClass('dn');
+        //
+        $('.jsVideoPreviewBox').addClass('dn');
         //
         cp.close();
         //
@@ -749,15 +808,95 @@ $(function() {
             handleError("Please add the question title");
             return;
         }
-        //
-        if (questionFile !== null) {
+
+        // 
+        if (question.video_help == 'record') { // Upload Recorded Video
+            //
+            uploadRecordedVideo(question);
+        } else if (question.video_help == 'upload') { // Upload video
+            //
+            if (Object.keys(questionFile).length === 0 || questionFile.error) {
+                handleError("Please upload a video.");
+                return;
+            }
+            //
             ml(true, 'review', 'Please wait, while we are uploading the video.');
+            //
             uploadVideo(question, questionFile);
         } else {
             saveQuestion(question);
         }
+        //
 
     });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsReviewRemoveQuestion', function(event) {
+        //
+        event.preventDefault();
+        //
+        var id = $(this).closest('.jsReviewQuestionRow').data('id');
+        //
+        alertify.confirm(
+            "Are you sure you want to remove this question?",
+            function() {
+                //
+                ml(true, 'review', 'Please wait, while we are removing the question.');
+                //
+                removeQuestion(id);
+            }
+        );
+    });
+
+    //
+    function uploadRecordedVideo(question) {
+
+        cp.getVideo()
+            .then(
+                function(video) {
+                    //
+                    if (video == 'data:') {
+                        handleError("Please record a video.");
+                        return;
+                    }
+                    //
+                    ml(true, 'review', 'Please wait, while we are uploading the video.');
+                    //
+                    var fd = new FormData();
+                    fd.append('file', video);
+                    fd.append('reviewId', obj.Id);
+                    fd.append('type', 'record');
+                    fd.append('step', 'SaveVideo');
+                    //
+                    $.ajax({
+                        url: pm.urls.pbase + 'save_review_step',
+                        type: 'post',
+                        data: fd,
+                        contentType: false,
+                        processData: false,
+                    }).done(function(resp) {
+                        //
+                        if (resp.Status === false) {
+                            ml(false, 'review');
+                            handleError('Failed to save video.');
+                            return false;
+                        }
+                        //
+                        cp.close();
+                        //
+                        question.video = resp.Id;
+                        //
+                        saveQuestion(question);
+                    });
+                },
+                function(error) {
+                    handleError("Please record the video first.");
+                }
+            );
+    }
+
 
     //
     function uploadVideo(question, video) {
@@ -765,6 +904,7 @@ $(function() {
         var fd = new FormData();
         fd.append('file', video);
         fd.append('reviewId', obj.Id);
+        fd.append('type', 'upload');
         fd.append('step', 'SaveVideo');
         //
         $.ajax({
@@ -796,6 +936,7 @@ $(function() {
             data: question,
             id: obj.Id
         }).done(function(resp) {
+            ml(false, 'review');
             //
             if (resp.Status === false) {
                 handleError('Failed to save question.');
@@ -804,10 +945,37 @@ $(function() {
             //
             handleSuccess('You have successfully added a question.', function() {
                 //
+                obj.Questions[question.id] = question;
+                //
                 loadQuestions();
                 //
                 $('#jsReviewQuestionListBox').removeClass('dn');
                 $('#jsReviewQuestionAddBox').addClass('dn');
+            });
+        });
+    }
+
+    //
+    function removeQuestion(questionId) {
+        //
+        $.post(pm.urls.pbase + 'save_review_step', {
+            step: 'RemoveQuestion',
+            question_id: questionId,
+            id: obj.Id
+        }).done(function(resp) {
+            //
+            ml(false, 'review');
+            //
+            if (resp.Status === false) {
+                handleError('Failed to remove question.');
+                return false;
+            }
+            //
+            handleSuccess('You have successfully removed a question.', function() {
+                //
+                delete obj.Questions[resp.Index];
+                //
+                loadQuestions();
             });
         });
     }
@@ -827,18 +995,17 @@ $(function() {
         $('#jsReviewQuestionAddPreviewMultipleChoiceBox').addClass('dn');
         $('#jsReviewQuestionAddPreviewRatingBox').addClass('dn');
         //
-        $('#jsReviewQuestionAddPreviewVideo').hide();
-        $('#jsReviewQuestionAddPreviewVideo').html('');
+        $('#jsReviewQuestionAddPreviewVideo').addClass('dn');
         //
         $('#jsReviewQuestionAddPreviewTitle').text(question.title);
         $('#jsReviewQuestionAddPreviewDescription').text(question.description);
         //
         if (question.file != null) {
-            $('#jsReviewQuestionAddPreviewVideo').show();
+            $('#jsReviewQuestionAddPreviewVideo').removeClass('dn');
             //
             var video = '';
             video += '<video controls style="width: 100%">';
-            video += '  <source src="' + (URL.createObjectURL(question.file)) + '" type="video/mp4"></source>';
+            video += '  <source src="' + (URL.createObjectURL(question.file)) + '" type="' + (question.type) + '"></source>';
             video += '</video>';
             $('#jsReviewQuestionAddPreviewVideo').append(video);
         }
@@ -1292,21 +1459,21 @@ $(function() {
         obj.Questions.map(function(question, index) {
             //
             html += '<!-- Question Row -->';
-            html += '<div class="' + (index % 2 === 0 ? 'csGB' : '') + '" data-id="' + (index) + '">';
+            html += '<div class="' + (index % 2 === 0 ? 'csGB' : '') + ' jsReviewQuestionRow" data-id="' + (question.id) + '" data-index="' + (index) + '">';
             html += '    <div class="row">';
             html += '        <div class="col-xs-12">';
             html += '            <div class="p10">';
             html += '                <h5 class="csF14 csB7">';
             html += '                    Q' + (++index) + ': ' + question.title;
             html += '                    <span class="pull-right">';
-            html += '                        <i class="fa fa-edit csF18 csB7 csCP" title="Edit the question" placemment="top" aria-hidden="true"></i>&nbsp;&nbsp;';
+            html += '                        <i class="fa fa-edit csF18 csB7 csCP csReviewQuestionEdit" title="Edit the question" placemment="top" aria-hidden="true"></i>&nbsp;&nbsp;';
             if (index !== 0) {
                 html += '                        <i class="fa fa-arrow-circle-up csF18 csB7 csCP" title="Move question one level up" placemment="top" aria-hidden="true"></i>';
             }
             if (index !== il) {
                 html += '                        <i class="fa fa-arrow-circle-down csF18 csB7 csCP" title="Move question one level down" placemment="top" aria-hidden="true"></i>';
             }
-            html += '                        <i class="fa fa-times-circle csF18 csB7 csCP" title="Remove this question from the list" placemment="top" aria-hidden="true"></i>';
+            html += '                        <i class="fa fa-times-circle csF18 csB7 csCP csInfo jsReviewRemoveQuestion" title="Remove this question from the list" placemment="top" aria-hidden="true"></i>';
             html += '                    </span>';
             html += '                </h5>';
             html += '                <!-- Description -->';
@@ -1317,7 +1484,7 @@ $(function() {
             html += '                    <div class="col-md-4 col-xs-12">';
             if (question.video_help) {
                 html += '                        <video controls style="width: 100%;">';
-                html += '                           <source src="' + (pm.urls.base + 'assets/performance_management/videos/' + (obj.Id) + '/' + question.video) + '.mp4" type="video/mp4"></source>';
+                html += '                           <source src="' + (pm.urls.base + 'assets/performance_management/videos/' + (obj.Id) + '/' + question.video) + '"  type="' + (getVideoType(question.video)) + '"></source>';
                 html += '                        </video>';
             }
             html += '                    </div>';
@@ -1388,5 +1555,18 @@ $(function() {
         //
         $('#jsReviewQuestionListArea').html(html);
 
+    }
+
+
+    //
+    function getVideoType(video) {
+        //
+        if (!video) {
+            return '';
+        }
+        //
+        var extension = video.split('.');
+        //
+        return 'type/' + extension[extension.length - 1].toLowerCase();
     }
 });

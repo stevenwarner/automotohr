@@ -491,12 +491,6 @@ class Performance_management extends Public_Controller{
             break;
             case "SaveVideo":
                 //
-                if(empty($_FILES)){
-                    //
-                    $resp['Msg'] = "Please record/upload a video.";
-                    $this->res($resp);
-                }
-                //
                 $path = APPPATH.'../assets/performance_management/videos/'.$post['reviewId'].'/';
                 //
                 if(!is_dir($path)){
@@ -505,6 +499,23 @@ class Performance_management extends Public_Controller{
                 //
                 $idd = time().generateRandomString(7);
                 //
+                if($post['type'] == 'record'){
+                    //
+                    $newName = $path.$idd.'.webm';
+                    //
+                    file_put_contents($newName, base64_decode(str_replace('data:video/webm;base64,', '',$this->input->post('file', false))));
+                    //
+                    $resp['Msg'] = "Recorded video is uploaded.";
+                    $resp['Id'] = $idd.'.webm';
+                    $resp['Status'] = true;
+                    $this->res($resp);
+                }
+                //
+                if(empty($_FILES)){
+                    //
+                    $resp['Msg'] = "Please record/upload a video.";
+                    $this->res($resp);
+                }
                 $newName = $idd.'.'.(explode('.', $_FILES['file']['name'])[1]);
                 //
                 if(!move_uploaded_file($_FILES['file']['tmp_name'], $path.$newName)){
@@ -513,10 +524,34 @@ class Performance_management extends Public_Controller{
                     $this->res($resp);
                 } else{
                     $resp['Msg'] = "Video is uploaded";
-                    $resp['Id'] = $idd;
+                    $resp['Id'] = $newName;
                     $resp['Status'] = true;
                     $this->res($resp);
                 }
+            break;
+            case "RemoveQuestion":
+                // Get the question
+                $questions = json_decode($this->pmm->GetReviewRowById($post['id'], $pargs['companyId'], ['questions'])['questions'], true);
+                //
+                $returningIndex = 0;
+                //
+                foreach($questions as $index => $question){
+                    if($question['id'] == $post['question_id']){
+                        //
+                        $returningIndex = $index;
+                        //
+                        unset($questions[$index]);
+                    }
+                }
+                //
+                $reviewId = $this->pmm->UpdateReview(['questions' => json_encode(array_values($questions))], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Question deleted.';
+                $resp['Id'] = $reviewId;
+                $resp['Index'] = $returningIndex;
+                //
+                $this->res($resp);
             break;
         endswitch;
     }
