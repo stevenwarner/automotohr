@@ -93,3 +93,6 @@ application/logs/*
 executive_admin/application/logs/*
 manage_ams/application/logs/*
 manage_portal/application/logs/*
+
+
+manage_ams/sitemap.xml
