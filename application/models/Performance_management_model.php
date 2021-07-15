@@ -393,6 +393,15 @@ class Performance_management_model extends CI_Model{
         //
         return $id;
     }
+    
+    /**
+     * 
+     */
+    function UpdateReviewee($data, $where){
+        $this->db
+        ->where($where)
+        ->update($this->PRR, $data);
+    }
 
     /**
      * 
@@ -508,6 +517,7 @@ class Performance_management_model extends CI_Model{
         "
             sid,
             review_start_date,
+            company_sid,
             review_end_date,
             frequency,
             repeat_after,
@@ -541,7 +551,7 @@ class Performance_management_model extends CI_Model{
                     //
                     foreach($reviewees as $reviewee){
                         //
-                        $compareDate = addTimeToDate($reviewee['joined_at'], );
+                        // $compareDate = addTimeToDate($reviewee['joined_at'], );
                     }
                       
                 }
@@ -572,6 +582,81 @@ class Performance_management_model extends CI_Model{
         //
         return $employees;
         
+    }
+
+    /**
+     * 
+     */
+    function CheckAndStartEndReviewees($now, $reviewId){
+        //
+        $reviewees = $this->GetReviewRevieews($reviewId);
+        //
+        foreach($reviewees as $reviewee){
+            //
+            if($reviewee['start_date'] == $now && $reviewee['end_date'] > $now){
+                $this->UpdateReviewee(
+                    ['is_started' => "1"], 
+                    [
+                        'review_sid' => $reviewId,
+                        'reviewee_sid' => $reviewee['reviewee_sid']
+                    ]
+                );
+            }
+            
+            // Review will end
+            if($reviewee['end_date'] <= $now){
+                $this->UpdateReviewee(
+                    ['is_started' => "0"], 
+                    [
+                        'review_sid' => $reviewId,
+                        'reviewee_sid' => $reviewee['reviewee_sid']
+                    ]
+                );
+            }
+        }   
+    }
+
+    /**
+     * 
+     */
+    function GetReviewsForCron(){
+        $reviews =  $this->db
+        ->order_by('sid', 'desc')
+        ->where('is_draft', 0)
+        ->where('is_archived', 0)
+        ->where('frequency != ', 'onetime')
+        ->get('pm_reviews')
+        ->result_array();
+
+        //
+        if(!empty($reviews)){
+            //
+            $nr = [];
+            //
+            foreach($reviews as $index => $review){
+                //
+                if(empty($review['parent_review_sid'])){
+                   //
+                   $nr[$review['sid']]  = $review;
+                   $nr[$review['sid']]['Cycles']  = [];
+                }
+            }
+
+            //
+            foreach($reviews as $index => $review){
+                //
+                if(!empty($review['parent_review_sid'])){
+                   //
+                   $nr[$review['parent_review_sid']]['Cycles'][]  = $review;
+                }
+            }
+            //
+            $reviews = $nr;
+        }
+
+
+        //
+        return $reviews;
     }
 
     
@@ -810,4 +895,9 @@ class Performance_management_model extends CI_Model{
         //
         return $ra;
     }
+
+    
+
+
+    
 }
