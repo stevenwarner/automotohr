@@ -96,3 +96,6 @@ manage_portal/application/logs/*
 
 
 manage_ams/sitemap.xml
+
+staging
+staging/*
