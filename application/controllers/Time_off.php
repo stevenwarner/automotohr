@@ -1491,7 +1491,7 @@ class Time_off extends Public_Controller
             $data['allow_update'] = 'yes';
             //
             if ($args['typeSid'] == 'cancelled') {
-                if ($request['request_from_date'] > date('Y-m-d', strtotime('now')) || $request['status'] == $args['typeSid']) {
+                if ($request['request_from_date'] <= date('Y-m-d', strtotime('now')) || $request['status'] == $args['typeSid']) {
                     $data['allow_update'] = 'no';
                 }
             }
