@@ -65,6 +65,17 @@
     }
 ?>
 
+<!-- Feedback -->
+<?php 
+    if(strpos($this->uri->uri_string(), 'feedback') !== false){
+        ?>
+        <link rel="stylesheet" type="text/css" href="<?=base_url('assets/mFileUploader/index.css');?>" />
+        <script type="text/javascript" src="<?=base_url('assets/mFileUploader/index.js');?>"></script>
+        <?php
+    }
+?>
+
+
 <!-- Report -->
 <?php 
     if(strpos($this->uri->uri_string(), 'report') !== false){

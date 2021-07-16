@@ -16,7 +16,7 @@
                     <p class="csF14 csB7"><i class="fa fa-info-circle csF16 csB7" aria-hidden="true"></i>&nbsp;<em style="color: #cc0000;">All the questions are mendatory.</em></p>
                 </div>
             </div>
-            <!--  -->
+            <!-- Basic -->
             <div class="row">
                 <br>
                 <div class="col-md-3 col-xs-12"> 
@@ -35,7 +35,7 @@
                     </div>
                 </div>
             </div>
-            <!--  -->
+            <!-- Feedbacks -->
             <div class="row">
                 <br />
                 <div class="col-xs-12">
@@ -44,11 +44,11 @@
                             <h5 class="csF16 csB7 csW">
                                 Reviewer(s) Feedback
                                 <span class="pull-right">
-                                    <i class="fa fa-minus-circle csF18 csB7 csCP" aria-hidden="true"></i>
+                                    <i class="fa fa-plus-circle csF18 csB7 csCP" aria-hidden="true"></i>
                                 </span>
                             </h5>
                         </div>
-                        <div class="panel-body">
+                        <div class="panel-body dn">
                             <div class="row">
                                 <div class="col-md-8 col-xs-12">
                                     <p class="csF14 csB7"><i class="fa fa-info-circle csF16" aria-hidden="true"></i>&nbsp;<em style="color: #cc0000;">Feedback percentage is calculated according to the reviewer(s) feedback.</em></p>
@@ -138,6 +138,115 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Attachments -->
+            <div class="row">
+                <br />
+                <div class="col-xs-12">
+                    <div class="panel panel-theme">
+                        <div class="panel-heading">
+                            <h5 class="csF16 csB7 csW">
+                                Attachment(s)
+                                <span class="pull-right">
+                                    <i class="fa fa-plus-circle csF18 csB7 csCP" aria-hidden="true"></i>
+                                </span>
+                            </h5>
+                        </div>
+                        <div class="panel-body dn">
+                            <!--  -->
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <input type="file" name="attachment" id="jsQuestionAttachmentUpload" class="hidden" />
+                                </div>
+                            </div>
+                            <!--  -->
+                            <div class="row dn" id="jsQuestionAttachmentUploadRow">
+                                <br />
+                                <div class="col-sm-12">
+                                    <button class="btn btn-orange csF16 csB7 pull-right">
+                                        <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;Upload File
+                                    </button>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <!--  -->
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <table class="table table-striped table-condensed">
+                                        <caption></caption>
+                                        <thead>
+                                            <tr>
+                                                <th class="csF16" scope="col">Attached By</th>
+                                                <th class="csF16" scope="col">Filename</th>
+                                                <th class="csF16" scope="col">Attached On</th>
+                                                <th class="csF16" scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="vertical-align: middle">
+                                                    <p class="csF14 csB7">
+                                                        Mubashir Ahmed <br>
+                                                        (QA) [Admin Plus]
+                                                    </p>
+                                                </td>
+                                                <td style="vertical-align: middle">
+                                                    <p class="csF14 csB7">Attachment</p>
+                                                </td>
+                                                <td style="vertical-align: middle">
+                                                    <p class="csF14 csB7">July 15 2021, Thu</p>
+                                                </td>
+                                                <td style="vertical-align: middle">
+                                                    <button class="btn btn-orange csF14">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="vertical-align: middle">
+                                                    <p class="csF14 csB7">
+                                                        Mubashir Ahmed <br>
+                                                        (QA) [Admin Plus]
+                                                    </p>
+                                                </td>
+                                                <td style="vertical-align: middle">
+                                                    <p class="csF14 csB7">Attachment</p>
+                                                </td>
+                                                <td style="vertical-align: middle">
+                                                    <p class="csF14 csB7">July 15 2021, Thu</p>
+                                                </td>
+                                                <td style="vertical-align: middle">
+                                                    <button class="btn btn-orange csF14">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="vertical-align: middle">
+                                                    <p class="csF14 csB7">
+                                                        Mubashir Ahmed <br>
+                                                        (QA) [Admin Plus]
+                                                    </p>
+                                                </td>
+                                                <td style="vertical-align: middle">
+                                                    <p class="csF14 csB7">Attachment</p>
+                                                </td>
+                                                <td style="vertical-align: middle">
+                                                    <p class="csF14 csB7">July 15 2021, Thu</p>
+                                                </td>
+                                                <td style="vertical-align: middle">
+                                                    <button class="btn btn-orange csF14">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -241,3 +350,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(function(){
+        $('#jsQuestionAttachmentUpload').mFileUploader({
+            allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv', 'webm', 'mp4'],
+            fileLimit: -1,
+            path: true,
+            onSuccess: function(file){
+                $('#jsQuestionAttachmentUploadRow').removeClass('dn');
+            }, 
+            onError :function(){
+                $('#jsQuestionAttachmentUploadRow').addClass('dn');
+            }, 
+            onClear: function(){
+                $('#jsQuestionAttachmentUploadRow').addClass('dn');
+            }
+        });
+    });
+</script>
