@@ -752,6 +752,7 @@ class Performance_management_model extends CI_Model{
         ->select("
             {$this->R}.sid,
             {$this->PRR}.reviewee_sid,
+            {$this->PRRS}.reviewer_sid,
             {$this->PRR}.start_date,
             {$this->PRR}.end_date,
             ".(getUserFields())."
@@ -772,7 +773,66 @@ class Performance_management_model extends CI_Model{
         return $result;
     }
 
+    /**
+     * 
+     */
+    function GetReviewByReviewer($reviewId, $revieweeId, $reviewerId){
+        //
+        $query =
+        $this->db
+        ->select("
+            {$this->R}.review_title,
+            {$this->PRR}.start_date,
+            {$this->PRR}.end_date,
+            {$this->PRR}.is_started,
+            {$this->PRRS}.is_manager,
+            {$this->PRRS}.is_completed,
+            {$this->U}.first_name,
+            {$this->U}.last_name,
+            reviewer.first_name as reviewer_first_name,
+            reviewer.last_name as reviewer_last_name,
+        ")
+        ->join($this->PRR, "{$this->PRR}.reviewee_sid = {$this->PRRS}.reviewee_sid and {$this->PRR}.review_sid = {$this->PRRS}.review_sid", "inner")
+        ->join($this->R, "{$this->R}.sid = {$this->PRR}.review_sid", "inner")
+        ->join($this->U, "{$this->U}.sid = {$this->PRRS}.reviewee_sid", "inner")
+        ->join("{$this->U} as reviewer", "reviewer.sid = {$this->PRRS}.reviewer_sid", "inner")
+        ->where("{$this->PRR}.review_sid", $reviewId)
+        ->where("{$this->PRRS}.reviewee_sid", $revieweeId)
+        ->where("{$this->PRRS}.reviewer_sid", $reviewerId)
+        ->get($this->PRRS);
+        //
+        $result = $query->row_array();
+        //
+        $query->free_result();
+        //
+        if(!empty($result)){
+            //
+            $result = array_merge($result, $this->GetReviewerAnswers($reviewId, $revieweeId, $reviewerId));
+        }
+        //
+        return $result;
+    }
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //
     function getMyGoals(){
@@ -920,6 +980,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select("
             {$this->PRQ}.question,
+            {$this->PRQ}.sid,
             {$this->PRA}.multiple_choice,
             {$this->PRA}.text_answer,
             {$this->PRA}.rating,
@@ -955,6 +1016,7 @@ class Performance_management_model extends CI_Model{
                 );
                 //
                 $t[] = [
+                    'question_id' => $row['sid'],
                     'question' => $question,
                     'answer' => [
                         'multiple_choice' => $row['multiple_choice'],

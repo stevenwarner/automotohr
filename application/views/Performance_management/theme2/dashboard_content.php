@@ -11,7 +11,7 @@
                 </div>
                 <div class="col-md-3 col-sm-12">
                     <span class="pull-right">
-                        <a href="" class="btn btn-orange"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
+                        <a href="<?=purl("reviews");?>" class="btn btn-orange"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
                             Review(s)</a>
                     </span>
                 </div>
@@ -30,9 +30,12 @@
             <?php
                 //
                 if(!empty($AssignedReviews)){
+                    ?>
+                    <div class="row">
+                        <?php
+                        $now = date('Y-m-d', strtotime('now'));
                     foreach($AssignedReviews as $review){
                         ?>
-                        <div class="row">
                             <div class="col-md-4 col-sm-4 col-xs-12">
                                 <div class="csEmployeeBox">
                                     <figure>
@@ -40,18 +43,20 @@
                                         <div class="csTextBox">
                                             <p class="csF14 csB7 mb0"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
                                             <p class="csTextSmall mb0 csF14"> <?=remakeEmployeeName($employee, false);?></p>
-                                            <p class="csTextSmall csF14">Due in 6 days</p>
+                                            <p class="csTextSmall csF14">Due in <?=dateDifferenceInDays($now, $review['start_date'], '%a');?> day(s)</p>
                                             <p class="csTextSmall csF14">
-                                                <button class="btn btn-orange csF14">Start Review</button>
+                                                <a href="<?=purl("review/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}");?>" class="btn btn-orange csF14">Start Review</a>
                                             </p>
                                         </div>
                                     </figure>
                                     <div class="clearfix"></div>
                                 </div>
                             </div>
-                        </div>
                         <?php
                     }
+                    ?>
+                    </div>
+                    <?php
                 } else{
                     ?>
                     <div class="panel-body">
@@ -81,7 +86,7 @@
                 </div>
                 <div class="col-md-3 col-sm-12">
                     <span class="pull-right">
-                        <a href="" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
+                        <a href="<?=purl("reviews");?>" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
                             Review(s)</a>
                     </span>
                 </div>
@@ -90,13 +95,54 @@
             <div class="row">
                 <div class="col-sm-12">
                     <p class="csF14 csW dn jsToggleHelpArea" data-help="assigned_reviews">All the assigned reviews, on
-                        which your feedback is required. The submitted feedback will be shared with the reporting
-                        manager(s).</p>
+                        which your feedback is required. The submitted feedback will be shared with the employee.</p>
                 </div>
             </div>
         </div>
-
-        
+    <?php
+            //
+            if(!empty($FeedbackReviews)){
+                ?>
+                <div class="panel-body">
+                <div class="row">
+                    <?php
+                    $now = date('Y-m-d', strtotime('now'));
+                foreach($FeedbackReviews as $review){
+                    ?>
+                        <div class="col-md-4 col-sm-4 col-xs-12">
+                            <div class="csEmployeeBox">
+                                <figure>
+                                    <img src="<?=getImageURL($employee['profile_picture']);?>" class="csRadius50" alt="" />
+                                    <div class="csTextBox">
+                                        <p class="csF14 csB7 mb0"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
+                                        <p class="csTextSmall mb0 csF14"> <?=remakeEmployeeName($employee, false);?></p>
+                                        <p class="csTextSmall csF14">Due in <?=dateDifferenceInDays($now, $review['start_date'], '%a');?> day(s)</p>
+                                        <p class="csTextSmall csF14">
+                                            <a href="<?=purl("feedback/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}");?>" class="btn btn-orange csF14">Start Review</a>
+                                        </p>
+                                    </div>
+                                </figure>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    <?php
+                }
+                ?>
+                </div></div>
+                <?php
+            } else{
+                ?>
+                <div class="panel-body">
+                    <div class="row">
+                        <p class="csF26 csB7 text-center">
+                            <i class="fa fa-check csF40" aria-hidden="true"></i><br />
+                            You are all caught up
+                        </p>
+                    </div>
+                </div>
+                <?php
+            }
+        ?>
     </div>
 
     <!-- Goals -->

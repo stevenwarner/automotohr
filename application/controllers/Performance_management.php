@@ -74,24 +74,15 @@ class Performance_management extends Public_Controller{
         $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
         // Set employee information for the blue screen
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
-
+        // // Get Assigned Reviews 
+        $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 0);
+        $this->pargs['FeedbackReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1);
+        //
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}dashboard");
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
-        // Get department & teams list
-        // Get goals 
-        // $this->pargs['goals'] = $this->pmm->getGoals($this->pargs['employerId']);
-        // // Get Assigned Reviews 
-        $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 0);
-        $this->pargs['FeedbackReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1);
-
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}{$this->mp}dashboard", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
     }
     
     
@@ -157,7 +148,7 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function review(){
+    function review($reviewId, $revieweeId, $reviewerId){
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -166,10 +157,18 @@ class Performance_management extends Public_Controller{
         $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
         // Set employee information for the blue screen
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
-
+        //
+        $this->pargs['review'] = $this->pmm->GetReviewByReviewer($reviewId, $revieweeId, $reviewerId);
+        //
+        $this->pargs['reviewId'] = $reviewId;
+        $this->pargs['revieweeId'] = $revieweeId;
+        $this->pargs['reviewerId'] = $reviewerId;
+        //
+        $this->pargs['selectedPage'] = $this->input->get('page', true) ? $this->input->get('page', true) : 1;
+        //
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
-        $this->load->view("{$this->pp}review");
+        $this->load->view("{$this->pp}feedback/review");
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
@@ -273,6 +272,28 @@ class Performance_management extends Public_Controller{
 
         //
         $this->res(['data' => $template]);
+    }
+    
+    /**
+     * 
+     */
+    function SaveFeedbackAnswer(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(null, true);
+        //
+        $this->pmm->CheckAndSaveAnswer(
+            $post['reviewId'],
+            $post['revieweeId'],
+            $post['reviewerId']
+        );
+       
+
+        //
+        $this->res(); // TODO
     }
     
     /**

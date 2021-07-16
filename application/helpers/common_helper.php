@@ -12741,11 +12741,11 @@ if(!function_exists('getImageURL')){
  * 
  */
 if(!function_exists('getVideoURL')){
-    function getVideoURL($id, $qid, $module = 'performance_management') {
+    function getVideoURL($id, $video_url, $module = 'performance_management') {
         switch($module):
             case "performance_management":
-                if(file_exists(APPPATH."../assets/performance_management/videos/{$id}/video_".($qid).".webm"))
-                    return base_url("assets/performance_management/videos/{$id}/video_".($qid).".webm");
+                if(file_exists(APPPATH."../assets/performance_management/videos/{$id}/{$video_url}"))
+                    return base_url("assets/performance_management/videos/{$id}/{$video_url}");
                 else
                     return FALSE;
             break;
@@ -12758,7 +12758,7 @@ if(!function_exists('getVideoURL')){
  * 
  */
 if(!function_exists('getDueText')){
-    function getDueText($endDate) {
+    function getDueText($endDate, $full = false) {
         $endDate .= ' 23:59:59';
         $startDate = date('Y-m-d 23:59:59', strtotime('now'));
         $now = new DateTime($startDate);

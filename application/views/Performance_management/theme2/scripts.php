@@ -40,7 +40,8 @@
         window.pm.review = <?=json_encode($review);?>;
     <?php endif; ?>
     
-    <?php if(isset($review)):?>
+    
+    <?php if(isset($review) && isset($company_employees)):?>
         // Employees
         window.pm.employees = <?=json_encode($company_employees);?>;
     <?php endif; ?>
@@ -63,14 +64,18 @@
         <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/create'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
         <?php
     }
-?>
+    ?>
 
 <!-- Feedback -->
 <?php 
-    if(strpos($this->uri->uri_string(), 'feedback') !== false){
-        ?>
+    if(
+        strpos($this->uri->uri_string(), 'feedback') !== false ||
+        strpos($this->uri->uri_string(), 'review') !== false
+        ){
+            ?>
         <link rel="stylesheet" type="text/css" href="<?=base_url('assets/mFileUploader/index.css');?>" />
         <script type="text/javascript" src="<?=base_url('assets/mFileUploader/index.js');?>"></script>
+        <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/review/index'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
         <?php
     }
 ?>
