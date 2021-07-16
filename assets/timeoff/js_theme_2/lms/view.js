@@ -668,6 +668,11 @@ $(function() {
           timeoffDateFormatWithTime
         )}`;
                 il = '<i class="fa fa-times-circle text-danger"></i>';
+            } else if (action.status == "cancelled" || action.status == "cancel") {
+                msg += ` has cancelled the time-off at ${moment(his.created_at).format(
+                  timeoffDateFormatWithTime
+                )}`;
+                il = '<i class="fa fa-times-circle text-danger"></i>';
             }
             //
             if ($.inArray(his.userId, arr) !== -1) return "";
@@ -709,6 +714,9 @@ $(function() {
                 } else if (action.status == "rejected") {
                     status = 'rejected';
                     msg += ` has rejected the time-off on ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
+                } else if (action.status == "cancelled" || action.status == "cancel") {
+                    status = 'cancelled';
+                    msg += ` has cancelled the time-off on ${moment(his.created_at).format(timeoffDateFormatWithTime)}`;
                 }
             }
             
@@ -1056,6 +1064,8 @@ $(function() {
                 obj.status = 'approved';
             } else if (action.status == "rejected") {
                 obj.status = 'rejected';
+            } else if (action.status == "cancelled" || action.status == "cancel") {
+                obj.status = 'cancelled';
             }
 
             comments.push(obj);
