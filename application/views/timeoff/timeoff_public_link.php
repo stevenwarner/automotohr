@@ -294,13 +294,13 @@
                                         <?php
                                         } else if($request['status'] == 'cancel' || $request['status'] == 'cancelled'){
                                             ?>
-                                        <strong class="text-success">
+                                        <strong class="text-danger">
                                             <?=strtoupper($request['status']);?>
                                         </strong>
                                         <?php
                                         } else if($request['status'] == 'pending'){
                                             ?>
-                                        <strong class="text-success">
+                                        <strong class="text-warning">
                                             <?=strtoupper($request['status']);?>
                                         </strong>
                                         <?php
@@ -398,7 +398,7 @@
                                                         else if($note['status'] == 'rejected' && $note['canApprove'] == 1) $act = "Time-off rejected 100%";
                                                         else if($note['status'] == 'rejected' && $note['canApprove'] == 0) $act = "Time-off rejected 50%";
                                                         else if($note['status'] == 'pending' && $note['canApprove'] == 0) $act = "Time-off updated";
-                                                        else if($note['status'] == 'cancelled') $act = "Time-off cancelled";
+                                                        else if($note['status'] == 'cancelled' || $note['status'] == 'cancel') $act = "Time-off cancelled";
                                                         //
                                                         if(isset($note['comment']) && $note['comment'] != '') $comment = $note['comment'];
                                                     } else{
@@ -542,7 +542,17 @@
                             <?php if ($user_type == 'approvers' && $request['status'] != 'pending') { ?>
                                 <div class="row">
                                     <div class="col-xs-12">
-                                            <p>The time-off "<?=$lastApprover['Status'];?>" request was made by "<?=$lastApprover['Name'];?>" with the following comment.</p>
+                                        <?php 
+                                            if($request['status'] === 'cancelled'){
+                                                ?>
+                                                <p>The time-off was canceled by "<?=$request['first_name'];?> <?=$request['last_name'];?>" with the following comment.</p>
+                                                <?php
+                                            } else{
+                                                ?>
+                                                <p>The time-off "<?=$lastApprover['Status'];?>" was made by "<?=$lastApprover['Name'];?>" with the following comment.</p>
+                                                <?php
+                                            }
+                                        ?>
                                             <p>"<?=$lastApprover['Comment'];?>"</p>
                                     </div>
                                 </div>

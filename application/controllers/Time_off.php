@@ -1457,7 +1457,6 @@ class Time_off extends Public_Controller
                     $this->sendNotifications($request['sid'], 'cancel');
                     $data['hf'] = message_header_footer_domain($request['company_sid'], ucwords($request['CompanyName']));
                     //
-                    // $this->load->view('timeoff/partials/thankyou', $data);
                     $this->load->view('timeoff/thank_you');
 
                 break;
@@ -1492,11 +1491,13 @@ class Time_off extends Public_Controller
             $data['allow_update'] = 'yes';
             //
             if ($args['typeSid'] == 'cancelled') {
-                if ($request['request_from_date'] <= date('Y-m-d')) {
-                    $data['allow_update'] = 'no';
-                } else if ($request['status'] == $args['typeSid']) {
+                if ($request['request_from_date'] > date('Y-m-d', strtotime('now')) || $request['status'] == $args['typeSid']) {
                     $data['allow_update'] = 'no';
                 }
+            }
+            //
+            if($request['status'] == 'cancelled'){
+                $data['allow_update'] = 'no';
             }
             //
             if ($args['employerSid'] == $request['employee_sid']) {
