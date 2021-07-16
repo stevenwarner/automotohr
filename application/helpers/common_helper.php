@@ -13606,3 +13606,22 @@ if(!function_exists('addTimeToDate')){
         return $date->format($format);
     }
 }
+
+/**
+ * Get time off button
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/07/2021
+ * 
+ * @param Array  $replaceArray
+ * 
+ * @return String
+ */
+if(!function_exists('getButtonForEmail')){
+    function getButtonForEmail($replaceArray){
+        return
+            str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 5px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
+        {{text}}             
+        </a>');
+    }
+}

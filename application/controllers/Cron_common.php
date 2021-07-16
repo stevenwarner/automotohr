@@ -350,4 +350,92 @@ class Cron_common extends CI_Controller{
         exit(0);
     }
 
+
+    /**
+     * 
+     */
+    function SendNotificationEmails($verificationToken){
+        //
+        if($verificationToken != $this->verifyToken){
+            echo "All done!";
+            exit(0);
+        }
+        //
+        $this->load->model('performance_management_model', 'pmm');
+        //
+        $toArray = [];
+        //
+        $this->getEmployeesForNotification(7, $toArray);
+        $this->getEmployeesForNotification(3, $toArray);
+        $this->getEmployeesForNotification(1, $toArray);
+        //
+        if(empty($toArray)){
+            echo "All Done!";
+            exit(0);
+        }
+        // Get template
+        $template = get_email_template(REVIEW_EXPIRING);
+        //
+        foreach($toArray as $record){
+            //
+            $hf = message_header_footer($record['companyId'], $record['companyName']);
+            //
+            $indexes = array_keys($record['replace']);
+            //
+            $subject = str_replace($indexes, $record['replace'], $template['subject']);
+            //
+            $body = $hf['header'].str_replace($indexes, $record['replace'], $template['text']).$hf['footer'];
+            //
+            log_and_sendEmail(
+                $template['from_email'],
+                $record['email'],
+                $subject,
+                $body,
+                $record['name']
+            );
+            //
+            usleep(100);
+        }
+        //
+        echo "All Done!";
+        exit(0);
+    }
+
+    /**
+     * 
+     */
+    private function getEmployeesForNotification($days, &$toArray){
+        //
+        $records = $this->pmm->GetEmployeesForNotificationEmailByDays($days);
+        //
+        if(!empty($records)){
+            foreach($records as $record) {
+                //
+                $reviewPeriod = formatDateToDB($record['start_date'], 'Y-m-d', 'M d Y, D');
+                $reviewPeriod .= ' - '.formatDateToDB($record['end_date'], 'Y-m-d', 'M d Y, D');
+                //
+                $link = base_url("performance-management/".($record['is_manager'] ? "feedback" : "review")."/".($record['sid'])."/".($record['reviewee_sid'])."/".($record['reviewer_sid'])."");
+                //
+                // Set replace array 
+                $replaceArray = [];
+                $replaceArray['{{first_name}}'] = ucwords($record['first_name']);
+                $replaceArray['{{last_name}}'] = ucwords($record['last_name']);
+                $replaceArray['{{expiring_days}}'] = $days;
+                $replaceArray['{{review_title}}'] = ucwords($record['review_title']);
+                $replaceArray['{{review_period}}'] = $reviewPeriod;
+                $replaceArray['{{reviewee_first_name}}'] = ucwords($record['reviewer_first_name']);
+                $replaceArray['{{reviewee_last_name}}'] = ucwords($record['reviewer_last_name']);
+                $replaceArray['{{link}}'] = getButtonForEmail(['{{url}}' => $link, '{{text}}' => 'Complete The Review', '{{color}}'=> '#0000ff']);
+                //
+                $toArray[] = [
+                    "companyId" => $record['company_sid'],
+                    "companyName" => ucwords(strtolower(trim($record['company_name']))),
+                    "email" => strtolower(trim($record['reviewer_email'])),
+                    "name" => ucwords(strtolower(trim($record['reviewer_first_name'].' '.$record['reviewer_last_name']))),
+                    "replace" => $replaceArray
+                ];
+            }
+        }
+    }
+
 }

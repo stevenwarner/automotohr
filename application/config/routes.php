@@ -1322,3 +1322,5 @@ $route['performance-management/save_review_step']['post'] = 'Performance_managem
 $route['performance-management/reviews'] = 'Performance_management/reviews';
 // Replicate and Start/End cron job
 $route['review_start_and_replicate/(:any)']['cli'] = 'Cron_common/PMMCronStartAndEndReplicate/$1';
+// Send reminder emails
+$route['review_reminder_emails/(:any)']['cli'] = 'Cron_common/SendNotificationEmails/$1';
