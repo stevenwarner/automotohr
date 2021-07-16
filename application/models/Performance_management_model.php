@@ -659,9 +659,122 @@ class Performance_management_model extends CI_Model{
         return $reviews;
     }
 
+    /**
+     * 
+     */
+    function GetEmployeesForNotificationEmailByDays($days){
+        //
+        $date = date('Y-m-d H:i:s', strtotime("+{$days} days"));
+        //
+        $query = 
+        $this->db
+        ->select("
+            {$this->R}.sid,
+            {$this->R}.review_title,
+            {$this->PRR}.reviewee_sid,
+            {$this->PRR}.start_date,
+            {$this->PRR}.end_date,
+            {$this->PRRS}.is_manager,
+            {$this->PRRS}.reviewer_sid,
+            {$this->U}.first_name,
+            {$this->U}.last_name,
+            reviewer.first_name as reviewer_first_name,
+            reviewer.last_name as reviewer_last_name,
+            reviewer.email as reviewer_email,
+            {$this->R}.company_sid,
+            company.CompanyName as company_name,
+        ")
+        ->from("{$this->PRRS}")
+        ->join("{$this->PRR}", "{$this->PRR}.review_sid = {$this->PRRS}.review_sid AND {$this->PRR}.reviewee_sid = {$this->PRRS}.reviewee_sid", "inner")
+        ->join("{$this->R}", "{$this->R}.sid = {$this->PRR}.review_sid", "inner")
+        ->join("{$this->U}", "{$this->U}.sid = {$this->PRR}.reviewee_sid", "inner")
+        ->join("{$this->U} as reviewer", "reviewer.sid = {$this->PRRS}.reviewer_sid", "inner")
+        ->join("{$this->U} as company", "company.sid = {$this->R}.company_sid", "inner")
+        ->where("{$this->PRR}.is_started", 1)
+        ->where("{$this->PRRS}.is_completed", 0)
+        ->where("{$this->PRR}.end_date", $date)
+        ->get();
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        return $result;
+    }
+
+    /**
+     * 
+     */
+    function getMyReviewCounts($companyId, $employeeId){
+        //
+        $query = 
+        $this->db
+        ->select("
+            {$this->PRRS}.is_manager,
+            {$this->PRRS}.is_completed
+        ")
+        ->from("{$this->PRRS}")
+        ->join("{$this->PRR}", "{$this->PRR}.review_sid = {$this->PRRS}.review_sid AND {$this->PRR}.reviewee_sid = {$this->PRRS}.reviewee_sid", "inner")
+        ->join("{$this->R}", "{$this->R}.sid = {$this->PRR}.review_sid", "inner")
+        ->where("{$this->PRR}.is_started", 1)
+        ->where("{$this->PRRS}.reviewer_sid", $employeeId)
+        ->where("{$this->R}.company_sid", $companyId)
+        ->get();
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        $returnArray = [
+            'Reviews' => 0,
+            'Feedbacks' => 0,
+            'Total' => 0
+        ];
+        //
+        if(!empty($result)){
+            foreach($result as $record){
+                //
+                $returnArray[$record['is_manager'] ? 'Feedbacks' : 'Reviews']++;
+                $returnArray['Total']++;
+            }
+        }
+        //
+        return $returnArray;
+    }
+    
+    /**
+     * 
+     */
+    function GetReviewsByTypeForDashboard($employeeId, $type){
+        //
+        $query = 
+        $this->db
+        ->select("
+            {$this->R}.sid,
+            {$this->PRR}.reviewee_sid,
+            {$this->PRR}.start_date,
+            {$this->PRR}.end_date,
+            ".(getUserFields())."
+        ")
+        ->from("{$this->PRRS}")
+        ->join("{$this->PRR}", "{$this->PRR}.review_sid = {$this->PRRS}.review_sid AND {$this->PRR}.reviewee_sid = {$this->PRRS}.reviewee_sid", "inner")
+        ->join("{$this->R}", "{$this->R}.sid = {$this->PRR}.review_sid", "inner")
+        ->join("{$this->U}", "{$this->U}.sid = {$this->PRR}.reviewee_sid", "inner")
+        ->where("{$this->PRR}.is_started", 1)
+        ->where("{$this->PRRS}.reviewer_sid", $employeeId)
+        ->where("{$this->PRRS}.is_manager", $type)
+        ->get();
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        return $result;
+    }
+
     
 
-     //
+    //
     function getMyGoals(){
         return [];
     }
@@ -897,46 +1010,7 @@ class Performance_management_model extends CI_Model{
     }
 
     
-    //
-    function GetEmployeesForNotificationEmailByDays($days){
-        //
-        $date = date('Y-m-d H:i:s', strtotime("+{$days} days"));
-        //
-        $query = 
-        $this->db
-        ->select("
-            {$this->R}.sid,
-            {$this->R}.review_title,
-            {$this->PRR}.reviewee_sid,
-            {$this->PRR}.start_date,
-            {$this->PRR}.end_date,
-            {$this->PRRS}.is_manager,
-            {$this->PRRS}.reviewer_sid,
-            {$this->U}.first_name,
-            {$this->U}.last_name,
-            reviewer.first_name as reviewer_first_name,
-            reviewer.last_name as reviewer_last_name,
-            reviewer.email as reviewer_email,
-            {$this->R}.company_sid,
-            company.CompanyName as company_name,
-        ")
-        ->from("{$this->PRRS}")
-        ->join("{$this->PRR}", "{$this->PRR}.review_sid = {$this->PRRS}.review_sid AND {$this->PRR}.reviewee_sid = {$this->PRRS}.reviewee_sid", "inner")
-        ->join("{$this->R}", "{$this->R}.sid = {$this->PRR}.review_sid", "inner")
-        ->join("{$this->U}", "{$this->U}.sid = {$this->PRR}.reviewee_sid", "inner")
-        ->join("{$this->U} as reviewer", "reviewer.sid = {$this->PRRS}.reviewer_sid", "inner")
-        ->join("{$this->U} as company", "company.sid = {$this->R}.company_sid", "inner")
-        ->where("{$this->PRR}.is_started", 1)
-        ->where("{$this->PRRS}.is_completed", 0)
-        ->where("{$this->PRR}.end_date", $date)
-        ->get();
-        //
-        $result = $query->result_array();
-        //
-        $query->free_result();
-        //
-        return $result;
-    }
+   
 
 
     

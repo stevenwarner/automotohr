@@ -81,30 +81,15 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
         // Get department & teams list
-        // $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
-        // //
-        // if(!empty($employees)){
-        //     foreach($employees as $employee){
-        //         $this->pargs['employees'][$employee['Id']] = [
-        //             'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
-        //             'role' => $employee['FullRole'],
-        //             'img' => getImageURL($employee['Image'])
-        //         ];
-        //     }
-        // }
         // Get goals 
         // $this->pargs['goals'] = $this->pmm->getGoals($this->pargs['employerId']);
         // // Get Assigned Reviews 
-        // $this->pargs['assignedReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'assigned');
-        // $this->pargs['feedbackReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'feedback');
-        // // Get employer role
-        // $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // // Get department & teams list
-        // My goals
+        $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 0);
+        $this->pargs['FeedbackReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1);
 
         $this->load->view("main/header", $this->pargs);
         $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}{$this->mp}dashboard_new", $this->pargs);
+        $this->load->view("{$this->pp}{$this->mp}dashboard", $this->pargs);
         $this->load->view("{$this->pp}footer", $this->pargs);
         $this->load->view("main/footer");
     }

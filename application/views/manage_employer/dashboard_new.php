@@ -736,12 +736,13 @@
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
-                                                <figure><i class="fa fa-pencil-square-o <?php echo $review['Pending'] > 0 ? 'start_animation' : ''; ?>"></i></figure>
-                                                <h2 class="post-title">
-                                                    <a href="<?= base_url("performance-management/dashboard"); ?>">Performance Management</a>
+                                                <figure><i class="fa fa-pencil-square-o <?php echo $review['Reviews'] || $review['Feedbacks'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i></figure>
+                                                <h2 class="post-title" style="margin: 2px 0;">
+                                                    <a href="<?php echo base_url('performance-management/dashboard'); ?>">Performance Management</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
-                                                    <small style="font-size: 12px">0 Total Reviews</small>
+                                                    <small style="font-size: 12px"><?php echo $review['Reviews']; ?> Pending Review(s)</small><br>
+                                                    <small style="font-size: 12px"><?php echo $review['Feedbacks']; ?> Pending Feedback(s)</small>
                                                 </div>
                                                 <div class="button-panel">
                                                     <a href="<?= base_url("performance-management/dashboard"); ?>" class="site-btn">Show</a>

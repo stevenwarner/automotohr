@@ -27,24 +27,45 @@
         </div>
 
         <div class="panel-body">
-            <div class="row">
-                <div class="col-md-4 col-sm-4 col-xs-12">
-                    <div class="csEmployeeBox">
-                        <figure>
-                            <img src="<?=getImageURL($employee['profile_picture']);?>" class="csRadius50" alt="" />
-                            <div class="csTextBox">
-                                <p class="csF14 csB7 mb0"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
-                                <p class="csTextSmall mb0 csF14"> <?=remakeEmployeeName($employee, false);?></p>
-                                <p class="csTextSmall csF14">Due in 6 days</p>
-                                <p class="csTextSmall csF14">
-                                    <button class="btn btn-orange csF14">Start Review</button>
-                                </p>
+            <?php
+                //
+                if(!empty($AssignedReviews)){
+                    foreach($AssignedReviews as $review){
+                        ?>
+                        <div class="row">
+                            <div class="col-md-4 col-sm-4 col-xs-12">
+                                <div class="csEmployeeBox">
+                                    <figure>
+                                        <img src="<?=getImageURL($employee['profile_picture']);?>" class="csRadius50" alt="" />
+                                        <div class="csTextBox">
+                                            <p class="csF14 csB7 mb0"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
+                                            <p class="csTextSmall mb0 csF14"> <?=remakeEmployeeName($employee, false);?></p>
+                                            <p class="csTextSmall csF14">Due in 6 days</p>
+                                            <p class="csTextSmall csF14">
+                                                <button class="btn btn-orange csF14">Start Review</button>
+                                            </p>
+                                        </div>
+                                    </figure>
+                                    <div class="clearfix"></div>
+                                </div>
                             </div>
-                        </figure>
-                        <div class="clearfix"></div>
+                        </div>
+                        <?php
+                    }
+                } else{
+                    ?>
+                    <div class="panel-body">
+                        <div class="row">
+                            <p class="csF26 csB7 text-center">
+                                <i class="fa fa-check csF40" aria-hidden="true"></i><br />
+                                You are all caught up
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </div>
+                    <?php
+                }
+            ?>
+           
         </div>
     </div>
 
@@ -75,14 +96,7 @@
             </div>
         </div>
 
-        <div class="panel-body">
-            <div class="row">
-                <p class="csF26 csB7 text-center">
-                    <i class="fa fa-check csF40" aria-hidden="true"></i><br />
-                    You are all caught up
-                </p>
-            </div>
-        </div>
+        
     </div>
 
     <!-- Goals -->
