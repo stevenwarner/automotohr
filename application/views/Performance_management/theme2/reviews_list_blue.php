@@ -43,6 +43,7 @@
                                         <button class="btn btn-<?=$statusClass;?> btn-xs csF14 csRadius5"><?=strtoupper($review['status']);?></button>
                                         <span class="pull-right">
                                             <?php
+                                            if(!$review['is_draft']){
                                                 if($review['status'] != 'started'){
                                                     ?>
                                                     <button class="btn btn-black csF16 btn-xs jsStartReview"  title="Start the review" placement="top">
@@ -56,6 +57,13 @@
                                                     </button>
                                                     <?php
                                                 }
+                                            }else{
+                                                ?>
+                                                 <a href="<?=purl('review/create/'.$review['sid']);?>" class="btn btn-black csF16 btn-xs "  title="Edit Review" placement="top">
+                                                        <i class="fa fa-edit csF16" aria-hidden="true"></i>
+                                                    </a>
+                                                <?php
+                                            }
                                             ?>
                                             <a href="<?=purl('review/'.$review['sid']);?>" class="btn btn-black csF16 btn-xs" title="View Review Details" placement="top">
                                                 <i class="fa fa-eye csF16" aria-hidden="true"></i>

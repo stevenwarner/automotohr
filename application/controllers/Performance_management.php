@@ -681,7 +681,7 @@ class Performance_management extends Public_Controller{
                     $data_array['questions'] = json_encode($questions);
                 }
                 //
-                if(!isset($post['id'])){
+                if(!isset($post['id']) || $post['id'] == 0){
                     $data_array['company_sid']  = $pargs['companyId'];
                     $data_array['is_draft'] = 1;
                     $data_array['status'] = 'pending';

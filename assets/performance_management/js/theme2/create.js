@@ -1399,7 +1399,7 @@ $(function() {
                 return;
             }
             // Employee check 
-            if (filter.employees.length > 0 && $.inArray(data['employees'], filter.employees) !== -1) {
+            if (filter.employees.length > 0 && $.inArray(data['id'], filter.employees) !== -1) {
                 obj.Reviewees.included.push(data.id);
                 $(this).show();
                 return;
