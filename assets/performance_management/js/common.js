@@ -170,14 +170,18 @@ function remakeEmployeeName(o, d) {
  * 
  * @param  {Boolean} doShow 
  * @param  {String}  p 
+ * @param  {String}  msg
  * @return {Void}
  */
-function ml(doShow, p) {
+function ml(doShow, p, msg) {
     //
     p = p === undefined ? `.jsIPLoader` : `.jsIPLoader[data-page="${p}"]`;
     //
     if (doShow === undefined || doShow === false) $(p).hide();
-    else $(p).show();
+    else {
+        $(p).show();
+        $(p).find('.jsIPLoaderBox p > span').html(msg === undefined ? 'Please wait while we are processing your request.' : msg);
+    }
 }
 
 /**
@@ -189,35 +193,34 @@ function ml(doShow, p) {
  */
 function Modal(options, cb) {
     //
-    let html = `
-    <!-- Custom Modal -->
-    <div class="csModal" id="${options.Id}">
-        <div class="container">
-            <div class="csModalHeader">
-                <h3 class="csModalHeaderTitle csF20 csB7">
-                    ${options.Title}
-                    <span class="csModalButtonWrap">
-                    ${ options.Buttons !== undefined && options.Buttons.length !== 0 ? options.Buttons.join('') : '' }
-                        <button class="btn btn-black btn-lg jsModalCancel csF16" title="Close this window"><em class="fa fa-times-circle csF16"></em> Cancel</button>
-                    </span>
-                    <div class="clearfix"></div>
-                </h3>
-            </div>
-            <div class="csModalBody">
-                <div class="csIPLoader jsIPLoader" data-page="${options.Loader}"><i class="fa fa-circle-o-notch fa-spin"></i></div>
-                ${options.Body}
-            </div>
-            <div class="clearfix"></div>
-        </div>
-    </div>
-    `;
+    var html = '';
+    html += '<!-- Custom Modal -->';
+    html += '<div class="csModal" id="' + (options.Id) + '">';
+    html += '    <div class="container">';
+    html += '        <div class="csModalHeader">';
+    html += '            <h3 class="csModalHeaderTitle csF20 csB7">';
+    html += options.Title;
+    html += '                <span class="csModalButtonWrap">';
+    html += options.Buttons !== undefined && options.Buttons.length !== 0 ? options.Buttons.join('') : '';
+    html += '                    <button class="btn btn-black btn-lg jsModalCancel csF16"><em class="fa fa-times-circle csF16"></em> ' + (options.Cancel ? options.Cancel : 'Cancel') + '</button>';
+    html += '                </span>';
+    html += '                <div class="clearfix"></div>';
+    html += '            </h3>';
+    html += '        </div>';
+    html += '        <div class="csModalBody">';
+    html += '            <div class="csIPLoader jsIPLoader" data-page="' + (options.Loader) + '"><i class="fa fa-circle-o-notch fa-spin"></i></div>';
+    html += options.Body;
+    html += '        </div>';
+    html += '        <div class="clearfix"></div>';
+    html += '    </div>';
+    html += '</div>';
     //
     $('.csModal').remove();
     $('.csPageWrap').append(html);
-    $(`#${options.Id}`).fadeIn(300);
+    $("#" + (options.Id) + "").fadeIn(300);
     //
     $('body').css('overflow-y', 'hidden');
-    $(`#${options.Id} .csModalBody`).css('top', $(`#${options.Id} .csModalHeader`).height() + 50);
+    $("#" + (options.Id) + " .csModalBody").css('top', $("#" + (options.Id) + " .csModalHeader").height() + 50);
     if (typeof(cb) === 'function') cb();
 }
 
@@ -395,130 +398,6 @@ Array.prototype.arrayColumn = function(column) {
     }).filter(function(el) { return typeof el != 'undefined'; });
 };
 
-/**
- * 
- * @param {Object}  question 
- * @param {Integer} index 
- * @param {Integer} questionsLength 
- */
-function getQuestionRow(question, index, questionsLength) {
-    //
-    let rows = '';
-    //
-    rows += `<div class="csQuestionRow" data-id="${index}">`;
-    rows += `   <div class="csFeedbackViewBox p10">`;
-    rows += `       <h4 class="bbb pb10">`;
-    rows += `           <span class="csF16 csB7">Question ${index+1}</span>`;
-    rows += `           <span class="csBTNBox">`;
-    if (index != questionsLength) {
-        rows += `           <i class="fa fa-long-arrow-down jsQuestionMoveDown csF16" title="Move down" placement="top"></i>`;
-    }
-    if (index != 0) {
-        rows += `           <i class="fa fa-long-arrow-up jsQuestionMoveUp csF16" title="Move up" placement="top"></i>`;
-    }
-    rows += `           <span>|</span>`;
-    rows += `           <i class="fa fa-clone jsQuestionClone csF16" title="Clone this question" placement="top"></i>`;
-    rows += `           <i class="fa fa-trash jsQuestionDelete csF16"  title="Delete this question" placement="top"></i>`;
-    rows += `           <i class="fa fa-pencil jsQuestionEdit csF16" title="Edit this question" placement="top"></i>`;
-    rows += `           </span>`;
-    rows += `       </h4>`;
-    rows += `       <h4 class="csF16 csB7">${question.title}</h4>`;
-    if (!isEmpty(question.text)) {
-        rows += `       <p class="csF16">${question.text}</p>`;
-    }
-    if (!isEmpty(question.video_help)) {
-        rows += `       <video controls="true" style="width: 250px;"><source src="${question.video_help}" type="video/webm"></source></video><br />`;
-    }
-    //
-    if (question.not_applicable === 1) {
-        rows += '<label class="control control--checkbox csF16 csB1">';
-        rows += '   <input type="checkbox" class="csF16" /> Not Applicable';
-        rows += '   <div class="control__indicator"></div>';
-        rows += '</label><br />';
-    }
-
-    //
-    if ($.inArray(question.question_type, ['text-n-rating', 'rating']) !== -1) {
-        rows += '<ul>';
-        for (let i = 1; i <= question.scale; i++) {
-            rows += '<li>';
-            rows += '   <div class="csFeedbackViewBoxTab">';
-            rows += `       <p class="mb0 csF16">${i}</p>`;
-            if (question.labels_flag === 1) {
-                rows += `   <p class="csF16">${question.label_question[i]}</p>`;
-            }
-            rows += '   </div>';
-            rows += '</li>';
-        }
-        rows += '</ul>';
-    }
-
-    //
-    if ($.inArray(question.question_type, ['multiple-choice-with-text', 'multiple-choice']) !== -1) {
-        rows += '<br /><label class="control control--radio csB1">';
-        rows += `   <input type="radio" class="csF16" name="jsQuestionMultipleChoice${index}" /> Yes`;
-        rows += '   <div class="control__indicator"></div>';
-        rows += '</label> &nbsp;&nbsp;';
-        rows += '<label class="control control--radio csB1">';
-        rows += `   <input type="radio" class="csF16" name="jsQuestionMultipleChoice${index}" /> No`;
-        rows += '   <div class="control__indicator"></div>';
-        rows += '</label>';
-    }
-
-    //
-    if ($.inArray(question.question_type, ['rating', 'multiple-choice']) === -1) {
-        rows += '<div class="csFeedbackViewBoxComment">';
-        rows += '    <div class="row">';
-        rows += '        <div class="col-sm-12 col-xs-12">';
-        rows += '            <h5 class="csF14 csB7">Feedback (Elaborate)</h5>';
-        rows += '            <textarea rows="3" class="form-control csF16"></textarea>';
-        rows += '        </div>';
-        rows += '    </div>';
-        rows += '</div>';
-    }
-
-    //
-    rows += ''
-
-
-    rows += `   </div>`;
-    rows += `</div>`;
-
-    return rows;
-}
-
-/**
- * Object.assign polyfil
- */
-if (typeof Object.assign !== 'function') {
-    // Must be writable: true, enumerable: false, configurable: true
-    Object.defineProperty(Object, "assign", {
-        value: function assign(target, varArgs) { // .length of function is 2
-            'use strict';
-            if (target === null || target === undefined) {
-                throw new TypeError('Cannot convert undefined or null to object');
-            }
-
-            var to = Object(target);
-
-            for (var index = 1; index < arguments.length; index++) {
-                var nextSource = arguments[index];
-
-                if (nextSource !== null && nextSource !== undefined) {
-                    for (var nextKey in nextSource) {
-                        // Avoid bugs when hasOwnProperty is shadowed
-                        if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-                            to[nextKey] = nextSource[nextKey];
-                        }
-                    }
-                }
-            }
-            return to;
-        },
-        writable: true,
-        configurable: true
-    });
-}
 
 /**
  * 
@@ -562,37 +441,6 @@ $(document).on('click', '.jsPageSectionBTN', function(event) {
     $(`.jsPageSection[data-key="${$(this).data().target}"]`).fadeIn(0);
 });
 
-
-/**
- * Get employees list with dnt
- * 
- * @return {Promise}
- */
-function getCompanyEmployees() {
-    return new Promise(function(res) {
-        $.get(`${pm.urls.handler}get/employeeListWithDnT`)
-            .done(function(resp) { res(resp); })
-            .fail(function(resp) {
-                res(getMessage(resp.status, true));
-            });
-    });
-}
-
-/**
- * Get employees list with dnt
- * 
- * @return {Promise}
- */
-function getCompanyAllEmployees() {
-    return new Promise(function(res) {
-        $.get(`${pm.urls.handler}get/get_all_company_employees`)
-            .done(function(resp) { res(resp); })
-            .fail(function(resp) {
-                res(getMessage(resp.status, true));
-            });
-    });
-}
-
 /**
  * 
  */
@@ -600,23 +448,6 @@ function getMeasureSymbol(unit) {
     return unit == 1 ? '%' : (unit == 3 ? '$' : '');
 }
 
-/**
- * 
- */
-function getEmployee(employeeId, index) {
-    if (pm.allEmployees === undefined || pm.allEmployees.length === 0) return {};
-    //
-    let i = 0,
-        il = pm.allEmployees.length;
-    //
-    for (i; i < il; i++) {
-        if (pm.allEmployees[i][index] == employeeId) {
-            return pm.allEmployees[i];
-        }
-    }
-    //
-    return {};
-}
 
 //
 $('.jsCalendarView').click(function(e) {
@@ -632,7 +463,6 @@ $('.jsCalendarView').click(function(e) {
         ml(false, 'jsCalendarLoader')
     });
 });
-
 
 /**
  * 
@@ -701,6 +531,9 @@ $('.jsResetSize').click(function(event) {
     loadFonts();
 });
 
+$('.select2').select2({
+    placeholder: "Please select"
+})
 
 //
 function getFontList() {
@@ -738,14 +571,8 @@ function loadFonts() {
 }
 // Load default fonts
 loadFonts();
-// Get all employees of the company
-getCompanyAllEmployees()
-    .then((resp) => {
-        pm.allEmployees = resp.Data;
-        //
-        pm.allEmployeesOBJ = {};
-        //
-        pm.allEmployees.map(function(v) {
-            pm.allEmployeesOBJ[v.Id] = v;
-        });
-    });
+
+//
+function getRandomId() {
+    return Math.ceil(Math.random(1, 5000) * 1000000);
+}

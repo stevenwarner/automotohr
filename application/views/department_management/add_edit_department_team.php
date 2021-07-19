@@ -70,7 +70,7 @@
                                                         <option value="0">Please Select Team Lead</option>
                                                         <?php foreach ($employees as $key => $employee): ?>
                                                             <option value="<?php echo $employee['sid'] ?>" <?php echo isset($team['team_lead']) && in_array($employee['sid'], explode(',', $team['team_lead']))  ? 'selected="selected"' : ''; ?>>
-                                                                <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
+                                                                <?php echo remakeEmployeeName($employee); ?>
                                                             </option>
                                                         <?php endforeach ?>
                                                     </select>
@@ -87,7 +87,7 @@
                                                     <select name="approvers[]" class="invoice-fields" id="approvers_id" multiple="true">
                                                         <?php foreach ($employees as $key => $employee): ?>
                                                             <option value="<?php echo $employee['sid'] ?>" <?php echo isset($team['approvers']) && in_array($employee['sid'], explode(',', $team['approvers']))  ? 'selected="selected"' : ''; ?>>
-                                                                <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
+                                                            <?php echo remakeEmployeeName($employee); ?>
                                                             </option>
                                                         <?php endforeach ?>
                                                     </select>
@@ -106,7 +106,7 @@
                                                         <option value="0">Please Select Team Lead</option>
                                                         <?php foreach ($employees as $key => $employee): ?>
                                                             <option value="<?php echo $employee['sid'] ?>" <?php echo isset($team['reporting_managers']) && in_array($employee['sid'], explode(',', $team['reporting_managers']))  ? 'selected="selected"' : ''; ?>>
-                                                                <?php echo $employee['first_name'].' '.$employee['last_name'].' ('.( remakeAccessLevel($employee) ).')'; ?>
+                                                                <?php echo remakeEmployeeName($employee); ?>
                                                             </option>
                                                         <?php endforeach ?>
                                                     </select>

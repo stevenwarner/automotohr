@@ -35,13 +35,11 @@
                     switch (opt) {
                         case "get":
                             return instances[_this.selector];
+                        case "clear":
+                            return delete instances[_this.selector];
                     }
                     return;
                 }
-                //
-                // console.log('start_check');  
-                // console.log(instances[_this.selector]);
-                // console.log('end check');
                 //
                 let
                     oFile = {},
@@ -52,13 +50,9 @@
                 //
                 instances[_this.selector] = oFile;
                 //
-                // console.log(instances);
-                // alert('please check console');
-                // return;
-                //
                 options['s3'] = opt !== undefined && opt.s3 || `https://automotohrattachments.s3.amazonaws.com/`;
+                options['path'] = opt.path === undefined ? true : opt.path;
                 options['placeholderImage'] = opt !== undefined && opt.placeholderImage || '';
-                //        options['fileLimit'] =  opt !== undefined && opt.fileLimit || '2MB';
                 options['fileLimit'] = $.inArray('mp4', opt.allowedTypes) === -1 ? -1 : opt.fileLimit;
                 options['allowedTypes'] = opt !== undefined && opt.allowedTypes || ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv']
                 options['text'] = opt !== undefined && opt.text || `Click / Drag to upload`;
@@ -294,7 +288,7 @@
                 $(`#${options['jsMFUPreviewFile']}`).data('key').match(/data:/) === null
             ){
                 filename = $(`#${options['jsMFUPreviewFile']}`).data('key');
-                fullFileName = options['s3']+filename;
+                fullFileName = options['path'] ? options['s3']+filename : filename;
             } else{
                 filename = oFile.name;
                 fullFileName = $(`#${options['jsMFUPreviewFile']}`).data('key');
@@ -339,12 +333,12 @@
             if($(this).data('key').match(/data:/) === null){
                 filename = $(this).data('key');
                 extension = getFileExtension(filename);
-                fullFileName = options['s3']+filename;
+                fullFileName = options['path'] ? options['s3']+filename : filename;
                 //
                 if($.inArray(extension, ['xls', 'xlsx', 'ppt', 'pptx', 'doc', 'docx', 'rtf', 'csv']) !== -1) tag = `<iframe frameborder="0" width="100%" height="600" class="jsMFUIframe" src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURI(fullFileName)}"></iframe>`;
                 else if($.inArray(extension, ['png', 'jpg', 'jpeg', 'gif', 'svg']) !== -1) tag = `<img class="img-responsive" src="${fullFileName}" />`;
-                else if($.inArray(extension, ['mp4']) !== -1) tag = `<video class="img-responsive" src="${fullFileName}" controls></video>`;
-                else tag = `<iframe frameborder="0" width="100%" height="600" class="jsMFUIframe" src="https://docs.google.com/gview?url=${fullFileName}&embedded=true"></iframe>`;
+                else if($.inArray(extension, ['mp4']) !== -1) tag = `<video style="width: 100%;" class="img-responsive" src="${fullFileName}" controls></video>`;
+                else tag = `<iframe frameborder="0" style="width: 100%; height: 600px;" class="jsMFUIframe" src="https://docs.google.com/gview?url=${fullFileName}&embedded=true"></iframe>`;
             } else {
                 filename = oFile.name;
                 extension = getFileExtension();
@@ -352,7 +346,7 @@
                 //
                 if($.inArray(extension, ['png', 'jpg', 'jpeg', 'gif', 'svg']) !== -1) tag = `<img class="img-responsive" src="${fullFileName}" />`;
                 else if($.inArray(extension, ['mp4']) !== -1) tag = `<video class="img-responsive" src="${fullFileName}" controls></video>`;
-                else tag = `<iframe frameborder="0" width="100%" height="600" class="jsMFUIframe" src="${fullFileName}"></iframe>`;
+                else tag = `<iframe frameborder="0" style="width: 100%; height: 600px;" class="jsMFUIframe" src="${fullFileName}"></iframe>`;
             }
             // Geneate and load modal on dom
             const modalHTML = generateModalHTML(tag, filename);

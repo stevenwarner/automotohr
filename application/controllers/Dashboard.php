@@ -454,13 +454,11 @@ class Dashboard extends Public_Controller {
             $this->load->model('timeoff_model');
 
             $data['timeOffDays'] = $this->timeoff_model->getTimeOffDays($data['session']['company_detail']['sid']);
-
-
-            // 
+            //
             $data['theme'] = 2;
             //
             $this->load->model('performance_management_model', 'pmm');
-            $data['review'] = 0;
+            $data['review'] = $this->pmm->getMyReviewCounts($data['session']['company_detail']['sid'], $employer_id);
             $data['total_goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
 
             //

@@ -12741,11 +12741,11 @@ if(!function_exists('getImageURL')){
  * 
  */
 if(!function_exists('getVideoURL')){
-    function getVideoURL($id, $qid, $module = 'performance_management') {
+    function getVideoURL($id, $video_url, $module = 'performance_management') {
         switch($module):
             case "performance_management":
-                if(file_exists(APPPATH."../assets/performance_management/videos/{$id}/video_".($qid).".webm"))
-                    return base_url("assets/performance_management/videos/{$id}/video_".($qid).".webm");
+                if(file_exists(APPPATH."../assets/performance_management/videos/{$id}/{$video_url}"))
+                    return base_url("assets/performance_management/videos/{$id}/{$video_url}");
                 else
                     return FALSE;
             break;
@@ -12758,7 +12758,7 @@ if(!function_exists('getVideoURL')){
  * 
  */
 if(!function_exists('getDueText')){
-    function getDueText($endDate) {
+    function getDueText($endDate, $full = false) {
         $endDate .= ' 23:59:59';
         $startDate = date('Y-m-d 23:59:59', strtotime('now'));
         $now = new DateTime($startDate);
@@ -13622,5 +13622,76 @@ if (!function_exists('getTeamNameBySID')) {
         } 
 
         return $teamName;
+    }
+}
+
+
+if(!function_exists('addTimeToDate')){
+    function addTimeToDate(
+        $date,
+        $add,
+        $format = 'Y-m-d'
+    ){
+        $date = new DateTime($date);
+        $date->add(new DateInterval("P{$add}"));
+        return $date->format($format);
+    }
+}
+
+/**
+ * Get time off button
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/07/2021
+ * 
+ * @param Array  $replaceArray
+ * 
+ * @return String
+ */
+if(!function_exists('getButtonForEmail')){
+    function getButtonForEmail($replaceArray){
+        return
+            str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 5px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
+        {{text}}             
+        </a>');
+    }
+}
+
+
+if(!function_exists('getCompletedPercentage')){
+    function getCompletedPercentage($records, $type, $returnAll = false){
+        //
+        if(empty($records)){
+            return 0;
+        }
+        //
+        $percentage = 0;
+        $total = 0;
+        $completed = 0;
+        //
+        foreach($records as $reviewee){
+            foreach($reviewee['reviewers'] as $reviewer){
+                //
+                if($type == 'manager' && $reviewer['is_manager'] == 0){
+                    continue;
+                }
+                //
+                $total++;
+                //
+                if($reviewer['is_completed']){
+                    $completed++;
+                }
+            }
+        }
+        //
+        if($returnAll){
+            return [
+                'total' => $total,
+                'completed' => $completed,
+                'percentage' => ceil($completed*$total/100)
+            ];
+        }
+        //
+        return ceil($completed*$total/100);
     }
 }

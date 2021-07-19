@@ -1252,40 +1252,6 @@ $route['manage_admin/timeoff/icons'] = 'manage_admin/Time_off/icons';
 $route['manage_admin/timeoff/handler'] = 'manage_admin/Time_off/handler';
 $route['timeoff/public/(:any)'] = 'Time_off/public_action/$1';
 
-/**
- * Performance Mnagement - Routes
- * 
- * @employee Mubashir Ahmed
- * @date     02/02/2021
- */
-$route['performance-management/dashboard'] = 'Performance_management/dashboard';
-$route['performance-management/reviews'] = 'Performance_management/reviews';
-$route['performance-management/review/(:num)'] = 'Performance_management/review/$1';
-$route['performance-management/feedback/(:num)/(:num)'] = 'Performance_management/feedback/$1/$2';
-$route['performance-management/reviewer_feedback/(:num)/(:num)'] = 'Performance_management/reviewer_feedback/$1/$2';
-$route['performance-management/review/create'] = 'Performance_management/create_review';
-$route['performance-management/review/create/(:num)'] = 'Performance_management/create_review/$1';
-$route['performance-management/report'] = 'Performance_management/report';
-// Goals
-$route['performance-management/goal/create'] = 'Performance_management/create_goal';
-$route['performance-management/goals'] = 'Performance_management/goals';
-// Handler
-$route['performance-management/handler'] = 'Performance_management/handler';
-$route['performance-management/handler/get/(.+)'] = 'Performance_management/get_handler';
-$route['performance-management/handler/post'] = 'Performance_management/post_handler';
-// LMS
-$route['performance-management/lms/goals'] = 'Performance_management/lms_goals';
-$route['performance-management/lms/reviews'] = 'Performance_management/lms_reviews';
-$route['performance-management/employee/goals/(:num)'] = 'Performance_management/gp_goals/$1';
-$route['performance-management/employee/reviews/(:num)'] = 'Performance_management/gp_reviews/$1';
-$route['performance-management/download/(:any)/(:num)/(:num)/(:num)'] = 'Performance_management/download/$1/$2/$3/$4';
-//
-$route['performance-management/employee/review/(:num)/(:num)'] = 'Performance_management/gp_review/$1/$2';
-$route['performance-management/employee/review/(:num)/(:num)/(:num)'] = 'Performance_management/gp_review/$1/$2/$3';
-//
-$route['performance-management/report'] = 'Performance_management/report';
-$route['performance-management/report/(:any)/(:any)/(:any)/(:any)'] = 'Performance_management/report/$1/$2/$3/$4';
-
 // Sync
 $route['sync_jobs']['cli'] = 'Testing/sj';
 $route['sync_applicants']['cli'] = 'Testing/sja';
@@ -1311,3 +1277,46 @@ $route['auto_email_reminder/(:any)']['cli'] = 'Cron_common/auto_email_reminder/$
 $route['send_eeoc_form'] = 'Hr_documents_management/send_eeoc_form';
 $route['eeoc_form/(:any)']['get'] = 'Home/eeoc_form/$1';
 $route['eeoc_form_submit']['post'] = 'Home/eeoc_form_submit';
+
+/**
+ * Performance Mnagement - Routes
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/02/2021
+ */
+// Overview
+$route['performance-management/dashboard'] = 'Performance_management/dashboard';
+// Create
+$route['performance-management/review/create'] = 'Performance_management/create_review';
+$route['performance-management/review/create/(:num)'] = 'Performance_management/create_review/$1';
+// Report
+$route['performance-management/report'] = 'Performance_management/report';
+$route['performance-management/report/(:any)/(:any)/(:any)/(:any)'] = 'Performance_management/report/$1/$2/$3/$4';
+//
+$route['performance-management/review/(:num)']['get'] = 'Performance_management/SingleReview/$1';
+$route['performance-management/review/(:num)/(:num)/(:num)']['get'] = 'Performance_management/review/$1/$2/$3';
+$route['performance-management/feedback/(:num)/(:num)/(:num)']['get'] = 'Performance_management/feedback/$1/$2/$3';
+//
+$route['performance-management/reviews'] = 'Performance_management/reviews';
+$route['performance-management/my-reviews'] = 'Performance_management/MyReviews';
+
+// AJAX
+$route['performance-management/get-template-questions/(:any)/(:num)']['get'] = 'Performance_management/template_questions/$2/$1';
+$route['performance-management/get-single-template/(:any)/(:num)']['get'] = 'Performance_management/single_template/$2/$1';
+$route['performance-management/save_review_step']['post'] = 'Performance_management/SaveReviewStep';
+$route['performance-management/save_answer']['post'] = 'Performance_management/SaveFeedbackAnswer';
+$route['performance-management/upload_question_file']['post'] = 'Performance_management/UploadQuestionAttachment';
+$route['performance-management/get_reviewee_reviewes/(:num)/(:num)']['get'] = 'Performance_management/GetReviewReviewers/$1/$2';
+$route['performance-management/save_review_reviewers']['post'] = 'Performance_management/UpdateRevieweeReviewers';
+$route['performance-management/archive_review']['post'] = 'Performance_management/ArchiveReview';
+$route['performance-management/activate_review']['post'] = 'Performance_management/ActivateReview';
+$route['performance-management/stop_review']['post'] = 'Performance_management/StopReview';
+$route['performance-management/start_review']['post'] = 'Performance_management/StartReview';
+$route['performance-management/stop_reviewee_review']['post'] = 'Performance_management/StopReviweeReview';
+$route['performance-management/start_reviewee_review']['post'] = 'Performance_management/StartReviweeReview';
+$route['performance-management/update_reviewee']['post'] = 'Performance_management/UpdateReviewee';
+// Cron
+// Replicate and Start/End cron job
+$route['review_start_and_replicate/(:any)']['cli'] = 'Cron_common/PMMCronStartAndEndReplicate/$1';
+// Send reminder emails
+$route['review_reminder_emails/(:any)']['cli'] = 'Cron_common/SendNotificationEmails/$1';

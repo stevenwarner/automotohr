@@ -132,4 +132,310 @@ class Cron_common extends CI_Controller{
         log_and_sendEmail($from_email, $user_detail['email'], $subject, $body, $from_name);
     }
 
+
+    /**
+     * 
+     */
+    function PMMCronStartAndEndReplicate($verificationToken){
+        //
+        if($verificationToken != $this->verifyToken){
+            echo "All done!";
+            exit(0);
+        }
+        //
+        $this->load->model('performance_management_model', 'pmm');
+        //
+        $records = $this->pmm->GetReviewsForCron();
+        //
+        if(empty($records)){
+            exit(0);
+        }
+        //
+        $now = date('Y-m-d', strtotime('now'));
+        //
+        foreach($records as $record){
+            //
+            $insertArray = [];
+            //
+            if(isset($reviewId)){ unset($reviewId); }
+            //
+            if(isset($activeRecord)){ unset($activeRecord); }
+            // Case 3
+            if($record['frequency'] == 'custom'){
+                //
+                $activeRecord = $record;
+                //
+                $customRuns = json_decode($activeRecord['review_runs'], true);
+                //
+                $dueIn = $activeRecord['review_due'];
+                //
+                $dueInType = $activeRecord['review_due_type'];
+                //
+                if($dueInType == 'days'){ $dueInType = 'D' ;}
+                else if($dueInType == 'weeks'){ $dueInType = 'W' ;}
+                else if($dueInType == 'months'){ $dueInType = 'M' ;}
+                //
+                $repeat = $activeRecord['repeat_review']; // todo
+                //
+                $employeesList = array_diff(explode(',', $activeRecord['included_employees']), explode(',', $activeRecord['excluded_employees']));
+                //
+                $employeesList = $this->pmm->GetEmployeeColumns($employeesList, ['sid', 'joined_at']);
+                //
+                $selectedEmployees = [];
+                //
+                $i = 0;
+                //
+                foreach($employeesList as $employee){
+                    //
+                    foreach($customRuns as $run){
+                        //
+                        if($run['type'] == 'days'){ $run['type'] = 'D' ;}
+                        else if($run['type'] == 'weeks'){ $run['type'] = 'W' ;}
+                        else if($run['type'] == 'months'){ $run['type'] = 'M' ;}
+                        //
+                        $runDate = addTimeToDate($employee['joined_at'], "{$run['value']}{$run['type']}", 'Y-m-d');
+                        //
+                        if($runDate == $now){
+                            $selectedEmployees[] = $employee['sid'];
+                            break;
+                        }
+                    }
+                }
+
+                //
+                if(!empty($selectedEmployees)){
+                    // Insert new record here
+                    $insertArray = $activeRecord;
+                    $insertArray['parent_review_sid'] = $record['sid'];
+                    $insertArray['review_start_date'] = $now;
+                    $insertArray['review_end_date'] = addTimeToDate($insertArray['review_start_date'], "{$dueIn}{$dueInType}", 'Y-m-d');
+                    $insertArray['included_employees'] = implode(',', $selectedEmployees);
+                    $insertArray['excluded_employees'] = '';
+                    //
+                    unset($insertArray['Cycles']);
+                    unset($insertArray['sid']);
+                    //
+                    $reviewId = $this->pmm->InsertReview($insertArray);
+                }
+            }
+            // Case 2
+            if($record['frequency'] == 'recurring'){
+
+                // Lets check for sub record
+                if(!empty($record['Cycles'])){ // Sub record found
+                    $activeRecord = $record['Cycles'][0];
+                } else{ // Sub record not found
+                    $activeRecord = $record;
+                }
+                //
+                $repeatValue = $activeRecord['repeat_after'];
+                //
+                $repeatType = $activeRecord['repeat_type'];
+                //
+                if($repeatType == 'days'){ $repeatType = 'D' ;}
+                else if($repeatType == 'weeks'){ $repeatType = 'W' ;}
+                else if($repeatType == 'months'){ $repeatType = 'M' ;}
+                //
+                $compareDate = addTimeToDate($activeRecord['review_end_date'], "{$repeatValue}{$repeatType}", 'Y-m-d');
+                //
+                if(date('Y-m-d', strtotime('now')) == $compareDate){
+                    // Insert new record here
+                    $insertArray = $activeRecord;
+                    $insertArray['parent_review_sid'] = $record['sid'];
+                    $insertArray['review_start_date'] = date('Y-m-d', strtotime('now'));
+                    $insertArray['review_end_date'] = addTimeToDate($insertArray['review_start_date'], "{$repeatValue}{$repeatType}", 'Y-m-d');
+                    //
+                    unset($insertArray['Cycles']);
+                    unset($insertArray['sid']);
+                    //
+                    $reviewId = $this->pmm->InsertReview($insertArray);
+                }
+            }
+
+            // Add reviewers and reviewees
+            if(isset($reviewId)){
+                // Get the review
+                $review = $this->pmm->GetReviewRowById($reviewId, $activeRecord['company_sid']);
+
+                // Set the questions
+                $questions = json_decode($review['questions'], true);
+                //
+                $ins = [];
+                //
+                foreach($questions as $question){
+                    //
+                    $ins[] = [
+                        'review_sid' => $review['reviewId'],
+                        'question_type' => $question['question_type'],
+                        'question' => json_encode($question),
+                        'created_at' => $now
+                    ];
+                }
+                //
+                $this->pmm->insertReviewQuestions($ins);
+
+                // Set reviwees
+                //
+                $ins = [];
+                //
+                $reviewees = explode(',', $review['included']);
+                //
+                foreach($reviewees as $reviewee){
+                    //
+                    $ins[] = [
+                        'review_sid' => $review['reviewId'],
+                        'reviewee_sid' => $reviewee,
+                        'start_date' => $review['start_date'],
+                        'end_date' => $review['end_date'],
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'is_started' => 0
+                    ];
+                }
+                //
+                $this->pmm->insertReviewReviewees($ins);
+
+
+                // Set reviwers
+                //
+                $ins = [];
+                //
+                $reviewers = json_decode($review['reviewers'], true);
+                //
+                foreach($reviewers['reviewees'] as $reviewee => $reviewer){
+                    //
+                    $newReviewers = array_diff($reviewer['included'], isset($reviewer['excluded']) ? $reviewer['excluded'] : []);
+                    //
+                    foreach($newReviewers as $newReviewer){
+                        //
+                        $ins[] = [
+                            'review_sid' => $review['reviewId'],
+                            'reviewee_sid' => $reviewee,
+                            'reviewer_sid' => $newReviewer,
+                            'added_by' => 0,
+                            'created_at' => $now,
+                            'is_manager' => $this->pmm->isManager($reviewee, $newReviewer, $activeRecord['company_sid']),
+                            'is_completed' => 0
+                        ];
+                    }
+                }
+                //
+                $this->pmm->insertReviewReviewers($ins);
+            }
+
+            // Lets check for sub record
+            if(!empty($record['Cycles'])){ // Sub record found
+                $activeRecord = $record['Cycles'][0];
+            } else{ // Sub record not found
+                $activeRecord = $record;
+            }
+
+            // Start and end reviews
+            // Review will start
+            if($activeRecord['review_start_date'] == $now && $activeRecord['review_end_date'] > $now){
+                $this->pmm->UpdateReview(['status' => "started"], $activeRecord['sid']);
+                //
+            }
+            
+            // Review will end
+            if($activeRecord['review_end_date'] <= $now){
+                $this->pmm->UpdateReview(['status' => "ended"], $activeRecord['sid']);
+            }
+            // Check and start/end reviews 
+            $this->pmm->CheckAndStartEndReviewees($now, $activeRecord['sid']);
+        }
+
+        //
+        echo "All done";
+        exit(0);
+    }
+
+
+    /**
+     * 
+     */
+    function SendNotificationEmails($verificationToken){
+        //
+        if($verificationToken != $this->verifyToken){
+            echo "All done!";
+            exit(0);
+        }
+        //
+        $this->load->model('performance_management_model', 'pmm');
+        //
+        $toArray = [];
+        //
+        $this->getEmployeesForNotification(7, $toArray);
+        $this->getEmployeesForNotification(3, $toArray);
+        $this->getEmployeesForNotification(1, $toArray);
+        //
+        if(empty($toArray)){
+            echo "All Done!";
+            exit(0);
+        }
+        // Get template
+        $template = get_email_template(REVIEW_EXPIRING);
+        //
+        foreach($toArray as $record){
+            //
+            $hf = message_header_footer($record['companyId'], $record['companyName']);
+            //
+            $indexes = array_keys($record['replace']);
+            //
+            $subject = str_replace($indexes, $record['replace'], $template['subject']);
+            //
+            $body = $hf['header'].str_replace($indexes, $record['replace'], $template['text']).$hf['footer'];
+            //
+            log_and_sendEmail(
+                $template['from_email'],
+                $record['email'],
+                $subject,
+                $body,
+                $record['name']
+            );
+            //
+            usleep(100);
+        }
+        //
+        echo "All Done!";
+        exit(0);
+    }
+
+    /**
+     * 
+     */
+    private function getEmployeesForNotification($days, &$toArray){
+        //
+        $records = $this->pmm->GetEmployeesForNotificationEmailByDays($days);
+        //
+        if(!empty($records)){
+            foreach($records as $record) {
+                //
+                $reviewPeriod = formatDateToDB($record['start_date'], 'Y-m-d', 'M d Y, D');
+                $reviewPeriod .= ' - '.formatDateToDB($record['end_date'], 'Y-m-d', 'M d Y, D');
+                //
+                $link = base_url("performance-management/".($record['is_manager'] ? "feedback" : "review")."/".($record['sid'])."/".($record['reviewee_sid'])."/".($record['reviewer_sid'])."");
+                //
+                // Set replace array 
+                $replaceArray = [];
+                $replaceArray['{{first_name}}'] = ucwords($record['first_name']);
+                $replaceArray['{{last_name}}'] = ucwords($record['last_name']);
+                $replaceArray['{{expiring_days}}'] = $days;
+                $replaceArray['{{review_title}}'] = ucwords($record['review_title']);
+                $replaceArray['{{review_period}}'] = $reviewPeriod;
+                $replaceArray['{{reviewee_first_name}}'] = ucwords($record['reviewer_first_name']);
+                $replaceArray['{{reviewee_last_name}}'] = ucwords($record['reviewer_last_name']);
+                $replaceArray['{{link}}'] = getButtonForEmail(['{{url}}' => $link, '{{text}}' => 'Complete The Review', '{{color}}'=> '#0000ff']);
+                //
+                $toArray[] = [
+                    "companyId" => $record['company_sid'],
+                    "companyName" => ucwords(strtolower(trim($record['company_name']))),
+                    "email" => strtolower(trim($record['reviewer_email'])),
+                    "name" => ucwords(strtolower(trim($record['reviewer_first_name'].' '.$record['reviewer_last_name']))),
+                    "replace" => $replaceArray
+                ];
+            }
+        }
+    }
+
 }

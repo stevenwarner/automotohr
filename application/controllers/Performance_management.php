@@ -22,8 +22,6 @@ class Performance_management extends Public_Controller{
     private $pargs;
     //
     private $resp = [];
-    //
-    private $tables = [];
 
     /**
      * Contructor
@@ -35,33 +33,17 @@ class Performance_management extends Public_Controller{
         //
         parent::__construct();
         //
-        $this->tables = [
-            'PM' => 'performance_management',
-            'PMT' => 'performance_management_templates',
-            'PMCT' => 'performance_management_company_templates',
-            'USER' => 'users',
-            'DM' => 'departments_management',
-            'DTM' => 'departments_team_management',
-            'DME' => 'departments_employee_2_team',
-            'PMR' => 'performance_management_reviewees',
-            'PMRV' => 'performance_management_reviewers',
-            'PMQ' => 'performance_management_review_questions',
-            'G' => 'goals',
-            'GC' => 'goal_comments',
-            'GH' => 'goal_history',
-        ];
-        //
         $this->pargs = [];
         // Load helper
-        $this->load->helper($this->tables['PM']);
+        $this->load->helper('performance_management');
         // Load modal
-        $this->load->model('performance_management_model', 'pmm', TRUE, $this->tables);
+        $this->load->model('performance_management_model', 'pmm');
         // Load user agent
         $this->load->library('user_agent');
         //
         $this->mp = $this->agent->is_mobile() ? '' : '';
         //
-        $this->pp = 'Performance_management/theme1/';
+        $this->pp = 'Performance_management/theme2/';
         //
         $this->pargs['pp'] = $this->pp;
         //
@@ -70,6 +52,9 @@ class Performance_management extends Public_Controller{
             'Redirect' => TRUE,
             'Response' => 'Invalid request'
         ];
+        //
+        $this->header = 'main/header';
+        $this->footer = 'main/footer';
     }
 
     /**
@@ -85,37 +70,22 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Dashboard';
-        // Get department & teams list
-        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // // Get Assigned Reviews 
+        $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 0);
+        $this->pargs['FeedbackReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1);
         //
-        if(!empty($employees)){
-            foreach($employees as $employee){
-                $this->pargs['employees'][$employee['Id']] = [
-                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
-                    'role' => $employee['FullRole'],
-                    'img' => getImageURL($employee['Image'])
-                ];
-            }
-        }
-        // Get goals 
-        $this->pargs['goals'] = $this->pmm->getGoals($this->pargs['employerId']);
-        // Get Assigned Reviews 
-        $this->pargs['assignedReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'assigned');
-        $this->pargs['feedbackReviews'] = $this->pmm->getReviewsByType($this->pargs['employerId'], 'feedback');
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-        // My goals
-
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}{$this->mp}dashboard", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}dashboard");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
     }
     
-    
+   
     /**
      * Reviews
      * 
@@ -129,16 +99,862 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Reviews';
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $type = $this->input->get('type', true) ? $this->input->get('type', true) : 'active';
+        //
+        $this->pargs['type'] = $type;
+        //
+        $this->pargs['reviews'] = $this->pmm->GetAllReviews(
+            $this->pargs['employerId'], 
+            $this->pargs['employerRole'], 
+            $this->pargs['level'], 
+            $this->pargs['companyId'],
+            null,
+            $type
+        );
 
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}reviews/{$this->mp}index", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}reviews");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    /**
+     * Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function MyReviews(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Reviews';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['reviews'] = $this->pmm->GetAllMyReviews(
+            $this->pargs['employerId']
+        );
+
+        // _e($this->pargs['reviews'], true, true);
+
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}my_reviews/reviews");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+   
+    /**
+     * Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function SingleReview($id){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Reviews';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $type = $this->input->get('type', true) ? $this->input->get('type', true) : 'active';
+        //
+        $this->pargs['type'] = $type;
+        //
+        $this->pargs['review'] = $this->pmm->GetReviewById(
+            $id
+        );
+
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}single_review/single_review");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+    
+    /**
+     * Review
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function review($reviewId, $revieweeId, $reviewerId){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Feedback';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        //
+        $this->pargs['review'] = $this->pmm->GetReviewByReviewer($reviewId, $revieweeId, $reviewerId);
+        //
+        $this->pargs['reviewId'] = $reviewId;
+        $this->pargs['revieweeId'] = $revieweeId;
+        $this->pargs['reviewerId'] = $reviewerId;
+        //
+        $this->pargs['selectedPage'] = $this->input->get('page', true) ? $this->input->get('page', true) : 1;
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}feedback/review");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    /**
+     * Review
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function feedback($reviewId, $revieweeId, $reviewerId){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Feedback';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        //
+        $this->pargs['review'] = $this->pmm->GetReviewByReviewer($reviewId, $revieweeId, $reviewerId);
+        //
+        $this->pargs['reviewId'] = $reviewId;
+        $this->pargs['revieweeId'] = $revieweeId;
+        $this->pargs['reviewerId'] = $reviewerId;
+        //
+        $this->pargs['selectedPage'] = $this->input->get('page', true) ? $this->input->get('page', true) : 1;
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}feedback/feedback");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    /**
+     * Create Review
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function create_review($id = 0){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Dashboard';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->GetMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        // Set company department and teams
+        $this->pargs['company_dt'] = $this->pmm->GetCompanyDepartmentAndTeams($this->pargs['companyId']);
+        // Set system provided templates
+        $this->pargs['system_templates'] = $this->pmm->GetCompanyTemplates();
+        // Set company generated templates
+        $this->pargs['company_templates'] = $this->pmm->GetPersonalTemplates($this->pargs['companyId']);
+        // Get Review
+        $this->pargs['review'] = $this->pmm->GetReviewRowById($id, $this->pargs['companyId']);
+        //
+        if($id !== 0 &&$this->pargs['review']['is_draft'] == 0){
+            redirect('performance-management/reviews','refresh');
+            return;
+        }
+        
+        // Set Job titles
+        $this->pargs['job_titles'] = array_filter(array_unique(array_column($this->pargs['company_employees'], 'JobTitle')), function($job){
+            if(!empty($job)) {
+                return 1;
+            }
+        });
+        //
+        sort($this->pargs['job_titles']);
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}create_review/create");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    
+
+    // AJAX REQUESTS
+
+    /**
+     * 
+     */
+    function template_questions($id, $type){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        if($type == 'company'){
+            // Set system provided templates
+            $template = $this->pmm->GetSingleCompanyTemplates($id, 'questions');
+            // Set company generated templates
+        } else if($type == 'personal'){
+            $template = $this->pmm->GetSinglePersonalTemplates($id, 'questions');
+            
+        } else{
+            $this->res([], true);
+        }
+
+        //
+        $this->load->view($this->pp.'create_review/template_questions_view', ['questions' => json_decode($template['questions'])]);
+    }
+
+    /**
+     * 
+     */
+    function single_template($id, $type){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        if($type == 'company'){
+            // Set system provided templates
+            $template = $this->pmm->GetSingleCompanyTemplates($id, ['name', 'questions']);
+            // Set company generated templates
+        } else if($type == 'personal'){
+            $template = $this->pmm->GetSinglePersonalTemplates($id, ['name', 'questions']);
+        } else{
+            $this->res([], true);
+        }
+        //
+        $template['questions'] = json_decode($template['questions'], true);
+
+        //
+        $this->res(['data' => $template]);
+    }
+    
+    /**
+     * 
+     */
+    function SaveFeedbackAnswer(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(null, true);
+        //
+        $questionId = $this->pmm->CheckAndSaveAnswer(
+            $post['reviewId'],
+            $post['revieweeId'],
+            $post['reviewerId'],
+            $post['questionId'],
+            $post
+        );
+        //
+        $this->res(['Status' => true, "Id" => $questionId]);
+    }
+    
+    
+    /**
+     * 
+     */
+    function GetReviewReviewers($reviewId, $revieweeId){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $reviewers = $this->pmm->GetReviewReviewers($reviewId, $revieweeId);
+        //
+        $this->res(['Status' => true, "Data" => $reviewers]);
+    }
+   
+    /**
+     * 
+     */
+    function UpdateRevieweeReviewers(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->CheckAndInsertReviewee($post['reviewId'], $post['revieweeId']);
+        //
+        $insertArray = [];
+        //
+        foreach($post['reviewerIds'] as $reviewer){
+            //
+            $insertArray[] = [
+                'review_sid' => $post['reviewId'],
+                'reviewee_sid' => $post['revieweeId'],
+                'reviewer_sid' => $reviewer,
+                'created_at' => date("Y-m-d H:i:s", strtotime("now")),
+                'is_manager' => 0,
+                'is_completed' => 0
+            ];
+        }
+        //
+        $this->pmm->UpdateRevieweeReviewers($insertArray);
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function ArchiveReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->MarkReviewAsArchived($post['reviewId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    
+    /**
+     * 
+     */
+    function ActivateReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->MarkReviewAsActive($post['reviewId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function StopReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->StopReview($post['reviewId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function StartReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->StartReview($post['reviewId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    
+    /**
+     * 
+     */
+    function StopReviweeReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->StopReviweeReview($post['reviewId'], $post['revieweeId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function StartReviweeReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->StartReviweeReview($post['reviewId'], $post['revieweeId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function UpdateReviewee(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $currentReviewers = $this->pmm->GetReviewReviewers($post['reviewId'], $post['revieweeId']);
+        //
+        $newReviewers = array_diff($post['reviwers'], $currentReviewers);
+        $deletedReviewers = array_diff($currentReviewers, $post['reviwers']);
+        //
+        if(!empty($deletedReviewers)){
+            $this->pmm->DeleteRevieweeReviewers($post['reviewId'], $post['revieweeId'],$deletedReviewers);
+        }
+        //
+        if(!empty($newReviewers)){
+            $this->pmm->AddRevieweeReviewers($post['reviewId'], $post['revieweeId'],$newReviewers);
+        }
+        //
+        $this->pmm->UpdateRevieweeDates($post['reviewId'], $post['revieweeId'], $post);
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function SaveReviewStep(){
+        //
+        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        $pargs = [];
+        //
+        $this->checkLogin($pargs);
+        //
+        switch($post['step']):
+            case "ReviewStep1":
+                // Set data array
+                $data_array = [];
+                //
+                if(empty($post['data']['title'])){
+                    //
+                    $resp['Msg'] = "The review title is missing.";
+                    $this->res($resp);
+                }
+                //
+                if(empty($post['data']['frequency_type'])){
+                    //
+                    $resp['Msg'] = "The frequency is missing.";
+                    $this->res($resp);
+                }
+                //
+                if(
+                    ($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring') &&
+                    (empty($post['data']['start_date']) || empty($post['data']['end_date']))
+                ){
+                    //
+                    $resp['Msg'] = "The review start and end dates are missing.";
+                    $this->res($resp);
+                }
+                //
+                if(
+                    $post['data']['frequency_type'] == 'recurring' &&
+                    (empty($post['data']['recur_value']) || $post['data']['recur_value'] == 0)
+                ){
+                    //
+                    $resp['Msg'] = "The recur value is missing.";
+                    $this->res($resp);
+                }
+                //
+                if(
+                    $post['data']['frequency_type'] == 'custom' &&
+                    (empty($post['data']['review_due_value']) || $post['data']['review_due_value'] == 0)
+                ){
+                    //
+                    $resp['Msg'] = "The review due value is missing.";
+                    $this->res($resp);
+                }
+                //
+                if(
+                    $post['data']['frequency_type'] == 'custom' &&
+                    empty($post['data']['custom_runs']) 
+                ){
+                    //
+                    $resp['Msg'] = "Please add at least one custom run.";
+                    $this->res($resp);
+                }
+                //
+                if($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring'){
+                    $data_array['review_start_date'] = formatDateToDB($post['data']['start_date']);
+                    $data_array['review_end_date'] = formatDateToDB($post['data']['end_date']);
+                }
+                //
+                if($post['data']['frequency_type'] == 'recurring'){
+                    $data_array['repeat_after'] = $post['data']['recur_value'];
+                    $data_array['repeat_type'] = $post['data']['recur_type'];
+                }
+                //
+                if($post['data']['frequency_type'] == 'custom'){
+                    $data_array['review_due_type'] = $post['data']['review_due_type'];
+                    $data_array['review_due'] = $post['data']['review_due_value'];
+                    $data_array['repeat_review'] = $post['data']['repeat_review'];
+                    $data_array['review_runs'] = json_encode($post['data']['custom_runs']);
+                }
+                //
+                $data_array['review_title'] = $post['data']['title'];
+                $data_array['description'] = $post['data']['description'];
+                $data_array['frequency'] = $post['data']['frequency_type'];
+                //
+                if(isset($post['data']['roles'])){
+                    $data_array['visibility_roles'] = implode(',', $post['data']['roles']);
+                }
+                if(isset($post['data']['departments'])){
+                    $data_array['visibility_departments'] = implode(',', $post['data']['departments']);
+                }
+                if(isset($post['data']['teams'])){
+                    $data_array['visibility_teams'] = implode(',', $post['data']['teams']);
+                }
+                if(isset($post['data']['employees'])){
+                    $data_array['visibility_employees'] = implode(',', $post['data']['employees']);
+                }
+                
+                if(isset($post['data']['questions'])){
+                    //
+                    $questions = [];
+                    //
+                    foreach($post['data']['questions'] as $question){
+                        //
+                        if(!isset($question['id'])){
+                            $questions[] = array_merge($question, ['id' => generateRandomString(10)]);
+                        }
+                    }
+                    $data_array['questions'] = json_encode($questions);
+                }
+                //
+                if(!isset($post['id'])){
+                    $data_array['company_sid']  = $pargs['companyId'];
+                    $data_array['is_draft'] = 1;
+                    $data_array['status'] = 'pending';
+                    $data_array['created_at'] = date("Y-m-d H:i:s", strtotime("now"));
+
+                    //
+                    $reviewId = $this->pmm->InsertReview($data_array);
+                } else{
+                    $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
+                }
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Review added.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "ReviewStep2":
+                // Set data array
+                $data_array = [];
+                //
+                if(empty($post['data']['included'])){
+                    //
+                    $resp['Msg'] = "Please select at least one reviewee.";
+                    $this->res($resp);
+                }
+                //
+                $data_array['included_employees'] = implode(',', $post['data']['included']);
+                //
+                if(isset($post['data']['excluded'])){
+                    $data_array['excluded_employees'] = implode(',', $post['data']['excluded']);
+                }
+                
+                $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Reviewee added.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "ReviewStep3":
+                // Set data array
+                $data_array = [];
+                //
+                if(empty($post['data']['reviewer_type'])){
+                    //
+                    $resp['Msg'] = "Please select the reviewer type.";
+                    $this->res($resp);
+                }
+                //
+                if(empty($post['data']['reviewees'])){
+                    //
+                    $resp['Msg'] = "Please add reviewers to reviewees.";
+                    $this->res($resp);
+                }
+
+                $data_array['reviewers'] = json_encode($post['data']);
+                
+                $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Reviewer added.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "SaveQuestion":
+                // Set data array
+                $data_array = [];
+                // Get old 
+                $questions = $this->pmm->GetReviewRowById($post['id'], $pargs['companyId'], ['questions'])['questions'];
+                //
+                if(!empty($questions) && $questions != null && $questions != 'null'){
+                    $questions = json_decode($questions, true);
+                    $questions = array_merge($questions, [$post['data']]);
+                } else{
+                    $questions[] = $post['data'];
+                }
+                //
+                $data_array['questions'] = json_encode($questions);
+                //
+                $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Questions added.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "SaveVideo":
+                //
+                $path = APPPATH.'../assets/performance_management/videos/'.$post['reviewId'].'/';
+                //
+                if(!is_dir($path)){
+                    mkdir($path, DIR_WRITE_MODE, true);
+                }
+                //
+                $idd = time().generateRandomString(7);
+                //
+                if($post['type'] == 'record'){
+                    //
+                    $newName = $path.$idd.'.webm';
+                    //
+                    file_put_contents($newName, base64_decode(str_replace('data:video/webm;base64,', '',$this->input->post('file', false))));
+                    //
+                    $resp['Msg'] = "Recorded video is uploaded.";
+                    $resp['Id'] = $idd.'.webm';
+                    $resp['Status'] = true;
+                    $this->res($resp);
+                }
+                //
+                if(empty($_FILES)){
+                    //
+                    $resp['Msg'] = "Please record/upload a video.";
+                    $this->res($resp);
+                }
+                $newName = $idd.'.'.(explode('.', $_FILES['file']['name'])[1]);
+                //
+                if(!move_uploaded_file($_FILES['file']['tmp_name'], $path.$newName)){
+                    //
+                    $resp['Msg'] = "Failed to save video.";
+                    $this->res($resp);
+                } else{
+                    $resp['Msg'] = "Video is uploaded";
+                    $resp['Id'] = $newName;
+                    $resp['Status'] = true;
+                    $this->res($resp);
+                }
+            break;
+            case "RemoveQuestion":
+                // Get the question
+                $questions = json_decode($this->pmm->GetReviewRowById($post['id'], $pargs['companyId'], ['questions'])['questions'], true);
+                //
+                $returningIndex = 0;
+                //
+                foreach($questions as $index => $question){
+                    if($question['id'] == $post['question_id']){
+                        //
+                        $returningIndex = $index;
+                        //
+                        unset($questions[$index]);
+                    }
+                }
+                //
+                $reviewId = $this->pmm->UpdateReview(['questions' => json_encode(array_values($questions))], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Question deleted.';
+                $resp['Id'] = $reviewId;
+                $resp['Index'] = $returningIndex;
+                //
+                $this->res($resp);
+            break;
+            case "ReviewStep4":
+                //
+                $reviewId = $this->pmm->UpdateReview(['questions' => json_encode(array_values($post['questions']))], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Question added.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "UpdateQuestion":
+                // Get the question
+                $questions = json_decode($this->pmm->GetReviewRowById($post['id'], $pargs['companyId'], ['questions'])['questions'], true);
+                //
+                foreach($questions as $index => $question){
+                    if($question['id'] == $post['data']['id']){
+                        //
+                        $questions[$index] = $post['data'];
+                    }
+                }
+                //
+                $reviewId = $this->pmm->UpdateReview(['questions' => json_encode(array_values($questions))], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Question updated.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+            case "ReviewStep5":
+                //
+                $now = date('Y-m-d H:i:s', strtotime('now'));
+                // Get the review
+                $review = $this->pmm->GetReviewRowById($post['id'], $pargs['companyId']);
+
+                // Set the questions
+                $questions = json_decode($review['questions'], true);
+                //
+                $ins = [];
+                //
+                foreach($questions as $question){
+                    //
+                    $ins[] = [
+                        'review_sid' => $review['reviewId'],
+                        'question_type' => $question['question_type'],
+                        'question' => json_encode($question),
+                        'created_at' => $now
+                    ];
+                }
+                //
+                $this->pmm->insertReviewQuestions($ins);
+
+                // Set reviwees
+                //
+                $ins = [];
+                //
+                $reviewees = explode(',', $review['included']);
+                //
+                foreach($reviewees as $reviewee){
+                    //
+                    $ins[] = [
+                        'review_sid' => $review['reviewId'],
+                        'reviewee_sid' => $reviewee,
+                        'start_date' => $review['start_date'],
+                        'end_date' => $review['end_date'],
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                        'is_started' => 0
+                    ];
+                }
+                //
+                $this->pmm->insertReviewReviewees($ins);
+
+
+                // Set reviwers
+                //
+                $ins = [];
+                //
+                $reviewers = json_decode($review['reviewers'], true);
+                //
+                foreach($reviewers['reviewees'] as $reviewee => $reviewer){
+                    //
+                    $newReviewers = array_diff($reviewer['included'], isset($reviewer['excluded']) ? $reviewer['excluded'] : []);
+                    //
+                    foreach($newReviewers as $newReviewer){
+                        //
+                        $ins[] = [
+                            'review_sid' => $review['reviewId'],
+                            'reviewee_sid' => $reviewee,
+                            'reviewer_sid' => $newReviewer,
+                            'added_by' => $pargs['employerId'],
+                            'created_at' => $now,
+                            'is_manager' => $this->pmm->isManager($reviewee, $newReviewer, $pargs['companyId']),
+                            'is_completed' => 0
+                        ];
+                    }
+                }
+                //
+                $this->pmm->insertReviewReviewers($ins);
+                // 
+                $reviewId = $this->pmm->UpdateReview([
+                    'share_feedback' => $post['feedback'], 
+                    'is_draft' => 0
+                ], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Review updated.';
+                $resp['Id'] = $reviewId;
+                //
+                $this->res($resp);
+            break;
+        endswitch;
+    }
+
+    /**
+     * 
+     */
+    function UploadQuestionAttachment(){
+        echo upload_file_to_aws('file', 1, $_FILES['file']['name']);
     }
 
     /**
@@ -154,1366 +970,17 @@ class Performance_management extends Public_Controller{
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Report';
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
         //
-        $this->pargs['allEmployees'] = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
+        $this->pargs['graph1'] = $this->pmm->GetCompletedReviews($this->pargs['companyId']);
+        $this->pargs['graph2'] = $this->pmm->GetReviewCountByStatus($this->pargs['companyId']);        
         //
-        $this->pargs['reviews'] = $this->pmm->getReviewTitles($this->pargs['companyId']);
-        //
-        $startDate = $startDate == 'all' ? date('Y-01-01', strtotime('now')) : DateTime::createfromformat('m-d-Y', $startDate)->format('Y-m-d');
-        $endDate = $endDate == 'all' ? date('Y-12-t', strtotime('now')) : DateTime::createfromformat('m-d-Y', $endDate)->format('Y-m-d');
-        // Get all reviews
-        $this->pargs['allReviews'] = $this->pmm->getAllReviews($this->pargs['companyId'], $reviewId, $employeeIds, $startDate, $endDate);
-        //
-        $this->pargs['startDate'] = DateTime::createfromformat('Y-m-d', $startDate)->format('m/d/Y');
-        $this->pargs['endDate'] = DateTime::createfromformat('Y-m-d', $endDate)->format('m/d/Y');
-        $this->pargs['reviewId'] = $reviewId;
-        $this->pargs['employeeIds'] = $employeeIds;
-
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}report", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
-    }
-    
-    /**
-     * Review
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/02/2021
-     * 
-     * @param Integer $reviewId
-     * 
-     * @return Void
-     */
-    function review($reviewId){
-        // 
-        $this->checkLogin($this->pargs);
-        // Set title
-        $this->pargs['title'] = 'Performance Management - Review';
-        $this->pargs['pid'] = $reviewId;
-        // Get department & teams list
-        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
-        //
-        if(!empty($employees)){
-            foreach($employees as $employee){
-                $this->pargs['employees'][$employee['Id']] = [
-                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
-                    'role' => $employee['FullRole'],
-                    'img' => getImageURL($employee['Image'])
-                ];
-            }
-        }
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-        //
-        $this->pargs['review'] = $this->pmm->getReview($reviewId);
-        $this->pargs['review']['sid'] = $reviewId;
-        //
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}reviews/{$this->mp}review", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
-    }
-
-    /**
-     * Reviews
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/01/2021
-     * 
-     * @return Void
-     */
-    function lms_reviews(){
-        // 
-        $this->checkLogin($this->pargs);
-        // Set title
-        $this->pargs['title'] = 'Performance Management - Reviews';
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-        $this->pargs['employee'] = $this->pargs['employerDetails'];
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        $this->pargs['gp'] = true;
-        // Get department & teams list
-        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
-        //
-        if(!empty($employees)){
-            foreach($employees as $employee){
-                $this->pargs['employees'][$employee['Id']] = [
-                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
-                    'role' => $employee['FullRole'],
-                    'img' => getImageURL($employee['Image'])
-                ];
-            }
-        }
-        $this->pargs['Reviews'] = $this->pmm->getLMSReviews($this->pargs['employerId'], $this->pargs['companyId']);
-
-        $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}lms/reviews/{$this->mp}index", $this->pargs);
-        $this->load->view("main/footer", $this->pargs);
-    }
-    
-    /**
-     * Review - Feedback
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/03/2021
-     * 
-     * @param Integer $reviewId
-     * @param Integer $employeeId
-     * 
-     * @return Void
-     */
-    function feedback($reviewId, $employeeId){
-        // 
-        $this->checkLogin($this->pargs);
-        // Set title
-        $this->pargs['title'] = 'Performance Management - Feedback';
-        // Get department & teams list
-        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
-        //
-        if(!empty($employees)){
-            foreach($employees as $employee){
-                $this->pargs['employees'][$employee['Id']] = [
-                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
-                    'role' => $employee['FullRole'],
-                    'img' => getImageURL($employee['Image']),
-                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
-                ];
-            }
-        }
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-        //
-        $this->pargs['review'] = $this->pmm->getReviewWithQuestionsForManager($reviewId, $employeeId, $this->pargs['employerId']);
-        $this->pargs['pid'] = $reviewId;
-        $this->pargs['pem'] = $employeeId;
-
-        $this->pargs['isAllowed'] = in_array($this->pargs['employerId'], array_column($this->pargs['review']['Reviewer'], 'reviewer_sid'));
-
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}reviews/{$this->mp}feedback", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
-    }
-
-    /**
-     * Review - Reviewer Feedback
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/03/2021
-     * 
-     * @param Integer $reviewId
-     * @param Integer $employeeId
-     * 
-     * @return Void
-     */
-    function reviewer_feedback($reviewId, $employeeId){
-        // 
-        $this->checkLogin($this->pargs);
-        // Set title
-        $this->pargs['title'] = 'Performance Management - Feedback';
-        // Get department & teams list
-        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
-        //
-        if(!empty($employees)){
-            foreach($employees as $employee){
-                $this->pargs['employees'][$employee['Id']] = [
-                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
-                    'role' => $employee['FullRole'],
-                    'img' => getImageURL($employee['Image']),
-                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
-                ];
-            }
-        }
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-        //
-        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $employeeId, $this->pargs['employerId']);
-        $this->pargs['pid'] = $reviewId;
-        $this->pargs['pem'] = $employeeId;        
-        $this->pargs['isAllowed'] = false;
-        foreach($this->pargs['review']['Reviewer'] as $ft){
-            if($ft['reviewer_sid'] == $this->pargs['employerId'] && $employeeId == $ft['reviewee_sid']){$this->pargs['isAllowed'] = true;}
-        }
-
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}reviews/{$this->mp}reviewer_feedback", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
-    }
-    
-    /**
-     * Review - Create Review
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/04/2021
-     * 
-     * @return Void
-     */
-    function create_review($id = 0){
-        // 
-        $this->checkLogin($this->pargs);
-        // Set title
-        $this->pargs['title'] = 'Performance Management - Create a review';
-        // Set templates
-        $this->pargs['templates'] = [];
-        // Get personal templates
-        $this->pargs['templates']['personal'] = $this->pmm->getPersonalTemplates($this->pargs['companyId'], ['sid', 'name']);
-        // Get company templates
-        $this->pargs['templates']['company'] = $this->pmm->getCompanyTemplates(['sid', 'name']);
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-        // Get job titles
-        $this->pargs['jobTitles'] = $this->pmm->getCompanyJobTitles($this->pargs['companyId']);
-        //
-        if($id != 0){
-            $this->pargs['review'] = $this->pmm->getReviewById($id, '*', 0, ['is_draft' => 1]);
-        }
-
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}reviews/{$this->mp}create", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
-    }
-    
-    /**
-     * Goals - Create Goal
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/04/2021
-     * 
-     * @return Void
-     */
-    function download(
-        $type,
-        $reviewId = 0,
-        $revieweeId = 0,
-        $reviewerId = 0
-    ){
-        // 
-        $this->checkLogin($this->pargs);
-        // Get department & teams list
-        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
-        //
-        if(!empty($employees)){
-            foreach($employees as $employee){
-                $this->pargs['employees'][$employee['Id']] = [
-                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
-                    'role' => $employee['FullRole'],
-                    'img' => getImageURL($employee['Image']),
-                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
-                ];
-            }
-        }
-        //
-        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $revieweeId, $reviewerId);
-        $this->load->view("{$this->pp}reviews/download_q", $this->pargs);
-    }
-    
-    /**
-     * Goals - Create Goal
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/04/2021
-     * 
-     * @return Void
-     */
-    function create_goal(){
-        // 
-        $this->checkLogin($this->pargs);
-        // Set title
-        $this->pargs['title'] = 'Performance Management - Create a goal';
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}goals/{$this->mp}create", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
-    }
-    
-    /**
-     * Goals - List Goal
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/08/2021
-     * 
-     * @return Void
-     */
-    function goals(){
-        // 
-        $this->checkLogin($this->pargs);
-        // Set title
-        $this->pargs['title'] = 'Performance Management - List Goals';
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}goals/{$this->mp}view", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
-    }
-
-
-    /**
-     * Goals - List Goal
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/08/2021
-     * 
-     * @return Void
-     */
-    function lms_goals(){
-        // 
-        $this->checkLogin($this->pargs);
-        // Set title
-        $this->pargs['title'] = 'Performance Management - List Goals';
-        $this->pargs['employee'] = $this->pargs['employerDetails'];
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        $this->pargs['gp'] = true;
-        //
-        $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}lms/goals/{$this->mp}view", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
-    }
-    
-    /**
-     * Goals - List Goal
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/08/2021
-     * 
-     * @return Void
-     */
-    function gp_goals($sid){
-        // 
-        $this->checkLogin($this->pargs);
-        // // Set title
-        $this->pargs['title'] = 'Performance Management - List Goals';
-        $this->pargs['employee'] = $this->pargs['employerDetails'];
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-
-        $this->pargs['right_bar'] = employee_right_nav($sid);
-        //
-        $this->load->model('dashboard_model');
-        $this->load->model('application_tracking_system_model');
-        //
-        $this->pargs['sid'] = $sid;
-        //
-        $this->pargs['employer'] = $this->pargs['employer'] = $this->dashboard_model->get_company_detail($sid);
-        
-        // Added on: 04-07-2019
-        if (empty($this->pargs['employer']['resume'])) { // check if reseme is uploaded
-            $this->pargs['employer']['resume_link'] = "javascript:void(0);";
-            $this->pargs['resume_link_title'] = "No Resume found!";
-        } else {
-            $this->pargs['employer']['resume_link'] = AWS_S3_BUCKET_URL . $this->pargs['employer']['resume'];
-            $this->pargs['resume_link_title'] = $this->pargs['employer']['resume'];
-        }
-        
-        if (empty($this->pargs['employer']['cover_letter'])) { // check if cover letter is uploaded
-            $this->pargs['employer']["cover_link"] = "javascript:void(0)";
-            $this->pargs['cover_letter_title'] = "No Cover Letter found!";
-        } else {
-            $this->pargs['employer']["cover_link"] = AWS_S3_BUCKET_URL . $this->pargs['employer']['cover_letter'];
-            $this->pargs['cover_letter_title'] = $this->pargs['employer']['cover_letter'];
-        }
-        //
-        $this->pargs['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
-        $this->pargs['pp'] = $this->pp;
-        $this->pargs['gp'] = true;
-        $this->pargs['employeeId'] = $sid;
-        //
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}gp/goals/{$this->mp}index", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
-    }
-    
-    /**
-     * Goals - List Goal
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/08/2021
-     * 
-     * @return Void
-     */
-    function gp_reviews($sid){
-        // 
-        $this->checkLogin($this->pargs);
-        // // Set title
-        $this->pargs['title'] = 'Performance Management - List Reviews';
-        $this->pargs['employee'] = $this->pargs['employerDetails'];
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-
-        $this->pargs['right_bar'] = employee_right_nav($sid);
-        //
-        $this->load->model('dashboard_model');
-        $this->load->model('application_tracking_system_model');
-        //
-        $this->pargs['sid'] = $sid;
-        //
-        $this->pargs['employer'] = $this->pargs['employer'] = $this->dashboard_model->get_company_detail($sid);
-        
-        // Added on: 04-07-2019
-        if (empty($this->pargs['employer']['resume'])) { // check if reseme is uploaded
-            $this->pargs['employer']['resume_link'] = "javascript:void(0);";
-            $this->pargs['resume_link_title'] = "No Resume found!";
-        } else {
-            $this->pargs['employer']['resume_link'] = AWS_S3_BUCKET_URL . $this->pargs['employer']['resume'];
-            $this->pargs['resume_link_title'] = $this->pargs['employer']['resume'];
-        }
-        
-        if (empty($this->pargs['employer']['cover_letter'])) { // check if cover letter is uploaded
-            $this->pargs['employer']["cover_link"] = "javascript:void(0)";
-            $this->pargs['cover_letter_title'] = "No Cover Letter found!";
-        } else {
-            $this->pargs['employer']["cover_link"] = AWS_S3_BUCKET_URL . $this->pargs['employer']['cover_letter'];
-            $this->pargs['cover_letter_title'] = $this->pargs['employer']['cover_letter'];
-        }
-        //
-        $this->pargs['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
-        $this->pargs['pp'] = $this->pp;
-        $this->pargs['gp'] = true;
-        $this->pargs['employeeId'] = $sid;
-
-        //
-        $startDate = date('Y-01-01', strtotime('now'));
-        $endDate = date('Y-12-t', strtotime('now'));
-        // Get all reviews
-        $this->pargs['allReviews'] = $this->pmm->getAllReviews($this->pargs['companyId'], 'all', $sid, $startDate, $endDate);
-        $this->pargs['myReviews'] = $this->pmm->getMyReviews($this->pargs['companyId'], $sid);
-
-        // Get department & teams list
-        $employees = $this->pmm->getAllCompanyEmployees($this->pargs['companyId']);
-        //
-        if(!empty($employees)){
-            foreach($employees as $employee){
-                $this->pargs['employees'][$employee['Id']] = [
-                    'name' => ucwords($employee['FirstName'].' '.$employee['LastName']),
-                    'role' => $employee['FullRole'],
-                    'img' => getImageURL($employee['Image']),
-                    'joined' => formatDate($employee['JoinedAt'], 'Y-m-d', 'M d D, Y')
-                ];
-            }
-        }
-        //
-        $this->load->view("main/header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}gp/reviews/{$this->mp}index", $this->pargs);
-        $this->load->view("{$this->pp}footer", $this->pargs);
-        $this->load->view("main/footer");
-    }
-    
-    /**
-     * Goals - List Goal
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/08/2021
-     * 
-     * @return Void
-     */
-    function gp_review($reviewId, $revieweeId, $reviewerId = 0){
-        // 
-        $this->checkLogin($this->pargs);
-        // Set title
-        $this->pargs['title'] = 'Performance Management - Reviews';
-        // Get department & teams list
-        $this->pargs['dnt'] = $this->pmm->getTeamsAndDepartments($this->pargs['companyId']);
-        $this->pargs['employee'] = $this->pargs['employerDetails'];
-        // Get employer role
-        $this->pargs['permission'] = $this->pmm->getEmployeePermission($this->pargs['employerId'], $this->pargs['level']);
-        $this->pargs['gp'] = true;
-        $this->pargs['pid'] = $reviewId;
-        $this->pargs['pem'] = $revieweeId;
-        $this->pargs['review'] = $this->pmm->getReviewWithQuestions($reviewId, $revieweeId, $this->pargs['employerId']);
-        $this->pargs['isAllowed'] = in_array($reviewerId, array_column($this->pargs['review']['Reviewer'], 'reviewer_sid'));
-
-        $this->load->view("{$this->pp}on_boarding_header", $this->pargs);
-        $this->load->view("{$this->pp}header", $this->pargs);
-        $this->load->view("{$this->pp}lms/reviews/{$this->mp}single", $this->pargs);
-        $this->load->view("main/footer", $this->pargs);
-    }
-
-    /**
-     * handler
-     * 
-     * @employee Mubashir Ahmed
-     * @date     02/17/2021
-     * 
-     * @return Void
-     */
-    function handler(){
-        if($this->input->method(false) == 'get') $this->get_handler();
-        else if($this->input->method(false) == 'post') $this->post_handler();
-        else{
-            res(['Status' => false, 'Response' => 'Invalid request made.']);
-        }
-    }
-
-    /**
-     * Get handler
-     * 
-     * @employee Mubashir Ahmed
-     * @date     02/10/2021
-     * 
-     * @return JSON
-     */
-    function get_handler(){
-        $pargs = [];
-        // Check session
-        $isLogin = $this->checkLogin($pargs, true);
-        //
-        if(!$isLogin) res($this->resp);
-        //
-        $this->resp['Redirect'] = false;
-        //
-        $params = $this->getParams();
-        //
-        switch($params[0]):
-            // Get template questions
-            case "template-questions-h":
-                if($params[2] == 'personal'):
-                    $questions = $this->pmm->getPersonalQuestionsById($params[1]);
-                else:
-                    $questions = $this->pmm->getCompanyQuestionsById($params[1]);
-                endif;
-                // Decode JSON to Array
-                $questions = json_decode($questions, true);
-                // Get question HTML
-                $html = $this->load->view("{$this->pp}preview/questions", ['Questions' => $questions], true);
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                $this->resp['Data'] = $html;
-                //
-                res($this->resp);
-            break;
-            // Get template by id
-            case "template":
-                if($params[2] == 'personal'):
-                    $template = $this->pmm->getPersonalTemplateById($params[1], ['name', 'questions']);
-                else:
-                    $template = $this->pmm->getCompanyTemplateById($params[1], ['name', 'questions']);
-                endif;
-                // Decode JSON to Array
-                $template['questions'] = json_decode($template['questions'], true);
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                $this->resp['Data'] = $template;
-                //
-                res($this->resp);
-            break;
-            // Get employee list with dnt
-            case "employeeListWithDnT":
-                $list = $this->pmm->getEmployeeListWithDepartments($pargs['employerId'], $pargs['companyId'], getEmployerAccessLevel());
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                $this->resp['Data'] = $list;
-                //
-                res($this->resp);
-            break;
-            // Get all company employees
-            case "get_all_company_employees":
-                $list = $this->pmm->getAllCompanyEmployees($pargs['companyId']);
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                $this->resp['Data'] = $list;
-                //
-                res($this->resp);
-            break;
-            // Get all company employees
-            case "get_reviewers_list":
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                $this->resp['Data'] = $this->pmm->getReviwerListByRevieweeId($params[1], $params[2]);
-                //
-                res($this->resp);
-            break;
-            // Get goal body
-            case "goal_body":
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                $this->resp['Data'] = $this->load->view("{$this->pp}goals/{$this->mp}create", [], true);
-                //
-                res($this->resp);
-            break;
-            // Get company goals
-            case "company_goals":
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                $this->resp['Data'] = $this->pmm->getCompanyGoals($pargs['companyId']);
-                //
-                res($this->resp);
-            break;
-            // Get goal comments
-            case "comments":
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                $this->resp['Data'] = $this->pmm->getGoalComments(
-                    $pargs['companyId'],
-                    $params['1']
-                );
-                //
-                res($this->resp);
-            break;
-            // Get goal history
-            case "history":
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                $this->resp['Data'] = $this->pmm->getGoalHistory(
-                    $pargs['companyId'],
-                    $params[1]
-                );
-                //
-                res($this->resp);
-            break;
-        endswitch;
-    }
-
-    /**
-     * Post handler
-     * 
-     * @employee Mubashir Ahmed
-     * @date     02/10/2021
-     * 
-     * @return JSON
-     */
-    function post_handler(){
-        $pargs = [];
-        // Check session
-        $isLogin = $this->checkLogin($pargs, true);
-        //
-        if(!$isLogin) res($this->resp);
-        //
-        $this->resp['Redirect'] = false;
-        //
-        $params = $this->input->post(NULL, TRUE);
-        //
-        switch($params['action']):
-            // Video
-            case "basetovideo":
-                $video = str_replace('data:video/webm;base64,', '', $this->input->post('data'));
-                //
-                $pd = APPPATH.'../assets/performance_management/videos/'.$params['id'].'/';
-                // _e($video, true, true);
-                $filename = 'video_'.($params['questionId']).'.webm';
-                //
-                if(!is_dir($pd)) mkdir($pd, 0777, true);
-                //
-                $handler = fopen($pd.$filename, 'wb');
-                fwrite($handler, base64_decode($video));
-                fclose($handler);
-            break;
-            // Save review
-            case "save_review":
-                //
-                $ins = [];
-                $ins['company_sid'] = $pargs['companyId'];
-                $ins['review_title'] = $params['title'];
-                $ins['description'] = $params['description'];
-                $ins['frequency'] = $params['schedule']['frequency'];
-                $ins['review_start_date'] = !empty($params['schedule']['reviewStartDate']) ? $params['schedule']['reviewStartDate'] : NULL;
-                $ins['review_end_date'] = !empty($params['schedule']['reviewEndDate']) ? $params['schedule']['reviewEndDate'] : NULL;
-                $ins['repeat_after'] = $params['schedule']['repeatVal'];
-                $ins['repeat_type'] = $params['schedule']['repeatType'];
-                $ins['review_runs'] = !isset($params['schedule']['customRuns']) || empty($params['schedule']['customRuns']) ? '{}' : json_encode($params['schedule']['customRuns']);
-                $ins['repeat_review'] = $params['schedule']['continueReview'];
-                $ins['review_due'] = $params['schedule']['reviewDue'];
-                $ins['visibility_roles'] = empty($params['visibility']) ? '' : implode(',', $params['visibility']['roles']);
-                $ins['visibility_departments'] = empty($params['visibility']) ? '' : implode(',', $params['visibility']['departments']);
-                $ins['visibility_teams'] = empty($params['visibility']) ? '' : implode(',', $params['visibility']['teams']);
-                $ins['visibility_employees'] = empty($params['visibility']) ? '' : implode(',', $params['visibility']['individuals']);
-                //
-                if($ins['frequency'] == 'custom'){
-                    $ins['repeat_after'] = 0;
-                    $ins['review_start_date'] = 
-                    $ins['review_end_date'] = ''; 
-                    $ins['repeat_type'] = 'day';
-                } else{
-                    $ins['review_due'] = 0;
-                    $ins['review_runs'] = '[]';
-                    $ins['repeat_review'] = 0;
-                }
-                //
-                if($ins['frequency'] == 'onetime'){
-                    $ins['repeat_after'] = 0;
-                    $ins['repeat_type'] = 'day';
-                }
-                //
-                if(!empty($ins['review_start_date'])){
-                    $ins['review_start_date'] = formatDateToDB($ins['review_start_date']);
-                    $ins['review_end_date'] = formatDateToDB($ins['review_end_date']);
-                } else{
-                    unset($ins['review_start_date'], $ins['review_end_date']);
-                }
-                $ins['last_updated_by'] = $pargs['employerId'];
-                // Insert the review into the database
-                $reviewId = $this->pmm->_insert($this->tables['PM'], $ins);
-                // History array
-                $ins = [];
-                $ins['review_sid'] = $reviewId;
-                $ins['employee_sid'] = $pargs['employerId'];
-                $ins['action'] = 'review_created';
-                $ins['action_fields'] = json_encode(['action' => 'created', 'msg' => '']);
-                // Insert the review log
-                $this->pmm->_insert('perfomance_management_log', $ins);
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                $this->resp['Data'] = $reviewId;
-                //
-                res($this->resp);
-            break;
-            // Update review
-            case "update_review":
-                // For Schedule
-                if($params['step'] == 'schedule'){
-                    //
-                    $upd = [];
-                    $upd['review_title'] = $params['title'];
-                    $upd['description'] = $params['description'];
-                    $upd['frequency'] = $params['schedule']['frequency'];
-                    $upd['review_start_date'] = !empty($params['schedule']['reviewStartDate']) ? $params['schedule']['reviewStartDate'] : NULL;
-                    $upd['review_end_date'] = !empty($params['schedule']['reviewEndDate']) ? $params['schedule']['reviewEndDate'] : NULL;
-                    $upd['repeat_after'] = $params['schedule']['repeatVal'];
-                    $upd['repeat_type'] = $params['schedule']['repeatType'];
-                    $upd['review_runs'] = isset($params['schedule']['customRuns']) && !empty($params['schedule']['customRuns']) ? json_encode($params['schedule']['customRuns']) : '';
-                    $upd['repeat_review'] = $params['schedule']['continueReview'];
-                    $upd['review_due'] = $params['schedule']['reviewDue'];
-                    $upd['visibility_roles'] = isset($params['visibility']['roles']) && !empty($params['visibility']['roles']) ? implode(',', $params['visibility']['roles']) : '';
-                    $upd['visibility_departments'] = isset($params['visibility']['departments']) && !empty($params['visibility']['departments']) ? implode(',', $params['visibility']['departments']) : '';
-                    $upd['visibility_teams'] = isset($params['visibility']['teams']) && !empty($params['visibility']['teams']) ? implode(',', $params['visibility']['teams']) : '';
-                    $upd['visibility_employees'] = isset($params['visibility']['individuals']) && !empty($params['visibility']['individuals']) ? implode(',', $params['visibility']['individuals']) : '';
-
-                    //
-                    if($upd['frequency'] == 'custom'){
-                        $upd['repeat_after'] = 0;
-                        $upd['review_start_date'] = 
-                        $upd['review_end_date'] = ''; 
-                        $upd['repeat_type'] = 'day';
-                    } else{
-                        $upd['review_due'] = 0;
-                        $upd['review_runs'] = '[]';
-                        $upd['repeat_review'] = 0;
-                    }
-                    //
-                    if($upd['frequency'] == 'onetime'){
-                        $upd['repeat_after'] = 0;
-                        $upd['repeat_type'] = 'day';
-                    }
-                    //
-                    if(!empty($upd['review_start_date'])){
-                        $upd['review_start_date'] = formatDateToDB($upd['review_start_date']);
-                        $upd['review_end_date'] = formatDateToDB($upd['review_end_date']);
-                    } else{
-                        unset($upd['review_start_date'], $upd['review_end_date']);
-                    }
-                    $upd['last_updated_by'] = $pargs['employerId'];
-
-                    $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
-                }
-
-                // For Reviewees
-                if($params['step'] == 'reviewees'){
-                    //
-                    $upd = [];
-                    $upd['included_employees'] = isset($params['reviewees']['included']) ? json_encode($params['reviewees']['included']) : '[]';
-                    $upd['excluded_employees'] = isset($params['reviewees']['excluded']) ? json_encode($params['reviewees']['excluded']) : '[]';
-                    //
-                    $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
-                }
-                
-                // For Reviewers
-                if($params['step'] == 'reviewers'){
-                    //
-                    $upd = [];
-                    $upd['reviewers'] = json_encode($params['reviewer']);
-                    //
-                    $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
-                }
-               
-                // For Questions
-                if($params['step'] == 'questions'){
-                    //
-                    $upd = [];
-                    $upd['questions'] = json_encode($params['questions']);
-                    //
-                    $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
-                }
-                
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                //
-                res($this->resp);
-            break;
-            // Save
-            case "finish_save_review":
-                
-                //
-                $upd = [];
-                $upd['share_feedback'] = $params['feedback'];
-                $upd['is_draft'] = 0;
-                $upd['questions'] = '';
-                $upd['reviewers'] = '';
-                $upd['included_employees '] = '';
-                // Get review
-                $review = $this->pmm->getReviewByid($params['id'], ['included_employees', 'reviewers', 'questions', 'review_start_date', 'review_end_date']);
-                //
-                $is_started = 0;
-                if($review['review_start_date'] >= date('Y-m-d', strtotime('now')) && $review['review_end_date'] < date('Y-m-d', strtotime('now'))) {$is_started = 1;}
-                //
-                $ins = [];
-                // Lets set reviwees
-                foreach(json_decode($review['included_employees'], true) as $reviewee){
-                    $t = [];
-                    $t['review_sid']  = $params['id'];
-                    $t['reviewee_sid']  = $reviewee;
-                    if(!empty($review['review_start_date'])){
-                        $t['start_date']  = $review['review_start_date'];
-                        $t['end_date']  = $review['review_end_date'];
-                    }
-                    $t['is_started']  = $is_started;
-                    //
-                    $ins[] = $t;
-                }
-                //
-                $this->pmm->_insert($this->tables['PMR'], $ins);
-                //
-                $ins = [];
-                // Lets set reviewers
-                foreach(json_decode($review['reviewers'], true)['employees'] as $k => $reviewer){
-                    //
-                    $revieweeId = $k;
-                    $reviewers = [];
-                    $reviewers = !empty($reviewer['reporting_manager']) ? 
-                    array_merge($reviewers, $reviewer['reporting_manager']) : $reviewers;
-                    $reviewers = !empty($reviewer['self_review']) ? 
-                    array_merge($reviewers, $reviewer['self_review']) : $reviewers;
-                    $reviewers = !empty($reviewer['peer']) ? 
-                    array_merge($reviewers, $reviewer['peer']) : $reviewers;
-                    $reviewers = !empty($reviewer['specific']) ? 
-                    array_merge($reviewers, $reviewer['specific']) : $reviewers;
-                    if(!empty($reviewer['custom'])){
-                        $reviewers = array_merge($reviewers, $reviewer['custom']);
-                        //
-                        if(!empty($reviewer['excluded'])){
-                            $reviewers = array_diff($reviewers, $reviewer['excluded']);
-                        }
-                    }
-                    //
-                    $reviewers = array_unique($reviewers, SORT_STRING);
-                    //
-                    if(!empty($reviewers)){
-                        foreach($reviewers as $em){
-                            $t = [];
-                            $t['review_sid']  = $params['id'];
-                            $t['reviewee_sid']  = $revieweeId;
-                            $t['reviewer_sid']  = $em;
-                            $t['is_manager']  = $this->pmm->isManager($revieweeId, $em);
-                            $t['added_by']  = $pargs['employerId'];
-                            //
-                            $ins[] = $t;
-                        }
-                    }
-                }
-                //
-                $this->pmm->_insert($this->tables['PMRV'], $ins);
-                //
-                $ins = [];
-                // Lets add questions
-                $questions = json_decode($review['questions'], true);
-                //
-                foreach($questions as $question){
-                    $t = [];
-                    $t['review_sid'] = $params['id'];
-                    $t['question_type'] = $question['question_type'];
-                    $t['question'] = json_encode($question);
-                    //
-                    $ins[] = $t;
-                }
-                //
-                $this->pmm->_insert($this->tables['PMQ'], $ins);
-                //
-                $this->pmm->_update($this->tables['PM'], $upd, ['sid' => $params['id']]);
-                // Get added reviewers
-                $reviewersList = $this->pmm->getReviewReviewers2($params['id']);
-                //
-                if(!empty($reviewersList)){
-                    foreach($reviewersList as $imp){
-                        $this->sendEmail(
-                            PM_ASSIGNED,
-                            $imp,
-                            $pargs['companyId'],
-                            $pargs['companyName'],
-                            'Review'
-                        );
-                    }
-                }
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                //
-                res($this->resp);
-            break;
-
-            // Review listing
-            case "get_review_listing":
-                $this->resp['Data'] = $this->pmm->getReviews($pargs['companyId'], $pargs['employerId'], $pargs['employerRole'], $pargs['level'], $params['filter']);
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed.';
-                //
-                res($this->resp);
-            break;
-            
-            // Convert review to template
-            case "convert_review_to_template":
-                //
-                $isSaved = $this->pmm->saveReviewAsTemplate($pargs['companyId'], $pargs['employerId'], $params['reviewId']);
-                //
-                if(!$isSaved){
-                    res($this->resp);
-                }
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed.';
-                //
-                res($this->resp);
-            break;
-            
-            // Change review status
-            case "change_review_status":
-                //
-                $this->pmm->_update(
-                    $this->tables['PM'],
-                    ['is_archived' => $params['type']],
-                    ['sid' => $params['reviewId']]
-                );
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed.';
-                //
-                res($this->resp);
-            break;
-            
-            // End review
-            case "end_review":
-                //
-                $this->pmm->_update(
-                    $this->tables['PM'],
-                    ['status' => 'ended'],
-                    ['sid' => $params['reviewId']]
-                );
-                //
-                $this->pmm->_update(
-                    $this->tables['PMR'],
-                    ['is_started' => 2],
-                    ['review_sid' => $params['reviewId']]
-                );
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed.';
-                //
-                res($this->resp);
-            break;
-            
-            // Re-open review
-            case "reopen_review":
-                //
-                $this->pmm->_update(
-                    $this->tables['PM'],
-                    ['status' => 'started'],
-                    ['sid' => $params['reviewId']]
-                );
-                //
-                $this->pmm->_update(
-                    $this->tables['PMR'],
-                    ['is_started' => 1],
-                    ['review_sid' => $params['reviewId']]
-                );
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed.';
-                //
-                res($this->resp);
-            break;
-            
-            // Add a reviewer
-            case "add_reviewer":
-                //
-                $managersList = $this->pmm->getManagerOffEmployee($params['revieweeId']);
-                //
-                $ins = [];
-                //
-                foreach($params['reviewerId'] as $reviewer){
-                    $t = [];
-                    $t['review_sid'] = $params['reviewId'];
-                    $t['reviewee_sid'] = $params['revieweeId'];
-                    $t['reviewer_sid'] = $reviewer;
-                    $t['added_by'] = $pargs['employerId'];
-                    $t['is_completed'] = 0;
-                    $t['is_manager'] = in_array($reviewer, $managersList) ? 1 : 0;
-                    //
-                    $ins[] = $t;
-                }
-                //
-                $this->pmm->_insert($this->tables['PMRV'], $ins);
-                // Check and insert reviewer
-                $this->pmm->checkAndInsert($this->tables['PMR'], [
-                    'review_sid' => $params['reviewId'],
-                    'reviewee_sid' => $params['revieweeId']
-                ], [
-                    'review_sid' => $params['reviewId'],
-                    'reviewee_sid' => $params['revieweeId']
-                ]);
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed.';
-                //
-                res($this->resp);
-            break;
-            
-            //
-            case "save_goal":
-                //
-                $goal = $params['goal'];
-                //
-                $ins = [];
-                $ins['title'] = $goal['title'];
-                $ins['target'] = $goal['target'];
-                $ins['status'] = 1;
-                $ins['end_date'] = formatDateToDB($goal['endDate']);
-                $ins['goal_type'] = $goal['goalType'];
-                $ins['start_date'] = formatDateToDB($goal['startDate']);
-                $ins['company_sid'] = $pargs['companyId'];
-                $ins['description'] = $goal['description'];
-                $ins['employee_sid'] = empty($goal['employeeId']) ? 0 : $goal['employeeId'];
-                //
-                if($ins['goal_type'] == 2) {
-                    $ins['employee_sid'] = empty($goal['teamId']) ? 0 : $goal['teamId'];
-                }
-                if($ins['goal_type'] == 3) {
-                    $ins['employee_sid'] = empty($goal['departmentId']) ? 0 : $goal['departmentId'];
-                }
-                //
-                $ins['roles'] = empty($goal['roles']) ? '{}' : json_encode($goal['roles']);
-                $ins['teams'] = empty($goal['teams']) ? '{}' : json_encode($goal['teams']);
-                $ins['departments'] = empty($goal['departments']) ? '{}' : json_encode($goal['departments']);
-                $ins['employees'] = empty($goal['employees']) ? '{}' : json_encode($goal['employees']);
-                $ins['measure_type'] = $goal['measure'];
-                $ins['aligned_goal_sid'] =  empty($goal['alignedGoal']) ? 0 : $goal['alignedGoal'];
-                //
-                $insertId = $this->pmm->_insert($this->tables['G'], $ins);
-                //
-                if(!$insertId){
-                    $this->resp['Response'] = 'Something went wrong while adding goal.';
-                    res($this->resp);
-                }
-                //
-                $employeList = [];
-                //
-                if($ins['goal_type'] == 2){
-                    //
-                    $employeList = $this->pmm->getTeamEmployees($ins['employee_sid'], $pargs['companyId']);
-                } else if($ins['goal_type'] == 3){
-                    $employeList = $this->pmm->getDepartmentEmployees($ins['employee_sid'], $pargs['companyId']);
-                } else if($ins['goal_type'] == 1 && $ins['employee_sid'] != $pargs['employerId']){
-                    $employeList[] = $ins['employee_sid'];
-                }
-                //
-                if(!empty($employeList)){
-                    //
-                    foreach($employeList as $imp){
-                        //
-                        $this->sendEmail(
-                            GOAL_CREATED_BY_ADMIN, 
-                            $imp,
-                            $pargs['companyId'],
-                            $pargs['companyName']
-                        );
-                    }
-                }
-                //
-                $ins = [];
-                $ins['goal_sid'] = $insertId;
-                $ins['employee_sid'] = $pargs['employerId'];
-                $ins['action'] = 'created';
-                $ins['note'] = json_encode(['target'=> $goal['target']]);
-                //
-                $this->pmm->_insert($this->tables['GH'], $ins);
-                //
-                $this->resp['Status'] = true;
-                $this->resp['Response'] = 'Proceed.';
-                res($this->resp);
-            break;
-
-            //
-            case "get_goals":
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed';
-                $this->resp['Data'] = $this->pmm->getGoalsByFilter($pargs['companyId'], $pargs['employerId'], $params['filter']);
-                //
-                res($this->resp);
-            break;
-
-            //
-            case "update_goal":
-                //
-                $upd = [];
-                $upd['on_track'] = $params['onTrack'];
-                $upd['completed_target'] = $params['completedTarget'];
-                $upd['target'] = $params['target'];
-                //
-                $this->pmm->_update($this->tables['G'], $upd, ['sid' => $params['sid']]);
-                //
-                $ins = [];
-                $ins['goal_sid'] = $params['sid'];
-                $ins['employee_sid'] = $pargs['employerId'];
-                $ins['action'] = 'updated';
-                $ins['note'] = json_encode($upd);
-                //
-                $this->pmm->_insert($this->tables['GH'], $ins);
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed';
-                //
-                res($this->resp);
-            break;
-            
-            //
-            case "update_visibility":
-                //
-                $upd = [];
-                $upd['roles'] = json_encode($params['roles']);
-                $upd['teams'] = json_encode($params['teams']);
-                $upd['departments'] = json_encode($params['departments']);
-                $upd['employees'] = json_encode($params['employees']);
-                //
-                $this->pmm->_update($this->tables['G'], $upd, ['sid' => $params['goalId']]);
-                //
-                $ins = [];
-                $ins['goal_sid'] = $params['goalId'];
-                $ins['employee_sid'] = $pargs['employerId'];
-                $ins['action'] = 'updated visibility';
-                $ins['note'] = json_encode($upd);
-                //
-                $this->pmm->_insert($this->tables['GH'], $ins);
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed';
-                //
-                res($this->resp);
-            break;
-           
-            //
-            case "save_comment":
-                //
-                $ins = [];
-                $ins['goal_sid'] = $params['goalId'];
-                $ins['sender_sid'] = $params['employeeId'];
-                $ins['message'] = $params['message'];
-                //
-                $this->pmm->_insert($this->tables['GC'], $ins);
-                //
-                $hins = [];
-                $hins['goal_sid'] = $params['goalId'];
-                $hins['employee_sid'] = $pargs['employerId'];
-                $hins['action'] = 'commented';
-                $hins['note'] = json_encode($ins);
-                //
-                $this->pmm->_insert($this->tables['GH'], $hins);
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed';
-                //
-                res($this->resp);
-            break;
-            
-            //
-            case "change_goal_status":
-                //
-                $upd = [];
-                $upd['status'] = $params['status'];
-                //
-                $this->pmm->_update($this->tables['G'], $upd, ['sid' => $params['goalId']]);
-                //
-                $ins = [];
-                $ins['goal_sid'] = $params['goalId'];
-                $ins['employee_sid'] = $pargs['employerId'];
-                $ins['action'] = 'updated';
-                $ins['note'] = json_encode($upd);
-                //
-                $this->pmm->_insert($this->tables['GH'], $ins);
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed';
-                //
-                res($this->resp);
-            break;
-           
-            //
-            case "remove_reviewee":
-                //
-                $this->pmm->removeReviewee(
-                    $params['reviewId'],
-                    $params['id']
-                );
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed';
-                //
-                res($this->resp);
-            break;
-            
-            case "update_review_period":
-                //
-                $this->pmm->_update(
-                    'performance_management_reviewees', [
-                        'start_date' => DateTime::createfromformat('m/d/Y', $params['startDate'])->format('Y-m-d'),
-                        'end_date' => DateTime::createfromformat('m/d/Y', $params['endDate'])->format('Y-m-d')
-                    ], [
-                        'review_sid' => $params['reviewId'],
-                        'reviewee_sid' => $params['revieweeId']
-                    ]
-                );
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed';
-                //
-                res($this->resp);
-            break;
-
-            //
-            case "save_answer":
-                //
-                $ins = [];
-                $ins['review_question_sid'] = $params['questionId'];
-                $ins['reviewee_sid'] = $params['revieweeId'];
-                $ins['review_reviewer_sid'] = $pargs['employerId'];
-                $ins['answer'] = json_encode($params['question']);
-                //
-                $insertId = $this->pmm->checkAndInsert(
-                    'performance_management_review_answers', 
-                    $ins, [
-                        'review_question_sid' => $params['questionId'],
-                        'reviewee_sid' => $params['revieweeId'],
-                        'review_reviewer_sid' => $pargs['employerId']
-                    ]
-                );
-                //
-                if(!$insertId){
-                    $this->pmm->_update(
-                        'performance_management_review_answers', 
-                        $ins, [
-                            'review_question_sid' => $params['questionId'],
-                            'reviewee_sid' => $params['revieweeId'],
-                            'review_reviewer_sid' => $pargs['employerId']
-                        ]
-                    );
-                }
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed';
-                //
-                res($this->resp);
-            break;
-            
-            //
-            case "save_bulk_answer":
-                //
-                $ins = [];
-                $ins['reviewee_sid'] = $params['revieweeId'];
-                $ins['review_reviewer_sid'] = $pargs['employerId'];
-                //
-                foreach($params['questions'] as $questionId => $answer):
-                    //
-                    $ins['review_question_sid'] = $questionId;
-                    $ins['answer'] = json_encode($answer);
-                    //
-                    $insertId = $this->pmm->checkAndInsert(
-                        'performance_management_review_answers', 
-                        $ins, [
-                            'review_question_sid' => $questionId,
-                            'reviewee_sid' => $params['revieweeId'],
-                            'review_reviewer_sid' => $pargs['employerId']
-                        ]
-                    );
-                    //
-                    if(!$insertId){
-                        $this->pmm->_update(
-                            'performance_management_review_answers', 
-                            $ins, [
-                                'review_question_sid' => $questionId,
-                                'reviewee_sid' => $params['revieweeId'],
-                                'review_reviewer_sid' => $pargs['employerId']
-                            ]
-                        );
-                    }
-                endforeach;
-                //
-                $this->pmm->_update(
-                    'performance_management_reviewers',
-                    [
-                        'is_completed' => 1
-                    ],
-                    [
-                        'review_sid' => $params['reviewId'],
-                        'reviewee_sid' => $params['revieweeId'],
-                        'reviewer_sid' => $pargs['employerId']
-                    ]
-                );
-                //
-                $this->resp['Status'] = TRUE;
-                $this->resp['Response'] = 'Proceed';
-                //
-                res($this->resp);
-            break;
-        endswitch;
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}report/index");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
     }
 
     /**
@@ -1530,7 +997,9 @@ class Performance_management extends Public_Controller{
     private function checkLogin(&$data, $return = FALSE){
         //
         if (!$this->session->userdata('logged_in')) {
-            if ($return) return false;
+            if ($return) {
+                return false;
+            }
             redirect('login', 'refresh');
         }
         //
@@ -1538,16 +1007,21 @@ class Performance_management extends Public_Controller{
         //
         $data['companyId'] = $data['session']['company_detail']['sid'];
         $data['companyName'] = $data['session']['company_detail']['CompanyName'];
-        $data['employerDetails'] = $data['session']['employer_detail'];
-        $data['companyDetails'] = $data['session']['company_detail'];
         $data['employerId'] = $data['session']['employer_detail']['sid'];
         $data['employerName'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
         $data['isSuperAdmin'] = $data['session']['employer_detail']['access_level_plus'];
-        $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 || $data['session']['employer_detail']['pay_plan_flag'] == 1 ? 1 : 0;
+        $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 ? 1 : 0;
         $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
+        $data['load_view'] = $data['session']['company_detail']['ems_status'];
+        // $data['load_view'] = 1;
+        $data['hide_employer_section'] = 1;
         //
-        if ($return) return true;
-        else $data['security_details'] = db_get_access_level_details($data['employerId'], NULL, $data['session']);
+        if ($return) {
+            return true;
+        }
+        else {
+            $data['security_details'] = db_get_access_level_details($data['employerId'], NULL, $data['session']);
+        }
     }
 
     /**
@@ -1572,44 +1046,9 @@ class Performance_management extends Public_Controller{
     /**
      * 
      */
-    private function sendNotifications(
-        $reviewId,
-        $companyId,
-        $companyName,
-        $type = 'added'
-    ){ 
-        // Get request
-        $review = $this->pmm->getReviewId($reviewId);
-        //
-        $CHF = message_header_footer($companyId, $companyName); 
-        // Get template
-        $template =  $this->pmm->getEmailTemplate(REVIEW_ADDED);
-    }
-
-
-
-    //
-    private function sendEmail($templateId, $employeeId, $companyId, $companyName, $type= 'Goal'){
-        // Get employee details
-        $employeeDetails = $this->pmm->getEmployeeDetails($employeeId);
-        // Get template details
-        $template = $this->pmm->getTemplate($templateId);
-        //
-        $replaceArray = [];
-        $replaceArray['{{first_name}}'] = ucwords($employeeDetails['first_name']);
-        $replaceArray['{{last_name}}'] = ucwords($employeeDetails['last_name']);
-        $replaceArray['{{link}}'] = '<a href="'.base_url('performance-management/'.($type == 'Review' ? 'reviews' : 'goals').'').'" style="padding: 10px; color: #fff; background-color: #fd7a2a; border-radius: 5px;">Show '.($type).'</a>';
-        //
-        $hf = message_header_footer($companyId, $companyName);
-        //
-        $body = $hf['header']. str_replace(array_keys($replaceArray), $replaceArray, $template['text']).$hf['footer'];
-        //
-        log_and_sendEmail(
-            'notification@automotohr.com', 
-            $employeeDetails['email'],
-            $template['subject'],
-            $body,
-            $companyName
-        );
+    private function res($resp = [], $isError = false){
+        header("Content-Type: application/json");
+        echo json_encode($isError ? ["Error" => "Invalid request"] : $resp);
+        exit(0);
     }
 }

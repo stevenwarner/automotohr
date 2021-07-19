@@ -65,9 +65,10 @@ function mVideoRecorder(opt) {
         } else {
             this.stopRecording();
             this.isRecording = false;
-            this.playButton.disabled = false;
+            if (this.playButton) this.playButton.disabled = false;
 
             this.targetVideo.parentElement.classList.remove('dn');
+            this.targetVideo.parentElement.parentElement.classList.remove('dn');
         }
     };
 
@@ -98,7 +99,7 @@ function mVideoRecorder(opt) {
             }
         }
         this.recordButton.innerHTML = '<i class="fa fa-stop-circle"></i> Stop Recording';
-        this.playButton.disabled = true;
+        if (this.playButton) this.playButton.disabled = true;
         this.mediaRecorder.onstop = this.handleStop;
         this.mediaRecorder.ondataavailable = this.handleDataAvailable;
         this.mediaRecorder.start(10);
@@ -109,7 +110,7 @@ function mVideoRecorder(opt) {
     /**
      * Stop the video recording
      */
-    this.stopRecording = (step) => {
+    this.stopRecording = () => {
         this.pauseRecordingButton.classList.add('dn');
         this.recordButton.innerHTML = '<i class="fa fa-stop"></i> Start Recording';
         this.mediaRecorder.stop();
@@ -175,8 +176,8 @@ function mVideoRecorder(opt) {
         this.recordButton.onclick = this.toggleRecording;
         this.pauseRecordingButton.onclick = this.pauseRecording;
         this.resumeRecordingButton.onclick = this.resumeRecording;
-        this.playButton.onclick = this.play;
-        this.removeButton.onclick = this.remove;
+        if (this.playButton) this.playButton.onclick = this.play;
+        if (this.removeButton) this.removeButton.onclick = this.remove;
         this.sourceVideo.srcObject = stream;
         this.sourceVideo.play();
         //

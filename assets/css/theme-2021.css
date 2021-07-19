@@ -234,6 +234,10 @@
         border: 1px solid #ccc;
     }
     
+    .csPageWrap .csPageBox.active {
+        background-color: rgba(253, 122, 42, .2);
+    }
+    
     .csPageWrap .csPageBox .csCaughtBox {
         text-align: center;
         font-size: 25px;
@@ -667,10 +671,17 @@
         -moz-border-radius: 5px !important;
         -o-border-radius: 5px !important;
         font-size: 14px;
+        border: 1px solid #fd7b5b;
     }
     
     .csPageWrap a.btn-orange:hover,
     .csPageWrap button.btn-orange:hover {
+        background-color: #ffffff;
+        color: #fd7b5b;
+        border: 1px solid #fd7b5b;
+    }
+    
+    .csPageWrap a.btn-orange.active {
         background-color: #ffffff;
         color: #fd7b5b;
         border: 1px solid #fd7b5b;
@@ -687,6 +698,7 @@
     .csPageWrap a.btn-black,
     .csPageWrap button.btn-black {
         background-color: #444444;
+        border: 1px solid #444444;
         color: #ffffff;
         border-radius: 5px !important;
         -webkit-border-radius: 5px !important;
@@ -781,6 +793,14 @@
     
     .p10 {
         padding: 10px !important;
+    }
+    
+    .pa0 {
+        padding-top: 0 !important;
+    }
+    
+    .pb0 {
+        padding-bottom: 0 !important;
     }
     
     .pa10 {
@@ -1092,16 +1112,31 @@
         bottom: 0;
         width: 100%;
         background: rgba(255, 255, 255, .9);
-        z-index: 1;
+        z-index: 2;
     }
     
-    .csIPLoader i {
+    .csIPLoader>i {
         position: relative;
         top: 50%;
         left: 50%;
         font-size: 50px;
         color: #fd7a2a;
         transform: translate(-50%, -50%);
+    }
+    
+    .csIPLoader div {
+        position: relative;
+        top: 100px;
+    }
+    
+    .csIPLoader div p {
+        color: #333;
+        text-align: center;
+    }
+    
+    .csIPLoader div p i {
+        font-size: 50px;
+        color: #fd7a2a;
     }
     /*  */
     
@@ -1310,6 +1345,10 @@
     .csF26 {
         font-size: 26px !important;
     }
+    
+    .csF40 {
+        font-size: 40px !important;
+    }
     /* Weights */
     
     .csB1 {
@@ -1386,9 +1425,306 @@
     }
     
     .csRatingBar li:not(.active):hover {
-        background-color: #444;
+        background-color: #fd7b5b;
     }
     
     .csRatingBar li:not(.active):hover p {
         color: #f2f2ff;
+    }
+    
+    .csSidebar {
+        -webkit-box-shadow: 0px 0px 0px 2px rgba(221, 221, 221, 1);
+        -moz-box-shadow: 0px 0px 0px 2px rgba(221, 221, 221, 1);
+        box-shadow: 0px 0px 0px 2px rgba(221, 221, 221, 1);
+        position: relative;
+        background-color: #fff;
+    }
+    
+    .csSidebar .csSidebarHead {
+        background-color: #3554DC;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    
+    .csSidebar .csSidebarHead figure img {
+        float: left;
+        width: 60px;
+        height: 60px;
+        margin-left: 5px;
+        margin-top: 10px;
+    }
+    
+    .csSidebar .csSidebarHead figure .csTextBox {
+        float: left;
+        margin-top: 5px;
+        margin-left: 5px;
+        width: 130px;
+        color: #ffffff;
+    }
+    
+    .csSidebar .csSidebarHead figure .csTextBox p {
+        margin: 0;
+        color: #ffffff;
+    }
+    
+    .csSidebar .csSidebarHead figure .csTextBox p {
+        font-weight: 800;
+    }
+    
+    .csSidebar .csSidebarHead figure .csTextBox p.csTextSmall {
+        font-size: 12px;
+        font-weight: 100;
+    }
+    
+    .csSidebar .csSidebarHead figure .csFixBox {
+        position: absolute;
+        right: 10px;
+        top: 20px;
+    }
+    
+    .csSidebar .csSidebarApproverSection h4 {
+        padding: 0;
+        margin: 0;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        color: #555555;
+        font-weight: 900;
+    }
+    
+    .csSidebar .csSidebarApproverSection ul {
+        list-style: none;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .csSidebar .csSidebarApproverSection ul li {
+        display: inline-block;
+    }
+    
+    .csSidebar .csSidebarApproverSection ul li a {
+        display: block;
+        width: 50px;
+        height: 50px;
+        margin-left: 5px;
+        margin-bottom: 10px;
+    }
+    
+    .csSidebar .csSidebarApproverSection ul li a img {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .csSidebar .csSidebarApproverSection ul li.csCustomImg a {
+        background-color: #ddd;
+        color: #3554DC;
+        font-weight: 100;
+        line-height: 1;
+        padding-top: 7px;
+    }
+    /*  */
+    
+    ul.csUl {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    ul.csUl li {
+        display: block;
+        width: 100%;
+    }
+    
+    .jsToggleHelp {
+        cursor: pointer !important;
+    }
+    
+    .csW {
+        color: #fff !important;
+    }
+    /* Employee Box */
+    
+    .csEmployeeBox {
+        width: 100%;
+        height: 200px;
+    }
+    
+    .csEmployeeBox img {
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        margin: auto;
+        vertical-align: top;
+    }
+    
+    .csEmployeeBox .csTextBox {
+        display: inline-block;
+        width: 70%;
+    }
+    
+    .csFWI {
+        width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .panel-theme .panel-heading {
+        background-color: #3554DC;
+        color: #fff !important;
+    }
+    
+    .panel-theme {
+        border: 1px solid #ccc;
+    }
+    
+    .csRatingScale ul {
+        list-style: none;
+        margin: 10px 0;
+        padding: 0;
+        border: 1px solid #eee;
+    }
+    
+    .csRatingScale ul li {
+        width: 19.7%;
+        padding: 10px 0;
+        display: inline-block;
+        text-align: center;
+        background: #fff;
+        margin: 0;
+        cursor: pointer;
+        border-right: 1px solid #eee;
+    }
+    
+    .csRatingScale ul li:hover,
+    .csRatingScale ul li.active {
+        background-color: #fd7a2a;
+    }
+    
+    .csRatingScale ul li:hover p,
+    .csRatingScale ul li.active p {
+        color: #fff !important;
+    }
+    
+    .csCP {
+        cursor: pointer;
+    }
+    
+    .mb30 {
+        margin-bottom: 30px !important;
+    }
+    
+    .csInfo {
+        color: #b4052c !important;
+    }
+    
+    .daterangepicker td.active,
+    .daterangepicker td.active:hover {
+        background-color: #3554DC !important;
+    }
+    
+    .csBoxMenu {
+        list-style: none;
+    }
+    
+    .csBoxMenu li {
+        font-size: 14px;
+        /* margin-left: 10px; */
+        margin-bottom: 10px;
+    }
+    
+    .csPaginationMenu {
+        list-style: none;
+    }
+    
+    .csPaginationMenu li {
+        display: inline-block;
+    }
+    
+    .csPaginationMenu li a {
+        display: block;
+        background: #f1f1f1;
+        padding: 10px 20px;
+        text-align: center;
+        color: #111;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -o-border-radius: 5px;
+    }
+    
+    .csPaginationMenu li.active a,
+    .csPaginationMenu li:hover a {
+        background: #fd7a2a;
+        color: #fff;
+    }
+    
+    .highcharts-credits {
+        display: none;
+    }
+    
+    .panel-success .panel-heading {
+        background-color: #81b431;
+    }
+    
+    .csSidebarGP {
+        background-color: #ffffff !important;
+    }
+    
+    .csSidebarGP p {
+        color: #000 !important;
+    }
+    
+    @media only screen and (max-width: 600px) {
+        .csRatingBar li {
+            display: block;
+            width: 99%;
+        }
+    }
+    
+    .csTabMenu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    /* .csTabMenu li {
+        display: inline-block;
+        background-color: #81b431;
+        color: #fff;
+        padding: 10px;
+        padding-bottom: 20px;
+        margin: 0;
+    }
+    
+    .csTabMenu li.active,
+    .csTabMenu li:hover {
+        background-color: #ffffff;
+        color: #333;
+    } */
+    /* INFO */
+    
+    .csInfoTxt {
+        color: #cc0000;
+    }
+    /*  */
+    
+    .csGB {
+        background-color: #f1f1f1;
+    }
+    /*  */
+    
+    .pt5 {
+        padding-top: 5px;
+    }
+    
+    .pb5 {
+        padding-bottom: 5px;
+    }
+    
+    .pl5 {
+        padding-left: 5px;
+    }
+    
+    .pr5 {
+        padding-right: 5px;
     }

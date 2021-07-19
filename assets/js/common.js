@@ -1,9 +1,9 @@
 //
 function loadTitles() {
-    $('[title][placement="left"]').tooltip({ placement: 'left', trigger: "hover" });
-    $('[title][placement="right"]').tooltip({ placement: 'right', trigger: "hover" });
-    $('[title][placement="top"]').tooltip({ placement: 'top', trigger: "hover" });
-    $('[title]').tooltip({ placement: 'bottom', trigger: "hover" });
+    $('[title][placement="left"]').tooltip({ placement: 'left auto', trigger: "hover" });
+    $('[title][placement="right"]').tooltip({ placement: 'right auto', trigger: "hover" });
+    $('[title][placement="top"]').tooltip({ placement: 'top auto', trigger: "hover" });
+    $('[title]').tooltip({ placement: 'bottom auto', trigger: "hover" });
 }
 
 
@@ -35,3 +35,27 @@ $(document).on('click', '.jsHintBtn', function(event) {
     $('.jsHintBody[data-hint="' + ($(this).data('target')) + '"]').toggle();
 
 });
+// 
+$(document).on('click', '.jsPageBTN', function(event) {
+
+    //
+    event.preventDefault();
+    //
+    $(this).toggleClass('fa-minus-circle');
+    $(this).toggleClass('fa-plus-circle');
+    //
+    $('.jsPageBody[data-page="' + ($(this).data('target')) + '"]').toggle();
+
+});
+
+footer_fixer();
+//
+function footer_fixer() {
+    //
+    if ($('.csPageWrap').length === 0) {
+        return;
+    }
+    var wh = $(document).height() - $('.csPageWrap').height();
+    var fh = $('footer').height();
+    $('footer').css('margin-top', (wh - fh) + 'px')
+}
