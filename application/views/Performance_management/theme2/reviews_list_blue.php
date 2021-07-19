@@ -40,7 +40,10 @@
                             <div class="col-md-4 col-xs-12">
                                 <div class="panel panel-theme jsReviewBox" data-id="<?=$review['sid'];?>" data-title="<?=$review['review_title'];?>">
                                     <div class="panel-heading pl5 pr5">
+                                    <?php
+                                            if(!$review['is_draft']){?>
                                         <button class="btn btn-<?=$statusClass;?> btn-xs csF14 csRadius5"><?=strtoupper($review['status']);?></button>
+                                        <?php } ?>
                                         <span class="pull-right">
                                             <?php
                                             if(!$review['is_draft']){
@@ -57,6 +60,14 @@
                                                     </button>
                                                     <?php
                                                 }
+                                                ?>
+                                                <a href="<?=purl('review/'.$review['sid']);?>" class="btn btn-black csF16 btn-xs" title="View Review Details" placement="top">
+                                                    <i class="fa fa-eye csF16" aria-hidden="true"></i>
+                                                </a>
+                                                <button class="btn btn-black csF16 btn-xs jsAddReviewers"  title="Add Reviewers" placement="top">
+                                                    <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
+                                                </button>
+                                                <?php 
                                             }else{
                                                 ?>
                                                  <a href="<?=purl('review/create/'.$review['sid']);?>" class="btn btn-black csF16 btn-xs "  title="Edit Review" placement="top">
@@ -65,12 +76,6 @@
                                                 <?php
                                             }
                                             ?>
-                                            <a href="<?=purl('review/'.$review['sid']);?>" class="btn btn-black csF16 btn-xs" title="View Review Details" placement="top">
-                                                <i class="fa fa-eye csF16" aria-hidden="true"></i>
-                                            </a>
-                                            <button class="btn btn-black csF16 btn-xs jsAddReviewers"  title="Add Reviewers" placement="top">
-                                                <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
-                                            </button>
                                             <?php 
                                             if(!$review['is_draft']){
                                                 if($review['is_archived']){
