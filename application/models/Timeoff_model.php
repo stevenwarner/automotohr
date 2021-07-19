@@ -9605,7 +9605,7 @@ class Timeoff_model extends CI_Model
             $request['approvers'] = $this->getEmployeeApprovers($request['company_sid'], $request['employee_sid']);
         }
         //
-        if(empty($request['timeoff_days']) || $request['timeoff_days'] = '[]'){
+        if(empty($request['timeoff_days']) || $request['timeoff_days'] == '[]'){
             //
             $user =
             $this->db
