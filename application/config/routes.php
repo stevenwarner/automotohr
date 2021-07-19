@@ -1297,6 +1297,7 @@ $route['performance-management/review/(:num)/(:num)/(:num)']['get'] = 'Performan
 $route['performance-management/feedback/(:num)/(:num)/(:num)']['get'] = 'Performance_management/feedback/$1/$2/$3';
 //
 $route['performance-management/reviews'] = 'Performance_management/reviews';
+$route['performance-management/my-reviews'] = 'Performance_management/MyReviews';
 
 // AJAX
 $route['performance-management/get-template-questions/(:any)/(:num)']['get'] = 'Performance_management/template_questions/$2/$1';

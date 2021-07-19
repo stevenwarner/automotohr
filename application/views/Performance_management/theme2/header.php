@@ -22,6 +22,13 @@
             'icon' => 'th-list',
             'segment' => 'reviews'
         ],
+        [
+            'title' => 'My Reviews',
+            'url' => '/my-reviews',
+            'slug' => 'my-reviews',
+            'icon' => 'th-list',
+            'segment' => 'my-reviews'
+        ],
         // [
         //     'title' => 'Create a Goal',
         //     'url' => 'javascript:void(0)',

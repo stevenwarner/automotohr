@@ -125,6 +125,39 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
+
+    /**
+     * Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function MyReviews(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Reviews';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['reviews'] = $this->pmm->GetAllMyReviews(
+            $this->pargs['employerId']
+        );
+
+        // _e($this->pargs['reviews'], true, true);
+
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}my_reviews/reviews");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
    
     /**
      * Reviews

@@ -102,6 +102,17 @@
     }
 ?>
 
+<!-- Single Review listing -->
+<?php 
+    if(
+        strpos($this->uri->uri_string(), 'my-reviews') !== false
+        ){
+            ?>
+        <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/my_review/index'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+        <?php
+    }
+?>
+
 
 <!-- Report -->
 <?php 

@@ -1429,6 +1429,69 @@ class Performance_management_model extends CI_Model{
     }
 
     
+    /**
+     * 
+     */
+    function GetAllMyReviews($employeeId){
+        //
+        $query = 
+        $this->db
+        ->select("
+            {$this->R}.review_title,
+            {$this->U}.first_name,
+            {$this->U}.last_name,
+            {$this->PRRS}.review_sid,
+            {$this->PRRS}.reviewee_sid,
+            {$this->PRRS}.reviewer_sid
+        ")
+        ->from($this->PRRS)
+        ->join($this->R, "{$this->R}.sid = {$this->PRRS}.review_sid", "inner")
+        ->join($this->U, "{$this->U}.sid = {$this->PRRS}.reviewer_sid", "inner")
+        ->where("{$this->R}.share_feedback", 1)
+        ->where("{$this->PRRS}.reviewee_sid", $employeeId)
+        ->where("{$this->PRRS}.is_completed", 1)
+        ->where("{$this->PRRS}.is_manager", 1)
+        ->get();
+        //
+        $records = $query->result_array();
+        $query->free_result();
+        //
+        if(!empty($records)){
+            //
+            $t = [];
+            //
+            foreach($records as $record){
+                //
+                $key = $record['review_sid'].'_'.$record['reviewee_sid'].'_'.$record['reviewer_sid'];
+                //
+                if(!isset($t[$key])){
+                    $t[$key] = $record;
+                    //
+                    $query = 
+                    $this->db
+                    ->select("
+                        {$this->PRA}.multiple_choice,
+                        {$this->PRA}.text_answer,
+                        {$this->PRA}.rating,
+                        {$this->PRA}.attachments,
+                        {$this->PRA}.is_modified,
+                        {$this->PRA}.updated_at
+                    ")
+                    ->where("{$this->PRA}.review_sid", $record['review_sid'])
+                    ->where("{$this->PRA}.reviewee_sid", $record['reviewee_sid'])
+                    ->where("{$this->PRA}.reviewer_sid", $record['reviewer_sid'])
+                    ->where("{$this->PRA}.question_sid", 0)
+                    ->get($this->PRA);
+                    //
+                    $t[$key]['feedback'] = $query->row_array();
+                }
+            }
+            $records = array_values($t);
+
+        }
+        //
+        return $records;
+    }
    
 
 
