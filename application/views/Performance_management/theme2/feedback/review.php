@@ -7,7 +7,7 @@
                 <p class="csF16 csB7 jsToggleHelpArea ma10" data-help="assigned_reviews"><i class="fa fa-info-circle csF16 csB7" aria-hidden="true"></i>&nbsp;<em style="color: #cc0000;">The provided feedback will be shared with the reporting manager(s).</em></p>
             </div>
             <div class="col-md-6 col-xs-12">
-                <span class="pull-right">
+                <span class="pull-right dn">
                     <a href="" class="btn btn-black" title="Send a reminder email to the reviewer." placement="top">
                         <i class="fa fa-bell-o" aria-hidden="true"></i>&nbsp; Send A Reminder Email
                     </a>

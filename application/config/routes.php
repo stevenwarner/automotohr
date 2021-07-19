@@ -1302,6 +1302,7 @@ $route['performance-management/get-template-questions/(:any)/(:num)']['get'] = '
 $route['performance-management/get-single-template/(:any)/(:num)']['get'] = 'Performance_management/single_template/$2/$1';
 $route['performance-management/save_review_step']['post'] = 'Performance_management/SaveReviewStep';
 $route['performance-management/save_answer']['post'] = 'Performance_management/SaveFeedbackAnswer';
+$route['performance-management/upload_question_file']['post'] = 'Performance_management/UploadQuestionAttachment';
 // Cron
 // Replicate and Start/End cron job
 $route['review_start_and_replicate/(:any)']['cli'] = 'Cron_common/PMMCronStartAndEndReplicate/$1';

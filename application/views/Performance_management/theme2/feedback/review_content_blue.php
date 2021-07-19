@@ -1,6 +1,8 @@
 <?php 
     $totalQuestions = count($review['QA']);
     $question = $review['QA'][$selectedPage -1];
+    $totalPages = count($review['QA']);
+
     //
     $completedQuestionsCount = 0;
     //
@@ -12,15 +14,38 @@
 ?>
 
 <script>
+    var page = <?=$selectedPage;?>;
+    var totalPages = <?=$totalPages;?>;
+    var completedPages = <?=$completedQuestionsCount;?>;
+    var isManager = <?=$review['is_manager'];?>;
     var question = {
         questionId: <?=$review['QA'][$selectedPage -1]['question_id'];?>,
         reviewId: <?=$reviewId;?>,
         revieweeId: <?=$revieweeId;?>,
         reviewerId: <?=$reviewerId;?>,
+        attachments: <?=empty($question['attachments']) ? '[]' : $question['attachments'];?>,
         multiple_choice: undefined,
         rating: undefined,
         text: undefined
     };
+
+    <?php
+        if(!empty($question['answer']['text'])){
+            ?>
+            question.text = "<?=$question['answer']['text'];?>";
+            <?php
+        }
+        if(!empty($question['answer']['rating'])){
+            ?>
+            question.rating = "<?=$question['answer']['rating'];?>";
+            <?php
+        }
+        if(!empty($question['answer']['multiple_choice'])){
+            ?>
+            question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
+            <?php
+        }
+    ?>
 </script>
 
 <div class="col-md-9 col-sm-12">
@@ -117,7 +142,7 @@
                                 if(!empty($question['question']['video'])){
                                     ?>
                                     <video controls style="width: 100%;" preload="metadata">
-                                        <source src="<?=getVideoURL($question['question']['video']);?>" type="image/mp4"></source>
+                                        <source src="<?=getVideoURL($reviewId,$question['question']['video']);?>" type="image/mp4"></source>
                                         <track label="English" kind="captions" srclang="en" default />
                                     </video>
                                     <?php
@@ -186,9 +211,9 @@
                 <div class="panel-footer">
                     <div class="row">
                         <div class="col-xs-12">
-                            <button class="btn btn-black jsReviewFinishLater">
+                            <!-- <button class="btn btn-black jsReviewFinishLater">
                                 <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp; Finish Later
-                            </button>
+                            </button> -->
                             <span class="pull-right">
                                 <button class="btn btn-orange jsReviewSave">
                                     <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp; Save & Next
@@ -240,70 +265,32 @@
                                 <caption></caption>
                                 <thead>
                                     <tr>
-                                        <th class="csF16" scope="col">Attached By</th>
                                         <th class="csF16" scope="col">Filename</th>
-                                        <th class="csF16" scope="col">Attached On</th>
                                         <th class="csF16" scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td style="vertical-align: middle">
-                                            <p class="csF14 csB7">
-                                                Mubashir Ahmed <br>
-                                                (QA) [Admin Plus]
-                                            </p>
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <p class="csF14 csB7">Attachment</p>
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <p class="csF14 csB7">July 15 2021, Thu</p>
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <button class="btn btn-orange csF14">
-                                                <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: middle">
-                                            <p class="csF14 csB7">
-                                                Mubashir Ahmed <br>
-                                                (QA) [Admin Plus]
-                                            </p>
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <p class="csF14 csB7">Attachment</p>
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <p class="csF14 csB7">July 15 2021, Thu</p>
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <button class="btn btn-orange csF14">
-                                                <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: middle">
-                                            <p class="csF14 csB7">
-                                                Mubashir Ahmed <br>
-                                                (QA) [Admin Plus]
-                                            </p>
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <p class="csF14 csB7">Attachment</p>
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <p class="csF14 csB7">July 15 2021, Thu</p>
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <button class="btn btn-orange csF14">
-                                                <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <?php
+                                        if(!empty($question['attachments'])){
+                                            foreach(json_decode($question['attachments'], true) as $attachment){
+                                                ?>
+                                                <tr>
+                                                    <td style="vertical-align: middle">
+                                                        <p class="csF16"><?=$attachment;?></p>
+                                                    </td>
+                                                    <td style="vertical-align: middle">
+                                                        <button class="btn btn-orange csF14">
+                                                            <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <?php
+                                            }
+                                        } else{
+                                            ?>
+                                            <?php
+                                        }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>

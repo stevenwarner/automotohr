@@ -285,15 +285,15 @@ class Performance_management extends Public_Controller{
         //
         $post = $this->input->post(null, true);
         //
-        $this->pmm->CheckAndSaveAnswer(
+        $questionId = $this->pmm->CheckAndSaveAnswer(
             $post['reviewId'],
             $post['revieweeId'],
-            $post['reviewerId']
+            $post['reviewerId'],
+            $post['questionId'],
+            $post
         );
-       
-
         //
-        $this->res(); // TODO
+        $this->res(['Status' => true, "Id" => $questionId]);
     }
     
     /**
@@ -681,7 +681,13 @@ class Performance_management extends Public_Controller{
             break;
         endswitch;
     }
-    
+
+    /**
+     * 
+     */
+    function UploadQuestionAttachment(){
+        echo upload_file_to_aws('file', 1, $_FILES['file']['name']);
+    }
 
     /**
      * Check user session and set data

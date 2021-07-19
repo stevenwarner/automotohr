@@ -1,13 +1,18 @@
 $(function() {
     //
     $('#jsQuestionAttachmentUpload').mFileUploader({
-        allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv', 'webm', 'mp4'],
+        allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv'],
         fileLimit: -1,
         path: true,
         onSuccess: function(file) {
+            //
+            ml(true, 'save_question');
+            //
+            uploadFile(file);
+            //
             $('#jsQuestionAttachmentUploadRow').removeClass('dn');
         },
-        onError: function() {
+        onError: function(error) {
             $('#jsQuestionAttachmentUploadRow').addClass('dn');
         },
         onClear: function() {
@@ -21,6 +26,9 @@ $(function() {
         event.preventDefault();
         //
         question.rating = $(this).data('id');
+        //
+        $('.jsReviewRating').removeClass('active')
+        $(this).addClass('active')
     });
 
     //
@@ -63,12 +71,40 @@ $(function() {
         //
         $.post(pm.urls.pbase + 'save_answer', question)
             .done(function(resp) {
-
+                ml(false, 'save_question');
+                handleSuccess("Answer saved.", function() {
+                    //
+                    if (isManager && page == totalPages) {
+                        window.location = window.location.origin + window.location.pathname + '?page=feedback';
+                    } else {
+                        if (page != totalPages) {
+                            window.location = window.location.origin + window.location.pathname + '?page=' + (++page);
+                        } else {
+                            window.location.reload();
+                        }
+                    }
+                });
             });
-
-        console.log(question);
-
     });
+
+
+    function uploadFile(file) {
+        var fd = new FormData();
+        var files = file;
+        fd.append('file', files);
+        //
+        $.ajax({
+            method: "POST",
+            url: pm.urls.pbase + 'upload_question_file',
+            contentType: false,
+            processData: false,
+            data: fd,
+            success: function(resp) {
+                question.attachments.push(resp);
+                ml(false, 'save_question');
+            }
+        });
+    }
 
     //
     ml(false, 'save_question');

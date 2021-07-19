@@ -813,16 +813,57 @@ class Performance_management_model extends CI_Model{
         return $result;
     }
     
+    /**
+     * 
+     */
+    function CheckAndSaveAnswer($reviewId, $reviweeId, $reviewerId, $questionId, $answer){
+        // 
+        $array = [];
+        $array['multiple_choice'] = isset($answer['multiple_choice']) ? $answer['multiple_choice'] : null;
+        $array['rating'] = isset($answer['rating']) ? $answer['rating'] : null;
+        $array['text_answer'] = isset($answer['text']) ? $answer['text'] : null;
+        $array['updated_at'] = date("Y-m-d H:i:s", strtotime("now"));
+        if(isset($answer['attachments'])){
 
+            $array['attachments'] = json_encode($answer['attachments']);
+        }
+        //
+        if(
+            $this->db
+            ->where('review_sid', $reviewId)
+            ->where('reviewee_sid', $reviweeId)
+            ->where('reviewer_sid', $reviewerId)
+            ->where('question_sid', $questionId)
+            ->count_all_results($this->PRA)
+        ){  
+            $array['is_modified'] = 1;
+            //
+            $this->db
+            ->where('review_sid', $reviewId)
+            ->where('reviewee_sid', $reviweeId)
+            ->where('reviewer_sid', $reviewerId)
+            ->where('question_sid', $questionId)
+            ->update($this->PRA, $array);
+            return $questionId;
+        }
+        //
+        $array['review_sid'] = $reviewId;
+        $array['reviewee_sid'] = $reviweeId;
+        $array['reviewer_sid'] = $reviewerId;
+        $array['question_sid'] = $questionId;
+        $array['created_at'] = date("Y-m-d H:i:s", strtotime("now"));
+        //
+        $this->db->insert($this->PRA, $array);
+        return $questionId;
+    }
+    
 
+    
+    
 
-
-
-
-
-
-
-
+    
+    
+    
 
 
 
@@ -984,6 +1025,7 @@ class Performance_management_model extends CI_Model{
             {$this->PRA}.multiple_choice,
             {$this->PRA}.text_answer,
             {$this->PRA}.rating,
+            {$this->PRA}.attachments,
             {$this->PRA}.is_modified,
             {$this->PRA}.updated_at
         ")
@@ -995,6 +1037,7 @@ class Performance_management_model extends CI_Model{
             {$this->PRA}.review_sid = {$reviewId}
         ", "left")
         ->where("{$this->PRQ}.review_sid", $reviewId)
+        ->order_by("{$this->PRQ}.sid", "ASC")
         ->get();
         //
         $result = $query->result_array();
@@ -1018,6 +1061,7 @@ class Performance_management_model extends CI_Model{
                 $t[] = [
                     'question_id' => $row['sid'],
                     'question' => $question,
+                    'attachments' => $row['attachments'],
                     'answer' => [
                         'multiple_choice' => $row['multiple_choice'],
                         'rating' => $row['rating'],
@@ -1039,6 +1083,7 @@ class Performance_management_model extends CI_Model{
             {$this->PRA}.multiple_choice,
             {$this->PRA}.text_answer,
             {$this->PRA}.rating,
+            {$this->PRA}.attachments,
             {$this->PRA}.is_modified,
             {$this->PRA}.updated_at
         ")
@@ -1052,6 +1097,7 @@ class Performance_management_model extends CI_Model{
         //
         if(!empty($feedback)){
             $ra['Feedback'] = [
+                'attachments' => $feedback['attachments'],
                 'multiple_choice' => $feedback['multiple_choice'],
                 'rating' => $feedback['rating'],
                 'text' => $feedback['text_answer'],
@@ -1060,6 +1106,7 @@ class Performance_management_model extends CI_Model{
             ];
         } else{
             $ra['Feedback'] = [
+                'attachments' => '',
                 'multiple_choice' => '',
                 'rating' => '',
                 'text' => '',
