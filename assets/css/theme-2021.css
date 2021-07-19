@@ -681,6 +681,12 @@
         border: 1px solid #fd7b5b;
     }
     
+    .csPageWrap a.btn-orange.active {
+        background-color: #ffffff;
+        color: #fd7b5b;
+        border: 1px solid #fd7b5b;
+    }
+    
     .csPageWrap button.btn-theme,
     .csPageWrap a.btn-theme {
         border-radius: 5px !important;

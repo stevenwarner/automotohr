@@ -80,6 +80,28 @@
     }
 ?>
 
+<!-- Reviews listing -->
+<?php 
+    if(
+        strpos($this->uri->uri_string(), 'reviews') !== false
+        ){
+            ?>
+        <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/reviews/index'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+        <?php
+    }
+?>
+
+<!-- Single Review listing -->
+<?php 
+    if(
+        strpos($this->uri->uri_string(), 'review') !== false
+        ){
+            ?>
+        <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/single_review/index'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+        <?php
+    }
+?>
+
 
 <!-- Report -->
 <?php 

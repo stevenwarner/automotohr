@@ -1292,8 +1292,9 @@ $route['performance-management/review/create/(:num)'] = 'Performance_management/
 $route['performance-management/report'] = 'Performance_management/report';
 $route['performance-management/report/(:any)/(:any)/(:any)/(:any)'] = 'Performance_management/report/$1/$2/$3/$4';
 //
-$route['performance-management/feedback']['get'] = 'Performance_management/feedback';
+$route['performance-management/review/(:num)']['get'] = 'Performance_management/SingleReview/$1';
 $route['performance-management/review/(:num)/(:num)/(:num)']['get'] = 'Performance_management/review/$1/$2/$3';
+$route['performance-management/feedback/(:num)/(:num)/(:num)']['get'] = 'Performance_management/feedback/$1/$2/$3';
 //
 $route['performance-management/reviews'] = 'Performance_management/reviews';
 
@@ -1303,6 +1304,15 @@ $route['performance-management/get-single-template/(:any)/(:num)']['get'] = 'Per
 $route['performance-management/save_review_step']['post'] = 'Performance_management/SaveReviewStep';
 $route['performance-management/save_answer']['post'] = 'Performance_management/SaveFeedbackAnswer';
 $route['performance-management/upload_question_file']['post'] = 'Performance_management/UploadQuestionAttachment';
+$route['performance-management/get_reviewee_reviewes/(:num)/(:num)']['get'] = 'Performance_management/GetReviewReviewers/$1/$2';
+$route['performance-management/save_review_reviewers']['post'] = 'Performance_management/UpdateRevieweeReviewers';
+$route['performance-management/archive_review']['post'] = 'Performance_management/ArchiveReview';
+$route['performance-management/activate_review']['post'] = 'Performance_management/ActivateReview';
+$route['performance-management/stop_review']['post'] = 'Performance_management/StopReview';
+$route['performance-management/start_review']['post'] = 'Performance_management/StartReview';
+$route['performance-management/stop_reviewee_review']['post'] = 'Performance_management/StopReviweeReview';
+$route['performance-management/start_reviewee_review']['post'] = 'Performance_management/StartReviweeReview';
+$route['performance-management/update_reviewee']['post'] = 'Performance_management/UpdateReviewee';
 // Cron
 // Replicate and Start/End cron job
 $route['review_start_and_replicate/(:any)']['cli'] = 'Cron_common/PMMCronStartAndEndReplicate/$1';

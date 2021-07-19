@@ -146,7 +146,7 @@
     </div>
 
     <!-- Goals -->
-    <div class="panel panel-theme">
+    <div class="panel panel-theme dn">
         <div class="panel-heading" style="background-color: #3554DC;">
             <div class="row">
                 <div class="col-md-9 col-sm-12">

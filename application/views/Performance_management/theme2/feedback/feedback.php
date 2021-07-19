@@ -4,7 +4,18 @@
         <!-- Main Page Box -->
         <div class="csPageWrap" style="margin: 20px auto;">
             <div class="col-md-6 col-xs-12">
-                <p class="csF16 csB7 jsToggleHelpArea ma10 dn" data-help="assigned_reviews"><i class="fa fa-info-circle csF16 csB7" aria-hidden="true"></i>&nbsp;<em style="color: #cc0000;">The provided feedback will be shared with the reporting manager(s).</em></p>
+                <p class="csF16 csB7 jsToggleHelpArea ma10" data-help="assigned_reviews"><i class="fa fa-info-circle csF16 csB7" aria-hidden="true"></i>&nbsp;<em style="color: #cc0000;">
+                <?php
+                    if($review['share_feedback']){
+                        ?>
+                        The provided feedback will be shared with the reviewee.
+                        <?php
+                    }  else{
+                        ?>
+                        The provided feedback will not be shared with the reviewee.
+                        <?php
+                    }
+                ?></em></p>
             </div>
             <div class="col-md-6 col-xs-12">
                 <span class="pull-right dn">
@@ -20,11 +31,10 @@
             <!-- Left Sidebar -->
             <?php $this->load->view("{$pp}left_sidebar"); ?>
             <!-- Right Content Area -->
-            <?php $this->load->view("{$pp}reviews_list_blue"); ?>
+            <?php $this->load->view("{$pp}feedback/review_content_blue"); ?>
         </div>
         <?php
     } else{
         // Load green view
-        
     }
 ?>

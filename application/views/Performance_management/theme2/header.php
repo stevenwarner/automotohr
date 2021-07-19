@@ -22,21 +22,21 @@
             'icon' => 'th-list',
             'segment' => 'reviews'
         ],
-        [
-            'title' => 'Create a Goal',
-            'url' => 'javascript:void(0)',
-            'slug' => 'goal/create',
-            'icon' => 'plus-square',
-            'segment' => 'goal/create',
-            'class' => 'jsCreateGoal'
-        ],
-        [
-            'title' => 'Goals',
-            'url' => '/goals',
-            'slug' => 'goals',
-            'icon' => 'bullseye',
-            'segment' => 'goals'
-        ],
+        // [
+        //     'title' => 'Create a Goal',
+        //     'url' => 'javascript:void(0)',
+        //     'slug' => 'goal/create',
+        //     'icon' => 'plus-square',
+        //     'segment' => 'goal/create',
+        //     'class' => 'jsCreateGoal'
+        // ],
+        // [
+        //     'title' => 'Goals',
+        //     'url' => '/goals',
+        //     'slug' => 'goals',
+        //     'icon' => 'bullseye',
+        //     'segment' => 'goals'
+        // ],
         [
             'title' => 'Calendar',
             'url' => 'javascript:void(0)',
@@ -52,13 +52,13 @@
             'icon' => 'pie-chart',
             'segment' => 'report'
         ],
-        [
-            'title' => 'Settings',
-            'url' => '/settings',
-            'slug' => 'settings',
-            'icon' => 'pie-chart',
-            'segment' => 'settings'
-        ]
+        // [
+        //     'title' => 'Settings',
+        //     'url' => '/settings',
+        //     'slug' => 'settings',
+        //     'icon' => 'pie-chart',
+        //     'segment' => 'settings'
+        // ]
     ];
     //
     $lis = '';

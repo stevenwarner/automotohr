@@ -85,31 +85,6 @@ class Performance_management extends Public_Controller{
         $this->load->view($this->footer);
     }
     
-    
-    /**
-     * Dashboard
-     * 
-     * @employee Mubashir Ahmed 
-     * @date     02/01/2021
-     * 
-     * @return Void
-     */
-    function feedback(){
-        // 
-        $this->checkLogin($this->pargs);
-        // Set title
-        $this->pargs['title'] = 'Performance Management - Feedback';
-        // Set logged in employee departments and teams
-        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
-        // Set employee information for the blue screen
-        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
-
-        $this->load->view($this->header, $this->pargs);
-        $this->load->view("{$this->pp}header");
-        $this->load->view("{$this->pp}feedback");
-        $this->load->view("{$this->pp}footer");
-        $this->load->view($this->footer);
-    }
    
     /**
      * Reviews
@@ -128,14 +103,60 @@ class Performance_management extends Public_Controller{
         $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
         // Set employee information for the blue screen
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
         //
-        $this->pargs['reviews'] = $this->pmm->GetAllReviews($this->pargs['employerId'], $this->pargs['employerRole'], $this->pargs['level'], $this->pargs['companyId']);
-        // Check and assign
-        $this->pmm->CheckAndAssign($this->pargs['companyId']);
+        $type = $this->input->get('type', true) ? $this->input->get('type', true) : 'active';
+        //
+        $this->pargs['type'] = $type;
+        //
+        $this->pargs['reviews'] = $this->pmm->GetAllReviews(
+            $this->pargs['employerId'], 
+            $this->pargs['employerRole'], 
+            $this->pargs['level'], 
+            $this->pargs['companyId'],
+            null,
+            $type
+        );
 
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}reviews");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+   
+    /**
+     * Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function SingleReview($id){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Reviews';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $type = $this->input->get('type', true) ? $this->input->get('type', true) : 'active';
+        //
+        $this->pargs['type'] = $type;
+        //
+        $this->pargs['review'] = $this->pmm->GetReviewById(
+            $id
+        );
+
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}single_review/single_review");
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
@@ -174,6 +195,39 @@ class Performance_management extends Public_Controller{
     }
 
     /**
+     * Review
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function feedback($reviewId, $revieweeId, $reviewerId){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Feedback';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        //
+        $this->pargs['review'] = $this->pmm->GetReviewByReviewer($reviewId, $revieweeId, $reviewerId);
+        //
+        $this->pargs['reviewId'] = $reviewId;
+        $this->pargs['revieweeId'] = $revieweeId;
+        $this->pargs['reviewerId'] = $reviewerId;
+        //
+        $this->pargs['selectedPage'] = $this->input->get('page', true) ? $this->input->get('page', true) : 1;
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}feedback/feedback");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    /**
      * Create Review
      * 
      * @employee Mubashir Ahmed 
@@ -201,10 +255,11 @@ class Performance_management extends Public_Controller{
         // Get Review
         $this->pargs['review'] = $this->pmm->GetReviewRowById($id, $this->pargs['companyId']);
         //
-        if($this->pargs['review']['is_draft'] == 0){
+        if($id !== 0 &&$this->pargs['review']['is_draft'] == 0){
             redirect('performance-management/reviews','refresh');
             return;
         }
+        
         // Set Job titles
         $this->pargs['job_titles'] = array_filter(array_unique(array_column($this->pargs['company_employees'], 'JobTitle')), function($job){
             if(!empty($job)) {
@@ -294,6 +349,186 @@ class Performance_management extends Public_Controller{
         );
         //
         $this->res(['Status' => true, "Id" => $questionId]);
+    }
+    
+    
+    /**
+     * 
+     */
+    function GetReviewReviewers($reviewId, $revieweeId){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $reviewers = $this->pmm->GetReviewReviewers($reviewId, $revieweeId);
+        //
+        $this->res(['Status' => true, "Data" => $reviewers]);
+    }
+   
+    /**
+     * 
+     */
+    function UpdateRevieweeReviewers(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->CheckAndInsertReviewee($post['reviewId'], $post['revieweeId']);
+        //
+        $insertArray = [];
+        //
+        foreach($post['reviewerIds'] as $reviewer){
+            //
+            $insertArray[] = [
+                'review_sid' => $post['reviewId'],
+                'reviewee_sid' => $post['revieweeId'],
+                'reviewer_sid' => $reviewer,
+                'created_at' => date("Y-m-d H:i:s", strtotime("now")),
+                'is_manager' => 0,
+                'is_completed' => 0
+            ];
+        }
+        //
+        $this->pmm->UpdateRevieweeReviewers($insertArray);
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function ArchiveReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->MarkReviewAsArchived($post['reviewId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    
+    /**
+     * 
+     */
+    function ActivateReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->MarkReviewAsActive($post['reviewId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function StopReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->StopReview($post['reviewId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function StartReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->StartReview($post['reviewId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    
+    /**
+     * 
+     */
+    function StopReviweeReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->StopReviweeReview($post['reviewId'], $post['revieweeId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function StartReviweeReview(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->StartReviweeReview($post['reviewId'], $post['revieweeId']);
+       
+        //
+        $this->res(['Status' => true]);
+    }
+    
+    /**
+     * 
+     */
+    function UpdateReviewee(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $currentReviewers = $this->pmm->GetReviewReviewers($post['reviewId'], $post['revieweeId']);
+        //
+        $newReviewers = array_diff($post['reviwers'], $currentReviewers);
+        $deletedReviewers = array_diff($currentReviewers, $post['reviwers']);
+        //
+        if(!empty($deletedReviewers)){
+            $this->pmm->DeleteRevieweeReviewers($post['reviewId'], $post['revieweeId'],$deletedReviewers);
+        }
+        //
+        if(!empty($newReviewers)){
+            $this->pmm->AddRevieweeReviewers($post['reviewId'], $post['revieweeId'],$newReviewers);
+        }
+        //
+        $this->pmm->UpdateRevieweeDates($post['reviewId'], $post['revieweeId'], $post);
+        //
+        $this->res(['Status' => true]);
     }
     
     /**

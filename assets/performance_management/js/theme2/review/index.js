@@ -67,6 +67,10 @@ $(function() {
             return;
         }
         //
+        if (totalPages == completedPages) {
+            question.completed = 1;
+        }
+        //
         ml(true, 'save_question');
         //
         $.post(pm.urls.pbase + 'save_answer', question)

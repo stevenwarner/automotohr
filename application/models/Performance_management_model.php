@@ -443,7 +443,7 @@ class Performance_management_model extends CI_Model{
     /**
      * 
      */
-    function GetAllReviews($employeeId, $employeeRole, $plus, $companyId, $columns = null){
+    function GetAllReviews($employeeId, $employeeRole, $plus, $companyId, $columns = null, $type = 'active'){
         //
         if(!$plus){
             $dt = $this->employeeDT($employeeId, []);
@@ -456,6 +456,8 @@ class Performance_management_model extends CI_Model{
             review_title,
             description,
             share_feedback,
+            is_archived,
+            is_draft,
             review_start_date,
             review_end_date,
             review_end_date,
@@ -463,9 +465,25 @@ class Performance_management_model extends CI_Model{
             updated_at,
             status
         ")
-        ->where('is_archived', 0)
         ->where('company_sid', $companyId);
-
+        //
+        if($type == 'active'){
+            $this->db
+            ->where('is_archived', 0)
+            ->where('is_draft', 0);
+        }
+        //
+        if($type == 'archived'){
+            $this->db
+            ->where('is_archived', 1)
+            ->where('is_draft', 0);
+        }
+        //
+        if($type == 'draft'){
+            $this->db
+            ->where('is_archived', 0)
+            ->where('is_draft', 1);
+        }
         //
         if(!$plus){
             //
@@ -505,65 +523,6 @@ class Performance_management_model extends CI_Model{
         }
         //
         return $reviews;
-    }
-
-
-    /**
-     * 
-     */
-    function CheckAndAssign($companyId){
-        //
-        $reviews = $this->GetAllReviews(0, 0, 1, $companyId, 
-        "
-            sid,
-            review_start_date,
-            company_sid,
-            review_end_date,
-            frequency,
-            repeat_after,
-            repeat_type,
-            review_runs,
-            repeat_review,
-            review_due,
-            review_due_type,
-            created_at,
-            updated_at,
-        ");
-        //
-        if(!empty($reviews)){
-            foreach($reviews as $review){
-                //
-                if($review['frequency'] == 'onetime'){
-                    continue;
-                }
-                //
-                if($review['frequency'] == 'custom'){
-                    $customRuns = array_values(json_decode($review['review_runs'], true));
-                    $doRepeat = $review['repeat_review'];
-                    $reviewEnd = $review['review_due'];
-                    $reviewEndType = $review['review_due_type'];
-                    //
-                    $reviewees = array_keys($review['Reviewees']);
-                    //
-                    $reviewees = $this->GetEmployeeColumns($reviewees, ['sid', 'joined_at']);
-                    //
-                    $runRe = [];
-                    //
-                    foreach($reviewees as $reviewee){
-                        //
-                        // $compareDate = addTimeToDate($reviewee['joined_at'], );
-                    }
-                      
-                }
-                _e($customRuns, true);
-                _e($doRepeat, true);
-                _e($reviewEnd, true);
-                _e($reviewEndType, true);
-                _e($employees, true);
-                _e($reviewees, true, true);
-
-            }
-        }
     }
 
     /**
@@ -782,6 +741,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select("
             {$this->R}.review_title,
+            {$this->R}.share_feedback,
             {$this->PRR}.start_date,
             {$this->PRR}.end_date,
             {$this->PRR}.is_started,
@@ -812,11 +772,59 @@ class Performance_management_model extends CI_Model{
         //
         return $result;
     }
+
+    /**
+     * 
+     */
+    function GetReviewById($reviewId){
+        //
+        $this->db
+        ->select(
+            "
+            sid,
+            review_title,
+            description,
+            share_feedback,
+            is_archived,
+            is_draft,
+            review_start_date,
+            review_end_date,
+            review_end_date,
+            created_at,
+            updated_at,
+            status
+        ")
+        ->where('sid', $reviewId);
+        //
+        $query = $this->db->get($this->R);
+        //
+        $reviews = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(!empty($reviews)){
+            foreach($reviews as $index => $review){
+                $reviews[$index]['created_at'] = formatDateToDB($review['created_at'], 'Y-m-d H:i:s', 'M d Y, D H:i:s');
+                $reviews[$index]['updated_at'] = formatDateToDB($review['updated_at'], 'Y-m-d H:i:s', 'M d Y, D H:i:s');
+                $reviews[$index]['Reviewees'] = $this->GetReviewRevieews($review['sid']);
+            }
+        }
+        //
+        return $reviews;
+    }
     
     /**
      * 
      */
     function CheckAndSaveAnswer($reviewId, $reviweeId, $reviewerId, $questionId, $answer){
+        //
+        if(isset($answer['completed'])){
+            $this->db
+            ->where('review_sid', $reviewId)
+            ->where('reviewee_sid', $reviweeId)
+            ->where('reviewer_sid', $reviewerId)
+            ->update($this->PRRS, ['is_completed' => 1]);
+        }
         // 
         $array = [];
         $array['multiple_choice'] = isset($answer['multiple_choice']) ? $answer['multiple_choice'] : null;
@@ -856,8 +864,178 @@ class Performance_management_model extends CI_Model{
         $this->db->insert($this->PRA, $array);
         return $questionId;
     }
+
+
+    /**
+     * 
+     */
+    function GetReviewReviewers($reviewId, $revieweeId){
+        //
+        $query = $this->db
+        ->select('reviewer_sid')
+        ->where('review_sid', $reviewId)
+        ->where('reviewee_sid', $revieweeId)
+        ->get($this->PRRS);
+        //
+        $reviewers = $query->result_array();
+        //
+        $query->free_result();
+        //
+        return array_column($reviewers, 'reviewer_sid');
+    }
     
 
+    /**
+     * 
+     */
+    function CheckAndInsertReviewee($reviewId, $revieweeId){
+        //
+        if(
+            $this->db->where('review_sid', $reviewId)
+            ->where('reviewee_sid', $revieweeId)
+            ->count_all_results($this->PRR)
+        ){
+            return true;
+        }
+        //
+        $this->db->insert($this->PRR, [
+            'review_sid' => $reviewId,
+            'reviewee_sid' => $revieweeId,
+            'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+            'updated_at' => date('Y-m-d H:i:s', strtotime('now')),
+            'is_started' => 0,
+            'start_date' => '',
+            'end_date' => ''
+        ]);
+        return $this->db->insert_id();
+    }
+    
+    /**
+     * 
+     */
+    function UpdateRevieweeReviewers($insertArray){
+        //
+        $this->db->insert_batch($this->PRRS, $insertArray);
+        return $this->db->insert_id();
+    }
+    
+    
+    /**
+     * 
+     */
+    function MarkReviewAsArchived($reviewId){
+        //
+        $this->db->where('sid',$reviewId)
+        ->update($this->R, ['is_archived' => 1]);
+    }
+    
+    /**
+     * 
+     */
+    function MarkReviewAsActive($reviewId){
+        //
+        $this->db->where('sid',$reviewId)
+        ->update($this->R, ['is_archived' => 0]);
+    }
+    
+    /**
+     * 
+     */
+    function StopReview($reviewId){
+        //
+        $this->db->where('sid',$reviewId)
+        ->update($this->R, ['status' => 'ended']);
+        
+        //
+        $this->db->where('review_sid',$reviewId)
+        ->update($this->PRR, ['is_started' =>0]);
+    }
+    
+    /**
+     * 
+     */
+    function StartReview($reviewId){
+        //
+        $this->db->where('sid',$reviewId)
+        ->update($this->R, ['status' => 'started']);
+        
+        //
+        $this->db->where('review_sid',$reviewId)
+        ->update($this->PRR, ['is_started' =>1]);
+    }
+    
+    
+    /**
+     * 
+     */
+    function StartReviweeReview($reviewId, $revieweeId){
+        //
+        $this->db->where('sid',$reviewId)
+        ->update($this->R, ['status' => 'started']);
+        //
+        $this->db
+        ->where('review_sid',$reviewId)
+        ->where('reviewee_sid',$revieweeId)
+        ->update($this->PRR, ['is_started' =>1]);
+    }
+    
+    /**
+     * 
+     */
+    function StopReviweeReview($reviewId, $revieweeId){
+        //
+        $this->db
+        ->where('review_sid',$reviewId)
+        ->where('reviewee_sid',$revieweeId)
+        ->update($this->PRR, ['is_started' =>0]);
+    }
+    
+    /**
+     * 
+     */
+    function DeleteRevieweeReviewers($reviewId, $revieweeId, $reviewerIds){
+        //
+        $this->db
+        ->where('review_sid',$reviewId)
+        ->where('reviewee_sid',$revieweeId)
+        ->where_in('reviewer_sid',$reviewerIds)
+        ->delete($this->PRRS);
+    }
+    
+    /**
+     * 
+     */
+    function AddRevieweeReviewers($reviewId, $revieweeId, $reviewerIds){
+        //
+        foreach($reviewerIds as $reviewerId){
+            //
+            $this->db
+            ->insert($this->PRRS, [
+                'review_sid' => $reviewId,
+                'reviewee_sid' => $revieweeId,
+                'reviewer_sid' => $reviewerId,
+                'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                'is_manager' => 0,
+                'is_completed' => 1
+            ]);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function UpdateRevieweeDates($reviewId, $revieweeId, $post){
+        //
+        $this->db
+        ->where('review_sid',$reviewId)
+        ->where('reviewee_sid',$revieweeId)
+        ->update(
+            $this->PRR, [
+                'start_date' => formatDateToDB($post['start_date']),
+                'end_date' => formatDateToDB($post['start_date'])
+            ]
+        );
+    }
     
     
 

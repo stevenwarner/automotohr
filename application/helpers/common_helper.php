@@ -13625,3 +13625,42 @@ if(!function_exists('getButtonForEmail')){
         </a>');
     }
 }
+
+
+if(!function_exists('getCompletedPercentage')){
+    function getCompletedPercentage($records, $type, $returnAll = false){
+        //
+        if(empty($records)){
+            return 0;
+        }
+        //
+        $percentage = 0;
+        $total = 0;
+        $completed = 0;
+        //
+        foreach($records as $reviewee){
+            foreach($reviewee['reviewers'] as $reviewer){
+                //
+                if($type == 'manager' && $reviewer['is_manager'] == 0){
+                    continue;
+                }
+                //
+                $total++;
+                //
+                if($reviewer['is_completed']){
+                    $completed++;
+                }
+            }
+        }
+        //
+        if($returnAll){
+            return [
+                'total' => $total,
+                'completed' => $completed,
+                'percentage' => ceil($completed*$total/100)
+            ];
+        }
+        //
+        return ceil($completed*$total/100);
+    }
+}
