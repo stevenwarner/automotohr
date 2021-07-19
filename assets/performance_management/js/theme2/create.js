@@ -354,12 +354,12 @@ $(function() {
             id: obj.Id
         }, function(resp) {
             //
-            if (!resp.Status) {
+            if (resp.Status == false) {
                 handleError(resp.Msg);
                 return;
             }
             //
-            loadQuestions();
+            loadQuestions(true);
         });
 
     });
@@ -1675,7 +1675,7 @@ $(function() {
     }
 
     //
-    function loadQuestions() {
+    function loadQuestions(shift) {
         //
         if (!obj.Questions || obj.Questions.length === 0) {
             return;
@@ -1784,6 +1784,10 @@ $(function() {
         });
         //
         $('#jsReviewQuestionListArea').html(html);
+        //
+        if (shift) {
+            stepMover('questions');
+        }
 
     }
 
