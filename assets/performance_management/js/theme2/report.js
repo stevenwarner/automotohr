@@ -1,7 +1,14 @@
 $(function() {
-    loadOverallGraph(10, 20);
-    loadExpiringGraph(2, 50);
-    loadSchedulesGraph(20, 5, 10, 2);
+    loadOverallGraph(
+        graph1.Pending,
+        graph1.Completed
+    );
+    loadSchedulesGraph(
+        graph2.Started,
+        graph2.Completed,
+        graph2.Draft,
+        graph2.archived
+    );
     //
     function loadOverallGraph(
         notcompleted,
@@ -13,8 +20,8 @@ $(function() {
                 datasets: [{
                     label: '# of hours',
                     data: [
+                        completed,
                         notcompleted,
-                        completed
                     ],
                     backgroundColor: [
                         '#1032c3',
@@ -31,7 +38,7 @@ $(function() {
                 // These labels appear in the legend and in the tooltips when hovering different arcs
                 labels: [
                     `Completed Review(s): ${completed}`,
-                    `Not Completed Review(s) : ${notcompleted}`
+                    `Not Completed Review(s) : ${notcompleted}`,
                 ],
             },
             options: {
@@ -47,53 +54,6 @@ $(function() {
                 maintainAspectRatio: false,
                 showAllTooltips: true,
                 onClick: function(e) {}
-            },
-        });
-    }
-
-    //
-    function loadExpiringGraph(
-        past,
-        within
-    ) {
-        new Chart(document.getElementById('jsTimeoffPieGraph1'), {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: [
-                        past,
-                        within,
-                    ],
-                    backgroundColor: [
-                        '#fd7a2a',
-                        '#1032c3',
-                        'rgba(255, 206, 86, 1)'
-                    ],
-                    borderColor: [
-                        '#fd7a2a',
-                        '#1032c3',
-                        'rgba(255, 206, 86, 1)',
-                    ],
-                    borderWidth: 1
-                }],
-                // These labels appear in the legend and in the tooltips when hovering different arcs
-                labels: [
-                    `Past Due`,
-                    `Due within a week`,
-                ],
-            },
-            options: {
-                tooltips: {
-                    callbacks: {
-                        label: function(tooltipItem, data) {
-                            if (tooltipItem.index == 0) return `Past Due: ${past}`;
-                            return `Due within a week: ${within}`;
-                        }
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-                showAllTooltips: true
             },
         });
     }
@@ -125,8 +85,8 @@ $(function() {
                 }],
                 // These labels appear in the legend and in the tooltips when hovering different arcs
                 labels: [
-                    `Scheduled Review(s)`,
-                    `Active Review(s)`,
+                    `Started Review(s)`,
+                    `Completed Review(s)`,
                     `Arhived Review(s)`,
                     `Review(s) In Draft`
                 ],

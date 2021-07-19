@@ -925,6 +925,32 @@ class Performance_management extends Public_Controller{
     }
 
     /**
+     * Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function report($reviewId = 'all', $employeeIds = 'all', $startDate = 'all', $endDate = 'all'){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Report';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        //
+        $this->pargs['graph1'] = $this->pmm->GetCompletedReviews($this->pargs['companyId']);
+        $this->pargs['graph2'] = $this->pmm->GetReviewCountByStatus($this->pargs['companyId']);        
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}report/index");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    /**
      * Check user session and set data
      * 
      * @employee Mubashir Ahmed

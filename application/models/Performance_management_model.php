@@ -1036,6 +1036,138 @@ class Performance_management_model extends CI_Model{
             ]
         );
     }
+
+    /**
+     * 
+     */
+    function GetCompletedReviews($companyId){
+        //
+        $query = 
+        $this->db
+        ->select("
+            {$this->R}.review_title,
+            {$this->U}.first_name,
+            {$this->U}.last_name,
+            reviewee.first_name as reviewee_first_name,
+            reviewee.last_name as reviewee_last_name,
+            {$this->PRRS}.review_sid,
+            {$this->PRRS}.reviewee_sid,
+            {$this->PRRS}.reviewer_sid,
+            {$this->PRRS}.is_completed,
+            {$this->PRRS}.is_manager
+        ")
+        ->from($this->PRRS)
+        ->join($this->R, "{$this->R}.sid = {$this->PRRS}.review_sid", "inner")
+        ->join($this->PRR, "{$this->PRR}.review_sid = {$this->R}.sid", "inner")
+        ->join($this->U, "{$this->U}.sid = {$this->PRRS}.reviewer_sid", "inner")
+        ->join("{$this->U} as reviewee", "reviewee.sid = {$this->PRRS}.reviewee_sid", "inner")
+        ->where("{$this->R}.status <>", 'pending')
+        ->where("{$this->R}.company_sid", $companyId)
+        ->where("{$this->PRR}.is_started", 1)
+        ->get();
+        //
+        $records = $query->result_array();
+        $query->free_result();
+        //
+        $rt = [
+            'Total' => 0,
+            'Completed' => 0,
+            'Pending' => 0,
+            'Records' => []
+        ];
+        //
+        if(!empty($records)){
+            //
+            $t = [];
+            $completed = 0;
+            $total = 0;
+            $pending = 0;
+            //
+            foreach($records as $record){
+                //
+                $key = $record['review_sid'].'_'.$record['reviewee_sid'].'_'.$record['reviewer_sid'];
+                //
+                if(!isset($t[$key])){
+                    $t[$key] = $record;
+                    //
+                    $total++;
+                    //
+                    if($record['is_completed']){
+                        $completed++;
+                    } else{
+                        $pending++;
+                    }
+                }
+            }
+            //
+            $rt['Total'] = $total;
+            $rt['Pending'] = $pending;
+            $rt['Completed'] = $completed;
+            $rt['Records'] = array_values($t);
+        }
+        //
+        return $rt;
+    }
+
+    /**
+     * 
+     */
+    function GetReviewCountByStatus($companyId){
+        //
+        $rt = [
+            'Started' => 0,
+            'Pending' => 0,
+            'Ended' => 0,
+            'Draft' => 0,
+            'Archived' => 0
+        ];
+        //
+        $rt['Started'] = 
+        $this->db
+        ->where("{$this->R}.status", 'started')
+        
+        ->where("{$this->R}.is_draft <>", 1)
+        ->where("{$this->R}.is_archived <>", 1)
+        ->where("{$this->R}.company_sid", $companyId)
+        ->count_all_results($this->R);
+
+        //
+        $rt['Pending'] = 
+        $this->db
+        ->where("{$this->R}.status", 'pending')
+        
+        ->where("{$this->R}.is_draft <>", 1)
+        ->where("{$this->R}.is_archived <>", 1)
+        ->where("{$this->R}.company_sid", $companyId)
+        ->count_all_results($this->R);
+
+        //
+        $rt['Ended'] = 
+        $this->db
+        ->where("{$this->R}.status", 'ended')
+        ->where("{$this->R}.is_draft <>", 1)
+        ->where("{$this->R}.is_archived <>", 1)
+        ->where("{$this->R}.company_sid", $companyId)
+        ->count_all_results($this->R);
+
+        //
+        $rt['Draft'] = 
+        $this->db
+        ->where("{$this->R}.is_draft", 1)
+        ->where("{$this->R}.is_archived <>", 1)
+        ->where("{$this->R}.company_sid", $companyId)
+        ->count_all_results($this->R);
+        
+        //
+        $rt['Archived'] = 
+        $this->db
+        ->where("{$this->R}.is_draft <>", 1)
+        ->where("{$this->R}.is_archived", 1)
+        ->where("{$this->R}.company_sid", $companyId)
+        ->count_all_results($this->R);
+        //
+        return $rt;
+    }
     
     
 
