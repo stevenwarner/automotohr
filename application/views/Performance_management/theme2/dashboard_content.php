@@ -39,7 +39,7 @@
                             <div class="col-md-4 col-sm-4 col-xs-12">
                                 <div class="csEmployeeBox">
                                     <figure>
-                                        <img src="<?=getImageURL($company_employees_index[$review['reviewee_sid']]['Image']);?>" class="csRadius50" alt="" />
+                                        <img src="<?=($company_employees_index[$review['reviewee_sid']]['Image']);?>" class="csRadius50" alt="" />
                                         <div class="csTextBox">
                                             <p class="csF14 csB7 mb0"><?=$company_employees_index[$review['reviewee_sid']]['Name'];?></p>
                                             <p class="csTextSmall mb0 csF14"> <?=$company_employees_index[$review['reviewee_sid']]['Role'];?></p>
@@ -112,7 +112,7 @@
                         <div class="col-md-4 col-sm-4 col-xs-12">
                             <div class="csEmployeeBox">
                                 <figure>
-                                    <img src="<?=getImageURL($company_employees_index[$review['reviewee_sid']]['Image']);?>" class="csRadius50" alt="" />
+                                    <img src="<?=($company_employees_index[$review['reviewee_sid']]['Image']);?>" class="csRadius50" alt="" />
                                     <div class="csTextBox">
                                         <p class="csF14 csB7 mb0"><?=$company_employees_index[$review['reviewee_sid']]['Name'];?></p>
                                         <p class="csTextSmall mb0 csF14"> <?=$company_employees_index[$review['reviewee_sid']]['Role'];?></p>
