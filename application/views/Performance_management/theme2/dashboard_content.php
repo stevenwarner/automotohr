@@ -39,10 +39,10 @@
                             <div class="col-md-4 col-sm-4 col-xs-12">
                                 <div class="csEmployeeBox">
                                     <figure>
-                                        <img src="<?=getImageURL($company_employees_index[$review['reviewer_sid']]['profile_picture']);?>" class="csRadius50" alt="" />
+                                        <img src="<?=getImageURL($company_employees_index[$review['revieweee_sid']]['profile_picture']);?>" class="csRadius50" alt="" />
                                         <div class="csTextBox">
-                                            <p class="csF14 csB7 mb0"><?=$company_employees_index[$review['reviewer_sid']]['Name'];?></p>
-                                            <p class="csTextSmall mb0 csF14"> <?=$company_employees_index[$review['reviewer_sid']]['Role'];?></p>
+                                            <p class="csF14 csB7 mb0"><?=$company_employees_index[$review['revieweee_sid']]['Name'];?></p>
+                                            <p class="csTextSmall mb0 csF14"> <?=$company_employees_index[$review['revieweee_sid']]['Role'];?></p>
                                             <p class="csTextSmall csF14">Due in <?=dateDifferenceInDays($now, $review['start_date'], '%a');?> day(s)</p>
                                             <p class="csTextSmall csF14">
                                                 <a href="<?=purl("review/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}");?>" class="btn btn-orange csF14">Start Review</a>
@@ -112,10 +112,10 @@
                         <div class="col-md-4 col-sm-4 col-xs-12">
                             <div class="csEmployeeBox">
                                 <figure>
-                                    <img src="<?=getImageURL($company_employees_index[$review['reviewer_sid']]['profile_picture']);?>" class="csRadius50" alt="" />
+                                    <img src="<?=getImageURL($company_employees_index[$review['reviewee_sid']]['profile_picture']);?>" class="csRadius50" alt="" />
                                     <div class="csTextBox">
-                                        <p class="csF14 csB7 mb0"><?=$company_employees_index[$review['reviewer_sid']]['Name'];?></p>
-                                        <p class="csTextSmall mb0 csF14"> <?=$company_employees_index[$review['reviewer_sid']]['Role'];?></p>
+                                        <p class="csF14 csB7 mb0"><?=$company_employees_index[$review['reviewee_sid']]['Name'];?></p>
+                                        <p class="csTextSmall mb0 csF14"> <?=$company_employees_index[$review['reviewee_sid']]['Role'];?></p>
                                         <p class="csTextSmall csF14">Due in <?=dateDifferenceInDays($now, $review['start_date'], '%a');?> day(s)</p>
                                         <p class="csTextSmall csF14">
                                             <a href="<?=purl("feedback/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}");?>" class="btn btn-orange csF14">Start Review</a>
