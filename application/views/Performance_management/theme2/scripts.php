@@ -94,7 +94,7 @@
 <!-- Single Review listing -->
 <?php 
     if(
-        strpos($this->uri->uri_string(), 'review') !== false
+        strpos($this->uri->uri_string(), 'review/') !== false
         ){
             ?>
         <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/single_review/index'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
