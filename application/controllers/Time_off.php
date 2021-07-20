@@ -3555,11 +3555,30 @@ class Time_off extends Public_Controller
             // Create timeoff
             case "update_timeoff":
                 //
+                $update_time = 'no';
+                $update_date = 'no';
+                //
+                $old_request_data = $this->timeoff_model->getRequestById($post['requestId'], false);
+                $old_start_date = date('Y-m-d', strtotime($old_request_data['request_from_date']));
+                $old_end_date = date('Y-m-d', strtotime($old_request_data['request_to_date']));
+                $old_request_time = $old_request_data['requested_time'];
+                $new_start_date = DateTime::createfromformat('m/d/Y', $post['startDate'])->format('Y-m-d');
+                $new_end_date = DateTime::createfromformat('m/d/Y', $post['endDate'])->format('Y-m-d');
+                $new_request_time = $post['dateRows']['totalTime'];
+                //
+                if ($old_start_date != $new_start_date || $old_end_date != $new_end_date) {
+                    $update_date = 'yes';
+                }
+                //
+                if ($old_request_time != $new_request_time) {
+                    $update_time = 'yes';
+                }
+                //
                 $in = [];
                 $in['timeoff_policy_sid'] = $post['policyId'];
                 $in['requested_time'] = $post['dateRows']['totalTime'];
-                $in['request_from_date'] = DateTime::createfromformat('m/d/Y', $post['startDate'])->format('Y-m-d');
-                $in['request_to_date'] = DateTime::createfromformat('m/d/Y', $post['endDate'])->format('Y-m-d');
+                $in['request_from_date'] = $new_start_date;
+                $in['request_to_date'] = $new_end_date;
                 $in['reason'] = $post['reason'];
                 $in['timeoff_days'] = json_encode($post['dateRows']);
                 //
@@ -3591,18 +3610,43 @@ class Time_off extends Public_Controller
                 $in['action'] = 'update';
                 $in['comment'] = $post['comment'];
                 if($post['fromAdmin'] == 1){
-                    $in['note'] = json_encode([
-                        'status' => $post['status'], 
-                        'canApprove' => $canApprove, 
-                        'comment' => $post['comment'],
-                        'details' => [
-                            'startDate' => $post['startDate'],
-                            'endDate' => $post['endDate'],
-                            'time' => $post['dateRows']['totalTime'],
-                            'policyId' => $post['policyId'],
-                            'policyTitle' => $this->timeoff_model->getPolicyColumn('title', $post['policyId'])['title']
-                        ]
-                        ]);
+                    $note = array();
+                    $note['status'] = $post['status'];
+                    $note['canApprove'] = $canApprove;
+                    $note['comment'] = $post['comment'];
+                    $note['details'] = array(
+                        'startDate' => $post['startDate'],
+                        'endDate' => $post['endDate'],
+                        'time' => $post['dateRows']['totalTime'],
+                        'policyId' => $post['policyId'],
+                        'policyTitle' => $this->timeoff_model->getPolicyColumn('title', $post['policyId'])['title']
+                    );
+                    //
+                    if ($update_date == 'yes') {
+                        $note['old_start_date'] = $old_start_date;
+                        $note['old_end_date'] = $old_end_date;
+                        $note['new_start_date'] = $new_start_date;
+                        $note['new_end_date'] = $new_end_date;
+                    }
+                    //
+                    if ($update_time == 'yes') {
+                        $note['old_request_time'] = $old_request_time;
+                        $note['new_request_time'] = $new_request_time;
+                    }
+                    //
+                    $in['note'] = json_encode($note);
+                    // $in['note'] = json_encode([
+                    //     'status' => $post['status'], 
+                    //     'canApprove' => $canApprove, 
+                    //     'comment' => $post['comment'],
+                    //     'details' => [
+                    //         'startDate' => $post['startDate'],
+                    //         'endDate' => $post['endDate'],
+                    //         'time' => $post['dateRows']['totalTime'],
+                    //         'policyId' => $post['policyId'],
+                    //         'policyTitle' => $this->timeoff_model->getPolicyColumn('title', $post['policyId'])['title']
+                    //     ]
+                    //     ]);
                 } else{
                     $in['note'] = json_encode(['status' => 'pending', 'comment' => $post['reason']]);
                 }
