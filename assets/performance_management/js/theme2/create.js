@@ -305,6 +305,8 @@ $(function() {
             id: obj.Id
         }, function(resp) {
             //
+            obj.Id = resp.Id;
+            //
             if (!resp.Status) {
                 handleError(resp.Msg);
                 return;
