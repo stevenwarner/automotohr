@@ -721,6 +721,8 @@ class Performance_management_model extends CI_Model{
         ->join("{$this->R}", "{$this->R}.sid = {$this->PRR}.review_sid", "inner")
         ->join("{$this->U}", "{$this->U}.sid = {$this->PRR}.reviewee_sid", "inner")
         ->where("{$this->PRR}.is_started", 1)
+        ->where("{$this->R}.is_archived", 0)
+        ->where("{$this->R}.is_draft", 0)
         ->where("{$this->PRRS}.reviewer_sid", $employeeId)
         ->where("{$this->PRRS}.is_manager", $type)
         ->get();
