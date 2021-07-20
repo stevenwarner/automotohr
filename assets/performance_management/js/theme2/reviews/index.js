@@ -30,6 +30,57 @@ $(function() {
     });
 
     //
+    $('.jsReviewVisibility').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        var reviewId = $(this).closest('.jsReviewBox').data('id');
+        //
+        Modal({
+            Id: 'jsManageVisibilityModal',
+            Title: 'Manage Visibility for ' + $(this).closest('.jsReviewBox').data('title'),
+            Body: '<div id="jsManageVisibilityModalBody"></div><input type="hidden" id="jsManageVisibilityModalINP" value="' + (reviewId) + '" />',
+            Loader: 'jsManageVisibilityModalLoader'
+        }, async function() {
+            //
+            var reviewVisibility = await GetReviewVisibility(reviewId);
+            //
+            $('#jsManageVisibilityModalBody').html(reviewVisibility);
+            //
+            $('#jsVRoles').select2({ closeOnSelect: false });
+            $('#jsVDepartments').select2({ closeOnSelect: false });
+            $('#jsVTeams').select2({ closeOnSelect: false });
+            $('#jsVEmployees').select2({ closeOnSelect: false });
+            //
+            ml(false, 'jsManageVisibilityModalLoader');
+        });
+    });
+
+    //
+    $(document).on('click', '.jsUpdateVisibility', function(event) {
+        //
+        event.preventDefault();
+        //
+        ml(true, 'jsManageVisibilityModalLoader');
+        //
+        var obj = {
+            reviewId: $('#jsManageVisibilityModalINP').val(),
+            roles: $('#jsVRoles').val() || [],
+            departments: $('#jsVDepartments').val() || [],
+            teams: $('#jsVTeams').val() || [],
+            employees: $('#jsVEmployees').val() || []
+        };
+        //
+        $.post(
+            pm.urls.pbase + 'update_visibility_post',
+            obj
+        ).done(function(resp) {
+            ml(false, 'jsManageVisibilityModalLoader');
+            handleSuccess("You have successfully updated the visibility.");
+        });
+    });
+
+    //
     $('.jsArchiveReview').click(function(event) {
         //
         event.preventDefault();
@@ -238,6 +289,18 @@ $(function() {
             handleSuccess("You have successfully started the review.", function() {
                 window.location.reload();
             });
+        });
+    }
+
+    //
+    function GetReviewVisibility(reviewId) {
+        //
+        return new Promise(function(res) {
+            //
+            $.get(pm.urls.pbase + 'get_visibility/' + reviewId)
+                .done(function(resp) {
+                    res(resp);
+                });
         });
     }
 });

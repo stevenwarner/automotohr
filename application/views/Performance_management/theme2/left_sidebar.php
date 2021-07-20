@@ -74,6 +74,12 @@
                     </p>
                     <p class="csF14">
                         <button class="btn btn-black csF14 btn-xs">
+                            <i class="fa fa-users csF14" aria-hidden="true"></i>
+                        </button>
+                        Manage review visibility.
+                    </p>
+                    <p class="csF14">
+                        <button class="btn btn-black csF14 btn-xs">
                             <i class="fa fa-archive csF14" aria-hidden="true"></i>
                         </button>
                         The review will be archived

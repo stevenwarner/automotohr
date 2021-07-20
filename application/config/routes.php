@@ -1315,6 +1315,8 @@ $route['performance-management/start_review']['post'] = 'Performance_management/
 $route['performance-management/stop_reviewee_review']['post'] = 'Performance_management/StopReviweeReview';
 $route['performance-management/start_reviewee_review']['post'] = 'Performance_management/StartReviweeReview';
 $route['performance-management/update_reviewee']['post'] = 'Performance_management/UpdateReviewee';
+$route['performance-management/get_visibility/(:num)']['get'] = 'Performance_management/GetReviewVisibility/$1';
+$route['performance-management/update_visibility_post']['post'] = 'Performance_management/UpdateVisibility';
 // Cron
 // Replicate and Start/End cron job
 $route['review_start_and_replicate/(:any)']['cli'] = 'Cron_common/PMMCronStartAndEndReplicate/$1';

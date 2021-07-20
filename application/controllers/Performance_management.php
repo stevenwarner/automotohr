@@ -580,6 +580,54 @@ class Performance_management extends Public_Controller{
         $this->res(['Status' => true]);
     }
     
+    
+    /**
+     * 
+     */
+    function GetReviewVisibility($id){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $bs = [];
+        //
+        $this->checkLogin($bs);
+        //
+        $data['visibility'] = $this->pmm->GetReviewVisibility($id);
+        // Set company department and teams
+        $data['company_dt'] = $this->pmm->GetCompanyDepartmentAndTeams($bs['companyId']);
+        // Set company employees
+        $data['company_employees'] = $this->pmm->GetAllEmployees($bs['companyId']);
+        // Set company department and teams
+        $data['company_roles'] = getRoles();
+
+        echo $this->load->view("{$this->pp}visibility", $data, true);
+    }
+    
+    /**
+     * 
+     */
+    function UpdateVisibility(){
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $ins = [];
+        //
+        $ins['visibility_roles'] = !isset($post['roles']) ? '': implode(',', $post['roles']);
+        $ins['visibility_departments'] = !isset($post['departments']) ? '': implode(',', $post['departments']);
+        $ins['visibility_teams'] = !isset($post['teams']) ? '': implode(',', $post['teams']);
+        $ins['visibility_employees'] = !isset($post['employees']) ? '': implode(',', $post['employees']);
+        //
+        $this->pmm->UpdateVisibility($ins, $post['reviewId']);
+        //
+        $this->res(['Status' => true]);
+    }
+    
     /**
      * 
      */

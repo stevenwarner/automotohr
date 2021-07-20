@@ -56,7 +56,7 @@
                                 <div class="panel panel-theme jsReviewBox" data-id="<?=$review['sid'];?>" data-title="<?=$review['review_title'];?>">
                                     <div class="panel-heading pl5 pr5">
                                     <?php
-                                            if(!$review['is_draft']){?>
+                                    if(!$review['is_draft']){?>
                                         <button class="btn btn-<?=$statusClass;?> btn-xs csF14 csRadius5"><?=strtoupper($review['status']);?></button>
                                         <?php } ?>
                                         <span class="pull-right">
@@ -81,6 +81,9 @@
                                                 </a>
                                                 <button class="btn btn-black csF16 btn-xs jsAddReviewers"  title="Add Reviewers" placement="top">
                                                     <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
+                                                </button>
+                                                <button class="btn btn-black csF16 btn-xs jsReviewVisibility"  title="Manage Visibility" placement="top">
+                                                    <i class="fa fa-users csF16" aria-hidden="true"></i>
                                                 </button>
                                                 <?php 
                                             }else{

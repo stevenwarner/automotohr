@@ -1563,6 +1563,32 @@ class Performance_management_model extends CI_Model{
     }
    
 
-
+    /**
+     * 
+     */
+    function GetReviewVisibility($reviewId){
+        //
+        $query = 
+        $this->db->select("
+            visibility_roles,
+            visibility_departments,
+            visibility_teams,
+            visibility_employees
+        ")
+        ->where('sid', $reviewId)
+        ->get($this->R);
+        //
+        $record = $query->row_array();
+        //
+        $query->free_result();
+        //
+        return $record;
+    }
+    
+    
+    function UpdateVisibility($upd, $id){
+        $this->db->where('sid', $id)
+        ->update($this->R, $upd);
+    }
     
 }
