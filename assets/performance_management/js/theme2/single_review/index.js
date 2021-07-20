@@ -111,7 +111,7 @@ $(function() {
                 trs += '        </p>';
                 trs += '    </td>';
                 trs += '    <td style="vertical-align: middle;">';
-                trs += '        <p class="csF16 csB7 text-' + (reviewer['is_manager'] ? 'success' : 'warning') + '">' + (reviewer['is_manager'] ? "Reporting Manager" : "Reviewer") + '</p>';
+                trs += '        <p class="csF16 csB7 text-' + (reviewer['is_manager'] == 1 ? 'success' : 'warning') + '">' + (reviewer['is_manager'] == 1 ? "Reporting Manager" : "Reviewer") + '</p>';
                 trs += '    </td>';
                 trs += '    <td style="vertical-align: middle;">';
                 trs += '        <p class="csF16 csB7 text-' + (reviewer['is_completed'] == 1 ? 'success' : 'warning') + '">' + (reviewer['is_completed'] == 1 ? "COMPLETED" : "PENDING") + '</p>';

@@ -735,7 +735,7 @@ class Performance_management_model extends CI_Model{
     /**
      * 
      */
-    function GetReviewByReviewer($reviewId, $revieweeId, $reviewerId){
+    function GetReviewByReviewer($reviewId, $revieweeId, $reviewerId, $withOtherAnswers = false){
         //
         $query =
         $this->db
@@ -767,7 +767,7 @@ class Performance_management_model extends CI_Model{
         //
         if(!empty($result)){
             //
-            $result = array_merge($result, $this->GetReviewerAnswers($reviewId, $revieweeId, $reviewerId));
+            $result = array_merge($result, $this->GetReviewerAnswers($reviewId, $revieweeId, $reviewerId, $withOtherAnswers));
         }
         //
         return $result;
@@ -869,12 +869,18 @@ class Performance_management_model extends CI_Model{
     /**
      * 
      */
-    function GetReviewReviewers($reviewId, $revieweeId){
+    function GetReviewReviewers($reviewId, $revieweeId, $isManager = null){
         //
-        $query = $this->db
+        $this->db
         ->select('reviewer_sid')
         ->where('review_sid', $reviewId)
-        ->where('reviewee_sid', $revieweeId)
+        ->where('reviewee_sid', $revieweeId);
+        //
+        if($isManager !== null){
+            $this->db->where('is_manager', $isManager);
+        }
+        //
+        $query = $this->db
         ->get($this->PRRS);
         //
         $reviewers = $query->result_array();
@@ -1323,9 +1329,14 @@ class Performance_management_model extends CI_Model{
     /**
      * 
      */
-    private function GetReviewerAnswers($reviewId, $revieweeId, $reviewerId){
+    private function GetReviewerAnswers($reviewId, $revieweeId, $reviewerId, $withOtherAnswers = false){
         //
         $ra = ['QA' => [], 'Feedback' => []];
+        //
+        if($withOtherAnswers){
+            // Get all reviewers
+            $reviewerIdArray = $this->GetReviewReviewers($reviewId, $revieweeId, 0);
+        }
         //
         $query = 
         $this->db
@@ -1360,6 +1371,8 @@ class Performance_management_model extends CI_Model{
             //
             foreach($result as $row){
                 //
+                $otherAnswers = [];
+                //
                 $question = json_decode($row['question'], true);
                 //
                 unset(
@@ -1367,6 +1380,11 @@ class Performance_management_model extends CI_Model{
                     $question['not_applicable'],
                     $question['video_help']
                 );
+                //
+                if(!empty($reviewerIdArray)){
+                    //
+                    $otherAnswers = $this->GetReviewerAnswerByQueston($reviewId, $revieweeId, $reviewerIdArray, $row['sid']);
+                }
                 //
                 $t[] = [
                     'question_id' => $row['sid'],
@@ -1378,7 +1396,8 @@ class Performance_management_model extends CI_Model{
                         'text' => $row['text_answer'],
                         'is_modified' => $row['is_modified'],
                         'updated_at' => $row['updated_at']
-                    ]
+                    ],
+                    'other_answers' => $otherAnswers
                 ];
             }
             //
@@ -1488,6 +1507,56 @@ class Performance_management_model extends CI_Model{
             }
             $records = array_values($t);
 
+        }
+        //
+        return $records;
+    }
+
+
+    private function GetReviewerAnswerByQueston(
+        $reviewId,
+        $revieweeId,
+        $reviewerIds,
+        $questionId
+    ){
+        //
+        $reviewerIds = implode(',', $reviewerIds);
+        $query = 
+        $this->db
+        ->select("
+            {$this->PRA}.reviewer_sid,
+            {$this->PRA}.multiple_choice,
+            {$this->PRA}.text_answer,
+            {$this->PRA}.rating,
+            {$this->PRA}.attachments,
+            {$this->PRA}.is_modified,
+            {$this->PRA}.updated_at
+        ")
+        ->from($this->PRQ)
+        ->join($this->PRA, "
+            {$this->PRQ}.sid = {$this->PRA}.question_sid AND 
+            {$this->PRA}.reviewer_sid IN ({$reviewerIds}) AND 
+            {$this->PRA}.reviewee_sid = {$revieweeId} AND 
+            {$this->PRA}.review_sid = {$reviewId}
+        ", "left")
+        ->where("{$this->PRQ}.sid", $questionId)
+        ->where("{$this->PRQ}.review_sid", $reviewId)
+        ->order_by("{$this->PRQ}.sid", "ASC")
+        ->get();
+        //
+        $records = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(!empty($records)){
+            //
+            foreach($records as $index => $record){
+                if(empty($record['reviewer_sid'])){
+                    unset($records[$index]);
+                }
+            }
+            //
+            $records = array_values($records);
         }
         //
         return $records;

@@ -1289,6 +1289,8 @@ $(function() {
      * 
      */
     function loadReviewees() {
+        obj.Reviewees.included = [];
+        obj.Reviewees.excluded = [];
         //
         var filter = {};
         //

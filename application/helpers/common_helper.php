@@ -13675,6 +13675,9 @@ if(!function_exists('getCompletedPercentage')){
                 if($type == 'manager' && $reviewer['is_manager'] == 0){
                     continue;
                 }
+                if($type == 'reviewer' && $reviewer['is_manager'] == 1){
+                    continue;
+                }
                 //
                 $total++;
                 //

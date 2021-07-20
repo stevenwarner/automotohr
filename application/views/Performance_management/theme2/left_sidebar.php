@@ -1,4 +1,4 @@
-<div class="col-md-3 col-sm-12">
+<div class="col-md-3 col-xa-12">
     <div class="csSidebar csRadius5">
         <!-- Sidebar head -->
         <div class="csSidebarHead csRadius5 csRadiusBL0 csRadiusBR0 pa0">
@@ -39,6 +39,50 @@
             </ul>
         </div>
     </div>
+    <!--  -->
+    <?php
+        if(
+            strpos($this->uri->uri_string(), 'reviews') !== false
+            ){
+                ?>
+            <!-- Help Box -->
+            <div class="panel panel-theme">
+                <div class="panel-body">
+                    <p class="csF14">
+                        <button class="btn btn-black csF14 btn-xs">
+                            <i class="fa fa-play csF14" aria-hidden="true"></i>
+                        </button>
+                        Manually starts the review.
+                    </p>
+                    <p class="csF14">
+                        <button class="btn btn-black csF14 btn-xs">
+                            <i class="fa fa-stop csF14" aria-hidden="true"></i>
+                        </button>
+                        Manually stops the review.
+                    </p>
+                    <p class="csF14">
+                        <button class="btn btn-black csF14 btn-xs">
+                            <i class="fa fa-eye csF14" aria-hidden="true"></i>
+                        </button>
+                        View reviewers and review details.
+                    </p>
+                    <p class="csF14">
+                        <button class="btn btn-black csF14 btn-xs">
+                            <i class="fa fa-plus-circle csF14" aria-hidden="true"></i>
+                        </button>
+                        Add new reviewers.
+                    </p>
+                    <p class="csF14">
+                        <button class="btn btn-black csF14 btn-xs">
+                            <i class="fa fa-archive csF14" aria-hidden="true"></i>
+                        </button>
+                        The review will be archived
+                    </p>
+                </div>
+            </div>
+            <?php
+        }
+    ?>
     <!--  -->
     <?php $this->load->view("{$pp}help_box"); ?>
 </div>

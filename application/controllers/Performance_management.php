@@ -253,7 +253,15 @@ class Performance_management extends Public_Controller{
         // Set employee information for the blue screen
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
         //
-        $this->pargs['review'] = $this->pmm->GetReviewByReviewer($reviewId, $revieweeId, $reviewerId);
+        $this->pargs['review'] = $this->pmm->GetReviewByReviewer($reviewId, $revieweeId, $reviewerId, true);
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['company_employees_index'] = [];
+        //
+        foreach($this->pargs['company_employees'] as $emp){
+            $this->pargs['company_employees_index'][$emp['Id']] = $emp;
+        }
         //
         $this->pargs['reviewId'] = $reviewId;
         $this->pargs['revieweeId'] = $revieweeId;
@@ -901,6 +909,10 @@ class Performance_management extends Public_Controller{
                 $ins = [];
                 //
                 $reviewees = explode(',', $review['included']);
+                //
+                if(!empty($review['excluded'])){
+                    $reviewees = array_diff($reviewees, explode(',', $review['excluded']));
+                }
                 //
                 foreach($reviewees as $reviewee){
                     //

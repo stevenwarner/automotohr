@@ -15,7 +15,6 @@ $ne = [];
 foreach($company_employees as $emp){
     $ne[$emp['Id']] = $emp;
 }
-
 //
 $RT = getCompletedPercentage($review['Reviewees'], 'reviewer', true);
 $MT = getCompletedPercentage($review['Reviewees'], 'manager', true);

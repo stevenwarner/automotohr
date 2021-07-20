@@ -39,10 +39,10 @@
                             <div class="col-md-4 col-sm-4 col-xs-12">
                                 <div class="csEmployeeBox">
                                     <figure>
-                                        <img src="<?=getImageURL($company_employees_index[$review['revieweee_sid']]['profile_picture']);?>" class="csRadius50" alt="" />
+                                        <img src="<?=getImageURL($company_employees_index[$review['reviewee_sid']]['Image']);?>" class="csRadius50" alt="" />
                                         <div class="csTextBox">
-                                            <p class="csF14 csB7 mb0"><?=$company_employees_index[$review['revieweee_sid']]['Name'];?></p>
-                                            <p class="csTextSmall mb0 csF14"> <?=$company_employees_index[$review['revieweee_sid']]['Role'];?></p>
+                                            <p class="csF14 csB7 mb0"><?=$company_employees_index[$review['reviewee_sid']]['Name'];?></p>
+                                            <p class="csTextSmall mb0 csF14"> <?=$company_employees_index[$review['reviewee_sid']]['Role'];?></p>
                                             <p class="csTextSmall csF14">Due in <?=dateDifferenceInDays($now, $review['start_date'], '%a');?> day(s)</p>
                                             <p class="csTextSmall csF14">
                                                 <a href="<?=purl("review/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}");?>" class="btn btn-orange csF14">Start Review</a>
@@ -79,7 +79,7 @@
         <div class="panel-heading" style="background-color: #3554DC;">
             <div class="row">
                 <div class="col-md-9 col-sm-12">
-                    <h5 class="csF16 csB7 csW jsToggleHelp" data-target="assigned_reviews">
+                    <h5 class="csF16 csB7 csW jsToggleHelp" data-target="feedback_reviews">
                         Feedback Reviews <i class="fa fa-question-circle-o" aria-hidden="true"
                             title="Click to see help." placement="top"></i>
                     </h5>
@@ -94,7 +94,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <p class="csF14 csW dn jsToggleHelpArea" data-help="assigned_reviews">All the assigned reviews, on
+                    <p class="csF14 csW dn jsToggleHelpArea" data-help="feedback_reviews">All the assigned reviews, on
                         which your feedback is required. The submitted feedback will be shared with the employee.</p>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                         <div class="col-md-4 col-sm-4 col-xs-12">
                             <div class="csEmployeeBox">
                                 <figure>
-                                    <img src="<?=getImageURL($company_employees_index[$review['reviewee_sid']]['profile_picture']);?>" class="csRadius50" alt="" />
+                                    <img src="<?=getImageURL($company_employees_index[$review['reviewee_sid']]['Image']);?>" class="csRadius50" alt="" />
                                     <div class="csTextBox">
                                         <p class="csF14 csB7 mb0"><?=$company_employees_index[$review['reviewee_sid']]['Name'];?></p>
                                         <p class="csTextSmall mb0 csF14"> <?=$company_employees_index[$review['reviewee_sid']]['Role'];?></p>

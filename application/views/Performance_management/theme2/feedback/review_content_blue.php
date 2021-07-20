@@ -64,6 +64,7 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
     <div class="csIPLoader jsIPLoader" data-page="save_question">
         <i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>
     </div>
+    
     <!-- Questions -->
     <div class="panel panel-theme">
         <!--  -->
@@ -136,6 +137,83 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
             </div>
         </div>
     </div>
+
+    <?php if($selectedPage != 'feedback' && !empty($question['other_answers'])) {?>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-theme">
+                    <div class="panel-heading">
+                        <p class="csF16 csB7 csW mb0">
+                        Reviewer(s) Feedback
+                        </p>
+                    </div>
+                    <!--  -->
+                    <div class="panel-body">
+                        <?php
+                            foreach($question['other_answers'] as $answer){
+                                //
+                                $cls = 'success';
+                                $txt = 'ANSWERED';
+                                //
+                                if(
+                                    empty($answer['multiple_choice']) &&
+                                    empty($answer['rating']) &&
+                                    empty($answer['text_answer'])
+                                ){
+                                    $cls = 'warning';
+                                    $txt = 'PENDING';
+                                }
+                                ?>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <p class="csF16 csW mb0">
+                                            <?=$company_employees_index[$answer['reviewer_sid']]['Name'];?>'s Feedback
+                                            <span class="pull-right"><button class="btn btn-<?=$cls;?> btn-xs csF16 csRadius5"><?=$txt;?></button></span>
+                                        </p>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-sm-4 col-xs-12">
+                                                <p class="csF16 csB7">Multiple Choice</p>
+                                            </div>
+                                            <div class="col-sm-8 col-xs-12">
+                                                <p class="csF16">
+                                                    <?=empty($answer['multipe_choice']) ? 'N/A' : $answer['multipe_choice'];?>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-sm-4 col-xs-12">
+                                                <p class="csF16 csB7">Rating</p>
+                                            </div>
+                                            <div class="col-sm-8 col-xs-12">
+                                                <p class="csF16">
+                                                <?=empty($answer['rating']) ? 'N/A' : $answer['rating'];?>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-sm-4 col-xs-12">
+                                                <p class="csF16 csB7">Text</p>
+                                            </div>
+                                            <div class="col-sm-8 col-xs-12">
+                                                <p class="csF16">
+                                                <?=empty($answer['text_answer']) ? 'N/A' : $answer['text_answer'];?>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                            }                        
+                        ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php }?>
 
     <!-- Question Screen -->
     <div class="row">
@@ -315,78 +393,77 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
         </div>
     </div>
 
-    <?php if($selectedPage != 'feedback') {?>
 
-    <!-- Attachments -->
-    <div class="row">
-        <br />
-        <div class="col-xs-12">
-            <div class="panel panel-theme">
-                <div class="panel-heading">
-                    <h5 class="csF16 csB7 csW">
-                        Attachment(s)
-                        <span class="pull-right">
-                            <i class="fa fa-plus-circle csF18 csB7 csCP" aria-hidden="true"></i>
-                        </span>
-                    </h5>
-                </div>
-                <div class="panel-body">
-                    <!--  -->
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <input type="file" name="attachment" id="jsQuestionAttachmentUpload" class="hidden" />
-                        </div>
+    
+
+    <?php if($selectedPage != 'feedback') {?>
+        <!-- Attachments -->
+        <div class="row">
+            <br />
+            <div class="col-xs-12">
+                <div class="panel panel-theme">
+                    <div class="panel-heading">
+                        <h5 class="csF16 csB7 csW">
+                            Attachment(s)
+                        </h5>
                     </div>
-                    <!--  -->
-                    <div class="row dn" id="jsQuestionAttachmentUploadRow">
-                        <br />
-                        <div class="col-sm-12">
-                            <button class="btn btn-orange csF16 csB7 pull-right">
-                                <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;Upload File
-                            </button>
+                    <div class="panel-body">
+                        <!--  -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="file" name="attachment" id="jsQuestionAttachmentUpload" class="hidden" />
+                            </div>
                         </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <!--  -->
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <table class="table table-striped table-condensed">
-                                <caption></caption>
-                                <thead>
-                                    <tr>
-                                        <th class="csF16" scope="col">Filename</th>
-                                        <th class="csF16" scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                        if(!empty($question['attachments'])){
-                                            foreach(json_decode($question['attachments'], true) as $attachment){
+                        <!--  -->
+                        <div class="row dn" id="jsQuestionAttachmentUploadRow">
+                            <br />
+                            <div class="col-sm-12">
+                                <button class="btn btn-orange csF16 csB7 pull-right">
+                                    <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;Upload File
+                                </button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <!--  -->
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <table class="table table-striped table-condensed">
+                                    <caption></caption>
+                                    <thead>
+                                        <tr>
+                                            <th class="csF16" scope="col">Filename</th>
+                                            <th class="csF16" scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                            if(!empty($question['attachments'])){
+                                                foreach(json_decode($question['attachments'], true) as $attachment){
+                                                    ?>
+                                        <tr>
+                                            <td style="vertical-align: middle">
+                                                <p class="csF16"><?=$attachment;?></p>
+                                            </td>
+                                            <td style="vertical-align: middle">
+                                                <button class="btn btn-orange csF14">
+                                                    <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                                }
+                                            } else{
                                                 ?>
-                                    <tr>
-                                        <td style="vertical-align: middle">
-                                            <p class="csF16"><?=$attachment;?></p>
-                                        </td>
-                                        <td style="vertical-align: middle">
-                                            <button class="btn btn-orange csF14">
-                                                <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <?php
+                                        <?php
                                             }
-                                        } else{
-                                            ?>
-                                    <?php
-                                        }
-                                    ?>
-                                </tbody>
-                            </table>
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     <?php } ?>
 </div>

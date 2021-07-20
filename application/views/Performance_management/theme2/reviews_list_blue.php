@@ -11,15 +11,30 @@
                 </div>
                 <div class="col-xs-12 col-md-10">
                     <span class="pull-right">
-                        <a href="<?=current_url();?>?type=active" class="btn btn-orange <?=$type == 'active' ? 'active' : ''?>">Active</a>
-                        <a href="<?=current_url();?>?type=archived" class="btn btn-orange <?=$type == 'archived' ? 'active' : ''?>">Archived</a>
-                        <a href="<?=current_url();?>?type=draft" class="btn btn-orange <?=$type == 'draft' ? 'active' : ''?>">Draft</a>
+                        <a title="Show me active reviews" placement="top" href="<?=current_url();?>?type=active" class="btn btn-orange <?=$type == 'active' ? 'active' : ''?>">Active</a>
+                        <a title="Show me archived reviews" placement="top" href="<?=current_url();?>?type=archived" class="btn btn-orange <?=$type == 'archived' ? 'active' : ''?>">Archived</a>
+                        <a title="Show me reviews that are in draft" placement="top" href="<?=current_url();?>?type=draft" class="btn btn-orange <?=$type == 'draft' ? 'active' : ''?>">Draft</a>
                     </span>
                 </div>
             </div>
         </div>
         <!--  -->
         <div class="panel-body">
+            <!--  -->
+            <div class="row">
+                <div class="col-sm-12">
+                    <p class="csF16">
+                        <button class="btn btn-warning btn-xs csRadius5">PENDING</button>&nbsp; The review is active but hasn't started.
+                    </p>
+                    <p class="csF16">
+                        <button class="btn btn-success btn-xs csRadius5">STARTED</button>&nbsp; The review is active and started.
+                    </p>
+                    <p class="csF16">
+                        <button class="btn btn-danger btn-xs csRadius5">ENDED</button>&nbsp; The review is active and ended.
+                    </p>
+                </div>
+            </div>
+            <br />
             <!--  -->
             <div class="row">
             <?php
