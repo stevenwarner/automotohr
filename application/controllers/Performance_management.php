@@ -74,6 +74,14 @@ class Performance_management extends Public_Controller{
         $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
         // Set employee information for the blue screen
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['company_employees_index'] = [];
+        //
+        foreach($this->pargs['company_employees'] as $emp){
+            $this->pargs['company_employees_index'][$emp['Id']] = $emp;
+        }
         // // Get Assigned Reviews 
         $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 0);
         $this->pargs['FeedbackReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1);
