@@ -110,6 +110,34 @@ $(function() {
         });
     }
 
+    $('.jsPreviewAttachment').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        var fileName = $(this).closest('tr').data().id;
+        //
+        var iframeURL = '';
+        //
+        var tmp = fileName.split('.');
+        //
+        var extension = tmp[tmp.length - 1];
+        //
+        if ($.inArray(extension, ['xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx']) !== -1) {
+            iframeURL = encodeURI('https://view.officeapps.live.com/op/view.aspx?srchttps://automotohrattachments.s3.amazonaws.com/' + fileName)
+        } else {
+            iframeURL = 'https://docs.google.com/gview?url=https://automotohrattachments.s3.amazonaws.com/' + fileName + '&embedded=true'
+        }
+        //
+        Modal({
+            Id: "jsPreviewModal",
+            Title: "Preview - " + fileName,
+            Loader: "jsPreviewModalLoader",
+            Body: '<iframe src="' + (iframeURL) + '"  width="100%" height="600"></iframe>'
+        }, function() {
+            ml(false, 'jsPreviewModalLoader');
+        });
+    });
+
     //
     ml(false, 'save_question');
 });

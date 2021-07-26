@@ -415,7 +415,7 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
                             </div>
                         </div>
                         <!--  -->
-                        <div class="row dn" id="jsQuestionAttachmentUploadRow">
+                        <div class="row dn" id="jsQuestionAttachmentsUploadRow">
                             <br />
                             <div class="col-sm-12">
                                 <button class="btn btn-orange csF16 csB7 pull-right">
@@ -440,12 +440,12 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
                                             if(!empty($question['attachments'])){
                                                 foreach(json_decode($question['attachments'], true) as $attachment){
                                                     ?>
-                                        <tr>
+                                        <tr data-id="<?=$attachment;?>">
                                             <td style="vertical-align: middle">
                                                 <p class="csF16"><?=$attachment;?></p>
                                             </td>
                                             <td style="vertical-align: middle">
-                                                <button class="btn btn-orange csF14">
+                                                <button class="btn btn-orange csF14 jsPreviewAttachment">
                                                     <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
                                                 </button>
                                             </td>
