@@ -29,14 +29,14 @@
             'icon' => 'th-list',
             'segment' => 'my-reviews'
         ],
-        // [
-        //     'title' => 'Create a Goal',
-        //     'url' => 'javascript:void(0)',
-        //     'slug' => 'goal/create',
-        //     'icon' => 'plus-square',
-        //     'segment' => 'goal/create',
-        //     'class' => 'jsCreateGoal'
-        // ],
+        [
+            'title' => 'Create a Goal',
+            'url' => 'javascript:void(0)',
+            'slug' => 'goal/create',
+            'icon' => 'plus-square',
+            'segment' => 'goal/create',
+            'class' => 'jsCreateGoal'
+        ],
         // [
         //     'title' => 'Goals',
         //     'url' => '/goals',

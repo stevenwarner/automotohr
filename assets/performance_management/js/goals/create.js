@@ -5,13 +5,13 @@ $(function() {
             description: '',
             startDate: '',
             endDate: '',
-            goalType: '',
-            employeeId: '',
-            teamId: '',
-            departmentId: '',
-            measure: '',
+            type: '',
+            departmentIds: [],
+            teamIds: [],
+            employeeIds: [],
+            measureUnit: '',
+            customUnit: '',
             target: '',
-            alignedGoal: '',
             roles: [],
             teams: [],
             departments: [],
@@ -33,28 +33,9 @@ $(function() {
             //
             const resp = await getCreateGoalBody();
             //
-            if (resp.Redirect === true) {
-                handleRedirect();
-                return;
-            }
+            $('#jsCreateGoalModal .csModalBody').append(resp);
             //
-            if (resp.Status === false) {
-                handleError(getError());
-                return;
-            }
-            //
-            if (pm.employees === undefined) {
-                const employees = await getEmployeeListWithDnT();
-                //
-                pm.employees = employees.Data;
-            }
-            //
-            const companyGoals = await getCompanyGoals();
-            //
-            pm.companyGoals = companyGoals.Data;
-            //
-            $('#jsCreateGoalModal .csModalBody').append(resp.Data);
-
+            ml(false, 'jsCreateGoalModalLoader');
             //
             $('#jsCGStartDate').datepicker({
                 changeYear: true,
@@ -76,144 +57,19 @@ $(function() {
                     goal.endDate = d;
                 }
             });
-            //
-            let options = '<option value="0">[Select an employee]</option>';
-            //
-            pm.employees.map((em) => {
-                options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
-            });
+
             //
             $('#jsCGType').select2({ minimumResultsForSearch: -1 });
-            $('#jsCGEmployee').html(options).select2();
-            $('#jsCGMeasure').select2({ minimumResultsForSearch: -1 });
-            //
-            options = '<option value= "0"> [Select a team] </option>';
-            //
-            dnt['teams'].map((team) => {
-                options += `<option value="${team.sid}">${team.name}</option>`;
-            });
-            $('#jsCGTeam').html(options).select2();
-            //
-            options = '<option value= "0"> [Select a department] </option>';
-            //
-            dnt['departments'].map((department) => {
-                options += `<option value="${department.sid}">${department.name}</option>`;
-            });
-            $('#jsCGDepartment').html(options).select2();
-            //
-            if (pm.permission.isSuperAdmin === undefined) {
-                $('.jsCGBoxVisibilty').hide();
-            }
-            //
-            if (pm.permission.isSuperAdmin === undefined) {
-                console.log(1)
-                if (
-                    pm.permission.teamIds.length === 0 &&
-                    pm.permission.departmentIds.length === 0 &&
-                    pm.permission.employeeIds.length === 0
-                ) {
-                    $('.jsCGTypeBox').hide();
-                    $('.jsCGBoxTeam').hide();
-                    $('.jsCGBoxDepartment').hide();
-                    $('.jsCGBoxIndividual').hide();
-                    $('#jsCGEmployee').select2('val', pm.employerId);
-                    $('#jsCGType').select2('val', 1);
-                    goal.employeeId = pm.employerId;
-                } else {
-                    //
-                    let typeOptions = ' <option value="0">[Select a type]</option>';
-                    if (
-                        pm.permission.departmentIds.length > 0
-                    ) {
-                        typeOptions += '<option value="3">Departments</option>';
-                    }
-                    if (
-                        pm.permission.employeeIds.length > 0
-                    ) {
-                        typeOptions += '<option value="1">Individual</option>';
-                    }
-                    if (
-                        pm.permission.teamIds.length > 0
-                    ) {
-                        typeOptions += '<option value="2">Team</option>';
-                    }
+            $('#jsCGGoalType').select2({ minimumResultsForSearch: -1 });
+            $('#jsCGDepartments').select2({ closeOnSelect: false });
+            $('#jsCGTeams').select2({ closeOnSelect: false });
+            $('#jsCGEmployees').select2({ closeOnSelect: false });
+            $('#jsCGVDepartments').select2({ closeOnSelect: false });
+            $('#jsCGVTeams').select2({ closeOnSelect: false });
+            $('#jsCGVEmployees').select2({ closeOnSelect: false });
+            $('#jsCGVRoles').select2({ closeOnSelect: false, minimumResultsForSearch: -1 });
 
-                    $('#jsCGType').html(typeOptions).select2();
-                }
-            }
-            //
-            options = '<option value="0">[Select a role]</option>';
-            options += '<option value="admin">Admin</option>';
-            options += '<option value="hiring_manager">Hiring Manager</option>';
-            options += '<option value="manager">Manager</option>';
-            options += '<option value="employee">Employee</option>';
-            //
-            $('#jsCGVisibilityRoles').html(options).select2({ minimumResultsForSearch: -1 });
-            //
-            options = '<option value="0">[Select a team]</option>';
-            //
-            dnt['teams'].map((team) => {
-                if (pm.permission.teamIds !== undefined) {
-                    if ($.inArray(team.sid, pm.permission.teamIds) === -1) { return; }
-                }
-                options += `<option value="${team.sid}">${team.name}</option>`;
-            });
-            $('#jsCGVisibilityTeams').html(options).select2();
-            //
-            options = '<option value="0">[Select a department]</option>';
-            dnt['departments'].map((team) => {
-                if (pm.permission.departmentIds !== undefined) {
-                    if ($.inArray(team.sid, pm.permission.departmentIds) === -1) { return; }
-                }
-                options += `<option value="${team.sid}">${team.name}</option>`;
-            });
-            $('#jsCGVisibilityDepartments').html(options).select2();
-            options = '<option value="0">[Select an employee]</option>';
-            //
-            pm.employees.map((em) => {
-                if (pm.permission.employeeIds !== undefined) {
-                    if ($.inArray(em.userId, pm.permission.employeeIds) === -1) { return; }
-                }
-                options += `<option value="${em.userId}">${remakeEmployeeName(em)}</option>`;
-            });
-            $('#jsCGVisibilityEmployees').html(options).select2();
-            //
-            ml(false, 'jsCreateGoalModalLoader');
-            //
-            if (pm.companyGoals.length == 0) {
-                $('#jsCreateGoalModal .jsAlignBox').html('<p class="alert alert-info text-center">No goals found.</p>');
-                return;
-            }
-            //
-            let rows = '';
-            //
-            rows += `<div class="row">`;
-            pm.companyGoals.map((go) => {
-                rows += `    <div class="col-sm-4 col-xs-12">`;
-                rows += `            <div class="csPageBox csRadius5 csGoalCard jsGoalCard csCursorSelect" data-id="${go.sid}">`;
-                rows += `                <div class="csPageBoxHeader p10">`;
-                rows += `                    <h4 class="csF18 csB7">`;
-                rows += `                        ${go.title}`;
-                rows += `                    </h4>`;
-                rows += `                </div>`;
-                rows += `                <div class="csPageBoxBody">`;
-                rows += `                    <div class="csGoalCardProgress p10">`;
-                rows += `                        <h4 class="csF16">`;
-                rows += `                            <span class="csBTNBox">`;
-                rows += `                                ${getMeasureSymbol(go.measure_type)} ${go.target}`;
-                rows += `                            </span>`;
-                rows += `                        </h4>`;
-                rows += `                        <div class="clearfix"></div>`;
-                rows += `                    </div>`;
-                rows += `                </div>`;
-                rows += `            </div>`;
-                rows += `        </div>`;
-            });
-            rows += `</div>`;
-            //
-            $('#jsCreateGoalModal .jsAlignBox').html(rows);
-            //
-            $('#jsCGMeasure').trigger('change');
+
             //
             loadFonts();
         });
@@ -234,84 +90,69 @@ $(function() {
     });
 
     /**
-     * 
+     *  
      */
     $(document).on('change', '#jsCGType', function() {
-        goal.goalType = $(this).val();
         //
-        if (goal.goalType == 1) {
-            $('.jsCGBoxTeam').addClass('dn');
-            $('.jsCGBoxDepartment').addClass('dn');
-            $('.jsCGBoxIndividual').removeClass('dn');
-        } else if (goal.goalType == 2) {
-            $('.jsCGBoxTeam').removeClass('dn');
-            $('.jsCGBoxIndividual').addClass('dn');
-            $('.jsCGBoxDepartment').addClass('dn');
-        } else if (goal.goalType == 3) {
-            $('.jsCGBoxTeam').addClass('dn');
-            $('.jsCGBoxIndividual').addClass('dn');
-            $('.jsCGBoxDepartment').removeClass('dn');
-        } else {
-            $('.jsCGBoxTeam').addClass('dn');
-            $('.jsCGBoxIndividual').addClass('dn');
-            $('.jsCGBoxDepartment').addClass('dn');
+        goal.type = $(this).val();
+        //
+        goal.departmentIds = [];
+        goal.teamIds = [];
+        goal.employeeIds = [];
+        //
+        $('#jsCGDR').addClass('dn');
+        $('#jsCGTR').addClass('dn');
+        $('#jsCGER').addClass('dn');
+        //
+        if (goal.type == '2') {
+            $('#jsCGDR').removeClass('dn');
+        } else if (goal.type == '3') {
+            $('#jsCGTR').removeClass('dn');
+        } else if (goal.type == '4') {
+            $('#jsCGER').removeClass('dn');
         }
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGEmployee', function() {
-        goal.employeeId = $(this).val();
+    $(document).on('change', '#jsCGDepartments', function() {
+        goal.departmentIds = $(this).val() || [];
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGTeam', function() {
-        goal.teamId = $(this).val();
+    $(document).on('change', '#jsCGTeams', function() {
+        goal.teamIds = $(this).val() || [];
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGDepartment', function() {
-        goal.departmentId = $(this).val();
+    $(document).on('change', '#jsCGEmployees', function() {
+        goal.employeeIds = $(this).val() || [];
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGVisibilityRoles', function() {
-        goal.roles = $(this).val() || [];
+    $(document).on('change', '#jsCGGoalType', function() {
+        //
+        goal.measureUnit = $(this).val();
+        //
+        $('#jsCGCustomGoalType').addClass('dn');
+        //
+        if (goal.measureUnit == 4) {
+            $('#jsCGCustomGoalType').removeClass('dn');
+        }
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGVisibilityTeams', function() {
-        goal.teams = $(this).val() || [];
-    });
-
-    /**
-     * 
-     */
-    $(document).on('change', '#jsCGVisibilityDepartments', function() {
-        goal.departments = $(this).val() || [];
-    });
-
-    /**
-     * 
-     */
-    $(document).on('change', '#jsCGVisibilityEmployees', function() {
-        goal.employees = $(this).val() || [];
-    });
-
-    /**
-     * 
-     */
-    $(document).on('change', '#jsCGMeasure', function() {
-        goal.measure = $(this).val();
+    $(document).on('keyup', '#jsCGCustomGoalType', function() {
+        goal.customUnit = $(this).val().trim();
     });
 
     /**
@@ -324,129 +165,149 @@ $(function() {
     /**
      * 
      */
-    $(document).on('click', '.jsGoalCard', function() {
-        goal.alignedGoal = $(this).data().id;
-        $('.jsGoalCard').removeClass('active');
-        $(this).addClass('active');
+    $(document).on('change', '#jsCGVRoles', function() {
+        goal.roles = $(this).val() || [];
     });
 
     /**
      * 
      */
-    $(document).on('click', '.jsCGSave', function(event) {
+    $(document).on('change', '#jsCGVDepartments', function() {
+        goal.departments = $(this).val() || [];
+    });
+
+    /**
+     * 
+     */
+    $(document).on('change', '#jsCGVTeams', function() {
+        goal.teams = $(this).val() || [];
+    });
+
+    /**
+     * 
+     */
+    $(document).on('change', '#jsCGVEmployees', function() {
+        goal.employees = $(this).val() || [];
+    });
+
+    /**
+     * 
+     * @returns 
+     */
+    $(document).on('click', '.jsCGCloseModal', function(event) {
         //
         event.preventDefault();
         //
+        alertify.confirm('All the unsaved changes will be lost. <br> Would you like to continue?',
+            function() {
+                //
+                resetGoal();
+                $('.jsModalCancel').trigger('click');
+            });
+    });
+
+    /**
+     * 
+     * @returns 
+     */
+    $(document).on('click', '.jsCGSaveGoal', function(event) {
+        //
+        event.preventDefault();
+        //
+        console.log(goal);
+        //
         if (goal.title == '') {
-            handleError(getError('goal_title'));
+            handleError("Goal title is required.");
             return;
         }
+        //
         if (goal.startDate == '') {
-            handleError(getError('goal_start_date'));
+            handleError("Goal start date is required.");
             return;
         }
+        //
         if (goal.endDate == '') {
-            handleError(getError('goal_end_date'));
+            handleError("Goal end date is required.");
             return;
         }
-        if (goal.goalType == 0) {
-            handleError(getError('goal_type'));
+        //
+        if (goal.type == 0) {
+            handleError("Goal type is required.");
             return;
         }
-        if (goal.goalType == 1 && (goal.employeeId == null || goal.employeeId == '')) {
-            handleError(getError('goal_employee'));
+        //
+        if (goal.type == 2 && goal.departmentIds.length === 0) {
+            handleError("Please select at least one department.");
             return;
         }
-        if (goal.goalType == 2 && (goal.teamId == null || goal.teamId == '')) {
-            handleError(getError('goal_team'));
+        //
+        if (goal.type == 3 && goal.teamIds.length === 0) {
+            handleError("Please select at least one team.");
             return;
         }
-        if (goal.goalType == 3 && (goal.departmentId == null || goal.departmentId == '')) {
-            handleError(getError('goal_department'));
+        //
+        if (goal.type == 4 && goal.employeeIds.length === 0) {
+            handleError("Please select at least one employee.");
             return;
         }
+        //
+        if (goal.measureUnit == 0) {
+            handleError("Measure unit is required.");
+            return;
+        }
+        //
+        if (goal.measureUnit == 4 && goal.customUnit == '') {
+            handleError("Measure unit is required.");
+            return;
+        }
+        //
         if (goal.target == '') {
-            handleError(getError('goal_target'));
+            handleError("Please set a proper target.");
             return;
         }
         //
         ml(true, 'jsCreateGoalModalLoader');
         //
-        $.post(
-            pm.urls.handler, {
-                action: 'save_goal',
-                goal: goal
-            },
-            (resp) => {
+        $.post(pm.urls.pbase + "save_goal", goal)
+            .done(function(resp) {
+                ml(false, 'jsCreateGoalModalLoader');
+                //
                 if (resp.Status === false) {
-                    handleError(getError('save_goal_error'));
-                    ml(false, 'jsCreateGoalModalLoader');
+                    handleError("Something went wrong while creating goal.");
                     return;
                 }
-                handleSuccess(getError('save_goal_success'), function() {
-                    goal.title = '';
-                    goal.description = '';
-                    goal.startDate = '';
-                    goal.endDate = '';
-                    goal.goalType = '';
-                    goal.employeeId = '';
-                    goal.teamId = '';
-                    goal.departmentId = '';
-                    goal.measure = '';
-                    goal.target = '';
-                    goal.alignedGoal = '';
-                    goal.roles = '';
-                    goal.departments = '';
-                    goal.teams = '';
-                    goal.employees = '';
-                    //
+                //
+                handleSuccess("You have successfully created a goal.", function() {
+                    resetGoal();
                     $('.jsModalCancel').trigger('click');
-                    window.location.reload();
                 });
-            }
-        );
+            });
     });
+
+    function resetGoal() {
+        goal['title'] = '';
+        goal['description'] = '';
+        goal['startDate'] = '';
+        goal['endDate'] = '';
+        goal['type'] = '';
+        goal['departmentIds'] = [];
+        goal['teamIds'] = [];
+        goal['employeeIds'] = [];
+        goal['measureUnit'] = '';
+        goal['target'] = '';
+        goal['roles'] = [];
+        goal['teams'] = [];
+        goal['departments'] = [];
+        goal['employees'] = [];
+    }
 
     /**
      * 
      */
     function getCreateGoalBody() {
         return new Promise((res) => {
-            $.get(`${pm.urls.handler}get/goal_body`)
-                .done(function(resp) { res(resp); })
-                .fail(function(resp) {
-                    res(getMessage(resp.status, true));
-                });;
-        });
-    }
-
-    /**
-     * Get employees list with dnt
-     * 
-     * @return {Promise}
-     */
-    function getEmployeeListWithDnT() {
-        return new Promise(function(res) {
-            $.get(`${pm.urls.handler}get/employeeListWithDnT`)
-                .done(function(resp) { res(resp); })
-                .fail(function(resp) {
-                    res(getMessage(resp.status, true));
-                });
-        });
-    }
-
-    /**
-     * Get company goals
-     * 
-     * @return {Promise}
-     */
-    function getCompanyGoals() {
-        return new Promise(function(res) {
-            $.get(`${pm.urls.handler}get/company_goals`)
-                .done(function(resp) { res(resp); })
-                .fail(function(resp) {
-                    res(getMessage(resp.status, true));
-                });
+            $.get(`${pm.urls.pbase}get_goal_body`)
+                .done(function(resp) { res(resp); });
         });
     }
 

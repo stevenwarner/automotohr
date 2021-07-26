@@ -1,163 +1,20 @@
 <div class="col-md-9 col-sm-12">
-    <!-- Assigned -->
-    <div class="panel panel-theme">
-        <div class="panel-heading" style="background-color: #3554DC;">
-            <div class="row">
-                <div class="col-md-9 col-sm-12">
-                    <h5 class="csF16 csB7 csW jsToggleHelp" data-target="assigned_reviews">
-                        Assigned Reviews <i class="fa fa-question-circle-o" aria-hidden="true"
-                            title="Click to see help." placement="top"></i>
-                    </h5>
-                </div>
-                <div class="col-md-3 col-sm-12">
-                    <span class="pull-right">
-                        <a href="<?=purl("reviews");?>" class="btn btn-orange"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
-                            Review(s)</a>
-                    </span>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <p class="csF14 csW dn jsToggleHelpArea" data-help="assigned_reviews">All the assigned reviews, on
-                        which your feedback is required. The submitted feedback will be shared with the reporting
-                        manager(s).</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="panel-body">
-            <?php
-                //
-                if(!empty($AssignedReviews)){
-                    ?>
-                    <div class="row">
-                        <?php
-                        $now = date('Y-m-d', strtotime('now'));
-                    foreach($AssignedReviews as $review){
-                        ?>
-                            <div class="col-md-4 col-sm-4 col-xs-12">
-                                <div class="csEmployeeBox">
-                                    <figure>
-                                        <img src="<?=getImageURL($employee['profile_picture']);?>" class="csRadius50" alt="" />
-                                        <div class="csTextBox">
-                                            <p class="csF14 csB7 mb0"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
-                                            <p class="csTextSmall mb0 csF14"> <?=remakeEmployeeName($employee, false);?></p>
-                                            <p class="csTextSmall csF14">Due in <?=dateDifferenceInDays($now, $review['start_date'], '%a');?> day(s)</p>
-                                            <p class="csTextSmall csF14">
-                                                <a href="<?=purl("review/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}");?>" class="btn btn-orange csF14">Start Review</a>
-                                            </p>
-                                        </div>
-                                    </figure>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </div>
-                        <?php
-                    }
-                    ?>
-                    </div>
-                    <?php
-                } else{
-                    ?>
-                    <div class="panel-body">
-                        <div class="row">
-                            <p class="csF26 csB7 text-center">
-                                <i class="fa fa-check csF40" aria-hidden="true"></i><br />
-                                You are all caught up
-                            </p>
-                        </div>
-                    </div>
-                    <?php
-                }
-            ?>
-           
-        </div>
-    </div>
-
-    <!-- Feedback -->
-    <div class="panel panel-theme">
-        <div class="panel-heading" style="background-color: #3554DC;">
-            <div class="row">
-                <div class="col-md-9 col-sm-12">
-                    <h5 class="csF16 csB7 csW jsToggleHelp" data-target="assigned_reviews">
-                        Feedback Reviews <i class="fa fa-question-circle-o" aria-hidden="true"
-                            title="Click to see help." placement="top"></i>
-                    </h5>
-                </div>
-                <div class="col-md-3 col-sm-12">
-                    <span class="pull-right">
-                        <a href="<?=purl("reviews");?>" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
-                            Review(s)</a>
-                    </span>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <p class="csF14 csW dn jsToggleHelpArea" data-help="assigned_reviews">All the assigned reviews, on
-                        which your feedback is required. The submitted feedback will be shared with the employee.</p>
-                </div>
-            </div>
-        </div>
-    <?php
-            //
-            if(!empty($FeedbackReviews)){
-                ?>
-                <div class="panel-body">
-                <div class="row">
-                    <?php
-                    $now = date('Y-m-d', strtotime('now'));
-                foreach($FeedbackReviews as $review){
-                    ?>
-                        <div class="col-md-4 col-sm-4 col-xs-12">
-                            <div class="csEmployeeBox">
-                                <figure>
-                                    <img src="<?=getImageURL($employee['profile_picture']);?>" class="csRadius50" alt="" />
-                                    <div class="csTextBox">
-                                        <p class="csF14 csB7 mb0"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
-                                        <p class="csTextSmall mb0 csF14"> <?=remakeEmployeeName($employee, false);?></p>
-                                        <p class="csTextSmall csF14">Due in <?=dateDifferenceInDays($now, $review['start_date'], '%a');?> day(s)</p>
-                                        <p class="csTextSmall csF14">
-                                            <a href="<?=purl("feedback/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}");?>" class="btn btn-orange csF14">Start Review</a>
-                                        </p>
-                                    </div>
-                                </figure>
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-                    <?php
-                }
-                ?>
-                </div></div>
-                <?php
-            } else{
-                ?>
-                <div class="panel-body">
-                    <div class="row">
-                        <p class="csF26 csB7 text-center">
-                            <i class="fa fa-check csF40" aria-hidden="true"></i><br />
-                            You are all caught up
-                        </p>
-                    </div>
-                </div>
-                <?php
-            }
-        ?>
-    </div>
-
     <!-- Goals -->
     <div class="panel panel-theme">
         <div class="panel-heading" style="background-color: #3554DC;">
             <div class="row">
-                <div class="col-md-9 col-sm-12">
+                <div class="col-md-2 col-sm-12">
                     <h5 class="csF16 csB7 csW jsToggleHelp" data-target="assigned_reviews">
-                        My Goal(s)
+                        Goal(s)
                     </h5>
                 </div>
-                <div class="col-md-3 col-sm-12">
+                <div class="col-md-10 col-sm-12">
                     <span class="pull-right">
-                        <a href="<?=purl('goals');?>" class="btn btn-orange"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View My
-                            Goal(s)</a>
+                        <a href="<?=current_url();?>?type=all" class="btn btn-orange <?=$type == 'all' ? 'active' : '';?>">All Goal(s)</a>
+                        <a href="<?=current_url();?>?type=my" class="btn btn-orange <?=$type == 'my' ? 'active' : '';?>">My Goal(s)</a>
+                        <a href="<?=current_url();?>?type=company" class="btn btn-orange <?=$type == 'company' ? 'active' : '';?>">Company Goal(s)</a>
+                        <a href="<?=current_url();?>?type=department" class="btn btn-orange <?=$type == 'department' ? 'active' : '';?>">Department Goal(s)</a>
+                        <a href="<?=current_url();?>?type=team" class="btn btn-orange <?=$type == 'team' ? 'active' : '';?>">Team Goal(s)</a>
                     </span>
                 </div>
                 <div class="clearfix"></div>
@@ -238,12 +95,23 @@
                                                     <!-- Employee -->
                                                     <div class="col-sm-12 col-xs-12">
                                                         <div class="csEBox">
-                                                            <figure> 
-                                                                <img src="<?=$employee['profile_picture'];?>" alt="">
-                                                            </figure>
-                                                            <div class="csEBoxText">
-                                                                <p class="mb0 ma10 csF14 csB7"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
-                                                            </div>
+                                                            <?php
+                                                                if($goal['employee_sid'] == 0){
+                                                                    ?>
+                                                                    <p class="mb0 ma10 csF14 csB7">Company</p>
+                                                                    <?php
+                                                                } else{
+                                                                    ?>
+                                                                <figure> 
+                                                                    <img src="<?=$ne[$goal['employee_sid']]['Image'];?>" alt="">
+                                                                </figure>
+                                                                <div class="csEBoxText">
+                                                                    <p class="mb0 ma10 csF14 csB7"><?=$ne[$goal['employee_sid']]['Name'];?></p>
+                                                                    <p class="mb0"><?=$ne[$goal['employee_sid']]['Role'];?></p>
+                                                                </div>
+                                                                    <?php
+                                                                }
+                                                            ?>
                                                         </div>
                                                     </div> <!-- Track Row -->
                                                     <div class="col-sm-12 col-xs-12">
