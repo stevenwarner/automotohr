@@ -33,11 +33,11 @@
                             $g_target_sign = 'V';
                             //
                             if($goal['goal_type'] == '1'){
-                                $g_atrget_sign= '%';
+                                $g_target_sign= '%';
                             } else if($goal['goal_type'] == '3'){
-                                $g_atrget_sign= '$';
+                                $g_target_sign= '$';
                             }else if($goal['goal_type'] == '4'){
-                                $g_atrget_sign= $goal['custom_measure_type'];
+                                $g_target_sign= $goal['custom_measure_type'];
                             }
                             ?>
                             <div class="col-md-4 col-sm-4 col-xs-12">
