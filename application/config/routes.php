@@ -1286,6 +1286,8 @@ $route['eeoc_form_submit']['post'] = 'Home/eeoc_form_submit';
  */
 // Overview
 $route['performance-management/dashboard'] = 'Performance_management/dashboard';
+$route['performance-management/goals'] = 'Performance_management/goals';
+$route['performance-management/pd_goal/(:num)']['get'] = 'Performance_management/pd_goal/$1';
 // Create
 $route['performance-management/review/create'] = 'Performance_management/create_review';
 $route['performance-management/review/create/(:num)'] = 'Performance_management/create_review/$1';
@@ -1317,6 +1319,13 @@ $route['performance-management/start_reviewee_review']['post'] = 'Performance_ma
 $route['performance-management/update_reviewee']['post'] = 'Performance_management/UpdateReviewee';
 $route['performance-management/get_visibility/(:num)']['get'] = 'Performance_management/GetReviewVisibility/$1';
 $route['performance-management/update_visibility_post']['post'] = 'Performance_management/UpdateVisibility';
+$route['performance-management/get_goal_body']['get'] = 'Performance_management/GetGoalBody';
+$route['performance-management/save_goal']['post'] = 'Performance_management/SaveGoal';
+$route['performance-management/close_goal']['post'] = 'Performance_management/CloseGoal';
+$route['performance-management/open_goal']['post'] = 'Performance_management/OpenGoal';
+$route['performance-management/update_goal']['post'] = 'Performance_management/UpdateGoal';
+$route['performance-management/add_comment']['post'] = 'Performance_management/AddComment';
+$route['performance-management/goal_comments/(:num)']['get'] = 'Performance_management/GetGoalComments/$1';
 // Cron
 // Replicate and Start/End cron job
 $route['review_start_and_replicate/(:any)']['cli'] = 'Cron_common/PMMCronStartAndEndReplicate/$1';

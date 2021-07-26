@@ -54,6 +54,9 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <!-- Common functions -->
 <script src="<?=base_url('assets/performance_management/js/common'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+<!-- Create Goal -->
+<script src="<?=base_url('assets/performance_management/js/goals/create'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+<script src="<?=base_url('assets/performance_management/js/goals/events'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
 
 <?php 
     if(strpos($this->uri->uri_string(), 'review/create') !== false){
@@ -78,7 +81,7 @@
         <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/review/index'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
         <?php
     }
-?>
+    ?>
 
 <!-- Reviews listing -->
 <?php 
@@ -89,7 +92,7 @@
         <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/reviews/index'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
         <?php
     }
-?>
+    ?>
 
 <!-- Single Review listing -->
 <?php 
@@ -100,7 +103,7 @@
         <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/single_review/index'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
         <?php
     }
-?>
+    ?>
 
 <!-- Single Review listing -->
 <?php 
@@ -111,7 +114,7 @@
         <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/my_review/index'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
         <?php
     }
-?>
+    ?>
 
 
 <!-- Report -->
@@ -123,4 +126,4 @@
         <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/report'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
         <?php
     }
-?>
+    ?>

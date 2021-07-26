@@ -13,6 +13,9 @@ class Performance_management_model extends CI_Model{
     private $PRA = 'pm_review_answers';
     private $PRR = 'pm_review_reviewees';
     private $PRRS = 'pm_review_reviewers';
+    private $G = 'goals';
+    private $GH = 'goal_history';
+    private $GC = 'goal_comments';
     //
     private $DbDateFormat = 'Y-m-d H:i:s';
     //
@@ -1175,6 +1178,121 @@ class Performance_management_model extends CI_Model{
         ->count_all_results($this->R);
         //
         return $rt;
+    }
+
+
+    //
+    function GetAllGoals($companyId){
+        $query = 
+        $this->db
+        ->where('company_sid', $companyId)
+        ->get('goals');
+        //
+        $goals = $query->result_array();
+        //        
+        $query->free_result();
+        //
+        return $goals;
+    }
+
+    //
+    function InsertGoal($array){
+        $this->db->insert($this->G, $array);
+        return $this->db->insert_id();
+    }
+
+    //
+    function GetEmployeesByDeparmentIds($ids){
+        //
+        $query = 
+        $this->db
+        ->select('employee_sid')
+        ->from($this->DE2T)
+        ->join($this->DTM, "{$this->DTM}.sid = {$this->DE2T}.team_sid", "inner")
+        ->join($this->DM, "{$this->DM}.sid = {$this->DTM}.department_sid", "inner")
+        ->where("{$this->DTM}.status", 1)
+        ->where("{$this->DTM}.is_deleted", 0)
+        ->where("{$this->DM}.status", 1)
+        ->where("{$this->DM}.is_deleted", 0)
+        ->where_in("{$this->DM}.sid", $ids)
+        ->get();
+        //
+        return array_unique(array_column($query->result_array(), 'employee_sid'));
+    }
+    
+    //
+    function GetEmployeesByTeamIds($ids){
+        //
+        $query = 
+        $this->db
+        ->select('employee_sid')
+        ->from($this->DE2T)
+        ->join($this->DTM, "{$this->DTM}.sid = {$this->DE2T}.team_sid", "inner")
+        ->join($this->DM, "{$this->DM}.sid = {$this->DTM}.department_sid", "inner")
+        ->where("{$this->DTM}.status", 1)
+        ->where("{$this->DTM}.is_deleted", 0)
+        ->where("{$this->DM}.status", 1)
+        ->where("{$this->DM}.is_deleted", 0)
+        ->where_in("{$this->DTM}.sid", $ids)
+        ->get();
+        //
+        return array_unique(array_column($query->result_array(), 'employee_sid'));
+    }
+
+
+    //
+    function UpdateGoal($array, $id){
+        $this->db->where('sid', $id)->update($this->G, $array);
+    }
+    
+    //
+    function InsertGoalHistory($array){
+        $this->db->insert($this->GH, $array);
+    }
+    
+    //
+    function InsertComment($array){
+        $this->db->insert($this->GC, $array);
+    }
+
+    //
+    function GetGoalComments($goalId){
+        //
+        return $this->db
+        ->select("
+            {$this->GC}.message,
+            {$this->GC}.sender_sid,
+            {$this->GC}.created_at,
+            {$this->U}.first_name,
+            {$this->U}.last_name,
+        ")
+        ->join($this->U, "{$this->U}.sid = {$this->GC}.sender_sid", 'inner')
+        ->where("{$this->GC}.goal_sid", $goalId)
+        ->order_by("{$this->GC}.sid", 'ASC')
+        ->get($this->GC)
+        ->result_array();
+    }
+    
+    
+    //
+    function GetSingleGoalById($goalId){
+        //
+        $goal = 
+        $this->db
+        ->select("
+            {$this->G}.*,
+            c.first_name as created_first_name,
+            c.last_name as created_last_name,
+            ".(getUserFields()).",
+        ")
+        ->join($this->U, "{$this->U}.sid = {$this->G}.employee_sid", 'inner')
+        ->join("{$this->U} as c", "c.sid = {$this->G}.created_by", 'inner')
+        ->where("{$this->G}.sid", $goalId)
+        ->get($this->G)
+        ->row_array();
+        //
+        $goal['Comments'] = $this->GetGoalComments($goalId);
+        return $goal;
     }
     
     

@@ -86,11 +86,95 @@ class Performance_management extends Public_Controller{
         $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 0);
         $this->pargs['FeedbackReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1);
         //
+        $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pargs['employerId']);
+        //
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}dashboard");
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
+    }
+
+    /**
+     * Dashboard
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function goals(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Goals';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $ne = [];
+        //
+        foreach($this->pargs['company_employees'] as $imp){
+            $ne[$imp['Id']] = $imp;
+        }
+        //
+        $this->pargs['ne'] = $ne;
+        //
+        $this->pargs['type'] = $type = $this->input->get('type', true) ? $this->input->get('type', true): 'my';
+        //
+        if($type == 'my'){
+            //
+            $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pargs['employerId']);
+        } else if($type == 'company'){
+            //
+            $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], 0);
+        } else if($type == 'department'){
+            //
+            $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pmm->GetEmployeesByDeparmentIds($this->pargs['employee']['department_sid']));
+        } else if($type == 'team'){
+            //
+            $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pmm->GetEmployeesByDeparmentIds($this->pargs['employee']['team_sid']));
+        }else {
+            //
+            if(!$this->pargs['employee']['access_level_plus']){
+                //
+                $this->pargs['MyGoals'] = $this->pargs['Goals'];
+            } else{
+                $this->pargs['MyGoals'] = array_filter($this->pargs['Goals'], function($goal){
+                    //
+                    if($goal['employee_sid'] == $this->pargs['employee']['sid']){
+                        return 1;
+                    }
+                });
+            }
+            $this->pargs['MyGoals'] = $this->pargs['Goals'];
+        } 
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}goals/dashboard");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    /**
+     * Dashboard
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function pd_goal($id){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Goal';
+        //
+        $this->pargs['Goal'] = $this->pmm->GetSingleGoalById($id);
+        
+        $this->load->view("{$this->pp}goals/pd");
     }
     
    
@@ -1036,7 +1120,7 @@ class Performance_management extends Public_Controller{
     function report($reviewId = 'all', $employeeIds = 'all', $startDate = 'all', $endDate = 'all'){
         // 
         $this->checkLogin($this->pargs);
-        // Set title
+        // Set titleub
         $this->pargs['title'] = 'Performance Management - Report';
         // Set employee information for the blue screen
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
@@ -1050,6 +1134,255 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
+
+    //
+    function GetGoalBody(){
+        //
+        $this->checkLogin($this->pargs);
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        // Set company department and teams
+        $this->pargs['company_dt'] = $this->pmm->GetCompanyDepartmentAndTeams($this->pargs['companyId']);
+        //
+        echo $this->load->view("{$this->pp}goals/create", $this->pargs, true);
+    }
+    
+    //
+    function SaveGoal(){
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+            $this->res($resp, true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->checkLogin($this->pargs);
+        //
+        $insertArray = [];
+        $insertArray['created_by'] =  $this->pargs['employerId'];
+        $insertArray['employee_sid'] = 0;
+        $insertArray['company_sid'] = $this->pargs['companyId'];
+        $insertArray['title'] = $post['title'];
+        $insertArray['description'] = $post['description'];
+        $insertArray['goal_type'] = $post['type'];
+        $insertArray['status'] = 1;
+        $insertArray['measure_type'] = $post['measureUnit'];
+        $insertArray['custom_measure_type'] = $post['customUnit'];
+        $insertArray['target'] = $post['target'];
+        $insertArray['start_date'] = formatDateToDB($post['startDate']);
+        $insertArray['end_date'] = formatDateToDB($post['endDate']);
+        $insertArray['created_at'] = date("Y-m-d H:i:s", strtotime('now'));
+        $insertArray['updated_at'] = date("Y-m-d H:i:s", strtotime('now'));
+        $insertArray['roles'] = isset($post['roles']) ? json_encode($post['roles']) : '{}';
+        $insertArray['teams'] = isset($post['teams']) ? json_encode($post['teams']) : '{}';
+        $insertArray['departments'] = isset($post['departments']) ? json_encode($post['departments']) : '{}';
+        $insertArray['employees'] = isset($post['employees']) ? json_encode($post['employees']) : '{}';
+        //
+        $ids = [];
+        //
+        if($insertArray['goal_type'] == 1){
+            $this->pmm->InsertGoal($insertArray);
+        } else if($insertArray['goal_type'] == 2){
+            //
+            $ids = $this->pmm->GetEmployeesByDeparmentIds($post['departmentIds']);
+        } else if($insertArray['goal_type'] == 3){
+            $ids = $this->pmm->GetEmployeesByTeamIds($post['teamIds']);
+        } else if($insertArray['goal_type'] == 4){
+            $ids = $post['employeeIds'];
+        }
+
+        if(!empty($ids)){
+            //
+            foreach($ids as $id){
+                $insertArray['employee_sid'] = $id;
+                $this->pmm->InsertGoal($insertArray);
+            }
+        }
+        //
+        $resp['Status'] = true;
+        $resp['Msg'] = 'Procees';
+        //
+        $this->res($resp);
+    }
+    
+    
+    //
+    function CloseGoal(){
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+            $this->res($resp, true);
+        }
+        //
+        $args = [];
+        //
+        $this->checkLogin($args);
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $insertArray = [];
+        $insertArray['goal_sid'] = $post['goalId'];
+        $insertArray['employee_sid'] = $args['employerId'];
+        $insertArray['action'] = 'closed';
+        $insertArray['note'] = json_encode([]);
+        $insertArray['created_at'] = date("Y-m-d H:i:s", strtotime('now'));
+        //
+        $this->pmm->InsertGoalHistory($insertArray);
+        //
+        $updateArray = [];
+        $updateArray['status'] =  0;
+        //
+        $this->pmm->UpdateGoal($updateArray, $post['goalId']);
+        //
+        $resp['Status'] = true;
+        $resp['Msg'] = 'Procees';
+        //
+        $this->res($resp);
+    }
+    
+    //
+    function OpenGoal(){
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+            $this->res($resp, true);
+        }
+        //
+        $args = [];
+        //
+        $this->checkLogin($args);
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $insertArray = [];
+        $insertArray['goal_sid'] = $post['goalId'];
+        $insertArray['employee_sid'] = $args['employerId'];
+        $insertArray['action'] = 'opened';
+        $insertArray['note'] = json_encode([]);
+        $insertArray['created_at'] = date("Y-m-d H:i:s", strtotime('now'));
+        //
+        $this->pmm->InsertGoalHistory($insertArray);
+        //
+        $updateArray = [];
+        $updateArray['status'] =  1;
+        //
+        $this->pmm->UpdateGoal($updateArray, $post['goalId']);
+        //
+        $resp['Status'] = true;
+        $resp['Msg'] = 'Procees';
+        //
+        $this->res($resp);
+    }
+    
+    //
+    function UpdateGoal(){
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+            $this->res($resp, true);
+        }
+        //
+        $args = [];
+        //
+        $this->checkLogin($args);
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $insertArray = [];
+        $insertArray['goal_sid'] = $post['goalId'];
+        $insertArray['employee_sid'] = $args['employerId'];
+        $insertArray['action'] = 'updated';
+        $insertArray['note'] = json_encode($post);
+        $insertArray['created_at'] = date("Y-m-d H:i:s", strtotime('now'));
+        //
+        $this->pmm->InsertGoalHistory($insertArray);
+        //
+        $updateArray = [];
+        $updateArray['on_track'] = $post['on_track'];
+        $updateArray['completed_target'] =  $post['completed'];
+        $updateArray['target'] =  $post['target'];
+        //
+        $this->pmm->UpdateGoal($updateArray, $post['goalId']);
+        //
+        $resp['Status'] = true;
+        $resp['Msg'] = 'Procees';
+        //
+        $this->res($resp);
+    }
+    
+    //
+    function AddComment(){
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+            $this->res($resp, true);
+        }
+        //
+        $args = [];
+        //
+        $this->checkLogin($args);
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $insertArray = [];
+        $insertArray['goal_sid'] = $post['goalId'];
+        $insertArray['sender_sid'] = $args['employerId'];
+        $insertArray['message'] = $post['msg'];
+        $insertArray['created_at'] = date("Y-m-d H:i:s", strtotime('now'));
+        $insertArray['updated_at'] = date("Y-m-d H:i:s", strtotime('now'));
+        //
+        $this->pmm->InsertComment($insertArray);
+        //
+        $resp['Status'] = true;
+        $resp['Msg'] = 'Procees';
+        //
+        $this->res($resp);
+    }
+    
+    //
+    function GetGoalComments($id){
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res($resp, true);
+        }
+        $resp['Data'] = $this->pmm->GetGoalComments($id);
+        //
+        $resp['Status'] = true;
+        $resp['Msg'] = 'Procees';
+        //
+        $this->res($resp);
+    }
+
+
+    //
+    function filterGoals(
+        $goals,
+        $employerId
+    ){
+        //
+        if(empty($goals)){
+            return $goals;
+        }
+        //
+        $myGoals = [];
+        //
+        foreach($goals as $goal){
+            if($goal['employee_sid'] == $employerId){
+                $myGoals[] = $goal;
+            }
+        }
+        //
+        return $myGoals;
+    }
+
 
     /**
      * Check user session and set data
@@ -1088,7 +1421,10 @@ class Performance_management extends Public_Controller{
             return true;
         }
         else {
+            //
             $data['security_details'] = db_get_access_level_details($data['employerId'], NULL, $data['session']);
+            // Get Goals
+            $data['Goals'] = $this->pmm->GetAllGoals($data['session']['company_detail']['sid']);
         }
     }
 

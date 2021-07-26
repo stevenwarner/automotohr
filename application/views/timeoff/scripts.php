@@ -3,8 +3,8 @@
 let
     baseURL = "<?=rtrim(base_url(), '/');?>/",
     handlerURL = "<?=rtrim(base_url(), '/');?>/timeoff/handler",
-    companyId = <?=$company_sid;?>,
-    employerId = <?=$employer_sid;?>,
+    companyId = <?=isset($companyId) ? $companyId : $company_sid;?>,
+    employerId = <?=isset($employerId) ? $employerId : $employer_sid;?>,
     level = <?=$level;?>,
     employeeId = <?=isset($employee_sid) ? $employee_sid : 0;?>,
     employeeName = "<?=isset($employee_name) ? $employee_name : '';?>",

@@ -194,3 +194,8 @@ ALTER TABLE `applicant_merge_employee_record`
 
 ALTER TABLE `applicant_merge_employee_record`
   MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
+
+
+-- 
+ALTER TABLE `goals` ADD `custom_measure_type` VARCHAR(30) NULL DEFAULT NULL AFTER `measure_type`;
+ALTER TABLE `goals` ADD `created_by` INT NOT NULL AFTER `employees`;
