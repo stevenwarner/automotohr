@@ -239,7 +239,7 @@
                                                     <div class="col-sm-12 col-xs-12">
                                                         <div class="csEBox">
                                                             <figure> 
-                                                                <img src="<?=$employee['profile_picture'];?>" alt="">
+                                                                <img src="<?=AWS_S3_BUCKET_URL.$employee['profile_picture'];?>" alt="">
                                                             </figure>
                                                             <div class="csEBoxText">
                                                                 <p class="mb0 ma10 csF14 csB7"><?=ucwords($employee['first_name'].' '.$employee['last_name']);?></p>
