@@ -774,6 +774,7 @@ class Performance_management_model extends CI_Model{
         ->where("{$this->R}.is_draft", 0)
         ->where("{$this->PRRS}.reviewer_sid", $employeeId)
         ->where("{$this->PRRS}.is_manager", $type)
+        ->where("{$this->PRRS}.is_completed", 0)
         ->get();
         //
         $result = $query->result_array();
