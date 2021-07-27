@@ -408,6 +408,29 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
+    
+    /**
+     * Create Review
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function pd($action, $reviewId, $revieweeId, $reviewerId){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Review';
+        //
+        $this->pargs['action'] = $action;
+        //
+        $this->pargs['isManager'] = $this->pmm->isManager($revieweeId, $reviewerId);
+        //
+        $this->pargs['review'] = $this->pmm->GetReviewDetailsForPD($reviewId, $revieweeId, $reviewerId, $this->pargs['isManager']);
+        //
+        $this->load->view("{$this->pp}pd",  $this->pargs);
+    }
 
     
 
@@ -1106,7 +1129,8 @@ class Performance_management extends Public_Controller{
      * 
      */
     function UploadQuestionAttachment(){
-        echo upload_file_to_aws('file', 1, $_FILES['file']['name']);
+        $filename =  upload_file_to_aws('file', 1, $_FILES['file']['name']);
+        echo $filename;
     }
 
     /**

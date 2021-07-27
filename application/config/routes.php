@@ -1288,6 +1288,7 @@ $route['eeoc_form_submit']['post'] = 'Home/eeoc_form_submit';
 $route['performance-management/dashboard'] = 'Performance_management/dashboard';
 $route['performance-management/goals'] = 'Performance_management/goals';
 $route['performance-management/pd_goal/(:num)']['get'] = 'Performance_management/pd_goal/$1';
+$route['performance-management/pd/(:any)/(:num)/(:num)/(:num)']['get'] = 'Performance_management/pd/$1/$2/$3/$4';
 // Create
 $route['performance-management/review/create'] = 'Performance_management/create_review';
 $route['performance-management/review/create/(:num)'] = 'Performance_management/create_review/$1';

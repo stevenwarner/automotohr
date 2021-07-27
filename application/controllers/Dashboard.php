@@ -786,11 +786,11 @@ class Dashboard extends Public_Controller {
             $data['theme'] = 2;
 
             $this->session->set_userdata('time_off_theme', $data['theme']);
-
             //
             $this->load->model('performance_management_model', 'pmm');
+            $data['review'] = $this->pmm->getMyReviewCounts($data['session']['company_detail']['sid'], $employer_id);
+            $data['total_goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
             $this->load->model('varification_document_model');
-            $data['goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
 
             // Authorized Check
             $data['AuthorizedDocuments'] = [];

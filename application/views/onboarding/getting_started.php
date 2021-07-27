@@ -633,18 +633,29 @@
                             </a>
                         </div>
 
-                        <?php if (checkIfAppIsEnabled('performance_managemen')) { ?>
+                        <?php if (checkIfAppIsEnabled('performance_management')) { ?>
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6" id="js-to-box">
                             <a href="<?= base_url('performance-management/dashboard'); ?>">
                                 <div class="widget-box">
                                     <div class="link-box  bg-pr full-width">
                                         <h2 class="text-blue">Performance Management</h2>
-                                        <div><span>&nbsp;</span></div>
-                                        <div class="current-date">
-                                            <span><?php echo $performanceReviewPending; ?><sub>Pending</sub></span>
-                                        </div>
+                                        <ul class="pto-box">
+                                            <li>
+                                                <span><?=$review['Reviews'];?></span>
+                                                <span>Review(s)</span>
+                                            </li>
+                                            <li>
+                                                <span><?=$review['Feedbacks'];?></span>
+                                                <span>Feedback(s)</span>
+                                            </li>
+                                            <li>
+                                                <span><?=$total_goals;?></span>
+                                                <span>Goal(s)</span>
+                                            </li>
+                                        </ul>
                                         <div class="status-panel">
-                                            <h3>Show</h3>
+                                            <h3>View Review(s)</h3>
+                                            <span>Show</span>
                                         </div>
                                     </div>
                                 </div>

@@ -430,7 +430,7 @@ class Performance_management_model extends CI_Model{
     /**
      * 
      */
-    function isManager($reviewee, $reviewer, $companyId){
+    function isManager($reviewee, $reviewer, $companyId = 0){
         //
         $revieweeDT = [];
         //
@@ -1712,5 +1712,32 @@ class Performance_management_model extends CI_Model{
         $this->db->where('sid', $id)
         ->update($this->R, $upd);
     }
+
+    //
+    function GetReviewDetailsForPD(
+        $reviewId,
+        $revieweeId,
+        $reviewerId,
+        $isManager
+    ){
+        //
+        $review =
+        $this->db
+        ->select("
+            {$this->R}.review_title,
+            {$this->R}.review_start_date,
+            {$this->R}.review_end_date
+        ")
+        ->where("sid", $reviewId)
+        ->get($this->R)
+        ->row_array();
+        //
+        $review = array_merge($review, ['Reviewee' => $this->GetEmployeeColumns($revieweeId, explode(',', getUserFields()))[0]]);
+        $review = array_merge($review, ['Reviewer' => $this->GetEmployeeColumns($reviewerId, explode(',', getUserFields()))[0]]);
+        $review = array_merge($review, $this->GetReviewerAnswers($reviewId, $revieweeId, $reviewerId, $isManager));
+        //
+        return $review;
+    }
+
     
 }
