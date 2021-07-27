@@ -681,6 +681,7 @@ class Performance_management_model extends CI_Model{
         ->where("{$this->PRR}.is_started", 1)
         ->where("{$this->PRRS}.reviewer_sid", $employeeId)
         ->where("{$this->R}.company_sid", $companyId)
+        ->where("{$this->R}.is_archived", 0)
         ->get();
         //
         $result = $query->result_array();
@@ -1072,6 +1073,7 @@ class Performance_management_model extends CI_Model{
         ->join($this->PRR, "{$this->PRR}.review_sid = {$this->R}.sid", "inner")
         ->join($this->U, "{$this->U}.sid = {$this->PRRS}.reviewer_sid", "inner")
         ->join("{$this->U} as reviewee", "reviewee.sid = {$this->PRRS}.reviewee_sid", "inner")
+        ->where("{$this->R}.is_archived", 0)
         ->where("{$this->R}.status <>", 'pending')
         ->where("{$this->R}.company_sid", $companyId)
         ->where("{$this->PRR}.is_started", 1)
