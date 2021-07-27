@@ -1104,6 +1104,8 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select("
             {$this->R}.review_title,
+            {$this->R}.review_start_date,
+            {$this->R}.review_end_date,
             {$this->U}.first_name,
             {$this->U}.last_name,
             reviewee.first_name as reviewee_first_name,

@@ -50,13 +50,15 @@
     <!--  -->
     <div class="panel panel-theme">
         <div class="panel-body">
+            <p class="csF16 csB7">
+                Reviewer(s) that haven't completed the reviews.
+            </p>
             <table class="table table-striped table-condensed">
                 <caption></caption>
                 <thead>
                     <tr>
-                        <th scope="col" class="csF16 csB7">Reviewer</th>
-                        <th scope="col" class="csF16 csB7">Review / Reviewee</th>
-                        <th scope="col" class="csF16 csB7">Status</th>
+                        <th scope="col" class="csF16 csB7">Review</th>
+                        <th scope="col" class="csF16 csB7">Reviewee / Reviewer</th>
                         <th scope="col" class="csF16 csB7">Action</th>
                     </tr>
                 </thead>
@@ -77,20 +79,17 @@
                                 <tr>
                                     <td style="vertical-align: middle;">
                                         <p class="csF16">
-                                            <?=ucwords($record['first_name'].' '.$record['last_name']);?>
-                                        </p>
-                                    </td>
-                                    <td style="vertical-align: middle;">
-                                        <p class="csF16">
                                             <?=ucwords($record['review_title']);?>
                                         </p>
-                                        <p class="csF16">
-                                            <?=ucwords($record['reviewee_first_name'].' '.$record['reviewee_last_name']);?>
+                                        <p class="csF14">
+                                            (<?=formatDate($record['review_start_date'], 'Y-m-d', DATE);?> - 
+                                            <?=formatDate($record['review_end_date'], 'Y-m-d', DATE);?>)
                                         </p>
                                     </td>
                                     <td style="vertical-align: middle;">
-                                        <p class="csF16 csB7 text-danger">
-                                            PENDING
+                                        <p class="csF16">
+                                            <?=ucwords($record['first_name'].' '.$record['last_name']);?>&nbsp;<i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp;
+                                            <?=ucwords($record['reviewee_first_name'].' '.$record['reviewee_last_name']);?>
                                         </p>
                                     </td>
                                     <td style="vertical-align: middle;">
