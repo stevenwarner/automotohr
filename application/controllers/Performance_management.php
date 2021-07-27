@@ -241,9 +241,7 @@ class Performance_management extends Public_Controller{
         $this->pargs['reviews'] = $this->pmm->GetAllMyReviews(
             $this->pargs['employerId']
         );
-
-        // _e($this->pargs['reviews'], true, true);
-
+        //
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}my_reviews/reviews");

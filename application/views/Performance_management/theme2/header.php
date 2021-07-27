@@ -37,13 +37,13 @@
             'segment' => 'goal/create',
             'class' => 'jsCreateGoal'
         ],
-        // [
-        //     'title' => 'Goals',
-        //     'url' => '/goals',
-        //     'slug' => 'goals',
-        //     'icon' => 'bullseye',
-        //     'segment' => 'goals'
-        // ],
+        [
+            'title' => 'Goals',
+            'url' => '/goals',
+            'slug' => 'goals',
+            'icon' => 'bullseye',
+            'segment' => 'goals'
+        ],
         [
             'title' => 'Calendar',
             'url' => 'javascript:void(0)',

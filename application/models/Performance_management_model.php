@@ -708,6 +708,51 @@ class Performance_management_model extends CI_Model{
     /**
      * 
      */
+    function getMyPendingReviewCounts($companyId, $employeeId){
+        //
+        $query = 
+        $this->db
+        ->select("
+            {$this->PRRS}.is_manager,
+            {$this->PRRS}.is_completed
+        ")
+        ->from("{$this->PRRS}")
+        ->join("{$this->PRR}", "{$this->PRR}.review_sid = {$this->PRRS}.review_sid AND {$this->PRR}.reviewee_sid = {$this->PRRS}.reviewee_sid", "inner")
+        ->join("{$this->R}", "{$this->R}.sid = {$this->PRR}.review_sid", "inner")
+        ->where("{$this->PRR}.is_started", 1)
+        ->where("{$this->PRRS}.reviewer_sid", $employeeId)
+        ->where("{$this->R}.company_sid", $companyId)
+        ->where("{$this->R}.is_archived", 0)
+        ->get();
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        $returnArray = [
+            'Reviews' => 0,
+            'Feedbacks' => 0,
+            'Total' => 0
+        ];
+        //
+        if(!empty($result)){
+            foreach($result as $record){
+                //
+                if($record['is_completed']){
+                    continue;
+                }
+                //
+                $returnArray[$record['is_manager'] ? 'Feedbacks' : 'Reviews']++;
+                $returnArray['Total']++;
+            }
+        }
+        //
+        return $returnArray;
+    }
+    
+    /**
+     * 
+     */
     function GetReviewsByTypeForDashboard($employeeId, $type){
         //
         $query = 
@@ -1579,6 +1624,8 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select("
             {$this->R}.review_title,
+            {$this->R}.review_start_date,
+            {$this->R}.review_end_date,
             {$this->U}.first_name,
             {$this->U}.last_name,
             {$this->PRRS}.review_sid,

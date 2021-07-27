@@ -27,15 +27,36 @@ class Notifications extends Public_Controller {
             $ses,
             strtolower($ses['employer_detail']['access_level']) != 'employee' ? false : true
         );
-        if (checkIfAppIsEnabled('performance_review')) {
-            $this->load->model('Performance_management_model', 'pmm');
-            $goalsCount = $this->pmm->getMyGoals($ses['employer_detail']['sid']);
+        if (checkIfAppIsEnabled('performance_management')) {
             //
-            if(count($goalsCount)){
+            $this->load->model('Performance_management_model', 'pmm');
+            //
+            $review = $this->pmm->getMyPendingReviewCounts($ses['company_detail']['sid'], $ses['employer_detail']['sid']);
+            $total_goals = count($this->pmm->getMyGoals($ses['employer_detail']['sid']));
+            //
+            if($total_goals){
                 $data[] = [
-                    'count' => count($goalsCount),
-                    'link' => base_url('performance-management/lms/goals'),
+                    'count' => $total_goals,
+                    'link' => base_url('performance-management/goals'),
                     'title' => 'Goals'
+                ];
+            }
+            
+            //
+            if($review['Reviews']){
+                $data[] = [
+                    'count' => $review['Reviews'],
+                    'link' => base_url('performance-management/reviews'),
+                    'title' => 'Pending Reviews'
+                ];
+            }
+            
+            //
+            if($review['Feedbacks']){
+                $data[] = [
+                    'count' => $review['Feedbacks'],
+                    'link' => base_url('performance-management/reviews'),
+                    'title' => 'Pending Feedbacks'
                 ];
             }
         }

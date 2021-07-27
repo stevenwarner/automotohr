@@ -101,6 +101,11 @@ $(function() {
             //
             $.each(review.Reviewees[revieweeId].reviewers, function(index, reviewer) {
                 //
+                var link = pm.urls.pbase + (reviewer['is_manager'] == 1 ? 'feedback' : 'review') + '/';
+                link += review.sid + '/';
+                link += review.Reviewees[revieweeId].reviewee_sid + '/';
+                link += index;
+                //
                 trs += '<tr>';
                 trs += '    <td style="vertical-align: middle;">';
                 trs += '        <p class="csF16">';
@@ -115,6 +120,9 @@ $(function() {
                 trs += '    </td>';
                 trs += '    <td style="vertical-align: middle;">';
                 trs += '        <p class="csF16 csB7 text-' + (reviewer['is_completed'] == 1 ? 'success' : 'warning') + '">' + (reviewer['is_completed'] == 1 ? "COMPLETED" : "PENDING") + '</p>';
+                trs += '    </td>';
+                trs += '    <td style="vertical-align: middle;">';
+                trs += '        <a href="' + (link) + '" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Review</a>';
                 trs += '    </td>';
                 trs += '</tr>';
             });
@@ -325,6 +333,7 @@ $(function() {
         html += '                        <th scope="col">Reviewer</th>';
         html += '                        <th scope="col">Reviewer Type</th>';
         html += '                        <th scope="col">Status</th>';
+        html += '                        <th scope="col">Action</th>';
         html += '                    </tr>';
         html += '                </thead>';
         html += '                <tbody id="jsReviewersBox">';

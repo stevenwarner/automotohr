@@ -478,22 +478,28 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
                     }
                 ?>
 
-                <!--  -->
-                <div class="panel-footer">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <!-- <button class="btn btn-black jsReviewFinishLater">
-                                <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp; Finish Later
-                            </button> -->
-                            <span class="pull-right">
-                                <button class="btn btn-orange jsReviewSave">
-                                    <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp; Save & <?=$selectedPage == $totalPages ? "Finish" : "Next";?>
-                                </button>
-                            </span>
+                <?php 
+                    if($employerId == $reviewerId){
+                        ?>
+                    <!--  -->
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <!-- <button class="btn btn-black jsReviewFinishLater">
+                                    <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp; Finish Later
+                                </button> -->
+                                <span class="pull-right">
+                                    <button class="btn btn-orange jsReviewSave">
+                                        <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp; Save & <?=$selectedPage == $totalPages ? "Finish" : "Next";?>
+                                    </button>
+                                </span>
+                            </div>
+                            <div class="clearfix"></div>
                         </div>
-                        <div class="clearfix"></div>
                     </div>
-                </div>
+                        <?php
+                    }
+                ?>
             </div>
         </div>
     </div>

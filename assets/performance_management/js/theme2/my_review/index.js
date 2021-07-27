@@ -69,4 +69,31 @@ $(function() {
         ml(false, 'jsViewFeedbackModalLoader');
     });
 
+    //
+    if (reviews.length > 0) {
+        var rows = '';
+
+        reviews.map(function(v) {
+            rows += '<option value="' + (v.review_sid) + '">' + (v.review_title) + '</option>';
+        });
+
+        $('#jsReviewTitles').html(rows);
+    }
+    //
+    $('#jsReviewTitles').select2({ closeOnSelect: false });
+    //
+    //
+    $('#jsReviewStartDateInp').datepicker({
+        changeYear: true,
+        changeMonth: true,
+        onselect: function(d) {
+            $('#jsReviewEndDateInp').datepicker("set", "minDate", d)
+        }
+    });
+    //
+    $('#jsReviewEndDateInp').datepicker({
+        changeYear: true,
+        changeMonth: true,
+    });
+
 });

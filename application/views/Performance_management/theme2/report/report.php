@@ -57,6 +57,7 @@
                         <th scope="col" class="csF16 csB7">Reviewer</th>
                         <th scope="col" class="csF16 csB7">Review / Reviewee</th>
                         <th scope="col" class="csF16 csB7">Status</th>
+                        <th scope="col" class="csF16 csB7">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,14 +68,19 @@
                                 if($record['is_completed'] == 1){
                                     continue;
                                 }
+                                //
+                                $url = ($record['is_manager'] ? 'feedback' : 'review'). '/';
+                                $url .= $record['review_sid']. '/';
+                                $url .= $record['reviewee_sid']. '/';
+                                $url .= $record['reviewer_sid'];
                                 ?>
                                 <tr>
-                                    <td>
+                                    <td style="vertical-align: middle;">
                                         <p class="csF16">
                                             <?=ucwords($record['first_name'].' '.$record['last_name']);?>
                                         </p>
                                     </td>
-                                    <td>
+                                    <td style="vertical-align: middle;">
                                         <p class="csF16">
                                             <?=ucwords($record['review_title']);?>
                                         </p>
@@ -82,10 +88,15 @@
                                             <?=ucwords($record['reviewee_first_name'].' '.$record['reviewee_last_name']);?>
                                         </p>
                                     </td>
-                                    <td>
+                                    <td style="vertical-align: middle;">
                                         <p class="csF16 csB7 text-danger">
                                             PENDING
                                         </p>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <a href="<?=purl($url);?>" class="btn btn-orange csF16" target="_blank">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>&nbsp; View Review
+                                        </a>
                                     </td>
                                 </tr>
                                 <?php
