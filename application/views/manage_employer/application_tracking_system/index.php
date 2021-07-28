@@ -2871,6 +2871,10 @@
 
             have_all_records = true;
             last_fetched_id  = 0;
+            //
+            if(megaOBJ.phone_e16.toString().length >= 10){
+                megaOBJ.phone_e16 = megaOBJ.phone_e16.toString().substr(1, 10);
+            }
 
             <?php if(isset($phone_pattern_enable) && $phone_pattern_enable == 1) { ?>
                 var is_valid = fpn(megaOBJ.phone_e16.toString(), null, true);
