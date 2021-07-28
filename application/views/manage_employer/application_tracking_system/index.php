@@ -2861,8 +2861,6 @@
         targetTriggerForm = $('.js-sms-form-btn'),
         have_all_records,
         last_fetched_id = 0;
-
-        console.log(<?=$phone_pattern_enable?>);
         //
         $('.js-sms-btn').click(function(){
             megaOBJ = {};
@@ -2875,21 +2873,22 @@
             last_fetched_id  = 0;
 
             <?php if(isset($phone_pattern_enable) && $phone_pattern_enable == 1) { ?>
-            var is_valid = fpn(megaOBJ.phone_e16.toString(), null, true);
+                var is_valid = fpn(megaOBJ.phone_e16.toString(), null, true);
 
-            if(is_valid){
-                var t = fpn(megaOBJ.phone_e16.toString().replace(/\D/, '').substr(1));
-                megaOBJ.phone = typeof(t) === 'object' ? t.number : t;
-            }else{
+                if(is_valid){
+                    var t = fpn(megaOBJ.phone_e16.toString().replace(/\D/, '').substr(1));
+                    megaOBJ.phone = typeof(t) === 'object' ? t.number : t;
+                } else{
             <?php } ?>
                 var tmp_phone = fpn(megaOBJ.phone_e16.toString());
-                console.log(tmp_phone);
                 megaOBJ.phone = typeof(tmp_phone) === 'object' ? tmp_phone.number : tmp_phone;
-            <?php if(isset($phone_pattern_enable) && $phone_pattern_enable == 1) { ?>
-            }
+                <?php if(isset($phone_pattern_enable) && $phone_pattern_enable == 1) { ?>
+                }
             <?php } else { ?>
                 var is_valid = true;
             <?php } ?>
+
+            
 
             // Set button
             var btn_row = '<div class="row js-sms-view-btn" '+( !is_valid ? 'style="display: none;"' : '' )+'><div class="col-sm-12"><a href="javascript:void(0);" class="btn btn-success pull-right js-sms-form-btn">Send SMS</a></div></div>',
@@ -2905,14 +2904,10 @@
             send_sms_box += '       <form action="javascript:void(0)" id="js-sms-form">';
             send_sms_box += '           <div class="form-group">';
             send_sms_box += '               <label>Receiver Phone Number</label>';
-            <?php if(isset($phone_pattern_enable) && $phone_pattern_enable == 1) { ?>
             send_sms_box += '               <div class="input-group">';
             send_sms_box += '                   <div class="input-group-addon">+1</div>';
             send_sms_box += '                   <input type="text" disabled="true" name="txt_phone" class="form-control" value="'+( megaOBJ.phone )+'" />';
             send_sms_box += '               </div>';
-            <?php } else { ?>
-            send_sms_box += '                   <input type="text" disabled="true" name="txt_phone" class="form-control" value="'+( megaOBJ.phone )+'" />';
-            <?php } ?>
             send_sms_box += '           </div>';
             send_sms_box += '           <div class="form-group">';
             send_sms_box += '               <label>Message</label>';

@@ -25,14 +25,6 @@
 		<div class="alert alert-success js-msg-area" style="display: none;"></div>
 		<h4>Applicant phone number is invalid. Send an email to the applicant.</h4>
 		<form action="javascript:void(0)" id="js-phone-update-form">
-			<!-- <div class="form-group">
-				<label>Phone number</label>
-				<div class="input-group">
-					<div class="input-group-addon">+1</div>
-					<input type="text" name="txt_phonenumber" class="form-control js-sms-phone" value="<?=$ats_phonenumber;?>"/>
-				</div>
-				<span class="cs-error js-error"></span>
-			</div> -->
 			<!--  -->
 			<div class="form-group">
 				<input type="hidden" name="txt_sid" value="<?=$ats_sid;?>" />

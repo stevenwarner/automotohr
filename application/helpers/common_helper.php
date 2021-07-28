@@ -10016,6 +10016,10 @@ if (!function_exists('phonenumber_format')) {
         if (strlen($phone_number) === 0) return $phone_number;
         if ($phone_number == $country_code) return '';
         if ($phone_number == '') return '';
+        //
+        if(substr($phone_number, 0, 1) == 1){
+            $phone_number = substr($phone_number, 1, strlen($phone_number));
+        }
         // Removes country code if exists
         $phone_number = str_replace($country_code, '', $phone_number);
         // Clean phone number
