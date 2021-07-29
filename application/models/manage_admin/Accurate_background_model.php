@@ -456,7 +456,7 @@ class Accurate_background_model extends CI_Model
                         $dataToUpdate['serialized_items_info'] = serialize($dataArray);
                         $this->db->where('sid', $order['sid'])->update('invoices', $dataToUpdate);
                         $dobreak = true;
-                        return;
+                        return $invoiceId;
                     }
                 } else { // Added by Hamid ( No of days check was failing hence qty was not deducted ).
                     if ($product == $productId) {
@@ -467,7 +467,7 @@ class Accurate_background_model extends CI_Model
                         $dataToUpdate['serialized_items_info'] = serialize($dataArray);
                         $this->db->where('sid', $order['sid'])->update('invoices', $dataToUpdate);
                         $dobreak = true;
-                        return;
+                        return $invoiceId;
                     }
                 }
             }
