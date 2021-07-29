@@ -409,7 +409,7 @@ class Accurate_background_model extends CI_Model
                 $rows .= '    <td class="no-print">
                 <a class="btn btn-success btn-sm" href="' . base_url() . 'manage_admin/accurate_background/order_status/' . $v0['order_sid'] . '" >Order Status</a>
                 <button class="btn btn-danger btn-sm jsRemoveBGC" data-id="'.($v0['order_sid']).'">
-                    Remove
+                    Delete
                 </button>
                 </td>';
                 $rows .= '</tr>';
