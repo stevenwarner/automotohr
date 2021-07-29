@@ -9,6 +9,14 @@
                     <!-- Main Content area -->
                     <div class="csPageWrap">
                         <br>
+                        <span class="pull-right">
+                            <button class="btn btn-success jsCreateGoal">
+                                <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
+                                Create A Goal
+                            </button>
+                        </span>
+                        <div class="clearfix"><!--  --></div>
+                        <br>
                         <!--  -->
                         <div class="panel panel-success">
                             <div class="panel-heading mb0 pb0">

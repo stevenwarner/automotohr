@@ -40,7 +40,6 @@ $(function() {
             $('#jsCGStartDate').datepicker({
                 changeYear: true,
                 changeMonth: true,
-                minDate: 0,
                 formatDate: pm.dateTimeFormats.ymdf,
                 onSelect: function(d) {
                     $('#jsCGEndDate').datepicker('option', 'minDate', d);
@@ -51,7 +50,6 @@ $(function() {
             $('#jsCGEndDate').datepicker({
                 changeYear: true,
                 changeMonth: true,
-                minDate: 0,
                 formatDate: pm.dateTimeFormats.ymdf,
                 onSelect: function(d) {
                     goal.endDate = d;
