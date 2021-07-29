@@ -475,4 +475,38 @@ class Accurate_background_model extends CI_Model
         //
         return $invoiceId;
     }
+    
+    function deduct_product_qty($productId, $companyId, $invoiceId)
+    { //Getting all invoices against the company which are paid STARTS
+        //
+        $where  = array('company_sid' => $companyId, 'status' => 'Paid');
+        //
+        if(!empty($invoiceId)){
+            $where['sid'] = $invoiceId;
+        }
+        $orders = $this->db->get_where('invoices', $where)->result_array();
+        //Getting all invoices against the company which are paid ENDS
+        foreach ($orders as $order) {
+            //
+            $invoiceId = $order['sid'];
+            //
+            $dataArray = unserialize($order['serialized_items_info']);
+
+            foreach ($dataArray['products'] as $key => $product) {
+                //
+                if ($product == $productId && $dataArray['item_remaining_qty'][$key] > 0) {
+                    $currentCounter = $dataArray['item_remaining_qty'][$key];
+                    
+                    $currentCounter--;
+                    $dataArray['item_remaining_qty'][$key] = $currentCounter;
+                    $dataToUpdate['serialized_items_info'] = serialize($dataArray);
+                    $this->db->where('sid', $order['sid'])->update('invoices', $dataToUpdate);
+                    $dobreak = true;
+                    return $currentCounter;
+                }
+            }
+        }
+        //
+        return -1;
+    }
 }
