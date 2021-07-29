@@ -579,9 +579,52 @@
                 $('button.js-search').trigger('click');
             }
         }
+
+        //
+        $(document).on('click', '.jsRemoveBGC', function(event){
+            //
+            event.preventDefault();
+            //
+            var Id = $(this).data('id');
+            //
+            alertify.confirm(
+                "Do you want to delete this background check?<br>This action is not revertable.", 
+                function(){
+                    //
+                    $('.js-loader .cs-loader-text').text('Please wait, while we are deleting the selected background check.');
+                    $('.js-loader').show();
+                    //
+                    $.post(
+                        "<?=base_url("manage_admin/accurate_background/remove_background_check");?>",
+                        {
+                            id: Id
+                        }
+                    ).done(function(resp){
+                        //
+                        $('.js-loader').hide();
+                        //
+                        $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
+                        //
+                        if(resp.MSG == 'Success'){
+                            alertify.alert("You have successfully deleted the background check.", function(){
+                                window.location.reload();
+                            });
+                        }else {
+                            alertify.alert("Something went wrong while deleting the background check.");
+                        }
+                    }).error(function(err){
+                        //
+                        $('.js-loader').hide();
+                        //
+                        $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
+                        //
+                        alertify.alert("Error!", "Something went wrong while deleting the backgrond check.<br/> Status Code: "+(err.status)+"<br> Error: "+(err.statusText)+"");
+                    });
+                }
+            );
+        });
     })
 </script>
-
 
 <!-- Loader -->
 <div class="text-center cs-loader js-loader" >
@@ -598,7 +641,7 @@
     .cs-loader-box div.cs-loader-text{ display: block; padding: 10px; color: #000; background-color: #fff; border-radius: 5px; text-align: center; font-weight: 600; margin-top: 35px; }
     .cs-calendar{ margin-top: 10px; }
     /**/
-    .ajs-ok{ display: none !important; }
+    /* .ajs-ok{ display: none !important; } */
     .ajs-button{ background-color: #81b431 !important; color: #ffffff !important; padding-left: 5px !important; padding-right: 5px !important; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -o-border-radius: 4px; border-color: #4cae4c !important; }
     .ajs-header{ background-color: #81b431 !important; color: #ffffff !important; }
 </style>

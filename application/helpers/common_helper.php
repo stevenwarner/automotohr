@@ -13715,3 +13715,12 @@ if(!function_exists('getCompletedPercentage')){
         return ceil($completed*$total/100);
     }
 }
+
+
+if(!function_exists('res')){
+    function res($array){
+        header("Content-Type: application/json");
+        echo json_encode($array);
+        exit(0);
+    }
+}

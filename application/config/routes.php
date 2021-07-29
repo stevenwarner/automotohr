@@ -1332,3 +1332,6 @@ $route['performance-management/goal_comments/(:num)']['get'] = 'Performance_mana
 $route['review_start_and_replicate/(:any)']['cli'] = 'Cron_common/PMMCronStartAndEndReplicate/$1';
 // Send reminder emails
 $route['review_reminder_emails/(:any)']['cli'] = 'Cron_common/SendNotificationEmails/$1';
+
+// 
+$route['manage_admin/accurate_background/remove_background_check']['post'] = 'manage_admin/Accurate_background/RemoveBackgroundCheck';

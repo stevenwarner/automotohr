@@ -729,6 +729,51 @@ class Accurate_background extends Admin_Controller {
         download_file($download_file);
         exit(0);
     }
+
+
+    /**
+     * 
+     */
+    function RemoveBackgroundCheck(){
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        if(!$post){
+            res(['MSG' => 'Invalid Request.']);
+        }
+        // Lets remove the record but keep a copy of it
+        // for safety
+        $oldRecord = $this->db
+        ->where('sid', $post['id'])
+        ->get('background_check_orders')
+        ->row_array();
+        //
+        $this->db->insert('background_check_orders_history', $oldRecord);
+        // //
+        $insertId = $this->db->insert_id();
+        // //
+        if(!$insertId){
+            res(['MSG' => "Failed to add record to history"]);
+        }
+        // Deduct one before removing the row
+        $invoiceId = 
+        $this->accurate_background_model->add_product_qty(
+            $oldRecord['product_sid'],
+            $oldRecord['company_sid']
+        );
+        // Add the invoice Id
+        $this->db
+        ->where('sid', $post['id'])
+        ->update('background_check_orders_history', [
+            'invoice_sid' => $invoiceId
+        ]);
+        // Remove record now
+        $this->db
+        ->where('sid', $post['id'])
+        ->delete('background_check_orders');
+        //
+        res(['MSG' => "Success"]);
+    }
 }
 
 

@@ -406,7 +406,12 @@ class Accurate_background_model extends CI_Model
                 $rows .= '    <td>' . $v0['product_type'] . '</td>';
                 $rows .= '    <td>' . ucwords($v0['cname']) . '</td>';
                 $rows .= '    <td ' . $status_color . '>' . ($v0['status'] == 'Draft' ? 'Awaiting Candidate Input' : ($v0['status'] == '' || $v0['status'] == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $v0['status']))) . '</td>';
-                $rows .= '    <td class="no-print"><a class="btn btn-success btn-sm" href="' . base_url() . 'manage_admin/accurate_background/order_status/' . $v0['order_sid'] . '" >Order Status</a></td>';
+                $rows .= '    <td class="no-print">
+                <a class="btn btn-success btn-sm" href="' . base_url() . 'manage_admin/accurate_background/order_status/' . $v0['order_sid'] . '" >Order Status</a>
+                <button class="btn btn-danger btn-sm jsRemoveBGC" data-id="'.($v0['order_sid']).'">
+                    Remove
+                </button>
+                </td>';
                 $rows .= '</tr>';
             }
         }
@@ -415,5 +420,59 @@ class Accurate_background_model extends CI_Model
 
         if ($export) return $result_arr;
         return $do_count ? array('TotalRecords' => count($result_arr), 'StatusArray' => $status_array) : $rows;
+    }
+
+
+    function add_product_qty($productId, $companyId, $no_of_days = 0)
+    { //Getting all invoices against the company which are paid STARTS
+        $orders = $this->db->get_where('invoices', array('company_sid' => $companyId, 'status' => 'Paid'))->result_array();
+        //
+        $dobreak = false;
+        //
+        $invoiceId = 0;
+        //Getting all invoices against the company which are paid ENDS
+        foreach ($orders as $order) {
+            //
+            if($dobreak){
+                continue;
+            }
+            //
+            $invoiceId = $order['sid'];
+            //
+            $dataArray = unserialize($order['serialized_items_info']);
+
+            foreach ($dataArray['products'] as $key => $product) {
+                //
+                if($dobreak){
+                    continue;
+                }
+                //
+                if ($no_of_days > 0) {
+                    if ($product == $productId && $dataArray['no_of_days'][$key] == $no_of_days) { //I dont know why this no of days check is implemented so i have moved it one level above if the value is greater than zero then it will be applied. Hamid
+                        $currentCounter = $dataArray['item_remaining_qty'][$key];
+                        //
+                        $currentCounter++;
+                        $dataArray['item_remaining_qty'][$key] = $currentCounter;
+                        $dataToUpdate['serialized_items_info'] = serialize($dataArray);
+                        $this->db->where('sid', $order['sid'])->update('invoices', $dataToUpdate);
+                        $dobreak = true;
+                        return;
+                    }
+                } else { // Added by Hamid ( No of days check was failing hence qty was not deducted ).
+                    if ($product == $productId) {
+                        $currentCounter = $dataArray['item_remaining_qty'][$key];
+                        
+                        $currentCounter++;
+                        $dataArray['item_remaining_qty'][$key] = $currentCounter;
+                        $dataToUpdate['serialized_items_info'] = serialize($dataArray);
+                        $this->db->where('sid', $order['sid'])->update('invoices', $dataToUpdate);
+                        $dobreak = true;
+                        return;
+                    }
+                }
+            }
+        }
+        //
+        return $invoiceId;
     }
 }

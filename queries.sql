@@ -199,3 +199,35 @@ ALTER TABLE `applicant_merge_employee_record`
 -- 
 ALTER TABLE `goals` ADD `custom_measure_type` VARCHAR(30) NULL DEFAULT NULL AFTER `measure_type`;
 ALTER TABLE `goals` ADD `created_by` INT NOT NULL AFTER `employees`;
+
+
+--
+CREATE TABLE `background_check_orders_history` (
+  `sid` int(11) NOT NULL,
+  `employer_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `users_sid` int(11) NOT NULL DEFAULT '0',
+  `users_type` enum('applicant','employee') NOT NULL,
+  `product_sid` int(11) NOT NULL DEFAULT '0',
+  `package_id` varchar(128) DEFAULT NULL,
+  `package_response` text,
+  `order_response` text,
+  `order_response_status` varchar(128) DEFAULT NULL,
+  `date_applied` datetime DEFAULT NULL,
+  `date_response_received` datetime DEFAULT NULL,
+  `product_price` decimal(15,2) DEFAULT NULL,
+  `product_name` varchar(255) DEFAULT NULL,
+  `product_type` varchar(128) DEFAULT NULL,
+  `product_image` text,
+  `order_refunded` tinyint(1) NOT NULL DEFAULT '0',
+  `external_id` varchar(100) DEFAULT NULL,
+  `invoice_sid` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `background_check_orders_history`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `background_check_orders_history`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
