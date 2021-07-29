@@ -2350,4 +2350,327 @@ class Employee_management extends Public_Controller {
 
         $this->session->set_flashdata('message', '<b>Success:</b> ' . $type . ' removed successfully');
     }
+
+    public function employee_goals($sid) {
+        if ($this->session->userdata('logged_in')) {
+            $data = employee_right_nav($sid);
+            // Added on: 04-07-2019
+            $data['show_timezone'] = $data['session']['company_detail']['timezone'];
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'employee_management', 'employee_profile'); // Param2: Redirect URL, Param3: Function Name
+            $company_id = $data["session"]["company_detail"]["sid"];
+            $employer_access_level = $data["session"]["employer_detail"]["access_level"];
+            $data['access_level_plus'] = $data["session"]["employer_detail"]["access_level_plus"];
+            $employer_id = $sid;
+            $data['title'] = "Employee / Team Members Profile";
+            $data['employer_sid'] = $security_sid;
+            $data['main_employer_id'] = $security_sid;
+            $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
+            $employee_detail = $data['employer'];
+
+            // Check and set the company sms module
+            // phone number
+            company_sms_phonenumber(
+                $data['session']['company_detail']['sms_module_status'],
+                $company_id,
+                $data,
+                $this
+            );
+
+            if ($data['employer']['department_sid'] > 0) {
+                $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);                   
+                $data['department_name'] = $department_name;
+            }
+
+            if ($data['employer']['team_sid'] > 0) {
+                $team_name = $this->employee_model->get_team_name($data['employer']['team_sid']);
+                $data['team_name'] = $team_name;
+            }
+
+            if(isset($data['team_name']) && $data['team_name'] == ''){
+                // Fetch employee team and department
+                $t = $this->employee_model->fetch_department_teams($employer_id);
+                if(sizeof($t)){
+                    $data['employer']['department_sid'] = $t['department_sid'];
+                    $data['employer']['team_sid'] = $t['team_sid'];
+                    //
+                    $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);
+                    $data['department_name'] = $department_name;
+                    $team_name = $this->employee_model->get_team_name($data['employer']['team_sid']);
+                    $data['team_name'] = $team_name;
+                }
+            } 
+
+            if (empty($data['employer']['employee_number']) || $data['employer']['employee_number'] == '') {
+                $data['employer']['employee_number'] = $sid; 
+            }
+
+            $employee_assign_team = $this->employee_model->fetch_employee_assign_teams($employer_id);
+            $data['team_names'] = [];
+            $data['team_sids'] = [];
+            if (!empty($employee_assign_team)) {
+                $data['team_names'] = $employee_assign_team['team_names'];
+                $data['team_sids'] = $employee_assign_team['team_sids'];
+            }
+
+            if (empty($data['employer'])) { // Employer does not exists - throw error
+                $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
+                redirect('employee_management', 'refresh');
+            }
+
+            if (!$data['session']['employer_detail']['access_level_plus'] && !$data['session']['employer_detail']['pay_plan_flag']) {
+                $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessable!');
+                redirect('employee_management', 'refresh');
+            }
+
+            $parent_sid = $data["employer"]["parent_sid"];
+
+            if ($company_id != $parent_sid) { // Employer exists but does not belongs to this company - throw error
+                $this->session->set_flashdata('message', '<b>Error:</b> Employee does not exists in your company!');
+                redirect('employee_management', 'refresh');
+            }
+
+            $data['employer_id'] = $employer_id;
+            $applicant_sid = $data['employer']['applicant_sid']; // check if this employee is moved from ATS
+            $data['employer']['test'] = false;
+            $data['applicant_jobs'] = $this->application_tracking_system_model->get_single_applicant_all_jobs($applicant_sid, $company_id);
+            if (!empty($applicant_sid)) { //Questionare
+                // $applicant_info = $this->application_tracking_system_model->getApplicantData($applicant_sid);
+                // $data['employer']['score'] = $applicant_info['score'];
+                // $data['employer']['passing_score'] = $applicant_info['passing_score'];
+                // if ($applicant_info['questionnaire'] != NULL) {
+                // $myquestionnaire = unserialize($applicant_info['questionnaire']);
+                // $data['employer']['questionnaire'] = $myquestionnaire;
+                // $data['employer']['test'] = true;
+                //  }
+            }
+
+            $data['applicant_message'] = array();
+            $data['applicant_all_ratings'] = NULL;
+            $data['applicant_ratings_count'] = NULL;
+            $data['applicant_events'] = '';
+            $registration_date = $data['session']['employer_detail']['registration_date'];
+            $rating_result = $this->application_tracking_system_model->getApplicantAllRating($employer_id, 'employee', $registration_date); //getting all rating of applicant
+            $data['applicant_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($employer_id, 'employee'); // getting applicant ratings - getting average rating of applicant
+
+            if ($rating_result != NULL) {
+                $data['applicant_ratings_count'] = $rating_result->num_rows();
+                $data['applicant_all_ratings'] = $rating_result->result_array();
+            }
+
+            $company_accounts = $this->application_tracking_system_model->getCompanyAccounts($company_id); //fetching list of all sub-accounts
+            $data['company_timezone'] = $company_timezone = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
+            foreach($company_accounts as $key => $company_account){
+                $company_accounts[$key]['timezone'] = !empty($company_account['timezone']) ? $company_account['timezone'] : $company_timezone;
+            }
+            $data['company_accounts'] = $company_accounts;
+            if(!empty($data['session']['employer_detail']['timezone']))
+                $data['employer_timezone'] =   $data['session']['employer_detail']['timezone']; 
+            else
+                $data['employer_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
+        
+            $data['upcoming_events'] = $this->employee_model->get_employee_events($company_id, $sid, 'upcoming'); //Getting Events
+            $to_id = $data['id'];
+            $rawMessages = $this->application_tracking_system_model->get_sent_messages($to_id, NULL);
+
+            if (!empty($rawMessages)) {
+                $i = 0;
+
+                foreach ($rawMessages as $message) {
+                    if ($message['outbox'] == 1) {
+                        $employerData = $this->application_tracking_system_model->getEmployerDetail($data["session"]["employer_detail"]["sid"]);
+                        $message['profile_picture'] = $employerData['profile_picture'];
+                        $message['first_name'] = $employerData['first_name'];
+                        $message['last_name'] = $employerData['last_name'];
+                        $message['username'] = $employerData['username'];
+                    } else {
+                        $message['profile_picture'] = $data['employer']['profile_picture'];
+                        $message['first_name'] = $data['employer']['first_name'];
+                        $message['last_name'] = $data['employer']['last_name'];
+                        $message['username'] = "";
+                    }
+
+                    $allMessages[$i] = $message;
+                    $i++;
+                }
+
+                $data['applicant_message'] = $allMessages;
+            }
+
+            $data['extra_info'] = unserialize($data['employer']['extra_info']);
+            $data['employer_access_level'] = $employer_access_level;
+            $full_access = false;
+
+            if ($employer_access_level == 'Admin') {
+                $full_access = true;
+            }
+
+            $data['full_access'] = $full_access;
+            $data_countries = db_get_active_countries();
+
+            foreach ($data_countries as $value) {
+                $data_states[$value['sid']] = db_get_active_states($value['sid']);
+            }
+
+            $data_states_encode = htmlentities(json_encode($data_states));
+            $data['active_countries'] = $data_countries;
+            $data['active_states'] = $data_states;
+            $data['states'] = $data_states_encode;
+            $data["access_level"] = db_get_enum_values('users', 'access_level');
+            $data['employer']['state_name'] = '';
+            $data['employer']['country_name'] = '';
+
+            if (!empty($data['employer']['Location_State'])) { // get state name
+                $state_id = $data['employer']['Location_State'];
+                $country_state_info = db_get_state_name($state_id);
+                $data['employer']['state_name'] = $country_state_info['state_name'];
+                $data['employer']['country_name'] = $country_state_info['country_name'];
+            }
+
+            if (empty($data['employer']['country_name']) && !empty($data['employer']['Location_Country'])) {
+                $country_id = $data['employer']['Location_Country'];
+                $country_info = db_get_country_name($country_id);
+                $data['employer']['country_name'] = $country_info['country_name'];
+            }
+
+            $data['employee_notes'] = $this->employee_model->getEmployeeNotes($employer_id, $registration_date); //Getting Notes - table: portal_misc_notes, employers_sid=company id, applicant_job_sid= employee_sid - start here
+            //
+            $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
+            
+            //checking if the form is submitted so i can open the form screen again
+            $this->load->model('portal_email_templates_model');
+            $data['edit_form'] = false;
+
+            if ($this->input->post()) {
+                $data['edit_form'] = true;
+            }
+
+            $data['notes_view'] = false; //checking if the form is submitted so i can open the notes form screen again
+
+            if (isset($_SESSION['show_notes']) && $_SESSION['show_notes'] == 'true') {
+                $data['notes_view'] = true;
+                $_SESSION['show_notes'] = 'false';
+            }
+
+            //checking if the form is submitted so i can open the notes form screen again
+            $data['show_event'] = false;
+
+            if (isset($_SESSION['show_event']) && $_SESSION['show_event'] == 'true') {
+                $data['show_event'] = true;
+                $_SESSION['show_event'] = 'false';
+            }
+
+            $data['show_message'] = false; //checking if the form is submitted so i can open the Messages form screen again
+
+            if (isset($_SESSION['show_message']) && $_SESSION['show_message'] == 'true') {
+                $data['show_message'] = true;
+                $_SESSION['show_message'] = 'false';
+            }
+
+            $portal_email_templates = $this->application_tracking_system_model->get_portal_email_templates($company_id);
+
+            foreach ($portal_email_templates as $key => $template) {
+                $portal_email_templates[$key]['attachments'] = $this->portal_email_templates_model->get_all_email_template_attachments($template['sid']);
+            }
+
+            $data['portal_email_templates'] = $portal_email_templates;
+
+            if (empty($data['employer']['resume'])) { // check if reseme is uploaded
+                $data['employer']['resume_link'] = "javascript:void(0);";
+                $data['resume_link_title'] = "No Resume found!";
+                if(!empty($data['employer']['applicant_sid']) && $data['employer']['applicant_sid'] != NULL){
+                    $resume = $this->employee_model->check_for_resume($data['employer']['applicant_sid']);
+                    if($resume != 0){
+                        $data['employer']['resume_link'] = AWS_S3_BUCKET_URL . $resume;
+                        $data['resume_link_title'] = $resume;
+                    }
+                }
+            } else {
+                $data['employer']['resume_link'] = AWS_S3_BUCKET_URL . $data['employer']['resume'];
+                $data['resume_link_title'] = $data['employer']['resume'];
+            }
+
+            if (empty($data['employer']['cover_letter'])) { // check if cover letter is uploaded
+                $data['employer']["cover_link"] = "javascript:void(0)";
+                $data['cover_letter_title'] = "No Cover Letter found!";
+            } else {
+                $data['employer']["cover_link"] = AWS_S3_BUCKET_URL . $data['employer']['cover_letter'];
+                $data['cover_letter_title'] = $data['employer']['cover_letter'];
+            }
+            $data['employment_statuses'] = $this->application_tracking_system_model->getEmploymentStatuses();
+            $data['employment_types'] = $this->application_tracking_system_model->getEmploymentTypes();
+            $data['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
+            $addresses = $this->employee_model->get_company_addresses($company_id);
+            $data['addresses'] = $addresses;
+            $departments = $this->employee_model->get_all_departments($company_id);
+            $data['departments'] = $departments;
+            $data['is_new_calendar'] = $this->call_old_event();
+            // Time off policies
+            $this->load->model('performance_management_model', 'pmm');
+            $gd = $this->pmm->GetAllGoals($company_id);
+            //
+            $get = $this->input->get(NULL, TRUE);
+            //
+            $data['filter'] = [];
+            $data['filter']['start_date'] = isset($get['start_date']) ? $get['start_date'] : '';
+            $data['filter']['end_date'] = isset($get['end_date']) ? $get['end_date'] : '';
+            $data['filter']['Types'] = isset($get['goal_types']) ? $get['goal_types'] : [];
+            //
+            $data['MyGoals'] = [];
+            //
+            $start_date = '';
+            $end_date = '';
+            //
+            if(!empty($data['filter']['start_date'])){
+                $start_date = formatDateToDB($data['filter']['start_date']);
+            }
+            //
+            if(!empty($data['filter']['end_date'])){
+                $end_date = formatDateToDB($data['filter']['end_date']);
+            }
+            //
+            foreach($gd as $g){
+                //
+                if($g['employee_sid'] == $employee_detail['sid']){
+                    //
+                    if(!empty($data['filter']['Types']) && !in_array($g['status'],$data['filter']['Types'])){
+                        continue;
+                    }
+                    //
+                    if(!empty($start_date) && $g['start_date'] < $data['filter']['start_date'] ){
+                        continue;
+                    }
+                    //
+                    if(!empty($end_date) && $g['end_date'] > $data['filter']['end_date'] ){
+                        continue;
+                    }
+                    $data['MyGoals'][] = $g;
+                }
+            }
+
+            //
+            $data['pp'] = 'Performance_management/theme2/';
+
+            $data['companyId'] = $data['session']['company_detail']['sid'];
+            $data['companyName'] = $data['session']['company_detail']['CompanyName'];
+            $data['employerId'] = $data['session']['employer_detail']['sid'];
+            $data['employerName'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
+            $data['isSuperAdmin'] = $data['session']['employer_detail']['access_level_plus'];
+            $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 ? 1 : 0;
+            $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
+
+            //
+            $data['ne']= [];
+            $data['ne'][$employee_detail['sid']] = $employee_detail;
+    
+            $this->load->view('main/header', $data);
+            $this->load->view('manage_employer/employee_management/dts');
+            //$this->load->view('manage_employer/employee_profile_view');
+            $this->load->view('main/footer');
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
 }

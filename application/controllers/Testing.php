@@ -7,16 +7,27 @@ class Testing extends CI_Controller
     {
         parent::__construct();
         // Call the model
-        $this->load->model("performance_management_model", "pmm");
-        // REVIEW_EXPIRING
+        $this->load->model("performance_management_model", "ccp");
 
     }
 
-
-    
-
-    
+    function text($id)
+    {
+        //
+        $returnArray = [];
+        $returnArray['Count'] = [];
+        $returnArray['Records'] = [];
+        //
+        $records = $this->cpp->GetRecords($id);
+        //
+        if(!empty($records)){
+            return $returnArray;
+        }
+        //
+        foreach($records as $record){
+            //
+            $returnArray['Count']++;
+        }
+    }
 
 }
-	
-   

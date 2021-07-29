@@ -1336,3 +1336,5 @@ $route['review_reminder_emails/(:any)']['cli'] = 'Cron_common/SendNotificationEm
 // 
 $route['manage_admin/accurate_background/remove_background_check']['post'] = 'manage_admin/Accurate_background/RemoveBackgroundCheck';
 $route['manage_admin/accurate_background/revert_background_check']['post'] = 'manage_admin/Accurate_background/RevertBackgroundCheck';
+//
+$route['performance-management/employee/goals/(:num)']['get'] = 'Employee_management/employee_goals/$1';

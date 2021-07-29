@@ -123,6 +123,11 @@
             <script src="<?php echo base_url('assets/video_interview/video-js-record/dist/videojs.record.js') ?>"></script>
         <?php } ?>
 
+         <!--  -->
+    <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
+            <?php $this->load->view("{$pp}styles"); ?>
+        <?php }?>
+
         <!-- Modal -->
         <div class="modal fade" id="popupmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
