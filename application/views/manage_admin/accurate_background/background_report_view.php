@@ -79,12 +79,12 @@ $background_order['report_url'] = isset($background_order['package_response']['o
                                                 </div>
                                                 
                                                 <?php
-                                                    if(isset($background_order['is_deleted_status']) && !empty($background_order['invoice_sid'])){
+                                                    if(isset($background_order['is_deleted_status'])){
                                                         ?>
                                                 <div class="col-sm-12">
                                                     <p>
                                                         <br />
-                                                        <i class="fa fa-info-circle" aria-hidden="true"></i> The credit was added to invoice # <strong><?=$background_order['invoice_sid'];?></strong>.
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i> Canceled & Credited <?=!empty($background_order['invoice_sid']) ? 'to invoice #' : '<strong>'.($background_order['invoice_sid']).'</strong>';?>.
                                                     </p>
                                                 </div>
                                                 <?php
