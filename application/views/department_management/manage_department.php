@@ -21,6 +21,12 @@
                 <!-- insert department button -->
                 <div class="btn-panel text-right">
                     <div class="row">
+                    <?php if ($session['employer_detail']['access_level_plus']) { ?>
+                        <a class="btn btn-success jsEmployeeQuickProfile" title="Quick View of Employee Profile" placement="top">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Employee Profie
+                        </a>
+                    <?php  } ?>
                         <a class="btn btn-success" href="<?php echo base_url('department_management/add_edit_team').'/'.$department_sid; ?>">+ Add New Team</a>
                     </div>
                 </div>
