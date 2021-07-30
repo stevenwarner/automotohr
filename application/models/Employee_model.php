@@ -920,4 +920,426 @@
         return 0;
     }
 
+    //
+    function GetEmployeeProfile($employeeId, $companyId){
+        //
+        $a = [];
+        //
+        $v =
+        // Get basic profile
+        $this->db
+        ->select('
+            sid,
+            first_name,
+            last_name,
+            email,
+            PhoneNumber,
+            job_title,
+            dob,
+            IF(joined_at = null, registration_date, joined_at) as joined_at,
+            profile_picture,
+            employee_type,
+            access_level,
+            access_level_plus,
+            pay_plan_flag,
+            is_executive_admin
+        ')
+        ->where('sid', $employeeId)
+        ->where('parent_sid', $companyId)
+        ->get('users')
+        ->row_array();
+        //
+        if(empty($v)){
+            return [];
+        }
+        //
+        $a = [
+            'Id' => $v['sid'],
+            'Name' => ucwords($v['first_name'].' '.$v['last_name']),
+            'BasicRole' => $v['access_level'],
+            'Role' => trim(remakeEmployeeName($v, false)),
+            'Image' => AWS_S3_BUCKET_URL. (empty($v['profile_picture']) ? 'test.png' : $v['profile_picture']),
+            'Email' => strtolower($v['email']),
+            'EmploymentType' => strtolower($v['employee_type']),
+            'JobTitle' => ucwords(strtolower($v['job_title'])),
+            'Phone' => $v['PhoneNumber'],
+            'DOB' => empty($v['dob']) || $v['dob'] == '0000-00-00' ? '' : DateTime::createfromformat('Y-m-d', $v['dob'])->format('Y-m-d'),
+            'JoinedDate' => empty($v['joined_at']) ? '' : DateTime::createfromformat('Y-m-d H:i:s', $v['joined_at'])->format('Y-m-d')
+        ];
+        //
+        $a = array_merge(
+            $a,
+            $this->employeeDT($employeeId, $companyId)
+        );
+        //
+        $a = array_merge(
+            $a,
+            $this->MyManagingDTs($employeeId, $companyId)
+        );
+        // Get department names
+        if(!empty($a['Departments'])){
+            $a['Departments'] = $this->GetDepartmentNamesByIds($a['Departments']);
+        }
+        // Get team names
+        if(!empty($a['Teams'])){
+            $a['Teams'] = $this->GetTeamNamesByIds($a['Teams']);
+        }
+        // Get supervisors
+        if(!empty($a['Supervisors'])){
+            $a['Supervisors'] = $this->GetEmployeeNamesByIds($a['Supervisors']);
+        }
+        // Get team leads
+        if(!empty($a['TeamLeads'])){
+            $a['TeamLeads'] = $this->GetEmployeeNamesByIds($a['TeamLeads']);
+        }
+        // Get reporing managers
+        if(!empty($a['ReportingManagers'])){
+            $a['ReportingManagers'] = $this->GetEmployeeNamesByIds($a['ReportingManagers']);
+        }
+        // Get approvers
+        if(!empty($a['Approvers'])){
+            $a['Approvers'] = $this->GetEmployeeNamesByIds($a['Approvers']);
+        }
+        //
+        return $a;
+    }
+
+
+     /**
+     * 
+     */
+    private function employeeDT($employeeId, $companyId){
+        $r = [];
+        //
+        $a =
+        $this->db
+        ->select("
+            departments_team_management.sid as team_id,
+            departments_team_management.team_lead,
+            departments_team_management.reporting_managers,
+            departments_management.sid as department_id,
+            departments_management.reporting_managers as reporting_managers_2,
+            departments_management.supervisor
+        ")
+        ->join("departments_team_management", "departments_team_management.sid = departments_employee_2_team.team_sid")
+        ->join("departments_management", "departments_management.sid = departments_team_management.department_sid")
+        ->where("departments_management.status", 1)
+        ->where("departments_management.company_sid", $companyId)
+        ->where("departments_team_management.company_sid", $companyId)
+        ->where("departments_management.is_deleted", 0)
+        ->where("departments_team_management.status", 1)
+        ->where("departments_team_management.is_deleted", 0)
+        ->where("departments_employee_2_team.employee_sid", $employeeId)
+        ->get("departments_employee_2_team");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        if(!empty($b)){
+            //
+            $d = $t = $s = $l = $rm = [];
+            //
+            foreach($b as $v){
+                //
+                $d[] = $v['department_id'];
+                $t[] = $v['team_id'];
+                //
+                $s = array_merge($s, explode(',', $v['supervisor']));
+                $l = array_merge($l, explode(',', $v['team_id']));
+                //
+                $rm = array_merge($rm, !empty( $v['reporting_managers']) ? explode(',', $v['reporting_managers']) : []);
+                $rm = array_merge($rm, !empty( $v['reporting_managers_2']) ? explode(',', $v['reporting_managers_2']) : []);
+            }
+            //
+            $r['TeamLeads'] = $l;
+            $r['Supervisors'] = $s;
+            $r['Departments'] = $d;
+            $r['Teams'] = $t;
+            $r['ReportingManagers'] = $rm;
+        } else{
+            $r['TeamLeads'] = 
+            $r['Supervisors'] =
+            $r['Departments'] =
+            $r['ReportingManagers'] =
+            $r['Teams'] = [];
+        }
+        //
+        $r['Approvers'] = $this->getEmployeeApprovers($companyId, $employeeId);
+        return $r;
+    }
+     
+    
+    /**
+     * 
+     */
+    private function MyManagingDTs($employeeId, $companyId){
+        $r = [
+            'Departments' => [],
+            'Teams' => []
+        ];
+        //
+        $a =
+        $this->db
+        ->select("
+            name
+        ")
+        ->where("departments_management.company_sid", $companyId)
+        ->where("departments_management.status", 1)
+        ->where("departments_management.is_deleted", 0)
+        ->where("FIND_IN_SET({$employeeId}, departments_management.supervisor) > 0", NULL)
+        ->get("departments_management");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        $r['Departments'] = array_column($b, 'name');
+        //
+        $a =
+        $this->db
+        ->select("
+            departments_team_management.name
+        ")
+        ->join("departments_management", "departments_management.sid = departments_team_management.department_sid")
+        ->where("departments_management.company_sid", $companyId)
+        ->where("departments_management.status", 1)
+        ->where("departments_management.is_deleted", 0)
+        ->where("departments_team_management.company_sid", $companyId)
+        ->where("departments_team_management.status", 1)
+        ->where("departments_team_management.is_deleted", 0)
+        ->where("FIND_IN_SET({$employeeId}, departments_team_management.team_lead) > 0", NULL)
+        ->get("departments_team_management");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        unset($a);
+        //
+        $r['Teams'] = array_column($b, 'name');
+       
+        return ['Managing' => $r];
+    }
+
+
+    //
+    function getEmployeeApprovers(
+        $companyId,
+        $employeeId
+    ){
+        // Get team leads and supervisors
+        $n =
+        $this->db
+        ->select('
+            departments_team_management.sid as team_sid,
+            departments_management.sid
+        ')
+        ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
+        ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid', 'inner')
+        ->where('departments_team_management.status', 1)
+        ->where('departments_team_management.is_deleted', 0)
+        ->where('departments_team_management.company_sid', $companyId)
+        ->where('departments_management.status', 1)
+        ->where('departments_management.is_deleted', 0)
+        ->where('departments_management.company_sid', $companyId)
+        ->where('departments_employee_2_team.employee_sid', $employeeId)
+        ->get('departments_employee_2_team')
+        ->result_array();
+        //
+        $teamIds = array_column($n, 'team_sid');
+        $departmentIds = array_column($n, 'sid');
+        //
+        $tWhere = '';
+        $dWhere = '';
+        // Get approvers
+        $this->db
+        ->select('
+            timeoff_approvers.employee_sid as userId
+        ')
+        ->where('timeoff_approvers.company_sid', $companyId)
+        ->where('timeoff_approvers.status', 1)
+        ->where('timeoff_approvers.is_archived', 0);
+        //
+        if(!empty($teamIds)) {
+            foreach($teamIds as $teamId) $tWhere .= "FIND_IN_SET($teamId, timeoff_approvers.department_sid) > 0 OR ";
+            $tWhere = rtrim($tWhere, " OR ");
+        }
+        if(!empty($departmentIds)) {
+            foreach($departmentIds as $departmentId) $dWhere .= "FIND_IN_SET($departmentId, timeoff_approvers.department_sid) > 0 OR ";
+            $dWhere = rtrim($dWhere, " OR ");
+        }
+        $this->db->group_start();
+
+        
+        //
+        if(!empty($tWhere) && !empty($dWhere)){
+            $this->db->group_start();
+            $this->db->group_start();
+            $this->db->where(rtrim($tWhere, 'OR '));
+            $this->db->where('timeoff_approvers.is_department', 0);
+            $this->db->group_end();
+            $this->db->or_group_start();
+            $this->db->where(rtrim($dWhere, 'OR '));
+            $this->db->where('timeoff_approvers.is_department', 1);
+            $this->db->group_end();
+            $this->db->group_end();
+        } else if(!empty($tWhere)){
+            $this->db->group_start();
+            $this->db->where(rtrim($tWhere, 'OR '));
+            $this->db->where('timeoff_approvers.is_department', 0);
+            $this->db->group_end();
+        }  else if(!empty($dWhere)){
+            $this->db->group_start();
+            $this->db->where(rtrim($dWhere, 'OR '));
+            $this->db->where('timeoff_approvers.is_department', 1);
+            $this->db->group_end();
+        }
+        $this->db->or_where('timeoff_approvers.department_sid', 'all');
+        $this->db->group_end();
+        //
+
+        $approvers = $this->db->get('timeoff_approvers')->result_array();
+
+        //
+        $t = [];
+        //
+        foreach($approvers as $k => $approver){
+            if(in_array($approver['userId'], $t)) {
+                unset($approvers[$k]);
+                continue;
+            }
+            $t[] =$approver['userId'];
+        }
+
+        //
+        return array_column($approvers, 'userId');
+    }
+
+    /**
+     * 
+     */
+    function GetDepartmentNamesByIds($ids){
+        $a =
+        $this->db
+        ->select("
+            name
+        ")
+        ->where_in("sid", $ids)
+        ->get("departments_management");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        return array_column($b, 'name');
+    }
+    
+    /**
+     * 
+     */
+    function GetTeamNamesByIds($ids){
+        $a =
+        $this->db
+        ->select("
+            name
+        ")
+        ->where_in("sid", $ids)
+        ->get("departments_team_management");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        return array_column($b, 'name');
+    }
+   
+    /**
+     * 
+     */
+    function GetEmployeeNamesByIds($ids){
+        $a =
+        $this->db
+        ->select("
+            first_name,
+            last_name,
+            access_level,
+            access_level_plus,
+            is_executive_admin,
+            pay_plan_flag,
+            job_title
+        ")
+        ->where_in("sid", $ids)
+        ->get("users");
+        //
+        $b = $a->result_array();
+        //
+        $a->free_result();
+        //
+        $t = [];
+        //
+        foreach($b as $employee){
+            $t[] = remakeEmployeeName($employee);
+        }
+        //
+        $b = $t;
+        //
+        return $b;
+    }
+   
+   
+    /**
+     * 
+     */
+    function GetAllEmployees($companyId){
+        //
+        $records =
+        // Get basic profile
+        $this->db
+        ->select('
+            sid,
+            first_name,
+            last_name,
+            email,
+            PhoneNumber,
+            job_title,
+            dob,
+            IF(joined_at = null, registration_date, joined_at) as joined_at,
+            profile_picture,
+            employee_type,
+            access_level,
+            access_level_plus,
+            pay_plan_flag,
+            is_executive_admin
+        ')
+        ->where('active', 1)
+        ->where('terminated_status', 0)
+        ->where('parent_sid', $companyId)
+        ->order_by('first_name', 'ASC')
+        ->get('users')
+        ->result_array();
+        //
+        if(empty($records)){
+            return [];
+        }
+        //
+        $a = [];
+        //
+        foreach($records as $v){
+            //
+            $a[] = [
+                'Id' => $v['sid'],
+                'Name' => ucwords($v['first_name'].' '.$v['last_name']),
+                'Role' => trim(remakeEmployeeName($v, false))
+            ];
+        }
+
+        return $a;
+    }
+
+
 }

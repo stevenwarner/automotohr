@@ -2673,4 +2673,75 @@ class Employee_management extends Public_Controller {
             redirect(base_url('login'), "refresh");
         }
     }
+
+    //
+    function GetEmployeeProfile($employeeId){
+        //
+        $resp = [
+            'Status' => false,
+            'Msg' => 'Invalid Request'
+        ];
+        //
+        if (!$this->session->userdata('logged_in')) {
+            //
+            $resp['Msg'] = 'Your session has expired';
+            res($resp);
+        }
+        //
+        if (!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {
+            //
+            $resp['Msg'] = 'You don\'t permission to the employee profile.';
+            res($resp);
+        }
+        //
+        $companyId = $this->session->userdata('logged_in')['company_detail']['sid'];
+        // Fetch employees profile
+        $record = $this->employee_model->GetEmployeeProfile($employeeId, $companyId);
+        //
+        if(empty($record)){
+            $resp['Msg'] = 'Employee not found';
+        } else{
+            $resp['Status'] = true;
+            $resp['Msg'] = 'Proceed.';
+            $resp['Data'] = $this->load->view('quick_view', $record, true);
+        }
+        //
+        res($resp);
+    }
+    
+    
+    //
+    function GetAllEmployees(){
+        //
+        $resp = [
+            'Status' => false,
+            'Msg' => 'Invalid Request'
+        ];
+        //
+        if (!$this->session->userdata('logged_in')) {
+            //
+            $resp['Msg'] = 'Your session has expired';
+            res($resp);
+        }
+        //
+        if (!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {
+            //
+            $resp['Msg'] = 'You don\'t permission to the employee profile.';
+            res($resp);
+        }
+        //
+        $companyId = $this->session->userdata('logged_in')['company_detail']['sid'];
+        // Fetch employees profile
+        $records = $this->employee_model->GetAllEmployees($companyId);
+        //
+        if(empty($records)){
+            $resp['Msg'] = 'Employees not found';
+        } else{
+            $resp['Status'] = true;
+            $resp['Msg'] = 'Proceed.';
+            $resp['Data'] = $records;
+        }
+        //
+        res($resp);
+    }
 }

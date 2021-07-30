@@ -1285,6 +1285,15 @@
                                                             </a>
                                                         </li>
                                                     <?php  } ?>
+                                                    <?php $get_data = $this->session->userdata('logged_in'); ?>
+                                                    <?php if ($get_data['employer_detail']['access_level_plus']) { ?>
+                                                        <li>
+                                                            <a href="" class="jsEmployeeQuickProfile">
+                                                                <figure><i class="fa fa-users"></i></figure>
+                                                                Employee Profile
+                                                            </a>
+                                                        </li>
+                                                    <?php  } ?>
                                                     <li>
                                                         <?php $get_data = $this->session->userdata('logged_in');
                                                         $sub_domain_url = db_get_sub_domain($get_data['company_detail']['sid']); ?>

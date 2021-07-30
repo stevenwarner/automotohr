@@ -59,3 +59,205 @@ function footer_fixer() {
     var fh = $('footer').height();
     $('footer').css('margin-top', (wh - fh) + 'px')
 }
+
+// 
+$(document).on('click', '.jsEmployeeQuickProfile', function(event) {
+    //
+    event.preventDefault();
+    //
+    var employeeId = $(this).data('id') || null;
+    //
+    Model({
+        Id: "jsEmployeeQuickProfileModal",
+        Loader: 'jsEmployeeQuickProfileModalLoader',
+        Title: 'Employee Quick Profile View',
+        Body: '<div class="container"><div id="jsEmployeeQuickProfileModalBody"></div></div>'
+    }, function() {
+        GetAllEmployee(employeeId, 'jsEmployeeQuickProfileModal');
+    });
+});
+
+var isXHRInProgress = null;
+
+
+function GetAllEmployee(
+    employeeId,
+    id
+) {
+    //
+    if (isXHRInProgress != null) {
+        isXHRInProgress.abort();
+    }
+    //
+    isXHRInProgress =
+        $.get(window.location.origin + '/get_all_company_employees')
+        .done(function(resp) {
+            //
+            isXHRInProgress = null;
+            //
+            if (resp.Status === false) {
+                $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                $('#' + id + 'Body').html(resp.Msg);
+                return;
+            }
+            $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+            //
+            var html = '';
+            //
+            html += '<div class="row">';
+            html += '    <div class="col-sm-12">';
+            html += '    <label><strong>Select Employee</strong></label>';
+            html += '        <select id="' + (id) + 'Select">';
+            html += '<option value="0">[Please Select An Employee]</option>';
+            //
+            if (resp.Data.length) {
+                resp.Data.map(function(emp) {
+                    html += '<option value="' + (emp.Id) + '">' + (emp.Name) + ' ' + (emp.Role) + '</option>';
+                });
+            }
+            html += '        </select>';
+            html += '    </div>';
+            html += '</div>';
+            html += '<div id="' + (id) + 'MainBody"></div>';
+            //
+            $('#' + id + 'Body').html(html);
+            $('#' + id + 'Select').select2();
+            //
+            if (employeeId) {
+                $('#' + id + 'Select').select2('val', employeeId);
+                $('#' + id + 'Select').trigger('change');
+                //
+                GetEmployeeDetails(id);
+            }
+            //
+            $('#' + id + 'Select').change(function() {
+                GetEmployeeDetails(id);
+            });
+        })
+        .error(function(err) {
+            $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+            //
+            isXHRInProgress = null;
+            $('#' + id + 'Body').html('Something went wrong while accessing the employee profile.');
+        });
+}
+
+function GetEmployeeDetails(
+    id
+) {
+    //
+    var employeeId = $('#' + id + 'Select').val();
+    //
+    if (employeeId === 0) {
+        // flush view
+        $('#' + id + 'MainBody').html('');
+        return;
+    }
+    //
+    if (isXHRInProgress != null) {
+        isXHRInProgress.abort();
+    }
+    $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
+    //
+    isXHRInProgress =
+        $.get(window.location.origin + '/get_employee_profile/' + employeeId)
+        .done(function(resp) {
+            //
+            isXHRInProgress = null;
+            //
+            if (resp.Status === false) {
+                $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                $('#' + id + 'MainBody').html(resp.Msg);
+                return;
+            }
+            $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+            //
+            $('#' + id + 'MainBody').html(resp.Data);
+        })
+        .error(function(err) {
+            //
+            isXHRInProgress = null;
+            $('#' + id).html('Something went wrong while accessing the employee profile.');
+        });
+    //
+    return '<div id="' + (id) + '"><p class="text-center"><i class="fa fa-spinner fa-spin csF18 csB7" aria-hidden="true"></i></p></div>';
+}
+
+
+/**
+ * Click
+ * 
+ * Triggers when page modal closes
+ * 
+ * @param  {Object} e
+ * @return {Void}
+ */
+$(document).on('click', '.jsModalCancel', (e) => {
+    //
+    e.preventDefault();
+    //
+    if ($(e.target).data('ask') != undefined) {
+        //
+        alertify.confirm(
+            'Any unsaved changes will be lost.',
+            () => {
+                //
+                $(e.target).closest('.csModal').fadeOut(300);
+                //
+                $('body').css('overflow-y', 'auto');
+            }
+        ).set('labels', {
+            ok: 'LEAVE',
+            cancel: 'NO, i WILL STAY'
+        }).set(
+            'title', 'Notice!'
+        );
+    } else {
+        //
+        $(e.target).closest('.csModal').fadeOut(300);
+        //
+        $('.csModal').remove();
+        //
+        $('body').css('overflow-y', 'auto');
+    }
+});
+
+/**
+ * Modal page
+ * 
+ * @param   {Object}   options 
+ * @param   {Function} cb 
+ * @returns {Void}
+ */
+function Model(options, cb) {
+    //
+    var html = '';
+    html += '<!-- Custom Modal -->';
+    html += '<div class="csModal" id="' + (options.Id) + '">';
+    html += '    <div class="container">';
+    html += '        <div class="csModalHeader">';
+    html += '            <h3 class="csModalHeaderTitle csF20 csB7">';
+    html += options.Title;
+    html += '                <span class="csModalButtonWrap">';
+    html += options.Buttons !== undefined && options.Buttons.length !== 0 ? options.Buttons.join('') : '';
+    html += '                    <button class="btn btn-black btn-lg jsModalCancel csF16"><em class="fa fa-times-circle csF16"></em> ' + (options.Cancel ? options.Cancel : 'Cancel') + '</button>';
+    html += '                </span>';
+    html += '                <div class="clearfix"></div>';
+    html += '            </h3>';
+    html += '        </div>';
+    html += '        <div class="csModalBody">';
+    html += '            <div class="csIPLoader jsIPLoader" data-page="' + (options.Loader) + '"><i class="fa fa-circle-o-notch fa-spin"></i></div>';
+    html += options.Body;
+    html += '        </div>';
+    html += '        <div class="clearfix"></div>';
+    html += '    </div>';
+    html += '</div>';
+    //
+    $('.csModal').remove();
+    $('body').append(html);
+    $("#" + (options.Id) + "").fadeIn(300);
+    //
+    $('body').css('overflow-y', 'hidden');
+    $("#" + (options.Id) + " .csModalBody").css('top', $("#" + (options.Id) + " .csModalHeader").height() + 50);
+    if (typeof(cb) === 'function') cb();
+}

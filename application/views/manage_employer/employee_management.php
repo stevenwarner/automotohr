@@ -293,6 +293,16 @@
                                                                 <span class="btn-tooltip">HR-Documents</span>
                                                             </a>
                                                     <?php } ?>
+                                                    <?php
+                                                        if($session['employer_detail']['access_level_plus']){
+                                                            ?>
+                                                        <!-- Employee Quick Profile -->
+                                                        <button class="btn btn-success jsEmployeeQuickProfile" title="Employee Profile Quick View" placement="top" data-id="<?=$employee['sid'];?>">
+                                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                                        </button>
+                                                            <?php
+                                                        }
+                                                    ?>
                                                 </td>
                                                 <?php } ?>
                                                 <td class="text-center">
