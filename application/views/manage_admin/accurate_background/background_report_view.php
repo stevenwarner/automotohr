@@ -39,7 +39,17 @@ $background_order['report_url'] = isset($background_order['package_response']['o
                                                 <div class="hr-box-header">
                                                     <h1 class="hr-registered pull-left">Order Information</h1>
                                                     <div class="pull-right">
-                                                        <button class="btn btn-danger jsRemoveBGC" data-id="<?=$background_order['sid'];?>">Delete Background Check</button>
+                                                        <?php
+                                                            if(isset($background_order['is_deleted_status'])){
+                                                                ?>
+                                                                <button class="btn btn-success jsRevertBGC" data-id="<?=$background_order['sid'];?>">Revert Background Check</button>
+                                                                <?php
+                                                            } else{
+                                                                ?>
+                                                                <button class="btn btn-danger jsRemoveBGC" data-id="<?=$background_order['sid'];?>">Delete Background Check</button>
+                                                                <?php
+                                                            }
+                                                        ?>
                                                         <?php if ($background_order['package_id'] != null || $background_order['package_id'] != '') { ?>
                                                             <?php if ($background_order['product_brand'] == 'assurehire') { ?>
                                                                 <a href="javascript:void(0)" class="btn btn-success js_view_report" data-url="<?= $background_order['report_url']; ?>">View Report </a>
@@ -67,6 +77,19 @@ $background_order['report_url'] = isset($background_order['package_response']['o
                                                         <?php } ?>
                                                     </div>
                                                 </div>
+                                                
+                                                <?php
+                                                    if(isset($background_order['is_deleted_status'])){
+                                                        ?>
+                                                <div class="col-sm-12">
+                                                    <p>
+                                                        <br />
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i> The credit was added to invoice # <strong><?=$background_order['invoice_sid'];?></strong>.
+                                                    </p>
+                                                </div>
+                                                <?php
+                                                    }
+                                                ?>
 
                                                 <div class="table-responsive hr-innerpadding">
                                                     <table class="table table-bordered table-striped table-hover">
@@ -353,45 +376,88 @@ $background_order['report_url'] = isset($background_order['package_response']['o
 
     //
     $(document).on('click', '.jsRemoveBGC', function(event){
-            //
-            event.preventDefault();
-            //
-            var Id = $(this).data('id');
-            //
-            alertify.confirm(
-                "Do you want to delete this background check?<br>This action is not revertable.", 
-                function(){
+        //
+        event.preventDefault();
+        //
+        var Id = $(this).data('id');
+        //
+        alertify.confirm(
+            "Do you want to delete this background check?<br>This action is not revertable.", 
+            function(){
+                //
+                $('.js-loader .cs-loader-text').text('Please wait, while we are deleting the selected background check.');
+                $('.js-loader').show();
+                //
+                $.post(
+                    "<?=base_url("manage_admin/accurate_background/remove_background_check");?>",
+                    {
+                        id: Id
+                    }
+                ).done(function(resp){
                     //
-                    $('.js-loader .cs-loader-text').text('Please wait, while we are deleting the selected background check.');
-                    $('.js-loader').show();
+                    $('.js-loader').hide();
                     //
-                    $.post(
-                        "<?=base_url("manage_admin/accurate_background/remove_background_check");?>",
-                        {
-                            id: Id
-                        }
-                    ).done(function(resp){
-                        //
-                        $('.js-loader').hide();
-                        //
-                        $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
-                        //
-                        if(resp.MSG == 'Success'){
-                            alertify.alert("You have successfully deleted the background check.", function(){
-                                window.location = 'manage_admin/accurate_background';
-                            });
-                        }else {
-                            alertify.alert("Something went wrong while deleting the background check.");
-                        }
-                    }).error(function(err){
-                        //
-                        $('.js-loader').hide();
-                        //
-                        $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
-                        //
-                        alertify.alert("Error!", "Something went wrong while deleting the backgrond check.<br/> Status Code: "+(err.status)+"<br> Error: "+(err.statusText)+"");
-                    });
-                }
-            );
-        });
+                    $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
+                    //
+                    if(resp.MSG == 'Success'){
+                        alertify.alert("You have successfully deleted the background check.", function(){
+                            window.location.reload();
+                        });
+                    }else {
+                        alertify.alert("Something went wrong while deleting the background check.");
+                    }
+                }).error(function(err){
+                    //
+                    $('.js-loader').hide();
+                    //
+                    $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
+                    //
+                    alertify.alert("Error!", "Something went wrong while deleting the backgrond check.<br/> Status Code: "+(err.status)+"<br> Error: "+(err.statusText)+"");
+                });
+            }
+        );
+    });
+    //
+    $(document).on('click', '.jsRevertBGC', function(event){
+        //
+        event.preventDefault();
+        //
+        var Id = $(this).data('id');
+        //
+        alertify.confirm(
+            "Do you want to revert this background check?", 
+            function(){
+                //
+                $('.js-loader .cs-loader-text').text('Please wait, while we are delrevertingeting the selected background check.');
+                $('.js-loader').show();
+                //
+                $.post(
+                    "<?=base_url("manage_admin/accurate_background/revert_background_check");?>",
+                    {
+                        id: Id
+                    }
+                ).done(function(resp){
+                    //
+                    $('.js-loader').hide();
+                    //
+                    $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
+                    //
+                    if(resp.MSG == 'Success'){
+                        alertify.alert("You have successfully reverted the background check.", function(){
+                            window.location.reload();
+                        });
+                    }else {
+                        alertify.alert("Something went wrong while reverting the background check.");
+                    }
+                }).error(function(err){
+                    //
+                    $('.js-loader').hide();
+                    //
+                    $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
+                    //
+                    alertify.alert("Error!", "Something went wrong while reverting the backgrond check.<br/> Status Code: "+(err.status)+"<br> Error: "+(err.statusText)+"");
+                });
+            }
+        );
+    });
 </script>

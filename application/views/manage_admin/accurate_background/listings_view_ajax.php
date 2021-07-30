@@ -623,6 +623,49 @@
                 }
             );
         });
+            //
+    $(document).on('click', '.jsRevertBGC', function(event){
+        //
+        event.preventDefault();
+        //
+        var Id = $(this).data('id');
+        //
+        alertify.confirm(
+            "Do you want to revert this background check?", 
+            function(){
+                //
+                $('.js-loader .cs-loader-text').text('Please wait, while we are delrevertingeting the selected background check.');
+                $('.js-loader').show();
+                //
+                $.post(
+                    "<?=base_url("manage_admin/accurate_background/revert_background_check");?>",
+                    {
+                        id: Id
+                    }
+                ).done(function(resp){
+                    //
+                    $('.js-loader').hide();
+                    //
+                    $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
+                    //
+                    if(resp.MSG == 'Success'){
+                        alertify.alert("You have successfully reverted the background check.", function(){
+                            window.location.reload();
+                        });
+                    }else {
+                        alertify.alert("Something went wrong while reverting the background check.");
+                    }
+                }).error(function(err){
+                    //
+                    $('.js-loader').hide();
+                    //
+                    $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
+                    //
+                    alertify.alert("Error!", "Something went wrong while reverting the backgrond check.<br/> Status Code: "+(err.status)+"<br> Error: "+(err.statusText)+"");
+                });
+            }
+        );
+    });
     })
 </script>
 
