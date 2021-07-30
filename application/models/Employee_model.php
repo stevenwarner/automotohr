@@ -996,10 +996,6 @@
         if(!empty($a['ReportingManagers'])){
             $a['ReportingManagers'] = $this->GetEmployeeNamesByIds($a['ReportingManagers']);
         }
-        // Get approvers
-        if(!empty($a['Approvers'])){
-            $a['Approvers'] = $this->GetEmployeeNamesByIds($a['Approvers']);
-        }
         //
         return $a;
     }
@@ -1083,9 +1079,7 @@
         //
         $a =
         $this->db
-        ->select("
-            name
-        ")
+        ->select("name")
         ->where("departments_management.company_sid", $companyId)
         ->where("departments_management.status", 1)
         ->where("departments_management.is_deleted", 0)
@@ -1159,7 +1153,10 @@
         // Get approvers
         $this->db
         ->select('
-            timeoff_approvers.employee_sid as userId
+            timeoff_approvers.employee_sid as userId,
+            timeoff_approvers.approver_percentage,
+            timeoff_approvers.department_sid,
+            timeoff_approvers.is_department
         ')
         ->where('timeoff_approvers.company_sid', $companyId)
         ->where('timeoff_approvers.status', 1)
@@ -1202,22 +1199,37 @@
         $this->db->or_where('timeoff_approvers.department_sid', 'all');
         $this->db->group_end();
         //
-
         $approvers = $this->db->get('timeoff_approvers')->result_array();
-
         //
-        $t = [];
+        $d = [];
         //
         foreach($approvers as $k => $approver){
-            if(in_array($approver['userId'], $t)) {
-                unset($approvers[$k]);
-                continue;
+            //
+            if(!isset($d[$approver['userId']])){
+                //
+                $d[$approver['userId']] = [
+                    'user' => $this->GetEmployeeNamesByIds($approver['userId'])[0],
+                    'departments' => [],
+                    'teams' => []
+                ];
             }
-            $t[] =$approver['userId'];
+            //
+            if($approver['is_department'] == 1){
+                $d[$approver['userId']]['departments'][] = [
+                    'CanApprove' => $approver['approver_percentage'] ? '100%' : '50%',
+                    'Names' => $this->GetDepartmentNamesByIds($approver['department_sid'])[0]
+                ];
+            }
+            //
+            if($approver['is_department'] == 0){
+                $d[$approver['userId']]['teams'][] = [
+                    'CanApprove' => $approver['approver_percentage'] ? '100%' : '50%',
+                    'Names' => $this->GetTeamNamesByIds($approver['department_sid'])[0]
+                ];
+            }
         }
-
         //
-        return array_column($approvers, 'userId');
+        return $d;
     }
 
     /**

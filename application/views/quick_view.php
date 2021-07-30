@@ -85,7 +85,50 @@
                 </tr>
                 <tr>
                     <td class="col-sm-3"><strong>Approver(s)</strong></td>
-                    <td class="col-sm-9"><?=!empty($Approvers) ? implode('<br>',$Approvers) : 'N/A';?></td>
+                    <td class="col-sm-9">
+                        <?php
+                            if(!empty($Approvers)){
+                                foreach($Approvers as $Approver){
+                                    ?>
+                                    <p><?=$Approver['user'];?></p>
+                                    <p><strong>Departments:</strong> <br>
+                                        <?php 
+                                            if(!empty($Approver['departments'])){
+                                                foreach($Approver['departments'] as $dt){
+                                                    ?>
+                                                    <span><?=$dt['Names'];?> (<?=$dt['CanApprove'];?>)</span>
+                                                    <?php
+                                                }
+                                            } else{
+                                                ?>
+                                                <span>N/A</span>
+                                                <?php
+                                            }
+                                        ?>
+                                    </p>
+                                    <p><strong>Teams:</strong> <br>
+                                        <?php 
+                                            if(!empty($Approver['teams'])){
+                                                foreach($Approver['teams'] as $dt){
+                                                    ?>
+                                                    <span><?=$dt['Names'];?> (<?=$dt['CanApprove'];?>)</span>
+                                                    <?php
+                                                }
+                                            } else{
+                                                ?>
+                                                <span>N/A</span>
+                                                <?php
+                                            }
+                                        ?>
+                                    </p>
+                                    <hr>
+                                    <?php
+                                }
+                            } else{
+                                echo 'N/A';
+                            }
+                        ?>
+                    </td>
                 </tr>
                 <tr>
                     <td class="col-sm-3"><strong>Reporitng Manager(s)</strong></td>
