@@ -1,3 +1,9 @@
+<?php
+//
+$uns = json_decode(
+    $invoiceData['serialized_items_info'], true
+);
+?>
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
@@ -93,6 +99,13 @@
                                     ?>
                                     <tr id="item-<?= $counter ?>">
                                         <td style="vertical-align: top; text-align: left; border-collapse: collapse; border:thin solid #000; padding: 5px;"><?php echo db_get_product_name($serialized_products['products'][$i]); ?>
+                                        <?php
+                                            if(isset($uns['credit'])){
+                                                ?>
+                                                <p class="text-danger">Last credited on <?=formatDateToDB($uns['credit'][$serialized_products['products'][$i]]['date'], 'Y-m-d H:i:s', DATE_WITH_TIME);?></p>
+                                                <?php
+                                            }
+                                        ?>
                                         </td>
                                         <td style="vertical-align: top; text-align: center; border-collapse: collapse; border:thin solid #000; padding: 5px;"> <?php echo $serialized_products['item_qty'][$i]; ?></td>
                                         <td style="vertical-align: top; text-align: center; border-collapse: collapse; border:thin solid #000; padding: 5px;">$<?php echo $serialized_products['item_price'][$i]; ?></td>

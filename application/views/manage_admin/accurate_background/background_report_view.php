@@ -84,7 +84,7 @@ $background_order['report_url'] = isset($background_order['package_response']['o
                                                 <div class="col-sm-12">
                                                     <p>
                                                         <br />
-                                                        <i class="fa fa-info-circle" aria-hidden="true"></i> Canceled & Credited <?=!empty($background_order['invoice_sid']) ? 'to invoice #' : '<strong>'.($background_order['invoice_sid']).'</strong>';?>.
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i> Canceled & Credited <?=!empty($background_order['invoice_sid']) ? 'to invoice # '.($background_order['invoice_sid']).'' : '<strong>'.($background_order['invoice_sid']).'</strong>';?>.
                                                     </p>
                                                 </div>
                                                 <?php

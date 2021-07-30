@@ -197,6 +197,7 @@ class order_history_model extends CI_Model
             invoices.product_sid,
             invoices.date,
             invoices.payment_method,
+            invoices.serialized_items_info,
             invoices.total,
             invoices.status,
             concat( users.first_name, " ", users.last_name) as fullname,
@@ -206,12 +207,12 @@ class order_history_model extends CI_Model
         ->join('users', 'invoices.user_sid = users.sid', 'left');
 
         // Date Check
-        if($from != '' && $to != '')
-            $this->db->where(" date BETWEEN '$from' AND '$to'", NULL);
-        else if($from != '')
-            $this->db->where(" date >= '$from'", NULL);
-        else if($to != '')
-            $this->db->where(" date <= '$to'", NULL);
+        // if($from != '' && $to != '')
+        //     $this->db->where(" date BETWEEN '$from' AND '$to'", NULL);
+        // else if($from != '')
+        //     $this->db->where(" date >= '$from'", NULL);
+        // else if($to != '')
+        //     $this->db->where(" date <= '$to'", NULL);
 
         // Invoice id check
         if($invoice_id != 'all') $this->db->where('invoices.sid',$invoice_id);
@@ -241,6 +242,8 @@ class order_history_model extends CI_Model
         //
         $rows = '';
         foreach ($result_arr as $k0 => $v0) {
+            //
+            $uns = unserialize($v0['serialized_items_info']);
             $items = '';
             $product_ids = explode(',', $v0['product_sid']);
             $result_arr[$k0]['has_refund_notes'] = $v0['has_refund_notes'] = sizeof($this->get_invoice_credit_notes($v0['invoice_number'], 'Marketplace', true)) ? 1 : 0;
@@ -257,7 +260,12 @@ class order_history_model extends CI_Model
             foreach ($product_ids as $prodcut_id_key => $product_id) {
                 $product_detail  = $this->get_product_detail($product_id);
                 $items .= sc_remove($product_detail['name']); 
-                $rows .= '  <li class="invoice-description-list-item">'.sc_remove($product_detail['name']).'</li>';
+                $rows .= '  <li class="invoice-description-list-item">'.sc_remove($product_detail['name']);
+                //
+                if(isset($uns['credit'][$product_id])){
+                    $rows .='<br><span class="text-danger">Last Credited on '.(formatDateToDB($uns['credit'][$product_id]['date'], 'Y-m-d H:i:s', DATE_WITH_TIME)).'</span>';
+                }
+                $rows .='</li>';
             }
             $rows .= '  </ul></td>';
             $rows .= '  <td>'.$v0['date'].'</td>';

@@ -545,6 +545,18 @@ class Accurate_background_model extends CI_Model
                         $currentCounter = $dataArray['item_remaining_qty'][$key];
                         //
                         $currentCounter++;
+                        //
+                        if(!isset($dataArray['credit'])){
+                            $dataArray['credit'] = [];
+                        }
+                        //
+                        $dataArray['credit'][$productId] = [];
+                        $dataArray['credit'][$productId] = [
+                            'type' => 'subtracted',
+                            'origanlCount' => $dataArray['item_remaining_qty'][$key],
+                            'newCount' => $currentCounter,
+                            'date' => date('Y-m-d H:i:s', strtotime('now'))
+                        ];
                         $dataArray['item_remaining_qty'][$key] = $currentCounter;
                         $dataToUpdate['serialized_items_info'] = serialize($dataArray);
                         $this->db->where('sid', $order['sid'])->update('invoices', $dataToUpdate);
@@ -556,7 +568,20 @@ class Accurate_background_model extends CI_Model
                         $currentCounter = $dataArray['item_remaining_qty'][$key];
                         
                         $currentCounter++;
+                        //
+                        if(!isset($dataArray['credit'])){
+                            $dataArray['credit'] = [];
+                        }
+                        //
+                        $dataArray['credit'][$productId] = [];
+                        $dataArray['credit'][$productId] = [
+                            'type' => 'subtracted',
+                            'origanlCount' => $dataArray['item_remaining_qty'][$key],
+                            'newCount' => $currentCounter,
+                            'date' => date('Y-m-d H:i:s', strtotime('now'))
+                        ];
                         $dataArray['item_remaining_qty'][$key] = $currentCounter;
+                        
                         $dataToUpdate['serialized_items_info'] = serialize($dataArray);
                         $this->db->where('sid', $order['sid'])->update('invoices', $dataToUpdate);
                         $dobreak = true;
@@ -591,10 +616,22 @@ class Accurate_background_model extends CI_Model
                     $currentCounter = $dataArray['item_remaining_qty'][$key];
                     
                     $currentCounter--;
+                    //
+                    if(!isset($dataArray['credit'])){
+                        $dataArray['credit'] = [];
+                    }
+                    //
+                    $dataArray['credit'][$productId] = [];
+                    $dataArray['credit'][$productId] = [
+                        'type' => 'added',
+                        'origanlCount' => $dataArray['item_remaining_qty'][$key],
+                        'newCount' => $currentCounter,
+                        'date' => date('Y-m-d H:i:s', strtotime('now'))
+                    ];
+                    //
                     $dataArray['item_remaining_qty'][$key] = $currentCounter;
                     $dataToUpdate['serialized_items_info'] = serialize($dataArray);
                     $this->db->where('sid', $order['sid'])->update('invoices', $dataToUpdate);
-                    $dobreak = true;
                     return $currentCounter;
                 }
             }
