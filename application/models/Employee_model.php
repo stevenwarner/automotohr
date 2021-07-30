@@ -1171,8 +1171,6 @@
             $dWhere = rtrim($dWhere, " OR ");
         }
         $this->db->group_start();
-
-        
         //
         if(!empty($tWhere) && !empty($dWhere)){
             $this->db->group_start();
@@ -1215,21 +1213,52 @@
             }
             //
             if($approver['is_department'] == 1){
-                $d[$approver['userId']]['departments'][] = [
+                $d[$approver['userId']]['departments'][$approver['department_sid']] = [
                     'CanApprove' => $approver['approver_percentage'] ? '100%' : '50%',
+                    'Id' => $approver['department_sid'],
                     'Names' => $this->GetDepartmentNamesByIds($approver['department_sid'])[0]
                 ];
             }
             //
             if($approver['is_department'] == 0){
-                $d[$approver['userId']]['teams'][] = [
+                $d[$approver['userId']]['teams'][$approver['department_sid']] = [
                     'CanApprove' => $approver['approver_percentage'] ? '100%' : '50%',
+                    'Id' => $approver['department_sid'],
                     'Names' => $this->GetTeamNamesByIds($approver['department_sid'])[0]
                 ];
             }
         }
+        // Double Check department and team
+        foreach($d as $index => $approver){
+            //
+            $total = count($approver['departments']) + count($approver['teams']);
+            // 
+            if(!empty($approver['departments'])){
+                foreach($approver['departments'] as $dt){
+                    //
+                    if(!$this->IsActiveDepartment($dt['Id'])){
+                        $total --;
+                        unset($d[$index]['departments'][$dt['id']]);
+                    }
+                }
+            }
+            // 
+            if(!empty($approver['teams'])){
+                foreach($approver['teams'] as $dt){
+                    //
+                    if(!$this->IsActiveTeam($dt['Id'])){
+                        $total --;
+                        unset($d[$index]['teams'][$dt['id']]);
+                    }
+                }
+            }
+            //
+            if($total == 0){
+                unset($d[$index]);
+            }
+        }
         //
-        return $d;
+        return array_values($d);
     }
 
     /**
@@ -1301,6 +1330,34 @@
         $b = $t;
         //
         return $b;
+    }
+
+
+    /**
+     * 
+     */
+    function IsActiveDepartment($id){
+        return
+        $this->db
+        ->where("sid", $id)
+        ->where("status", 1)
+        ->where("is_deleted", 0)
+        ->count_all_results("departments_management");
+    }
+    
+    /**
+     * 
+     */
+    function IsActiveTeam($id){
+        return
+        $this->db
+        ->where("departments_team_management.sid", $id)
+        ->where("departments_team_management.status", 1)
+        ->where("departments_team_management.is_deleted", 0)
+        ->where("departments_team_management.status", 1)
+        ->where("departments_team_management.is_deleted", 0)
+        ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+        ->count_all_results("departments_team_management");
     }
    
    
