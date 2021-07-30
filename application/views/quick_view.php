@@ -91,36 +91,36 @@
                                 foreach($Approvers as $Approver){
                                     ?>
                                     <p><?=$Approver['user'];?></p>
-                                    <p><strong>Departments:</strong> <br>
-                                        <?php 
-                                            if(!empty($Approver['departments'])){
+                                    <?php 
+                                        if(!empty($Approver['departments'])){
+                                            ?>
+                                            <p><strong>Departments:</strong> <br>
+                                            <?php
                                                 foreach($Approver['departments'] as $dt){
                                                     ?>
                                                     <span><?=$dt['Names'];?> (<?=$dt['CanApprove'];?>)</span>
                                                     <?php
                                                 }
-                                            } else{
                                                 ?>
-                                                <span>N/A</span>
+                                                </p>
                                                 <?php
                                             }
                                         ?>
-                                    </p>
-                                    <p><strong>Teams:</strong> <br>
                                         <?php 
                                             if(!empty($Approver['teams'])){
+                                                ?>
+                                                <p><strong>Teams:</strong> <br>
+                                                <?php
                                                 foreach($Approver['teams'] as $dt){
                                                     ?>
                                                     <span><?=$dt['Names'];?> (<?=$dt['CanApprove'];?>)</span>
                                                     <?php
                                                 }
-                                            } else{
                                                 ?>
-                                                <span>N/A</span>
+                                                </p>
                                                 <?php
                                             }
                                         ?>
-                                    </p>
                                     <hr>
                                     <?php
                                 }
