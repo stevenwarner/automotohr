@@ -588,7 +588,7 @@
             var Id = $(this).data('id');
             //
             alertify.confirm(
-                "Do you want to delete this background check?<br>This action is not revertable.", 
+                "Do you want to cancel this background check?<br>This action is not revertable.", 
                 function(){
                     //
                     $('.js-loader .cs-loader-text').text('Please wait, while we are deleting the selected background check.');
@@ -606,11 +606,11 @@
                         $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
                         //
                         if(resp.MSG == 'Success'){
-                            alertify.alert("You have successfully deleted the background check.", function(){
+                            alertify.alert("You have successfully canceled the background check.", function(){
                                 window.location.reload();
                             });
                         }else {
-                            alertify.alert("Something went wrong while deleting the background check.");
+                            alertify.alert("Something went wrong while canceling the background check.");
                         }
                     }).error(function(err){
                         //
@@ -618,7 +618,7 @@
                         //
                         $('.js-loader .cs-loader-text').text('Please wait, while we are fetching more results.');
                         //
-                        alertify.alert("Error!", "Something went wrong while deleting the backgrond check.<br/> Status Code: "+(err.status)+"<br> Error: "+(err.statusText)+"");
+                        alertify.alert("Error!", "Something went wrong while canceling the backgrond check.<br/> Status Code: "+(err.status)+"<br> Error: "+(err.statusText)+"");
                     });
                 }
             );

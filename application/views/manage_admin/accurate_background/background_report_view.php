@@ -46,7 +46,7 @@ $background_order['report_url'] = isset($background_order['package_response']['o
                                                                 <?php
                                                             } else{
                                                                 ?>
-                                                                <button class="btn btn-danger jsRemoveBGC" data-id="<?=$background_order['sid'];?>">Delete Background Check</button>
+                                                                <button class="btn btn-danger jsRemoveBGC" data-id="<?=$background_order['sid'];?>">Cancel & Credit Back</button>
                                                                 <?php
                                                             }
                                                         ?>
@@ -79,7 +79,7 @@ $background_order['report_url'] = isset($background_order['package_response']['o
                                                 </div>
                                                 
                                                 <?php
-                                                    if(isset($background_order['is_deleted_status'])){
+                                                    if(isset($background_order['is_deleted_status']) && !empty($background_order['invoice_sid'])){
                                                         ?>
                                                 <div class="col-sm-12">
                                                     <p>

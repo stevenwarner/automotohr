@@ -173,6 +173,10 @@ class Background_check extends CI_Controller {
                         $data_function['purchasedProducts'][$myKey] = $product;
                     }
                 }
+                //
+                $data_function['deleted_bgchecks'] = $this->background_check_model->GetDeletedBGC($sid, $type, $product_type);
+                //
+                $data_function['appliedProducts'] = array_merge($data_function['appliedProducts'], $data_function['deleted_bgchecks']);
                 $data_function['notPurchasedProducts'] = $this->dashboard_model->notPurchasedProducts($product_ids, $product_type);
                 //End==> Checking purchased backgroung Check products//
                 $perform_action = $this->input->post('perform_action');

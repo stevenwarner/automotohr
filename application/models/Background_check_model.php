@@ -48,6 +48,18 @@ class Background_check_model extends CI_Model {
                         ->where('background_check_orders.product_type', $product_type)
                         ->get('background_check_orders');
     }
+    
+    
+    function GetDeletedBGC($app_id, $user_type, $product_type) {
+        return $this->db
+        ->select('background_check_orders_history.*, "deleted" as is_deleted_status, products.product_brand')
+        ->join('products', 'products.sid = background_check_orders_history.product_sid', 'left')
+        ->where('background_check_orders_history.users_sid', $app_id)
+                        ->where('background_check_orders_history.users_type', $user_type)
+                        ->where('background_check_orders_history.product_type', $product_type)
+                        ->get('background_check_orders_history')
+                        ->result_array();
+    }
 
     function get_order_details($order_sid) {
         $this->db->select('*');

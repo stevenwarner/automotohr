@@ -58,7 +58,7 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                                     <?php } else { ?>
                                                                         <?php $percent_complete = 0; ?>
                                                                     <?php } ?>
-                                                                    <?php if ($percent_complete < 100) { ?>
+                                                                    <?php if ($percent_complete < 100 && !isset($product['is_deleted_status'])) { ?>
                                                                         <span style="display: inline-block;">
                                                                             <form action="<?php echo current_url(); ?>" method="post" enctype="multipart/form-data">
                                                                                 <input type="hidden" name="perform_action" id="perform_action" value="get_order_status" />
@@ -118,14 +118,25 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                                                 ?>
                                                                                 <th class="col-xs-4">Status</th>
                                                                                 <td class="text-left">
-                                                                                    <?php $pos = strpos($status, 'draft');
+                                                                                    <?php
+                                                                                        //
+                                                                                        if(isset($product['is_deleted_status'])){
+                                                                                            ?>
+                                                                                            Canceled & Credited
+                                                                                            <?php
+                                                                                        } else{
+                                                                                            ?>
+                                                                                            <?php $pos = strpos($status, 'draft');
 
-                                                                                    if (strpos($status, 'draft') === false || ($product['product_brand'] == 'assurehire' && strpos($status, 'pending') === TRUE)) {
-                                                                                        echo ($status == '' || $status == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $status));
-                                                                                    } else {
-                                                                                        echo 'Awaiting Candidate Input';
-                                                                                    }
-                                                                                    //                                                                                        echo (strtolower($status) == 'draft' ? 'Awaiting Candidate Input' : ($status == '' || $status == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $status))); 
+                                                                                            if (strpos($status, 'draft') === false || ($product['product_brand'] == 'assurehire' && strpos($status, 'pending') === TRUE)) {
+                                                                                                echo ($status == '' || $status == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $status));
+                                                                                            } else {
+                                                                                                echo 'Awaiting Candidate Input';
+                                                                                            }
+                                                                                            //                                                                                        echo (strtolower($status) == 'draft' ? 'Awaiting Candidate Input' : ($status == '' || $status == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $status))); 
+                                                                                            ?>
+                                                                                            <?php
+                                                                                        }
                                                                                     ?>
                                                                                 </td>
                                                                             </tr>

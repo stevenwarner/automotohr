@@ -501,7 +501,7 @@ class Accurate_background_model extends CI_Model
                 } else{
                     $rows .='
                     <button class="btn btn-danger btn-sm jsRemoveBGC" data-id="'.($v0['order_sid']).'">
-                        Delete
+                        Cancel & Credit Back
                     </button>';
                 }
                 $rows .= '</td>';
