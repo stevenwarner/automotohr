@@ -62,8 +62,6 @@
                                                                 <?php } ?>
                                                             </select>
                                                             <div class="video-link" style='font-style: italic;'><b>Hint: </b> Employee name who executed the report</div>
-                                                            <!-- <label for="keyword">Order By</label> -->
-                                                            <!-- <input type="text" id="order_by" class="invoice-fields" name="order_by" value="<?php //echo $this->uri->segment(3) != 'all' ? urldecode($this->uri->segment(3)) : ''; ?>-->
                                                         </div>
                                                     </div>
                                                 </div>

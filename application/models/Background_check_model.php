@@ -315,6 +315,69 @@ class Background_check_model extends CI_Model {
         return $result_arr = array_merge($result_arr1, $result_arr2);
     }
 
+    /**
+     * Fetch accurate background report
+     *
+     * @param
+     *
+     * @return Array|Bool
+     *
+     */
+    function GetDeletedBGCR( 
+        $company_sid = false,
+        $users_type = false,
+        $users_sid = false,
+        $order_sid = false,
+        $product_type = false,
+        $status = false,
+        $from_date = false,
+        $to_date = false,
+        $inset = 0,
+        $offset = 0,
+        $do_count = false,
+        $ids_array = array(),
+        $export = false
+    ) {
+        $columns = '
+            "deleted" as is_deleted_status,
+            background_check_orders_history.employer_sid,
+            users.username,
+            users.first_name,
+            users.last_name,
+            companies.CompanyName as cname,
+            background_check_orders_history.users_sid,
+            background_check_orders_history.users_type,
+            background_check_orders_history.order_response,
+            background_check_orders_history.product_name,
+            background_check_orders_history.product_type,
+            background_check_orders_history.sid as order_sid, 
+            background_check_orders_history.date_applied';
+
+        if($do_count) $columns = 'background_check_orders_history.order_response, background_check_orders_history.sid as order_sid';
+        $this->db->select($columns)
+        ->from('background_check_orders_history')
+        ->join('users', 'background_check_orders_history.employer_sid = users.sid')
+        ->join('users as companies', 'background_check_orders_history.company_sid = companies.sid');
+
+        if($company_sid != 'all') $this->db->where('background_check_orders_history.company_sid', $company_sid);
+        if($users_sid != 'all' && $users_sid != 0) $this->db->where('users.sid', $users_sid);
+        if($users_type != 'all') $this->db->where('background_check_orders_history.users_type', $users_type);
+        if ($product_type != 'all') $this->db->where('background_check_orders_history.product_type', $product_type);
+        if (sizeof($ids_array)) $this->db->where_in('background_check_orders_history.sid', $ids_array);
+        if ($order_sid && $order_sid != 'all') $this->db->where('employer_sid', $order_sid);
+
+        $this->db
+        ->where('DATE_FORMAT(background_check_orders_history.date_applied, "%Y-%m-%d") BETWEEN "' . $from_date . '" and "' . $to_date . '"')
+        ->order_by("background_check_orders_history.date_applied", "desc");
+
+        if(!$do_count && !$export) $this->db->limit($offset, $inset);
+        $result = $this->db->get();
+        $result_arr = $result->result_array();
+        $result = $result->free_result();
+        //
+        return $result_arr;
+    }
+
 
     /**
      * Fetch accurate background report
@@ -375,6 +438,25 @@ class Background_check_model extends CI_Model {
         $result = $this->db->get();
         $result_arr = $result->result_array();
         $result = $result->free_result();
+        //
+        $result_arr = array_merge(
+            $result_arr,
+            $this->GetDeletedBGCR(
+                $company_sid,
+                $users_type,
+                $users_sid,
+                $order_sid,
+                $product_type,
+                $status,
+                $from_date,
+                $to_date,
+                $inset,
+                $offset,
+                $do_count,
+                $ids_array,
+                $export
+            )
+        );
 
         if(!sizeof($result_arr)) return $do_count ? 0 : $result_arr;
 
@@ -425,6 +507,10 @@ class Background_check_model extends CI_Model {
                 elseif($v0['status'] == '' || $v0['status'] == NULL) $status_color = 'style="color: #0000FF";';
                 elseif($v0['status'] == 'Completed') $status_color = 'style="color: #006400";';
                 elseif($v0['status'] == 'Cancelled') $status_color = 'style="color: #FF8C00";';
+                if(isset($v0['is_deleted_status'])) {
+                    $status_color = 'style="color: #d9534f";';
+                    $v0['status'] = 'Canceled & Credited'.(!empty($v0['invoice_sid']) ? ' to invoice # '.($v0['invoice_sid']).'' : '');
+                }
                 //
                 $rows .= '<tr>';
                 $rows .= '    <td>'.reset_datetime(array('datetime' => $v0['date_applied'], '_this' => $this)).'</td>';
