@@ -479,7 +479,7 @@ class Accurate_background_model extends CI_Model
                 
                 if(isset($v0['is_deleted_status'])) {
                     $status_color = 'style="color: #d9534f";';
-                    $v0['status'] = 'Deleted';
+                    $v0['status'] = 'Canceled & Credited'.(!empty($v0['invoice_sid']) ? ' to invoice # '.($v0['invoice_sid']).'' : '');
                 }
                 //
                 $rows .= '<tr>';
