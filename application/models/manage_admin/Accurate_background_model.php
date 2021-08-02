@@ -303,6 +303,7 @@ class Accurate_background_model extends CI_Model
         $columns = '
             "deleted" as is_deleted_status,
             background_check_orders_history.employer_sid,
+            background_check_orders_history.invoice_sid,
             users.username,
             users.first_name,
             users.last_name,
