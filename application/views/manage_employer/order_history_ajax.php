@@ -344,9 +344,12 @@
                 total_records: total_records,
                 page: current_page
             }, function(resp) {
+                //
+                resp = $.parseJSON(resp);
+                //
                 if(resp.Status === false) return;
-                if(resp.Data == '') { reset_table(); }
-                else if(resp.Data.length == 0) { reset_table(); }
+                if(resp.Data == '' || resp.Data == undefined) { reset_table(); return; }
+                else if(resp.Data.length == 0) { reset_table(); return; }
                 else {
                     $('.js-msg-row').hide(0);
                     $('.js-info-box').show(0);
