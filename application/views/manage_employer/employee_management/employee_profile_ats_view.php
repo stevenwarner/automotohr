@@ -1367,7 +1367,7 @@ $('#js-policies').select2({
                     pattern: /^[a-zA-Z0-9\- ]+$/
                 },
                 Location_Address: {
-                    pattern: /^[a-zA-Z0-9\-#,':;. ]+$/
+                    pattern: /^[a-zA-Z0-9/\-#,':;. ]+$/
                 },
                 email: {
                     email: true,
