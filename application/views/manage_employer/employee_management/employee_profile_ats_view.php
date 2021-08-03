@@ -1360,11 +1360,11 @@ $('#js-policies').select2({
             rules: {
                 first_name: {
                     required: true,
-                    pattern: /^[a-zA-Z0-9\- ]+$/
+                    pattern: /[a-zA-Z\-,' ]+$/
                 },
                 last_name: {
                     required: true,
-                    pattern: /^[a-zA-Z0-9\- ]+$/
+                    pattern: /^[a-zA-Z\-,' ]+$/
                 },
                 Location_Address: {
                     pattern: /^[a-zA-Z0-9/\-#,':;. ]+$/
@@ -1379,10 +1379,10 @@ $('#js-policies').select2({
                     email: true,
                 },
                 Location_State: {
-                    pattern: /^[a-zA-Z0-9\- ]+$/
+                    pattern: /^[a-zA-Z0-9\-,' ]+$/
                 },
                 Location_City: {
-                    pattern: /^[a-zA-Z0-9\- ]+$/
+                    pattern: /^[a-zA-Z0-9\-,' ]+$/
                 },
                 Location_ZipCode: {
                     pattern: /^[0-9\-]+$/
