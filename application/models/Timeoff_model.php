@@ -9605,7 +9605,7 @@ class Timeoff_model extends CI_Model
             $request['approvers'] = $this->getEmployeeApprovers($request['company_sid'], $request['employee_sid']);
         }
         //
-        if(empty($request['timeoff_days']) || $request['timeoff_days'] = '[]'){
+        if(empty($request['timeoff_days']) || $request['timeoff_days'] == '[]'){
             //
             $user =
             $this->db
@@ -9625,25 +9625,33 @@ class Timeoff_model extends CI_Model
             //
             $totalTimeInHours = ceil($request['requested_time'] / 60);
             //
+            $off_days = $this->getTimeOffDays($request['company_sid']);
+            //
             for($i = 0; $i < $d; $i++){
+                $day_name = strtolower(date('l', strtotime($request['request_from_date'].' 00:00:00 +'.($i).' days')));
                 //
                 $newDate = date('m-d-Y', strtotime($request['request_from_date'].' 00:00:00 +'.($i).' days'));
                 //
                 $time = 0;
                 //
-                if($totalTimeInHours > $user['user_shift_hours']){
-                    //
-                    $time = $user['user_shift_hours'];
-                    //
-                } else $time = $totalTimeInHours;
-                // 
-                $totalTimeInHours -= $time;
+                if (!in_array($day_name, $off_days)) {
+                    
+                    if($totalTimeInHours > $user['user_shift_hours']){
+                        //
+                        $time = $user['user_shift_hours'];
+                        //
+                    } else $time = $totalTimeInHours;
+                    // 
+                    $totalTimeInHours -= $time;
+                    
+                }
                 //
                 $json['days'][$i] = [
                     'time' => $time * 60,
                     'partial' => 'fullday',
                     'date' => $newDate
                 ];
+                // 
             }
             //
             $request['timeoff_days'] = json_encode($json);

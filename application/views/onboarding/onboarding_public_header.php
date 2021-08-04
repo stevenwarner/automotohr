@@ -36,7 +36,7 @@
 <body>
     <div class="wrapper-outer">
         <header class="header">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
                         <div class="logo">
@@ -53,7 +53,7 @@
             </div>
         </header>
         <div class="emp-info-strip">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="emp-info-box">

@@ -298,7 +298,7 @@ $(function() {
                         }
                         if (allow_update == 'yes') {
                             rows += ` ${
-                              v.status == "cancelled"
+                              v.status == "cancelled" || v.status == "cancel"
                                 ? ""
                                 : `<li><a href="#" class="${
                                     v.archive == 1
@@ -660,6 +660,11 @@ $(function() {
         il = '<i class="fa fa-check-circle text-success"></i>';
       } else if (action.status == "rejected") {
         msg += ` has rejected the time-off at ${moment(his.created_at).format(
+          timeoffDateFormatWithTime
+        )}`;
+        il = '<i class="fa fa-times-circle text-danger"></i>';
+      } else if (action.status == "cancelled" || action.status == "cancel") {
+        msg += ` has cancelled the time-off at ${moment(his.created_at).format(
           timeoffDateFormatWithTime
         )}`;
         il = '<i class="fa fa-times-circle text-danger"></i>';

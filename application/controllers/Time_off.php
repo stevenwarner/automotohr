@@ -1329,108 +1329,187 @@ class Time_off extends Public_Controller
     function public_action($key){
         //
         $args = timeoffDecryptLink($key);
+        if ($args['typeSid'] == 'approve') {
+            $args['typeSid'] = 'approved';
+        } else if ($args['typeSid'] == 'reject') {
+            $args['typeSid'] = 'rejected';
+        } else if ($args['typeSid'] == 'cancel') {
+            $args['typeSid'] = 'cancelled';
+        }
         //
         $request = $this->timeoff_model->getRequestById($args['requestSid']);
         //
         $data['request'] = $request;
         $data['action'] = $args['typeSid'];
-        // 
-        switch($args['typeSid']){
-            case "view":
-            case "approve":
-                //
-                $in = [];
-                //
-                $in['level_status'] = 'approved';
-                //
-                $canApprove = $this->timeoff_model->getEmployerApprovalStatus($args['employerSid']);
-                if($canApprove === 1) $in['status'] = 'approved';
-                //
-                $this->timeoff_model->updateTable($in, $request['sid'], 'timeoff_requests');
-                //
-                $in = [];
-                $in['request_sid'] = $request['sid'];
-                $in['employee_sid'] = $args['employerSid'];
-                $in['action'] = 'update';
-                $in['comment'] = '';
-                $in['note'] = json_encode([
-                    'status' => 'approved', 
-                    'canApprove' => $canApprove, 
-                    'comment' => NULL,
-                    'details' => []
-                ]);
-                //
-                $this->timeoff_model->insertHistory( $in, 'timeoff_request_timeline' );
-                // Send email notifications
-                // $this->sendNotifications($args['requestId'], 'approved');
-                $data['hf'] = message_header_footer_domain($request['company_sid'], ucwords($request['CompanyName']));
-                //
-                $this->load->view('timeoff/partials/thankyou', $data);
+        //
+        if ($_POST) {
+            
+            $request_for = $_POST['status'];
+            switch($request_for){
+                case "view":
+                case "approved":
+                    //
+                    $in = [];
+                    //
+                    $in['level_status'] = 'approved';
+                    //
+                    $canApprove = $this->timeoff_model->getEmployerApprovalStatus($args['employerSid']);
+                    if($canApprove === 1) $in['status'] = 'approved';
+                    //
+                    $this->timeoff_model->updateTable($in, $request['sid'], 'timeoff_requests');
+                    //
+                    $in = [];
+                    $in['request_sid'] = $request['sid'];
+                    $in['employee_sid'] = $args['employerSid'];
+                    $in['action'] = 'update';
+                    $in['comment'] = $_POST['comment'];
+                    $in['note'] = json_encode([
+                        'status' => 'approved', 
+                        'canApprove' => $canApprove, 
+                        'comment' => $_POST['comment'],
+                        'details' => [
+                                'startDate' => $request['request_from_date'],
+                                'endDate' => $request['request_to_date'],
+                                'time' => $request['requested_time'],
+                                'policyId' => $request['timeoff_policy_sid'],
+                                'policyTitle' => $this->timeoff_model->getPolicyColumn('title', $request['timeoff_policy_sid'])['title']
+                            ]
+                    ]);
+                    //
+                    $this->timeoff_model->insertHistory( $in, 'timeoff_request_timeline' );
+                    // Send email notifications
+                    // $this->sendNotifications($args['requestId'], 'approved');
+                    $data['hf'] = message_header_footer_domain($request['company_sid'], ucwords($request['CompanyName']));
+                    //
+                    // $this->load->view('timeoff/partials/thankyou', $data);
+                    $this->load->view('timeoff/thank_you');
 
-            break;
-            case "reject":
-                //
-                $in = [];
-                //
-                $in['level_status'] = 'rejected';
-                //
-                $canApprove = $this->timeoff_model->getEmployerApprovalStatus($args['employerSid']);
-                if($canApprove === 1) $in['status'] = 'rejected';
-                //
-                $this->timeoff_model->updateTable($in, $request['sid'], 'timeoff_requests');
-                //
-                $in = [];
-                $in['request_sid'] = $request['sid'];
-                $in['employee_sid'] = $args['employerSid'];
-                $in['action'] = 'update';
-                $in['comment'] = '';
-                $in['note'] = json_encode([
-                    'status' => 'rejected', 
-                    'canApprove' => $canApprove, 
-                    'comment' => NULL,
-                    'details' => []
-                ]);
-                //
-                $this->timeoff_model->insertHistory( $in, 'timeoff_request_timeline' );
-                // Send email notifications
-                // $this->sendNotifications($args['requestId'], 'rejected');
-                $data['hf'] = message_header_footer_domain($request['company_sid'], ucwords($request['CompanyName']));
-                //
-                $this->load->view('timeoff/partials/thankyou', $data);
+                break;
+                case "rejected":
+                    //
+                    $in = [];
+                    //
+                    $in['level_status'] = 'rejected';
+                    //
+                    $canApprove = $this->timeoff_model->getEmployerApprovalStatus($args['employerSid']);
+                    if($canApprove === 1) $in['status'] = 'rejected';
+                    //
+                    $this->timeoff_model->updateTable($in, $request['sid'], 'timeoff_requests');
+                    //
+                    $in = [];
+                    $in['request_sid'] = $request['sid'];
+                    $in['employee_sid'] = $args['employerSid'];
+                    $in['action'] = 'update';
+                    $in['comment'] = $_POST['comment'];
+                    $in['note'] = json_encode([
+                        'status' => 'rejected', 
+                        'canApprove' => $canApprove, 
+                        'comment' => $_POST['comment'],
+                        'details' => [
+                                'startDate' => $request['request_from_date'],
+                                'endDate' => $request['request_to_date'],
+                                'time' => $request['requested_time'],
+                                'policyId' => $request['timeoff_policy_sid'],
+                                'policyTitle' => $this->timeoff_model->getPolicyColumn('title', $request['timeoff_policy_sid'])['title']
+                            ]
+                    ]);
+                    //
+                    $this->timeoff_model->insertHistory( $in, 'timeoff_request_timeline' );
+                    // Send email notifications
+                    // $this->sendNotifications($args['requestId'], 'rejected');
+                    $data['hf'] = message_header_footer_domain($request['company_sid'], ucwords($request['CompanyName']));
+                    //
+                    // $this->load->view('timeoff/partials/thankyou', $data);
+                    $this->load->view('timeoff/thank_you');
 
-            break;
-            case "cancel":
-                //
-                $in = [];
-                //
-                $in['level_status'] = 'cancelled';
-                //
-                $canApprove = $this->timeoff_model->getEmployerApprovalStatus($args['employerSid']);
-                if($canApprove === 1) $in['status'] = 'cancelled';
-                //
-                $this->timeoff_model->updateTable($in, $request['sid'], 'timeoff_requests');
-                //
-                $in = [];
-                $in['request_sid'] = $request['sid'];
-                $in['employee_sid'] = $args['employerSid'];
-                $in['action'] = 'update';
-                $in['comment'] = '';
-                $in['note'] = json_encode([
-                    'status' => 'cancel', 
-                    'canApprove' => $canApprove, 
-                    'comment' => NULL,
-                    'details' => []
-                ]);
-                //
-                $this->timeoff_model->insertHistory( $in, 'timeoff_request_timeline' );
-                // Send email notifications
-                // $this->sendNotifications($args['requestId'], 'cancel');
-                $data['hf'] = message_header_footer_domain($request['company_sid'], ucwords($request['CompanyName']));
-                //
-                $this->load->view('timeoff/partials/thankyou', $data);
+                break;
+                case "cancelled":
+                    //
+                    $in = [];
+                    //
+                    $in['level_status'] = 'cancelled';
+                    //
+                    $canApprove = $this->timeoff_model->getEmployerApprovalStatus($args['employerSid']);
+                    if($canApprove === 1 || $args['employerSid'] == $request['employee_sid']) $in['status'] = 'cancelled';
+                    //
+                    $this->timeoff_model->updateTable($in, $request['sid'], 'timeoff_requests');
+                    //
+                    $in = [];
+                    $in['request_sid'] = $request['sid'];
+                    $in['employee_sid'] = $args['employerSid'];
+                    $in['action'] = 'update';
+                    $in['comment'] = $_POST['comment'];
+                    $in['note'] = json_encode([
+                        'status' => 'cancel', 
+                        'canApprove' => $canApprove, 
+                        'comment' => $_POST['comment'],
+                        'details' => [
+                                'startDate' => $request['request_from_date'],
+                                'endDate' => $request['request_to_date'],
+                                'time' => $request['requested_time'],
+                                'policyId' => $request['timeoff_policy_sid'],
+                                'policyTitle' => $this->timeoff_model->getPolicyColumn('title', $request['timeoff_policy_sid'])['title']
+                            ]
+                    ]);
+                    //
+                    $this->timeoff_model->insertHistory( $in, 'timeoff_request_timeline' );
+                    // Send email notifications
+                    $this->sendNotifications($request['sid'], 'cancel');
+                    $data['hf'] = message_header_footer_domain($request['company_sid'], ucwords($request['CompanyName']));
+                    //
+                    $this->load->view('timeoff/thank_you');
 
-            break;
-        }
+                break;
+            }
+        } else {
+            $employeeName = getUserNameBySID($args['employerSid']);
+            $employee_info = get_employee_profile_info($args['employerSid']);
+            //
+            $approvers = $this->timeoff_model->getEmployeeApprovers($args['companySid'], $request['userId']);
+            $policies = $this->timeoff_model->getEmployeePoliciesById($args['companySid'], $request['employee_sid']);
+            //
+            $data = array();
+            $data['title']              = 'Time-off';
+            $data['user_first_name']    = $employee_info['first_name'];
+            $data['user_last_name']     = $employee_info['last_name'];
+            $data['user_email']         = $employee_info['email'];
+            $data['user_phone']         = isset($employee_info['PhoneNumber']) ? $employee_info['PhoneNumber'] : '';
+            $data['user_picture']       = isset($employee_info['profile_picture']) ? $employee_info['profile_picture'] : '';
+            $data['company_sid']        = $args['companySid'];
+            $data['company_name']       = $args['companyName'];
+            $data['companyName']        = $args['companyName'];
+            $data['employeeName']       = $employeeName;
+            $data['employerId']         = $args['employerSid'];
+            $data['requestId']          = $args['requestSid'];
+            $data['request']            = $request;
+            $data['policies']           = $policies;
+            $data['approvers']          = $approvers;
+            $data['employee_sid']       = $request['employee_sid'];
+            $data['varification_key']   = $key;
+            $data['request_status']     = $args['typeSid'];
+            //
+            $data['allow_update'] = 'yes';
+            //
+            if ($args['typeSid'] == 'cancelled') {
+                if ($request['request_from_date'] <= date('Y-m-d', strtotime('now')) || $request['status'] == $args['typeSid']) {
+                    $data['allow_update'] = 'no';
+                }
+            }
+            //
+            if($request['status'] == 'cancelled'){
+                $data['allow_update'] = 'no';
+            }
+            //
+            if ($args['employerSid'] == $request['employee_sid']) {
+                $data['user_type']      = 'self';
+            } else {
+                $data['user_type']      = 'approvers';
+            }
+            //
+            $this->load->view('onboarding/onboarding_public_header', $data);
+            $this->load->view('timeoff/timeoff_public_link');
+            $this->load->view('onboarding/onboarding_public_footer');
+        }    
     }
 
 
@@ -3476,11 +3555,30 @@ class Time_off extends Public_Controller
             // Create timeoff
             case "update_timeoff":
                 //
+                $update_time = 'no';
+                $update_date = 'no';
+                //
+                $old_request_data = $this->timeoff_model->getRequestById($post['requestId'], false);
+                $old_start_date = date('Y-m-d', strtotime($old_request_data['request_from_date']));
+                $old_end_date = date('Y-m-d', strtotime($old_request_data['request_to_date']));
+                $old_request_time = $old_request_data['requested_time'];
+                $new_start_date = DateTime::createfromformat('m/d/Y', $post['startDate'])->format('Y-m-d');
+                $new_end_date = DateTime::createfromformat('m/d/Y', $post['endDate'])->format('Y-m-d');
+                $new_request_time = $post['dateRows']['totalTime'];
+                //
+                if ($old_start_date != $new_start_date || $old_end_date != $new_end_date) {
+                    $update_date = 'yes';
+                }
+                //
+                if ($old_request_time != $new_request_time) {
+                    $update_time = 'yes';
+                }
+                //
                 $in = [];
                 $in['timeoff_policy_sid'] = $post['policyId'];
                 $in['requested_time'] = $post['dateRows']['totalTime'];
-                $in['request_from_date'] = DateTime::createfromformat('m/d/Y', $post['startDate'])->format('Y-m-d');
-                $in['request_to_date'] = DateTime::createfromformat('m/d/Y', $post['endDate'])->format('Y-m-d');
+                $in['request_from_date'] = $new_start_date;
+                $in['request_to_date'] = $new_end_date;
                 $in['reason'] = $post['reason'];
                 $in['timeoff_days'] = json_encode($post['dateRows']);
                 //
@@ -3512,18 +3610,43 @@ class Time_off extends Public_Controller
                 $in['action'] = 'update';
                 $in['comment'] = $post['comment'];
                 if($post['fromAdmin'] == 1){
-                    $in['note'] = json_encode([
-                        'status' => $post['status'], 
-                        'canApprove' => $canApprove, 
-                        'comment' => $post['comment'],
-                        'details' => [
-                            'startDate' => $post['startDate'],
-                            'endDate' => $post['endDate'],
-                            'time' => $post['dateRows']['totalTime'],
-                            'policyId' => $post['policyId'],
-                            'policyTitle' => $this->timeoff_model->getPolicyColumn('title', $post['policyId'])['title']
-                        ]
-                        ]);
+                    $note = array();
+                    $note['status'] = $post['status'];
+                    $note['canApprove'] = $canApprove;
+                    $note['comment'] = $post['comment'];
+                    $note['details'] = array(
+                        'startDate' => $post['startDate'],
+                        'endDate' => $post['endDate'],
+                        'time' => $post['dateRows']['totalTime'],
+                        'policyId' => $post['policyId'],
+                        'policyTitle' => $this->timeoff_model->getPolicyColumn('title', $post['policyId'])['title']
+                    );
+                    //
+                    if ($update_date == 'yes') {
+                        $note['old_start_date'] = $old_start_date;
+                        $note['old_end_date'] = $old_end_date;
+                        $note['new_start_date'] = $new_start_date;
+                        $note['new_end_date'] = $new_end_date;
+                    }
+                    //
+                    if ($update_time == 'yes') {
+                        $note['old_request_time'] = $old_request_time;
+                        $note['new_request_time'] = $new_request_time;
+                    }
+                    //
+                    $in['note'] = json_encode($note);
+                    // $in['note'] = json_encode([
+                    //     'status' => $post['status'], 
+                    //     'canApprove' => $canApprove, 
+                    //     'comment' => $post['comment'],
+                    //     'details' => [
+                    //         'startDate' => $post['startDate'],
+                    //         'endDate' => $post['endDate'],
+                    //         'time' => $post['dateRows']['totalTime'],
+                    //         'policyId' => $post['policyId'],
+                    //         'policyTitle' => $this->timeoff_model->getPolicyColumn('title', $post['policyId'])['title']
+                    //     ]
+                    //     ]);
                 } else{
                     $in['note'] = json_encode(['status' => 'pending', 'comment' => $post['reason']]);
                 }
