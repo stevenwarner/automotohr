@@ -2024,6 +2024,7 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_policies'] = 1;
             $return_access_array['time_off_policy_overwrite'] = 1;
             $return_access_array['report'] = 1;
+            $return_access_array['employee_profile'] = 1;
         } else if ($is_approver) {
             //
             $return_access_array['url'] = base_url('timeoff/requests');
@@ -2042,6 +2043,7 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_policies'] = 0;
             $return_access_array['time_off_policy_overwrite'] = 0;
             $return_access_array['report'] = 0;
+            $return_access_array['employee_profile'] = 0;
         } else {
             $return_access_array['url'] = base_url('dashboard');
             $return_access_array['dashboard'] = 0;
@@ -2059,6 +2061,7 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_policies'] = 0;
             $return_access_array['time_off_policy_overwrite'] = 0;
             $return_access_array['report'] = 0;
+            $return_access_array['employee_profile'] = 0;
         }
         
         return $return_access_array; 

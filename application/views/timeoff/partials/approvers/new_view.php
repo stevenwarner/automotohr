@@ -7,6 +7,7 @@
             </div>
             <div class="col-sm-9">
                 <span class="pull-right">
+                    <button class="btn btn-orange jsEmployeeQuickProfile"><i class="fa fa-users"></i> Employee Profile</button>
                     <button class="btn btn-orange manage_my_team"><i class="fa fa-users"></i> Manage Teams</button>
                     <a id="js-add-type-btn" href="javascript:void(0)" class="btn btn-orange">
                         <span><i class="fa fa-plus-circle"></i></span>&nbsp; ADD AN APPROVER

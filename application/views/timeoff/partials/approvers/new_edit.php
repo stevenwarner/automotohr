@@ -7,6 +7,7 @@
                 <h4>
                     Add an approver
                     <span class="pull-right">
+                    <button class="btn btn-orange jsEmployeeQuickProfile"><i class="fa fa-users"></i> Employee Profile</button>
                         <button class="btn btn-orange manage_my_team"><i class="fa fa-users"></i> Manage Teams</button>
                         <a href="javascript:void(0)" class="btn btn-orange js-view-type-btn">
                             <span><i class="fa fa-arrow-circle-left"></i></span>&nbsp; VIEW APPROVERS

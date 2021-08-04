@@ -87,6 +87,14 @@
                     'icon' => 'area-chart',
                     'segment' => 'report',
                 ],
+                [
+                    'title' => 'Employee Profile',
+                    'url' => 'javascript:void(0)',
+                    'slug' => 'employee_profile',
+                    'icon' => 'users',
+                    'segment' => 'employee_profile',
+                    'class' => 'jsEmployeeQuickProfile'
+                ]
             ]
         ]
     ];
@@ -104,7 +112,7 @@
             $tmp = '';
             foreach($tab['submenu'] as $item){
                 if($timeOffAccess[$item['slug']] != 1){ continue;}
-                $tmp .= '<li><a href="'.( $item["url"] == "javascript:void(0)" ? $item : $baseURL.$item['url'] ).'"><i class="fa fa-'.( $item['icon'] ).'"></i> '.( $item['title'] ).'</a></li>';
+                $tmp .= '<li><a href="'.( $item["url"] == "javascript:void(0)" ? $item['url'] : $baseURL.$item['url'] ).'" '.( isset($item['class']) ? 'class="'.($item['class']).'"' : '' ).'><i class="fa fa-'.( $item['icon'] ).'"></i> '.( $item['title'] ).'</a></li>';
             }
             //
             if($tmp == ''){ continue;}

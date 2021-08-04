@@ -9,6 +9,7 @@
             </div>
             <div class="col-xs-6 col-lg-6">
                 <div class="pto-top-heading-right text-right pr0">
+                <button class="btn btn-orange jsEmployeeQuickProfile"><i class="fa fa-users"></i> Employee Profile</button>
                     <a href="javascript:void(0)" class="btn btn-success manage_my_team">Manage Teams</a>
                     <a id="js-add-type-btn" href="javascript:void(0)" class="dashboard-link-btn2 cs-btn-add">
                         <span><i class=
