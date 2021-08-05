@@ -2924,6 +2924,12 @@
             send_sms_box += '               <input type="submit" class="btn btn-success" value="Send SMS" />';
             send_sms_box += '               <input type="button" class="btn btn-default js-sms-cancel-btn" value="Cancel" />';
             send_sms_box += '           </div>';
+            send_sms_box += '           <div class="form-group">';
+            send_sms_box += '               <p class="text-center">OR</p>';
+            send_sms_box += '           </div>';
+            send_sms_box += '           <div class="form-group">';
+            send_sms_box += '               <button type="button" class="btn btn-success form-control jsSMSUpdateNumber">Update Number</button>';
+            send_sms_box += '           </div>';
             send_sms_box += '       </form>';
             send_sms_box += '   </div>';
             send_sms_box += '</div>';
@@ -2983,6 +2989,14 @@
             $('#js-sms-modal').modal();
         });
 
+        //
+        $(document).on('click', '.jsSMSUpdateNumber', function(e){
+            e.preventDefault();
+            $('.js-phone-form-view').show(0);
+            $('.js-sms-view-form').hide(0);
+            $('.js-sms-view-area').hide();
+        });
+       
         //
         $(document).on('click', '.js-sms-form-btn', function(){
             $('#js-sms-modal').find('div.modal-dialog').switchClass('modal-lg', 'modal-sm');
@@ -3084,7 +3098,10 @@
                     alertify.alert('Error!', resp.Response); return;
                 }
 
-                alertify.alert('Success!', resp.Response);
+                alertify.alert('Success!', resp.Response, function(){
+                    window.location.reload();
+                });
+                return;
                 $('.js-modal-loader').hide(0);
                 $('#js-sms-modal').find('.btn').removeClass('disabled').prop('disabled', false);
                 //
