@@ -65,6 +65,10 @@
                     <td class="col-sm-3"><strong>Team(s)</strong></td>
                     <td class="col-sm-9"><?=!empty($Teams) ? implode('<br>',$Teams) : 'N/A';?></td>
                 </tr>
+                <tr>
+                    <td class="col-sm-3"><strong>Colleague(s)</strong></td>
+                    <td class="col-sm-9"><?=!empty($TeamMembers) ? implode('<br>',$TeamMembers) : 'N/A';?></td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -133,10 +137,6 @@
                 <tr>
                     <td class="col-sm-3"><strong>Reporting Manager(s)</strong></td>
                     <td class="col-sm-9"><?=!empty($ReporitngManagers) ? implode('<br>',$ReporitngManagers) : 'N/A';?></td>
-                </tr>
-                <tr>
-                    <td class="col-sm-3"><strong>Team Member(s)</strong></td>
-                    <td class="col-sm-9"><?=!empty($TeamMembers) ? implode('<br>',$TeamMembers) : 'N/A';?></td>
                 </tr>
             </tbody>
         </table>
