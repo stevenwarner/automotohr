@@ -976,6 +976,11 @@
             $a,
             $this->MyManagingDTs($employeeId, $companyId)
         );
+        //
+        $a = array_merge(
+            $a,
+            $this->MyCollegues($employeeId, $companyId, $a['Teams'])
+        );
         // Get department names
         if(!empty($a['Departments'])){
             $a['Departments'] = $this->GetDepartmentNamesByIds($a['Departments']);
@@ -1408,6 +1413,52 @@
         }
 
         return $a;
+    }
+
+
+    //
+    function MyCollegues($employeeId, $companyId, $teamIds){
+        //
+        if(empty($teamIds)){
+            return [];
+        }
+        //
+        $query =
+        $this->db
+        ->select("
+            users.sid,
+            users.first_name,
+            users.last_name,
+            users.job_title,
+            users.access_level,
+            users.access_level_plus,
+            users.pay_plan_flag,
+            users.is_executive_admin
+        ")
+        ->from('departments_employee_2_team')
+        ->join('users', 'users.sid = departments_employee_2_team.employee_sid', 'inner')
+        ->where('departments_employee_2_team.employee_sid <> ', $employeeId)
+        ->where_in('departments_employee_2_team.team_sid', $teamIds)
+        ->get();
+        //
+        $records = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(empty($records)){
+            return [];
+        }
+        //
+        $t = [];
+        //
+        foreach($records as $v){
+            //
+            $t[] = ucwords($v['first_name'].' '.$v['last_name']).trim(remakeEmployeeName($v, false));
+        }
+        //
+        unset($records);
+        //
+        return ['TeamMembers' => $t ];
     }
 
 
