@@ -298,8 +298,8 @@
                                                     <div class="document-action-required">
                                                         <?php 
                                                             if ($document['uploaded_date'] != NULL) {
-                                                                echo '<b>Uploaded On: </b>';
-                                                                echo convert_date_to_frontend_format($document['uploaded_date']);
+                                                                echo '<br><b>Uploaded On: </b>';
+                                                                echo '<strong class="text-blue">'.convert_date_to_frontend_format($document['uploaded_date']).'</strong> <br><br>';
                                                             } 
                                                         ?>
 
