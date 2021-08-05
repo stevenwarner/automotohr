@@ -1453,7 +1453,7 @@
         //
         foreach($records as $v){
             //
-            $t[] = ucwords($v['first_name'].' '.$v['last_name']).trim(remakeEmployeeName($v, false));
+            $t[] = ucwords($v['first_name'].' '.$v['last_name']).' '.trim(remakeEmployeeName($v, false));
         }
         //
         unset($records);
