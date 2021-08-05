@@ -9679,18 +9679,13 @@ class Timeoff_model extends CI_Model
         if($post['level'] != 1){
             $notIds = $this->getEmployeeTeamMemberIds($post['employerId']);
             $subordinateIds = $this->getEmployeeSubordinateIds($post['employerId']);
-            // $subordinateIds = array();
-
+            
             if (!empty($notIds)) {
                 $approvers = $notIds;
             }
-
-            // if (!empty($notIds) && !empty($subordinateIds)) {
-                $combine_employees = array_merge($notIds,$subordinateIds);
-                $notIds = array_unique($combine_employees);
-            // }
-
             
+            $combine_employees = array_merge($notIds,$subordinateIds);
+            $notIds = array_unique($combine_employees);
         }
         //
         $this->db
@@ -9700,10 +9695,10 @@ class Timeoff_model extends CI_Model
             users.user_shift_minutes,
             timeoff_policies.title,
             '.( getUserFields()).'
-        ')
-        ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
-        ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
-        ->where('timeoff_policies.is_archived', 0)
+            ')
+            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
+            ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
+            ->where('timeoff_policies.is_archived', 0)
         ->where('timeoff_requests.company_sid', $post['companyId']);
         //
         if($post['type'] != 'archive') {
@@ -9720,7 +9715,7 @@ class Timeoff_model extends CI_Model
             if($post['level'] == 0 && empty($notIds)) return [];
         }
         //
-        if($post['level'] == 0 && empty($notIds)) return [];
+        // if($post['level'] == 0 && empty($notIds)) return [];
         //
         if(!empty($notIds)) $this->db->where_in('timeoff_requests.employee_sid', $notIds);
         else if($post['filter']['employees'] != 'all'){
@@ -9772,16 +9767,21 @@ class Timeoff_model extends CI_Model
             }
             //
             foreach($requests as $k => $request){
-                if ($is_access_level_plus == 'yes') {
+                if(isset($post['isMine']) && $post['isMine'] == 1){
                     $requests[$k]['allow_update'] = 'yes';
-                } else {    
+                } else{
 
-                    if (in_array($request['employee_sid'], $approvers)) {
+                    if ($is_access_level_plus == 'yes') {
                         $requests[$k]['allow_update'] = 'yes';
-                    } else {
-                        $requests[$k]['allow_update'] = 'no';
-                    }
-                }    
+                    } else {    
+    
+                        if (in_array($request['employee_sid'], $approvers)) {
+                            $requests[$k]['allow_update'] = 'yes';
+                        } else {
+                            $requests[$k]['allow_update'] = 'no';
+                        }
+                    }    
+                }
 
                 $requests[$k]['breakdown'] = get_array_from_minutes(
                     $request['requested_time'],

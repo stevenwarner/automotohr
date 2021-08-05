@@ -696,7 +696,7 @@ function getRequestedDays(
         if (err) return;
         var time = getTimeInMinutes(`el${slug}${$(this).data('id')}`);
         //
-        if (time.requestedMinutes <= 0) {
+        if (time.requestedMinutes < 0) {
             err = true;
             alertify.alert('WARNING!', 'Please, add request time for date <b>' + ($(this).data('date')) + '</b>.', function() { return; });
         } else if (time.requestedMinutes > time.defaultTimeslotMinutes) {
