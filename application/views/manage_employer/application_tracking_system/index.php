@@ -2872,7 +2872,7 @@
             have_all_records = true;
             last_fetched_id  = 0;
 
-            megaOBJ.phone_e16 = megaOBJ.phone_e16.replace(/[^0-9]/g, '');
+            megaOBJ.phone_e16 = megaOBJ.phone_e16.toString().replace(/[^0-9]/g, '');
             //
             if(megaOBJ.phone_e16.toString().length >= 10 && megaOBJ.phone_e16.toString().substr(0, 1) == 1){
                 megaOBJ.phone_e16 = megaOBJ.phone_e16.toString().substr(1, 10);
