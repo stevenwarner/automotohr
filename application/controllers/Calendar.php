@@ -885,8 +885,6 @@ class Calendar extends Public_Controller {
             $access_level
         );
         $pto_user_access = get_pto_user_access($company_id, $employer_id);
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
         if(checkIfAppIsEnabled('timeoff')) { 
             $timeoffs = $this->timeoff_model->getIncomingRequestByPermForCalendar(
                 $this->input->post('type'),
@@ -905,20 +903,20 @@ class Calendar extends Public_Controller {
         }
         if(checkIfAppIsEnabled('performance_review')) { 
             $this->load->model('performance_management_model', 'pmm');
-            $goals = $this->pmm->getGoalsByPerm(
-                $this->input->post('type'),
-                $this->input->post('year'),
-                $this->input->post('month'),
-                $this->input->post('day'),
-                $this->input->post('week_start'),
-                $this->input->post('week_end'),
-                $company_id,
-                $employer_id,
-                $event_type,
-                $access_level,
-                $data['session']['employer_detail']
-            );
-            $events = array_merge(!is_array($events) ? array() : $events ,$goals);
+            // $goals = $this->pmm->getGoalsByPerm(
+            //     $this->input->post('type'),
+            //     $this->input->post('year'),
+            //     $this->input->post('month'),
+            //     $this->input->post('day'),
+            //     $this->input->post('week_start'),
+            //     $this->input->post('week_end'),
+            //     $company_id,
+            //     $employer_id,
+            //     $event_type,
+            //     $access_level,
+            //     $data['session']['employer_detail']
+            // );
+            // $events = array_merge(!is_array($events) ? array() : $events ,$goals);
         }
         // Get companys public holidays
         $publicHolidays = $this->timeoff_model->getCompanyPublicHolidays(
