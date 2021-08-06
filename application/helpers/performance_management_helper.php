@@ -49,11 +49,11 @@ if(!function_exists('GetPMPermissions')){
         $roles = json_decode($settings['roles'], true);
         $employees = json_decode($settings['employees'], true);
         //
-        if(in_array($employeeRole, $roles)){
+        if(!empty($roles) && in_array($employeeRole, $roles)){
             return true;
         }
         //
-        if(in_array($employeeId, $employees)){
+        if(!empty($employees) && in_array($employeeId, $employees)){
             return true;
         }
 
