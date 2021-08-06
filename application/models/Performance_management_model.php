@@ -8,7 +8,7 @@ class Performance_management_model extends CI_Model{
     private $DE2T = 'departments_employee_2_team';
     private $PMT = 'performance_management_templates';
     private $PMCT = 'performance_management_company_templates';
-    private $PMS = 'pM_settings';
+    private $PMS = 'pm_settings';
     private $R = 'pm_reviews';
     private $PRQ = 'pm_review_questions';
     private $PRA = 'pm_review_answers';
