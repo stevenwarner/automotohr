@@ -26,7 +26,7 @@
                 <div class="col-sm-8 col-xs-12">
                     <select id="jsReviewRolesInp" multiple>
                         <?php   foreach(getRoles() as $index => $role): ?>
-                        <option value="<?=$index;?>" <?=in_array($index, $roles) ? 'selected' : '';?>><?=$role;?></option>
+                        <option value="<?=$index;?>" <?=!empty($roles) && in_array($index, $roles) ? 'selected' : '';?>><?=$role;?></option>
                         <?php   endforeach; ?>
                     </select>
                 </div>
@@ -45,7 +45,7 @@
                     <select id="jsReviewDepartmentsInp" multiple>
                         <?php if(!empty($company_dt['Departments'])): ?>
                         <?php   foreach($company_dt['Departments'] as $department): ?>
-                        <option value="<?=$department['Id'];?>" <?=in_array($department['Id'], $departments) ? 'selected' : '';?>><?=$department['Name'];?></option>
+                        <option value="<?=$department['Id'];?>" <?=!empty($departments) && in_array($department['Id'], $departments) ? 'selected' : '';?>><?=$department['Name'];?></option>
                         <?php   endforeach; ?>
                         <?php endif; ?>
                     </select>
@@ -65,7 +65,7 @@
                     <select id="jsReviewTeamsInp" multiple>
                         <?php if(!empty($company_dt['Teams'])): ?>
                         <?php   foreach($company_dt['Teams'] as $team): ?>
-                        <option value="<?=$team['Id'];?>" <?=in_array($team['Id'], $teams) ? 'selected' : '';?>><?=$team['Name'];?></option>
+                        <option value="<?=$team['Id'];?>" <?=!empty($teams) && in_array($team['Id'], $teams) ? 'selected' : '';?>><?=$team['Name'];?></option>
                         <?php   endforeach; ?>
                         <?php endif; ?>
                     </select>
@@ -84,7 +84,7 @@
                     <select id="jsReviewEmployeesInp" multiple>
                         <?php if(!empty($company_employees)): ?>
                         <?php   foreach($company_employees as $employee): ?>
-                        <option value="<?=$employee['Id'];?>" <?=in_array($employee['Id'], $employees) ? 'selected' : '';?>><?=$employee['Name'];?> <?=$employee['Role'];?></option>
+                        <option value="<?=$employee['Id'];?>" <?=!empty($employees) && in_array($employee['Id'], $employees) ? 'selected' : '';?>><?=$employee['Name'];?> <?=$employee['Role'];?></option>
                         <?php   endforeach; ?>
                         <?php endif; ?>
                     </select>
