@@ -248,6 +248,7 @@ class Performance_management_model extends CI_Model{
         $this->db
         ->select(is_array($columns) ? implode(',', $columns) : $columns)
         ->where('is_archived', $archived)
+        ->where('company_sid', $companyId)
         ->order_by('name', 'ASC');
         // For pagination
         if($page != 0){

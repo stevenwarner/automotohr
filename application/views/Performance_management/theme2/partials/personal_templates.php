@@ -16,11 +16,6 @@
                             aria-hidden="true"></i></button>&nbsp;View the template question(s).</p>
                 <p class="csF16"><button class="btn btn-xs btn-black"><i class="fa fa-check-circle"
                             aria-hidden="true"></i></button>&nbsp;Select the template to start with.</p>
-                <p class="csF14"><strong><em>Note:</em></strong></p>
-                <p class="csF14"><button class="btn btn-xs btn-black"><i class="fa fa-eye"
-                            aria-hidden="true"></i></button>&nbsp; View all the questions.</p>
-                <p class="csF14"><button class="btn btn-xs btn-black"><i class="fa fa-check-circle"
-                            aria-hidden="true"></i></button>&nbsp; Use the template for the review.</p>
             </div>
         </div>
         <div class="row">
