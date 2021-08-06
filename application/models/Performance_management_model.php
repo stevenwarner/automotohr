@@ -8,6 +8,7 @@ class Performance_management_model extends CI_Model{
     private $DE2T = 'departments_employee_2_team';
     private $PMT = 'performance_management_templates';
     private $PMCT = 'performance_management_company_templates';
+    private $PMS = 'pM_settings';
     private $R = 'pm_reviews';
     private $PRQ = 'pm_review_questions';
     private $PRA = 'pm_review_answers';
@@ -1788,6 +1789,47 @@ class Performance_management_model extends CI_Model{
         $review = array_merge($review, $this->GetReviewerAnswers($reviewId, $revieweeId, $reviewerId, $isManager));
         //
         return $review;
+    }
+
+    //
+    function CheckAndInsertData($post){
+        //
+        $data = [];
+        //
+        $data['roles'] = isset($post['roles']) ? json_encode($post['roles']) : '{}';
+        $data['departments'] = isset($post['departments']) ? json_encode($post['departments']) : '{}';
+        $data['teams'] = isset($post['teams']) ? json_encode($post['teams']) : '{}';
+        $data['employees'] = isset($post['employees']) ? json_encode($post['employees']) : '{}';
+        //
+        $data['last_updated_by'] = $post['employerId'];
+        $data['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        if(
+            $this->db
+            ->where('company_sid', $post['companyId'])
+            ->count_all_results($this->PMS)
+        ){
+            $this->db
+            ->where('company_sid', $post['companyId'])
+            ->update($this->PMS, $data);
+        } else{
+            //
+            $data['company_sid'] = $post['companyId'];
+            $data['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            $this->db
+            ->insert($this->PMS, $data);
+        }
+    }
+
+
+    function GetSettings($companyId){
+        //
+        return
+        $this->db
+        ->where('company_sid', $companyId)
+        ->get($this->PMS)
+        ->row_array();
     }
 
     

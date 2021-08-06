@@ -37,3 +37,26 @@ if(!function_exists('res')){
         exit(0);
     }
 }
+
+
+if(!function_exists('GetPMPermissions')){
+    function GetPMPermissions($companyId, $employeeId, $employeeRole, $_this){
+        //
+        $employeeRole = preg_replace('/[^a-z]/i', '_', strtolower($employeeRole));
+        //
+        $settings = $_this->pmm->GetSettings($companyId);
+        //
+        $roles = json_decode($settings['roles'], true);
+        $employees = json_decode($settings['employees'], true);
+        //
+        if(in_array($employeeRole, $roles)){
+            return true;
+        }
+        //
+        if(in_array($employeeId, $employees)){
+            return true;
+        }
+
+        return false;
+    }
+}

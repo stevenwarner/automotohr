@@ -99,3 +99,6 @@ manage_ams/sitemap.xml
 
 staging
 staging/*
+
+assets/performance_management/videos
+assets/performance_management/videos/*

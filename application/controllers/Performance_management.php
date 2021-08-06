@@ -430,6 +430,35 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}pd",  $this->pargs);
     }
 
+    /**
+     * Create Review
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function settings(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Settings';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        // Set company department and teams
+        $this->pargs['company_dt'] = $this->pmm->GetCompanyDepartmentAndTeams($this->pargs['companyId']);
+        // Get Settings
+        $this->pargs['settings'] = $this->pmm->GetSettings($this->pargs['companyId']);
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}settings");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
     
 
     // AJAX REQUESTS
@@ -1333,6 +1362,25 @@ class Performance_management extends Public_Controller{
         //
         $resp['Status'] = true;
         $resp['Msg'] = 'Procees';
+        //
+        $this->res($resp);
+    }
+    
+    //
+    function UpdateSettings(){
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+            $this->res($resp, true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->pmm->CheckAndInsertData($post);
+        //
+        $resp['Status'] = true;
+        $resp['Msg'] = 'You have successfully updated the settings.';
         //
         $this->res($resp);
     }

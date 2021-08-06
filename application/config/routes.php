@@ -1302,6 +1302,8 @@ $route['performance-management/feedback/(:num)/(:num)/(:num)']['get'] = 'Perform
 //
 $route['performance-management/reviews'] = 'Performance_management/reviews';
 $route['performance-management/my-reviews'] = 'Performance_management/MyReviews';
+//
+$route['performance-management/settings'] = 'Performance_management/settings';
 
 // AJAX
 $route['performance-management/get-template-questions/(:any)/(:num)']['get'] = 'Performance_management/template_questions/$2/$1';
@@ -1327,6 +1329,7 @@ $route['performance-management/open_goal']['post'] = 'Performance_management/Ope
 $route['performance-management/update_goal']['post'] = 'Performance_management/UpdateGoal';
 $route['performance-management/add_comment']['post'] = 'Performance_management/AddComment';
 $route['performance-management/goal_comments/(:num)']['get'] = 'Performance_management/GetGoalComments/$1';
+$route['performance-management/update_settings']['post'] = 'Performance_management/UpdateSettings';
 // Cron
 // Replicate and Start/End cron job
 $route['review_start_and_replicate/(:any)']['cli'] = 'Cron_common/PMMCronStartAndEndReplicate/$1';
