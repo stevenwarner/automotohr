@@ -349,7 +349,7 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
                                                     ?>
                                         <video controls style="width: 100%;" preload="metadata">
                                             <source src="<?=getVideoURL($reviewId,$question['question']['video']);?>"
-                                                type="image/mp4">
+                                                type="video/mp4">
                                             </source>
                                             <track label="English" kind="captions" srclang="en" default />
                                         </video>
