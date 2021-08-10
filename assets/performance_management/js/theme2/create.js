@@ -1649,10 +1649,11 @@ $(function() {
                 $('#jsReviewEmployeesInp').select2('val', obj.Visibility.employees);
             }
             //
-            if (pm.review.questions) {
-                //
-                obj.Questions = JSON.parse(pm.review.questions);
-            }
+        }
+        //
+        if (pm.review.questions) {
+            //
+            obj.Questions = JSON.parse(pm.review.questions);
         }
         //
 
