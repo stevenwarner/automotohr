@@ -1762,7 +1762,9 @@ $(function() {
     //
     function loadQuestions(shift) {
         //
+        console.log(obj.Questions);
         if (!obj.Questions || obj.Questions.length === 0) {
+            stepMover('questions');
             return;
         }
         //
