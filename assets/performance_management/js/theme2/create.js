@@ -1531,124 +1531,128 @@ $(function() {
             obj.Id = pm.review.reviewId;
         }
         //
-        if (pm.review.title) {
-            obj.Title = pm.review.title;
-            $('#jsReviewTitleInp').val(obj.Title);
-        }
-        //
-        if (pm.review.description) {
-            obj.Description = pm.review.description;
-            $('#jsReviewDescriptionInp').val(obj.Description);
-        }
-        //
-        if (pm.review.frequency_type) {
+        if (!pm.section) {
+
             //
-            $('.jsReviewFrequencyRowOne').addClass('dn');
-            $('.jsReviewFrequencyRowRecur').addClass('dn');
-            $('.jsReviewFrequencyRowCustom').addClass('dn');
-            //
-            obj.Schedule.frequency_type = pm.review.frequency_type;
-            $('.jsReviewFrequencyInp[value="' + (obj.Schedule.frequency_type) + '"]').click();
-            //
-            if (obj.Schedule.frequency_type === 'recurring') {
-                $('.jsReviewFrequencyRowRecur').removeClass('dn');
-            } else if (obj.Schedule.frequency_type === 'custom') {
-                $('.jsReviewFrequencyRowCustom').removeClass('dn');
-            } else {
-                $('.jsReviewFrequencyRowOne').removeClass('dn');
+            if (pm.review.title) {
+                obj.Title = pm.review.title;
+                $('#jsReviewTitleInp').val(obj.Title);
             }
-        }
-        //
-        if (pm.review.start_date) {
-            obj.Schedule.start_date = moment(pm.review.start_date, "YYYY-MM-DD").format("MM/DD/YYYY");
-            $('#jsReviewStartDateInp').val(obj.Schedule.start_date);
-        }
-        //
-        if (pm.review.end_date) {
-            obj.Schedule.end_date = moment(pm.review.end_date, "YYYY-MM-DD").format("MM/DD/YYYY");
-            $('#jsReviewEndDateInp').val(obj.Schedule.end_date);
-        }
-        //
-        if (pm.review.recur_type) {
-            obj.Schedule.recur_type = pm.review.recur_type;
-            $('#jsReviewRecurType[value="' + (obj.Schedule.recur_type) + '"]').prop('checked', true);
-        }
-        //
-        if (pm.review.recur_value) {
-            obj.Schedule.recur_value = pm.review.recur_value;
-            $('#jsReviewRecurValue').val(obj.Schedule.recur_value);
-        }
-        //
-        if (pm.review.review_due_type) {
-            obj.Schedule.review_due_type = pm.review.review_due_type;
-            $('#jsReviewCustomRunDueType[value="' + (obj.Schedule.review_due_type) + '"]').prop('checked', true);
-        }
-        //
-        if (pm.review.review_due_value) {
-            obj.Schedule.review_due_value = pm.review.review_due_value;
-            $('#jsReviewCustomRunDueValue').val(obj.Schedule.review_due_value);
-        }
-        //
-        if (pm.review.repeat_review) {
-            obj.Schedule.repeat_review = pm.review.repeat_review;
-            $('#jsReviewCustomRunEveryYear[value="' + (obj.Schedule.repeat_review) + '"]').prop('checked', true);
-        }
-        //
-        if (pm.review.custom_runs) {
-            obj.Schedule.custom_runs = JSON.parse(pm.review.custom_runs);
-            $.each(obj.Schedule.custom_runs, function(randomId, v) {
-                //
-                var html = '';
-                html += '<!-- Row 2 -->';
-                html += '<div class="row jsReviewCustomRunRow" data-id="' + (randomId) + '">';
-                html += '    <div class="col-md-2 col-xs-3">';
-                html += '        <input type="text" class="form-control jsReviewCustomRunValue" placeholder="5" id="jsReviewCustomRunValue' + (randomId) + '" value="' + (v.value) + '"/>';
-                html += '    </div>';
-                html += '    <div class="col-md-4 col-xs-4">';
-                html += '        <select class="jsReviewCustomRunType" id="jsReviewCustomRunType' + (randomId) + '">';
-                html += '            <option value="days">Day(s)</option>';
-                html += '            <option value="weeks">Week(s)</option>';
-                html += '            <option value="months">Month(s)</option>';
-                html += '        </select>';
-                html += '    </div>';
-                html += '    <div class="col-md-4 col-xs-4">';
-                html += '        <p class="csF16">After Employee\'s (Reviewee\'s) Hire Date</p>';
-                html += '    </div>';
-                html += '    <div class="col-md-1 col-xs-1">';
-                html += '        <i class="fa fa-trash-o csF18 csB7 csCP csInfoTxt jsReviewCustomRunDelete"  aria-hidden="true" title="Delete this custom run" placement="top"> </i>';
-                html += '    </div>';
-                html += '</div>';
-                //
-                $('#jsReviewCustomRunContainer').append(html);
-                //
-                $('#jsReviewCustomRunType' + (randomId) + '').select2({ minimumResultsForSearch: -1 });
-                $('#jsReviewCustomRunType' + (randomId) + '').select2('val', v.type);
-            });
-        }
-        //
-        if (pm.review.roles) {
-            obj.Visibility.roles = pm.review.roles.split(',');
-            $('#jsReviewRolesInp').select2('val', obj.Visibility.roles);
-        }
-        //
-        if (pm.review.departments) {
-            obj.Visibility.departments = pm.review.departments.split(',');
-            $('#jsReviewDepartmentsInp').select2('val', obj.Visibility.departments);
-        }
-        //
-        if (pm.review.teams) {
-            obj.Visibility.teams = pm.review.teams.split(',');
-            $('#jsReviewTeamsInp').select2('val', obj.Visibility.teams);
-        }
-        //
-        if (pm.review.employees) {
-            obj.Visibility.employees = pm.review.employees.split(',');
-            $('#jsReviewEmployeesInp').select2('val', obj.Visibility.employees);
-        }
-        //
-        if (pm.review.questions) {
             //
-            obj.Questions = JSON.parse(pm.review.questions);
+            if (pm.review.description) {
+                obj.Description = pm.review.description;
+                $('#jsReviewDescriptionInp').val(obj.Description);
+            }
+            //
+            if (pm.review.frequency_type) {
+                //
+                $('.jsReviewFrequencyRowOne').addClass('dn');
+                $('.jsReviewFrequencyRowRecur').addClass('dn');
+                $('.jsReviewFrequencyRowCustom').addClass('dn');
+                //
+                obj.Schedule.frequency_type = pm.review.frequency_type;
+                $('.jsReviewFrequencyInp[value="' + (obj.Schedule.frequency_type) + '"]').click();
+                //
+                if (obj.Schedule.frequency_type === 'recurring') {
+                    $('.jsReviewFrequencyRowRecur').removeClass('dn');
+                } else if (obj.Schedule.frequency_type === 'custom') {
+                    $('.jsReviewFrequencyRowCustom').removeClass('dn');
+                } else {
+                    $('.jsReviewFrequencyRowOne').removeClass('dn');
+                }
+            }
+            //
+            if (pm.review.start_date) {
+                obj.Schedule.start_date = moment(pm.review.start_date, "YYYY-MM-DD").format("MM/DD/YYYY");
+                $('#jsReviewStartDateInp').val(obj.Schedule.start_date);
+            }
+            //
+            if (pm.review.end_date) {
+                obj.Schedule.end_date = moment(pm.review.end_date, "YYYY-MM-DD").format("MM/DD/YYYY");
+                $('#jsReviewEndDateInp').val(obj.Schedule.end_date);
+            }
+            //
+            if (pm.review.recur_type) {
+                obj.Schedule.recur_type = pm.review.recur_type;
+                $('#jsReviewRecurType[value="' + (obj.Schedule.recur_type) + '"]').prop('checked', true);
+            }
+            //
+            if (pm.review.recur_value) {
+                obj.Schedule.recur_value = pm.review.recur_value;
+                $('#jsReviewRecurValue').val(obj.Schedule.recur_value);
+            }
+            //
+            if (pm.review.review_due_type) {
+                obj.Schedule.review_due_type = pm.review.review_due_type;
+                $('#jsReviewCustomRunDueType[value="' + (obj.Schedule.review_due_type) + '"]').prop('checked', true);
+            }
+            //
+            if (pm.review.review_due_value) {
+                obj.Schedule.review_due_value = pm.review.review_due_value;
+                $('#jsReviewCustomRunDueValue').val(obj.Schedule.review_due_value);
+            }
+            //
+            if (pm.review.repeat_review) {
+                obj.Schedule.repeat_review = pm.review.repeat_review;
+                $('#jsReviewCustomRunEveryYear[value="' + (obj.Schedule.repeat_review) + '"]').prop('checked', true);
+            }
+            //
+            if (pm.review.custom_runs) {
+                obj.Schedule.custom_runs = JSON.parse(pm.review.custom_runs);
+                $.each(obj.Schedule.custom_runs, function(randomId, v) {
+                    //
+                    var html = '';
+                    html += '<!-- Row 2 -->';
+                    html += '<div class="row jsReviewCustomRunRow" data-id="' + (randomId) + '">';
+                    html += '    <div class="col-md-2 col-xs-3">';
+                    html += '        <input type="text" class="form-control jsReviewCustomRunValue" placeholder="5" id="jsReviewCustomRunValue' + (randomId) + '" value="' + (v.value) + '"/>';
+                    html += '    </div>';
+                    html += '    <div class="col-md-4 col-xs-4">';
+                    html += '        <select class="jsReviewCustomRunType" id="jsReviewCustomRunType' + (randomId) + '">';
+                    html += '            <option value="days">Day(s)</option>';
+                    html += '            <option value="weeks">Week(s)</option>';
+                    html += '            <option value="months">Month(s)</option>';
+                    html += '        </select>';
+                    html += '    </div>';
+                    html += '    <div class="col-md-4 col-xs-4">';
+                    html += '        <p class="csF16">After Employee\'s (Reviewee\'s) Hire Date</p>';
+                    html += '    </div>';
+                    html += '    <div class="col-md-1 col-xs-1">';
+                    html += '        <i class="fa fa-trash-o csF18 csB7 csCP csInfoTxt jsReviewCustomRunDelete"  aria-hidden="true" title="Delete this custom run" placement="top"> </i>';
+                    html += '    </div>';
+                    html += '</div>';
+                    //
+                    $('#jsReviewCustomRunContainer').append(html);
+                    //
+                    $('#jsReviewCustomRunType' + (randomId) + '').select2({ minimumResultsForSearch: -1 });
+                    $('#jsReviewCustomRunType' + (randomId) + '').select2('val', v.type);
+                });
+            }
+            //
+            if (pm.review.roles) {
+                obj.Visibility.roles = pm.review.roles.split(',');
+                $('#jsReviewRolesInp').select2('val', obj.Visibility.roles);
+            }
+            //
+            if (pm.review.departments) {
+                obj.Visibility.departments = pm.review.departments.split(',');
+                $('#jsReviewDepartmentsInp').select2('val', obj.Visibility.departments);
+            }
+            //
+            if (pm.review.teams) {
+                obj.Visibility.teams = pm.review.teams.split(',');
+                $('#jsReviewTeamsInp').select2('val', obj.Visibility.teams);
+            }
+            //
+            if (pm.review.employees) {
+                obj.Visibility.employees = pm.review.employees.split(',');
+                $('#jsReviewEmployeesInp').select2('val', obj.Visibility.employees);
+            }
+            //
+            if (pm.review.questions) {
+                //
+                obj.Questions = JSON.parse(pm.review.questions);
+            }
         }
         //
 
