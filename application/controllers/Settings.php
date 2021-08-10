@@ -851,7 +851,7 @@ class Settings extends Public_Controller
 
                             if ($_SERVER['SERVER_NAME'] != 'localhost') {
                                 $result = $json_client->api2_query($auth_user, "AddonDomain", "addaddondomain", $args);
-                                sendMail(FROM_EMAIL_DEV, 'ahassan@egenienext.com', 'New addon domain - Domain Management', $result);
+                                sendMail(FROM_EMAIL_DEV, 'mubashar.ahmed@egenienext.com', 'New addon domain - Domain Management', $result);
                             }
                         } else { // make subdomain at server
                             $server = STORE_DOMAIN;
@@ -868,7 +868,7 @@ class Settings extends Public_Controller
 
                             if ($_SERVER['SERVER_NAME'] != 'localhost') {
                                 $result = $json_client->api2_query($auth_user, 'SubDomain', 'addsubdomain', $args);
-                                sendMail(FROM_EMAIL_DEV, 'ahassan@egenienext.com', 'New Api Result - Domain Management', $result);
+                                sendMail(FROM_EMAIL_DEV, 'mubashar.ahmed@egenienext.com', 'New Api Result - Domain Management', $result);
                             }
                         }
                         $this->session->set_flashdata('message', '<b>Success:</b> Your domain is updated successfully!');
