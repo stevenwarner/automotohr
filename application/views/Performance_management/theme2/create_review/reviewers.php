@@ -1,11 +1,7 @@
 <?php 
-    $employeeSelect = '';
+    $employeeSelect = $efj['EmployeeRows'];
 ?>
-<?php if(!empty($company_employees)): ?>
-<?php   foreach($company_employees as $employee): ?>
-<?php $employeeSelect .= '<option value="'.( $employee['Id']).'">'.($employee['Name']).' '.($employee['Role']).'</option>'; ?>
-<?php   endforeach; ?>
-<?php endif; ?>
+
 
 <!-- Reviewees -->
 <div class="panel panel-theme">
@@ -104,13 +100,11 @@
                     <div class="row dn jsReviewReviewerSelectBox">
                         <div class="col-sm-5 col-xs-12">
                             <select class="select2 jsReviewReviewerSelectBoxIncluded" multiple>
-                                <?=$employeeSelect;?>
                             </select>
                             <p class="csF14 csB7">Included Reviewers</p>
                         </div>
                         <div class="col-sm-5 col-xs-12">
                             <select class="select2 jsReviewReviewerSelectBoxExcluded" multiple>
-                                <?=$employeeSelect;?>
                             </select>
                             <p class="csF14 csB7">Excluded Reviewers</p>
                         </div>

@@ -45,6 +45,10 @@
         // Employees
         window.pm.employees = <?=json_encode($company_employees);?>;
     <?php endif; ?>
+    <?php if(isset($section) ):?>
+        // Employees
+        window.pm.section = "<?=$section;?>";
+    <?php endif; ?>
 </script>
 
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />

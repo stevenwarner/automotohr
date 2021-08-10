@@ -63,11 +63,7 @@
                             </div>
                             <div class="col-md-12 col-xs-12">
                                 <select id="jsReviewRevieweeFilterDepartments" multiple>
-                                    <?php if(!empty($company_dt['Departments'])): ?>
-                                    <?php   foreach($company_dt['Departments'] as $department): ?>
-                                        <option value="<?=$department['Id'];?>"><?=$department['Name'];?></option>
-                                    <?php   endforeach; ?>
-                                    <?php endif; ?>
+                                    <?=$efj['DepartmentRows'];?>
                                 </select>
                             </div>
                         </div>
@@ -80,11 +76,7 @@
                             </div>
                             <div class="col-md-12 col-xs-12">
                                 <select id="jsReviewRevieweeFilterTeams" multiple>
-                                    <?php if(!empty($company_dt['Teams'])): ?>
-                                    <?php   foreach($company_dt['Teams'] as $team): ?>
-                                        <option value="<?=$team['Id'];?>"><?=$team['Name'];?></option>
-                                    <?php   endforeach; ?>
-                                    <?php endif; ?>
+                                    <?=$efj['TeamRows'];?>
                                 </select>
                             </div>
                         </div>
@@ -97,11 +89,7 @@
                             </div>
                             <div class="col-md-12 col-xs-12">
                                 <select id="jsReviewRevieweeFilterEmployees" multiple>
-                                    <?php if(!empty($company_employees)): ?>
-                                    <?php   foreach($company_employees as $employee): ?>
-                                        <option value="<?=$employee['Id'];?>"><?=$employee['Name'];?> <?=$employee['Role'];?></option>
-                                    <?php   endforeach; ?>
-                                    <?php endif; ?>
+                                    <?=$efj['EmployeeRows'];?>
                                 </select>
                             </div>
                         </div>
@@ -153,11 +141,7 @@
                             </div>
                             <div class="col-md-12 col-xs-12">
                                 <select id="jsReviewRevieweeFilterExcludeEmployees" multiple>
-                                    <?php if(!empty($company_employees)): ?>
-                                    <?php   foreach($company_employees as $employee): ?>
-                                        <option value="<?=$employee['Id'];?>"><?=$employee['Name'];?> <?=$employee['Role'];?></option>
-                                    <?php   endforeach; ?>
-                                    <?php endif; ?>
+                                    <?=$efj['EmployeeRows'];?>
                                 </select>
                             </div>
                         </div>

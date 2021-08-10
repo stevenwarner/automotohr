@@ -366,7 +366,7 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function create_review($id = 0){
+    function create_review($id = 0, $section = false){
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -385,6 +385,8 @@ class Performance_management extends Public_Controller{
         $this->pargs['company_templates'] = $this->pmm->GetPersonalTemplates($this->pargs['companyId']);
         // Get Review
         $this->pargs['review'] = $this->pmm->GetReviewRowById($id, $this->pargs['companyId']);
+        //
+        $this->pargs['section'] = $section;
         //
         if($id !== 0 &&$this->pargs['review']['is_draft'] == 0){
             redirect('performance-management/reviews','refresh');
@@ -911,7 +913,10 @@ class Performance_management extends Public_Controller{
                 //
                 if(isset($post['data']['excluded'])){
                     $data_array['excluded_employees'] = implode(',', $post['data']['excluded']);
+                } else{
+                    $data_array['excluded_employees'] = '';
                 }
+                $data_array['reviewers'] = '';
                 
                 $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
                 //

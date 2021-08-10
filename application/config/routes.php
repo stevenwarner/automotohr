@@ -1292,6 +1292,7 @@ $route['performance-management/pd/(:any)/(:num)/(:num)/(:num)']['get'] = 'Perfor
 // Create
 $route['performance-management/review/create'] = 'Performance_management/create_review';
 $route['performance-management/review/create/(:num)'] = 'Performance_management/create_review/$1';
+$route['performance-management/review/create/(:num)/(:any)'] = 'Performance_management/create_review/$1/$2';
 // Report
 $route['performance-management/report'] = 'Performance_management/report';
 $route['performance-management/report/(:any)/(:any)/(:any)/(:any)'] = 'Performance_management/report/$1/$2/$3/$4';
