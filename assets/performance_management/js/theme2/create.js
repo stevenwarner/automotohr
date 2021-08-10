@@ -174,7 +174,7 @@ $(function() {
         //
         if ($(this).data('to') == 'schedule') {
 
-            window.location.href = pm.urls.pbase + 'review/create/' + obj.Id;
+            window.location.href = pm.urls.pbase + 'review/create/' + obj.Id + '/schedule';
             return;
         }
         //
@@ -1531,7 +1531,7 @@ $(function() {
             obj.Id = pm.review.reviewId;
         }
         //
-        if (!pm.section) {
+        if (!pm.section || pm.section == 'schedule') {
 
             //
             if (pm.review.title) {
@@ -1762,7 +1762,6 @@ $(function() {
     //
     function loadQuestions(shift) {
         //
-        console.log(obj.Questions);
         if (!obj.Questions || obj.Questions.length === 0) {
             stepMover('questions');
             return;

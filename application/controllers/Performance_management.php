@@ -392,6 +392,25 @@ class Performance_management extends Public_Controller{
             redirect('performance-management/reviews','refresh');
             return;
         }
+        if($id !== 0){
+            if(empty($section)){
+                //
+                if(!empty($this->pargs['review']['reviewers'])){
+                    redirect('performance-management/review/create/'.($id).'/reviewers','refresh');
+                    return;
+                }
+                //
+                if(!empty($this->pargs['review']['reviewees'])){
+                    redirect('performance-management/review/create/'.($id).'/reviewees','refresh');
+                    return;
+                }
+                //
+                if(!empty($this->pargs['review']['questions'])){
+                    redirect('performance-management/review/create/'.($id).'/questions','refresh');
+                    return;
+                }
+            }
+        }
         
         // Set Job titles
         $this->pargs['job_titles'] = array_filter(array_unique(array_column($this->pargs['company_employees'], 'JobTitle')), function($job){

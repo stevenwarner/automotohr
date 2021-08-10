@@ -91,7 +91,7 @@
                 
                 <!-- Step 1 -->
                 <?php 
-                    if(empty($section)){
+                    if(empty($section) ||  $section == 'schedule'){
                         ?>
                         <!-- Template -->
                         <div class="jsPageSection" data-page="template">
