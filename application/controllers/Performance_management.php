@@ -562,7 +562,7 @@ class Performance_management extends Public_Controller{
         }
 
         //
-        $this->load->view($this->pp.'create_review/template_questions_view', ['questions' => json_decode($template['questions'])]);
+        $this->load->view($this->pp.'create_review/template_questions_view', ['id' => $id, 'questions' => json_decode($template['questions'])]);
     }
 
     /**

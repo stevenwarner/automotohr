@@ -32,32 +32,42 @@
                                 }
                             ?>
                             <?php 
-                                if(!empty($question->video_help)){
+                                if(!empty($question->video_help) && $question->video_help != 'none'){
                                     ?>
                                     <!-- Video Help -->
-                                    <video controls preload="metadata" width="100%">
-                                        <source src="<?=$question->video_help;?>" type="video/webm">
+                                    <video controls preload="metadata" width="50%">
+                                        <source src="<?=site_url('assets/performance_management/videos/templates/'.($id).'/'.$question->video);?>" type="video/webm">
                                         <track label="English" kind="captions" srclang="en" src="resources/myvideo-en.vtt" default>
                                     </video>
                                     <?php
                                 }
                             ?>
                             <?php 
-                                if(in_array($question->question_type, ['text-n-rating', 'rating'])){
+                                if(in_array($question->question_type, ['text-n-rating', 'rating', 'text_rating'])){
                                     ?>
                                     <!-- Rating Scale -->
                                     <div class="csRatingScale mb30">
                                         <ul>
-                                    <?php
-                                    for($j = 1; $j <= $question->scale; $j++){
-                                        ?>
-                                        <li>
-                                            <p class="csF16 csB7"><?=$j;?></p>
-                                            <p class="csF16"><?=$question->label_question->$j;?></p>
-                                        </li>
-                                        <?php
-                                    }
-                                    ?>
+                                            <li>
+                                                <p class="csF16 csB7">1</p>
+                                                <p class="csF16">Strongly Agree</p>
+                                            </li>
+                                            <li>
+                                                <p class="csF16 csB7">2</p>
+                                                <p class="csF16">Agree</p>
+                                            </li>
+                                            <li>
+                                                <p class="csF16 csB7">3</p>
+                                                <p class="csF16">Neutral</p>
+                                            </li>
+                                            <li>
+                                                <p class="csF16 csB7">4</p>
+                                                <p class="csF16">Disagree</p>
+                                            </li>
+                                            <li>
+                                                <p class="csF16 csB7">5</p>
+                                                <p class="csF16">Strongly Disagree</p>
+                                            </li>
                                         </ul>
                                     </div>
                                     <?php
