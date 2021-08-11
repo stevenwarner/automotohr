@@ -2,9 +2,9 @@
 $(function() {
 
     var obj = {
-        Id: pm.template.sid !== undefined ? pm.template.sid : 0,
-        Title: pm.template.name !== undefined ? pm.template.name : '',
-        Questions: pm.template.questions !== undefined && pm.template.questions != '' ? JSON.parse(pm.template.questions) : [],
+        Id: pm.template !== undefined ? pm.template.sid : 0,
+        Title: pm.template !== undefined ? pm.template.name : '',
+        Questions: pm.template !== undefined && pm.template.questions != '' ? JSON.parse(pm.template.questions) : [],
     };
 
     loadQuestions();
@@ -473,7 +473,7 @@ $(function() {
                 //
                 $('#jsReviewQuestionListBox').removeClass('dn');
                 $('#jsReviewQuestionAddBox').addClass('dn');
-                $('.jsPageSection[data-page="schedule"]').addClass('dn');
+                $('.jsPageSection[data-page="schedule"]').removeClass('dn');
             });
         });
     }
@@ -505,7 +505,7 @@ $(function() {
                 //
                 $('#jsReviewQuestionListBox').removeClass('dn');
                 $('#jsReviewQuestionAddBox').addClass('dn');
-                $('.jsPageSection[data-page="schedule"]').addClass('dn');
+                $('.jsPageSection[data-page="schedule"]').removeClass('dn');
             });
         });
     }

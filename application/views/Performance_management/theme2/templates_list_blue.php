@@ -10,6 +10,12 @@
                     </h5>
                 </div>
                 <div class="col-xs-12 col-md-10">
+                    <span class="pull-right">
+                        <a href="<?=purl('template/create')?>" class="btn btn-orange csF16 csB7">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Create A Template
+                        </a>
+                    </span>
+                    <div class="clearfix"></div>
                 </div>
             </div>
         </div>
