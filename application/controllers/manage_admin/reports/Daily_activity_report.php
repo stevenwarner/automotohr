@@ -140,26 +140,32 @@ class Daily_activity_report extends Admin_Controller
                     $end_date = $my_date->format('Y-m-d');
                     $end_date = $end_date . ' 23:59:59';
 
-                    $companies = $this->employer_login_duration_model->get_all_companies();
-
+                    $companies = $this->employer_login_duration_model->get_all_companies(['sid','CompanyName']);
+                    
+                    
                     if(!empty($companies)){
                         foreach($companies as $key => $company){
                             $company_sid = $company['sid'];
-
-                            $report_data = $this->employer_login_duration_model->generate_activity_log_data_for_view($company_sid, $start_date, $end_date);
-
+                            
+                            $report_data = $this->employer_login_duration_model->generate_activity_log_data_for_view(
+                                $company_sid, 
+                                $start_date, 
+                                $end_date
+                            );
+                            
                             $companies[$key]['activities_data'] = $report_data;
                         }
                     }
 
-
-
+                    
+                    
+                    
                     $my_data['companies_logs'] = $companies;
                     $my_data['report_date'] = $this->input->post('report_date');
                     $my_data['report_type'] = 'daily';
-
-
-                    $this->load->view('manage_admin/reports/activity_report_partial', $my_data);
+                    
+                    
+                    echo $this->load->view('manage_admin/reports/activity_report_partial', $my_data, true);
 
                     break;
                 default:

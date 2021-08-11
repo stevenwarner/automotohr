@@ -5,9 +5,9 @@ class Employer_login_duration_model extends CI_Model {
         parent::__construct();
     }
 
-    public function get_all_companies() {
+    public function get_all_companies($columns = '*') {
         $excluded_companies = $this->get_excluded_company_sids();
-        $this->db->select('*');
+        $this->db->select(is_array($columns) ? implode(',', $columns) : $columns);
         $this->db->where('parent_sid', 0);
         $this->db->where('sid NOT IN ( ' . implode(',', $excluded_companies) . ' )');
         $this->db->order_by('sid', 'DESC');
@@ -87,6 +87,7 @@ class Employer_login_duration_model extends CI_Model {
             $this->db->where('employer_sid', $active_employer['employer_sid']);
             $this->db->order_by('action_timestamp', 'ASC');
             $this->db->order_by('employer_ip', 'ASC');
+            $this->db->limit(10);
             $employer_logs = $this->db->get('logged_in_activitiy_tracker')->result_array();
             $logs_to_return = array();
 
