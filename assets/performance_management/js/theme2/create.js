@@ -28,7 +28,7 @@ $(function() {
             reviewer_type: null,
             reviewees: {}
         },
-        Questions: {},
+        Questions: [],
         Share_feedback: true
     };
 
