@@ -18,6 +18,13 @@
     //
     if($PM_PERMISSION){
         $tabs[] =     [
+            'title' => 'Template(s)',
+            'url' => '/templates',
+            'slug' => 'templates',
+            'icon' => 'plus-square',
+            'segment' => 'templates'
+        ];
+        $tabs[] =     [
             'title' => 'Create a Review',
             'url' => '/review/create',
             'slug' => 'create',

@@ -1798,7 +1798,7 @@ $(function() {
             html += '                        <p class="csF14">' + (question.description) + '</p>';
             html += '                    </div>';
             html += '                    <div class="col-md-4 col-xs-12">';
-            if (question.video_help) {
+            if (question.video_help && question.video_help != 'none') {
                 html += '                        <video controls style="width: 100%;">';
                 html += '                           <source src="' + (pm.urls.base + 'assets/performance_management/videos/' + (obj.Id) + '/' + question.video) + '"  type="' + (getVideoType(question.video)) + '"></source>';
                 html += '                        </video>';
@@ -1887,6 +1887,6 @@ $(function() {
         //
         var extension = video.split('.');
         //
-        return 'type/' + extension[extension.length - 1].toLowerCase();
+        return 'video/' + extension[extension.length - 1].toLowerCase();
     }
 });

@@ -1832,5 +1832,38 @@ class Performance_management_model extends CI_Model{
         ->row_array();
     }
 
+
+    //
+    function InsertTemplate($data){
+        $this->db->insert($this->PMCT, $data);
+        return $this->db->insert_id();
+    }
+   
+    //
+    function UpdateTemplate($data, $sid){
+        $this->db
+        ->where('sid', $sid)
+        ->update($this->PMCT, $data);
+    }
+    
+    //
+    function GetTemplateById($sid){
+        return
+        $this->db
+        ->where('sid', $sid)
+        ->get($this->PMCT)
+        ->row_array();
+    }
+   
+    //
+    function GetAllTemplates($companyId){
+        return
+        $this->db
+        ->where('company_sid', $companyId)
+        ->order_by('sid', 'DESC')
+        ->get($this->PMCT)
+        ->result_array();
+    }
+
     
 }

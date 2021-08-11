@@ -1293,6 +1293,10 @@ $route['performance-management/pd/(:any)/(:num)/(:num)/(:num)']['get'] = 'Perfor
 $route['performance-management/review/create'] = 'Performance_management/create_review';
 $route['performance-management/review/create/(:num)'] = 'Performance_management/create_review/$1';
 $route['performance-management/review/create/(:num)/(:any)'] = 'Performance_management/create_review/$1/$2';
+// Create template
+$route['performance-management/templates']['get'] = 'Performance_management/templates';
+$route['performance-management/template/create'] = 'Performance_management/create_template';
+$route['performance-management/template/create/(:num)'] = 'Performance_management/create_template/$1';
 // Report
 $route['performance-management/report'] = 'Performance_management/report';
 $route['performance-management/report/(:any)/(:any)/(:any)/(:any)'] = 'Performance_management/report/$1/$2/$3/$4';
@@ -1310,6 +1314,7 @@ $route['performance-management/settings'] = 'Performance_management/settings';
 $route['performance-management/get-template-questions/(:any)/(:num)']['get'] = 'Performance_management/template_questions/$2/$1';
 $route['performance-management/get-single-template/(:any)/(:num)']['get'] = 'Performance_management/single_template/$2/$1';
 $route['performance-management/save_review_step']['post'] = 'Performance_management/SaveReviewStep';
+$route['performance-management/save_template_step']['post'] = 'Performance_management/SaveTemplateStep';
 $route['performance-management/save_answer']['post'] = 'Performance_management/SaveFeedbackAnswer';
 $route['performance-management/upload_question_file']['post'] = 'Performance_management/UploadQuestionAttachment';
 $route['performance-management/get_reviewee_reviewes/(:num)/(:num)']['get'] = 'Performance_management/GetReviewReviewers/$1/$2';
@@ -1331,6 +1336,7 @@ $route['performance-management/update_goal']['post'] = 'Performance_management/U
 $route['performance-management/add_comment']['post'] = 'Performance_management/AddComment';
 $route['performance-management/goal_comments/(:num)']['get'] = 'Performance_management/GetGoalComments/$1';
 $route['performance-management/update_settings']['post'] = 'Performance_management/UpdateSettings';
+$route['performance-management/save_template']['post'] = 'Performance_management/SaveTemplate';
 // Cron
 // Replicate and Start/End cron job
 $route['review_start_and_replicate/(:any)']['cli'] = 'Cron_common/PMMCronStartAndEndReplicate/$1';

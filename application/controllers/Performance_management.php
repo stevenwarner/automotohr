@@ -217,6 +217,36 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
+   
+   
+    /**
+     * templates
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function templates(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Reviews';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        //
+        $this->pargs['templates'] = $this->pmm->GetAllTemplates(
+            $this->pargs['companyId']
+        );
+
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}templates");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
 
     /**
      * Reviews
@@ -424,6 +454,33 @@ class Performance_management extends Public_Controller{
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}create_review/create");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    /**
+     * Create Review
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function create_template($id = 0){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Dashboard';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->GetMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        //
+        $this->pargs['template'] = $this->pmm->GetTemplateById($id);
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}create_template/create");
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
@@ -1175,6 +1232,147 @@ class Performance_management extends Public_Controller{
             break;
         endswitch;
     }
+    
+    /**
+     * 
+     */
+    function SaveTemplateStep(){
+        //
+        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+            $this->res([], true);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        $pargs = [];
+        //
+        $this->checkLogin($pargs);
+        //
+        switch($post['step']):
+            case "InsertQuestion":
+                // Set data array
+                $data_array = [];
+                // Get old 
+                $questions = $this->pmm->GetTemplateById($post['id'])['questions'];
+                //
+                if(!empty($questions) && $questions != null && $questions != 'null'){
+                    $questions = json_decode($questions, true);
+                    $questions = array_merge($questions, [$post['data']]);
+                } else{
+                    $questions[] = $post['data'];
+                }
+                //
+                $data_array['questions'] = json_encode($questions);
+                //
+                $this->pmm->UpdateTemplate($data_array, $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Questions added.';
+                $resp['Id'] = $post['id'];
+                //
+                $this->res($resp);
+            break;
+            case "SaveVideo":
+                //
+                $path = APPPATH.'../assets/performance_management/videos/templates/'.$post['reviewId'].'/';
+                //
+                if(!is_dir($path)){
+                    mkdir($path, DIR_WRITE_MODE, true);
+                }
+                //
+                $idd = time().generateRandomString(7);
+                //
+                if($post['type'] == 'record'){
+                    //
+                    $newName = $path.$idd.'.webm';
+                    //
+                    file_put_contents($newName, base64_decode(str_replace('data:video/webm;base64,', '',$this->input->post('file', false))));
+                    //
+                    $resp['Msg'] = "Recorded video is uploaded.";
+                    $resp['Id'] = $idd.'.webm';
+                    $resp['Status'] = true;
+                    $this->res($resp);
+                }
+                //
+                if(empty($_FILES)){
+                    //
+                    $resp['Msg'] = "Please record/upload a video.";
+                    $this->res($resp);
+                }
+                $newName = $idd.'.'.(explode('.', $_FILES['file']['name'])[1]);
+                //
+                if(!move_uploaded_file($_FILES['file']['tmp_name'], $path.$newName)){
+                    //
+                    $resp['Msg'] = "Failed to save video.";
+                    $this->res($resp);
+                } else{
+                    $resp['Msg'] = "Video is uploaded";
+                    $resp['Id'] = $newName;
+                    $resp['Status'] = true;
+                    $this->res($resp);
+                }
+            break;
+            case "RemoveQuestion":
+                // Get the question
+                $questions = json_decode($this->pmm->GetTemplateById($post['id'], $pargs['companyId'], ['questions'])['questions'], true);
+                //
+                $returningIndex = 0;
+                //
+                foreach($questions as $index => $question){
+                    if($question['id'] == $post['question_id']){
+                        //
+                        $returningIndex = $index;
+                        //
+                        unset($questions[$index]);
+                    }
+                }
+                //
+                $this->pmm->UpdateTemplate(['questions' => json_encode(array_values($questions))], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Question deleted.';
+                $resp['Id'] = $post['id'];
+                $resp['Index'] = $returningIndex;
+                //
+                $this->res($resp);
+            break;
+            case "UpdateQuestion":
+
+                // Get the question
+                $questions = json_decode($this->pmm->GetTemplateById($post['id'])['questions'], true);
+                //
+                foreach($questions as $index => $question){
+                    if($question['id'] == $post['data']['id']){
+                        //
+                        $questions[$index] = $post['data'];
+                    }
+                }
+                //
+                $this->pmm->UpdateTemplate(['questions' => json_encode(array_values($questions))], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Question updated.';
+                $resp['Id'] = $post['id'];
+                //
+                $this->res($resp);
+            break;
+            case "ReviewStep4":
+
+                // Get the question
+                //
+                $this->pmm->UpdateTemplate(['questions' => json_encode(array_values($post['questions']))], $post['id']);
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Question updated.';
+                $resp['Id'] = $post['id'];
+                //
+                $this->res($resp);
+            break;
+            
+        endswitch;
+    }
 
     /**
      * 
@@ -1451,6 +1649,48 @@ class Performance_management extends Public_Controller{
         //
         $resp['Status'] = true;
         $resp['Msg'] = 'Procees';
+        //
+        $this->res($resp);
+    }
+    
+    //
+    function SaveTemplate(){
+        //
+        $resp = ['Status' => false, 'Msg' => "Invalid request"];
+        //
+        if( !$this->input->is_ajax_request() ){
+            $this->res($resp, true);
+        }
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        if($post['Id'] != 0){
+            $Id = $post['Id'];
+            $this->pmm->UpdateTemplate(
+                [
+                    'name' => $post['name'],
+                    'updated_at' => date('Y-m-d H:i:s', strtotime('now')),
+                ],
+                $post['Id']
+            );
+        } else{
+            $Id = 
+            $this->pmm->InsertTemplate(
+                [
+                    'name' => $post['name'],
+                    'company_sid' => $session['company_detail']['sid'],
+                    'employee_sid' => $session['employer_detail']['sid'],
+                    'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                    'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]
+            );
+        }
+        
+        $resp['Status'] = true;
+        $resp['Id'] = $Id;
+        $resp['Msg'] = 'Proceed';
         //
         $this->res($resp);
     }
