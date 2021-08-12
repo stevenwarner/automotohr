@@ -115,6 +115,11 @@
                                                     <?=formatDateToDB($review['review_start_date'], DB_DATE, DATE);?> - <?=formatDateToDB($review['review_end_date'], DB_DATE, DATE);?> <br>
                                                 </p>
                                                 <hr />
+                                                <p class="csF14 csB7 mb0">Review Type</p>
+                                                <p class="csF14">
+                                                    <?=$review['is_manager'] == 1 ? 'Reviewer' : 'Reporting Manager';?> <br>
+                                                </p>
+                                                <hr />
                                                 <p class="csF14 csB7 mb0">Reviewer</p>
                                                 <p class="csF14">
                                                     <?=ucwords($review['first_name'].' '.$review['last_name']);?> <br>
