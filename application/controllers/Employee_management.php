@@ -2971,7 +2971,7 @@ class Employee_management extends Public_Controller {
             $this->load->helper('performance_management');
 
             //
-            $data['MyReviews'] = $this->pmm->GetEmployeeReviews($sid, $start_date, $end_date, $status, $reviewers, $country_id);
+            $data['MyReviews'] = $this->pmm->GetEmployeeReviews($sid, $start_date, $end_date, $status, $reviewers, $company_id);
             $data['employeesList'] = $this->pmm->GetAllEmployees($company_id);
 
             //
