@@ -13647,7 +13647,8 @@ if(!function_exists('addTimeToDate')){
     function addTimeToDate(
         $date,
         $add,
-        $format = 'Y-m-d'
+        $format = 'Y-m-d',
+        $type = 'P'
     ){
         $date = new DateTime($date);
         $date->add(new DateInterval("P{$add}"));

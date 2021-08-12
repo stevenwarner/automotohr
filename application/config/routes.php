@@ -1351,3 +1351,4 @@ $route['performance-management/employee/goals/(:num)']['get'] = 'Employee_manage
 //
 $route['get_employee_profile/(:num)']['get'] = 'Employee_management/GetEmployeeProfile/$1';
 $route['get_all_company_employees']['get'] = 'Employee_management/GetAllEmployees';
+$route['manage_admin/reports/daily_activity_report/get_employee/(:num)']['post'] = 'manage_admin/reports/Daily_activity_report/GetEmployeeReport/$1';

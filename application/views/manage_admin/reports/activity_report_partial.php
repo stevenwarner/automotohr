@@ -1,3 +1,4 @@
+<?php if(!empty($companies_logs)): ?>
 <?php if ($report_type == 'daily') { ?>
     <div class="col-xs-12 col-sm-12 margin-top">
         <div class="row">
@@ -32,8 +33,10 @@
         </div>
     </div>
 <?php } ?>
+<?php endif; ?>
 
-<?php foreach ($companies_logs as $company_log) { ?>
+<?php if(!empty($companies_logs)): 
+    foreach ($companies_logs as $company_log) { ?>
 
     <?php $employers_logs = $company_log['activities_data']; ?>
 
@@ -76,9 +79,14 @@
 
     <?php } ?>
 
-<?php } ?>
+<?php }
+else:
+    ?>
+    <p class="alert alert-info text-center">No records found</p>
+    <?php
+endif; ?>
 
-
+<?php if(!empty($companies_logs)): ?>
 <div class="col-xs-12 col-sm-12 margin-top">
     <div class="row">
         <div class="bt-panel">
@@ -90,3 +98,4 @@
         </div>
     </div>
 </div>
+<?php endif; ?>

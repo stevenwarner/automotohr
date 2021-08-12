@@ -10,9 +10,12 @@ class Employer_login_duration_model extends CI_Model {
         $this->db->select(is_array($columns) ? implode(',', $columns) : $columns);
         $this->db->where('parent_sid', 0);
         $this->db->where('sid NOT IN ( ' . implode(',', $excluded_companies) . ' )');
-        $this->db->order_by('sid', 'DESC');
+        $this->db->order_by('CompanyName', 'ASC');
         $this->db->where('career_page_type', 'standard_career_site');
         $this->db->where('active', 1);
+        if(is_array($columns)){
+            $this->db->where('is_paid', 1);
+        }
         return $this->db->get('users')->result_array();
     }
 
@@ -315,5 +318,99 @@ class Employer_login_duration_model extends CI_Model {
         $result_arr = $result->result_array();
         $result     = $result->free_result();
         return $result_arr;
+    }
+
+    //
+    function GetTrackerCE($start_date, $end_date){
+        $this->db->select('company_sid, company_name')->distinct();
+        $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+        $query = $this->db->get('logged_in_activitiy_tracker');
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(empty($result)){
+            return [];
+        }
+        //
+        return $result;
+    }
+
+    //
+    function GetTrackerReport(
+        $start_date,
+        $end_date,
+        $companyId
+    ){
+        $this->db->select('
+            employer_sid,
+            employer_name,
+            user_agent,
+            action_timestamp,
+            employer_ip
+        ');
+        $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+        $this->db->where('company_sid', $companyId);
+        $this->db->order_by('action_timestamp', 'ASC');
+        //
+        $query = $this->db->get('logged_in_activitiy_tracker');
+        //
+        $records = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(empty($records)){
+            return [];
+        }
+        //
+        $mainEmployeeArray = [];
+        //
+        foreach($records as $record){
+            //
+            $ip = str_replace('::1', '000_000_000_000', str_replace('.', '_', $record['employer_ip']));
+            //
+            if(!isset($mainEmployeeArray[$record['employer_sid']])){
+                $mainEmployeeArray[$record['employer_sid']] = [
+                    'time_spent' => 0,
+                    'log_count' => 0,
+                    'employee_name' => $record['employer_name'],
+                    'first_activity' => $record,
+                    'first_ip' => $ip
+                ];
+            }
+            //
+            if(!isset($mainEmployeeArray[$record['employer_sid']]['ips'][$ip])){
+                $mainEmployeeArray[$record['employer_sid']]['ips'][$ip] = [
+                    'time_spent' => 0,
+                    'user_agent' => ''
+                ];
+            }
+            //
+            $first_activity = $mainEmployeeArray[$record['employer_sid']]['first_activity'];
+            //
+            $first_time = addTimeToDate($first_activity['action_timestamp'], 'T10M', 'Y-m-d H:i:s');
+            //
+            $current_time = $record['action_timestamp'];
+            //
+            if($current_time >= $first_time){
+                //
+                if($mainEmployeeArray[$record['employer_sid']]['first_ip'] == $ip){
+                } else{
+                    // $mainEmployeeArray[$record['employer_sid']]['time_spent'] = 10;
+                }
+                //
+                $mainEmployeeArray[$record['employer_sid']]['log_count'] ++;
+                // Replace first with current
+                $mainEmployeeArray[$record['employer_sid']]['first_activity'] = $record;
+                $mainEmployeeArray[$record['employer_sid']]['first_ip'] = $ip;
+            }
+            //
+            $mainEmployeeArray[$record['employer_sid']]['time_spent'] += 10;
+            $mainEmployeeArray[$record['employer_sid']]['ips'][$ip]['time_spent'] += 10;
+            $mainEmployeeArray[$record['employer_sid']]['ips'][$ip]['user_agent'] = $record['user_agent'];
+        }
+        //
+        return array_values($mainEmployeeArray);
     }
 }

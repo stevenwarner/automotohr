@@ -130,6 +130,8 @@ class Daily_activity_report extends Admin_Controller
             switch ($perform_action) {
                 case 'get_daily_activity':
 
+                    // _e('here 123', true, true);
+
                     $report_date = $this->input->post('report_date');
 
                     $my_date = new DateTime($report_date);
@@ -140,32 +142,18 @@ class Daily_activity_report extends Admin_Controller
                     $end_date = $my_date->format('Y-m-d');
                     $end_date = $end_date . ' 23:59:59';
 
-                    $companies = $this->employer_login_duration_model->get_all_companies(['sid','CompanyName']);
-                    
-                    
-                    if(!empty($companies)){
-                        foreach($companies as $key => $company){
-                            $company_sid = $company['sid'];
-                            
-                            $report_data = $this->employer_login_duration_model->generate_activity_log_data_for_view(
-                                $company_sid, 
-                                $start_date, 
-                                $end_date
-                            );
-                            
-                            $companies[$key]['activities_data'] = $report_data;
-                        }
-                    }
+                    // Get company and employee Ids
+                    $CE = $this->employer_login_duration_model->GetTrackerCE($start_date, $end_date);
 
-                    
-                    
-                    
-                    $my_data['companies_logs'] = $companies;
+                    $my_data['companies'] = $CE;
                     $my_data['report_date'] = $this->input->post('report_date');
                     $my_data['report_type'] = 'daily';
+                    $my_data['start_date'] = $start_date;
+                    $my_data['end_date'] = $end_date;
                     
                     
-                    echo $this->load->view('manage_admin/reports/activity_report_partial', $my_data, true);
+                    echo $this->load->view('manage_admin/reports/activity_report_main_partial', $my_data, true);
+                    // echo $this->load->view('manage_admin/reports/activity_report_partial', $my_data, true);
 
                     break;
                 default:
@@ -174,6 +162,20 @@ class Daily_activity_report extends Admin_Controller
             }
         }
 
+    }
+
+    //
+    function GetEmployeeReport($companyId){
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $records = $this->employer_login_duration_model->GetTrackerReport(
+            $post['start_date'],
+            $post['end_date'],
+            $companyId
+        );
+        //
+        res(['data'=>$records]);
     }
 
 
