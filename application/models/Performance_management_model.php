@@ -1872,7 +1872,8 @@ class Performance_management_model extends CI_Model{
         $startDate,
         $endDate,
         $status,
-        $reviewers
+        $reviewers,
+        $companyId
     ){
         //
         $this->db
@@ -1887,7 +1888,8 @@ class Performance_management_model extends CI_Model{
             ".(getUserFields())."
         ")
         ->from($this->PRRS)
-        ->where("{$this->PRRS}.reviewee_sid", $employeeId);
+        ->where("{$this->PRRS}.reviewee_sid", $employeeId)
+        ->where("{$this->R}.company_sid", $companyId);
         //
         if(!empty($reviewers)){
             $this->db->where_in("{$this->PRRS}.reviewer_sid", $reviewers);
