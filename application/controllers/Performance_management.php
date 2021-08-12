@@ -952,6 +952,8 @@ class Performance_management extends Public_Controller{
                         //
                         if(!isset($question['id'])){
                             $questions[] = array_merge($question, ['id' => generateRandomString(10)]);
+                        } else{
+                            $questions[] = $question;
                         }
                     }
                     $data_array['questions'] = json_encode($questions);
