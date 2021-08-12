@@ -1905,7 +1905,7 @@ class Performance_management_model extends CI_Model{
         //
         $this->db->where("{$this->R}.is_draft", 0);
         $this->db->where("{$this->R}.is_archived", 0);
-        // $this->db->where("{$this->R}.status <> ", 'pending');
+        $this->db->where("{$this->R}.status <> ", 'pending');
         //
         if(!empty($startDate)){
             $this->db->where("{$this->R}.review_start_date >= ", $startDate);
