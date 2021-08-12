@@ -1865,5 +1865,70 @@ class Performance_management_model extends CI_Model{
         ->result_array();
     }
 
+
+    //
+    function GetEmployeeReviews(
+        $employeeId,
+        $startDate,
+        $endDate,
+        $status,
+        $reviewers
+    ){
+        //
+        $this->db
+        ->select("
+            {$this->R}.sid as reviewId,
+            {$this->R}.review_title,
+            {$this->R}.review_start_date,
+            {$this->R}.review_end_date,
+            {$this->PRRS}.reviewer_sid,
+            {$this->PRRS}.is_completed,
+            {$this->PRRS}.is_manager,
+            ".(getUserFields())."
+        ")
+        ->from($this->PRRS)
+        ->where("{$this->PRRS}.reviewee_sid", $employeeId);
+        //
+        if(!empty($reviewers)){
+            $this->db->where_in("{$this->PRRS}.reviewer_sid", $reviewers);
+        }
+        //
+        if(!empty($status) && in_array("0", $status)){
+            $this->db->where("{$this->PRRS}.is_completed", 0);
+        }
+        //
+        if(!empty($status) && in_array("1", $status)){
+            $this->db->where("{$this->PRRS}.is_completed", 1);
+        }
+        // Join with reviews
+        $this->db->join($this->R, "{$this->R}.sid = {$this->PRRS}.review_sid", "inner");
+        //
+        $this->db->where("{$this->R}.is_draft", 0);
+        $this->db->where("{$this->R}.is_archived", 0);
+        // $this->db->where("{$this->R}.status <> ", 'pending');
+        //
+        if(!empty($startDate)){
+            $this->db->where("{$this->R}.review_start_date >= ", $startDate);
+        }
+        //
+        if(!empty($endDate)){
+            $this->db->where("{$this->R}.review_end_date <= ", $endDate);
+        }
+
+        // Join with users
+        $this->db->join($this->U, "{$this->U}.sid = {$this->PRRS}.reviewer_sid", "inner");
+        //
+        $this->db->order_by("{$this->R}.review_start_date", "DESC");
+        //
+        $query = $this->db->get();
+        //
+        $records = $query->result_array();
+        //
+        $query->free_result();
+        //
+        return $records;
+
+    }
+
     
 }

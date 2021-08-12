@@ -89,6 +89,9 @@
             <?php
         }
     ?>
+
+    <?php if(strpos($this->uri->uri_string(), 'reviews') !== false): ?>
     <!--  -->
     <?php $this->load->view("{$pp}help_box"); ?>
+    <?php endif; ?>
 </div>

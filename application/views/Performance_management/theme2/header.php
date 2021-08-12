@@ -61,7 +61,7 @@
         'icon' => 'bullseye',
         'segment' => 'goals'
     ];
-    $tabs[] =     [
+    $sub[] =     [
         'title' => 'Calendar',
         'url' => 'javascript:void(0)',
         'slug' => 'calendar',
@@ -70,14 +70,15 @@
         'class' => 'jsCalendarView'
     ];
     if($PM_PERMISSION){
-        $tabs[] =     [
+        
+        $sub[] =     [
             'title' => 'Report',
             'url' => '/report',
             'slug' => 'report',
             'icon' => 'pie-chart',
             'segment' => 'report'
         ];
-        $tabs[] =     [
+        $sub[] =     [
             'title' => 'Settings',
             'url' => '/settings',
             'slug' => 'settings',
@@ -85,6 +86,10 @@
             'segment' => 'settings'
         ];
     }
+    $tabs[] = [
+        'title' => 'More',
+        'submenu' => $sub
+    ];
     //
     $lis = '';
     //
@@ -92,7 +97,23 @@
     //
     foreach($tabs as $tab){
         //
-        $lis .= '<li><a '.( isset($tab['props']) ? $tab['props'] : "").' class="csF16 '.(isset($tab['class']) ? $tab['class'] : '').' '.( $tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '' ).'" href="'.( $tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL.$tab['url'] ).'" ><i class="fa fa-'.( $tab['icon'] ).'"></i> '.( $tab['title'] ).'</a></li>';
+        if(isset($tab['submenu'])){
+            $tmp = '';
+            foreach($tab['submenu'] as $item){
+                $tmp .= '<li><a href="'.( $item["url"] == "javascript:void(0)" ? $item['url'] : $baseURL.$item['url'] ).'" '.( isset($item['class']) ? 'class="'.($item['class']).'"' : '' ).'><i class="fa fa-'.( $item['icon'] ).'"></i> '.( $item['title'] ).'</a></li>';
+            }
+            //
+            $lis .= '<li class="has">';
+            $lis .= '   <a href="javascript:void(0)">More &nbsp;&nbsp;<i class="fa fa-caret-down"></i></a>';
+            $lis .= '   <ul>';
+            $lis .=       $tmp;
+            $lis .= '   </ul>';
+            $lis .= '</li>';
+        } else{
+
+            //
+            $lis .= '<li><a '.( isset($tab['props']) ? $tab['props'] : "").' class="csF16 '.(isset($tab['class']) ? $tab['class'] : '').' '.( $tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '' ).'" href="'.( $tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL.$tab['url'] ).'" ><i class="fa fa-'.( $tab['icon'] ).'"></i> '.( $tab['title'] ).'</a></li>';
+        }
     }
 ?>
 <div class="clearfix"></div>

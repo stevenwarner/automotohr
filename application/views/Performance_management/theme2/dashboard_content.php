@@ -1,32 +1,35 @@
 <div class="col-md-9 col-sm-12">
+
     <!-- Assigned -->
     <div class="panel panel-theme">
         <div class="panel-heading" style="background-color: #3554DC;">
             <div class="row">
                 <div class="col-md-9 col-sm-12">
                     <h5 class="csF16 csB7 csW jsToggleHelp" data-target="assigned_reviews">
-                        Assigned Reviews <i class="fa fa-question-circle-o" aria-hidden="true"
-                            title="Click to see help." placement="top"></i>
+                        Assigned Reviews
                     </h5>
                 </div>
                 <div class="col-md-3 col-sm-12">
+                    <?php
+                     if(!empty($AssignedReviews)){
+                    ?>
                     <span class="pull-right">
                         <a href="<?=purl("reviews");?>" class="btn btn-orange"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
                             Review(s)</a>
                     </span>
+                    <?php } ?>
                 </div>
                 <div class="clearfix"></div>
             </div>
+        </div>
+        
+        <div class="panel-body">
             <div class="row">
                 <div class="col-sm-12">
-                    <p class="csF14 csW dn jsToggleHelpArea" data-help="assigned_reviews">All the assigned reviews, on
-                        which your feedback is required. The submitted feedback will be shared with the reporting
-                        manager(s).</p>
+                    <p class="csF14 csInfo csB7"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;Assigned reviews on which your feedback is required. The submitted feedback will be shared with the reporting manager(s).</p>
                 </div>
             </div>
-        </div>
-
-        <div class="panel-body">
+            <br>
             <?php
                 //
                 if(!empty($AssignedReviews)){
@@ -61,9 +64,8 @@
                     ?>
                     <div class="panel-body">
                         <div class="row">
-                            <p class="csF26 csB7 text-center">
-                                <i class="fa fa-check csF40" aria-hidden="true"></i><br />
-                                You are all caught up
+                            <p class="csF16 csB7 text-center">
+                                No reviews are assigned to you for feedback.
                             </p>
                         </div>
                     </div>
@@ -80,30 +82,33 @@
             <div class="row">
                 <div class="col-md-9 col-sm-12">
                     <h5 class="csF16 csB7 csW jsToggleHelp" data-target="feedback_reviews">
-                        Feedback Reviews <i class="fa fa-question-circle-o" aria-hidden="true"
-                            title="Click to see help." placement="top"></i>
+                        Feedback Reviews
                     </h5>
                 </div>
                 <div class="col-md-3 col-sm-12">
+                <?php
+                     if(!empty($FeedbackReviews)){
+                    ?>
                     <span class="pull-right">
                         <a href="<?=purl("reviews");?>" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
                             Review(s)</a>
                     </span>
+                    <?php } ?>
                 </div>
                 <div class="clearfix"></div>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <p class="csF14 csW dn jsToggleHelpArea" data-help="feedback_reviews">All the assigned reviews, on
-                        which your feedback is required. The submitted feedback will be shared with the employee.</p>
-                </div>
-            </div>
         </div>
-    <?php
+        <div class="panel-body">
+            <?php
             //
             if(!empty($FeedbackReviews)){
                 ?>
-                <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p class="csF14 csInfo csB7"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;Assigned reviews on which your feedback is required. The submitted feedback will be shared with the employee.</p>
+                    </div>
+                </div>
+                <br>
                 <div class="row">
                     <?php
                     $now = date('Y-m-d', strtotime('now'));
@@ -128,21 +133,20 @@
                     <?php
                 }
                 ?>
-                </div></div>
+                </div>
                 <?php
             } else{
                 ?>
-                <div class="panel-body">
+                
                     <div class="row">
-                        <p class="csF26 csB7 text-center">
-                            <i class="fa fa-check csF40" aria-hidden="true"></i><br />
-                            You are all caught up
+                        <p class="csF16 csB7 text-center">
+                            No reviews are assigned to you for feedback.
                         </p>
                     </div>
-                </div>
                 <?php
             }
         ?>
+        </div>
     </div>
 
     <!-- Goals -->
@@ -367,7 +371,7 @@
                         <div class="col-sm-12">
                         <p class="csF26 csB7 text-center">
                             <i class="fa fa-check csF40" aria-hidden="true"></i><br />
-                            No goals found
+                            You haven't created any goals yet
                         </p>
                         </div>
                         <?php

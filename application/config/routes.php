@@ -1348,6 +1348,7 @@ $route['manage_admin/accurate_background/remove_background_check']['post'] = 'ma
 $route['manage_admin/accurate_background/revert_background_check']['post'] = 'manage_admin/Accurate_background/RevertBackgroundCheck';
 //
 $route['performance-management/employee/goals/(:num)']['get'] = 'Employee_management/employee_goals/$1';
+$route['performance-management/employee/reviews/(:num)']['get'] = 'Employee_management/employee_reviews/$1';
 //
 $route['get_employee_profile/(:num)']['get'] = 'Employee_management/GetEmployeeProfile/$1';
 $route['get_all_company_employees']['get'] = 'Employee_management/GetAllEmployees';
