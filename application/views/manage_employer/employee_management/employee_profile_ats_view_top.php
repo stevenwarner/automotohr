@@ -41,11 +41,6 @@
                     <?php } ?>
                 </div>
             </div>
-            <?php 
-                if (isset($employer['active']) && checkForNewModuleAccess($session['company_detail']['sid'], 'timeoff') && ($this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] == 1 || $this->session->userdata('logged_in')['employer_detail']['access_level_plus'] == 1)){
-                    $this->load->view('timeoff/employee/header-box');  
-                }
-            ?>
         </div>
         <!--  -->
     </article>
