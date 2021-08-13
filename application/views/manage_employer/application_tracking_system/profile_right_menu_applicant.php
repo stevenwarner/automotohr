@@ -74,7 +74,7 @@ if ($this->session->userdata('logged_in')) {
                             </div>
                             <div class="rating-comment">
     <!--                            <h4>comment<samp class="red"> * </samp></h4>-->
-                                <input type="button" id="trigger-review" value="Review Comments" class="btn btn-success btn-block">
+                                <input type="button" id="trigger-review" value="Review Comments" class="btn btn-success" style="width: 100%; margin-top: 5px;">
     <!--                            <textarea id="rating_comment" name="comment" required>--><?php //if (!empty($applicant_rating)){ echo $applicant_rating['comment']; } ?><!--</textarea>-->
     <!--                            <input type="submit" value="submit">-->
                             </div>
