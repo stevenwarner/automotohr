@@ -723,7 +723,9 @@ class Performance_management extends Public_Controller{
         $post = $this->input->post(NULL, TRUE);
         //
         $this->pmm->StartReview($post['reviewId']);
-       
+        //
+        $this->sendEmailNotifications($post['reviewId']);
+        
         //
         $this->res(['Status' => true]);
     }
@@ -741,7 +743,7 @@ class Performance_management extends Public_Controller{
         $post = $this->input->post(NULL, TRUE);
         //
         $this->pmm->StopReviweeReview($post['reviewId'], $post['revieweeId']);
-       
+        
         //
         $this->res(['Status' => true]);
     }
@@ -758,6 +760,7 @@ class Performance_management extends Public_Controller{
         $post = $this->input->post(NULL, TRUE);
         //
         $this->pmm->StartReviweeReview($post['reviewId'], $post['revieweeId']);
+        $this->sendEmailNotifications($post['reviewId'], $post['revieweeId']);
        
         //
         $this->res(['Status' => true]);
@@ -1790,5 +1793,39 @@ class Performance_management extends Public_Controller{
         header("Content-Type: application/json");
         echo json_encode($isError ? ["Error" => "Invalid request"] : $resp);
         exit(0);
+    }
+
+    //
+    private function sendEmailNotifications($id, $revieweeId = 0){
+        //
+        $record = $this->pmm->GetReviewByIdByReviewers($id, $revieweeId)[0];
+        //
+        $hf = message_header_footer($record['company_sid'], $record['CompanyName']);
+        //
+        if(empty($record['Reviewees'])){
+            return;
+        }
+        //
+        $template = get_email_template(REVIEW_ADDED);
+
+        foreach($record['Reviewees'] as $row){
+            //
+            $replaceArray = [];
+            $replaceArray['{{first_name}}'] = ucwords($row[0]['reviewer_first_name']);
+            $replaceArray['{{last_name}}'] = ucwords($row[0]['reviewer_last_name']);
+            $replaceArray['{{review_title}}'] = $record['review_title'];
+            
+            $replaceArray['{{table}}'] = $this->load->view('table', ['records' => $row, 'id' => $record['sid']], true);
+            //
+            $body = $hf['header'].str_replace(array_keys($replaceArray), $replaceArray, $template['text']).$hf['footer'];
+
+            log_and_sendEmail(
+                FROM_EMAIL_NOTIFICATIONS,
+                $row[0]['reviewer_email'],
+                $template['subject'],
+                $body,
+                $record['CompanyName']
+            );
+        }
     }
 }

@@ -572,7 +572,7 @@ define('TIMEOFF_MAGIC_QUOTES', implode(',', [
 ]));
 
 // Performance management email ids
-define('REVIEW_ADDED', 399);
+define('REVIEW_ADDED', 415);
 define('REVIEW_EXPIRING', 400);
 
 // Goal template ids

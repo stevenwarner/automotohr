@@ -1497,6 +1497,65 @@ class Performance_management_model extends CI_Model{
         //
         return $result;
     }
+    
+    
+    /**
+     * 
+     */
+    private function GetReviewRevieewsByReviewers($reviewId, $revieweeId){
+        //
+        if($revieweeId != 0){
+            $this->db->where("{$this->PRRS}.reviewee_sid", $revieweeId);
+        }
+        //
+        $query =
+        $this->db
+        ->select("
+            {$this->PRR}.reviewee_sid,
+            {$this->PRR}.start_date,
+            {$this->PRR}.end_date,
+            {$this->PRR}.is_started,
+            {$this->PRRS}.reviewer_sid,
+            {$this->PRRS}.is_manager,
+            {$this->PRRS}.is_completed,
+            {$this->U}.first_name as reviewee_first_name,
+            {$this->U}.last_name as reviewee_last_name,
+            u.email as reviewer_email,
+            u.first_name as reviewer_first_name,
+            u.last_name as reviewer_last_name
+        ")
+        ->join($this->PRRS, "{$this->PRRS}.reviewee_sid = {$this->PRR}.reviewee_sid", "inner")
+        ->join($this->U, "{$this->U}.sid = {$this->PRRS}.reviewee_sid", "inner")
+        ->join("{$this->U} as u", "u.sid = {$this->PRRS}.reviewer_sid", "inner")
+        ->where("{$this->PRR}.review_sid", $reviewId)
+        ->where("{$this->PRRS}.review_sid", $reviewId)
+        ->get($this->PRR);
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(!empty($result)){
+            //
+            $t = [];
+            //
+            foreach($result as $row){
+                //
+                if(!isset($t[$row['reviewer_sid']])){
+                    $t[$row['reviewer_sid']] = [];
+                }
+                //
+                $t[$row['reviewer_sid']][] = $row;
+            }
+            //
+            $result = $t;
+            //
+            unset($t);
+            
+        }
+        //
+        return $result;
+    }
 
     /**
      * 
@@ -1930,6 +1989,50 @@ class Performance_management_model extends CI_Model{
         //
         return $records;
 
+    }
+
+
+    /**
+     * 
+     */
+    function GetReviewByIdByReviewers($reviewId, $revieweeId){
+        //
+        $this->db
+        ->select(
+            "
+            {$this->R}.sid,
+            {$this->R}.company_sid,
+            {$this->U}.CompanyName,
+            {$this->R}.review_title,
+            {$this->R}.description,
+            {$this->R}.share_feedback,
+            {$this->R}.is_archived,
+            {$this->R}.is_draft,
+            {$this->R}.review_start_date,
+            {$this->R}.review_end_date,
+            {$this->R}.review_end_date,
+            {$this->R}.created_at,
+            {$this->R}.updated_at,
+            {$this->R}.status
+        ")
+        ->join("{$this->U}", "{$this->U}.sid = {$this->R}.company_sid", "inner")
+        ->where("{$this->R}.sid", $reviewId);
+        //
+        $query = $this->db->get($this->R);
+        //
+        $reviews = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(!empty($reviews)){
+            foreach($reviews as $index => $review){
+                $reviews[$index]['created_at'] = formatDateToDB($review['created_at'], 'Y-m-d H:i:s', 'M d Y, D H:i:s');
+                $reviews[$index]['updated_at'] = formatDateToDB($review['updated_at'], 'Y-m-d H:i:s', 'M d Y, D H:i:s');
+                $reviews[$index]['Reviewees'] = $this->GetReviewRevieewsByReviewers($review['sid'], $revieweeId);
+            }
+        }
+        //
+        return $reviews;
     }
 
     
