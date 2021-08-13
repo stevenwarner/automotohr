@@ -8,7 +8,16 @@
         </tr>
     </thead>
     <tbody>
-            <?php foreach($records as $record):?>
+            <?php
+                $tmp = [];
+                foreach($records as $record):
+                    //
+                    if(!isset($tmp[$record['reviewee_sid']])){
+                        $tmp[$record['reviewee_sid']] = true;
+                    } else{
+                        continue;
+                    }
+                ?>
                 <tr>
                     <td style="text-align: center;"><?=ucwords($record['reviewee_first_name'].' '.$record['reviewee_last_name'])?></td>
                     <td style="text-align: center;"><?=formatDateToDB($record['start_date'], DB_DATE, DATE);?> - <?=formatDateToDB($record['end_date'], DB_DATE, DATE);?></td>
