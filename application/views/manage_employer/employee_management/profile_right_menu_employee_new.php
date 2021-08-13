@@ -27,7 +27,7 @@
                                 <input readonly="readonly" id="input-21b" <?php if (!empty($applicant_rating)) { ?> value="<?php echo $applicant_rating['rating']; ?>" <?php } ?> type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
                             </div>
                             <div class="rating-comment">
-                                <input type="button" id="trigger-review" value="Review Comments" class="btn btn-success btn-block">
+                                <input type="button" id="trigger-review" value="Review Comments" class="btn btn-success" style="width: 100%; margin-top: 5px;">
                             </div>
                         </form>
                     </div>
