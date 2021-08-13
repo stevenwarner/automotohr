@@ -6,6 +6,12 @@ class Learning_center extends Public_Controller {
     public function __construct() {
         parent::__construct();
 
+        $this->res['Status'] = FALSE;
+        $this->res['Redirect'] = TRUE;
+        $this->res['Response'] = 'Invalid request';
+        $this->res['Code'] = 'INVALIDREQUEST';
+        $this->load->library('user_agent');
+
         $this->limit     = 100;
         $this->list_size = 5;
 
@@ -2166,10 +2172,10 @@ class Learning_center extends Public_Controller {
                         $data_new['attempted_questionnaire_timestamp'] = $attempted_questionnaire[0]['attend_timestamp'];
                         $data_new['questionnaire_result'] = $attempted_questionnaire[0]['questionnaire_result'];
                     }
-//                    echo '<pre>';
-//                    print_r($assignment);
-//                    die();
-                    //End
+                    //  echo '<pre>';
+                    //  print_r($assignment);
+                    //  die();
+                    //  End
                     $data['assignment'] = $assignment;
                     $data['load_view'] = $load_view;
                     $data['user_type'] = $user_type;
@@ -2216,7 +2222,7 @@ class Learning_center extends Public_Controller {
         $file_extension = $_POST['file_ext'];
         $attached_date = date('Y-m-d H:i:s');
         $pdf_doc = upload_file_to_aws('docs', $company_sid, 'docs', '', AWS_S3_BUCKET_NAME);
-//        $pdf_doc = '0003-docs--Q5D.pdf';
+        // $pdf_doc = '0003-docs--Q5D.pdf';
 
         if (!empty($pdf_doc) && $pdf_doc != 'error') {
             $data_to_insert = array();
@@ -2515,7 +2521,7 @@ class Learning_center extends Public_Controller {
                 if (!empty($_FILES) && isset($_FILES['docs']) && $_FILES['docs']['size'] > 0) {
 
                     $pdf_doc = upload_file_to_aws('docs', $company_sid, 'docs', '', AWS_S3_BUCKET_NAME);
-//                    $pdf_doc = '0003-docs--Q5D.pdf';
+                    // $pdf_doc = '0003-docs--Q5D.pdf';
                     if (!empty($pdf_doc) && $pdf_doc != 'error') {
 
                         $file_extension = $_POST['file_ext'];

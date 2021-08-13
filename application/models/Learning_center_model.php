@@ -30,6 +30,25 @@ class Learning_center_model extends CI_Model {
         return $records_arr;
     }
 
+    function getTeams( $companySid, $departments ){
+        //
+        if(!$departments || !count($departments)) return [];
+        //
+        $a = $this->db
+        ->select('sid, name')
+        ->where('company_sid', $companySid)
+        ->where('status', 1)
+        ->where('is_deleted', 0)
+        ->where_in('department_sid', array_column($departments, 'sid'))
+        ->order_by('sort_order', 'ASC')
+        ->get('departments_team_management');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
     function get_all_onboarding_applicants($company_sid) {
         $this->db->select('sid, first_name, last_name');
         $this->db->where('employer_sid', $company_sid);

@@ -57,6 +57,28 @@
                             </a>
                         </div>
                         <?php }?>
+                        <?php if (checkIfAppIsEnabled('learning management system')) { ?>
+                            <?php if(check_access_permissions_for_view($security_details, 'training_sessions')) { ?>
+                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                <a href="<?php echo base_url('course'); ?>">
+                                    <div class="dash-box">
+                                        <div class="dashboard-widget-box" style="margin-top: 50px; margin-bottom: 50px;">
+                                            <figure>
+                                                <!-- <i class="fa fa-graduation-cap" style="font-size: 60px; color:#81b431;"></i> -->
+                                                <i class="fa fa-leanpub" style="font-size: 60px; color:#81b431;"></i>
+                                                <i class="fa fa-users" style="font-size: 60px; color:#81b431;"></i>
+                                            </figure>
+                                            <br />
+                                            <br />
+                                            <h2 class="post-title">
+                                                <span>Learning Management System</span>
+                                            </h2>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <?php }?>
+                        <?php }?>
 <!--                        <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2"></div>-->
                     </div>
                 </div>

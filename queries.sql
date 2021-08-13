@@ -231,3 +231,6 @@ ALTER TABLE `background_check_orders_history`
 
 ALTER TABLE `background_check_orders_history`
   MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `modules` (`sid`, `module_name`, `module_slug`, `stage`, `is_disabled`, `is_ems_module`, `created_at`, `updated_at`) VALUES (NULL, 'learning management system', 'learning management system', 'development', '0', '1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
