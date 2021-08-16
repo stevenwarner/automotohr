@@ -37,6 +37,8 @@ class Email_manager extends CI_Controller
         //
         $replaceArray = [];
         $replaceArray['username'] = ucwords($post['first_name'].' '.$post['last_name']);
+        $replaceArray['first_name'] = ucwords($post['first_name']);
+        $replaceArray['last_name'] = ucwords($post['last_name']);
         $replaceArray['baseurl'] = base_url();
         $replaceArray['company_name'] = $post['company_name'];
         //
@@ -71,6 +73,8 @@ class Email_manager extends CI_Controller
         $replaceArray = [];
         $replaceArray['username'] = ucwords($employee['first_name'].' '.$employee['last_name']);
         $replaceArray['baseurl'] = base_url();
+        $replaceArray['first_name'] = ucwords($employee['first_name']);
+        $replaceArray['last_name'] = ucwords($employee['last_name']);
         $replaceArray['company_name'] = $post['company_name'];
         //
         log_and_send_templated_email(
