@@ -63,6 +63,7 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
     $this->uri->segment(2) == 'copy_applicants' ||
     $this->uri->segment(2) == 'copy_documents' ||
     $this->uri->segment(2) == 'copy_employees' ||
+    $this->uri->segment(2) == 'pending_documents' ||
     ($this->uri->segment(2) == 'documents' && $this->uri->segment(3) > 0)
 
 ) {
@@ -411,7 +412,13 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                         <?php if (check_access_permissions_for_view($security_details, 'copy_documents')) { ?>
                             <div class="menu-item">
                                 <a <?php if(strpos(base_url(uri_string()), site_url('manage_admin/copy_documents')) !== false) { echo 'class="active"'; } ?>
-                                    href="<?php echo site_url('manage_admin/copy_documents'); ?>">Copy Documents</a>
+                                href="<?php echo site_url('manage_admin/copy_documents'); ?>">Copy Documents</a>
+                            </div>
+                        <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'copy_employees')) { ?>
+                            <div class="menu-item">
+                                <a <?php if(strpos(base_url(uri_string()), site_url('manage_admin/pending_documents')) !== false) { echo 'class="active"'; } ?>
+                                    href="<?php echo site_url('manage_admin/pending_documents'); ?>">Pending Documents</a>
                             </div>
                         <?php } ?>
                     </div>
