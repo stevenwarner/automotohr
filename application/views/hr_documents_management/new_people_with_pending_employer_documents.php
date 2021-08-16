@@ -128,25 +128,15 @@
                                         <div class="panel-body">
                                             <form action="javascript:void(0)" id="js-filter-form">
                                                 <div class="row">
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-12">
                                                         <div class="form-group">
                                                             <label>Employee(s)</label>
                                                             <select id="js-filter-employees" name="employees[]" multiple="true">
                                                                 <?php 
-                                                                    foreach ($employeesList as $k => $v) {
-                                                                        echo '<option value="'.( $v['sid'] ).'" '.( isset($selectedEmployeeList[$v['sid']]) ? 'selected="selected"' : ''  ).'>'.( remakeEmployeeName( $v ) ).'</option>';
-                                                                    }
-                                                                ?>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group">
-                                                            <label>Document(s)</label>
-                                                            <select id="js-filter-documents" name="documents[]" multiple="true">
-                                                                <?php 
-                                                                    foreach ($documentsList as $k => $v) {
-                                                                        echo '<option value="'.( $v['sid'] ).'" '.( in_array($v['sid'], $selectedDocumentList) ? 'selected="selected"' : ''  ).'>'.( $v['document_title'] ? $v['document_title'] : $v['letter_name'] ).' ('.( str_replace('-', ' ',$v['status']) ).')</option>';
+                                                                    if(!empty($employeesList)){
+                                                                        foreach ($employeesList as $k => $v) {
+                                                                            echo '<option value="'.( $v['sid'] ).'" '.( isset($selectedEmployees[$v['sid']]) ? 'selected' : '' ).'>'.( remakeEmployeeName( $v ) ).'</option>';
+                                                                        }
                                                                     }
                                                                 ?>
                                                             </select>
@@ -170,25 +160,20 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-<!--                                    <div class="row">-->
-<!--                                        <div class="col-xs-12">-->
-<!--                                            <h3 class="">Employees</h3>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-
 
                                     <?php
-                                    if ( isset($employees) && count($employees) > 0) {
+                                    //
+                                    $newArray = [];
+                                    if ( !empty($pendingAD)) {
                                         ?>
                                         <div class="table-responsive">
-                                            <h3>Employees with Pending Document Actions 
+                                            <h3>Managers with Pending Document Actions 
                                                 <span class="pull-right">
                                                     <button class="btn btn-success jsSendEmailReminder">
                                                         Send Email Reminder
                                                     </button>
-                                                    <button class="btn btn-success js-action-btn" data-type="print">Print</button>
-                                                    <button class="btn btn-success js-action-btn" data-type="export">Export</button>
                                                 </span>
+                                                <div class="clearfix"></div>
                                             </h3>
                                             <div class="hr-document-list">
                                                 <table class="hr-doc-list-table">
@@ -202,69 +187,72 @@
                                                             </label>
                                                         </th>
                                                         <th scope="col">Employee Name</th>
-                                                        <th scope="col">Email</th>
-                                                        <th scope="col">Document(s)</th>
                                                         <th scope="col" style="text-align: right" >View Document(s)</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <?php
-                                                    function dateSorter($a, $b){
-                                                        return $a['AssignedOn'] < $b['AssignedOn'];
-                                                    }
-                                                    foreach ($employees as $employee) {
-                                                        $icount = sizeof($employee['Documents']);
-                                                        $itext = '';
-                                                        if(sizeof($employee['Documents'])){
-                                                            //
-                                                            usort($employee['Documents'], 'dateSorter');
-                                                            foreach ($employee['Documents'] as $ke => $v) {
-                                                                //
-                                                                $assignedByText = '';
-                                                                //
-                                                                if(isset($v['AssignedBy'])){
-                                                                    $assignedBy = getUserNameBySID($v['AssignedBy']);
-                                                                    $assignedByText = '<br /> <em>Assigned By: '.( $assignedBy ).'</em>';
-
-                                                                }
-                                                                $itext .= '<p>';
-                                                                $itext .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
-                                                                $itext .= ' <br /> <em>Assigned On: '.($v['AssignedOn']).'';
-                                                                if(!empty($v['Days'])){
-                                                                    $itext .= ' ('.$v['Days'].' day'.($v['Days'] == 1 ? '' : 's').' ago)';
-                                                                }
-                                                                $itext .= ' </em>';
-                                                                $itext .= $assignedByText;
-                                                                $itext .= '</p>';
-                                                            }
-                                                        }
+                                                    
+                                                    //
+                                                    foreach ($pendingAD as $employeeId => $employee) {
+                                                        //
+                                                        $name = getUserNameBySID($employeeId);
+                                                        //
+                                                        $newArray[$employeeId] = [];
+                                                        $newArray[$employeeId]['id'] = $employeeId;
+                                                        $newArray[$employeeId]['name'] = $name;
+                                                        $newArray[$employeeId]['is_authotrized'] = 0;
+                                                        $newArray[$employeeId]['is_pending'] = 0;
                                                         ?>
-                                                        <tr data-id="<?=$employee['sid'];?>">
+                                                        <tr data-id="<?=$employeeId;?>">
                                                             <td>
                                                                 <label class="control control--checkbox">
                                                                     <input type="checkbox" class="jsSelectSingle" />
                                                                     <div class="control__indicator"></div>
                                                                 </label>
                                                             </td>
-                                                            <td><?=remakeEmployeeName($employee);?></td>
-                                                            <td><?php echo $employee['email']; ?></td>
-                                                            <td
-                                                                style="cursor: pointer"
-                                                                    data-container="body" 
-                                                                    data-toggle="cpopover"
-                                                                    data-placement="left" 
-                                                                    data-title="<?=$icount;?> Document(s)"
-                                                                    data-content="<?=$itext;?>">
-                                                                <strong
-                                                                    
-                                                                ><?=$icount;?></strong> Document(s)
-                                                            </td>
+                                                            <td><?=$name;?></td>
                                                             <td class="text-right">
-                                                                <a data-toggle="tooltip" title="View" data-placement="left" href="<?php echo base_url('hr_documents_management/employee_document'); ?>/<?php echo $employee['sid']; ?>" class=" btn-sm btn-default">
-                                                                    <i class="fa fa-eye"></i>
+                                                                <a class=" btn-sm btn-default csCP jsToggleDocuments" title="Show Documents">
+                                                                    <i class="fa fa-eye" aria-hidden="true"></i>
                                                                 </a>
                                                             </td>
                                                         </tr>
+                                                        <?php
+                                                            if(!empty($employee)):
+                                                                $itext = '';
+                                                                foreach($employee as $ke => $v):
+                                                                    if($v['type'] == 'AD'){
+                                                                        $newArray[$employeeId]['is_authotrized'] = 1;
+                                                                    } else{
+                                                                        $newArray[$employeeId]['is_pending'] = 1;
+                                                                    }
+                                                                    //
+                                                                    $assignedByText = '';
+                                                                    //
+                                                                    if(isset($v['assigned_by'])){
+                                                                        $assigned_by = getUserNameBySID($v['assigned_by']);
+                                                                        $assignedByText = '<br /> <em>Assigned By: '.( $assigned_by ).'</em>';
+
+                                                                    }
+                                                                    $itext .= '<p>';
+                                                                    $itext .= ' <strong>'.( $v['document_title'] ).'</strong> ('.($v['document_type']).')';
+                                                                    $itext .= ' <br /> <em>Assigned On: '.(formatDateToDB($v['assigned_by_date'], 'Y-m-d H:i:s', DATE_WITH_TIME)).'';
+                                                                    $itext .= ' </em>';
+                                                                    $itext .= $assignedByText;
+                                                                    $itext .= ' <br /> <em>Type: '.($v['type'] == 'AD' ? 'Authorized Document' : '').'';
+                                                                    $itext .= '</p>';
+                                                                    ?>
+                                                                    <tr data-id="<?=$employeeId?>" class="jsInnerDocs dn">
+                                                                        <td></td>
+                                                                        <td colspan="2">
+                                                                            <?=$itext;?>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <?php
+                                                                endforeach;
+                                                            endif;
+                                                        ?>
                                                     <?php }
                                                     ?>
                                                     </tbody>
@@ -281,13 +269,12 @@
                                                     <thead>
                                                     <tr>
                                                         <th>Employee Name</th>
-                                                        <th>Email</th>
                                                         <th style="text-align: right" >View Document(s)</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <tr class="text-center">
-                                                        <td colspan="3">No employee with pending document(s)</td>
+                                                        <td colspan="2">No employee with pending document(s)</td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -414,8 +401,6 @@
         //
         $('#js-filter-employees').select2({ closeOnSelect: false });
         //
-        $('#js-filter-documents').select2({ closeOnSelect: false });
-        //
         $('#js-filter-form').submit(function(e){
             //
             e.preventDefault();
@@ -425,7 +410,7 @@
             url += ( $('#js-filter-employees').val() == null ? 'all' : $('#js-filter-employees').val().join(':') )+'/';
             url += ( $('#js-filter-documents').val() == null ? 'all' : $('#js-filter-documents').val().join(':') )+'/';
             //
-            window.location = "<?=base_url('hr_documents_management/people_with_pending_documents');?>/" + url;
+            window.location = "<?=base_url('hr_documents_management/people_with_pending_employer_documents');?>/" + url;
         });
 
         //
@@ -440,10 +425,10 @@
             url += $(this).data('type');
 
             if( $(this).data('type') == 'print' ){
-                openInNewTab("<?=base_url('hr_documents_management/people_with_pending_documents');?>/" + url);
+                openInNewTab("<?=base_url('hr_documents_management/people_with_pending_employer_documents');?>/" + url);
             }else{
                 //
-                window.location = "<?=base_url('hr_documents_management/people_with_pending_documents');?>/" + url;
+                window.location = "<?=base_url('hr_documents_management/people_with_pending_employer_documents');?>/" + url;
             }
         });
 
@@ -461,7 +446,7 @@
         //
         $('.js-filter-clear').click(function(e) {
             e.preventDefault();
-            window.location = "<?=base_url('hr_documents_management/people_with_pending_documents');?>";
+            window.location = "<?=base_url('hr_documents_management/people_with_pending_employer_documents');?>";
         });
     });
 
@@ -474,7 +459,7 @@
         //
         var total = 0;
         //
-        var employeeWithDocuments = <?=json_encode($employees);?>;
+        var employeeWithDocuments = <?=json_encode(array_values($newArray));?>;
         //
         var selectedEmployees = {};
         //
@@ -493,7 +478,6 @@
         $('.jsSelectSingle').click(function(){
             useSelect();
         });
-        
         //
         $('.jsSendEmailReminder').click(function(event){
             //
@@ -524,6 +508,14 @@
             total = senderList.length;
             //
             startSendEmailProcess(senderList);
+        });
+
+        //
+        $('.jsToggleDocuments').click(function(event){
+            //
+            event.preventDefault();
+            //
+            $('.jsInnerDocs[data-id="'+($(this).closest('tr').data('id'))+'"]').toggle();
         });
 
         //
@@ -580,19 +572,19 @@
                 //
                 loader(false);
                 //
-                alertify.alert('Success!','You have successfully sent an email reminder to selected employees', function(){ return; });
+                alertify.alert('Success!','You have successfully sent an email reminder to selected employees.', function(){ return; });
                 //
                 return;
             }
             //
-            var text = '<p>Please wait, while we are sending email to <b>'+( employee.first_name +' '+employee.last_name )+'</b></p><p>'+(current)+' of '+(total)+'</p>';
+            var text = '<p>Please wait, while we are sending email to <b>'+( employee.name )+'</b></p><p>'+(current)+' of '+(total)+'</p>';
             //
             loader(true, text);
             //
-            $.post("<?=base_url('send_manual_reminder_email_to_employee');?>", {
-                first_name: employee.first_name,
-                last_name: employee.last_name,
-                email: employee.email,
+            $.post("<?=base_url('send_manual_reminder_email_to_manager');?>", {
+                id: employee.id,
+                is_authotrized: employee.is_authotrized,
+                is_pending: employee.is_pending,
                 company_sid: "<?=$session['company_detail']['sid'];?>",
                 company_name: "<?=$session['company_detail']['CompanyName'];?>"
             }).done(function(){

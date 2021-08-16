@@ -9,6 +9,8 @@ class Email_manager extends CI_Controller
     {
         parent::__construct();
         //
+        $this->load->model('ajax/Email_manager_model', 'emm');
+        //
         $this->resp = [
             'Status' => false,
             'Message' => 'Invalid Request.'
@@ -41,6 +43,39 @@ class Email_manager extends CI_Controller
         log_and_send_templated_email(
             HR_DOCUMENTS_NOTIFICATION_EMS,
             $post['email'],
+            $replaceArray,
+            message_header_footer($post['company_sid'], $post['company_name'])
+        );
+    }
+    
+    
+    /**
+     * 
+     */
+    function SendManualEmailReminderToManager(){
+        //
+        $res = $this->resp;
+        //
+        if(
+            !$this->input->is_ajax_request() || 
+            !$this->input->post(NULL, TRUE) || 
+            $this->input->method() != 'post' 
+        ){
+            res($res);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $employee = $this->emm->GetEmployeeDetails($post['id'], ['first_name', 'last_name', 'email']);
+        //
+        $replaceArray = [];
+        $replaceArray['username'] = ucwords($employee['first_name'].' '.$employee['last_name']);
+        $replaceArray['baseurl'] = base_url();
+        $replaceArray['company_name'] = $post['company_name'];
+        //
+        log_and_send_templated_email(
+            HR_DOCUMENTS_REMINDER_NOTIFICATION,
+            $employee['email'],
             $replaceArray,
             message_header_footer($post['company_sid'], $post['company_name'])
         );

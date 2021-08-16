@@ -3928,12 +3928,9 @@ class Hr_documents_management_model extends CI_Model {
             job_title
         ')
         ->where('parent_sid', $companySid)
-        ->group_start()
         ->where('active', 1)
-        ->where('general_status', 'active')
-        ->group_end()
         ->where('terminated_status', 0)
-        ->order_by('concat(first_name,last_name)', 'ASC', false)
+        ->order_by('first_name', 'ASC')
         ->get('users');
         //
         $b = $a->result_array();
@@ -6128,5 +6125,86 @@ class Hr_documents_management_model extends CI_Model {
         $this->db
         ->where($cond)
         ->update('portal_eeo_form', $data);
+    }
+
+    //
+    function GetCompanyPendingAuthorizedDocuments ($company_sid, $employees = 'all') {
+        $this->db->select('
+            documents_assigned.*,
+            authorized_document_assigned_manager.assigned_by_date,
+            authorized_document_assigned_manager.is_archive as assign_archive,
+            authorized_document_assigned_manager.archived_by_date,
+            authorized_document_assigned_manager.assigned_to_sid,
+            authorized_document_assigned_manager.archived_by
+        ');
+        //
+        if($employees != 'all'){
+            $this->db->where_in('authorized_document_assigned_manager.assigned_to_sid', $employees);
+        }
+        $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
+        $this->db->where('documents_assigned.status', 1);
+        $this->db->where('documents_assigned.archive', 0);
+        $this->db->group_start();
+        $this->db->where('documents_assigned.authorized_signature IS ', NULL);
+        $this->db->or_where('documents_assigned.authorized_signature', '');
+        $this->db->group_end();
+        $this->db->group_start();
+        $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false);
+        $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false);
+        $this->db->group_end();
+        $this->db->join('documents_assigned','documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid','inner');
+        $this->db->order_by('documents_assigned.authorized_signature', 'ASC', false);
+        $this->db->order_by('assigned_by_date', 'DESC', false);
+        //
+        $record_obj = $this->db->get('authorized_document_assigned_manager');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        if (empty($record_arr)) { return []; }
+        //
+        $newArray = [];
+        //
+        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+        //
+        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+        // //
+        foreach ($record_arr as $d_key => $aut_doc) {
+            //
+            if (
+                (in_array($aut_doc['user_sid'], $inactive_employee_sid) && $aut_doc['user_type'] == 'employee') ||
+                (in_array($aut_doc['user_sid'], $inactive_applicant_sid) && $aut_doc['user_type'] == 'applicant')
+            ) {
+                continue;
+            }
+            //
+            if(!isset($newArray[$aut_doc['assigned_to_sid']])){
+                //
+                $newArray[$aut_doc['assigned_to_sid']] = [];
+            }
+            //
+            $newArray[$aut_doc['assigned_to_sid']][] = [
+                'document_assigned_sid' => $aut_doc['sid'],
+                'assigned_to_sid' => $aut_doc['assigned_to_sid'],
+                'user_type' => $aut_doc['user_type'],
+                'user_sid' => $aut_doc['user_sid'],
+                'document_type' => $aut_doc['document_type'],
+                'assigned_by' => $aut_doc['assigned_by'],
+                'assigned_by_date' => $aut_doc['assigned_by_date'],
+                'document_title' => $aut_doc['document_title'],
+                'type' => 'AD'
+            ];
+        }
+        //
+        return $newArray;
+    }
+
+
+    //
+    function GetCompanyPendingEmployerDocuments($company_sid, $array){
+        //
+        $employee_pending_w4 = $this->get_all_users_pending_w4($company_sid, 'employee', false);
+        $employee_pending_i9 = $this->get_all_users_pending_i9($company_sid, 'employee', false);
+        $applicant_pending_w4 = $this->get_all_users_pending_w4($company_sid, 'applicant', false);
+        $applicant_pending_i9 = $this->get_all_users_pending_i9($company_sid, 'applicant', false);
     }
 }

@@ -5661,6 +5661,9 @@ class Hr_documents_management extends Public_Controller {
             //
             $data['selectedEmployeeList'] = explode(':', $employees);
             $data['selectedDocumentList'] = explode(':', $documents);
+
+            //
+            $data['selectedEmployeeList'] = array_flip($data['selectedEmployeeList']);
             //
 
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
@@ -11629,6 +11632,55 @@ class Hr_documents_management extends Public_Controller {
         //
         echo 'success';
         exit(0);
+    }
+
+    public function people_with_pending_employer_documents(
+        $employees = 'all',
+        $documents = 'all',
+        $type = FALSE
+    ) {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'appearance', 'pending_document'); // no need to check in this Module as Dashboard will be available to all
+            $company_sid = $data["session"]["company_detail"]["sid"];
+            $employer_sid = $data["session"]["employer_detail"]["sid"];
+            $data['title'] = 'Employees With Pending Documents';
+            $data['company_sid'] = $company_sid;
+            $data['company_name'] = $data["session"]["company_detail"]["CompanyName"];
+            $data['employer_sid'] = $employer_sid;
+            $data['user_type'] = 'employee';
+            $emp_ids = array();
+            $start = microtime(true);
+            //
+            $data['selectedEmployees'] = 'all';
+            //
+            if($employees != 'all'){
+                $employees = explode(':', $employees);
+                //
+                $data['selectedEmployees'] = $employees;
+                //
+                $data['selectedEmployees'] = array_flip($data['selectedEmployees']);
+            }
+            // Get employees list
+            $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees( $company_sid );
+            
+            
+            // Get managers with pending authorize documents
+            $data['pendingAD'] = $this->hr_documents_management_model->GetCompanyPendingAuthorizedDocuments($data['company_sid'], $employees);
+            // Get managers with pending employer sections
+            // $pendingED = $this->hr_documents_management_model->GetCompanyPendingEmployerDocuments($data['company_sid'], $pendingAD);
+            
+            
+            $this->load->view('main/header', $data);
+            $this->load->view('hr_documents_management/new_people_with_pending_employer_documents');
+            $this->load->view('main/footer');
+            
+        } else {
+            redirect('login', "refresh");
+        }
     }
 
 }
