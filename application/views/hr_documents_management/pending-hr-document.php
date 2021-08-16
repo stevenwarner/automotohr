@@ -11,10 +11,12 @@
                 <?php $this->load->view('main/manage_ems_left_view'); ?>
             </div>  
             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
+            <?php $this->load->view('loader', ['props' => 'id="jsEmployeeEmailLoader"']);?>
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow"><a class="dashboard-link-btn" href="<?php echo base_url('hr_documents_management/people_with_pending_documents'); ?>"><i class="fa fa-chevron-left"></i>Employees With Pending Documents</a><?php echo $title; ?> </span>
+                        <span class="page-heading down-arrow"><a class="dashboard-link-btn" href="<?php echo base_url('hr_documents_management/people_with_pending_documents'); ?>"><i class="fa fa-chevron-left"></i>Employees With Pending Documents</a><?php echo $title; ?> 
+                    </span>
                     </div>
                     <div class="create-job-wrap">
                         <?php if (!sizeof($documents) && !sizeof($w4_form) && !sizeof($w9_form) && !sizeof($i9_form)) { ?>
@@ -27,7 +29,14 @@
                         <?php } else { ?>
                             <?php if (count($documents) > 0 || !empty($w4_form) || !empty($w9_form) || !empty($i9_form) || count($NotCompletedGeneralDocuments)) { ?>
                                 <div class="table-responsive">
-                                    <h3>Document Details For Employee: <b><?php echo $userDetail['first_name']; ?> <?php echo $userDetail['last_name']; ?></b></h3>
+                                    <h3>Document Details For Employee: <b><?php echo $userDetail['first_name']; ?> <?php echo $userDetail['last_name']; ?></b>
+                                    <span class="pull-right">
+                                        <button class="btn btn-success jsSendEmailReminder">
+                                            Send Email Reminder
+                                        </button>
+                                    </span>
+                                    <div class="clearfix"></div>
+                                </h3>
                                     <div class="hr-document-list">
                                         <table class="hr-doc-list-table">
                                             <thead>
@@ -706,6 +715,54 @@
         $('#latest_assigned_document_preview').html('');
         $('#latest_assigned_document_preview').hide();
     });
+
+    //
+    $(function(){
+        var employee = <?=json_encode($userDetail);?>;
+        //
+        $('.jsSendEmailReminder').click(function(event){
+            //
+            event.preventDefault();
+            //
+            alertify.confirm('Do you really want to send an email reminder notification?', function(){
+                //
+                startSendEmailProcess();
+            });
+        });
+
+        //
+        function startSendEmailProcess(){
+            //
+            var text = '<p>Please wait, while we are sending email to <b>'+( employee.first_name +' '+employee.last_name )+'</b></p>';
+            //
+            loader(true, text);
+            //
+            $.post("<?=base_url('send_manual_reminder_email_to_employee');?>", {
+                first_name: employee.first_name,
+                last_name: employee.last_name,
+                email: employee.email,
+                company_sid: "<?=$session['company_detail']['sid'];?>",
+                company_name: "<?=$session['company_detail']['CompanyName'];?>"
+            }).done(function(){
+                //
+                loader(false);
+                //
+                alertify.alert('Success!','You have successfully sent an email reminder to '+( employee.first_name +' '+employee.last_name )+'', function(){ return; });
+            });
+        }
+
+        //
+        function loader(doShow, text){
+            //
+            if(doShow){
+                $('#jsEmployeeEmailLoader').show(0);
+                $('#jsEmployeeEmailLoader .jsLoaderText').html(text);
+            } else{
+                $('#jsEmployeeEmailLoader').hide(0);
+                $('#jsEmployeeEmailLoader .jsLoaderText').html('Please wait, while we are processing your request.');
+            }
+        }
+    })
 </script>
 
 
