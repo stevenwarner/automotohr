@@ -220,8 +220,8 @@
                                                         </tr>
                                                         <?php
                                                             if(!empty($employee)):
-                                                                $itext = '';
                                                                 foreach($employee as $ke => $v):
+                                                                    $itext = '';
                                                                     if($v['type'] == 'AD'){
                                                                         $newArray[$employeeId]['is_authotrized'] = 1;
                                                                     } else{
