@@ -503,11 +503,14 @@
                 });
             }
             //
-            current = 1;
-            //
-            total = senderList.length;
-            //
-            startSendEmailProcess(senderList);
+            alertify.confirm('Do you really want to send email reminders to the selected employees?', function(){
+                //
+                current = 1;
+                //
+                total = senderList.length;
+                //
+                startSendEmailProcess(senderList);
+            });
         });
 
         //
