@@ -13079,7 +13079,7 @@ if(!function_exists('getUploadedDocumentURL')){
             $ra['print_url'] = "https://view.officeapps.live.com/op/view.aspx?src=". AWS_S3_BUCKET_URL .$document_path;
             $ra['ifram_url'] = "https://view.officeapps.live.com/op/embed.aspx?src=" . AWS_S3_BUCKET_URL . $document_path;
         } else if (in_array($extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
-            $$ra['image_path'] = AWS_S3_BUCKET_URL . $document_s3_url;
+            $ra['image_path'] = AWS_S3_BUCKET_URL . $document_path;
             $ra['print_url'] = base_url('hr_documents_management/print_s3_image/'.$document_path);
         } else {
             $ra['print_url'] = "https://docs.google.com/viewerng/viewer?url=". AWS_S3_BUCKET_URL .$document_path; 

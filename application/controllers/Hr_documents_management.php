@@ -10612,6 +10612,9 @@ class Hr_documents_management extends Public_Controller {
 
         $data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name ($company_sid, 0, $type, 'bulk_download');
 
+        // Get all completed documents
+        $data['documents'] = $this->hr_documents_management_model->GetCompletedDocumentsWithEmployees($company_sid);
+
         $data['title'] = 'Export Bulk Documents - '.$type;
         $data['type'] = $type;
         $data['company_sid'] = $company_sid;
@@ -10632,7 +10635,7 @@ class Hr_documents_management extends Public_Controller {
      * $id             Int
      * $type           String employee|applicant
      */
-    function getDocuments($id, $type = 'employee'){
+    function getDocuments($id, $type = 'employee', $documentIds = ''){
         //
         $data = $this->session->userdata('logged_in');
         //
@@ -10648,17 +10651,27 @@ class Hr_documents_management extends Public_Controller {
             // Get employee documents
             $documents = $this->hr_documents_management_model->getEmployeeCompletedDocuments(
                 $data['company_detail']['sid'],
-                $id
+                $id,
+                $documentIds
             ); 
             //
-            $documents['W4']['sent_date'] = !isset($documents['W4']['sent_date']) ? date('Y-m-d') : $documents['W4']['sent_date'];
-            //
-            $assign_on = date("Y-m-d", strtotime($documents['W4']['sent_date']));
-            $compare_date = date("Y-m-d", strtotime('2020-01-06'));
-            //
-            $documents['TI9'] = count($documents['I9']) ? $this->load->view('form_i9/form_i9_pdf_template', ['pre_form' => $documents['I9']], true) : '';
-            $documents['TW9'] = count($documents['W9']) ? $this->load->view('form_w9/form_w9_pdf_template', ['pre_form' => $documents['W9']], true) : '';
-            $documents['TW4'] = count($documents['W4']) ? $this->load->view('form_w4/' . ($assign_on >= $compare_date ? "form_w4_2020_pdf_template" : "form_w4_pdf_template") . '', ['pre_form' => $documents['W4']], true) : '';
+            if(!empty($documentIds)){
+                //
+                $documents['W4'] = '';
+                $documents['TI9'] = '';
+                $documents['TW9'] = '';
+                $documents['TW4'] = '';
+            } else{
+                //
+                $documents['W4']['sent_date'] = !isset($documents['W4']['sent_date']) ? date('Y-m-d') : $documents['W4']['sent_date'];
+                //
+                $assign_on = date("Y-m-d", strtotime($documents['W4']['sent_date']));
+                $compare_date = date("Y-m-d", strtotime('2020-01-06'));
+                //
+                $documents['TI9'] = count($documents['I9']) ? $this->load->view('form_i9/form_i9_pdf_template', ['pre_form' => $documents['I9']], true) : '';
+                $documents['TW9'] = count($documents['W9']) ? $this->load->view('form_w9/form_w9_pdf_template', ['pre_form' => $documents['W9']], true) : '';
+                $documents['TW4'] = count($documents['W4']) ? $this->load->view('form_w4/' . ($assign_on >= $compare_date ? "form_w4_2020_pdf_template" : "form_w4_pdf_template") . '', ['pre_form' => $documents['W4']], true) : '';
+            }
         }
         //
         echo json_encode($documents);

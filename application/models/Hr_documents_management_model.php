@@ -4212,7 +4212,7 @@ class Hr_documents_management_model extends CI_Model {
 
 
     //
-    function getEmployeeCompletedDocuments($cId, $id){
+    function getEmployeeCompletedDocuments($cId, $id, $dIds = ''){
         //
         $r = [
             'Assigned' => [],
@@ -4228,15 +4228,20 @@ class Hr_documents_management_model extends CI_Model {
         //
         $t = [];
         //
-        $a = $this->db
+        $this->db
         ->select('*')
         ->where('user_sid', $id)
         ->where('user_type', 'employee')
         ->where('company_sid', $cId)
         ->where('archive', 0)
         ->where('status', 1)
-        ->order_by('sid', 'DESC')
-        ->get('documents_assigned');
+        ->order_by('sid', 'DESC');
+        //
+        if(!empty($dIds)){
+            $this->db->where_in('sid', explode(':', $dIds));
+        }
+        //
+        $a = $this->db->get('documents_assigned');
         //
         $b = $a->result_array();
         $a = $a->free_result();
@@ -4245,11 +4250,13 @@ class Hr_documents_management_model extends CI_Model {
             isDocumentCompleted($b);
             $r['Assigned'] = $b;
         }
-        //
-        $this->getEmployeeI9Form($cId, $id, $r);
-        $this->getEmployeeW9Form($cId, $id, $r);
-        $this->getEmployeeW4Form($cId, $id, $r);
-        $this->getEmployeeGeneralDocuments($cId, $id, $r, true);
+        if(empty($dIds)){
+            //
+            $this->getEmployeeI9Form($cId, $id, $r);
+            $this->getEmployeeW9Form($cId, $id, $r);
+            $this->getEmployeeW4Form($cId, $id, $r);
+            $this->getEmployeeGeneralDocuments($cId, $id, $r, true);
+        }
         //
         return $r;
     }
@@ -6201,5 +6208,61 @@ class Hr_documents_management_model extends CI_Model {
         }
         //
         return $newArray;
+    }
+
+    //
+    function GetCompletedDocumentsWithEmployees($company_sid){
+        //
+        $query = 
+        $this->db
+        ->select("
+            documents_assigned.*,
+            users.first_name,
+            users.last_name,
+            users.job_title,
+            users.is_executive_admin,
+            users.pay_plan_flag,
+            users.access_level,
+            users.access_level_plus
+        ")
+        ->join('users', 'users.sid = documents_assigned.user_sid', 'inner')
+        ->where('users.active', 1)
+        ->where('users.terminated_status', 0)
+        ->where('documents_assigned.company_sid', $company_sid)
+        ->where('documents_assigned.status', 1)
+        ->where('documents_assigned.archive', 0)
+        ->where('documents_assigned.user_type', 'employee')
+        ->get('documents_assigned');
+        //
+        $documents = $query->result_array();
+        $query->free_result();
+        //
+        if(empty($documents)){
+            return [];
+        }
+        //
+        $returnArray = [];
+        //
+        foreach($documents as $document){
+            //
+            if(isDocumentCompletedCheck($document, true)){
+                //
+                if(!isset($returnArray[$document['document_sid']])){
+                    $returnArray[$document['document_sid']] = [
+                        'id' => $document['document_sid'],
+                        'title' => $document['document_title'],
+                        'employees' => []
+                    ];
+                }
+                //
+                $returnArray[$document['document_sid']]['employees'][] = [
+                    'a_sid' => $document['sid'],
+                    'sid' => $document['user_sid'],
+                    'name' => remakeEmployeeName($document)
+                ];
+            }
+        }
+        //
+        return $returnArray;
     }
 }

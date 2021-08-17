@@ -20,7 +20,7 @@
                                 <div class="help-block">
                                     <h3><strong>Export Bulk Documents: </strong></h3>
                                     <h4>To export bulk documents, follow the steps below;</h4>
-                                    <h4>1- Select an Employee or Applicant. </h4>
+                                    <h4>1- Select an Employee or Applicant or Document(s). </h4>
                                     <h4>3- After selecting employees/applicants, click on the 'Export Document' button.</h4>
                                     <h4><strong>Depending on the number of documents this could take a bit of time to download, <span class="text-success">Please be patient.</span></strong></h4>
                                 </div>
@@ -39,6 +39,9 @@
                                             </li>
                                             <li role="presentation"  <?=$type == 'applicant' ? 'class="active"' : '';?>>
                                                 <a href="#applicant-box" aria-controls="home" role="tab" data-toggle="tab">Applicant(s)</a>
+                                            </li>
+                                            <li role="presentation"  <?=$type == 'documents' ? 'class="active"' : '';?>>
+                                                <a href="#documents-box" aria-controls="home" role="tab" data-toggle="tab">Documents(s)</a>
                                             </li>
                                         </ul>
 
@@ -89,6 +92,73 @@
                                                                 <a href="javascript:;" target="_blank" class="btn btn-success pull-right">Download ZIP</a>
                                                             </span>
                                                         <?php } ?>
+                                                    </div>
+                                                    <!-- Document Box -->
+                                                    <div role="tabpanel" class="tab-pane  <?=$type == 'documents' ? 'active' : '';?> cs-documents-box" id="documents-box">
+                                                        <!-- Filter -->
+                                                        <br>
+                                                        <div class="panel panel-success">
+                                                            <div class="panel-body">
+                                                                <div class="row">
+                                                                    <div class="col-sm-10">
+                                                                        <select id="jsDocumentSearch" multiple>
+                                                                        <?php 
+                                                                            if(!empty($documents)) {
+                                                                                foreach($documents as $document){
+                                                                                    ?>
+                                                                                    <option value="<?=$document['id'];?>"><?=$document['title'];?></option>
+                                                                                    <?php
+                                                                                }
+                                                                            }
+                                                                            ?>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-sm-2">
+                                                                        <button class="btn btn-success form-control" id="jsDocumentSearchBTN">Search</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--  -->
+                                                        <?php
+                                                            if(empty($documents)){
+                                                                ?>
+                                                                <br />
+                                                                <div class="panel panel-success">
+                                                                    <div class="panel-body">
+                                                                        <p class="alert alert-info text-center">No completed documents found</p>
+                                                                    </div>
+                                                                </div>
+                                                                <?php
+                                                            } else{
+                                                                foreach($documents as $document){
+                                                                ?>
+                                                                <br />
+                                                                <div class="panel panel-success jsDocumentPanel" data-id="<?=$document['id'];?>">
+                                                                    <div class="panel-heading">
+                                                                        <label class="control control--checkbox">
+                                                                            <input type="checkbox" class="jsSelectAllDocuments" name="jsSelectAllDocuments<?=$document['id'];?>" />
+                                                                            <div class="control__indicator" style="top: -10px;"></div>
+                                                                        </label>
+                                                                        &nbsp;&nbsp; <strong class="csW csF16"><?=$document['title']?></strong>
+                                                                    </div>
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <?php foreach($document['employees'] as $emp){ ?>
+                                                                            <div class="col-sm-6">
+                                                                                <label class="control control--checkbox">
+                                                                                    <input type="checkbox" class="jsSelectSingleDocument" name="jsSelectSingleDocument<?=$document['id'];?>" data-id="<?=$emp['sid'];?>" data-aid="<?=$emp['a_sid'];?>" /> <?=$emp['name'];?>
+                                                                                    <div class="control__indicator"></div>
+                                                                                </label>
+                                                                            </div>
+                                                                            <?php } ?>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <?php
+                                                                }
+                                                            }
+                                                        ?>
                                                     </div>
                                                 </div>
 
@@ -259,6 +329,19 @@ word-break: break-all;
                 return;
             }
             //
+
+            //
+            if(megaOBJ.type === 'documents'){
+                //
+                sendList = Object.keys(selectedDocuments);
+                //
+                if(sendList.length === 0){
+                    alertify.alert('Please select at least one employee.');
+                    return;
+                }
+                startEmployeeProcess();
+                return;
+            }
         });
 
         function startEmployeeProcess(){
@@ -312,7 +395,10 @@ word-break: break-all;
 
         //
         function fetchEmployeeDocument(){
-            $.get(`<?=base_url('hr_documents_management/getDocuments');?>/${currentEmployee.id}/employee`, (resp) => {
+            //
+            var documentIds = Object.keys(selectedDocuments[currentEmployee.id]['documents']).join(':');
+            //
+            $.get(`<?=base_url('hr_documents_management/getDocuments');?>/${currentEmployee.id}/employee/${documentIds}`, (resp) => {
                 cd = $.parseJSON(resp);
                 exportType = 'employee';
                 startExport();
@@ -818,5 +904,80 @@ word-break: break-all;
             //
             $('.js-body-loader-text').html(msg);
         }
-    })
+
+        //
+        $('#jsDocumentSearch').select2();
+        //
+        $('#jsDocumentSearchBTN').click(function(e){
+            //
+            e.preventDefault();
+            //
+            var v = $('#jsDocumentSearch').val() || null;
+            //
+            if(!v){
+                $('.jsDocumentPanel').show(0);
+            } else{
+                //
+                $('.jsDocumentPanel').hide(0);
+                //
+                v.map(function(id){
+                    $('.jsDocumentPanel[data-id="'+(id)+'"]').show(0);
+                });
+            }
+        });
+        //
+        var selectedDocuments = {};
+        //
+        $('.jsSelectAllDocuments').click(function(){
+            //
+            var documentId = $(this).closest('.jsDocumentPanel').data('id');
+            //
+            var isChecked = $(this).prop('checked');
+            //
+            $(this).closest('.jsDocumentPanel').find('.jsSelectSingleDocument').prop('checked', $(this).prop('checked'));
+            //
+            $('.jsDocumentPanel[data-id="'+(documentId)+'"] .jsSelectSingleDocument').map(function(){
+                //
+                if(selectedDocuments[$(this).data('id')] === undefined){
+                    //
+                    selectedDocuments[$(this).data('id')] = { 'documents': {}};
+                }
+                //
+                if(isChecked){
+                    //
+                    selectedDocuments[$(this).data('id')]['documents'][$(this).data('aid')] = true;
+                } else{
+                    delete selectedDocuments[$(this).data('id')]['documents'][$(this).data('aid')];
+                }
+                //
+                if(Object.keys(selectedDocuments[$(this).data('id')]['documents']).length === 0){
+                    delete selectedDocuments[$(this).data('id')];
+                }
+            });
+        });
+
+        //
+        $('.jsSelectSingleDocument').click(function(){
+            //
+            var isChecked = $(this).prop('checked');
+            //
+            if(selectedDocuments[$(this).data('id')] === undefined){
+                //
+                selectedDocuments[$(this).data('id')] = { 'documents': {}};
+            }
+            //
+            if(isChecked){
+                //
+                selectedDocuments[$(this).data('id')]['documents'][$(this).data('aid')] = true;
+            } else{
+                delete selectedDocuments[$(this).data('id')]['documents'][$(this).data('aid')];
+            }
+            //
+            if(Object.keys(selectedDocuments[$(this).data('id')]['documents']).length === 0){
+                    delete selectedDocuments[$(this).data('id')];
+                }
+        });
+
+        window.dd = selectedDocuments
+    });
 </script>
