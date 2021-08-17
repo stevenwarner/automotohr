@@ -453,7 +453,7 @@ class Accurate_background_model extends CI_Model
                 $result_arr[$k0]['user_first_name'] = $v0['user_first_name'] = 'Candidate Not Found';
                 //
                 $result = $this->db
-                    ->select('concat(first_name," ",last_name) as full_name')
+                    ->select('concat(first_name," ",last_name) as full_name, email')
                     ->where('sid', $v0['users_sid'])
                     ->get($v0['users_type'] == 'applicant' ? 'portal_job_applications' : 'users');
                 $result2_arr = $result->row_array();
@@ -485,7 +485,7 @@ class Accurate_background_model extends CI_Model
                 //
                 $rows .= '<tr>';
                 $rows .= '    <td>' . convert_date_to_frontend_format($v0['date_applied']) . '</td>';
-                $rows .= '    <td>' . $v0['first_name'] . ' ' . $v0['last_name'] . '</td>';
+                $rows .= '    <td>' . $v0['first_name'] . ' ' . $v0['last_name'] . ' ('.($v0['email']).')</td>';
                 $rows .= '    <td>' . $v0['user_first_name'] . '</td>';
                 $rows .= '    <td>' . ucfirst($v0['users_type']) . '</td>';
                 $rows .= '    <td>' . $v0['product_name'] . '</td>';
