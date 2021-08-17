@@ -6202,14 +6202,4 @@ class Hr_documents_management_model extends CI_Model {
         //
         return $newArray;
     }
-
-
-    //
-    function GetCompanyPendingEmployerDocuments($company_sid, $array){
-        //
-        $employee_pending_w4 = $this->get_all_users_pending_w4($company_sid, 'employee', false);
-        $employee_pending_i9 = $this->get_all_users_pending_i9($company_sid, 'employee', false);
-        $applicant_pending_w4 = $this->get_all_users_pending_w4($company_sid, 'applicant', false);
-        $applicant_pending_i9 = $this->get_all_users_pending_i9($company_sid, 'applicant', false);
-    }
 }

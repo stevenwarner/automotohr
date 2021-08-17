@@ -6,9 +6,12 @@ class Varification_document_model extends CI_Model {
     }
 
     function get_all_users_pending_w4 ($company_sid, $user_type, $count = FALSE) {
-        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
-        //
-        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+        if($user_type == 'employee'){
+            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+        } else{
+            //
+            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+        }
         //
         $this->db->select('user_type, employer_sid as user_sid, sent_date, signature_timestamp as filled_date');
         $this->db->where('company_sid', $company_sid);
@@ -56,14 +59,17 @@ class Varification_document_model extends CI_Model {
     }
 
     function get_all_users_pending_i9 ($company_sid, $user_type, $count = FALSE) {
-        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
-        //
-        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+
+        if($user_type == 'employee'){
+            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+        } else{
+            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+        }
         //
         $this->db->select('user_type, user_sid, sent_date, applicant_filled_date as filled_date');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
-
+        
         if ($user_type == 'employee' && !empty($inactive_employee_sid)) {
             $this->db->group_start();
             $this->db->where_not_in('user_sid', $inactive_employee_sid);
@@ -103,9 +109,14 @@ class Varification_document_model extends CI_Model {
 
     //
     function getPendingAuthDocs($company_sid, $user_type, $count = FALSE, $employer = []){
-        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
-        //
-        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+
+        if($user_type == 'employee'){
+            //
+            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+        } else{
+            //
+            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+        }
         //
         if(!empty($employer)){
             //
@@ -190,7 +201,7 @@ class Varification_document_model extends CI_Model {
         ->where('active', 0)
         ->where('parent_sid <> ', 0)
         ->or_where('terminated_status', 1)
-        ->order_by('concat(first_name,last_name)', 'ASC', false)
+        ->order_by('first_name', 'ASC')
         ->get('users');
         //
         $b = $a->result_array();

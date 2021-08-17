@@ -8808,7 +8808,7 @@ class Hr_documents_management extends Public_Controller {
                         );
                         //
                         log_and_sendEmail(
-                            'notifications@automotohr.com',
+                            FROM_EMAIL_NOTIFICATIONS,
                             $userInfoE['email'],
                             $template['subject'],
                             $body,
@@ -9632,7 +9632,7 @@ class Hr_documents_management extends Public_Controller {
                             );
                             //
                             log_and_sendEmail(
-                                'notifications@automotohr.com',
+                                FROM_EMAIL_NOTIFICATIONS,
                                 $user_info['email'],
                                 $template['subject'],
                                 $body,
@@ -10272,7 +10272,7 @@ class Hr_documents_management extends Public_Controller {
                     );
                     //
                     log_and_sendEmail(
-                        'notifications@automotohr.com',
+                        FROM_EMAIL_NOTIFICATIONS,
                         $user_info['email'],
                         $template['subject'],
                         $body,
@@ -10843,7 +10843,7 @@ class Hr_documents_management extends Public_Controller {
         );
         //
         log_and_sendEmail(
-            'notifications@automotohr.com',
+            FROM_EMAIL_NOTIFICATIONS,
             $document['user']['email'],
             $template['subject'],
             $body,
@@ -11628,7 +11628,7 @@ class Hr_documents_management extends Public_Controller {
         $body .= $hf['footer'];
         //
         log_and_sendEmail(
-            'notifications@automotohr.com',
+            FROM_EMAIL_NOTIFICATIONS,
             $info['email'],
             $template['subject'],
             $body,
@@ -11676,9 +11676,18 @@ class Hr_documents_management extends Public_Controller {
             // Get managers with pending authorize documents
             $data['pendingAD'] = $this->hr_documents_management_model->GetCompanyPendingAuthorizedDocuments($data['company_sid'], $employees);
             // Get managers with pending employer sections
-            // $pendingED = $this->hr_documents_management_model->GetCompanyPendingEmployerDocuments($data['company_sid'], $pendingAD);
-            
-            
+            $this->load->model('varification_document_model');
+            //
+            $employee_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'employee', false);
+            $employee_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'employee', false);
+            $employee_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false);
+            //
+            $data['managers'] = array_merge(
+                $employee_pending_w4,
+                $employee_pending_i9,
+                $employee_pending
+            );
+            //
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/new_people_with_pending_employer_documents');
             $this->load->view('main/footer');
