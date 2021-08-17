@@ -5662,6 +5662,11 @@ class Hr_documents_management extends Public_Controller {
             $data['selectedEmployeeList'] = explode(':', $employees);
             $data['selectedDocumentList'] = explode(':', $documents);
 
+            // Only get documents for active and non executive employees
+            if($employees == 'all'){
+                $employees = implode(':', array_column($data['employeesList'], 'sid'));
+            }
+
             //
             $data['selectedEmployeeList'] = array_flip($data['selectedEmployeeList']);
             //
