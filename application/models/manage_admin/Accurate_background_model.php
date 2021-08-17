@@ -458,7 +458,10 @@ class Accurate_background_model extends CI_Model
                     ->get($v0['users_type'] == 'applicant' ? 'portal_job_applications' : 'users');
                 $result2_arr = $result->row_array();
                 $result = $result->free_result();
-                if (sizeof($result2_arr)) $result_arr[$k0]['user_first_name'] = $v0['user_first_name'] = ucwords($result2_arr['full_name']);
+                if (sizeof($result2_arr)) {
+                    $result_arr[$k0]['user_first_name'] = $v0['user_first_name'] = ucwords($result2_arr['full_name']);
+                    $result_arr[$k0]['email'] = $v0['email'] = ($result2_arr['email']);
+                }
 
                 //
                  $result_arr[$k0]['product_name'] = 
