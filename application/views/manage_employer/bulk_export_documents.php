@@ -583,53 +583,54 @@ word-break: break-all;
                         title: dct.document_title,
                         content: resp.replace(/data:application\/pdf;base64,/,'')
                     }, dct.document_title);
-                    return;
+                } else{
+
+                    var obj = jQuery.parseJSON(resp);
+                    var html = obj.html;
+                    var form_input_data = obj.input_data;
+    
+                    let o = {
+                        title: dct.document_title,
+                        content: html
+                    };
+                    // $('#js-export-area div').html(o.content);
+                    if(dct.document_type == 'hybrid_document') o.file = dct.document_s3_name;
+                    // Check for existing base64
+                    if(o.content.indexOf('data:application/pdf;base64,') !== -1 ){
+                        o.content = o.content.replace(/data:application\/pdf;base64,/, '');
+                        uploadPDF(o, o.title);
+                    } else{
+                        $('#js-export-area div').html(html);
+                        //
+                        if($('#jsContentArea').find('select').length >= 0){
+                            $('#jsContentArea').find('select').map(function(i){
+                                //
+                                $(this).addClass('js_select_document');
+                                $(this).prop('name', 'selectDD'+i);
+                            });
+                        }
+                        //
+                        if(form_input_data != null && form_input_data != ''){
+                            //
+                            form_input_data = Object.entries(form_input_data);
+                            //
+                            
+                            $.each(form_input_data, function(key ,input_value) { 
+                                if(input_value[0].match(/select/) !== -1){
+                                    if(input_value[1] != null){
+                                        let cc = get_select_box_value(input_value[0],input_value[1]);
+                                        $(`select.js_select_document[name="${input_value[0]}"]`).html('');  
+                                        $(`select.js_select_document[name="${input_value[0]}"]`).hide(0);    
+                                        $(`select.js_select_document[name="${input_value[0]}"]`).after(`<strong style="font-size: 20px;">${cc}</strong>`);
+                                    }
+                                }    
+                            }); 
+                        }
+                        //
+                        generatePDF($('#js-export-area div'), o);
+                    }
                 }
                
-                var obj = jQuery.parseJSON(resp);
-                var html = obj.html;
-                var form_input_data = obj.input_data;
-
-                let o = {
-                    title: dct.document_title,
-                    content: html
-                };
-                // $('#js-export-area div').html(o.content);
-                if(dct.document_type == 'hybrid_document') o.file = dct.document_s3_name;
-                // Check for existing base64
-                if(o.content.indexOf('data:application/pdf;base64,') !== -1 ){
-                    o.content = o.content.replace(/data:application\/pdf;base64,/, '');
-                    uploadPDF(o, o.title);
-                } else{
-                    $('#js-export-area div').html(html);
-                    //
-                    if($('#jsContentArea').find('select').length >= 0){
-                        $('#jsContentArea').find('select').map(function(i){
-                            //
-                            $(this).addClass('js_select_document');
-                            $(this).prop('name', 'selectDD'+i);
-                        });
-                    }
-                    //
-                    if(form_input_data != null && form_input_data != ''){
-                        //
-                        form_input_data = Object.entries(form_input_data);
-                        //
-                        
-                        $.each(form_input_data, function(key ,input_value) { 
-                            if(input_value[0].match(/select/) !== -1){
-                                if(input_value[1] != null){
-                                    let cc = get_select_box_value(input_value[0],input_value[1]);
-                                    $(`select.js_select_document[name="${input_value[0]}"]`).html('');  
-                                    $(`select.js_select_document[name="${input_value[0]}"]`).hide(0);    
-                                    $(`select.js_select_document[name="${input_value[0]}"]`).after(`<strong style="font-size: 20px;">${cc}</strong>`);
-                                }
-                            }    
-                        }); 
-                    }
-                    //
-                    generatePDF($('#js-export-area div'), o);
-                }
                 acc++;
             });
         }
