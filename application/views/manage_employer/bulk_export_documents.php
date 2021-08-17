@@ -576,6 +576,15 @@ word-break: break-all;
             $('#js-export-area div').css('padding', '20px');
             //
             $.get(`<?=base_url('hr_documents_management/getSubmittedDocument');?>/${dct.sid}/submitted/assigned_document/${dct.document_type}`, (resp) => {
+
+                //
+                if(resp.match(/data:app/) !== null){
+                    uploadPDF({
+                        title: dct.document_title,
+                        content: resp.replace(/data:application\/pdf;base64,/,'')
+                    }, dct.document_title);
+                    return;
+                }
                
                 var obj = jQuery.parseJSON(resp);
                 var html = obj.html;
