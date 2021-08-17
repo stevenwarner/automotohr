@@ -41,7 +41,7 @@
                                                 <a href="#applicant-box" aria-controls="home" role="tab" data-toggle="tab">Applicant(s)</a>
                                             </li>
                                             <li role="presentation"  <?=$type == 'documents' ? 'class="active"' : '';?>>
-                                                <a href="#documents-box" aria-controls="home" role="tab" data-toggle="tab">Documents(s)</a>
+                                                <a href="#documents-box" aria-controls="home" role="tab" data-toggle="tab">Document(s)</a>
                                             </li>
                                         </ul>
 
