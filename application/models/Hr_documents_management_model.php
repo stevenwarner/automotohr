@@ -3914,9 +3914,10 @@ class Hr_documents_management_model extends CI_Model {
 
     // Fetch all active employees
     function getAllActiveEmployees(
-        $companySid
+        $companySid,
+        $withExec = true
     ){
-        $a = $this->db
+        $this->db
         ->select('
             sid, 
             first_name, 
@@ -3930,8 +3931,12 @@ class Hr_documents_management_model extends CI_Model {
         ->where('parent_sid', $companySid)
         ->where('active', 1)
         ->where('terminated_status', 0)
-        ->order_by('first_name', 'ASC')
-        ->get('users');
+        ->order_by('first_name', 'ASC');
+        //
+        if(!$withExec){
+            $this->db->where('is_executive_admin', 0);
+        }
+        $a = $this->db->get('users');
         //
         $b = $a->result_array();
         $a = $a->free_result();

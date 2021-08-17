@@ -5655,7 +5655,7 @@ class Hr_documents_management extends Public_Controller {
             $emp_ids = array();
 
             // Get employees list
-            $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees( $company_sid );
+            $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees( $company_sid, false );
             // Get documents list
             $data['documentsList'] = $this->hr_documents_management_model->getAllActiveDocuments( $company_sid );
             //
@@ -11665,7 +11665,7 @@ class Hr_documents_management extends Public_Controller {
                 $data['selectedEmployees'] = array_flip($data['selectedEmployees']);
             }
             // Get employees list
-            $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees( $company_sid );
+            $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees( $company_sid, false );
             
             
             // Get managers with pending authorize documents
