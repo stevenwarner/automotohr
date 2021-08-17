@@ -195,10 +195,10 @@
                                                     <caption></caption>
                                                     <thead>
                                                     <tr>
-                                                        <th scope="col">
+                                                        <th scope="col" style="vertical-align: middle;">
                                                             <label class="control control--checkbox">
                                                                 <input type="checkbox" id="jsSelectAll" />
-                                                                <div class="control__indicator"></div>
+                                                                <div class="control__indicator" style="top: -7px;"></div>
                                                             </label>
                                                         </th>
                                                         <th scope="col">Employee Name</th>
@@ -240,10 +240,10 @@
                                                         }
                                                         ?>
                                                         <tr data-id="<?=$employee['sid'];?>">
-                                                            <td>
+                                                            <td style="vertical-align: middle;">
                                                                 <label class="control control--checkbox">
                                                                     <input type="checkbox" class="jsSelectSingle" />
-                                                                    <div class="control__indicator"></div>
+                                                                    <div class="control__indicator" style="top: -7px;"></div>
                                                                 </label>
                                                             </td>
                                                             <td><?=remakeEmployeeName($employee);?></td>
