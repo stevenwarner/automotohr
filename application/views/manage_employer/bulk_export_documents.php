@@ -331,7 +331,7 @@ word-break: break-all;
             //
 
             //
-            if(megaOBJ.type === 'documents'){
+            if(megaOBJ.type === 'document'){
                 //
                 sendList = Object.keys(selectedDocuments);
                 //
@@ -679,6 +679,8 @@ word-break: break-all;
             var company_sid = "<?=$company_sid;?>";
             if(megaOBJ.type === 'employee'){
                 user_type = 'employee';
+            } else if(megaOBJ.type === 'document'){
+                user_type = 'documents';
             } else {
                 user_type = 'applicant';
             }
