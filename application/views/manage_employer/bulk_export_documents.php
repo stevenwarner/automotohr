@@ -396,7 +396,7 @@ word-break: break-all;
         //
         function fetchEmployeeDocument(){
             //
-            var documentIds = Object.keys(selectedDocuments[currentEmployee.id]['documents']).join(':');
+            var documentIds = selectedDocuments[currentEmployee.id] !== undefined ? Object.keys(selectedDocuments[currentEmployee.id]['documents']).join(':') : '';
             //
             $.get(`<?=base_url('hr_documents_management/getDocuments');?>/${currentEmployee.id}/employee/${documentIds}`, (resp) => {
                 cd = $.parseJSON(resp);
