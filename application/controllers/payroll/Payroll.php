@@ -99,15 +99,6 @@ class Payroll extends CI_Controller
      * 
      */
     function AddEmployeeToCompany(){
-
-        _e(
-            RefreshToken([
-                'refresh_token' => 'VnmgEl3LtYcoSe-utYZgTFExmVvd0bQqF_eOldCdPa4',
-                'access_token' => '0p-sNmulVtrZmLIqg-bYWfBis1_PdHVjTJdUG6jhz3c'
-            ]),
-            true, 
-            true
-        );
         //
         // if(
         //     !$this->input->is_ajax_request() ||
@@ -157,6 +148,7 @@ class Payroll extends CI_Controller
         $request['ssn'] = $employeeDetails['ssn'];
         //
         $response = AddEmployeeToCompany($request, $company);
+        _e($response, true, true);
         //
         if(isset($response['errors'])){
             //

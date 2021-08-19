@@ -601,3 +601,5 @@ define('GUSTO_MODE', 'test');
 define('GUSTO_CLIENT_ID', 'hCwof-BU9Xv1PaJGqInPVilUukJvoRR_gqC_cr3KIrg');
 define('GUSTO_CLIENT_SECRET', 'eEbHTeU4AClISVNUIRLB4T8RwDkMmQxt8298kfjt-cI');
 define('GUSTO_CLIENT_REDIRECT_URL', 'https://www.automotohr.com/gusto/callback');
+define('GUSTO_ACCESS_TOKEN', 'M-KCth2RQHAobcsz7Cc_Qf3fThssgHdAP7ClGC3LUDI');
+define('GUSTO_REFRESH_TOKEN', '7hY3IKva0XM__HIh3BYHVLJmKmunHuRltvvMmOVmJlw');

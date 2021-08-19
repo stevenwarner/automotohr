@@ -73,4 +73,14 @@ class Payroll_model extends CI_Model{
         //
         return $record;
     }
+    
+    /**
+     * 
+     */
+    function UpdateToken($array, $where){
+        //
+        $this->db
+        ->where($where)
+        ->update($this->tables['PC'], $array);
+    }
 }
