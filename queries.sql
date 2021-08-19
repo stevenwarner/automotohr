@@ -237,3 +237,8 @@ ALTER TABLE `background_check_orders_history`
 ALTER TABLE `facebook_jobs_status` ADD COLUMN 
 `is_deleted` TINYINT DEFAULT 0;
 ALTER TABLE `facebook_jobs_status` ADD `job_status` VARCHAR(10) NOT NULL AFTER `is_deleted`;
+
+-- Payroll check on users table
+-- 18/8/2021
+-- Mubashir Ahmed
+ALTER TABLE `users` ADD `on_payroll` TINYINT(1) NOT NULL DEFAULT '0' AFTER `created_at`;

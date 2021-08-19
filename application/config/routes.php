@@ -1369,3 +1369,6 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
  * @param String $token
  */
 $route['verify_my_token/(:any)']['post'] = 'Authentication/VerifyToken/$1';
+//
+$route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
+$route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
