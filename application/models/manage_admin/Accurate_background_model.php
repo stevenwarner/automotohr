@@ -186,7 +186,7 @@ class Accurate_background_model extends CI_Model
             $candidate_sid = $data_row['users_sid'];
 
             if ($candidate_type == 'applicant') {
-                $this->db->select('first_name, last_name');
+                $this->db->select('first_name, last_name, email');
                 $this->db->where('sid', $candidate_sid);
                 $candidate_info = $this->db->get('portal_job_applications')->result_array();
 
@@ -194,7 +194,7 @@ class Accurate_background_model extends CI_Model
                     $data_row['candidate_info'] = $candidate_info[0];
                 }
             } elseif ($candidate_type == 'employee') {
-                $this->db->select('first_name, last_name');
+                $this->db->select('first_name, last_name, email');
                 $this->db->where('sid', $candidate_sid);
                 $candidate_info = $this->db->get('users')->result_array();
 

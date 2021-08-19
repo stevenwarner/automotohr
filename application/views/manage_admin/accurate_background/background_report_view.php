@@ -106,6 +106,10 @@ $background_order['report_url'] = isset($background_order['package_response']['o
                                                                 <th class="col-xs-4">Candidate Name</th>
                                                                 <td><?php echo $background_order['candidate_info']['first_name'] . ' ' . $background_order['candidate_info']['last_name']; ?></td>
                                                             </tr>
+                                                            <tr>
+                                                                <th class="col-xs-4">Candidate Email</th>
+                                                                <td><?php echo $background_order['candidate_info']['email'];?></td>
+                                                            </tr>
 
                                                             <tr>
                                                                 <th class="col-xs-4">Candidate Type</th>
