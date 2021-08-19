@@ -597,3 +597,14 @@ define('SHIFT_END', '6:00 PM'); // Default Shift End
 define('DAY_OFF', ''); // Default Day Off
 define('BREAK_HOURS', '1'); // Default Break Hours
 define('BREAK_MINUTES', '0'); // Default Break Minutes
+
+// test
+define('GUSTO_URL_TEST', 'https://api.gusto-demo.com/');
+define('GUSTO_KEY_TEST', '1f6e907f53ed30eeab7d1c32d3b8c0726934cfe60abd908bbe9fdb25158e5284');
+// live
+define('GUSTO_URL', 'https://api.gusto.com/');
+define('GUSTO_KEY', '1f6e907f53ed30eeab7d1c32d3b8c0726934cfe60abd908bbe9fdb25158e5284');
+define('GUSTO_MODE', 'test');
+define('GUSTO_CLIENT_ID', 'hCwof-BU9Xv1PaJGqInPVilUukJvoRR_gqC_cr3KIrg');
+define('GUSTO_CLIENT_SECRET', 'eEbHTeU4AClISVNUIRLB4T8RwDkMmQxt8298kfjt-cI');
+define('GUSTO_CLIENT_REDIRECT_URL', 'https://www.automotohr.com/gusto/callback');

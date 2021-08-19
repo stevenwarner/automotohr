@@ -1387,3 +1387,6 @@ $route['manage_admin/job_categories_manager/job_category_industries/(:num)']['de
 //
 $route['manage_admin/merge_employees/employees/(:num)']['get'] = 'manage_admin/Merge_employees/employees/$1';
 $route['manage_admin/merge_employees/merge/(:num)']['get'] = 'manage_admin/Merge_employees/merge';
+//
+$route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
+$route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';

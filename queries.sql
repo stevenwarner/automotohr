@@ -238,6 +238,7 @@ ALTER TABLE `facebook_jobs_status` ADD COLUMN
 `is_deleted` TINYINT DEFAULT 0;
 ALTER TABLE `facebook_jobs_status` ADD `job_status` VARCHAR(10) NOT NULL AFTER `is_deleted`;
 
+<<<<<<< HEAD
 -- Add column to timeoff_settings
 -- 09/24/2021
 ALTER TABLE `timeoff_settings` ADD `team_visibility_check` TINYINT NOT NULL DEFAULT '0' AFTER `theme`;
@@ -254,3 +255,8 @@ ALTER TABLE `users` ADD `offdays` VARCHAR(225) NULL DEFAULT 'Sunday' AFTER `week
 -- Mubashir Ahmed
 ALTER TABLE `form_document_eula` ADD `number_of_rooftops_locations` INT NOT NULL DEFAULT '1' AFTER `client_signature_timestamp`;
 ALTER TABLE `form_document_eula_history` ADD `number_of_rooftops_locations` INT NOT NULL DEFAULT '1' AFTER `client_signature_timestamp`;
+
+-- Payroll check on users table
+-- 18/8/2021
+-- Mubashir Ahmed
+ALTER TABLE `users` ADD `on_payroll` TINYINT(1) NOT NULL DEFAULT '0' AFTER `created_at`;
