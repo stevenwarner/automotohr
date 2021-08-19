@@ -39,7 +39,7 @@ if(!function_exists('CreatePartnerCompany')){
 if(!function_exists('AddEmployeeToCompany')){
     function AddEmployeeToCompany($request, $company){
         //
-        return MakeCall(
+        $response =  MakeCall(
             PayrollURL('AddEmployeeToCompany', $company['gusto_company_uid']),[
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => json_encode($request),
@@ -49,6 +49,32 @@ if(!function_exists('AddEmployeeToCompany')){
                 )
             ] 
         );
+
+        _e($response, true, true);
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                AddEmployeeToCompany($request, $company);
+                //
+                return;
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
     }
 }
 
@@ -63,9 +89,9 @@ if(!function_exists('RefreshToken')){
         $key .= 'grant_type=refresh_token';
         //
         return MakeCall(
-            PayrollURL('RefreshToken', $key),[
+            PayrollURL('RefreshToken', $key), [
                 CURLOPT_CUSTOMREQUEST => 'POST'
-            ] 
+            ]
         );
     }
 }
@@ -76,22 +102,22 @@ if(!function_exists('MakeCall')){
         //
         $curl = curl_init();
         //
+        $options = 
+            [
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_SSL_VERIFYHOST => 0,
+                CURLOPT_SSL_VERIFYPEER => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1
+            ] + $options;
+        //
         curl_setopt_array(
             $curl, 
-            array_merge(
-                [
-                    CURLOPT_URL => $url,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_ENCODING => '',
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 0,
-                    CURLOPT_SSL_VERIFYHOST => 0,
-                    CURLOPT_SSL_VERIFYPEER => 0,
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1
-                ],
-                $options
-            )
+            $options
         );
         //
         $response = curl_exec($curl);
@@ -99,13 +125,8 @@ if(!function_exists('MakeCall')){
         $info = curl_getinfo($curl);
         //
         curl_close($curl);
-        _e($options, true);
-        _e($url, true);
-        _e($response, true);
-        _e($info, true, true);
-
         // Check for aut error
-        if($info['http_code'] != 200){
+        if($info['http_code'] == 401){
             return [
                 'errors' => [
                     'auth' => [
@@ -133,5 +154,23 @@ if(!function_exists('PayrollURL')){
         $urls['RefreshToken'] = 'oauth/token?'.($key);
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
+    }
+}
+
+
+//
+if(!function_exists('UpdateToken')){
+    function UpdateToken($token, $where, $company){
+        //
+        $_this =& get_instance();
+        //
+        $_this->load->model('Payroll_model', 'pm');
+        //
+        $_this->pm->UpdateToken([
+            'access_token' => $token['access_token'],
+            'refresh_token' => $token['refresh_token'],
+            'old_access_token' => $company['access_token'],
+            'old_refresh_token' => $company['refresh_token']
+        ], $where);
     }
 }
