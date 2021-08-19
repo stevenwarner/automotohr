@@ -590,3 +590,14 @@ define('TIMEOFF_UPDATE_FOR_APPROVER', 393); // when the requestw as updated
 define('USER_TIMEOFF_REQUEST', 414); // Send approve email to employee
 define('APPROVER_TIMEOFF_REQUEST_UPDATE', 412); // Send approve/reject email to approvers
 define('APPROVER_TIMEOFF_REQUEST', 413); // Send request email
+
+// test
+define('GUSTO_URL_TEST', 'https://api.gusto-demo.com/');
+define('GUSTO_KEY_TEST', '1f6e907f53ed30eeab7d1c32d3b8c0726934cfe60abd908bbe9fdb25158e5284');
+// live
+define('GUSTO_URL', 'https://api.gusto.com/');
+define('GUSTO_KEY', '1f6e907f53ed30eeab7d1c32d3b8c0726934cfe60abd908bbe9fdb25158e5284');
+define('GUSTO_MODE', 'test');
+define('GUSTO_CLIENT_ID', 'hCwof-BU9Xv1PaJGqInPVilUukJvoRR_gqC_cr3KIrg');
+define('GUSTO_CLIENT_SECRET', 'eEbHTeU4AClISVNUIRLB4T8RwDkMmQxt8298kfjt-cI');
+define('GUSTO_CLIENT_REDIRECT_URL', 'https://www.automotohr.com/gusto/callback');

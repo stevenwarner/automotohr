@@ -1357,3 +1357,7 @@ $route['manage_admin/reports/daily_activity_report/get_employee/(:num)']['post']
 // 16/8/2021
 $route['send_manual_reminder_email_to_employee']['post'] = 'ajax/Email_manager/SendManualEmailReminderToEmployee';
 $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/SendManualEmailReminderToManager';
+
+//
+$route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
+$route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';

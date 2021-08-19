@@ -231,3 +231,9 @@ ALTER TABLE `background_check_orders_history`
 
 ALTER TABLE `background_check_orders_history`
   MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
+
+
+-- Payroll check on users table
+-- 18/8/2021
+-- Mubashir Ahmed
+ALTER TABLE `users` ADD `on_payroll` TINYINT(1) NOT NULL DEFAULT '0' AFTER `created_at`;
