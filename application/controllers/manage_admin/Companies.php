@@ -2772,6 +2772,33 @@ class Companies extends Admin_Controller {
         if($statusUpdated){
             $r['Status'] = TRUE;
             $r['Response'] = 'Proceed';
+            //
+            $post = $this->input->post(NULL, TRUE);
+            // For Gusto
+            if($post['Id'] == 7 && $post['Status'] == 0){
+                // Load Payroll Model
+                $this->load->model('Payroll_model', 'pm');
+                // Check if company exists on Gusto
+                $exists = $this->pm->GetCompany($post['CompanyId'], 'sid');
+                //
+                if(empty($exists)){
+                    // Load Curl Helper
+                    $this->load->helper('curl');
+                    //
+                    SendRequest(
+                        base_url('create_partner_company'), [
+                            CURLOPT_CUSTOMREQUEST => 'POST',
+                            CURLOPT_POSTFIELDS => array(
+                                'center' => '2',
+                                'sid' => $post['CompanyId']
+                            ),
+                            CURLOPT_HTTPHEADER => [
+                                'X-Requested-With: XMLHttpRequest'
+                            ]
+                        ]
+                    );
+                }
+            }
         }
         //
         header('Content-Type: application/json');
