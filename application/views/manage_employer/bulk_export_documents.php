@@ -555,9 +555,12 @@ word-break: break-all;
                 obj = {
                     title: dct.document_title,
                     orig_filename: dct.document_original_name,
-                    // s3_filename: dct.document_s3_name
                     s3_filename: selectedDocuments[currentEmployee.id] != undefined ? dct.uploaded_file : dct.document_s3_name
                 };
+                //
+                if(dct.uploaded_file){
+                    obj.s3_filename = dct.uploaded_file;
+                }
                 //
                 uploadPDF(obj, 'document');
                 //
@@ -734,7 +737,6 @@ word-break: break-all;
 
 
         function uploadPDF(data, typo){
-            console.log(data);
             $.post("<?=base_url('hr_documents_management/upload');?>", {
                 data: data,
                 token: token,

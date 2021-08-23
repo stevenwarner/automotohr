@@ -5370,7 +5370,7 @@
     }
 
     function func_assign_document_group (group_sid, user_type, user_sid, group_name) {
-        var user_name = '<?php echo $user_info['first_name']; ?> <?php echo $user_info['last_name']; ?>';
+        var user_name = "<?php echo $user_info['first_name']; ?> <?php echo $user_info['last_name']; ?>";
         alertify.confirm(
             'Confirm Document Group Assignment?',
             'Are you sure you want to assign <strong><i>'+group_name+'</i></strong> group to <strong><i>'+user_name+'</i></strong> ?',
