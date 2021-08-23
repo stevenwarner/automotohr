@@ -128,7 +128,6 @@ class Payroll_model extends CI_Model{
         return $companies;
     }
 
-
     /**
      * 
      */
@@ -137,5 +136,16 @@ class Payroll_model extends CI_Model{
         $this->db
         ->where($where)
         ->update($this->tables['PC'], $array);
+    }
+
+    /**
+     * 
+     */
+    function CheckEINNumber($ein, $companyId){
+        //
+        return $this->db
+        ->where('ssn', $ein)
+        ->where('sid <>', $companyId)
+        ->count_all_results($this->tables['U']);
     }
 }

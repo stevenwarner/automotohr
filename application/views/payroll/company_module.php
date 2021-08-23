@@ -251,7 +251,7 @@
             //
             obj.action = 'refresh_token';
             //
-            UpdateAction();
+            UpdateAction('jsCompanyDetailModalLoader');
         });
 
         //
@@ -274,7 +274,7 @@
             obj.ein = newEIN;
             obj.action = 'update_ein';
             //
-            UpdateAction();
+            UpdateAction('jsEINModalLoader');
         });
        
         //
@@ -287,12 +287,16 @@
 
 
         //
-        function UpdateAction(){
+        function UpdateAction(loader){
             //
             $.post(
                 "<?=base_url("update_payroll_module")?>", 
                 obj
             ).done(function(resp){
+                //
+                if(loader !== undefined){
+                    ml(false, loader);
+                }
                 //
                 if(resp.Status === false){
                     alertify.alert('Error!', resp.Response);
