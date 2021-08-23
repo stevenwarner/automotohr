@@ -372,6 +372,7 @@ class Settings extends Public_Controller
 
             $this->form_validation->set_rules('email', 'Company E-Mail', 'trim|xss_clean');
             $this->form_validation->set_rules('CompanyDescription', 'Description', 'trim|xss_clean');
+            $this->form_validation->set_rules('ssn', 'ssn', 'trim|xss_clean|required');
 
             if ($this->form_validation->run() === FALSE) {
                 $this->load->view('main/header', $data);
@@ -505,6 +506,9 @@ class Settings extends Public_Controller
                     // Added on: 02-09-2019
                     $data['complynet_dashboard_link'] = $complynet_link;
                 }
+
+                //
+                $data['ssn'] = $this->input->post('ssn', true);
 
                 $this->dashboard_model->update_user($sid, $data);
                 $company_details = $data;
