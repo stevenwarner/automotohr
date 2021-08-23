@@ -46,6 +46,7 @@ class Payroll_model extends CI_Model{
         //
         $query = 
         $this->db
+        ->where('company_sid', $companyId)
         ->select($columns)
         ->get($this->tables['PC']);
         //
