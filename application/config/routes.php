@@ -1372,3 +1372,7 @@ $route['verify_my_token/(:any)']['post'] = 'Authentication/VerifyToken/$1';
 //
 $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
 $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
+$route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
+$route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
+//
+$route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';

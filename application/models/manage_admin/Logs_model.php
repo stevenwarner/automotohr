@@ -303,7 +303,7 @@ class logs_model extends CI_Model
     public function get_all_companies($moduleId)
     {
         $a = $this->db
-            ->select('sid, CompanyName, "0" as status')
+            ->select('sid, CompanyName, "0" as status, ssn')
             ->where('parent_sid', 0)
             ->where('active', 1)
             ->order_by('CompanyName', 'ASC')
