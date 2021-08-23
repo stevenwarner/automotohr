@@ -396,7 +396,7 @@ word-break: break-all;
         //
         function fetchEmployeeDocument(){
             //
-            var documentIds = Object.keys(selectedDocuments[currentEmployee.id]['documents']).join(':');
+            var documentIds = selectedDocuments[currentEmployee.id] != undefined ? Object.keys(selectedDocuments[currentEmployee.id]['documents']).join(':') : '';
             //
             $.get(`<?=base_url('hr_documents_management/getDocuments');?>/${currentEmployee.id}/employee/${documentIds}`, (resp) => {
                 cd = $.parseJSON(resp);
@@ -555,7 +555,8 @@ word-break: break-all;
                 obj = {
                     title: dct.document_title,
                     orig_filename: dct.document_original_name,
-                    s3_filename: dct.document_s3_name
+                    // s3_filename: dct.document_s3_name
+                    s3_filename: selectedDocuments[currentEmployee.id] != undefined ? dct.uploaded_file : dct.document_s3_name
                 };
                 //
                 uploadPDF(obj, 'document');
@@ -721,6 +722,7 @@ word-break: break-all;
 
 
         function uploadPDF(data, typo){
+            console.log(data);
             $.post("<?=base_url('hr_documents_management/upload');?>", {
                 data: data,
                 token: token,
