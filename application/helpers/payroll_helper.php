@@ -49,8 +49,6 @@ if(!function_exists('AddEmployeeToCompany')){
                 )
             ] 
         );
-
-        _e($response, true, true);
         //
         if(isset($response['errors']['auth'])){
             // Lets Refresh the token
@@ -123,6 +121,7 @@ if(!function_exists('MakeCall')){
         $response = curl_exec($curl);
         //
         $info = curl_getinfo($curl);
+        _e($info, true);
         //
         curl_close($curl);
         // Check for aut error

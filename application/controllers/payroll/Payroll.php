@@ -35,7 +35,7 @@ class Payroll extends CI_Controller
         if(
             !$this->input->is_ajax_request() ||
             $this->input->method() !== 'post' ||
-            empty($this->input->post) 
+            empty($this->input->post()) 
         ){
             res($this->resp);
         }
@@ -46,7 +46,7 @@ class Payroll extends CI_Controller
         // Get company
         $companyDetails = $this->Company_model->GetCompanyDetails(
             $companyId, [
-                '"123456789" as EIN',
+                '"123456739" as EIN',
                 'CompanyName'
             ]
         );
