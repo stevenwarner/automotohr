@@ -42,22 +42,21 @@
                         <caption></caption>
                         <thead>
                             <tr>
-                                <th scope="col" class="csF16 csB7">Review</th>
-                                <th scope="col" class="csF16 csB7">Reviewer</th>
-                                <th scope="col" class="csF16 csB7">Period</th>
+                                <th scope="col" class="csF16 csB7">Title</th>
+                                <th scope="col" class="csF16 csB7">Start Date</th>
+                                <th scope="col" class="csF16 csB7">Progress</th>
                                 <th scope="col" class="csF16 csB7">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                                if(!empty($reviews)){
-                                    foreach($reviews as $review){
+                                if(!empty($course_listing)){
+                                    foreach($course_listing as $course){
                                         ?>
-                            <tr data-id="<?=$review['review_sid'];?>" data-reviwee="<?=$review['reviewee_sid'];?>"
-                                data-reviwer="<?=$review['reviewer_sid'];?>">
-                                <td style="vertical-align: middle;"><?=ucwords($review['review_title']);?></td>
-                                <td style="vertical-align: middle;"><?=ucwords($review['first_name'].' '.$review['last_name']);?></td>
-                                <td style="vertical-align: middle;"><?=formatDate($review['review_start_date'], 'Y-m-d', DATE);?> - <?=formatDate($review['review_end_date'], 'Y-m-d', DATE);?></td>
+                            <tr data-id="<?=$course['sid'];?>">
+                                <td style="vertical-align: middle;"><?=ucwords($course['title']);?></td>
+                                <td style="vertical-align: middle;"><?=formatDate($course['course_start_date'], 'Y-m-d', DATE);?> - <?=formatDate($course['course_end_date'], 'Y-m-d', DATE);?></td>
+                                <td style="vertical-align: middle;"><?=ucwords($course['progress']);?></td>
                                 <td style="vertical-align: middle;">
                                     <button class="btn btn-orange csF16 csB7 jsViewFeedback"
                                         title="View Manager's Feedback" placement="top">
@@ -86,5 +85,5 @@
 </div>
 
 <script>
-    var reviews = <?=json_encode($reviews);?>;
+    var reviews = <?=json_encode($course_listing);?>;
 </script>

@@ -6,7 +6,7 @@
             <!-- Left Sidebar -->
             <?php $this->load->view("{$pp}left_sidebar"); ?>
             <!-- Right Content Area -->
-            <?php $this->load->view("{$pp}my_reviews/review_listing_blue"); ?>
+            <?php $this->load->view("{$pp}my_courses/course_listing_blue"); ?>
         </div>
         <?php
     } else{

@@ -6,14 +6,14 @@
 <!--  -->
 <script>
     /**
-     * Add performance management object 
+     * Add course object 
      * to window object
      */
     window.pm = {
         urls: {
             base: "<?=rtrim(base_url(), '/');?>/",
-            pbase: "<?=rtrim(base_url(), '/');?>/performance-management/",
-            handler: "<?=rtrim(base_url(), '/');?>/performance-management/handler/",
+            pbase: "<?=rtrim(base_url(), '/');?>/course/",
+            handler: "<?=rtrim(base_url(), '/');?>/course/handler/",
             aws: "<?=AWS_S3_BUCKET_URL;?>"
         },
         dateTimeFormats: {
