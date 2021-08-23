@@ -608,6 +608,13 @@ class logs extends Admin_Controller
         //
         switch($post['action']):
             case "update_ein":
+                // Check if EIN number already exists
+                $exists = $this->pm->CheckEINNumber($post['ein'], $post['companyId']);
+                //
+                if($exists){
+                    $this->resp['Response'] = 'EIN number already exists for another company.';
+                    res($this->resp) ;
+                }
                 //
                 $this->pm->UpdateCompanyEIN($post['companyId'], ['ssn' => $post['ein']]);
                 //
