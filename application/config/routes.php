@@ -1360,4 +1360,7 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
 
 //
 $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
+$route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
 $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
+//
+$route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';

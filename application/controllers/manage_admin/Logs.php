@@ -4,6 +4,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class logs extends Admin_Controller
 {
+    //
+    private $resp = [];
 
     function __construct()
     {
@@ -12,6 +14,11 @@ class logs extends Admin_Controller
         $this->load->model('manage_admin/logs_model');
         $this->load->library("pagination");
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
+        //
+        $this->resp = [
+            'Status' => false,
+            'Response' => 'Reqest Not Authorized'
+        ];
     }
 
 //contact us logs
@@ -393,13 +400,17 @@ class logs extends Admin_Controller
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         $this->data['page_title'] = 'Company Module';
         $this->data['groups'] = $this->ion_auth->groups()->result(); 
-        $companies=$this->logs_model->get_all_companies($sid);
-        $this->data['company_data']=$companies;
         $this->data['module_data']= $this->logs_model->getModuleInfo($sid);
         //
         if($sid == 7){
+            //
+            $this->load->model('Payroll_model', 'pm');
+            //
+            $this->data['company_data']=$this->pm->GetCompaniesWithGusto();
             $this->render('payroll/company_module'); 
         } else{
+            $companies=$this->logs_model->get_all_companies($sid);
+            $this->data['company_data']=$companies;
             $this->render('manage_admin/modules/company_module'); 
         }
      }
@@ -577,6 +588,87 @@ class logs extends Admin_Controller
             $this->session->set_flashdata('message', 'Mail sent Successfully.');
             redirect('manage_admin/email_enquiries', 'refresh');
         }
+    }
+
+
+    //
+    function UpdatePayroll(){
+        //
+        if(
+            !$this->input->is_ajax_request() ||
+            $this->input->method() != 'post' ||
+            empty($this->input->post(NULL))
+        ){
+            res($this->resp);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        // 
+        $this->load->model('Payroll_model', 'pm');
+        //
+        switch($post['action']):
+            case "update_ein":
+                //
+                $this->pm->UpdateCompanyEIN($post['companyId'], ['ssn' => $post['ein']]);
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'You have successfully updated the EIN number.';
+                break;
+            case "update_status":
+                //
+                $this->pm->UpdatePC(
+                    [
+                        'is_active' => $post['status'] ? 0 :1
+                    ],
+                    [
+                        'company_sid' => $post['companyId']
+                    ]
+                );
+                // Check if company exists on Gusto
+                $exists = $this->pm->GetCompany($post['companyId'], 'sid');
+                //
+                if(empty($exists)){
+                    // Load Curl Helper
+                    $this->load->helper('curl');
+                    //
+                    SendRequest(
+                        base_url('create_partner_company'), [
+                            CURLOPT_CUSTOMREQUEST => 'POST',
+                            CURLOPT_POSTFIELDS => array(
+                                'sid' => $post['companyId']
+                            ),
+                            CURLOPT_HTTPHEADER => [
+                                'X-Requested-With: XMLHttpRequest'
+                            ]
+                        ]
+                    );
+                 }
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'You have successfully '.( $post['status'] ? 'disabled' : 'enabled' ).' the company for payroll.';
+                break;
+            case "refresh_token":
+                // Load Curl Helper
+                $this->load->helper('curl');
+                //
+                SendRequest(
+                    base_url('refresh_token'), [
+                        CURLOPT_CUSTOMREQUEST => 'POST',
+                        CURLOPT_POSTFIELDS => array(
+                            'sid' => $post['companyId']
+                        ),
+                        CURLOPT_HTTPHEADER => [
+                            'X-Requested-With: XMLHttpRequest'
+                        ]
+                    ]
+                );
+                //
+                $this->resp['Status'] = true;
+                $this->resp['Response'] = 'You have successfully generated new tokens.';
+                break;
+        endswitch;
+        //
+        res($this->resp);
     }
 
 }

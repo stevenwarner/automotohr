@@ -46,7 +46,7 @@ class Payroll extends CI_Controller
         // Get company
         $companyDetails = $this->Company_model->GetCompanyDetails(
             $companyId, [
-                '"123456739" as EIN',
+                'ssn as EIN',
                 'CompanyName'
             ]
         );
@@ -100,15 +100,15 @@ class Payroll extends CI_Controller
      */
     function AddEmployeeToCompany(){
         //
-        // if(
-        //     !$this->input->is_ajax_request() ||
-        //     $this->input->method() !== 'post' ||
-        //     empty($this->input->post) 
-        // ){
-        //     res($this->resp);
-        // }
-        //
-        // $employeeId = $this->input->post('sid', TRUE);
+        if(
+            !$this->input->is_ajax_request() ||
+            $this->input->method() !== 'post' ||
+            empty($this->input->post) 
+        ){
+            res($this->resp);
+        }
+        
+        $employeeId = $this->input->post('sid', TRUE);
         $employeeId = 11712;
         // Check if employee was already added to Gusto
         if($this->pm->EmployeeAlreadyAddedToGusto($employeeId, ['sid'])){
@@ -182,5 +182,48 @@ class Payroll extends CI_Controller
                 'Id' => $insertId
             ]);
         }
+    }
+
+    /**
+     * 
+     */
+    function RefreshToken(){
+        //
+        if(
+            !$this->input->is_ajax_request() ||
+            $this->input->method() !== 'post' ||
+            empty($this->input->post()) 
+        ){
+            res($this->resp);
+        }
+        //        
+        $companyId = $this->input->post('sid', TRUE);
+        //
+        $company = $this->pm->GetCompany(
+            $companyId, [
+                'gusto_company_uid',
+                'access_token',
+                'refresh_token'
+            ]
+        );
+        //
+        $response = RefreshToken([
+            'access_token' => $company['access_token'],
+            'refresh_token' => $company['refresh_token']
+        ]);
+        //
+        if(isset($response['access_token'])){
+            $this->pm->UpdatePC([
+                'old_access_token' => $company['access_token'],
+                'old_refresh_token' => $company['refresh_token'],
+                'access_token' => $response['access_token'],
+                'refresh_token' => $response['refresh_token']
+            ], [
+                'company_sid' => $companyId
+            ]);
+            //
+        }
+        //
+        return $response;
     }
 }
