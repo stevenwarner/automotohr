@@ -1728,3 +1728,31 @@
     .pr5 {
         padding-right: 5px;
     }
+    /*  */
+    
+    .csBG1 {
+        background-color: #81b431;
+        color: #ffffff;
+    }
+    
+    .csBG2 {
+        background-color: #3554DC;
+        color: #ffffff;
+    }
+    
+    .csBG3 {
+        background-color: #fd7a2a;
+        color: #ffffff;
+    }
+    
+    .csFC1 {
+        color: #81b431;
+    }
+    
+    .csFC2 {
+        color: #3554DC;
+    }
+    
+    .csFC3 {
+        color: #fd7a2a;
+    }

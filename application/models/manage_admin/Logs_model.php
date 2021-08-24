@@ -332,4 +332,34 @@ class logs_model extends CI_Model
         ->get('modules')
         ->row_array();
     }
+
+    function UpdateCompanyData($companyId, $oldStatus){
+        //
+        if(
+            !$this->db
+            ->where('company_sid', $companyId)
+            ->where('module_sid', 7)
+            ->count_all_results('company_modules')
+        ){
+            $this->db->insert(
+                'company_modules', [
+                    'module_sid' => 7,
+                    'company_sid' => $companyId,
+                    'is_active' => 1,
+                    'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                    'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]
+            );
+        }
+        //
+        $this->db
+            ->where('company_sid', $companyId)
+            ->where('module_sid', 7)
+            ->update(
+                'company_modules', [
+                    'is_active' => $oldStatus ? 0 : 1,
+                    'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]
+            );
+    }
 }

@@ -623,6 +623,8 @@ class logs extends Admin_Controller
                 break;
             case "update_status":
                 //
+                $this->logs_model->UpdateCompanyData($post['companyId'], $post['status']);
+                //
                 $this->pm->UpdatePC(
                     [
                         'is_active' => $post['status'] ? 0 :1

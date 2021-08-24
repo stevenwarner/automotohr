@@ -186,6 +186,7 @@ if ($class != 'dashboard' &&
     ($class != 'video_interview_system' && $method != 'resource_page') &&
     $this->uri->segment(2) != 'questionnaires-tutorial ' &&
     $this->uri->segment(1) != 'performance_review' &&
+    $this->uri->segment(1) != 'payroll' &&
     $this->uri->segment(1) != 'performance'
 ) { ?>
         <div class="footer-widgets hidden-print">
