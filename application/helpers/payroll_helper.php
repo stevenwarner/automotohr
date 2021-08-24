@@ -77,6 +77,84 @@ if(!function_exists('AddEmployeeToCompany')){
 }
 
 //
+if(!function_exists('PayPeriods')){
+    function PayPeriods($company){
+        //
+        $response =  MakeCall(
+            PayrollURL('PayPeriods', $company['gusto_company_uid']),[
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                PayPeriods($company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            //
+            return $response;
+        }
+    }
+}
+
+//
+if(!function_exists('Payrolls')){
+    function Payrolls($company){
+        //
+        $response =  MakeCall(
+            PayrollURL('Payrolls', $company['gusto_company_uid']),[
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                Payrolls($company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            //
+            return $response;
+        }
+    }
+}
+
+//
 if(!function_exists('RefreshToken')){
     function RefreshToken($request){
         //
@@ -121,7 +199,6 @@ if(!function_exists('MakeCall')){
         $response = curl_exec($curl);
         //
         $info = curl_getinfo($curl);
-        _e($info, true);
         //
         curl_close($curl);
         // Check for aut error
@@ -141,7 +218,6 @@ if(!function_exists('MakeCall')){
     }
 }
 
-
 //
 if(!function_exists('PayrollURL')){
     function PayrollURL($index, $key = 0){
@@ -151,11 +227,12 @@ if(!function_exists('PayrollURL')){
         $urls['CreatePartnerCompany'] = 'v1/partner_managed_companies';
         $urls['AddEmployeeToCompany'] = 'v1/companies/'.($key).'/employees';
         $urls['RefreshToken'] = 'oauth/token?'.($key);
+        $urls['PayPeriods'] = 'v1/companies/'.($key).'/pay_periods';
+        $urls['Payrolls'] = 'v1/companies/'.($key).'/pay_schedules';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }
 }
-
 
 //
 if(!function_exists('UpdateToken')){

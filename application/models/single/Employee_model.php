@@ -31,4 +31,17 @@ class Employee_model extends CI_Model{
         //
         return $record;
     }
+
+    /**
+     * 
+     */
+    function Update(
+        $arr,
+        $where
+    ){
+        //
+        $this->db
+        ->where($where)
+        ->update($this->U, $arr);
+    }
 }

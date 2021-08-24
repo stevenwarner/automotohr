@@ -244,6 +244,7 @@ ALTER TABLE `facebook_jobs_status` ADD `job_status` VARCHAR(10) NOT NULL AFTER `
 -- Tables
   -- payroll_companies
   -- payroll_employees
+  -- payroll_settings
 ALTER TABLE `users` ADD `on_payroll` TINYINT(1) NOT NULL DEFAULT '0' AFTER `created_at`;
 INSERT INTO `modules` (`sid`, `module_name`, `module_slug`, `stage`, `is_disabled`, `is_ems_module`, `created_at`, `updated_at`) VALUES
 (7, 'Payroll (Gusto)', 'payroll', 'production', 0, 0, '2021-08-23 12:09:00', '2021-08-23 12:09:42');

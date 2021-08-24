@@ -1370,9 +1370,14 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
  */
 $route['verify_my_token/(:any)']['post'] = 'Authentication/VerifyToken/$1';
 //
+$route['payroll/dashboard']['get'] = 'payroll/Payroll/Dashboard';
+$route['payroll/settings']['get'] = 'payroll/Payroll/Settings';
+$route['payroll/create']['get'] = 'payroll/Payroll/Create';
+$route['payroll/employee/add/(:num)']['get'] = 'payroll/Payroll/AddEmployee/$1';
+
 $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
 $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
 $route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
-$route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
+$route['payroll/add_employee_to_payroll']['post'] = 'payroll/Payroll/AddEmployeeToPayroll';
 //
 $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
