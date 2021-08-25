@@ -1756,3 +1756,19 @@
     .csFC3 {
         color: #fd7a2a;
     }
+    /* Employee Card */
+    
+    .csCard {
+        height: 150px;
+    }
+    
+    .csCard img {
+        display: block;
+        margin: auto;
+        width: 50px;
+    }
+    /*  */
+    
+    .vam {
+        vertical-align: middle !important;
+    }

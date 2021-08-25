@@ -3,7 +3,7 @@
         <div class="row">
             <!-- Left Sidebar -->
             <div class="col-sm-3 col-xs-12">
-                <?php $this->load->view('payroll/sidebar'); ?>
+                <?php $this->load->view('payroll/navbar'); ?>
             </div>
             <!-- Main Content Area -->
             <div class="col-sm-9 col-xs-12">
