@@ -13796,3 +13796,14 @@ if(!function_exists('LoginToAPI')){
         }
     }
 }
+
+
+if(!function_exists('LoadModel')){
+    function LoadModel($index, $_this){
+        //
+        $models = [];
+        $models['sem'] = 'single/Employee_model';
+        //
+        $_this->load->model($models[$index], $index);
+    }
+}

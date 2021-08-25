@@ -1373,11 +1373,16 @@ $route['verify_my_token/(:any)']['post'] = 'Authentication/VerifyToken/$1';
 $route['payroll/dashboard']['get'] = 'payroll/Payroll/Dashboard';
 $route['payroll/settings']['get'] = 'payroll/Payroll/Settings';
 $route['payroll/create']['get'] = 'payroll/Payroll/Create';
+$route['payroll/employees']['get'] = 'payroll/Payroll/EmployeeList';
 $route['payroll/employee/add/(:num)']['get'] = 'payroll/Payroll/AddEmployee/$1';
+
+// AJAX Get
+$route['payroll/get_employee_ba/(:num)']['get'] = 'payroll/Payroll/GetEmployeeBankAccounts/$1';
 
 $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
 $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
 $route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
 $route['payroll/add_employee_to_payroll']['post'] = 'payroll/Payroll/AddEmployeeToPayroll';
+$route['payroll/add_bc_to_payroll']['post'] = 'payroll/Payroll/AddBankAccountToPayroll';
 //
 $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';

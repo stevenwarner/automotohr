@@ -49,7 +49,33 @@ class Payroll extends CI_Controller
         ->view('payroll/dashboard')
         ->view('main/footer');
     }
+
+    /**
+     * 
+     */
+    function EmployeeList(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Employees Listing';
+        $this->data['load_view'] = 0;
+        // Load Employee Model
+        $this->load->model($this->models['sem'], 'sem');
+        //
+        $this->data['Employees'] = $this->sem->GetCompanyEmployees(
+            $this->data['companyId'],
+            true
+        );
+        //
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/employees_list')
+        ->view('main/footer');
+    }
     
+    
+    
+
     
     /**
      * 
@@ -159,6 +185,114 @@ class Payroll extends CI_Controller
         ->view('main/footer');
     }
 
+    // AJAX Calls
+
+    /**
+     * 
+     */
+    function GetEmployeeBankAccounts($employeeId){
+        //
+        if(
+            !$this->input->is_ajax_request() ||
+            $this->input->method() !== 'get'
+        ){
+            res($this->resp);
+        }
+        // Load Employee Model
+        LoadModel('sem', $this);
+        //
+        $records = $this->sem->GetBankAccounts(
+            $employeeId, [
+                'sid as account_id',
+                'account_title',
+                'routing_transaction_number as routing_number',
+                'account_number',
+                'account_type',
+                'financial_institution_name as bank_name'
+            ]
+        );
+        //
+        $bankAccount = $this->pm->EmployeeAlreadyAddedToGusto($employeeId, [
+            'bank_uid',
+            'bank_id'
+        ]);
+        //
+        echo $this->load->view('payroll/partials/bank_account_details', [
+            'employeeId' => $employeeId, 
+            'bank_accounts' => $records, 
+            'selected' => $bankAccount 
+        ], true);
+    }
+
+    /**
+     * Create a partner company 
+     * on Gusto with the API Key
+     */
+    function CreatePartnerCompany(){
+        //
+        if(
+            !$this->input->is_ajax_request() ||
+            $this->input->method() !== 'post' ||
+            empty($this->input->post()) 
+        ){
+            res($this->resp);
+        }
+        //
+        $companyId = $this->input->post('sid', TRUE);
+        // Load Company Model
+        $this->load->model('single/Company_model');
+        // Get company
+        $companyDetails = $this->Company_model->GetCompanyDetails(
+            $companyId, [
+                'ssn as EIN',
+                'CompanyName'
+            ]
+        );
+        // Request
+        $request =  [];
+        $request['user'] =  $this->userDetails;
+        $request['company'] =  [];
+        $request['company']['name'] = $companyDetails['CompanyName'];
+        $request['company']['trade_name'] = $companyDetails['CompanyName'];
+        $request['company']['ein'] = $companyDetails['EIN'];
+        //
+        $response = CreatePartnerCompany($request);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            // All okay to go
+            $date = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            $insertArray = [];
+            $insertArray['company_sid'] = $companyId;
+            $insertArray['gusto_company_sid'] = $request['company']['ein'];
+            $insertArray['gusto_company_uid'] = $response['company_uuid'];
+            $insertArray['refresh_token'] = $response['refresh_token'];
+            $insertArray['access_token'] = $response['access_token'];
+            $insertArray['created_at'] = $date;
+            $insertArray['updated_at'] = $date;
+            //
+            $insertId = $this->pm->AddCompany($insertArray);
+            //
+            res([
+                'Status' => true,
+                'Message' => 'You have successfully created the company on Gusto.',
+                'Id' => $insertId
+            ]);
+        }
+    }
+
     /**
      * 
      */
@@ -237,13 +371,10 @@ class Payroll extends CI_Controller
         }
     }
 
-    
-
     /**
-     * Create a partner company 
-     * on Gusto with the API Key
+     * 
      */
-    function CreatePartnerCompany(){
+    function AddBankAccountToPayroll(){
         //
         if(
             !$this->input->is_ajax_request() ||
@@ -253,25 +384,53 @@ class Payroll extends CI_Controller
             res($this->resp);
         }
         //
-        $companyId = $this->input->post('sid', TRUE);
-        // Load Company Model
-        $this->load->model('single/Company_model');
-        // Get company
-        $companyDetails = $this->Company_model->GetCompanyDetails(
-            $companyId, [
-                'ssn as EIN',
-                'CompanyName'
-            ]
-        );
-        // Request
-        $request =  [];
-        $request['user'] =  $this->userDetails;
-        $request['company'] =  [];
-        $request['company']['name'] = $companyDetails['CompanyName'];
-        $request['company']['trade_name'] = $companyDetails['CompanyName'];
-        $request['company']['ein'] = $companyDetails['EIN'];
+        $post = $this->input->post(NULL, TRUE);
         //
-        $response = CreatePartnerCompany($request);
+        $bankAccount = $this->pm->EmployeeAlreadyAddedToGusto($post['employeeId'], [
+            'sid',
+            'company_sid',
+            'gusto_employee_uid',
+            'bank_uid',
+            'bank_id'
+        ]);
+        //
+        if(empty($bankAccount)){
+            res([
+                'Status' => false,
+                'Errors' => 'Please add the employee on payroll first.'
+            ]);
+        }
+        //
+        $company = $this->pm->GetCompany($bankAccount['company_sid'], [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        if(!empty($bankAccount['bank_uid'])){
+            // Remove the old ones
+            DeleteBankAccountToPayroll([
+                'bank_account_id' => $bankAccount['bank_uid'],
+                'employee_id' => $bankAccount['gusto_employee_uid']
+            ], $company);
+            // All okay to go
+            $updateArray = [];
+            $updateArray['bank_id'] = NULL;
+            $updateArray['bank_uid'] = NULL;
+            $updateArray['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            // Update Data
+            $this->pm->UpdatePCE($updateArray, ['sid' => $bankAccount['sid']]);
+        }
+        //
+        $request =  [];
+        $request['name'] = $post['name'];
+        $request['routing_number'] = $post['routing_number'];
+        $request['account_number'] = $post['account_number'];
+        $request['account_type'] = ucfirst($post['account_type']);
+        //
+        $company['employeeId'] = $bankAccount['gusto_employee_uid'];
+        //
+        $response = AddBankAccountToPayroll($request, $company);
         //
         if(isset($response['errors'])){
             //
@@ -287,114 +446,20 @@ class Payroll extends CI_Controller
             ]);
         } else{
             // All okay to go
-            $date = date('Y-m-d H:i:s', strtotime('now'));
-            //
-            $insertArray = [];
-            $insertArray['company_sid'] = $companyId;
-            $insertArray['gusto_company_sid'] = $request['company']['ein'];
-            $insertArray['gusto_company_uid'] = $response['company_uuid'];
-            $insertArray['refresh_token'] = $response['refresh_token'];
-            $insertArray['access_token'] = $response['access_token'];
-            $insertArray['created_at'] = $date;
-            $insertArray['updated_at'] = $date;
-            //
-            $insertId = $this->pm->AddCompany($insertArray);
+            $updateArray = [];
+            $updateArray['bank_id'] = $post['id'];
+            $updateArray['bank_uid'] = $response['uuid'];
+            $updateArray['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            // Update Data
+            $this->pm->UpdatePCE($updateArray, ['sid' => $bankAccount['sid']]);
             //
             res([
                 'Status' => true,
-                'Message' => 'You have successfully created the company on Gusto.',
-                'Id' => $insertId
+                'Message' => 'You have successfully updated the bank account for payroll.',
             ]);
         }
     }
 
-    /**
-     * 
-     */
-    function AddEmployeeToCompany(){
-        //
-        if(
-            !$this->input->is_ajax_request() ||
-            $this->input->method() !== 'post' ||
-            empty($this->input->post) 
-        ){
-            res($this->resp);
-        }
-        
-        $employeeId = $this->input->post('sid', TRUE);
-        $employeeId = 11712;
-        // Check if employee was already added to Gusto
-        if($this->pm->EmployeeAlreadyAddedToGusto($employeeId, ['sid'])){
-            res([
-                'Status' => false,
-                'Message' => 'Employee already added.'
-            ]);
-        }
-        // Load employee Model
-        $this->load->model('single/Employee_model');
-        // Get company
-        $employeeDetails = $this->Employee_model->GetEmployeeDetails(
-            $employeeId, [
-                'first_name',
-                'last_name',
-                'email',
-                'dob',
-                'ssn',
-                'parent_sid'
-            ]
-        );
-        //
-        $company = $this->pm->GetCompany(
-            $employeeDetails['parent_sid'], [
-                'gusto_company_uid',
-                'access_token',
-                'refresh_token'
-            ]
-        );
-        // Mock Request
-        $request =  [];
-        $request['first_name'] = $employeeDetails['first_name'];
-        $request['middle_initial'] = '';
-        $request['last_name'] = $employeeDetails['last_name'];
-        $request['date_of_birth'] = $employeeDetails['dob'];
-        $request['email'] = $employeeDetails['email'];
-        $request['ssn'] = $employeeDetails['ssn'];
-        //
-        $response = AddEmployeeToCompany($request, $company);
-        //
-        if(isset($response['errors'])){
-            //
-            $errors = [];
-            //
-            foreach($response['errors'] as $error){
-                $errors[] = $error[0];
-            }
-            // Error took place
-            res([
-                'Status' => false,
-                'Errors' => $errors
-            ]);
-        } else{
-            // All okay to go
-            $date = date('Y-m-d H:i:s', strtotime('now'));
-            //
-            $insertArray = [];
-            $insertArray['company_sid'] = $employeeDetails['parent_sid'];
-            $insertArray['employee_sid'] = $employeeId;
-            $insertArray['gusto_employee_id'] = $response['id'];
-            $insertArray['gusto_employee_uid'] = $response['uuid'];
-            $insertArray['created_at'] = $date;
-            $insertArray['updated_at'] = $date;
-            //
-            $insertId = $this->pm->AddEmployeeCompany($insertArray);
-            //
-            res([
-                'Status' => true,
-                'Message' => 'You have successfully added the employee on Gusto.',
-                'Id' => $insertId
-            ]);
-        }
-    }
 
     /**
      * 

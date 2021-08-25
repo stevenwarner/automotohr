@@ -141,6 +141,16 @@ class Payroll_model extends CI_Model{
     /**
      * 
      */
+    function UpdatePCE($array, $where){
+        //
+        $this->db
+        ->where($where)
+        ->update($this->tables['PCE'], $array);
+    }
+
+    /**
+     * 
+     */
     function CheckEINNumber($ein, $companyId){
         //
         return $this->db

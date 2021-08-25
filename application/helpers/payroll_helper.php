@@ -155,6 +155,85 @@ if(!function_exists('Payrolls')){
 }
 
 //
+if(!function_exists('AddBankAccountToPayroll')){
+    function AddBankAccountToPayroll($request, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('AddBankAccountToPayroll', $company['employeeId']),[
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                AddBankAccountToPayroll($request, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            //
+            return $response;
+        }
+    }
+}
+
+//
+if(!function_exists('DeleteBankAccountToPayroll')){
+    function DeleteBankAccountToPayroll($request, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('DeleteBankAccountToPayroll', $request['employee_id'], $request['bank_account_id']),[
+                CURLOPT_CUSTOMREQUEST => "DELETE",
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                DeleteBankAccountToPayroll($request, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            //
+            return $response;
+        }
+    }
+}
+
+//
 if(!function_exists('RefreshToken')){
     function RefreshToken($request){
         //
@@ -220,7 +299,7 @@ if(!function_exists('MakeCall')){
 
 //
 if(!function_exists('PayrollURL')){
-    function PayrollURL($index, $key = 0){
+    function PayrollURL($index, $key = 0, $key1 = 0){
         //
         $urls = [];
         $urls['Me'] = 'v1/me';
@@ -229,6 +308,8 @@ if(!function_exists('PayrollURL')){
         $urls['RefreshToken'] = 'oauth/token?'.($key);
         $urls['PayPeriods'] = 'v1/companies/'.($key).'/pay_periods';
         $urls['Payrolls'] = 'v1/companies/'.($key).'/pay_schedules';
+        $urls['AddBankAccountToPayroll'] = 'v1/employees/'.($key).'/bank_accounts';
+        $urls['DeleteBankAccountToPayroll'] = 'v1/employees/'.($key).'/bank_accounts/'.$key1;
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }
