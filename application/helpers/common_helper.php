@@ -13731,6 +13731,7 @@ if(!function_exists('LoadModel')){
         //
         $models = [];
         $models['sem'] = 'single/Employee_model';
+        $models['scm'] = 'single/Company_model';
         //
         $_this->load->model($models[$index], $index);
     }
