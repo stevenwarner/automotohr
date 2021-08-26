@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <h1 class="csF18 csB9">
-                    Employees Listing 
+                    Company Bank Accounts
                 </h1>
                 <hr>
             </div>
@@ -180,7 +180,7 @@
             //
             Modal({
                 Id: "jsEBEModal",
-                Title: "Add A New Bank Account",
+                Title: "Update Bank Account",
                 Body:  "<div id=\"jsEBEModalBody\"></div>",
                 Loader: "jsEBEModalLoader",
             }, function(){
