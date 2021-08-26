@@ -48,6 +48,7 @@
                                 <th class="text-center" scope="col">Used For Payroll</th>
                                 <th class="text-center" scope="col">Account Payroll Id</th>
                                 <th class="text-center" scope="col">Last Updated By</th>
+                                <th class="text-center" scope="col">Status</th>
                                 <th class="text-center" scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -83,6 +84,9 @@
                                         <p><?=remakeEmployeeName($account);?></p>
                                         <p><?=formatDateToDB($account['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);?></p>
                                     </td>
+                                    <td class="vam">
+                                        <p><?=ucwords(str_replace('_', ' ', $account['verification_status']));?></p>
+                                    </td>
                                     <td class="vam text-center">
                                         <?php if(empty($account['account_uid'])): ?>
                                             <button class="btn btn-success jsEditAccount">
@@ -97,7 +101,7 @@
                             <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="8">
+                                    <td colspan="9">
                                         <p class="alert alert-info text-center csF16 csB7">
                                             No bank accounts found. <br><br>
                                             <button class="btn btn-success jsAddBankAccount"><i class="fa fa-plus-square" aria-hidden="true"></i> Add A New Bank Account</button>

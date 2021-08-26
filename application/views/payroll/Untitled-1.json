@@ -1,0 +1,164 @@
+{
+    "company_id": 7756341741025749,
+    "version": "04fa4acee901f02cbeb9c703d277d1c1",
+    "id": 7757727717265269,
+    "street_1": "425 2nd Street",
+    "street_2": "Suite 602",
+    "city": "New York",
+    "state": "NY",
+    "zip": "94107",
+    "country": "USA",
+    "active": true,
+    "phone_number": "1234567891",
+    "filing_address": true,
+    "mailing_address": true
+}
+
+{
+    "id": 7757869441500918,
+    "uuid": "5bf0acf6-06cb-4aa8-aea9-8b5daaec6fd6",
+    "version": "51eb568c03640ba2b30b71b2b156b68c",
+    "employee_id": 7757869433124669,
+    "employee_uuid": "92b8f362-2771-47f5-b2c6-a333be2f3271",
+    "current_compensation_id": 7757869445309099,
+    "current_compensation_uuid": "52e04f50-e48f-4aef-b1e1-0197b3fb3a10",
+    "payment_unit": "Hour",
+    "primary": true,
+    "title": null,
+    "compensations": [{
+        "id": 7757869445309099,
+        "uuid": "52e04f50-e48f-4aef-b1e1-0197b3fb3a10",
+        "version": "b3eadd958fea3b17cf2e9182ce893616",
+        "payment_unit": "Hour",
+        "flsa_status": "Nonexempt",
+        "job_id": 7757869441500918,
+        "job_uuid": "5bf0acf6-06cb-4aa8-aea9-8b5daaec6fd6",
+        "effective_date": "2021-01-02",
+        "rate": "0.00"
+    }],
+    "rate": "0.00",
+    "hire_date": "2021-01-02",
+    "location_id": 7757727717265271,
+    "location": {
+        "id": 7757727717265271,
+        "street_1": "425 2nd Street",
+        "street_2": "Suite 602",
+        "city": "New York",
+        "state": "NY",
+        "zip": "94107",
+        "country": "USA",
+        "inactive": false
+    }
+}
+
+{
+    "employee_compensations": [],
+    "payroll_id": 7757500918421925,
+    "payroll_uuid": "5a49c11b-5788-40d2-bc23-3caee496d855",
+    "company_id": 7756341741025749,
+    "company_uuid": "70d9b2a7-8f93-4c17-ab15-4613d4504a0e",
+    "version": "89a1bd0357acc7c544ab9542b8cf20e4",
+    "processed": false,
+    "processed_date": null,
+    "calculated_at": null,
+    "totals": {
+        "company_debit": "0.00",
+        "net_pay_debit": "0.00",
+        "tax_debit": "0.00",
+        "reimbursement_debit": "0.00",
+        "child_support_debit": "0.00",
+        "reimbursements": "0.00",
+        "net_pay": "0.00",
+        "gross_pay": "0.00",
+        "employee_bonuses": "0.00",
+        "employee_commissions": "0.00",
+        "employee_cash_tips": "0.00",
+        "employee_paycheck_tips": "0.00",
+        "additional_earnings": "0.00",
+        "owners_draw": "0.00",
+        "check_amount": "0.00",
+        "employer_taxes": "0.00",
+        "employee_taxes": "0.00",
+        "benefits": "0.00",
+        "employee_benefits_deductions": "0.00",
+        "deferred_payroll_taxes": "0.00"
+    },
+    "pay_period": {
+        "start_date": "2021-08-01",
+        "end_date": "2021-08-30",
+        "pay_schedule_id": null,
+        "pay_schedule_uuid": null
+    },
+    "payroll_deadline": "2021-08-26",
+    "check_date": "2021-08-30"
+}
+
+
+{
+    "id": 7757869445309099,
+    "uuid": "52e04f50-e48f-4aef-b1e1-0197b3fb3a10",
+    "version": "6025106b73f3b9950a4377e1848a7315",
+    "payment_unit": "Year",
+    "flsa_status": "Exempt",
+    "job_id": 7757869441500918,
+    "job_uuid": "5bf0acf6-06cb-4aa8-aea9-8b5daaec6fd6",
+    "effective_date": "2021-01-02",
+    "rate": "60000.00"
+}
+
+[{
+    "id": 7757869441500918,
+    "uuid": "5bf0acf6-06cb-4aa8-aea9-8b5daaec6fd6",
+    "version": "7def0fe378b787147892f031650cdff3",
+    "employee_id": 7757869433124669,
+    "employee_uuid": "92b8f362-2771-47f5-b2c6-a333be2f3271",
+    "current_compensation_id": 7757869445309099,
+    "current_compensation_uuid": "52e04f50-e48f-4aef-b1e1-0197b3fb3a10",
+    "payment_unit": "Year",
+    "primary": true,
+    "title": "Software Engineer",
+    "compensations": [{
+        "id": 7757869445309099,
+        "uuid": "52e04f50-e48f-4aef-b1e1-0197b3fb3a10",
+        "version": "6025106b73f3b9950a4377e1848a7315",
+        "payment_unit": "Year",
+        "flsa_status": "Exempt",
+        "job_id": 7757869441500918,
+        "job_uuid": "5bf0acf6-06cb-4aa8-aea9-8b5daaec6fd6",
+        "effective_date": "2021-01-02",
+        "rate": "60000.00"
+    }],
+    "rate": "60000.00",
+    "hire_date": "2021-01-02",
+    "location_id": 7757727717265271,
+    "location": {
+        "id": 7757727717265271,
+        "street_1": "425 2nd Street",
+        "street_2": "Suite 602",
+        "city": "New York",
+        "state": "NY",
+        "zip": "94107",
+        "country": "USA",
+        "inactive": false
+    }
+}]
+
+{
+    "version": "dedefa7b4ddf2a023e7917da765d472f",
+    "tax_payer_type": null,
+    "ein": "325878960",
+    "taxable_as_scorp": false,
+    "filing_form": "941",
+    "ein_verified": null,
+    "legal_name": "Gusto"
+}
+
+{
+    "version": "076dd7e15f2d3833f7967dd4a9ebad3e",
+    "tax_payer_type": "LLP",
+    "ein": "325878960",
+    "taxable_as_scorp": false,
+    "filing_form": "944",
+    "ein_verified": null,
+    "legal_name": "Demo Company."
+}

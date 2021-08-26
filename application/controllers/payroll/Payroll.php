@@ -95,6 +95,7 @@ class Payroll extends CI_Controller
                 'company_bank_accounts.use_for_payroll',
                 'company_bank_accounts.account_uid',
                 'company_bank_accounts.updated_at',
+                'company_bank_accounts.verification_status',
                 'u.first_name',
                 'u.last_name',
                 'u.access_level',
@@ -718,6 +719,7 @@ class Payroll extends CI_Controller
             // All okay to go
             $updateArray = [];
             $updateArray['account_uid'] = $response['uuid'];
+            $updateArray['verification_status'] = $response['verification_status'];
             $updateArray['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
             // Update Data
             $this->scm->Update(['account_uid' => NULL, 'use_for_payroll' => 0], ['company_sid' => $post['companyId']]);
@@ -788,6 +790,7 @@ class Payroll extends CI_Controller
             // All okay to go
             $updateArray = [];
             $updateArray['account_uid'] = $response['uuid'];
+            $updateArray['verification_status'] = $response['verification_status'];
             $updateArray['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
             // Update Data
             $this->scm->Update(['account_uid' => NULL, 'use_for_payroll' => 0], ['company_sid' => $post['companyId']]);

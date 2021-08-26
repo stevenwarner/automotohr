@@ -43,31 +43,39 @@
             <?php endif; ?>
             <!--  -->
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <label class="csF16 csB7">Firstname <span class="csRequired"></span></label>
                     <input type="text" class="form-control jsFN" <?=!empty($Employee['first_name']) ? 'disabled' : '';?> value="<?=!empty($Employee['first_name']) ? $Employee['first_name'] : '';?>" />
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <label class="csF16 csB7">Middlename</label>
                     <input type="text" class="form-control jsMN" <?=!empty($Employee['middle_name']) ? 'disabled' : '';?> value="<?=!empty($Employee['middle_name']) ? $Employee['middle_name'] : '';?>" />
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <label class="csF16 csB7">Lastname <span class="csRequired"></span></label>
                     <input type="text" class="form-control jsLN" <?=!empty($Employee['last_name']) ? 'disabled' : '';?> value="<?=!empty($Employee['last_name']) ? $Employee['last_name'] : '';?>" />
+                </div>
+                <div class="col-sm-3">
+                    <label class="csF16 csB7">Email <span class="csRequired"></span></label>
+                    <input type="text" class="form-control jsEmail" <?=!empty($Employee['email']) ? 'disabled' : '';?> value="<?=!empty($Employee['email']) ? $Employee['email'] : '';?>" />
                 </div>
             </div>
             <br />
             <div class="row">
-                <div class="col-sm-4">
-                    <label class="csF16 csB7">Email <span class="csRequired"></span></label>
-                    <input type="text" class="form-control jsEmail" <?=!empty($Employee['email']) ? 'disabled' : '';?> value="<?=!empty($Employee['email']) ? $Employee['email'] : '';?>" />
-                </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <label class="csF16 csB7">SSN <span class="csRequired"></span></label>
                     <input type="text" class="form-control jsSSN" <?=!empty($Employee['ssn']) ? 'disabled' : '';?> value="<?=!empty($Employee['ssn']) ? $Employee['ssn'] : '';?>" />
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
+                    <label class="csF16 csB7">Job Title<span class="csRequired"></span></label>
+                    <input type="text" class="form-control jsDOB" <?=!empty($Employee['dob']) ? 'disabled' : '';?> value="<?=!empty($Employee['dob']) ? $Employee['dob'] : '';?>" />
+                </div>
+                <div class="col-sm-3">
                     <label class="csF16 csB7">Date Of Birth <span class="csRequired"></span></label>
+                    <input type="text" class="form-control jsDOB" <?=!empty($Employee['dob']) ? 'disabled' : '';?> value="<?=!empty($Employee['dob']) ? $Employee['dob'] : '';?>" />
+                </div>
+                <div class="col-sm-3">
+                    <label class="csF16 csB7">Hired Date <span class="csRequired"></span></label>
                     <input type="text" class="form-control jsDOB" <?=!empty($Employee['dob']) ? 'disabled' : '';?> value="<?=!empty($Employee['dob']) ? $Employee['dob'] : '';?>" />
                 </div>
             </div>
@@ -76,7 +84,10 @@
             <div class="row">
                 <div class="col-sm-12">
                     <span class="pull-right">
-                        <button class="btn btn-success jsSubmitBtn">Add Employee To Payroll</button>
+                        <button class="btn btn-success jsSubmitBtn">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                            Add Employee To Payroll
+                        </button>
                     </span>
                 </div>
             </div>
