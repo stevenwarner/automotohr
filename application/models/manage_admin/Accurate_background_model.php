@@ -426,8 +426,13 @@ class Accurate_background_model extends CI_Model
             'awaiting_candidate_input' => array()
         );
 
-          //  _e($result_arr, true, true);
-
+        if (!$do_count) {
+            usort($result_arr, function($a, $b) {
+                return $a['date_applied'] < $b['date_applied'];
+            });
+        }
+            
+        //  _e($result_arr, true, true);
 
         foreach ($result_arr as $k0 => $v0) {
             $tmp_array = @unserialize($v0['order_response']);
@@ -461,6 +466,9 @@ class Accurate_background_model extends CI_Model
                 if (sizeof($result2_arr)) {
                     $result_arr[$k0]['user_first_name'] = $v0['user_first_name'] = ucwords($result2_arr['full_name']);
                     $result_arr[$k0]['email'] = $v0['email'] = ($result2_arr['email']);
+                } else {
+                    $result_arr[$k0]['user_first_name'] = $v0['user_first_name'] = "";
+                    $result_arr[$k0]['email'] = $v0['email'] = "";
                 }
 
                 //
@@ -488,8 +496,13 @@ class Accurate_background_model extends CI_Model
                 //
                 $rows .= '<tr>';
                 $rows .= '    <td>' . convert_date_to_frontend_format($v0['date_applied']) . '</td>';
-                $rows .= '    <td>' . $v0['first_name'] . ' ' . $v0['last_name'] . ' ('.($v0['email']).')</td>';
-                $rows .= '    <td>' . $v0['user_first_name'] . '</td>';
+                $rows .= '    <td>' . $v0['first_name'] . ' ' . $v0['last_name'] .'</td>';
+                $rows .= '    <td>';
+                if (!empty($v0['user_first_name']) && !empty($v0['email'])) {
+                    $rows .= $v0['user_first_name'] . '<br /> ('.$v0['email'].')';
+                }
+                $rows .= '    </td>';
+                // $rows .= '    <td>' . $v0['user_first_name'] . ' ('.($v0['email']).')</td>';
                 $rows .= '    <td>' . ucfirst($v0['users_type']) . '</td>';
                 $rows .= '    <td>' . $v0['product_name'] . '</td>';
                 $rows .= '    <td>' . $v0['product_type'] . '</td>';
