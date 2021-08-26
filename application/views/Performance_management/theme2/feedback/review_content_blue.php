@@ -82,7 +82,7 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
                         </p>
                         <p class="csF14">
                             <?=ucwords($review['reviewer_first_name'].' '.$review['reviewer_last_name']);?>
-                            <i class="fa fa-long-arrow-right csB7" aria-hidden="true"></i>
+                            Reviewing
                             <?=ucwords($review['first_name'].' '.$review['last_name']);?>
                         </p>
                     </div>
@@ -249,76 +249,7 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
         </div>
     <?php }?>
 
-    <?php if($selectedPage != 'feedback') {?>
-        <!-- Attachments -->
-        <div class="row">
-            <br />
-            <div class="col-xs-12">
-                <div class="panel panel-theme">
-                    <div class="panel-heading">
-                        <h5 class="csF16 csB7 csW">
-                            Attachment(s)
-                        </h5>
-                    </div>
-                    <div class="panel-body">
-                        <!--  -->
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <input type="file" name="attachment" id="jsQuestionAttachmentUpload" class="hidden" />
-                            </div>
-                        </div>
-                        <!--  -->
-                        <div class="row dn" id="jsQuestionAttachmentUploadRow">
-                            <br />
-                            <div class="col-sm-12">
-                                <button class="btn btn-orange csF16 csB7 pull-right">
-                                    <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;Upload File
-                                </button>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                        <!--  -->
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <table class="table table-striped table-condensed">
-                                    <caption></caption>
-                                    <thead>
-                                        <tr>
-                                            <th class="csF16" scope="col">Filename</th>
-                                            <th class="csF16" scope="col">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="jsAttachmentBody">
-                                        <?php
-                                            if(!empty($question['attachments'])){
-                                                foreach(json_decode($question['attachments'], true) as $attachment){
-                                                    ?>
-                                        <tr data-id="<?=$attachment;?>">
-                                            <td style="vertical-align: middle">
-                                                <p class="csF16"><?=$attachment;?></p>
-                                            </td>
-                                            <td style="vertical-align: middle">
-                                                <button class="btn btn-orange csF14 jsPreviewAttachment">
-                                                    <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <?php
-                                                }
-                                            } else{
-                                                ?>
-                                        <?php
-                                            }
-                                        ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <?php } ?>
+    
 
     <!-- Question Screen -->
     <div class="row">
@@ -503,7 +434,81 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
             </div>
         </div>
     </div>
+    
 
+    <?php if($selectedPage != 'feedback') {?>
+        <!-- Attachments -->
+        <div class="row">
+            <br />
+            <div class="col-xs-12">
+                <div class="panel panel-theme">
+                    <div class="panel-heading">
+                        <h5 class="csF16 csB7 csW">
+                            Attachment(s)
+                        </h5>
+                    </div>
+                    <div class="panel-body">
+                        <p class="csF16 csB7 csInfo">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp; Attach supporting documents. The documents will be visible to the Reporting Managers.
+                        </p>
+                        <!--  -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="file" name="attachment" id="jsQuestionAttachmentUpload" class="hidden" />
+                            </div>
+                        </div>
+                        <!--  -->
+                        <div class="row dn" id="jsQuestionAttachmentUploadRow">
+                            <br />
+                            <div class="col-sm-12">
+                                <button class="btn btn-orange csF16 csB7 pull-right">
+                                    <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;Upload File
+                                </button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <!--  -->
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <table class="table table-striped table-condensed">
+                                    <caption></caption>
+                                    <thead>
+                                        <tr>
+                                            <th class="csF16" scope="col">Filename</th>
+                                            <th class="csF16" scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="jsAttachmentBody">
+                                        <?php
+                                            if(!empty($question['attachments'])){
+                                                foreach(json_decode($question['attachments'], true) as $attachment){
+                                                    ?>
+                                        <tr data-id="<?=$attachment;?>">
+                                            <td style="vertical-align: middle">
+                                                <p class="csF16"><?=$attachment;?></p>
+                                            </td>
+                                            <td style="vertical-align: middle">
+                                                <button class="btn btn-orange csF14 jsPreviewAttachment">
+                                                    <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Preview
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                                }
+                                            } else{
+                                                ?>
+                                        <?php
+                                            }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
 
     
 
