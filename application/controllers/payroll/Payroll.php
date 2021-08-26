@@ -73,9 +73,43 @@ class Payroll extends CI_Controller
         ->view('main/footer');
     }
     
-    
-    
-
+    /**
+     * 
+     */
+    function Accounts(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Bank Accounts';
+        $this->data['load_view'] = 0;
+        // Load Company Modal
+        LoadModel('scm', $this);
+        // Get Company Bank Accounts
+        $this->data['BankAccounts'] = $this->scm->GetBankAccounts(
+            $this->data['companyId'], [
+                'company_bank_accounts.sid',
+                'company_bank_accounts.account_title',
+                'company_bank_accounts.account_number',
+                'company_bank_accounts.account_type',
+                'company_bank_accounts.routing_number',
+                'company_bank_accounts.use_for_payroll',
+                'company_bank_accounts.account_uid',
+                'company_bank_accounts.updated_at',
+                'u.first_name',
+                'u.last_name',
+                'u.access_level',
+                'u.access_level_plus',
+                'u.pay_plan_flag',
+                'u.is_executive_admin',
+                'u.job_title'
+            ]
+        );
+        //
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/accounts')
+        ->view('main/footer');
+    }
     
     /**
      * 
@@ -185,7 +219,84 @@ class Payroll extends CI_Controller
         ->view('main/footer');
     }
 
+    /**
+     * 
+     */
+    function GetAddBankAccount($companyId){
+        //
+        $d = [];
+        //
+        $this->checkLogin($d);
+        //
+        echo $this->load->view('payroll/partials/add_company_bank_account', [
+            'companyId' => $companyId,
+            'employerId' => $d['employerId']
+        ], true);
+    }
+
+    /**
+     * 
+     */
+    function GetEditBankAccount(
+        $accountId,
+        $companyId
+    ){
+        //
+        $d = [];
+        //
+        $this->checkLogin($d);
+        //
+        LoadModel('scm', $this);
+        //
+        $bankAccount= $this->scm->GetSingleBankAccounts(
+            $companyId,
+            $accountId, [
+                'bank_name',
+                'account_title',
+                'use_for_payroll',
+                'account_number',
+                'routing_number',
+                'account_type'
+            ]
+        );
+        //
+        echo $this->load->view('payroll/partials/edit_company_bank_account', [
+            'accountId' => $accountId,
+            'companyId' => $companyId,
+            'employerId' => $d['employerId'],
+            'bank_account' => $bankAccount
+        ], true);
+    }
+
     // AJAX Calls
+    /**
+     * 
+     */
+    function RemoveCompanyBankAccounts(){
+        //
+        if(
+            !$this->input->is_ajax_request() ||
+            $this->input->method() !== 'post' ||
+            empty($this->input->post()) 
+        ){
+            res($this->resp);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        // Load Company Model
+        LoadModel('scm', $this);
+        // Update Data
+        $this->scm->DeleteBankAccounts(
+            $post['accountIds'],
+            $post['employeeId']
+        );
+        //
+        res([
+            'Statua' => true,
+            'Message' => 'You have successfully deleted the bank accounts.'
+        ]);
+        
+    }
 
     /**
      * 
@@ -456,6 +567,235 @@ class Payroll extends CI_Controller
             res([
                 'Status' => true,
                 'Message' => 'You have successfully updated the bank account for payroll.',
+            ]);
+        }
+    }
+
+    /**
+     * 
+     */
+    function AddCompanyBankAccountToPayroll(){
+        //
+        if(
+            !$this->input->is_ajax_request() ||
+            $this->input->method() !== 'post' ||
+            empty($this->input->post()) 
+        ){
+            res($this->resp);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        // Load company model
+        LoadModel('scm', $this);
+        // Lets add company account to company
+        $bankAccountId = $this->scm->AddBankAccount([
+            'company_sid' => $post['companyId'],
+            'account_title' => $post['account_title'],
+            'bank_name' => $post['bank_name'],
+            'account_number' => $post['account_number'],
+            'routing_number' => $post['routing_number'],
+            'account_type' => $post['account_type'],
+            'use_for_payroll' => $post['use_for_payroll'] == 'true' ? 1 : 0,
+            'created_by' => $post['employerId'],
+            'last_updated_by' => $post['employerId'],
+            'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+            'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
+        ]);
+        //
+        if($post['use_for_payroll'] == 'false'){
+            res([
+                'Status' => true,
+                'Response' => 'You have successfully added a new bank account',
+            ]);
+        }
+        //
+        $company = $this->pm->GetCompany($post['companyId'], [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        
+        //
+        $request =  [];
+        $request['routing_number'] = $post['routing_number'];
+        $request['account_number'] = $post['account_number'];
+        $request['account_type'] = ucfirst($post['account_type']);
+        //
+        $response = AddCompanyBankAccountToPayroll($request, $company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            // All okay to go
+            $updateArray = [];
+            $updateArray['account_uid'] = $response['uuid'];
+            $updateArray['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            // Update Data
+            $this->scm->Update(['account_uid' => NULL, 'use_for_payroll' => 0], ['company_sid' => $post['companyId']]);
+            $this->scm->Update($updateArray, ['sid' => $bankAccountId]);
+            //
+            res([
+                'Status' => true,
+                'Response' => 'You have successfully added a bank account for payroll.',
+            ]);
+        }
+    }
+
+    /**
+     * 
+     */
+    function EditCompanyBankAccountToPayroll(){
+        //
+        if(
+            !$this->input->is_ajax_request() ||
+            $this->input->method() !== 'post' ||
+            empty($this->input->post()) 
+        ){
+            res($this->resp);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        // Load company model
+        LoadModel('scm', $this);
+        //
+        $bankAccountId = $post['accountId'];
+        // Lets add company account to company
+        $this->scm->UpdateBankAccount([
+            'account_title' => $post['account_title'],
+            'bank_name' => $post['bank_name'],
+            'account_number' => $post['account_number'],
+            'routing_number' => $post['routing_number'],
+            'account_type' => $post['account_type'],
+            'use_for_payroll' => $post['use_for_payroll'] == 'true' ? 1 : 0,
+            'last_updated_by' => $post['employerId'],
+            'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
+        ], ['sid' => $bankAccountId]);
+        //
+        if($post['use_for_payroll'] == 'false'){
+            res([
+                'Status' => true,
+                'Response' => 'You have successfully updated a new bank account',
+            ]);
+        }
+        //
+        $company = $this->pm->GetCompany($post['companyId'], [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        
+        //
+        $request =  [];
+        $request['routing_number'] = $post['routing_number'];
+        $request['account_number'] = $post['account_number'];
+        $request['account_type'] = ucfirst($post['account_type']);
+        //
+        $response = AddCompanyBankAccountToPayroll($request, $company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            // All okay to go
+            $updateArray = [];
+            $updateArray['account_uid'] = $response['uuid'];
+            $updateArray['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            // Update Data
+            $this->scm->Update(['account_uid' => NULL, 'use_for_payroll' => 0], ['company_sid' => $post['companyId']]);
+            $this->scm->Update($updateArray, ['sid' => $bankAccountId]);
+            //
+            res([
+                'Status' => true,
+                'Response' => 'You have successfully updated a bank account for payroll.',
+            ]);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function UpdateCompanyBankAccount(){
+        //
+        if(
+            !$this->input->is_ajax_request() ||
+            $this->input->method() !== 'post' ||
+            empty($this->input->post()) 
+        ){
+            res($this->resp);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        // Load company model
+        LoadModel('scm', $this);
+        //
+        $bankAccountId = $post['accountId'];
+        //
+        $bankAccount= $this->scm->GetSingleBankAccounts(
+            $post['companyId'],
+            $post['accountId'], [
+                'account_number',
+                'routing_number',
+                'account_type'
+            ]
+        );
+        //
+        $company = $this->pm->GetCompany($post['companyId'], [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        
+        //
+        $request =  [];
+        $request['routing_number'] = $bankAccount['routing_number'];
+        $request['account_number'] = $bankAccount['account_number'];
+        $request['account_type'] = ucfirst($bankAccount['account_type']);
+        //
+        $response = AddCompanyBankAccountToPayroll($request, $company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            // All okay to go
+            $updateArray = [];
+            $updateArray['account_uid'] = $response['uuid'];
+            $updateArray['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            // Update Data
+            $this->scm->Update(['account_uid' => NULL, 'use_for_payroll' => 0], ['company_sid' => $post['companyId']]);
+            $this->scm->Update($updateArray, ['sid' => $bankAccountId]);
+            //
+            res([
+                'Status' => true,
+                'Response' => 'You have successfully added a bank account for payroll.',
             ]);
         }
     }
