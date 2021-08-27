@@ -83,7 +83,13 @@ $(function() {
         $.post(pm.urls.pbase + 'save_answer', question)
             .done(function(resp) {
                 ml(false, 'save_question');
-                handleSuccess("Answer saved.", function() {
+                //
+                var text = 'Your answer has been saved.';
+                //
+                if (!isManager && page == totalPages) {
+                    text = 'You have successfully provided feedback.';
+                }
+                handleSuccess(text, function() {
                     //
                     if (isManager && page == totalPages) {
                         window.location = window.location.origin + window.location.pathname + '?page=feedback';
@@ -91,7 +97,7 @@ $(function() {
                         if (page != totalPages) {
                             window.location = window.location.origin + window.location.pathname + '?page=' + (++page);
                         } else {
-                            window.location.reload();
+                            window.location = window.location.origin + 'reviews';
                         }
                     }
                 });
