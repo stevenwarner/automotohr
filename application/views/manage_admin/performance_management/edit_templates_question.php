@@ -11,7 +11,11 @@
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title">
-                                        <h1 class="page-title"><i class="fa fa-envelope-square" aria-hidden="true"></i>Edit Questions Of <?php echo $template[0]['name'];?></h1>
+                                        <h1 class="page-title"><i class="fa fa-envelope-square" aria-hidden="true"></i>Edit Questions Of <?php echo $template[0]['name'];?>
+                                    </h1>
+                                    <span class="pull-right">
+                                        <a href="<?=base_url("manage_admin/performance_management");?>" class="btn btn-default">Back To Templates</a>
+                                    </span>
                                     </div>
                                     <div class="edit-email-template">
                                         <p>Fields marked with an asterisk (<span class="hr-required">*</span>) are mandatory</p>
