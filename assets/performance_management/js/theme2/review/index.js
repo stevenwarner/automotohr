@@ -97,7 +97,7 @@ $(function() {
                         if (page != totalPages) {
                             window.location = window.location.origin + window.location.pathname + '?page=' + (++page);
                         } else {
-                            window.location = window.location.origin + 'reviews';
+                            window.location = window.location.origin + '/performance-management/reviews';
                         }
                     }
                 });
