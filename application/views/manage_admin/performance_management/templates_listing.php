@@ -11,32 +11,31 @@
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title">
-                                        <h1 class="page-title"><i class="fa fa-envelope-square"></i><?php echo $page_title; ?></h1>
+                                        <h1 class="page-title"><i class="fa fa-envelope-square" aria-hidden="true"></i><?php echo $page_title; ?></h1>
                                     </div>
-                                    <?php if(check_access_permissions_for_view($security_details, 'add_email_templates_group')){ ?>
-                                        <div class="hr-add-new-template">
-                                            
-                                        </div>
-                                    <?php } ?>
+                                    <div class="clearfix"></div>
+                                    <p style="margin-top: 10px;"><i class="fa fa-info-circle" aria-hidden="true"></i> Modify the default template questions for Perfomance Management.</p>
                                     <!-- Search Result table Start -->
                                     <form action="" method="post">
                                         <div class="table-responsive table-outer">
                                             <div class="hr-template-result">
                                                 <table class="table table-bordered table-stripped table-hover">
+                                                    <caption></caption>
                                                     <thead>
                                                         <tr>
-                                                            <th>Template Name</th>
-                                                            <?php $function_names = array('add_email_templates_group'); ?>
-                                                            <?php if(check_access_permissions_for_view($security_details, $function_names)){ ?>
-                                                                <th class="last-col" valign="center">Action</th>
-                                                            <?php } ?>
+                                                            <th scope="col">Template Name</th>
+                                                            <th scope="col"># Of Questions</th>
+                                                            <th scope="col">Last Updated On</th>
+                                                            <th class="last-col" scope="col">Action</th>
                                                         </tr> 
                                                     </thead>
                                                     <tbody>
                                                         <?php foreach ($data as $value) { ?>
                                                             <tr>
-                                                                <td width="70%"><?php echo $value['name']; ?></td>
-                                                                <td width="30%" class="text-center"><a class="hr-edit-btn" href="<?php echo base_url('manage_admin/performance_management/edit_performance_template').'/'.$value['sid']; ?>">Edit Template Question</a></td>
+                                                                <td><?php echo $value['name']; ?></td>
+                                                                <td><?php echo count(json_decode($value['questions'], true)); ?> Questions</td>
+                                                                <td><?php echo formatDateToDB($value['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></td>
+                                                                <td class="text-center"><a class="hr-edit-btn" href="<?php echo base_url('manage_admin/performance_management/edit_performance_template').'/'.$value['sid']; ?>">Edit Template Question</a></td>
                                                             </tr>
                                                         <?php } ?>
                                                     </tbody>
