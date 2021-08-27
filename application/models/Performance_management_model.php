@@ -221,6 +221,34 @@ class Performance_management_model extends CI_Model{
         return $b;        
     }
 
+    function GetCompanyTemplatesById(
+        $template_sid,
+        $columns = '*', 
+        $archived = 0
+    ){
+        $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where('sid', $template_sid)
+        ->where('is_archived', $archived)
+        ->order_by('name', 'ASC');
+        //
+        $a = $this->db->get($this->PMT);
+        $b = $a->result_array();
+        // Free result
+        $a->free_result();
+        //
+        return $b;        
+    }
+
+    function updateCompanyTemplatesById (
+        $template_sid,
+        $data_to_update
+    ){
+         $this->db
+        ->where('sid', $template_sid)
+        ->update($this->PMT, $data_to_update);
+    }
+
     /**
      * Get personal templates
      * 

@@ -107,6 +107,8 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
     $this->uri->segment(3) == 'demo_affiliate_configurations' ||
     $this->uri->segment(3) == 'edit_demo_affiliate_configurations' ||
     base_url(uri_string()) == site_url('manage_admin/email_templates') ||
+    base_url(uri_string()) == site_url('manage_admin/performance_management_templates') ||
+    $this->uri->segment(3) == 'edit_performance_template' ||
     base_url(uri_string()) == site_url('manage_admin/free_demo') ||
     $this->uri->segment(2) == 'edit_demo_request' ||
     $this->uri->segment(2) == 'demo_admin_reply' ||
@@ -563,6 +565,15 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                                     echo 'class="active"';
                                 }
                                 ?> href="<?php echo site_url('manage_admin/email_templates'); ?>">Email Templates</a>
+                            </div>
+                        <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'performance_management')) { ?>
+                            <div class="menu-item">
+                                <a <?php
+                                if (base_url(uri_string()) == site_url('manage_admin/performance_management') || $this->uri->segment(3) == 'edit_performance_template') {
+                                    echo 'class="active"';
+                                }
+                                ?> href="<?php echo site_url('manage_admin/performance_management'); ?>">Performance Management Templates</a>
                             </div>
                         <?php } ?>
                         <?php if (check_access_permissions_for_view($security_details, 'free_demo_enquiries')) { ?>
