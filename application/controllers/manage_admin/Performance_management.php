@@ -43,6 +43,7 @@ class Performance_management extends Admin_Controller {
         $this->data['page_title'] = 'Edit Performance Templates';
         //
         $template = $this->pmm->GetCompanyTemplatesById($template_id);
+        $this->data['template'] = $template;
         //
         $questions = json_decode($template[0]['questions'], true);
         //
@@ -53,7 +54,8 @@ class Performance_management extends Admin_Controller {
             //
             if ($action == 'Save') {
                 foreach ($questions as $qkey => $question) {
-                    $questions[$qkey]['title'] = $_POST[$qkey+1];
+                    $questions[$qkey]['title'] = $_POST['Question'.($qkey+1)];
+                    $questions[$qkey]['description'] = $_POST['Description'.($qkey+1)];
                 }
 
                 $question_string = json_encode($questions);
