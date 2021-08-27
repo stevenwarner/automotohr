@@ -131,30 +131,16 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function Create(){
+    function Create($payrolId = false){
         //
         $this->checkLogin($this->data);
         //
         $this->data['title'] = 'Payroll | Create';
-        $this->data['load_view'] = 0;
+        $this->data['load_view'] = 1;
         // Get Gusto Company Details
-        $company = $this->pm->GetCompany(
-            $this->data['companyId'], [
-                'gusto_company_uid',
-                'access_token',
-                'refresh_token'
-            ]
-        );
-        // Start payroll on Gusto
-        // $resp = PayPeriods($company);
-        $resp = Payrolls($company);
-
-        _e($resp, true, true);
-
-        //
         $this->load
         ->view('main/header', $this->data)
-        ->view('payroll/create')
+        ->view('payroll/'.($payrolId ? 'create' : 'create_main').'')
         ->view('main/footer');
     }
     
@@ -879,6 +865,7 @@ class Payroll extends CI_Controller
         $data['isSuperAdmin'] = $data['session']['employer_detail']['access_level_plus'];
         $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
         $data['load_view'] = $data['session']['company_detail']['ems_status'];
+        $data['employee'] = $data['session']['employer_detail'];
         //
         if ($return) {
             return true;
