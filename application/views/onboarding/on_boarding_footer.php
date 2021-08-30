@@ -510,3 +510,5 @@ $(document).ready(loadTitles);
     }
 
 </style>
+
+<script src="<?=base_url("assets/js/common.js");?>"></script>

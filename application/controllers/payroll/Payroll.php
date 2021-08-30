@@ -137,10 +137,75 @@ class Payroll extends CI_Controller
         //
         $this->data['title'] = 'Payroll | Create';
         $this->data['load_view'] = 1;
+        $this->data['hide_employer_section'] = 1;
+        //
+        $this->data['step'] = $this->input->get('step', true) ? $this->input->get('step', true) : '1';
+        //
+        if(!$payrolId){
+            //
+            $this->data['UnProcessedPayrolls'] = [];
+            //
+            $response = $this->GetUnProcessedPayrolls($this->data['companyId']);
+            //
+            if($response['Status']){
+                //
+                $this->data['UnProcessedPayrolls'] = $response['Response'];
+                //
+                $payrolls = [];
+                //
+                if(!empty($this->data['UnProcessedPayrolls'])){
+                    foreach($this->data['UnProcessedPayrolls'] as $payroll){
+                        if(!empty($payroll['payroll_uuid'])){
+                            $payrolls[$payroll['payroll_uuid']] = $payroll;
+                            //
+                            unset(
+                                $payrolls[$payroll['payroll_uuid']]['employee_compensations']
+                            );
+                        }
+                    }
+                }
+                //
+                $this->data['UnProcessedPayrolls'] = $payrolls;
+            }
+        }else{
+            //
+            $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'])['Response'];
+            //
+            if(!empty($this->data['Payroll'])){
+                foreach($this->data['Payroll']['employee_compensations'] as $index => $payroll){
+                    //
+                    $fixed_compensations = [];
+                    $hourly_compensations = [];
+                    $paid_time_off = [];
+                    //
+                    if(!empty($payroll['fixed_compensations'])){
+                        foreach($payroll['fixed_compensations'] as $v){
+                            $fixed_compensations[stringToSlug($v['name'])] = $v;
+                        }
+                    }
+                    //
+                    if(!empty($payroll['hourly_compensations'])){
+                        foreach($payroll['hourly_compensations'] as $v){
+                            $hourly_compensations[stringToSlug($v['name'])] = $v;
+                        }
+                    }
+                    //
+                    if(!empty($payroll['paid_time_off'])){
+                        foreach($payroll['paid_time_off'] as $v){
+                            $paid_time_off[stringToSlug($v['name'])] = $v;
+                        }
+                    }
+                    //
+                    $this->data['Payroll']['employee_compensations'][$index]['fixed_compensations'] = $fixed_compensations;
+                    $this->data['Payroll']['employee_compensations'][$index]['hourly_compensations'] = $hourly_compensations;
+                    $this->data['Payroll']['employee_compensations'][$index]['paid_time_off'] = $paid_time_off;
+                }
+            }
+        }
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
-        ->view('payroll/'.($payrolId ? 'create' : 'create_main').'')
+        ->view('payroll/'.($payrolId ? 'create_payroll' : 'create').'')
         ->view('main/footer');
     }
     
@@ -786,6 +851,81 @@ class Payroll extends CI_Controller
                 'Status' => true,
                 'Response' => 'You have successfully added a bank account for payroll.',
             ]);
+        }
+    }
+
+    /**
+     * 
+     */
+    private function GetUnProcessedPayrolls($companyId){
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        
+        //
+        $query = '?processed=false';
+        //
+        $response = GetUnProcessedPayrolls($query, $company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            //
+            return[
+                'Status' => true,
+                'Response' => $response,
+            ];
+        }
+    }
+
+    /**
+     * 
+     */
+    private function GetSinglePayroll($payrollId, $companyId){
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $company['payroll_id'] = $payrollId;
+        //
+        $query = '';
+        //
+        $response = GetSinglePayroll($query, $company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            //
+            return[
+                'Status' => true,
+                'Response' => $response,
+            ];
         }
     }
 

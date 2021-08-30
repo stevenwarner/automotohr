@@ -274,6 +274,100 @@ if(!function_exists('AddCompanyBankAccountToPayroll')){
 }
 
 //
+if(!function_exists('GetUnProcessedPayrolls')){
+    function GetUnProcessedPayrolls($query, $company){
+        //
+        $url = PayrollURL('GetUnProcessedPayrolls', $company['gusto_company_uid'], $query);
+        //
+        $tr = CacheHolder($url);
+        if($tr){
+            return $tr;
+        }
+        //
+        $response =  MakeCall(
+            $url, [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                GetUnProcessedPayrolls($query, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            CacheHolder($url, $response);
+            //
+            return $response;
+        }
+    }
+}
+
+//
+if(!function_exists('GetSinglePayroll')){
+    function GetSinglePayroll($query, $company){
+        //
+        $url = PayrollURL('GetSinglePayroll', $company['gusto_company_uid'], $company['payroll_id']);
+        //
+        $tr = CacheHolder($url);
+        if($tr){
+            return $tr;
+        }
+        //
+        $response =  MakeCall(
+            $url, [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                GetSinglePayroll($query, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            CacheHolder($url, $response);
+            //
+            return $response;
+        }
+    }
+}
+
+//
 if(!function_exists('RefreshToken')){
     function RefreshToken($request){
         //
@@ -351,6 +445,8 @@ if(!function_exists('PayrollURL')){
         $urls['AddBankAccountToPayroll'] = 'v1/employees/'.($key).'/bank_accounts';
         $urls['DeleteBankAccountToPayroll'] = 'v1/employees/'.($key).'/bank_accounts/'.$key1;
         $urls['AddCompanyBankAccountToPayroll'] = 'v1/companies/'.($key).'/bank_accounts';
+        $urls['GetUnProcessedPayrolls'] = 'v1/companies/'.($key).'/payrolls'.($key1);
+        $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1);
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }
@@ -370,5 +466,20 @@ if(!function_exists('UpdateToken')){
             'old_access_token' => $company['access_token'],
             'old_refresh_token' => $company['refresh_token']
         ], $where);
+    }
+}
+
+//
+if(!function_exists('CacheHolder')){
+    function CacheHolder($url, $data = []){
+        //
+        $_this =&get_instance();
+        //
+        if($_this->session->userdata($url)){
+            return $_this->session->userdata($url);
+        }
+        if(!empty($data)){
+            $_this->session->set_userdata($url, $data);
+        }
     }
 }
