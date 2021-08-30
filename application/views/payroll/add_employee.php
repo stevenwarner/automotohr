@@ -76,7 +76,7 @@
                 </div>
                 <div class="col-sm-3">
                     <label class="csF16 csB7">Hired Date <span class="csRequired"></span></label>
-                    <input type="text" class="form-control jsDOB" <?=!empty($Employee['dob']) ? 'disabled' : '';?> value="<?=!empty($Employee['dob']) ? $Employee['dob'] : '';?>" />
+                    <input type="text" class="form-control jsDOB" <?=!empty($Employee['joined_at']) ? 'disabled' : '';?> value="<?=!empty($Employee['joined_at']) ? $Employee['joined_at'] : '';?>" />
                 </div>
             </div>
             <?php if($Employee['on_payroll'] == 0): ?>

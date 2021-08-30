@@ -1374,6 +1374,7 @@ $route['payroll/dashboard']['get'] = 'payroll/Payroll/Dashboard';
 $route['payroll/accounts']['get'] = 'payroll/Payroll/Accounts';
 $route['payroll/settings']['get'] = 'payroll/Payroll/Settings';
 $route['payroll/create']['get'] = 'payroll/Payroll/Create';
+$route['payroll/create/(:any)']['get'] = 'payroll/Payroll/Create/$1';
 $route['payroll/employees']['get'] = 'payroll/Payroll/EmployeeList';
 $route['payroll/employee/add/(:num)']['get'] = 'payroll/Payroll/AddEmployee/$1';
 
