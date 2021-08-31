@@ -13736,3 +13736,39 @@ if(!function_exists('LoadModel')){
         $_this->load->model($models[$index], $index);
     }
 }
+
+/**
+ * 
+ */
+if(!function_exists('SnToString')){
+    function SnToString($notation){
+        return (string) number_format(
+            $notation,
+            0,
+            '',
+            ''
+        );
+    }
+}
+
+/**
+ * 
+ */
+if(!function_exists('ResetRate')){
+    function ResetRate($rate, $rateType = 'Hour'){
+        //
+        $newRate = $rate;
+        //
+        $rateType = strtolower($rateType);
+        //
+        if($rateType == 'year'){
+            $newRate = $rate / 52 / WORK_WEEK_HOURS;
+        } else if($rateType == 'month'){
+            $newRate = ($rate * 12) / 52 / WORK_WEEK_HOURS;
+        } else if($rateType == 'week'){
+            $newRate = $rate / WORK_WEEK_HOURS;
+        }
+        //
+        return $newRate;
+    }
+}

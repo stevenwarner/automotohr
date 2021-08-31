@@ -27,8 +27,8 @@
 </div>
 
 <!-- Add Models -->
-<link rel="stylesheet" href="<?=base_url('assets/css/system_model.css');?>">
-<script src="<?=base_url("assets/js/system_modal.js");?>"></script>
+<link rel="stylesheet" href="<?=base_url('assets/css/SystemModel.css');?>">
+<script src="<?=base_url("assets/js/SystemModal.js");?>"></script>
 
 <script>
     $(function(){

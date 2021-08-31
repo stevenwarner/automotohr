@@ -169,10 +169,13 @@ class Payroll extends CI_Controller
             }
         }else{
             //
+            $this->data['PayrollEmployees'] = $this->GetCompanyEmployees($this->data['companyId'])['Response'];
             $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'])['Response'];
             //
             if(!empty($this->data['Payroll'])){
                 foreach($this->data['Payroll']['employee_compensations'] as $index => $payroll){
+                    //
+                    $this->data['Payroll']['employee_compensations'][$index]['employee_id'] = number_format($payroll['employee_id'], 0, '', '');
                     //
                     $fixed_compensations = [];
                     $hourly_compensations = [];
@@ -180,7 +183,12 @@ class Payroll extends CI_Controller
                     //
                     if(!empty($payroll['fixed_compensations'])){
                         foreach($payroll['fixed_compensations'] as $v){
-                            $fixed_compensations[stringToSlug($v['name'])] = $v;
+                            //
+                            if(stringToSlug($v['name']) == 'reimbursement'){
+                                $fixed_compensations[stringToSlug($v['name'])][] = $v;
+                            } else{
+                                $fixed_compensations[stringToSlug($v['name'])] = $v;
+                            }
                         }
                     }
                     //
@@ -202,6 +210,8 @@ class Payroll extends CI_Controller
                 }
             }
         }
+        //
+        $this->data['payrollId'] = $payrolId;
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
@@ -921,6 +931,61 @@ class Payroll extends CI_Controller
                 'Errors' => $errors
             ]);
         } else{
+            //
+            return[
+                'Status' => true,
+                'Response' => $response,
+            ];
+        }
+    }
+    
+    /**
+     * 
+     */
+    private function GetCompanyEmployees($companyId){
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $response = GetCompanyEmployees($company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            //
+            if(!empty($response)){
+                //
+                $emps = [];
+                //
+                foreach($response as $emp){
+                    //
+                    $id = SnToString($emp['id']);
+                    //
+                    $emps[$id] = $emp;
+                    //
+                    if(!empty($emps[$id]['jobs'])){
+                        foreach($emps[$id]['jobs'] as $index => $value){
+                            //
+                            $emps[$id]['jobs'][SnToString($value['id'])] = $value;
+                        }
+                    }
+                }
+                //
+                $response = $emps;
+            }
             //
             return[
                 'Status' => true,
