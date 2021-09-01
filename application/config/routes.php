@@ -1380,5 +1380,6 @@ $route['payroll/add_company_payroll_bank_account']['post'] = 'payroll/Payroll/Ad
 $route['payroll/edit_company_payroll_bank_account']['post'] = 'payroll/Payroll/EditCompanyBankAccountToPayroll';
 $route['payroll/remove_company_bank_account']['post'] = 'payroll/Payroll/RemoveCompanyBankAccounts';
 $route['payroll/update_bank_account_to_payroll']['post'] = 'payroll/Payroll/UpdateCompanyBankAccount';
+$route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';
 //
 $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';

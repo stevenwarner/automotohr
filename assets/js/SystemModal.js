@@ -74,10 +74,19 @@ $(document).on('click', '.jsModalCancel', (e) => {
 });
 
 // Loader
-function ml(doShow, p) {
+function ml(doShow, p, msg) {
     //
     p = p === undefined ? `.jsIPLoader` : `.jsIPLoader[data-page="${p}"]`;
     //
     if (doShow === undefined || doShow === false) $(p).hide();
     else $(p).show();
+    //
+    if(msg !== undefined){
+        $('.jsIPLoaderText').text(msg);
+    } 
+    //
+    if(!doShow){
+        //
+        $('.jsIPLoaderText').text('Please wait, while we are generating a preview.');
+    }
 }

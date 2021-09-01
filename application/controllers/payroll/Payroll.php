@@ -212,6 +212,7 @@ class Payroll extends CI_Controller
         }
         //
         $this->data['payrollId'] = $payrolId;
+        $this->data['payrollVersion'] = $this->data['Payroll']['version'];
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
@@ -943,6 +944,88 @@ class Payroll extends CI_Controller
      * 
      */
     private function GetCompanyEmployees($companyId){
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $response = GetCompanyEmployees($company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            //
+            if(!empty($response)){
+                //
+                $emps = [];
+                //
+                foreach($response as $emp){
+                    //
+                    $id = SnToString($emp['id']);
+                    //
+                    $emps[$id] = $emp;
+                    //
+                    if(!empty($emps[$id]['jobs'])){
+                        foreach($emps[$id]['jobs'] as $index => $value){
+                            //
+                            $emps[$id]['jobs'][SnToString($value['id'])] = $value;
+                        }
+                    }
+                }
+                //
+                $response = $emps;
+            }
+            //
+            return[
+                'Status' => true,
+                'Response' => $response,
+            ];
+        }
+    }
+    
+    /**
+     * 
+     */
+    function UpdatePayroll(){
+        //
+        if(
+            !$this->input->is_ajax_request() &&
+            $this->input->method() != 'post' &&
+            empty($this->input->post())
+        ){
+            res($this->resp);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        // Make request array
+        $employeeArray = [];
+        //
+        foreach($post['payroll'] as $payroll){
+            // Temporary Array
+            $ta = [];
+            $ta['employee_id'] = $payroll['employeeId'];
+            $ta['fixed_compensations'] = [];
+            // $ta['fixed_compensations'][] = [
+            //     'name' => $payroll[''],
+            //     'amount' => $payroll[''],
+            // ];
+        }
+        //
+        _e($post, true, true);
+        die;
+
         //
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
