@@ -65,7 +65,7 @@
     bottom: 0;
     width: 100%;
     background: rgba(255, 255, 255, .9);
-    z-index: 2;
+    z-index: 3;
 }
 
 .csIPLoader>i {
@@ -79,7 +79,6 @@
 
 .csIPLoader div {
     position: relative;
-    top: 100px;
 }
 
 .csIPLoader div p {

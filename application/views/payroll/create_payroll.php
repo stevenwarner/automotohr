@@ -5,8 +5,8 @@
     </div>
     <br>
     <!--  -->
-    <div class="row">
-        <div class="container-fluid">
+    <div class="container-fluid">
+        <div class="row">
             <!-- Side Bar -->
             <?php $this->load->view('employee_info_sidebar_ems'); ?>
             <!-- Main Content Area -->

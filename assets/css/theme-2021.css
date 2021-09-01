@@ -1112,7 +1112,7 @@
         bottom: 0;
         width: 100%;
         background: rgba(255, 255, 255, .9);
-        z-index: 2;
+        z-index: 3;
     }
     
     .csIPLoader>i {
@@ -1745,6 +1745,11 @@
         background-color: #fd7a2a;
         color: #ffffff;
     }
+
+    .csBG4 {
+        background-color: #444444;
+        color: #ffffff;
+    }
     
     .csBG4 {
         background-color: #444444;
@@ -1802,3 +1807,14 @@
         padding-bottom: 10px;
         z-index: 100;
     }
+
+    /*  */
+    .csDB{
+        display: block;
+    }
+
+    /*  */
+    .pr30{ padding-right: 30px;}
+
+    /*  */
+   

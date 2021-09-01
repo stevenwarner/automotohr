@@ -1,9 +1,46 @@
-
 <?php  
+//
+if(!empty($Payroll['employee_compensations'])): 
     //
-    if(!empty($Payroll['employee_compensations'])): 
+    $payrollOBJ = [];
+    //
+    foreach($Payroll['employee_compensations'] as $payrollEmployee):
         //
-        $payrollOBJ = [];
+        $emp = $PayrollEmployees[$payrollEmployee['employee_id']];
+        //
+        $tmp = [
+            'employeeId' => $payrollEmployee['employee_id'],
+            'firstName' => ucwords($emp['first_name']),
+            'lastName' => ucwords($emp['last_name']),
+            'fixedCompensations' => [],
+            'hourlyCompensations' => [],
+            'paid_time_off' => [],
+            'reimbursement' => 0.00,
+            'reimbursements' => [],
+            'rate' => $emp['jobs'][0]['rate'],
+            'rateUnit' => $emp['jobs'][0]['payment_unit'],
+            'rateByHour' => 0.00
+        ];
+        //
+        $tmp['rateByHour'] = number_format((float)ResetRate($tmp['rate'], $tmp['rateUnit']), 2);
+        //
+        if(isset($payrollEmployee['fixed_compensations'])){
+            $tmp['fixedCompensations'] = $payrollEmployee['fixed_compensations'];
+        }
+        //
+        if(isset($payrollEmployee['hourly_compensations']) && !empty($payrollEmployee['hourly_compensations'])){
+            $tmp['hourlyCompensations'] = $payrollEmployee['hourly_compensations'];
+        } else{
+            $tmp['hourlyCompensations']['regular-hours'] = [
+                'compensation_multiplier' => 1,
+                'job_id' => $emp['jobs'][0]['id'],
+                'hours' => (float)number_format(WORK_WEEK_HOURS, 2),
+                'name' => 'Regular Hours'
+            ];
+        }
+        //
+        $payrollOBJ[$payrollEmployee['employee_id']] = $tmp;
+    endforeach;
 ?>
 <!-- Steps -->
 <div class="row">
@@ -53,7 +90,7 @@
             </div>
         </div>
          <!-- Info -->
-         <div class="row">
+        <div class="row">
             <div class="col-sm-12">
                 <span class="pull-left">
                     <p class="csF16"><b>Payroll Period:</b> 
@@ -73,242 +110,21 @@
                 </span>
             </div>
         </div>
-        <!-- filter -->
-        <div class="row">
-            <div class="col-sm-12">
-                <table class="table table-striped">
-                    <caption></caption>
-                    <thead>
-                        <tr>
-                            <th scope="col">
-                                <label class="control control--checkbox">
-                                    <input type="checkbox" id="jsSelectAll" />
-                                    <div class="control__indicator" style="margin-top: -12px"></div>
-                                </label>
-                            </th>
-                            <th scope="col">
-                                Employees (<?=count($Payroll['employee_compensations']);?>)
-                            </th>
-                            <th scope="col">
-                                Regular Hours (RH) / Overtime (OT)
-                            </th>
-                            <th scope="col">
-                                Additional Earnings
-                            </th>
-                            <th scope="col">
-                                Gross Pay (GP)
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        foreach($Payroll['employee_compensations'] as $payrollEmployee):
-                            //
-                            $emp = $PayrollEmployees[$payrollEmployee['employee_id']];
-                            //
-                            $tmp = [
-                                'overtimeMultiplier' => "0.00",
-                                'overtime' => "0.00",
-                                'doubleOvertime' => "0.00",
-                                'doubleOvertimeMultiplier' => "0.00",
-                                'bonus' => "0.00",
-                                'cashTips' => "0.00",
-                                'commission' => "0.00",
-                                'correctionPayments' => "0.00",
-                                'reimbursement' => "0.00",
-                                'reimbursements' => [],
-                                'regularHours' => number_format(WORK_WEEK_HOURS, 2),
-                                'rate' => $emp['jobs'][0]['rate'],
-                                'rateUnit' => $emp['jobs'][0]['payment_unit'],
-                                'rateByHour' => "0.00",
-                                'rhTotal' => "0.00",
-                                'employeeId' => $payrollEmployee['employee_id'],
-                                'first_name' => ucwords($emp['first_name']),
-                                'last_name' => ucwords($emp['last_name'])
-                            ];
-                            //
-                            $ot = 
-                            $dot = 0;
-                            //
-                            $tmp['rateByHour'] = (float) ResetRate($tmp['rate'], $tmp['rateUnit']);
-                            //
-                            if(isset($payrollEmployee['fixed_compensations']['bonus'])){
-                                $tmp['bonus'] = (float) $payrollEmployee['fixed_compensations']['bonus']['amount'];
-                            }
-                            //
-                            if(isset($payrollEmployee['fixed_compensations']['cash-tips'])){
-                                $tmp['cashTips'] = $payrollEmployee['fixed_compensations']['cash-tips']['amount'];
-                            }
-                            //
-                            if(isset($payrollEmployee['fixed_compensations']['commission'])){
-                                $tmp['commission'] = $payrollEmployee['fixed_compensations']['commission']['amount'];
-                            }
-                            //
-                            if(isset($payrollEmployee['fixed_compensations']['reimbursement'])){
-                                //
-                                $payrollEmployee['fixed_compensations']['reimbursement'][] = [
-                                    'description' => 'Additional Amount',
-                                    'amount' => 20.00
-                                ];
-                                //
-                                foreach($payrollEmployee['fixed_compensations']['reimbursement'] as $reimbursement){
-                                    //
-                                    $tmp['reimbursement'] += $reimbursement['amount'];
-                                    $tmp['reimbursements'][] = [
-                                        'description' => 'Additional Amount',
-                                        'amount' => $reimbursement['amount']
-                                    ];
-                                    //
-                                    $tmp['reimbursement'] += (float) $reimbursement['amount'];
-                                }
-                            }
-                            //
-                            if(isset($payrollEmployee['hourly_compensations']['overtime'])){
-                                $tmp['overtime'] = (float) $payrollEmployee['hourly_compensations']['overtime']['hours'];
-                                $ot = $tmp['rate'] * $tmp['overtime'] * $payrollEmployee['hourly_compensations']['overtime']['compensation_multiplier'];
-                                $tmp['overtimeMultiplier'] = $payrollEmployee['hourly_compensations']['overtime']['compensation_multiplier'];
-                            }
-                            //
-                            if(isset($payrollEmployee['hourly_compensations']['double-overtime'])){
-                                $tmp['doubleOvertime'] = (float) $payrollEmployee['hourly_compensations']['double-overtime']['hours'];
-                                $dot = $tmp['rate'] * $tmp['overtime'] * $payrollEmployee['hourly_compensations']['double-overtime']['compensation_multiplier'];
-                                $tmp['doubleOvertimeMultiplier'] = $payrollEmployee['hourly_compensations']['double-overtime']['compensation_multiplier'];
-                            }
-                            //
-                            if(isset($payrollEmployee['hourly_compensations']['regular-hours'])){
-                                $tmp['regularHours'] = number_format(
-                                    $payrollEmployee['hourly_compensations']['regular-hours']['hours'], 2
-                                );
-                            }
-                            //
-                            $tmp['rhTotal'] = number_format(
-                                ($tmp['rateByHour'] * $tmp['regularHours']) +
-                                ($ot) +
-                                ($dot) +
-                                ($tmp['bonus']) +
-                                ($tmp['cashTips']) +
-                                ($tmp['commission']) +
-                                ($tmp['reimbursement']), 2
-                            );
-                            //
-                            $payrollOBJ[$payrollEmployee['employee_id']] = $tmp;
-                            ?>
-                            <tr data-id="<?=$payrollEmployee['employee_id'];?>">
-                                <td class="vam">
-                                    <label class="control control--checkbox">
-                                        <input type="checkbox" id="jsSelectSingle" value="44" />
-                                        <div class="control__indicator"  style="margin-top: -18px"></div>
-                                    </label>
-                                </td>
-                                <td class="vam">
-                                    <p class="csF16">
-                                        <b>
-                                            <?=$tmp['last_name'].', '.$tmp['first_name'];?>
-                                        </b>
-                                    </p>
-                                    <p class="csF16">
-                                        $<?=number_format($tmp['rate'], 2);?> /<?=$tmp['rateUnit'];?>
-                                    </p>
-                                </td>
-                                <td class="vam">
-                                    <a class="csF16 csCP jsPayrollRHBTN">
-                                        <i class="fa fa-edit" aria-hidden="true"></i>&nbsp; <?=$tmp['regularHours'];?> hr
-                                    </a>
-                                    <br>
-                                    <!--  -->
-                                    <div class="csPR jsPayrollRHBox dn">
-                                        <div class="input-group">
-                                            <span class="input-group-addon csCI" title="Regular Hours (RH)" placement="top">RH</span>
-                                            <input type="text" id="jsPayrollRH<?=$payrollEmployee['employee_id'];?>" class="form-control text-right jsInputRH" value="<?=$tmp['regularHours'];?>" style="padding-right: 25px;"/>
-                                        </div>
-                                        <b class="csInputPlaceholder csF14 csB1">hr</b>
-                                    </div>
-                                    <br>
-                                    <a class="csF16 csFC2 csCP jsPayrollOvertimeBTN">
-                                        <i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;Overtime
-                                    </a>
-                                    <div class="jsPayrollOvertimeBox dn">
-                                        <div class="csPR">
-                                            <div class="input-group">
-                                                <span class="input-group-addon csCI" title="Overtime (OT)" placement="top">OT</span>
-                                                <input type="text" id="jsPayrollOT<?=$payrollEmployee['employee_id'];?>" class="form-control text-right jsInputOT" value="<?=$tmp['overtime'];?>" style="padding-right: 25px;"/>
-                                            </div>
-                                            <b class="csInputPlaceholder csF14 csB1">hr</b>
-                                        </div>
-                                        <br>
-                                        <div class="csPR">
-                                            <div class="input-group">
-                                                <span class="input-group-addon csCI" title="Double Overtime (DOT)" placement="top">DOT</span>
-                                                <input type="text" id="jsPayrollDOT<?=$payrollEmployee['employee_id'];?>" class="form-control text-right jsInputDOT" value="<?=$tmp['doubleOvertime'];?>" style="padding-right: 25px;"/>
-                                            </div>
-                                            <b class="csInputPlaceholder csF14 csB1">hr</b>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="vam">
-                                    <div class="jsPayrollBonusBox dn">
-                                        <div class="csPR">
-                                            <div class="input-group">
-                                                <span class="input-group-addon csCI" title="Bonus" placement="top">B</span>
-                                                <input type="text" id="jsPayrollB<?=$payrollEmployee['employee_id'];?>" class="form-control text-right jsInputB" value="<?=$tmp['bonus'];?>" style="padding-right: 25px;"/>
-                                            </div>
-                                            <b class="csInputPlaceholder csF14 csB1">hr</b>
-                                        </div>
-                                    </div>
-                                    <a class="csF16 csFC2 csCP jsPayrollBonusBTN">
-                                        <i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;Bonus
-                                        <br>
-                                    </a> <br>
-                                    <div class="jsPayrollCashTipsBox dn">
-                                        <div class="csPR">
-                                            <div class="input-group">
-                                                <span class="input-group-addon csCI" title="Cash Tips" placement="top">C</span>
-                                                <input type="text" id="jsPayrollC<?=$payrollEmployee['employee_id'];?>" class="form-control text-right jsInputCT" value="<?=$tmp['cashTips'];?>" style="padding-right: 25px;"/>
-                                            </div>
-                                            <b class="csInputPlaceholder csF14 csB1">hr</b>
-                                        </div>
-                                    </div>
-                                    <a class="csF16 csFC2 csCP jsPayrollCashTipsBTN">
-                                        <i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;Cash Tips
-                                        <br>
-                                    </a> <br>
-                                    <a class="csF16 csFC2 csCP jsPayrollOtherEarnings">
-                                        <i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;Other Earnings
-                                        <br>
-                                    </a> <br>
-                                </td>
-                                <td class="vam">
-                                    <p class="csF16">
-                                        <b id="jsPayrollRowTotal<?=$payrollEmployee['employee_id'];?>">
-                                            $<?=$tmp['rhTotal'];?>
-                                        </b>
-                                    </p>
-                                    <a class="csF16 csFC2 csCP jsPayrollReimbursement">
-                                        <i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;Reimbursement
-                                    </a> <br> <br>
-                                    <p class="csF16">
-                                        Pay By: Direct Deposit
-                                    </p>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+        <!-- Box Layout -->
+        <div class="csPageBoxBody" style="min-height: 300px;">
+            <!-- Main Loader -->
+            <div class="csIPLoader jsIPLoader" data-page="main_loader">
+                <div>
+                    <p class="text-center">
+                        <i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i> <br> <br>
+                        <span class="csF16 csB7 jsIPLoaderText">
+                            Please wait, while we are generating a preview.
+                        </span>
+                    </p>
+                </div>
             </div>
-        </div>
-        <!--  -->
-        <div class="csPB">
-            <span class="pull-right">
-                <button class="btn btn-orange jsPayrollSaveBTN">
-                    <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save
-                </button>
-                <button class="btn btn-orange jsPayrollSaveAndNextBTN">
-                    <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp;Save & Next
-                </button>
-                <button class="btn btn-black jsPayrollCancelBTN">
-                    <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel
-                </button>
-            </span>
+            <!-- -->
+            <div class="jsPayrollContainer"></div>
         </div>
     </div>
 </div>
@@ -320,236 +136,235 @@
         //
         var payrollCode = "<?=$payrollId;?>";
         //
-        $('.jsInputCMN').keyup(function(){
+        var payrollVersion = "<?=$payrollVersion;?>";
+
+        // Triggers
+
+        /**
+         *  Regular Hours Edit
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollRowEditRHE, .jsPayrollRowEditRHP', function(event){
             //
-            var nv = $(this).val().replace(/[^0-9.]/g, '');
+            event.preventDefault();
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            boxREF.find('.csPageBoxBody').addClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody[data-portion="regular_hours"]').removeClass('dn');
+        });
+
+        /**
+         *  Regular Hours Save
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollRHSaveBTN', function(event){
+            //
+            event.preventDefault();
+            //
+            const employeeId = $(this).closest('.jsPayrollRowId').data('id');
+            //
+            ml(true, 'jsPayrollEditLoader'+employeeId)
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            let value = boxREF.find('.jsPayrollRHInput').val().trim();
+            //
+            if(parseInt(value) == 0){
+                value = <?=WORK_WEEK_HOURS;?>;
+            }
+            //
+            payrollOBJ[employeeId]['regularHours'] = parseFloat(value);
+            //
+            UpdatePayrollRow(employeeId);
+            //
+            boxREF.find('.csPageBoxBody').removeClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody').addClass('dn');
+        });
+
+        /**
+         *  Overtime Edit
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollRowEditOTE, .jsPayrollRowEditOTP', function(event){
+            //
+            event.preventDefault();
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            boxREF.find('.csPageBoxBody').addClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody[data-portion="overtime"]').removeClass('dn');
+        });
+
+        /**
+         *  Overtime Save
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollOTSaveBTN', function(event){
+            //
+            event.preventDefault();
+            //
+            const employeeId = $(this).closest('.jsPayrollRowId').data('id');
+            //
+            ml(true, 'jsPayrollEditLoader'+employeeId)
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            payrollOBJ[employeeId]['hourlyCompensations']['overtime']['hours'] = parseFloat(boxREF.find('.jsPayrollOTInput').val().trim());
+            //
+            UpdatePayrollRow(employeeId);
+            //
+            boxREF.find('.csPageBoxBody').removeClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody').addClass('dn');
+        });
+
+        /**
+         *  Double Overtime Edit
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollRowEditDOTE, .jsPayrollRowEditDOTP', function(event){
+            //
+            event.preventDefault();
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            boxREF.find('.csPageBoxBody').addClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody[data-portion="double_overtime"]').removeClass('dn');
+        });
+
+        /**
+         * Double  Overtime Save
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollDOTSaveBTN', function(event){
+            //
+            event.preventDefault();
+            //
+            const employeeId = $(this).closest('.jsPayrollRowId').data('id');
+            //
+            ml(true, 'jsPayrollEditLoader'+employeeId)
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            payrollOBJ[employeeId]['hourlyCompensations']['double-overtime']['hours'] = parseFloat(boxREF.find('.jsPayrollDOTInput').val().trim());
+            //
+            UpdatePayrollRow(employeeId);
+            //
+            boxREF.find('.csPageBoxBody').removeClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody').addClass('dn');
+        });
+
+        /**
+         *  Bonus Edit
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollRowEditBE, .jsPayrollRowEditBP', function(event){
+            //
+            event.preventDefault();
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            boxREF.find('.csPageBoxBody').addClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody[data-portion="bonus"]').removeClass('dn');
+        });
+
+        /**
+         *  Bonus Save
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollBSaveBTN', function(event){
+            //
+            event.preventDefault();
+            //
+            const employeeId = $(this).closest('.jsPayrollRowId').data('id');
+            //
+            ml(true, 'jsPayrollEditLoader'+employeeId)
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            payrollOBJ[employeeId]['fixedCompensations']['bonus']['amount'] = parseFloat(boxREF.find('.jsPayrollBInput').val().trim());
+            //
+            UpdatePayrollRow(employeeId);
+            //
+            boxREF.find('.csPageBoxBody').removeClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody').addClass('dn');
+        });
+
+        /**
+         *  Cash Tips Edit
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollRowEditCTE, .jsPayrollRowEditCTP', function(event){
+            //
+            event.preventDefault();
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            boxREF.find('.csPageBoxBody').addClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody[data-portion="cash_tips"]').removeClass('dn');
+        });
+
+        /**
+         *  Cash Tips Save
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollCTSaveBTN', function(event){
+            //
+            event.preventDefault();
+            //
+            const employeeId = $(this).closest('.jsPayrollRowId').data('id');
+            //
+            ml(true, 'jsPayrollEditLoader'+employeeId)
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            payrollOBJ[employeeId]['fixedCompensations']['cash-tips']['amount'] = parseFloat(boxREF.find('.jsPayrollCTInput').val().trim());
+            //
+            UpdatePayrollRow(employeeId);
+            //
+            boxREF.find('.csPageBoxBody').removeClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody').addClass('dn');
+        });
+
+        /**
+         *  Portion Cancel
+         *  Click
+         */  
+        $(document).on('click', '.jsPayrollCancelBTN', function(event){
+            //
+            event.preventDefault();
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            boxREF.find('.csPageBoxBody').removeClass('dn');
+            boxREF.find('.portionSections .csPageBoxBody').addClass('dn');
+        });
+       
+        /**
+         *  Reset input field
+         *  keyup
+         */  
+        $(document).on('keyup', '.jsPayrollRHInput, .jsPayrollOTInput, .jsPayrollDOTInput, .jsPayrollBInput, .jsPayrollCTInput', function(){
+            //
+            const nv = $(this).val().replace(/[^0-9.]/g, '');
             //
             $(this).val(
                 isNaN(nv) ? 0.00 : nv
             );
         });
-        //
-        $('.jsInputRH').keyup(function(){
-            //
-            var nv = $(this).val().replace(/[^0-9.]/g, '');
-            //
-            $(this).val(
-                isNaN(nv) ? 0.00 : nv
-            );
-            //
-            UpdatePayrollRow(
-                $(this).closest('tr').data('id'), 
-                'regularHours',
-                nv
-            );
-        });
-        //
-        $('.jsInputOT').keyup(function(){
-            //
-            var nv = $(this).val().replace(/[^0-9.]/g, '');
-            //
-            $(this).val(
-                isNaN(nv) ? 0.00 : nv
-            );
-            //
-            UpdatePayrollRow(
-                $(this).closest('tr').data('id'), 
-                'overtime',
-                nv
-            );
-        });
-        //
-        $('.jsInputDOT').keyup(function(){
-            //
-            var nv = $(this).val().replace(/[^0-9.]/g, '');
-            //
-            $(this).val(
-                isNaN(nv) ? 0.00 : nv
-            );
-            //
-            UpdatePayrollRow(
-                $(this).closest('tr').data('id'), 
-                'doubleOverTime',
-                nv
-            );
-        });
-        //
-        $('.jsInputB').keyup(function(){
-            //
-            var nv = $(this).val().replace(/[^0-9.]/g, '');
-            //
-            $(this).val(
-                isNaN(nv) ? 0.00 : nv
-            );
-            //
-            UpdatePayrollRow(
-                $(this).closest('tr').data('id'), 
-                'bonus',
-                nv
-            );
-        });
-        //
-        $('.jsInputCT').keyup(function(){
-            //
-            var nv = $(this).val().replace(/[^0-9.]/g, '');
-            //
-            $(this).val(
-                isNaN(nv) ? 0.00 : nv
-            );
-            //
-            UpdatePayrollRow(
-                $(this).closest('tr').data('id'), 
-                'cashTips',
-                nv
-            );
-        });
-        //
-        $('.jsPayrollOvertimeBTN').click(function(event){
+
+        /**
+         * Reimbursement Model
+         * Click
+         */
+        $(document).on('click', '.jsPayrollRowEditR, .jsPayrollRowEditRE', function(event){
             //
             event.preventDefault();
             //
-            $(this).hide();
-            //
-            $(this).closest('tr').find('.jsPayrollOvertimeBox').removeClass('dn');
-        });
-        //
-        $('.jsPayrollRHBTN').click(function(event){
-            //
-            event.preventDefault();
-            //
-            $(this).hide();
-            //
-            $(this).closest('tr').find('.jsPayrollRHBox').removeClass('dn');
-        });
-        //
-        $('.jsPayrollBonusBTN').click(function(event){
-            //
-            event.preventDefault();
-            //
-            $(this).hide();
-            //
-            $(this).closest('tr').find('.jsPayrollBonusBox').removeClass('dn');
-        });
-        //
-        $('.jsPayrollCashTipsBTN').click(function(event){
-            //
-            event.preventDefault();
-            //
-            $(this).hide();
-            //
-            $(this).closest('tr').find('.jsPayrollCashTipsBox').removeClass('dn');
-        });
-        //
-        $(document).on('click', '.jsPayrollEOSaveBTN', function(event){
-            //
-            event.preventDefault();
-            //
-            ml(true, 'jsPayrollOEModelLoader');
-            //
-            var id = $(this).data('id');
-            //
-            payrollOBJ[id]['commission'] = $('#jsPayrollCommission'+id).val().trim();
-            payrollOBJ[id]['correctionPayments'] = $('#jsPayrollCorrectionPayment'+id).val().trim();
-            payrollOBJ[id]['cashTips'] = $('#jsPayrollPaycheckTips'+id).val().trim();
-            //
-            UpdatePayrollRow(id);
-            //
-            ml(false, "jsPayrollOEModelLoader");
-            //
-            $('#jsPayrollOEModel .jsModalCancel').click();
-        });
-        //
-        $('.jsPayrollOtherEarnings').click(function(event){
-            //
-            event.preventDefault();
-            //
-            const singleEmployee = payrollOBJ[$(this).closest('tr').data('id')];
+            const payrollEmployee = payrollOBJ[$(this).closest('.jsPayrollRowId').data('id')];
             //
             var html = '';
-            html += '<!-- Other Earning -->';
-            html += '<div class="container csPageWrap">';
-            html += '    <div class="row">';
-            html += '        <div class="col-sm-12">';
-            html += '            <p class="csF16">';
-            html += '                '+(singleEmployee.first_name+' '+singleEmployee.last_name)+' will be paid the amounts below in addition to their regular wages.';
-            html += '            </p>';
-            html += '        </div>';
-            html += '    </div><br>';
-            html += '    <div class="row">';
-            html += '        <div class="col-sm-12">';
-            html += '            <p class="csF16 csB7">';
-            html += '                Commission';
-            html += '            </p>';
-            html += '            <p class="csF16">';
-            html += '                The amount of commission pay the employee received for this pay period.';
-            html += '            </p>';
-            html += '            <div class="input-group">';
-            html += '                <span class="input-group-addon">$</span>';
-            html += '                <input type="text" id="jsPayrollCommission'+(singleEmployee.employeeId)+'" value="'+(singleEmployee.commission)+'" class="form-control jsInputCMN" style="padding-right: 25px;"/>';
-            html += '            </div>';
-            html += '        </div>';
-            html += '    </div><br>';
-            html += '    <div class="row">';
-            html += '        <div class="col-sm-12">';
-            html += '            <p class="csF16 csB7">';
-            html += '                Correction Payment';
-            html += '            </p>';
-            html += '            <p class="csF16">';
-            html += '                Correction payment for this pay period. This amount will be added to gross wages, and taxed as regular income.';
-            html += '            </p>';
-            html += '            <div class="input-group">';
-            html += '                <span class="input-group-addon">$</span>';
-            html += '                <input type="text" id="jsPayrollCorrectionPayment'+(singleEmployee.employeeId)+'" value="'+(singleEmployee.correctionPayments)+'" class="form-control jsInputCMN" style="padding-right: 25px;"/>';
-            html += '            </div>';
-            html += '        </div>';
-            html += '    </div><br>';
-            html += '    <div class="row">';
-            html += '        <div class="col-sm-12">';
-            html += '            <p class="csF16 csB7">';
-            html += '                Paycheck Tips';
-            html += '            </p>';
-            html += '            <p class="csF16">';
-            html += '                Paycheck tips (service charges) to be paid to the employee this pay period. This amount will be added to the employee\'s gross pay.';
-            html += '            </p>';
-            html += '            <div class="input-group">';
-            html += '                <span class="input-group-addon">$</span>';
-            html += '                <input type="text" id="jsPayrollPaycheckTips'+(singleEmployee.employeeId)+'" value="'+(singleEmployee.cashTips)+'" class="form-control jsInputCMN" style="padding-right: 25px;"/>';
-            html += '            </div>';
-            html += '        </div>';
-            html += '    </div><br>';
-            html += '    <div class="row">';
-            html += '        <div class="col-sm-12">';
-            html += '            <span class="pull-right">';
-            html += '                <button class="btn btn-orange jsPayrollEOSaveBTN" data-id="'+(singleEmployee.employeeId)+'">';
-            html += '                    <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save';
-            html += '                </button>';
-            html += '                <button class="btn btn-black jsModalCancel">';
-            html += '                    <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel';
-            html += '                </button>';
-            html += '            </span>';
-            html += '        </div>';
-            html += '    </div>';
-            html += '</div>';
-            //
-            Modal({
-                Title: "Other Earnings for "+(singleEmployee.last_name+', '+singleEmployee.first_name),
-                Id: "jsPayrollOEModel",
-                Loader:"jsPayrollOEModelLoader",
-                Body: '<div id="jsPayrollOEModel">'+(html)+'</div>'
-            }, function(){
-                //
-                ml(false, "jsPayrollOEModelLoader")
-            });
-        });
-        //
-        $('.jsPayrollReimbursement').click(function(event){
-            //
-            event.preventDefault();
-            //
-            const singleEmployee = payrollOBJ[$(this).closest('tr').data('id')];
-            //
-            var html = '';
-            html +='<div class="container csPageWrap jsPayrollReimbursementWrap" data-id="'+(singleEmployee.employeeId)+'">';
+            html +='<div class="container csPageWrap jsPayrollReimbursementWrap" data-id="'+(payrollEmployee.employeeId)+'">';
             html +='    <div class="row">';
             html +='        <div class="col-sm-12">';
             html +='            <p class="csF16">';
@@ -610,7 +425,7 @@
             html +='</div>';
             //
             Modal({
-                Title: "Other Earnings for "+(singleEmployee.last_name+', '+singleEmployee.first_name),
+                Title: "Other Earnings for "+(payrollEmployee.lastName+', '+payrollEmployee.firstName),
                 Id: "jsPayrollOEModel",
                 Loader:"jsPayrollOEModelLoader",
                 Body: '<div id="jsPayrollOEModel">'+(html)+'</div>'
@@ -618,8 +433,8 @@
                 //
                 var totalReimbursement = 0;
                 //
-                if(singleEmployee.reimbursements.length > 0){
-                    singleEmployee.reimbursements.map(function(reim){
+                if(payrollEmployee.reimbursements.length > 0){
+                    payrollEmployee.reimbursements.map(function(reim){
                         //
                         totalReimbursement += parseFloat(reim.amount);
                         //
@@ -633,20 +448,16 @@
             });
         });
 
-        //
-        $('.jsPayrollCancelBTN').click(function(event){
-            //
-            event.preventDefault();
-            //
-            alertify.confirm(
-                "Any unsaved changes will be lost. Do you wish to continue?",
-                function(){
-                    window.location = window.location.origin +'/payroll/create';
-                }
-            );
-        });
+        /**
+         * Reimbursement Data Update
+         * Click
+         */
+        $(document).on('keyup', '.jsPayrollReimbursementRowAmount', CalculateReimbursment);
 
-        //
+        /**
+         * Reimbursement Row Add
+         * Click
+         */
         $(document).on('click', '.jsPayrollReimbursementBTN', function(event){
             //
             event.preventDefault();
@@ -654,22 +465,23 @@
             $('.jsPayrollReimbursementBox').append(GetImbursementRow());
         });
 
-        //
+        /**
+         * Reimbursement Row Remove
+         * Click
+         */
         $(document).on('click', '.jsPayrollReimbursementRowRemoveBTN', function(event){
             //
             event.preventDefault();
-            //
-            var id = $(this).closest('.jsPayrollReimbursementRow').data('id');
             //
             $(this).closest('.jsPayrollReimbursementRow').remove();
             //
             CalculateReimbursment();
         });
 
-        //
-        $(document).on('keyup', '.jsPayrollReimbursementRowAmount', CalculateReimbursment);
-
-        //
+        /**
+         * Save Reimbursements
+         * Click
+         */
         $(document).on('click', '.jsPayrollReimbursementSaveBTN', function(event){
             //
             event.preventDefault();
@@ -684,78 +496,178 @@
             //
             $('.jsPayrollReimbursementRow').map(function(){
                 //
-                total += parseFloat($(this).find('.jsPayrollReimbursementRowAmount').val().trim());
+                let tv = $(this).find('.jsPayrollReimbursementRowAmount').val().trim() || 0;
+                //
+                total += parseFloat(tv);
                 //
                 ReimbursmentArray.push({
                     description: $(this).find('.jsPayrollReimbursementRowDescription').val().trim(),
-                    amount: parseFloat($(this).find('.jsPayrollReimbursementRowAmount').val().trim())
+                    amount: parseFloat(tv)
                 });
             });
             //
+            payrollOBJ[id]['reimbursement'] = total;
             payrollOBJ[id]['reimbursements'] = ReimbursmentArray;
             //
-            UpdatePayrollRow(id, 'reimbursement', total);
+            UpdatePayrollRow(id);
             //
             $('#jsPayrollOEModel .jsModalCancel').click();
             //
             ml(false, 'jsPayrollOEModelLoader');
         });
 
-        //
-        function CalculateReimbursment(){
+        /**
+         * Other Earning Model
+         * Click
+         */
+        $(document).on('click', '.jsPayrollRowEditOE, .jsPayrollRowEditOEP', function(event){
             //
-            var id = $('.jsPayrollReimbursementWrap').data('id');
+            event.preventDefault();
             //
-            var total = 0;
-            //
-            $('.jsPayrollReimbursementRow').map(function(){
-                //
-                total += parseFloat($(this).find('.jsPayrollReimbursementRowAmount').val().trim());
-            });
-            //
-            $('.jsPayrollReimbursementTotalAmount').text('$'+(numberFormat(total.toFixed(2))));
-
-        }
-
-        //
-        function GetImbursementRow(data){
+            const payrollEmployee = payrollOBJ[$(this).closest('.jsPayrollRowId').data('id')];
             //
             var html = '';
+            html += '<!-- Other Earning -->';
+            html += '<div class="container csPageWrap">';
+            html += '    <div class="row">';
+            html += '        <div class="col-sm-12">';
+            html += '            <p class="csF16">';
+            html += '                '+(payrollEmployee.firstName+' '+payrollEmployee.lastName)+' will be paid the amounts below in addition to their regular wages.';
+            html += '            </p>';
+            html += '        </div>';
+            html += '    </div><br>';
+            html += '    <div class="row">';
+            html += '        <div class="col-sm-12">';
+            html += '            <p class="csF16 csB7">';
+            html += '                Commission';
+            html += '            </p>';
+            html += '            <p class="csF16">';
+            html += '                The amount of commission pay the employee received for this pay period.';
+            html += '            </p>';
+            html += '            <div class="input-group">';
+            html += '                <span class="input-group-addon">$</span>';
+            html += '                <input type="text" id="jsPayrollCommission'+(payrollEmployee.employeeId)+'" value="'+(payrollEmployee.commission)+'" class="form-control jsInputCMN" style="padding-right: 25px;"/>';
+            html += '            </div>';
+            html += '        </div>';
+            html += '    </div><br>';
+            html += '    <div class="row">';
+            html += '        <div class="col-sm-12">';
+            html += '            <p class="csF16 csB7">';
+            html += '                Correction Payment';
+            html += '            </p>';
+            html += '            <p class="csF16">';
+            html += '                Correction payment for this pay period. This amount will be added to gross wages, and taxed as regular income.';
+            html += '            </p>';
+            html += '            <div class="input-group">';
+            html += '                <span class="input-group-addon">$</span>';
+            html += '                <input type="text" id="jsPayrollCorrectionPayment'+(payrollEmployee.employeeId)+'" value="'+(payrollEmployee.correctionPayments)+'" class="form-control jsInputCMN" style="padding-right: 25px;"/>';
+            html += '            </div>';
+            html += '        </div>';
+            html += '    </div><br>';
+            html += '    <div class="row">';
+            html += '        <div class="col-sm-12">';
+            html += '            <p class="csF16 csB7">';
+            html += '                Paycheck Tips';
+            html += '            </p>';
+            html += '            <p class="csF16">';
+            html += '                Paycheck tips (service charges) to be paid to the employee this pay period. This amount will be added to the employee\'s gross pay.';
+            html += '            </p>';
+            html += '            <div class="input-group">';
+            html += '                <span class="input-group-addon">$</span>';
+            html += '                <input type="text" id="jsPayrollPaycheckTips'+(payrollEmployee.employeeId)+'" value="'+(payrollEmployee.cashTips)+'" class="form-control jsInputCMN" style="padding-right: 25px;"/>';
+            html += '            </div>';
+            html += '        </div>';
+            html += '    </div><br>';
+            html += '    <div class="row">';
+            html += '        <div class="col-sm-12">';
+            html += '            <span class="pull-right">';
+            html += '                <button class="btn btn-orange jsPayrollEOSaveBTN" data-id="'+(payrollEmployee.employeeId)+'">';
+            html += '                    <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save';
+            html += '                </button>';
+            html += '                <button class="btn btn-black jsModalCancel">';
+            html += '                    <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel';
+            html += '                </button>';
+            html += '            </span>';
+            html += '        </div>';
+            html += '    </div>';
+            html += '</div>';
             //
-            html +='<div class="jsPayrollReimbursementRow">';
-            html +='    <div class="row">';
-            html +='        <div class="col-sm-8">';
-            html +='            <label class="csF16 csB7">';
-            html +='                Description';
-            html +='            </label>';
-            html +='            <p class="csF14">';
-            html +='                If you choose not to add a description, this amount will be labeled “Additional amount.”';
-            html +='            </p>';
-            html +='            <input type="text" class="form-control jsPayrollReimbursementRowDescription" placeholder="Description (Optional)" '+( data !== undefined ? 'value="'+(data.description)+'"' : '' )+' />';
-            html +='        </div>';
-            html +='        <div class="col-sm-3">';
-            html +='            <label class="csF16 csB7">';
-            html +='                Amount <i class="fa fa-asterisk csInfo" aria-hidden="true"></i>';
-            html +='            </label>';
-            html +='            <p class="csF14">';
-            html +='                Amount to reimburse';
-            html +='            </p>';
-            html +='            <div class="input-group">';
-            html +='                <span class="input-group-addon csCI">$</span>';
-            html +='                <input type="text" class="form-control text-right jsPayrollReimbursementRowAmount" placeholder="0.00" '+( data !== undefined ? 'value="'+(data.amount)+'"' : '' )+'  />';
-            html +='            </div>';
-            html +='        </div>';
-            html +='        <div class="col-sm-1"><label>&nbsp;</label><p>&nbsp;</p>';
-            html +='            <button class="btn btn-danger jsPayrollReimbursementRowRemoveBTN">';
-            html +='                <i class="fa fa-times-circle" aria-hidden="true"></i>';
-            html +='            </button>';
-            html +='        </div>';
-            html +='    </div>';
-            html +='    <br>';
-            html +='</div>';
+            Modal({
+                Title: "Other Earnings for "+(payrollEmployee.lastName+', '+payrollEmployee.firstName),
+                Id: "jsPayrollOEModel",
+                Loader:"jsPayrollOEModelLoader",
+                Body: '<div id="jsPayrollOEModel">'+(html)+'</div>'
+            }, function(){
+                //
+                ml(false, "jsPayrollOEModelLoader")
+            });
+        });
+
+        /**
+         * Save Other Earnings
+         * Click
+         */
+        $(document).on('click', '.jsPayrollEOSaveBTN', function(event){
             //
-            return html;
-        }
+            event.preventDefault();
+            //
+            ml(true, 'jsPayrollOEModelLoader');
+            //
+            var employeeId = $(this).data('id');
+            //
+            payrollOBJ[employeeId]['fixedCompensations']['comisison']['amount'] = parseFloat($('#jsPayrollCommission'+employeeId).val().trim() || 0);
+            payrollOBJ[employeeId]['fixedCompensations']['correction-payments']['amount'] = parseFloat($('#jsPayrollCorrectionPayment'+employeeId).val().trim() || 0);
+            payrollOBJ[employeeId]['fixedCompensations']['paycheck-tips']['amount'] = parseFloat($('#jsPayrollPaycheckTips'+employeeId).val().trim() || 0);
+            //
+            UpdatePayrollRow(employeeId);
+            //
+            ml(false, "jsPayrollOEModelLoader");
+            //
+            $('#jsPayrollOEModel .jsModalCancel').click();
+        });
+
+        /**
+         * Shift to another page
+         * Click
+         */
+        $(document).on('click', '.jsPayrollCancelBTN', function(event){
+            //
+            event.preventDefault();
+            //
+            if($(this).data('mendatory') !== undefined){
+                //
+                alertify.confirm(
+                    "Any unsaved changes will be lost. Do you wish to continue?",
+                    function(){
+                        window.location = window.location.origin +'/payroll/create';
+                    }
+                );
+            }
+        });
+
+        /**
+         * 
+         */
+        $(document).on('click', '.jsPayrollSaveBTN', function(event){
+            //
+            event.preventDefault();
+            //
+            ml(true, 'main_loader', 'Please wait, while we are updating payrolls.');
+            //
+            $.post(
+                "<?=base_url("payroll/update_payroll");?>", {
+                    payrollId: payrollCode,
+                    payrollVersion: payrollVersion,
+                    payroll: payrollOBJ
+                }
+            ).done(function(resp){
+                //
+                console.log(resp);
+            });
+        });
+
+
+        // Functions
         
         //
         function UpdatePayrollRow(
@@ -769,41 +681,548 @@
                 payrollOBJ[employeeId][key] = value;
             }
             //
-            const singleEmployee = payrollOBJ[employeeId];
+            const payrollEmployee = payrollOBJ[employeeId];
+            // Get reference of box
+            const boxREF = $('.jsPayrollRowId[data-id="'+(employeeId)+'"]');
+
+            // Reset the index to be used
+            payrollEmployee.regularHours = 0.00;
+            payrollEmployee.overtime = 0.00;
+            payrollEmployee.overtimeMultiplier = 0.00;
+            payrollEmployee.doubleOvertime = 0.00;
+            payrollEmployee.doubleOvertimeMultiplier = 0.00;
+            payrollEmployee.bonus = 0.00;
+            payrollEmployee.cashTips = 0.00;
+            payrollEmployee.correctionPayments = 0.00;
+            payrollEmployee.commission = 0.00;
+            payrollEmployee.paycheckTips = 0.00;
+            payrollEmployee.reimbursement = 0.00;
+            //
+            payrollEmployee.regularHours = parseFloat(payrollEmployee.hourlyCompensations['regular-hours']['hours']);
+            //
+            if(payrollEmployee.hourlyCompensations.overtime !== undefined){
+                payrollEmployee.overtime = parseFloat(payrollEmployee.hourlyCompensations['overtime']['hours']);
+                payrollEmployee.overtimeMultiplier = parseFloat(payrollEmployee.hourlyCompensations['overtime']['compensation_multiplier']);
+            }
+            //
+            if(payrollEmployee.hourlyCompensations['double-overtime'] !== undefined){
+                payrollEmployee.doubleOvertime = parseFloat(payrollEmployee.hourlyCompensations['double-overtime']['hours']);
+                payrollEmployee.doubleOvertimeMultiplier = parseFloat(payrollEmployee.hourlyCompensations['double-overtime']['compensation_multiplier']);
+            }
+            //
+            payrollEmployee.bonus = parseFloat(payrollEmployee.fixedCompensations['bonus']['amount']);
+            payrollEmployee.cashTips = parseFloat(payrollEmployee.fixedCompensations['cash-tips']['amount']);
+            payrollEmployee.correctionPayments = parseFloat(payrollEmployee.fixedCompensations['correction-payment']['amount']);
+            payrollEmployee.commission = parseFloat(payrollEmployee.fixedCompensations['commission']['amount']);
+            payrollEmployee.paycheckTips = parseFloat(payrollEmployee.fixedCompensations['paycheck-tips']['amount']);
+
+            // Let's set the regular hours
+            boxREF.find('.jsPayrollRowEditRHValue').text("$"+ payrollEmployee.regularHours.toFixed(2));
+            boxREF.find('.jsPayrollRHInput').val(payrollEmployee.regularHours.toFixed(2));
+            // Let's set the overtime
+            boxREF.find('.jsPayrollRowEditOTValue').text("$"+ payrollEmployee.overtime.toFixed(2));
+            boxREF.find('.jsPayrollOTInput').val(payrollEmployee.overtime.toFixed(2));
+            //
+            if(parseInt(payrollEmployee.overtime) != 0){
+                boxREF.find('.jsPayrollRowEditOTP').addClass('dn');
+                boxREF.find('.jsPayrollRowEditOTE').removeClass('dn');
+            } else{
+                boxREF.find('.jsPayrollRowEditOTP').removeClass('dn');
+                boxREF.find('.jsPayrollRowEditOTE').addClass('dn');
+            }
+
+            // Let's set the double overtime
+            boxREF.find('.jsPayrollRowEditDOTValue').text("$"+ payrollEmployee.doubleOvertime.toFixed(2));
+            boxREF.find('.jsPayrollDOTInput').val(payrollEmployee.doubleOvertime.toFixed(2));
+            //
+            if(parseInt(payrollEmployee.doubleOvertime) != 0){
+                boxREF.find('.jsPayrollRowEditDOTP').addClass('dn');
+                boxREF.find('.jsPayrollRowEditDOTE').removeClass('dn');
+            } else{
+                boxREF.find('.jsPayrollRowEditDOTP').removeClass('dn');
+                boxREF.find('.jsPayrollRowEditDOTE').addClass('dn');
+            }
+
+            // Let's set the bonus
+            boxREF.find('.jsPayrollRowEditBValue').text("$"+ payrollEmployee.bonus.toFixed(2));
+            boxREF.find('.jsPayrollBInput').val(payrollEmployee.bonus.toFixed(2));
+            //
+            if(parseInt(payrollEmployee.bonus) != 0){
+                boxREF.find('.jsPayrollRowEditBP').addClass('dn');
+                boxREF.find('.jsPayrollRowEditBE').removeClass('dn');
+            } else{
+                boxREF.find('.jsPayrollRowEditBP').removeClass('dn');
+                boxREF.find('.jsPayrollRowEditBE').addClass('dn');
+            }
+
+            // Let's set the cash tips
+            boxREF.find('.jsPayrollRowEditCTValue').text("$"+ payrollEmployee.cashTips.toFixed(2));
+            boxREF.find('.jsPayrollCTInput').val(payrollEmployee.cashTips.toFixed(2));
+            //
+            if(parseInt(payrollEmployee.cashTips) != 0){
+                boxREF.find('.jsPayrollRowEditCTP').addClass('dn');
+                boxREF.find('.jsPayrollRowEditCTE').removeClass('dn');
+            } else{
+                boxREF.find('.jsPayrollRowEditCTP').removeClass('dn');
+                boxREF.find('.jsPayrollRowEditCTE').addClass('dn');
+            }
+            
+            // Let's set the additional earnings
+            const additonalEarnings = 
+            parseFloat(payrollEmployee.correctionPayments) + 
+            parseFloat(payrollEmployee.commission) + 
+            parseFloat(payrollEmployee.paycheckTips);
+            //
+            boxREF.find('.jsPayrollRowEditOEValue').text("$"+ additonalEarnings.toFixed(2));
+            //
+            if(parseInt(additonalEarnings) != 0){
+                boxREF.find('.jsPayrollRowEditOEP').addClass('dn');
+                boxREF.find('.jsPayrollRowEditOEE').removeClass('dn');
+            } else{
+                boxREF.find('.jsPayrollRowEditOEP').removeClass('dn');
+                boxREF.find('.jsPayrollRowEditOEE').addClass('dn');
+            }
+
+            // Let's set the reimbursements
+            //
+            boxREF.find('.jsPayrollRowEditRValue').text("$"+ payrollEmployee.reimbursement.toFixed(2));
+            boxREF.find('.jsPayrollRInput').val(payrollEmployee.reimbursement.toFixed(2));
+            //
+            if(parseInt(payrollEmployee.reimbursement) != 0){
+                boxREF.find('.jsPayrollRowEditRP').addClass('dn');
+                boxREF.find('.jsPayrollRowEditRE').removeClass('dn');
+            } else{
+                boxREF.find('.jsPayrollRowEditRP').removeClass('dn');
+                boxREF.find('.jsPayrollRowEditRE').addClass('dn');
+            }
+
+            //
+            const grossPay = numberFormat(
+                (
+                    parseFloat(payrollEmployee.rateByHour * payrollEmployee.regularHours) +
+                    parseFloat(payrollEmployee.rateByHour * (payrollEmployee.overtimeMultiplier * payrollEmployee.overtime)) +
+                    parseFloat(payrollEmployee.rateByHour * (payrollEmployee.doubleOvertimeMultiplier * payrollEmployee.doubleOvertime)) +
+                    additonalEarnings +
+                    payrollEmployee.bonus +
+                    payrollEmployee.cashTips +
+                    parseFloat(payrollEmployee.reimbursement)
+                ).toFixed(2)
+            );
+
+            //
+            boxREF.find('.jsPayrollRowEditGPValue').text("$"+ grossPay);
+
+            //
+            ml(false, 'jsParyrollRowLoader'+employeeId);
+        }
+        
+        // 
+        function MakeView(){
+            //
+            var html = '';
+            //
+            html += '<div class="row">';
+            //
+            $.each(payrollOBJ, function(i, v){
+                //
+                html += GetSingleView(v);
+            });
+            //
+            html += '</div>';
+            // Add Buttons
+            html +='<!--  -->';
+            html +='<div class="csPB">';
+            html +='    <span class="pull-right">';
+            html +='        <button class="btn btn-orange jsPayrollSaveBTN">';
+            html +='            <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save';
+            html +='        </button>';
+            html +='        <button class="btn btn-orange jsPayrollSaveAndNextBTN">';
+            html +='            <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp;Save & Next';
+            html +='        </button>';
+            html +='        <button class="btn btn-black jsPayrollCancelBTN" data-mendatory="true">';
+            html +='            <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel';
+            html +='        </button>';
+            html +='    </span>';
+            html +='</div>';
+            //
+            $('.jsPayrollContainer').html(html);
+            //
+            ml(false, 'main_loader');
+            //
+            $.each(payrollOBJ, function(i, v){
+                //
+                html += GetSingleView(v);
+                //
+                UpdatePayrollRow(v.employeeId);
+            });
+            //
+            loadTitles();
+        }
+
+        //
+        function GetSingleView(payrollEmployee){
+            //
+            var html = '';
+            //
+            html += '    <div class="col-md-4 col-sm-12 col-xs-12">';
+            html += '        <div class="csPageBox csRadius5 jsPayrollRowId" style="height: 500px; overflow-y: auto; overflow-x: hidden;"  data-id="'+(payrollEmployee.employeeId)+'">';
+            html += '            <div class="csPageBoxHeader csBG4 p10">';
+            html += '                <div class="row">';
+            html += '                    <div class="col-sm-6 col-xs-12">';
+            html += '                        <p class="csF16 csB7 csW mb0">';
+            html +=                           payrollEmployee.lastName+', '+payrollEmployee.firstName;
+            html += '                        </p>';
+            html += '                    </div>';
+            html += '                    <div class="col-sm-6 col-xs-12">';
+            html += '                        <p class="csF16 csB7 csW mb0 text-right">';
+            html +=                             '$'+numberFormat(payrollEmployee.rate)+' /'+(payrollEmployee.rateUnit.toLowerCase());
+            html += '                        </p>';
+            html += '                    </div>';
+            html += '                </div>';
+            html += '            </div>';
+            html += '            <div class="csPR">';
+            html += '                <!--  -->';
+            html += '                <div class="csIPLoader jsIPLoader" data-page="jsParyrollRowLoader'+(payrollEmployee.employeeId)+'">';
+            html += '                    <i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>';
+            html += '                </div>';
+            html += '                <!-- Main -->';
+            html += '                <div class="csPageBoxBody p10" >';
+            html += '                    <!-- RH -->';
+            html += '                    <div class="row">';
+            html += '                        <div class="col-sm-6 col-xs-12">';
+            html += '                            <p class="csF16 csB7">';
+            html += '                                Regular Hours (RH) <i class="fa fa-info-circle csF16 csCP jsPayrollRowEditRH"';
+            html += '                                placement="top" ';
+            html += '                                title="Employee worked hours." ';
+            html += '                                aria-hidden="true"></i>';
+            html += '                            </p>';
+            html += '                        </div>';
+            html += '                        <div class="col-sm-6 col-xs-12 text-right">';
+            html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditRH jsPayrollRowEditRHE" title="Update Regular Hours" placement="true">';
+            html += '                                <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditRHValue">$0.00</span>';
+            html += '                            </p>';
+            if(payrollEmployee.hourlyCompensations['overtime'] !== undefined){
+                html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditOT jsPayrollRowEditOTP">';
+                html += '                                <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Overtime';
+                html += '                            </p>';
+                html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditOT jsPayrollRowEditOTE" title="Update Overtime" placement="true">';
+                html += '                                <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditOTValue">$0.00</span> (OT)';
+                html += '                            </p>';
+            }
+            //
+            if(payrollEmployee.hourlyCompensations['double-overtime'] !== undefined){
+                html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditDOT jsPayrollRowEditDOTP">';
+                html += '                                <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Double Overtime';
+                html += '                            </p>';
+                html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditDOT jsPayrollRowEditDOTE" title="Update Double Overtime" placement="true">';
+                html += '                                <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditDOTValue">$0.00</span> (DOT)';
+                html += '                            </p>';
+            }
+            html += '                        </div>';
+            html += '                    </div>';
+            html += '                    <br>';
+            html += '                    <!-- AH -->';
+            html += '                    <div class="row">';
+            html += '                        <div class="col-sm-6 col-xs-12">';
+            html += '                            <p class="csF16 csB7">';
+            html += '                                Additional Earnings <i class="fa fa-info-circle csF16 csCP" ';
+            html += '                                placement="top" ';
+            html += '                                title="Additional earnings include bonuses, cash tips, commissions, correction payments, and paycheck tips.';
+            html += '                                aria-hidden="true"></i>';
+            html += '                            </p>';
+            html += '                        </div>';
+            html += '                        <div class="col-sm-6 col-xs-12 text-right">';
+            html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditB jsPayrollRowEditBP">';
+            html += '                                <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Bonus';
+            html += '                            </p>';
+            html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditB jsPayrollRowEditBE" title="Update Bonus" placement="true">';
+            html += '                                <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditBValue">$0.00</span> (B)';
+            html += '                            </p>';
+            html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditCT jsPayrollRowEditCTP">';
+            html += '                                <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Cash Tips';
+            html += '                            </p>';
+            html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditCT jsPayrollRowEditCTE" title="Update Cash Tips" placement="true">';
+            html += '                                <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditCTValue">$0.00</span> (CT)';
+            html += '                            </p>';
+            html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditOE jsPayrollRowEditOEP">';
+            html += '                                <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Other Earnings';
+            html += '                            </p>';
+            html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditOE jsPayrollRowEditOEE" title="Update Other Earnings" placement="true">';
+            html += '                                <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditOEValue">$0.00</span> (OE)';
+            html += '                            </p>';
+            html += '                        </div>';
+            html += '                    </div>';
+            html += '                    <br>';
+            html += '                    <!-- Reimbursement -->';
+            html += '                    <div class="row">';
+            html += '                        <div class="col-sm-6 col-xs-12">';
+            html += '                            <p class="csF16 csB7">';
+            html += '                                Reimbursement <i class="fa fa-info-circle csF16 csCP" ';
+            html += '                                placement="top" ';
+            html += '                                title="Add multiple one-time reimbursements." ';
+            html += '                                aria-hidden="true"></i>';
+            html += '                            </p>';
+            html += '                        </div>';
+            html += '                        <div class="col-sm-6 col-xs-12 text-right">';
+            html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditR jsPayrollRowEditRP">';
+            html += '                                <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Reimbursement';
+            html += '                            </p>';
+            html += '                            <p class="csF16 csB1 csFC2 csCP jsPayrollRowEditR jsPayrollRowEditRE">';
+            html += '                                <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditRValue">$0.00</span>';
+            html += '                            </p>';
+            html += '                        </div>';
+            html += '                    </div>';
+            html += '                    <br>';
+            html += '                    <!-- Payment Mode -->';
+            html += '                    <div class="row">';
+            html += '                        <div class="col-sm-6 col-xs-12">';
+            html += '                            <p class="csF16 csB7">';
+            html += '                                Pay By <i class="fa fa-info-circle csF16 csCP" ';
+            html += '                                placement="top" ';
+            html += '                                title="Payment type; how the employee is going to get paid." ';
+            html += '                                aria-hidden="true"></i>';
+            html += '                            </p>';
+            html += '                        </div>';
+            html += '                        <div class="col-sm-6 col-xs-12 text-right">';
+            html += '                            <p class="csF16">';
+            html += '                                Direct Deposit';
+            html += '                            </p>';
+            html += '                        </div>';
+            html += '                    </div>';
+            html += '                    <br>';
+            html += '                    <!-- GP -->';
+            html += '                    <div class="row">';
+            html += '                        <div class="col-sm-6 col-xs-12">';
+            html += '                            <p class="csF16 csB7">';
+            html += '                                Gross Pay (GP)';
+            html += '                            </p>';
+            html += '                        </div>';
+            html += '                        <div class="col-sm-6 col-xs-12 text-right">';
+            html += '                            <p class="csF16 csB7">';
+            html += '                                <span class="jsPayrollRowEditGPValue">$0.00<span>';
+            html += '                            </p>';
+            html += '                        </div>';
+            html += '                    </div>';
+            html += '                    ';
+            html += '                </div>';
+            html += '                <!-- Portion Page -->';
+            html += '                <div class="portionSections">';
+            html += '                    <!-- Manage Regular Hours -->';
+            html += '                    <div class="csPageBoxBody p10 dn" data-portion="regular_hours">';
+            html += '                        <!--  -->';
+            html += '                        <p class="csF16 csB7">';
+            html += '                            Regular Hours (RH)';
+            html += '                        </p>';
+            html += '                        <p class="csF14 csInfo">';
+            html += '                            The employee worked hours.';
+            html += '                        </p>';
+            html += '                        <!--  -->';
+            html += '                        <div class="csPR">';
+            html += '                            <div class="input-group">';
+            html += '                                <span class="input-group-addon csCI">RH</span>';
+            html += '                                <input type="text" class="form-control text-right pr30 jsPayrollRHInput" placeholder="0.00"/>';
+            html += '                            </div>';
+            html += '                            <b class="csInputPlaceholder csF14 csB1">hr</b>';
+            html += '                        </div>';
+            html += '                        <br>';
+            html += '                        <!--  -->';
+            html += '                        <span class="pull-right">';
+            html += '                            <button class="btn btn-orange jsPayrollRHSaveBTN">';
+            html += '                                <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save';
+            html += '                            </button>';
+            html += '                            <button class="btn btn-black jsPayrollCancelBTN">';
+            html += '                                <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel';
+            html += '                            </button>';
+            html += '                        </span>';
+            html += '                        <div class="clearfix"></div>';
+            html += '                    </div>';
+            if(payrollEmployee.hourlyCompensations['overtime'] !== undefined){
+                html += '                    <!-- Manage Overtime -->';
+                html += '                    <div class="csPageBoxBody p10 dn" data-portion="overtime">';
+                html += '                        <!--  -->';
+                html += '                        <p class="csF16 csB7">';
+                html += '                            Overtime (OT)';
+                html += '                        </p>';
+                html += '                        <p class="csF14 csInfo">';
+                html += '                            The amount multiplied by the base rate to calculate total compensation per hour worked which is <b>'+((payrollEmployee.hourlyCompensations['overtime']['compensation_multiplier'] || "0").toFixed(2))+'</b>.';
+                html += '                        </p>';
+                html += '                        <!--  -->';
+                html += '                        <div class="csPR">';
+                html += '                            <div class="input-group">';
+                html += '                                <span class="input-group-addon csCI">OT</span>';
+                html += '                                <input type="text" class="form-control text-right pr30 jsPayrollOTInput" placeholder="0.00"/>';
+                html += '                            </div>';
+                html += '                            <b class="csInputPlaceholder csF14 csB1">hr</b>';
+                html += '                        </div>';
+                html += '                        <br>';
+                html += '                        <!--  -->';
+                html += '                        <span class="pull-right">';
+                html += '                            <button class="btn btn-orange jsPayrollOTSaveBTN">';
+                html += '                                <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save';
+                html += '                            </button>';
+                html += '                            <button class="btn btn-black jsPayrollCancelBTN">';
+                html += '                                <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel';
+                html += '                            </button>';
+                html += '                        </span>';
+                html += '                        <div class="clearfix"></div>';
+                html += '                    </div>';
+            }
+            //
+            if(payrollEmployee.hourlyCompensations['double-overtime'] !== undefined){
+                html += '                    <!-- Manage Double Overtime -->';
+                html += '                    <div class="csPageBoxBody p10 dn" data-portion="double_overtime">';
+                html += '                        <!--  -->';
+                html += '                        <p class="csF16 csB7">';
+                html += '                            Double Overtime (DOT)';
+                html += '                        </p>';
+                html += '                        <p class="csF14 csInfo">';
+                html += '                            The amount multiplied by the base rate to calculate total compensation per hour worked which is <b>'+((payrollEmployee.hourlyCompensations['double-overtime']['compensation_multiplier'] || '0').toFixed(2))+'</b>';
+                html += '                        </p>';
+                html += '                        <!--  -->';
+                html += '                        <div class="csPR">';
+                html += '                            <div class="input-group">';
+                html += '                                <span class="input-group-addon csCI">DOT</span>';
+                html += '                                <input type="text" class="form-control text-right pr30 jsPayrollDOTInput" placeholder="0.00"/>';
+                html += '                            </div>';
+                html += '                            <b class="csInputPlaceholder csF14 csB1">hr</b>';
+                html += '                        </div>';
+                html += '                        <br>';
+                html += '                        <!--  -->';
+                html += '                        <span class="pull-right">';
+                html += '                            <button class="btn btn-orange jsPayrollDOTSaveBTN">';
+                html += '                                <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save';
+                html += '                            </button>';
+                html += '                            <button class="btn btn-black jsPayrollCancelBTN">';
+                html += '                                <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel';
+                html += '                            </button>';
+                html += '                        </span>';
+                html += '                        <div class="clearfix"></div>';
+                html += '                    </div>';
+            }
+            html += '                    <!-- Manage Bonus -->';
+            html += '                    <div class="csPageBoxBody p10 dn" data-portion="bonus">';
+            html += '                        <!--  -->';
+            html += '                        <p class="csF16 csB7">';
+            html += '                            Bonus (B)';
+            html += '                        </p>';
+            html += '                        <p class="csF14 csInfo">';
+            html += '                            The bonus amount for the employee.';
+            html += '                        </p>';
+            html += '                        <!--  -->';
+            html += '                        <div class="csPR">';
+            html += '                            <div class="input-group">';
+            html += '                                <span class="input-group-addon csCI">$</span>';
+            html += '                                <input type="text" class="form-control jsPayrollBInput" placeholder="0.00"/>';
+            html += '                            </div>';
+            html += '                        </div>';
+            html += '                        <br>';
+            html += '                        <!--  -->';
+            html += '                        <span class="pull-right">';
+            html += '                            <button class="btn btn-orange jsPayrollBSaveBTN">';
+            html += '                                <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save';
+            html += '                            </button>';
+            html += '                            <button class="btn btn-black jsPayrollCancelBTN">';
+            html += '                                <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel';
+            html += '                            </button>';
+            html += '                        </span>';
+            html += '                        <div class="clearfix"></div>';
+            html += '                    </div>';
+            html += '                    <!-- Manage Cash Tips -->';
+            html += '                    <div class="csPageBoxBody p10 dn" data-portion="cash_tips">';
+            html += '                        <!--  -->';
+            html += '                        <p class="csF16 csB7">';
+            html += '                            Cash Tips (CT)';
+            html += '                        </p>';
+            html += '                        <p class="csF14 csInfo">';
+            html += '                            The cash tips for the employee.';
+            html += '                        </p>';
+            html += '                        <!--  -->';
+            html += '                        <div class="csPR">';
+            html += '                            <div class="input-group">';
+            html += '                                <span class="input-group-addon csCI">$</span>';
+            html += '                                <input type="text" class="form-control jsPayrollCTInput" placeholder="0.00"/>';
+            html += '                            </div>';
+            html += '                        </div>';
+            html += '                        <br>';
+            html += '                        <!--  -->';
+            html += '                        <span class="pull-right">';
+            html += '                            <button class="btn btn-orange jsPayrollCTSaveBTN">';
+            html += '                                <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save';
+            html += '                            </button>';
+            html += '                            <button class="btn btn-black jsPayrollCancelBTN">';
+            html += '                                <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel';
+            html += '                            </button>';
+            html += '                        </span>';
+            html += '                        <div class="clearfix"></div>';
+            html += '                    </div>';
+            html += '                </div>';
+            html += '            </div>';
+            html += '        </div>';
+            html += '    </div>';
+            //
+            return html;
+        }
+
+        //
+        function CalculateReimbursment(){
+            //
+            var id = $('.jsPayrollReimbursementWrap').data('id');
             //
             var total = 0;
             //
-            total = parseFloat(singleEmployee.rateByHour * $('#jsPayrollRH'+employeeId).val().trim());
-            
+            $('.jsPayrollReimbursementRow').map(function(){
+                //
+                let tv = $(this).find('.jsPayrollReimbursementRowAmount').val().trim();
+                //
+                total += parseFloat(isNaN(tv) || !tv ? 0 : tv);
+            });
             //
-            total += parseFloat(
-                ($('#jsPayrollOT'+employeeId).val().trim() * singleEmployee.overtimeMultiplier) * singleEmployee.rateByHour
-            );
-            //
-            total += parseFloat(
-                ($('#jsPayrollDOT'+employeeId).val().trim() * singleEmployee.doubleOvertimeMultiplier) * singleEmployee.rateByHour
-            );
-            //
-            total += parseFloat(
-                singleEmployee.commission
-            );
-            //
-            total += parseFloat(
-                singleEmployee.correctionPayments
-            );
-            //
-            total += parseFloat(
-                singleEmployee.cashTips
-            );
-            //
-            total += parseFloat(
-                singleEmployee.reimbursement
-            );
-            
-            //
-            $('#jsPayrollRowTotal'+employeeId).text('$'+numberFormat(total.toFixed(2)));
+            $('.jsPayrollReimbursementTotalAmount').text('$'+(numberFormat(total.toFixed(2))));
+
         }
 
+        //
+        function GetImbursementRow(data){
+            //
+            var html = '';
+            //
+            html +='<div class="jsPayrollReimbursementRow">';
+            html +='    <div class="row">';
+            html +='        <div class="col-sm-8 col-xs-8">';
+            html +='            <label class="csF16 csB7">';
+            html +='                Description';
+            html +='            </label>';
+            html +='            <p class="csF14">';
+            html +='                If you choose not to add a description, this amount will be labeled “Additional amount.”';
+            html +='            </p>';
+            html +='            <input type="text" class="form-control jsPayrollReimbursementRowDescription" placeholder="Description (Optional)" '+( data !== undefined ? 'value="'+(data.description)+'"' : '' )+' />';
+            html +='        </div>';
+            html +='        <div class="col-sm-3 col-xs-3">';
+            html +='            <label class="csF16 csB7">';
+            html +='                Amount <i class="fa fa-asterisk csInfo" aria-hidden="true"></i>';
+            html +='            </label>';
+            html +='            <p class="csF14">';
+            html +='                Amount to reimburse';
+            html +='            </p>';
+            html +='            <div class="input-group">';
+            html +='                <span class="input-group-addon csCI">$</span>';
+            html +='                <input type="text" class="form-control text-right jsPayrollReimbursementRowAmount" placeholder="0.00" '+( data !== undefined ? 'value="'+(data.amount)+'"' : '' )+'  />';
+            html +='            </div>';
+            html +='        </div>';
+            html +='        <div class="col-sm-1 col-xs-1"><label>&nbsp;</label><p>&nbsp;</p>';
+            html +='            <button class="btn btn-danger jsPayrollReimbursementRowRemoveBTN">';
+            html +='                <i class="fa fa-times-circle" aria-hidden="true"></i>';
+            html +='            </button>';
+            html +='        </div>';
+            html +='    </div>';
+            html +='    <br>';
+            html +='</div>';
+            //
+            return html;
+        }
+
+        //
+        MakeView();
         //
         window.payrollOBJ =payrollOBJ;
     });
