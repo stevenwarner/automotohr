@@ -209,17 +209,17 @@ class Payroll extends CI_Controller
                     $this->data['Payroll']['employee_compensations'][$index]['paid_time_off'] = $paid_time_off;
                 }
             }
+            //
+            $this->data['payrollId'] = $payrolId;
+            $this->data['payrollVersion'] = $this->data['Payroll']['version'];
         }
         //
-        $this->data['payrollId'] = $payrolId;
-        $this->data['payrollVersion'] = $this->data['Payroll']['version'];
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
         ->view('payroll/'.($payrolId ? 'create_payroll' : 'create').'')
         ->view('main/footer');
     }
-    
     
     /**
      * 
@@ -868,6 +868,92 @@ class Payroll extends CI_Controller
     /**
      * 
      */
+    function UpdatePayroll(){
+        //
+        if(
+            !$this->input->is_ajax_request() &&
+            $this->input->method() != 'post' &&
+            empty($this->input->post())
+        ){
+            res($this->resp);
+        }
+        //
+        $data = [];
+        //
+        $this->checkLogin($data);
+        //
+        $post = $this->input->post(NULL, TRUE);
+        // Make request array
+        $employeeArray = [];
+        //
+        foreach($post['payroll'] as $payroll){
+            //
+            unset($payroll['fixedCompensations']['reimbursement']);
+            // Temporary Array
+            $ta = [];
+            $ta['employee_id'] = $payroll['employeeId'];
+            $ta['fixed_compensations'] = array_values($payroll['fixedCompensations']);
+            $ta['hourly_compensations'] = array_values($payroll['hourlyCompensations']);
+            $ta['paid_time_off'] = array_values($payroll['paidTimeOff']);
+            //
+            if(!isset($payroll['reimbursements'])){
+                $ta['fixed_compensations'][] = [
+                    'job_id' => $ta['fixed_compensations'][0]['job_id'],
+                    'name' => 'Reimbursement',
+                    'amount' => 0.00
+                ];
+            } else{
+                //
+                $reimbursements = $payroll['reimbursements'];
+                //
+                foreach($reimbursements as $reimbursement){
+                    $reimbursement['job_id'] = $ta['fixed_compensations'][0]['job_id'];
+                    $reimbursement['name'] = 'Reimbursement';
+                    $ta['fixed_compensations'][] = $reimbursement;
+                }
+            }
+            //
+            $employeeArray[] = $ta;
+        }
+        //
+        $company = $this->pm->GetCompany($data['companyId'], [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $company['payroll_id'] = $post['payrollId'];
+        //
+        $request = [];
+        $request['version'] = $post['payrollVersion'];
+        $request['employee_compensations'] = $employeeArray;
+        //
+        $response = UpdatePayrollById($request, $company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            //
+            res([
+                'Status' => true,
+                'Response' => $response
+            ]);
+        }
+    }
+
+    /**
+     * 
+     */
     private function GetUnProcessedPayrolls($companyId){
         //
         $company = $this->pm->GetCompany($companyId, [
@@ -994,89 +1080,6 @@ class Payroll extends CI_Controller
             ];
         }
     }
-    
-    /**
-     * 
-     */
-    function UpdatePayroll(){
-        //
-        if(
-            !$this->input->is_ajax_request() &&
-            $this->input->method() != 'post' &&
-            empty($this->input->post())
-        ){
-            res($this->resp);
-        }
-        //
-        $post = $this->input->post(NULL, TRUE);
-        // Make request array
-        $employeeArray = [];
-        //
-        foreach($post['payroll'] as $payroll){
-            // Temporary Array
-            $ta = [];
-            $ta['employee_id'] = $payroll['employeeId'];
-            $ta['fixed_compensations'] = [];
-            // $ta['fixed_compensations'][] = [
-            //     'name' => $payroll[''],
-            //     'amount' => $payroll[''],
-            // ];
-        }
-        //
-        _e($post, true, true);
-        die;
-
-        //
-        $company = $this->pm->GetCompany($companyId, [
-            'access_token',
-            'refresh_token',
-            'gusto_company_uid'
-        ]);
-        //
-        $response = GetCompanyEmployees($company);
-        //
-        if(isset($response['errors'])){
-            //
-            $errors = [];
-            //
-            foreach($response['errors'] as $error){
-                $errors[] = $error[0];
-            }
-            // Error took place
-            res([
-                'Status' => false,
-                'Errors' => $errors
-            ]);
-        } else{
-            //
-            if(!empty($response)){
-                //
-                $emps = [];
-                //
-                foreach($response as $emp){
-                    //
-                    $id = SnToString($emp['id']);
-                    //
-                    $emps[$id] = $emp;
-                    //
-                    if(!empty($emps[$id]['jobs'])){
-                        foreach($emps[$id]['jobs'] as $index => $value){
-                            //
-                            $emps[$id]['jobs'][SnToString($value['id'])] = $value;
-                        }
-                    }
-                }
-                //
-                $response = $emps;
-            }
-            //
-            return[
-                'Status' => true,
-                'Response' => $response,
-            ];
-        }
-    }
-
 
     /**
      * 
