@@ -341,8 +341,7 @@
             //
             file.format = tmp[tmp.length -1].trim().toLowerCase();
             //
-            if(file.format == 'vnd.openxmlformats-officedocument.wordprocessingml.document') file.format = '.docx';
-            if(file.format == 'msword') file.format = '.rtf';
+            file.format = get_document_extension(file.type);
             //
             parent.find('.js-text').val( file.name );
             //
