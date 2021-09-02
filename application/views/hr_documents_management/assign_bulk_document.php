@@ -319,6 +319,7 @@
             parent.find('.js-text').val( file.name );
             //
             file_format = get_document_extension(file.type);
+            console.log(file);
             //
             if(file_format === ''){
                 parent.find('span.js-error').text(errorText);

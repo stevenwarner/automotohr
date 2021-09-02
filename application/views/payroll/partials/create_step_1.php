@@ -14,7 +14,7 @@ if(!empty($Payroll['employee_compensations'])):
             'lastName' => ucwords($emp['last_name']),
             'fixedCompensations' => [],
             'hourlyCompensations' => [],
-            'paid_time_off' => [],
+            'paidTimeOff' => [],
             'reimbursement' => 0.00,
             'reimbursements' => [],
             'rate' => $emp['jobs'][0]['rate'],
@@ -24,8 +24,26 @@ if(!empty($Payroll['employee_compensations'])):
         //
         $tmp['rateByHour'] = number_format((float)ResetRate($tmp['rate'], $tmp['rateUnit']), 2);
         //
+        if(isset($payrollEmployee['paid_time_off'])){
+            $tmp['paidTimeOff'] = $payrollEmployee['paid_time_off'];
+        }
         if(isset($payrollEmployee['fixed_compensations'])){
             $tmp['fixedCompensations'] = $payrollEmployee['fixed_compensations'];
+        }
+        //
+        if(isset($payrollEmployee['fixed_compensations']['reimbursement']) && !empty($payrollEmployee['fixed_compensations']['reimbursement'])){
+            //
+            $tot = 0;
+            //
+            foreach($payrollEmployee['fixed_compensations']['reimbursement'] as $imb){
+                //
+                $tot += $imb['amount'];
+                //
+                $imb['description'] = '';
+                $tmp['reimbursements'][] = $imb;
+            }
+            //
+            $tmp['reimbursement'] = $tot;
         }
         //
         if(isset($payrollEmployee['hourly_compensations']) && !empty($payrollEmployee['hourly_compensations'])){
@@ -506,8 +524,8 @@ if(!empty($Payroll['employee_compensations'])):
                 });
             });
             //
-            payrollOBJ[id]['reimbursement'] = total;
             payrollOBJ[id]['reimbursements'] = ReimbursmentArray;
+            payrollOBJ[id]['reimbursement'] = total;
             //
             UpdatePayrollRow(id);
             //
@@ -615,8 +633,8 @@ if(!empty($Payroll['employee_compensations'])):
             //
             var employeeId = $(this).data('id');
             //
-            payrollOBJ[employeeId]['fixedCompensations']['comisison']['amount'] = parseFloat($('#jsPayrollCommission'+employeeId).val().trim() || 0);
-            payrollOBJ[employeeId]['fixedCompensations']['correction-payments']['amount'] = parseFloat($('#jsPayrollCorrectionPayment'+employeeId).val().trim() || 0);
+            payrollOBJ[employeeId]['fixedCompensations']['commission']['amount'] = parseFloat($('#jsPayrollCommission'+employeeId).val().trim() || 0);
+            payrollOBJ[employeeId]['fixedCompensations']['correction-payment']['amount'] = parseFloat($('#jsPayrollCorrectionPayment'+employeeId).val().trim() || 0);
             payrollOBJ[employeeId]['fixedCompensations']['paycheck-tips']['amount'] = parseFloat($('#jsPayrollPaycheckTips'+employeeId).val().trim() || 0);
             //
             UpdatePayrollRow(employeeId);
@@ -654,6 +672,8 @@ if(!empty($Payroll['employee_compensations'])):
             //
             ml(true, 'main_loader', 'Please wait, while we are updating payrolls.');
             //
+            const doNext = $(this).data('type');
+            //
             $.post(
                 "<?=base_url("payroll/update_payroll");?>", {
                     payrollId: payrollCode,
@@ -662,7 +682,25 @@ if(!empty($Payroll['employee_compensations'])):
                 }
             ).done(function(resp){
                 //
-                console.log(resp);
+                if(!resp.Status){
+                    alertify.alert(
+                        'Error!',
+                        resp.Message
+                    );
+                    return;
+                }
+                alertify.alert(
+                    'Success!',
+                    'The payroll has been successfully updated.',
+                    function(){
+                        ml(false, 'main_loader');
+                        if(doNext === undefined){
+                            window.location.reload();
+                        } else{
+                            window.location = window.location.origin +'/'+window.location.pathname+'?step=2';
+                        }
+                    }
+                );
             });
         });
 
@@ -696,7 +734,6 @@ if(!empty($Payroll['employee_compensations'])):
             payrollEmployee.correctionPayments = 0.00;
             payrollEmployee.commission = 0.00;
             payrollEmployee.paycheckTips = 0.00;
-            payrollEmployee.reimbursement = 0.00;
             //
             payrollEmployee.regularHours = parseFloat(payrollEmployee.hourlyCompensations['regular-hours']['hours']);
             //
@@ -784,7 +821,6 @@ if(!empty($Payroll['employee_compensations'])):
             }
 
             // Let's set the reimbursements
-            //
             boxREF.find('.jsPayrollRowEditRValue').text("$"+ payrollEmployee.reimbursement.toFixed(2));
             boxREF.find('.jsPayrollRInput').val(payrollEmployee.reimbursement.toFixed(2));
             //
@@ -836,7 +872,7 @@ if(!empty($Payroll['employee_compensations'])):
             html +='        <button class="btn btn-orange jsPayrollSaveBTN">';
             html +='            <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save';
             html +='        </button>';
-            html +='        <button class="btn btn-orange jsPayrollSaveAndNextBTN">';
+            html +='        <button class="btn btn-orange jsPayrollSaveBTN" data-type="next">';
             html +='            <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp;Save & Next';
             html +='        </button>';
             html +='        <button class="btn btn-black jsPayrollCancelBTN" data-mendatory="true">';

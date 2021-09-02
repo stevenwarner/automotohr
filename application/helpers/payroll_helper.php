@@ -405,6 +405,48 @@ if(!function_exists('GetCompanyEmployees')){
 }
 
 //
+if(!function_exists('UpdatePayrollById')){
+    function UpdatePayrollById($request, $company){
+        //
+        $url = PayrollURL('UpdatePayrollById', $company['gusto_company_uid'], $company['payroll_id']);
+        //
+        $response =  MakeCall(
+            $url, [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                UpdatePayrollById($request, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            //
+            return $response;
+        }
+    }
+}
+
+//
 if(!function_exists('RefreshToken')){
     function RefreshToken($request){
         //
@@ -466,8 +508,8 @@ if(!function_exists('MakeCall')){
                 ]
             ];   
         }
-        //
-        $response = json_decode($response, true);
+        // Convert to Associated Array and keep the long big ints
+        $response = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
         //
         return $response; 
     }
@@ -490,6 +532,7 @@ if(!function_exists('PayrollURL')){
         $urls['GetUnProcessedPayrolls'] = 'v1/companies/'.($key).'/payrolls'.($key1);
         $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1);
         $urls['GetCompanyEmployees'] = 'v1/companies/'.($key).'/employees';
+        $urls['UpdatePayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1);
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }
@@ -518,9 +561,9 @@ if(!function_exists('CacheHolder')){
         //
         $_this =&get_instance();
         //
-        if($_this->session->userdata($url)){
-            return $_this->session->userdata($url);
-        }
+        // if($_this->session->userdata($url)){
+        //     return $_this->session->userdata($url);
+        // }
         if(!empty($data)){
             $_this->session->set_userdata($url, $data);
         }

@@ -1818,4 +1818,10 @@
     .pr30{ padding-right: 30px;}
 
     /*  */
-   
+    @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        div.jsPayrollRowId {
+          height: auto !important;
+          overflow: hidden ;
+        }
+    }
