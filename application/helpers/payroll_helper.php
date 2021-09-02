@@ -447,6 +447,47 @@ if(!function_exists('UpdatePayrollById')){
 }
 
 //
+if(!function_exists('CalculatePayroll')){
+    function CalculatePayroll($company){
+        //
+        $url = PayrollURL('CalculatePayroll', $company['gusto_company_uid'], $company['payroll_id']);
+        //
+        $response =  MakeCall(
+            $url, [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                CalculatePayroll($company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            //
+            return $response;
+        }
+    }
+}
+
+//
 if(!function_exists('RefreshToken')){
     function RefreshToken($request){
         //
@@ -530,9 +571,10 @@ if(!function_exists('PayrollURL')){
         $urls['DeleteBankAccountToPayroll'] = 'v1/employees/'.($key).'/bank_accounts/'.$key1;
         $urls['AddCompanyBankAccountToPayroll'] = 'v1/companies/'.($key).'/bank_accounts';
         $urls['GetUnProcessedPayrolls'] = 'v1/companies/'.($key).'/payrolls'.($key1);
-        $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1);
+        $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'?show_calculation=true&include=benefits,deductions,taxes';
         $urls['GetCompanyEmployees'] = 'v1/companies/'.($key).'/employees';
         $urls['UpdatePayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1);
+        $urls['CalculatePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/calculate';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }

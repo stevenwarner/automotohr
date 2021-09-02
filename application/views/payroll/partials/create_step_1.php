@@ -60,35 +60,6 @@ if(!empty($Payroll['employee_compensations'])):
         $payrollOBJ[$payrollEmployee['employee_id']] = $tmp;
     endforeach;
 ?>
-<!-- Steps -->
-<div class="row">
-    <div class="col-sm-4">
-        <div class="progress mb0">
-            <div class="progress-bar csBG2" role="progressbar" aria-valuenow="100" aria-valuemin="0"
-                aria-valuemax="100" style="width:100%">
-            </div>
-        </div>
-        <p class="csF14 csB7" style="margin-top: 5px;">1. Hours and earnings</p>
-    </div>
-
-    <div class="col-sm-4">
-        <div class="progress mb0">
-            <div class="progress-bar csBG2" role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                aria-valuemax="100" style="width:0%">
-            </div>
-        </div>
-        <p class="csF14 csB7" style="margin-top: 5px;">2. Review and submit</p>
-    </div>
-
-    <div class="col-sm-4">
-        <div class="progress mb0">
-            <div class="progress-bar csBG2" role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                aria-valuemax="100" style="width:0%">
-            </div>
-        </div>
-        <p class="csF14 csB7" style="margin-top: 5px;">3. Confirmation</p>
-    </div>
-</div>
 <!-- Tabs -->
 <div class="jsPageTabContainer">
     <!-- Hours and earnings -->
