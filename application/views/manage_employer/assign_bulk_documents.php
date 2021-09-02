@@ -23,7 +23,7 @@
                                     <h4>1- Select the Employee or Applicant. </h4>
                                     <h4>2- Upload the document(s) by clicking on the file button or by dropping your file.</h4>
                                     <h4>3- After selecting all the files, click on the 'Upload & Assign' button.</h4>
-                                    <h4>Allowed formats are; <strong>jpg, jpeg, png, gif, pdf, doc, docx, rtf, ppt, xls, xlsx, csv</strong></h4>
+                                    <h4>Allowed formats are; <strong>jpg, jpeg, png, gif, pdf, doc, docx, rtf, ppt, pptx, xls, xlsx, csv</strong></h4>
                                     <h4><strong>Depending on the number of documents you are assigning this could take a bit of time to download, <span class="text-success">Please be patient.</span></strong></h4>
                                 </div>
                             </div>
