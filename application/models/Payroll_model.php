@@ -9,6 +9,8 @@ class Payroll_model extends CI_Model{
      */
     function __construct(){
         $this->tables = []; 
+        $this->tables['P'] = 'payrolls'; 
+        $this->tables['PH'] = 'payroll_history'; 
         $this->tables['PC'] = 'payroll_companies'; 
         $this->tables['PCE'] = 'payroll_employees'; 
         $this->tables['U'] = 'users'; 
@@ -157,5 +159,94 @@ class Payroll_model extends CI_Model{
         ->where('ssn', $ein)
         ->where('sid <>', $companyId)
         ->count_all_results($this->tables['U']);
+    }
+
+
+    /**
+     * 
+     */
+    function CheckAndInsertPayroll(
+        $companyId,
+        $employerId,
+        $payrollUid,
+        $payroll
+    ){
+        //
+        $isNew = false;
+        $doAdd = true;
+        //
+        $date = date('Y-m-d H:i:s', strtotime('now'));
+        // Check if the payroll already
+        // been added
+        if(
+            !$this->db
+            ->where('payroll_uid', $payrollUid)
+            ->count_all_results($this->tables['P'])
+        ){
+            // Let's insert the payroll
+            $this->db
+            ->insert(
+                $this->tables['P'], [
+                    'company_sid' => $companyId,
+                    'payroll_uid' => $payrollUid,
+                    'payroll_id' => $payroll['payroll_id'],
+                    'start_date' => $payroll['pay_period']['start_date'],
+                    'end_date' => $payroll['pay_period']['end_date'],
+                    'check_date' => $payroll['check_date'],
+                    'deadline_date' => $payroll['payroll_deadline'],
+                    'is_processed' => 0,
+                    'created_by' => $employerId,
+                    'created_at' => $date,
+                    'updated_at' => $date
+                ]
+            );
+            //
+            $isNew = true;
+        }
+        //
+        if(!$isNew){
+            // Get the last history
+            $historyVersion = $this->GetPayrollHistory($payroll['payroll_id'], ['version'])['version'];
+            //
+            if($historyVersion == $payroll['version']){
+                $doAdd = false;
+            }
+        }
+        //
+        if(!$doAdd){
+            return false;
+        }
+        // Let's add a history
+        $this->db
+        ->insert(
+            $this->tables['PH'], [
+                'payroll_id' => $payroll['payroll_id'],
+                'version' => $payroll['version'],
+                'created_by' => $employerId,
+                'content' => json_encode($payroll),
+                'created_at' => $date
+            ]
+        );
+    }
+
+
+    /**
+     * 
+     */
+    function GetPayrollHistory(
+        $payrollId, 
+        $columns = '*'
+    ){
+        //
+        $query =
+        $this->db
+        ->select($columns)
+        ->where('payroll_id', $payrollId)
+        ->get($this->tables['PH']);
+        //
+        $record = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $record;
     }
 }

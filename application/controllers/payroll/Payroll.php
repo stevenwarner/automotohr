@@ -174,6 +174,13 @@ class Payroll extends CI_Controller
             }
             //
             $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'])['Response'];
+            //
+            $this->pm->CheckAndInsertPayroll(
+                $this->data['companyId'],
+                $this->data['employerId'],
+                $payrolId,
+                $this->data['Payroll']
+            );
             _e($this->data['Payroll'], true, true);
             //
             $this->data['PayrollEmployees'] = $this->GetCompanyEmployees($this->data['companyId'])['Response'];
