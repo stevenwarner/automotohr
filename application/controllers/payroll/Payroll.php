@@ -168,9 +168,15 @@ class Payroll extends CI_Controller
                 $this->data['UnProcessedPayrolls'] = $payrolls;
             }
         }else{
+            if($this->data['step'] == 2){
+                // Calulate Payroll
+                $this->CalculatePayroll($this->data['companyId'], $payrolId);
+            }
+            //
+            $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'])['Response'];
+            _e($this->data['Payroll'], true, true);
             //
             $this->data['PayrollEmployees'] = $this->GetCompanyEmployees($this->data['companyId'])['Response'];
-            $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'])['Response'];
             //
             if(!empty($this->data['Payroll'])){
                 foreach($this->data['Payroll']['employee_compensations'] as $index => $payroll){
@@ -213,7 +219,6 @@ class Payroll extends CI_Controller
             $this->data['payrollId'] = $payrolId;
             $this->data['payrollVersion'] = $this->data['Payroll']['version'];
         }
-        //
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
@@ -1077,6 +1082,42 @@ class Payroll extends CI_Controller
             return[
                 'Status' => true,
                 'Response' => $response,
+            ];
+        }
+    }
+
+    /**
+     * 
+     */
+    private function CalculatePayroll($companyId, $payrollId){
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $company['payroll_id'] = $payrollId;
+        //
+        $response = CalculatePayroll($company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            //
+            return[
+                'Status' => true,
+                'Response' => $response
             ];
         }
     }
