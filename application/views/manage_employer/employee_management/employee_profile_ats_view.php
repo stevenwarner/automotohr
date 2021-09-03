@@ -323,6 +323,7 @@
                                         </div>
                                     <?php } ?>
                                 </div>
+                                <!--  -->
                                 <!--Edit part-->
                                 <div <?php if ($edit_form) { ?>style="display: block;"
                                      <?php } else { ?>style="display: none;" <?php } ?>
@@ -1260,7 +1261,11 @@
                             <?php }  ?>
                         </div>
                     </div>
+                    <?php if(checkIfAppIsEnabled('gusto')): ?>
+                        <?php $this->load->view('payroll/profile/employee_profile'); ?>
+                    <?php endif; ?>
                 </div>
+                
                 <?php $this->load->view($left_navigation); ?>
             </div>
         </div>
