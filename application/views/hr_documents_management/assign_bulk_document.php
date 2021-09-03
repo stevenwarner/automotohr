@@ -687,7 +687,8 @@
             $('#signed_date_'+id+'').datepicker({ 
                 format: 'mm-dd-yyyy',
                 changeYear: true,
-                changeMonth: true
+                changeMonth: true,
+                yearRange: "-40:+50"
             });
             $('.js-dropzone-'+id+' .categories').select2({
                 closeOnSelect : false,
