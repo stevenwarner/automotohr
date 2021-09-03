@@ -11128,9 +11128,9 @@ class Timeoff_model extends CI_Model
             //
             if( $employer_detail['access_level_plus'] == 0 && $employer_detail['pay_plan_flag'] == 0 ){
                 // Check if the employee is part of team
-                // $isTeamMember = $this->isTeamMember($v['employee_sid'], $employer_id);
-                $isTeamMember = 0;
-                $isColleague = $this->isColleague($v['employee_sid'], $employer_id);
+                $isTeamMember = $this->isTeamMember($v['employee_sid'], $employer_id);
+                // $isColleague = $this->isColleague($v['employee_sid'], $employer_id);
+                $isColleague = 0;
                 $isSame = $v['employee_sid'] != $employer_id ? 0 : 1;
                 //
                 if($isColleague) $asApprover = 2;
