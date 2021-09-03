@@ -754,4 +754,67 @@ class all_feed_model extends CI_Model {
         }
         
     }
+
+    public function GetCompanyAddresses($companyIdArray){
+        //
+        $query = 
+        $this->db
+        ->select('
+            users.sid,
+            users.Location_Address,
+            users.Location_City,
+            states.state_name as Location_State,
+            countries.country_name as Location_Country
+        ')
+        ->join('states', 'states.sid = users.Location_State', 'inner')
+        ->join('countries', 'countries.sid = users.Location_State', 'inner')
+        ->where_in('users.sid', $companyIdArray)
+        ->get('users');
+        //
+        $records = $query->result_array();
+        //
+        $notFound = [];
+        //
+        $returnArray = [];
+        //
+        foreach($records as $record){
+            //
+            $returnArray[$record['sid']] = '';
+            //
+            if(empty($record['Location_Address'])){
+                $notFound[] = $record['sid'];
+            } else{
+                $returnArray[$record['sid']] = ucwords($record['Location_Address'].', '.
+                $record['Location_City'].', '.
+                $record['Location_State'].', '.
+                $record['Location_Country']);
+            }
+        }
+
+        //
+        if(!empty($notFound)){
+            //
+            $query = 
+            $this->db
+            ->select('company_sid, address')
+            ->group_by('company_sid')
+            ->where_in('company_sid', $notFound)
+            ->where('status', 1)
+            ->order_by('sid', 'DESC')
+            ->get('company_addresses_locations');
+            //
+            $records = $query->result_array();
+            //
+            $query->free_result();
+            //
+            if(!empty($records)){
+                foreach($records as $record){
+                    //
+                    $returnArray[$record['company_sid']] = ucwords($record['address']);
+                }
+            }
+        }
+        //
+        return $returnArray;
+    }
 }

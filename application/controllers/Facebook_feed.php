@@ -53,7 +53,9 @@ class Facebook_feed extends CI_Controller
         $organic_today                                                          = array();
         $organic_week                                                           = array();
         $organic_month                                                          = array();
-
+        //
+        $companyAddresses = $this->all_feed_model->GetCompanyAddresses($activeCompaniesArray);
+        //
         foreach ($jobData as $job) {
             if (in_array($job['user_sid'], $activeCompaniesArray)) {
                 foreach ($featuredJobs as $featuredId) {
@@ -182,7 +184,7 @@ class Facebook_feed extends CI_Controller
                             'expiry_date' => $expiryDate,
                             'jid' => $job['sid'],
                             'cid' => $job['user_sid'],
-                            'company_address' => $job['Location_Address'],
+                            'company_address' => empty($companyAddresses[$company_id]) ? $job['Location_Address'] : $companyAddresses[$company_id],
                             'referencenumber' => $uid,
                             'url' => STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid,
                             'company' => $companyName,
@@ -349,6 +351,7 @@ class Facebook_feed extends CI_Controller
                     'url' => STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid,
                     'company' => $companyName,
                     'username' => $companyUserName,
+                    'company_address' => empty($companyAddresses[$company_id]) ? '' : $companyAddresses[$company_id],
                     'odate' => $publish_date,
                     'city' => $city,
                     'state' => $state['state_name'],
