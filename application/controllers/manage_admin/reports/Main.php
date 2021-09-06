@@ -19,6 +19,7 @@ class Main extends Admin_Controller {
             facebook_jobs_status.job_id,
             facebook_jobs_status.external_id,
             facebook_jobs_status.status,
+            facebook_jobs_status.is_deleted,
             facebook_jobs_status.reason,
             facebook_jobs_status.created_at,
             facebook_jobs_status.updated_at,

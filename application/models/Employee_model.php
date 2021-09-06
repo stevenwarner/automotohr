@@ -981,6 +981,11 @@
             $a,
             $this->MyCollegues($employeeId, $companyId, $a['Teams'])
         );
+        // Get jobs Visibility
+        $a = array_merge(
+            $a,
+            $this->JobsVisibility($employeeId, $companyId)
+        );
         // Get department names
         if(!empty($a['Departments'])){
             $a['Departments'] = $this->GetDepartmentNamesByIds($a['Departments']);
@@ -1459,6 +1464,31 @@
         unset($records);
         //
         return ['TeamMembers' => $t ];
+    }
+    
+    //
+    function JobsVisibility($employeeId, $companyId){
+        //
+        $query =
+        $this->db
+        ->select("
+            portal_job_listings.Title
+        ")
+        ->from('portal_job_listings_visibility')
+        ->join('portal_job_listings', 'portal_job_listings.sid = portal_job_listings_visibility.job_sid', 'inner')
+        ->where('portal_job_listings_visibility.employer_sid', $employeeId)
+        ->where('portal_job_listings_visibility.company_sid', $companyId)
+        ->get();
+        //
+        $records = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(empty($records)){
+            return [];
+        }
+        //
+        return ['Jobs' => array_column($records, 'Title') ];
     }
 
 

@@ -142,3 +142,31 @@
         </table>
     </div>
 </div>
+
+
+<!--  -->
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table table-striped table-bordered">
+            <caption>Visibility</caption>
+            <tbody>
+                <tr>
+                    <td class="col-sm-3"><strong>Job(s)</strong></td>
+                    <td class="col-sm-9">
+                        <?php
+                            if(!empty($Jobs)){
+                                foreach($Jobs as $Job){
+                                    ?>
+                                    <p><?=$Job;?></p>
+                                    <?php
+                                }
+                            } else{
+                                echo 'N/A';
+                            }
+                        ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,15 +1,28 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <?php 
 $tr = '';
-$inDraft =0;
-$inOpen =0;
+$Pending =
+$Rejected =
+$Deleted =
+$Approved = 0;
 
+//
 foreach($jobs as $job){
-    if($job['status'] == 'OPEN'){
-        $inOpen++;
+    //
+    if($job['is_deleted']){
+        $Deleted++;
+        continue;
     }
-    if($job['status'] == 'DRAFT'){
-        $inDraft++;
+    //
+
+    if($job['status'] == 'PENDING'){
+        $Pending++;
+    }
+    if($job['status'] == 'REJECTED'){
+        $Rejected++;
+    }
+    if($job['status'] == 'APPROVED'){
+        $Approved++;
     }
     $tr .= '<tr>';
     $tr .= ' <td>';
@@ -46,8 +59,10 @@ foreach($jobs as $job){
                                     <div class="hr-innerpadding">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <p><strong>Jobs marked as Draft: </strong><?=$inDraft;?></p>
-                                                <p><strong>Jobs marked as Open: </strong><?=$inOpen;?></p>
+                                                <p><strong>Pending Jobs: </strong><?=$Pending;?></p>
+                                                <p><strong>Rejected Jobs: </strong><?=$Rejected;?></p>
+                                                <p><strong>Approved Jobs: </strong><?=$Approved;?></p>
+                                                <p><strong>Deleted Jobs: </strong><?=$Deleted;?></p>
                                                 <hr />
                                             </div>
                                         </div>
@@ -55,13 +70,14 @@ foreach($jobs as $job){
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
                                                     <table class="table table-bordered table-striped">
+                                                        <caption></caption>
                                                         <thead>
                                                             <tr>
-                                                                <th>Job Title</th>
-                                                                <th>Facebook Job Link</th>
-                                                                <th>Status</th>
-                                                                <th>Reason</th>
-                                                                <th>Last Updated On</th>
+                                                                <th scope="col">Job Title</th>
+                                                                <th scope="col">Facebook Job Link</th>
+                                                                <th scope="col">Status</th>
+                                                                <th scope="col">Reason</th>
+                                                                <th scope="col">Last Updated On</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -71,10 +87,8 @@ foreach($jobs as $job){
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
