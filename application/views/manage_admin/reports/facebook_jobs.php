@@ -61,23 +61,27 @@ foreach($jobs as $job){
                                     </div>
                                     <div class="hr-innerpadding">
                                         <div class="row">
-                                            <div class="col-sm-2 col-xs-12">
+                                            <b><i>Click the links below to filter the jobs</i></b>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="col-sm-2 col-xs-12" style="padding: 10px 20px;">
                                                 <p style="cursor: pointer;" data-type="PENDING" class="text-warning jsTypeClick"><strong>Pending Jobs: </strong><?=$Pending;?></p>
                                             </div>
-                                            <div class="col-sm-2 col-xs-12">
+                                            <div class="col-sm-2 col-xs-12" style="padding: 10px 20px;">
                                                 <p style="cursor: pointer;" data-type="REJECTED" class="text-danger jsTypeClick"><strong>Rejected Jobs: </strong><?=$Rejected;?></p>
                                             </div>
-                                            <div class="col-sm-2 col-xs-12">
+                                            <div class="col-sm-2 col-xs-12" style="padding: 10px 20px;">
                                                 <p style="cursor: pointer;" data-type="APPROVED" class="text-success jsTypeClick"><strong>Approved Jobs: </strong><?=$Approved;?></p>
                                             </div>
-                                            <div class="col-sm-2 col-xs-12">
+                                            <div class="col-sm-2 col-xs-12" style="padding: 10px 20px;">
+                                                <p style="cursor: pointer;" data-type="TOTAL" class="text-warning jsTypeClick"><strong>Total Jobs: </strong><?=$Pending+$Rejected+$Approved+;?></p>
+                                            </div>
+                                            <div class="col-sm-2 col-xs-12" style="padding: 10px 20px;">
                                                 <p class="text-danger"><strong>Deleted Jobs: </strong><?=$Deleted;?></p>
                                             </div>
-                                            <div class="col-sm-2 col-xs-12">
-                                                <p style="cursor: pointer;" data-type="TOTAL" class="text-warning jsTypeClick"><strong>Total Jobs: </strong><?=$Pending+$Rejected+$Approved+$Deleted;?></p>
-                                            </div>
-                                            <hr />
                                         </div>
+                                        <hr />
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
