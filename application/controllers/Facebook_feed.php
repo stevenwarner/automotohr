@@ -967,7 +967,7 @@ class Facebook_feed extends CI_Controller
         //
         $this->db
         ->where_not_in(
-            'job_sid', $ids
+            'job_id', $ids
         )
         ->update('facebook_jobs_status', [
             'is_deleted' => 1
