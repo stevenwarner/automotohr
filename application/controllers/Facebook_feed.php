@@ -946,6 +946,7 @@ class Facebook_feed extends CI_Controller
         https://graph.facebook.com/v7.0/310277717149233/jobs?access_token=2211285445561045%7CCDxZYxcSQcx6mJFHiH1RRHbtyOk&fields=job_status,external_id,platform_review_status,id,wage,review_rejection_reasons&limit=5000&after=QVFIUksxM1V2cGcyb29wSmJoUG1LV1lyUmJHVlJGcGM5ZAnM2RVFnd0ZAQMjBfYWhtSWx3emFtQWZAmeEV1N3RHeUpUZAk1mMUROeXR2eHd0QllKaDViYXNmbVRB');
         //
         $ins = [];
+        $ids = [];
         //
         foreach($this->curl['data'] as $job){
             $t = [];
@@ -957,9 +958,9 @@ class Facebook_feed extends CI_Controller
             $this->checkAndInsert($t, $t['job_id']);
             //
             $ins[] = $t;
+            $ids[] = $job['external_id'];
         }
         // To be removed
-        $ids = array_column($ins, 'job_id');
         //
         $this->db
         ->where_not_in(
