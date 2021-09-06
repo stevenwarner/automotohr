@@ -1472,7 +1472,8 @@
         $query =
         $this->db
         ->select("
-            portal_job_listings.Title
+            portal_job_listings.Title,
+            portal_job_listings.sid
         ")
         ->from('portal_job_listings_visibility')
         ->join('portal_job_listings', 'portal_job_listings.sid = portal_job_listings_visibility.job_sid', 'inner')
@@ -1488,7 +1489,7 @@
             return [];
         }
         //
-        return ['Jobs' => array_column($records, 'Title') ];
+        return ['Jobs' => $records ];
     }
 
 
