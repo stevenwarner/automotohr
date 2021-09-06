@@ -1473,12 +1473,14 @@
         $this->db
         ->select("
             portal_job_listings.Title,
-            portal_job_listings.sid
+            portal_job_listings.sid,
+            portal_job_listings.active
         ")
         ->from('portal_job_listings_visibility')
         ->join('portal_job_listings', 'portal_job_listings.sid = portal_job_listings_visibility.job_sid', 'inner')
         ->where('portal_job_listings_visibility.employer_sid', $employeeId)
         ->where('portal_job_listings_visibility.company_sid', $companyId)
+        ->order_by('portal_job_listings.active', 'DESC')
         ->get();
         //
         $records = $query->result_array();

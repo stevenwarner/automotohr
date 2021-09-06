@@ -157,7 +157,7 @@
                             if(!empty($Jobs)){
                                 foreach($Jobs as $Job){
                                     ?>
-                                    <p><?=$Job['Title'];?> [<?=$Job['sid'];?>]</p>
+                                    <p><?=$Job['Title'];?> (<span class="text-<?=$Job['active'] ? 'success' : 'danger';?>"><?=$Job['active'] ? 'Active' : 'InActive';?></span>) [<?=$Job['sid'];?>]</p>
                                     <?php
                                 }
                             } else{
