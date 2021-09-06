@@ -128,7 +128,14 @@
                                 </div>
                                 <div class="btn-panel text-right">
                                     <div class="row">
-                                        <div class="col-xs-4"></div>
+                                        <div class="col-xs-4 text-left">
+                                        <?php if ($session['employer_detail']['access_level_plus']) { ?>
+                                            <a class="btn btn-success jsEmployeeQuickProfile" title="Quick View of Employee Profile" placement="top">
+                                                <i class="fa fa-users" aria-hidden="true"></i>
+                                                Employee Profie
+                                            </a>
+                                        <?php  } ?>
+                                        </div>
                                         <div class="col-xs-4">
                                             <a class="btn btn-success btn-block" href="<?php echo base_url(); ?>invite_colleagues">+ Add Employee / Team Members</a>
                                         </div>
