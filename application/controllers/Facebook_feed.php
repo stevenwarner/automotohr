@@ -859,7 +859,7 @@ class Facebook_feed extends CI_Controller
         $headers = array()
     ) {
         //
-        $this->parseURL($url);
+        $this->parseURL(trim($url));
 
         //
         $curl = curl_init();
@@ -928,7 +928,7 @@ class Facebook_feed extends CI_Controller
      * 
      */
     function jobsStatus(){
-        $this->getAccessToken();
+        // $this->getAccessToken();
         //
         // $this->makeCall('https://graph.facebook.com/v7.0/1923839514417430?access_token={{accessToken}}&fields=job_feeds{jobs.limit(50000){errors,wage,review_rejection_reasons,offsite_application_url,page,job_status,external_id,id}},id');
         // foreach($this->curl['job_feeds']['data'][0]['jobs']['data'] as $job){
@@ -942,8 +942,10 @@ class Facebook_feed extends CI_Controller
         //     //
         //     $ins[] = $t;
         // }
-        $this->makeCall('
-        https://graph.facebook.com/v7.0/310277717149233/jobs?access_token=2211285445561045%7CCDxZYxcSQcx6mJFHiH1RRHbtyOk&fields=job_status,external_id,platform_review_status,id,wage,review_rejection_reasons&limit=5000&after=QVFIUksxM1V2cGcyb29wSmJoUG1LV1lyUmJHVlJGcGM5ZAnM2RVFnd0ZAQMjBfYWhtSWx3emFtQWZAmeEV1N3RHeUpUZAk1mMUROeXR2eHd0QllKaDViYXNmbVRB');
+        $this->makeCall(
+            'https://graph.facebook.com/v7.0/310277717149233/jobs?access_token=2211285445561045%7CCDxZYxcSQcx6mJFHiH1RRHbtyOk&fields=job_status,external_id,platform_review_status,id,wage,review_rejection_reasons&limit=5000&after=QVFIUksxM1V2cGcyb29wSmJoUG1LV1lyUmJHVlJGcGM5ZAnM2RVFnd0ZAQMjBfYWhtSWx3emFtQWZAmeEV1N3RHeUpUZAk1mMUROeXR2eHd0QllKaDViYXNmbVRB',
+            array(CURLOPT_CUSTOMREQUEST => "GET")
+        );
         //
         $ins = [];
         $ids = [];
@@ -961,6 +963,7 @@ class Facebook_feed extends CI_Controller
             $ids[] = $job['external_id'];
         }
         // To be removed
+        $ids = array_column($ins, 'job_id');
         //
         $this->db
         ->where_not_in(
