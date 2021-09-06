@@ -14,24 +14,27 @@ foreach($jobs as $job){
         continue;
     }
     //
-
+    $cl = "text-success";
+    
     if($job['status'] == 'PENDING'){
+        $cl = "text-warning";
         $Pending++;
     }
     if($job['status'] == 'REJECTED'){
+        $cl = "text-danger";
         $Rejected++;
     }
     if($job['status'] == 'APPROVED'){
         $Approved++;
     }
-    $tr .= '<tr>';
+    $tr .= '<tr class="jsRows" data-type="'.($job['status']).'">';
     $tr .= ' <td>';
     $tr .= '       <a href="https://www.automotosocial.com/display-job/'.$job['job_id'].'" target="_blank">'.$job['Title'].'</a>';
     $tr .= '   </td>';
     $tr .= '   <td>';
     $tr .= '       <a href="https://www.facebook.com/'.$job['external_id'].'" target="_blank">'.$job['external_id'].'</a>';
     $tr .= '   </td>';
-    $tr .= '   <td>'.$job['status'].'</td>';
+    $tr .= '   <td class="'.($cl).'"><b>'.$job['status'].'</b></td>';
     $tr .= '   <td>'.$job['reason'].'</td>';
     $tr .= '   <td>'.DateTime::createfromformat('Y-m-d H:i:s', $job['created_at'])->format('M d, D Y H:i').'</td>';
     $tr .= '</tr>';
@@ -58,13 +61,22 @@ foreach($jobs as $job){
                                     </div>
                                     <div class="hr-innerpadding">
                                         <div class="row">
-                                            <div class="col-sm-12">
-                                                <p><strong>Pending Jobs: </strong><?=$Pending;?></p>
-                                                <p><strong>Rejected Jobs: </strong><?=$Rejected;?></p>
-                                                <p><strong>Approved Jobs: </strong><?=$Approved;?></p>
-                                                <p><strong>Deleted Jobs: </strong><?=$Deleted;?></p>
-                                                <hr />
+                                            <div class="col-sm-2 col-xs-12">
+                                                <p style="cursor: pointer;" data-type="PENDING" class="text-warning jsTypeClick"><strong>Pending Jobs: </strong><?=$Pending;?></p>
                                             </div>
+                                            <div class="col-sm-2 col-xs-12">
+                                                <p style="cursor: pointer;" data-type="REJECTED" class="text-danger jsTypeClick"><strong>Rejected Jobs: </strong><?=$Rejected;?></p>
+                                            </div>
+                                            <div class="col-sm-2 col-xs-12">
+                                                <p style="cursor: pointer;" data-type="APPROVED" class="text-success jsTypeClick"><strong>Approved Jobs: </strong><?=$Approved;?></p>
+                                            </div>
+                                            <div class="col-sm-2 col-xs-12">
+                                                <p class="text-danger"><strong>Deleted Jobs: </strong><?=$Deleted;?></p>
+                                            </div>
+                                            <div class="col-sm-2 col-xs-12">
+                                                <p style="cursor: pointer;" data-type="TOTAL" class="text-warning jsTypeClick"><strong>Total Jobs: </strong><?=$Pending+$Rejected+$Approved+$Deleted;?></p>
+                                            </div>
+                                            <hr />
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-12">
@@ -97,3 +109,20 @@ foreach($jobs as $job){
         </div>
     </div>
 </div>
+
+<script>
+    $(function(){
+        $('.jsTypeClick').click(function(event){
+            //
+            event.preventDefault();
+            //
+            if($(this).data('type') == 'TOTAL'){
+                $('tr.jsRows').show();
+                return;
+            }
+            //
+            $('tr.jsRows').hide();
+            $('tr.jsRows[data-type="'+($(this).data('type'))+'"]').show();
+        });
+    })
+</script>
