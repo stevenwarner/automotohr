@@ -36,7 +36,7 @@ foreach($jobs as $job){
     $tr .= '   </td>';
     $tr .= '   <td class="'.($cl).'"><b>'.$job['status'].'</b></td>';
     $tr .= '   <td>'.$job['reason'].'</td>';
-    $tr .= '   <td>'.DateTime::createfromformat('Y-m-d H:i:s', $job['created_at'])->format('M d, D Y H:i').'</td>';
+    $tr .= '   <td>'.DateTime::createfromformat('Y-m-d H:i:s', $job['updated_at'])->format('M d, D Y H:i').'</td>';
     $tr .= '</tr>';
 } ?>
 <div class="main">
