@@ -42,7 +42,7 @@ foreach($Jobs as $job){
     $tr .= '       <a href="https://www.automotosocial.com/display-job/'.$job['job_id'].'" target="_blank">'.$job['Title'].' - '.$job['job_id'].'</a>';
     $tr .= '   </td>';
     $tr .= '   <td>';
-    if(!empty($job['external_link'])){
+    if(!empty($job['external_id'])){
         $tr .= '       <a href="https://www.facebook.com/'.$job['external_id'].'" target="_blank">'.$job['external_id'].'</a>';
     } else{
         $tr .= '       <p>Job is not on Facebook</p>';
