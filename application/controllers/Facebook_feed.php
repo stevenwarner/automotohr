@@ -939,7 +939,6 @@ class Facebook_feed extends CI_Controller
             array(CURLOPT_CUSTOMREQUEST => "GET")
         );
         //
-        $ins = [];
         $ids = [];
         //
         foreach($this->curl['data'] as $job){
@@ -950,13 +949,10 @@ class Facebook_feed extends CI_Controller
             $t['reason'] = isset($job['review_rejection_reasons']) ? implode('<br />', $job['review_rejection_reasons']) : '';
             $t['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
             //
-            $this->checkAndInsert($t, $t['job_id']);
+            $id = $this->checkAndInsert($t, $t['job_id']);
             //
-            $ins[] = $t;
-            $ids[] = $job['external_id'];
+            $ids[] = $id;
         }
-        // To be removed
-        $ids = array_column($ins, 'job_id');
         //
         $this->db
         ->where_not_in(
@@ -976,8 +972,10 @@ class Facebook_feed extends CI_Controller
             $this->db->where('job_id', $id)
             ->set($a)->update($this->table);
         } else{
-            $this->db->insert($this->table, $a);
+            echo (int) $this->db->insert($this->table, $a);
         }
+        //
+        return $a['job_id'];
     }
 
 
