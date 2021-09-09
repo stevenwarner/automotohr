@@ -15,7 +15,7 @@ class Main extends Admin_Controller {
         //
         $passArray = [];
         //
-        $jobs = json_decode(getFileData("http://automotohr.local/Facebook_feed/index/1"), true);
+        $jobs = json_decode(getFileData(base_url("Facebook_feed/index/1")), true);
         //
         foreach($jobs as $job){
             //
