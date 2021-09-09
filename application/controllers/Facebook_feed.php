@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php
+
+use function GuzzleHttp\json_decode;
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Facebook_feed extends CI_Controller
 {
@@ -448,7 +452,7 @@ class Facebook_feed extends CI_Controller
 
                     <facebook-apply-data>
                         <application-callback-url>
-                        <![CDATA[" . STORE_PROTOCOL_SSL . "www." . STORE_DOMAIN . "/facebook_feed/jobXmlCallback]]>
+                        <![CDATA[" . STORE_PROTOCOL_SSL . "www." . STORE_DOMAIN . "/Facebook_feed/jobXmlCallback]]>
                         </application-callback-url>
                         <form-config>
                             <email-field>
@@ -973,5 +977,50 @@ class Facebook_feed extends CI_Controller
         } else{
             $this->db->where('job_id', $id)->insert($this->table, $a);
         }
+    }
+
+
+    /**
+     * 
+     */
+    function putBackApplicants($date){
+        //
+        $file_path = APPPATH.'../../applicant/Facebook/';
+        //
+        $files = scandir($file_path, 1);
+        //
+        foreach($files as $file){
+            //
+            if(!preg_match("/$date/", $file)){
+                continue;
+            }
+            //
+            $content = file_get_contents($file_path.$file);
+            //
+            $curl = curl_init();
+            //
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://www.automotohr.com/Facebook_feed/jobXmlCallback',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => $content,
+                CURLOPT_HTTPHEADER => array(
+                  'Content-Type: application/json',
+                ),
+            ));
+            //
+            curl_exec($curl);
+            //
+            curl_close($curl);
+            //
+            sleep(1);
+        }
+        //
+        die('All Done');
     }
 }
