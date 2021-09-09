@@ -976,7 +976,7 @@ class Facebook_feed extends CI_Controller
             $this->db->where('job_id', $id)
             ->set($a)->update($this->table);
         } else{
-            $this->db->where('job_id', $id)->insert($this->table, $a);
+            $this->db->insert($this->table, $a);
         }
     }
 
