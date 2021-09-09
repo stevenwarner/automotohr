@@ -940,16 +940,20 @@ class Facebook_feed extends CI_Controller
         );
         //
         $ids = [];
+        $inserted = 0;
+        $updated = 0;
+        $total = count($this->curl['data']);
         //
         foreach($this->curl['data'] as $job){
             $t = [];
             $t['job_id'] = $job['external_id'];
             $t['external_id'] = $job['id'];
             $t['status'] = $job['platform_review_status'];
+            $t['is_deleted'] = 0;
             $t['reason'] = isset($job['review_rejection_reasons']) ? implode('<br />', $job['review_rejection_reasons']) : '';
             $t['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
             //
-            $id = $this->checkAndInsert($t, $t['job_id']);
+            $id = $this->checkAndInsert($t, $t['job_id'], $inserted, $updated);
             //
             $ids[] = $id;
         }
@@ -961,17 +965,31 @@ class Facebook_feed extends CI_Controller
         ->update('facebook_jobs_status', [
             'is_deleted' => 1
         ]);
+
+        //
+        _e('-------------------');
+        _e("Total = ".$total);
+        _e("Updated = ".$updated);
+        _e("Inserted = ".$inserted);
+        _e('-------------------');
     }
 
 
     /**
      * 
      */
-    private function checkAndInsert($a,$id){
-        if($this->db->where('job_id', $id)->count_all_results($this->table)){
+    private function checkAndInsert($a,$id, &$i, &$u){
+        if(
             $this->db->where('job_id', $id)
-            ->set($a)->update($this->table);
+            ->count_all_results($this->table)
+        ){
+            $this->db
+            ->where('job_id', $id)
+            ->set($a)
+            ->update($this->table);
+            $u++;
         } else{
+            $i++;
             echo (int) $this->db->insert($this->table, $a);
         }
         //
