@@ -859,8 +859,9 @@ class Facebook_feed extends CI_Controller
         $headers = array()
     ) {
         //
-        $this->parseURL(trim($url));
-
+        $url = trim($url);
+        //
+        $this->parseURL($url);
         //
         $curl = curl_init();
         //
@@ -929,7 +930,7 @@ class Facebook_feed extends CI_Controller
      */
     function jobsStatus(){
         $this->makeCall(
-            'https://graph.facebook.com/v7.0/310277717149233/jobs?access_token=2211285445561045%7CCDxZYxcSQcx6mJFHiH1RRHbtyOk&fields=job_status,external_id,platform_review_status,id,wage,review_rejection_reasons&limit=5000&after=QVFIUksxM1V2cGcyb29wSmJoUG1LV1lyUmJHVlJGcGM5ZAnM2RVFnd0ZAQMjBfYWhtSWx3emFtQWZAmeEV1N3RHeUpUZAk1mMUROeXR2eHd0QllKaDViYXNmbVRB',
+            'https://graph.facebook.com/v7.0/310277717149233/jobs?access_token=2211285445561045%7CCDxZYxcSQcx6mJFHiH1RRHbtyOk&fields=job_status,external_id,platform_review_status,id,wage,review_rejection_reasons&limit=5000',
             array(CURLOPT_CUSTOMREQUEST => "GET")
         );
         //
