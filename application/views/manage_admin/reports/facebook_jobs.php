@@ -3,11 +3,12 @@
 $tr = '';
 $Pending =
 $Rejected =
+$Errors =
 $Deleted =
+$Missing =
 $Approved = 0;
-
 //
-foreach($jobs as $job){
+foreach($Jobs as $job){
     //
     if($job['is_deleted']){
         $Deleted++;
@@ -15,28 +16,49 @@ foreach($jobs as $job){
     }
     //
     $cl = "text-success";
-    
-    if($job['status'] == 'PENDING'){
-        $cl = "text-warning";
+    //
+    if($job['job_status'] == 'MISSING'){
+        $Missing++;
+    } 
+    else if($job['job_status'] == 'DRAFT'){
+        $Errors++;
         $Pending++;
+    } else{
+        if($job['status'] == 'PENDING'){
+            $cl = "text-warning";
+            $Pending++;
+        }
+        if($job['status'] == 'REJECTED'){
+            $cl = "text-danger";
+            $Rejected++;
+        }
+        if($job['status'] == 'APPROVED'){
+            $Approved++;
+        }
     }
-    if($job['status'] == 'REJECTED'){
-        $cl = "text-danger";
-        $Rejected++;
-    }
-    if($job['status'] == 'APPROVED'){
-        $Approved++;
-    }
-    $tr .= '<tr class="jsRows" data-type="'.($job['status']).'">';
+    
+    $tr .= '<tr class="jsRows" data-type="'.($job['status']).'" data-job_type="'.($job['job_status']).'">';
     $tr .= ' <td>';
-    $tr .= '       <a href="https://www.automotosocial.com/display-job/'.$job['job_id'].'" target="_blank">'.$job['Title'].'</a>';
+    $tr .= '       <a href="https://www.automotosocial.com/display-job/'.$job['job_id'].'" target="_blank">'.$job['Title'].' - '.$job['job_id'].'</a>';
     $tr .= '   </td>';
     $tr .= '   <td>';
-    $tr .= '       <a href="https://www.facebook.com/'.$job['external_id'].'" target="_blank">'.$job['external_id'].'</a>';
+    if(!empty($job['external_link'])){
+        $tr .= '       <a href="https://www.facebook.com/'.$job['external_id'].'" target="_blank">'.$job['external_id'].'</a>';
+    } else{
+        $tr .= '       <p>Job is not on Facebook</p>';
+    }
     $tr .= '   </td>';
-    $tr .= '   <td class="'.($cl).'"><b>'.$job['status'].'</b></td>';
+    if(!empty($job['status'])){
+        $tr .= '   <td class="'.($cl).'"><b>'.$job['status'].'</b></td>';
+    } else{
+        $tr .= '   <td class="text-warning"><b>MISSING</b></td>';
+    }
     $tr .= '   <td>'.$job['reason'].'</td>';
-    $tr .= '   <td>'.DateTime::createfromformat('Y-m-d H:i:s', $job['updated_at'])->format('M d, D Y H:i').'</td>';
+    if(!empty($job['updated_at'])){
+        $tr .= '   <td>'.DateTime::createfromformat('Y-m-d H:i:s', $job['updated_at'])->format('M d, D Y H:i').'</td>';
+    } else{
+        $tr .= '   <td class="text-warning"><b>N/A</b></td>';
+    }
     $tr .= '</tr>';
 } ?>
 <div class="main">
@@ -56,7 +78,7 @@ foreach($jobs as $job){
                                         </span>
                                         <span class="pull-right">
                                             <h1 class="hr-registered">Total Records Found :
-                                                <?php echo count($jobs);?></h1>
+                                                <?php echo count($Jobs);?></h1>
                                         </span>
                                     </div>
                                     <div class="hr-innerpadding">
@@ -73,6 +95,9 @@ foreach($jobs as $job){
                                             <div class="col-sm-2 col-xs-12" style="padding: 10px 20px;">
                                                 <p style="cursor: pointer;" data-type="REJECTED" class="text-danger jsTypeClick"><strong>Rejected Jobs: </strong><?=$Rejected;?></p>
                                             </div>
+                                            <div class="col-sm-2 col-xs-12" style="padding: 10px 20px;">
+                                                <p style="cursor: pointer;" data-type="DRAFT" class="text-danger jsTypeClick"><strong>Errors : </strong><?=$Errors;?></p>
+                                            </div>
                                             <div class="col-sm-3 col-xs-12" style="padding: 10px 20px;">
                                                 <p style="cursor: pointer;" data-type="APPROVED" class="text-success jsTypeClick"><strong>Approved Jobs: </strong><?=$Approved;?></p>
                                             </div>
@@ -80,7 +105,7 @@ foreach($jobs as $job){
                                                 <p style="cursor: pointer;" data-type="TOTAL" class="text-warning jsTypeClick"><strong>Total Jobs: </strong><?=$Pending+$Rejected+$Approved;?></p>
                                             </div>
                                             <div class="col-sm-2 col-xs-12" style="padding: 10px 20px;">
-                                                <p class="text-danger"><strong>Deleted Jobs: </strong><?=$Deleted;?></p>
+                                            <p style="cursor: pointer;" data-type="MISSING" class="text-warning jsTypeClick"><strong>Missing Jobs: </strong><?=$Missing;?></p>
                                             </div>
                                         </div>
                                         <hr />
@@ -128,7 +153,17 @@ foreach($jobs as $job){
             }
             //
             $('tr.jsRows').hide();
-            $('tr.jsRows[data-type="'+($(this).data('type'))+'"]').show();
+            //
+            if(
+                $(this).data('type') == 'DRAFT' ||
+                $(this).data('type') == 'MISSING'
+            ){
+
+                $('tr.jsRows[data-job_type="'+($(this).data('type'))+'"]').show();
+            } else{
+
+                $('tr.jsRows[data-type="'+($(this).data('type'))+'"]').show();
+            }
         });
     })
 </script>

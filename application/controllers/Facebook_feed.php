@@ -187,6 +187,7 @@ class Facebook_feed extends CI_Controller
                         $paid_feed[] = array(
                             'title' => $job['Title'],
                             'publish_date' => date_with_time($publish_date) . ' PST',
+                            'publish_date_orginal' => $publish_date,
                             'odate' => $publish_date,
                             'expiry_date' => $expiryDate,
                             'jid' => $job['sid'],
@@ -352,6 +353,7 @@ class Facebook_feed extends CI_Controller
                 $paid_feed[] = array(
                     'title' => $job['Title'],
                     'publish_date' => date_with_time($publish_date) . ' PST',
+                    'publish_date_orginal' => $publish_date,
                     'expiry_date' => $expiryDate,
                     'referencenumber' => $uid,
                     'jid' => $job['sid'],
@@ -403,6 +405,10 @@ class Facebook_feed extends CI_Controller
             $columns = array_column($paid_feed, 'odate');
             array_multisort($columns, SORT_DESC, $paid_feed);
 
+            if($generate_file == 1) {
+                echo json_encode($paid_feed);
+                exit(0);
+            }
             foreach ($paid_feed as $om) {
                 $salary = $om['salary'];
                 $salary = str_replace(" - ", "/", $salary);
@@ -473,18 +479,14 @@ class Facebook_feed extends CI_Controller
         }
 
         $xml_data                                                               .= '</source>';
-
-        // if($generate_file == 1) {
-        //     file_put_contents('ams_feed.xml', $xml_data);
-        // } else {
+        //
         header('Content-type: text/xml');
         header('Pragma: public');
         header('Cache-control: private');
         header('Expires: -1');
         echo $xml_data;
-
+        //
         @mail('mubashir.saleemi123@gmail.com', 'Facebook Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($paid_feed));
-        // }
         exit;
     }
 
@@ -935,7 +937,7 @@ class Facebook_feed extends CI_Controller
      */
     function jobsStatus(){
         $this->makeCall(
-            'https://graph.facebook.com/v7.0/310277717149233/jobs?access_token=2211285445561045%7CCDxZYxcSQcx6mJFHiH1RRHbtyOk&fields=job_status,external_id,platform_review_status,id,wage,review_rejection_reasons&limit=5000',
+            'https://graph.facebook.com/v7.0/310277717149233/jobs?access_token=2211285445561045%7CCDxZYxcSQcx6mJFHiH1RRHbtyOk&fields=job_status,external_id,platform_review_status,id,wage,review_rejection_reasons,errors&limit=5000',
             array(CURLOPT_CUSTOMREQUEST => "GET")
         );
         //
@@ -948,9 +950,13 @@ class Facebook_feed extends CI_Controller
             $t = [];
             $t['job_id'] = $job['external_id'];
             $t['external_id'] = $job['id'];
+            $t['job_status'] = $job['job_status'];
             $t['status'] = $job['platform_review_status'];
             $t['is_deleted'] = 0;
             $t['reason'] = isset($job['review_rejection_reasons']) ? implode('<br />', $job['review_rejection_reasons']) : '';
+            if($job['job_status'] == 'DRAFT'){
+                $t['reason'] = isset($job['errors']) ? implode('<br />', $job['errors']) : '';
+            }
             $t['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
             //
             $id = $this->checkAndInsert($t, $t['job_id'], $inserted, $updated);

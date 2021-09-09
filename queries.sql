@@ -236,3 +236,4 @@ ALTER TABLE `background_check_orders_history`
 -- 06/09/2021
 ALTER TABLE `facebook_jobs_status` ADD COLUMN 
 `is_deleted` TINYINT DEFAULT 0;
+ALTER TABLE `facebook_jobs_status` ADD `job_status` VARCHAR(10) NOT NULL AFTER `is_deleted`;

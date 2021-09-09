@@ -12,24 +12,51 @@ class Main extends Admin_Controller {
 
     //
     function facebook_job_report(){
-
         //
-        $this->data['jobs'] = $this->db
+        $passArray = [];
+        //
+        $jobs = json_decode(getFileData("http://automotohr.local/Facebook_feed/index/1"), true);
+        //
+        foreach($jobs as $job){
+            //
+            $passArray[$job['jid']] = [
+                'job_id' => $job['jid'],
+                'job_status' => 'MISSING',
+                'external_id' => '',
+                'status' => '',
+                'is_deleted' => 0,
+                'reason' => '',
+                'updated_at' => $job['publish_date_orginal'],
+                'Title' => $job['title']
+            ];
+        }
+        //
+        $facebookJobs = $this->db
         ->select('
             facebook_jobs_status.job_id,
+            facebook_jobs_status.job_status,
             facebook_jobs_status.external_id,
             facebook_jobs_status.status,
             facebook_jobs_status.is_deleted,
             facebook_jobs_status.reason,
-            facebook_jobs_status.created_at,
-            facebook_jobs_status.updated_at,
-            portal_job_listings.Title
+            facebook_jobs_status.updated_at
         ')
-        ->join('portal_job_listings', 'portal_job_listings.sid = facebook_jobs_status.job_id')
-        ->order_by('portal_job_listings.activation_date', 'DESC')
         ->get('facebook_jobs_status')
         ->result_array();
-
+        //
+        foreach($facebookJobs as $job){
+            //
+            if(isset($passArray[$job['job_id']])){
+                $passArray[$job['job_id']]['job_status'] = $job['job_status'];
+                $passArray[$job['job_id']]['external_id'] = $job['external_id'];
+                $passArray[$job['job_id']]['status'] = $job['status'];
+                $passArray[$job['job_id']]['is_deleted'] = $job['is_deleted'];
+                $passArray[$job['job_id']]['reason'] = $job['reason'];
+                $passArray[$job['job_id']]['updated_at'] = $job['updated_at'];
+            }
+        }
+        //
+        $this->data['Jobs'] = array_values($passArray);
         //
         $this->render('manage_admin/reports/facebook_jobs');
     }
