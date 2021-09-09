@@ -13,6 +13,7 @@ class Facebook_feed extends CI_Controller
     private $accessToken;
     private $accessTokenType;
     private $feedId;
+    private $jobApplicationId;
 
     // Job Feed Ids:[310277717149233,2925045904484375,1364424370612380]
 
