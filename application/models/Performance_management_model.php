@@ -1262,6 +1262,41 @@ class Performance_management_model extends CI_Model{
         //
         return $rt;
     }
+    
+    /**
+     * 
+     */
+    function GetReviewCount($companyId){
+        //
+        $rt = [
+            'Active' => 0,
+            'Draft' => 0,
+            'Archived' => 0
+        ];
+        //
+        $rt['Active'] = 
+        $this->db
+        ->where("{$this->R}.is_draft <>", 1)
+        ->where("{$this->R}.is_archived <>", 1)
+        ->where("{$this->R}.company_sid", $companyId)
+        ->count_all_results($this->R);
+
+        //
+        $rt['Draft'] = 
+        $this->db
+        ->where("{$this->R}.is_draft", 1)
+        ->where("{$this->R}.company_sid", $companyId)
+        ->count_all_results($this->R);
+        
+        //
+        $rt['Archived'] = 
+        $this->db
+        ->where("{$this->R}.is_archived", 1)
+        ->where("{$this->R}.company_sid", $companyId)
+        ->count_all_results($this->R);
+        //
+        return $rt;
+    }
 
 
     //

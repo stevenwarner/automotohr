@@ -11,9 +11,9 @@
                 </div>
                 <div class="col-xs-12 col-md-10">
                     <span class="pull-right">
-                        <a title="Show me active reviews" placement="top" href="<?=current_url();?>?type=active" class="btn btn-orange <?=$type == 'active' ? 'active' : ''?>">Active Reviews</a>
-                        <a title="Show me archived reviews" placement="top" href="<?=current_url();?>?type=archived" class="btn btn-orange <?=$type == 'archived' ? 'active' : ''?>">Archived Reviews</a>
-                        <a title="Show me reviews that are in draft" placement="top" href="<?=current_url();?>?type=draft" class="btn btn-orange <?=$type == 'draft' ? 'active' : ''?>">Reviews In Draft</a>
+                        <a title="Show me active reviews" placement="top" href="<?=current_url();?>?type=active" class="btn btn-orange <?=$type == 'active' ? 'active' : ''?>">Active Reviews (<?=$ReviewCount['Active'];?>)</a>
+                        <a title="Show me archived reviews" placement="top" href="<?=current_url();?>?type=archived" class="btn btn-orange <?=$type == 'archived' ? 'active' : ''?>">Archived Reviews (<?=$ReviewCount['Archived'];?>)</a>
+                        <a title="Show me reviews that are in draft" placement="top" href="<?=current_url();?>?type=draft" class="btn btn-orange <?=$type == 'draft' ? 'active' : ''?>">Reviews In Draft (<?=$ReviewCount['Draft'];?>)</a>
                     </span>
                 </div>
             </div>

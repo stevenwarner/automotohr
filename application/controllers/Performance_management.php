@@ -202,6 +202,8 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['type'] = $type;
         //
+        $this->pargs['ReviewCount'] = $this->pmm->GetReviewCount($this->pargs['companyId']);
+        //
         $this->pargs['reviews'] = $this->pmm->GetAllReviews(
             $this->pargs['employerId'], 
             $this->pargs['employerRole'], 
