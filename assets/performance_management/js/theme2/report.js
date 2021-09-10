@@ -6,8 +6,8 @@ $(function() {
     loadSchedulesGraph(
         graph2.Started,
         graph2.Completed,
-        graph2.Draft,
-        graph2.archived
+        graph2.archived,
+        graph2.Draft
     );
     //
     function loadOverallGraph(
@@ -38,7 +38,7 @@ $(function() {
                 // These labels appear in the legend and in the tooltips when hovering different arcs
                 labels: [
                     `Completed Review(s): ${completed}`,
-                    `Not Completed Review(s) : ${notcompleted}`,
+                    `Pending Review(s) : ${notcompleted}`,
                 ],
             },
             options: {
@@ -78,8 +78,9 @@ $(function() {
                     ],
                     backgroundColor: [
                         '#1032c3',
-                        '#fd7a2a',
-                        'rgba(255, 206, 86, 1)'
+                        '#81b431',
+                        '#cc1100',
+                        '#444'
                     ],
                     borderWidth: 1
                 }],

@@ -83,8 +83,8 @@ class Performance_management extends Public_Controller{
             $this->pargs['company_employees_index'][$emp['Id']] = $emp;
         }
         // // Get Assigned Reviews 
-        $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 0);
-        $this->pargs['FeedbackReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1);
+        $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 0, 6);
+        $this->pargs['FeedbackReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1, 6);
         //
         $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pargs['employerId']);
         //
@@ -536,6 +536,101 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
+    
+    
+    /**
+     * All Assigned Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function all_reviews(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - All Reviews';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['company_employees_index'] = [];
+        //
+        foreach($this->pargs['company_employees'] as $emp){
+            $this->pargs['company_employees_index'][$emp['Id']] = $emp;
+        }
+        // // Get Assigned Reviews 
+        $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 0);
+
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}all_reviews");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+
+    /**
+     * All Feedback Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function all_feedbacks(){
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - All Feedbacks';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['company_employees_index'] = [];
+        //
+        foreach($this->pargs['company_employees'] as $emp){
+            $this->pargs['company_employees_index'][$emp['Id']] = $emp;
+        }
+        // // Get Assigned Feedbacks 
+        $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1);
+
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}all_feedbacks");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    /**
+     * Reviews
+     * 
+     * @employee Mubashir Ahmed 
+     * @date     02/01/2021
+     * 
+     * @return Void
+     */
+    function review_details($id){
+        // 
+        $this->checkLogin($this->pargs);
+        //
+        $this->pargs['company_employees_index'] = [];
+        //
+        foreach($this->pmm->GetAllEmployees($this->pargs['companyId']) as $emp){
+            $this->pargs['company_employees_index'][$emp['Id']] = $emp;
+        }
+        //
+        $this->pargs['Review'] = $this->pmm->GetReviewById(
+            $id
+        )[0];
+
+        echo $this->load->view("{$this->pp}review_detail", $this->pargs, true);
+    }
 
     
 
@@ -642,6 +737,8 @@ class Performance_management extends Public_Controller{
         //
         $insertArray = [];
         //
+        $ids = [];
+        //
         foreach($post['reviewerIds'] as $reviewer){
             //
             $insertArray[] = [
@@ -652,11 +749,34 @@ class Performance_management extends Public_Controller{
                 'is_manager' => 0,
                 'is_completed' => 0
             ];
+            //
+            $ids[] = $reviewer;
         }
         //
         $this->pmm->UpdateRevieweeReviewers($insertArray);
+        $sent = 0;
+        // Check if the review is started
+        if(
+            $this->pmm->IsReviewStarted(
+                $post['reviewId'],
+                $post['revieweeId']
+                )
+        ){
+            $sent = 1;
+            //
+            $this->sendEmailNotifications(
+                $post['reviewId'],
+                $post['revieweeId'],
+                $ids
+            );
+        }
         //
-        $this->res(['Status' => true]);
+        $this->res([
+            'Status' => true, 
+            'Message' => 'You have successfully added new reviewers. '.(
+                $sent ? 'An email notification has been sent to the selected reviewers.' : 'The selected reviewers are not notified because the review is not started yet.'
+            ).''
+        ]);
     }
     
     /**
@@ -792,7 +912,29 @@ class Performance_management extends Public_Controller{
         //
         $this->pmm->UpdateRevieweeDates($post['reviewId'], $post['revieweeId'], $post);
         //
-        $this->res(['Status' => true]);
+        $sent = 0;
+        // Check if the review is started
+        if(
+            $this->pmm->IsReviewStarted(
+                $post['reviewId'],
+                $post['revieweeId']
+            )
+        ){
+            $sent = 1;
+            //
+            $this->sendEmailNotifications(
+                $post['reviewId'],
+                $post['revieweeId'],
+                array_values($newReviewers)
+            );
+        }
+        //
+        $this->res([
+            'Status' => true, 
+            'Message' => 'You have successfully added new reviewers. '.(
+                $sent ? 'An email notification has been sent to the selected reviewers.' : 'The selected reviewers are not notified because the review is not started yet.'
+            ).''
+        ]);
     }
     
     
@@ -1796,7 +1938,7 @@ class Performance_management extends Public_Controller{
     }
 
     //
-    private function sendEmailNotifications($id, $revieweeId = 0){
+    private function sendEmailNotifications($id, $revieweeId = 0, $ids = []){
         //
         $record = $this->pmm->GetReviewByIdByReviewers($id, $revieweeId)[0];
         //
@@ -1809,6 +1951,12 @@ class Performance_management extends Public_Controller{
         $template = get_email_template(REVIEW_ADDED);
 
         foreach($record['Reviewees'] as $row){
+            //
+            if(!empty($ids)){
+                if(!in_array($row[0]['reviewer_sid'], $ids)){
+                    continue;
+                }
+            }
             //
             $replaceArray = [];
             $replaceArray['{{first_name}}'] = ucwords($row[0]['reviewer_first_name']);

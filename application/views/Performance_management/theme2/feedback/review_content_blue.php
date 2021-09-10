@@ -1,5 +1,7 @@
 <?php 
     //
+    $completedQuestionsOBJ = [];
+    //
     if($selectedPage == 'feedback' ){
         $selectedPage = 0;
     }
@@ -17,8 +19,9 @@
         $question = $review['QA'][$selectedPage -1];
     }
     //
-    foreach($review['QA'] as $q){
+    foreach($review['QA'] as $index => $q){
         if(!empty($q['answer']['text']) || !empty($q['answer']['multiple_choice']) ||!empty($q['answer']['rating'])){
+            $completedQuestionsOBJ[++$index] = true;
             $completedQuestionsCount++;
         }
     }
@@ -80,7 +83,7 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
                             <?= formatDateToDB($review['start_date'], 'Y-m-d', 'M d Y, D').' - '.formatDateToDB($review['end_date'], 'Y-m-d', 'M d Y, D');?>
                             <br /><?=getDueText($review['start_date'], true);?>
                         </p>
-                        <p class="csF14">
+                        <p class="csF14 csB7">
                             <?=ucwords($review['reviewer_first_name'].' '.$review['reviewer_last_name']);?>
                             Reviewing
                             <?=ucwords($review['first_name'].' '.$review['last_name']);?>
@@ -118,8 +121,8 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
                     <div>
                         <ul class="csPaginationMenu text-left">
                             <?php for($i = 1; $i <= $totalQuestions; $i++): ?>
-                            <li <?=$i == $selectedPage ? 'class="active"' : '';?>>
-                                <a href="<?=current_url();?>?page=<?=$i;?>"><?=$i;?></a>
+                            <li class="<?=$i == $selectedPage ? 'active' : '';?> <?=isset($completedQuestionsOBJ[$i]) ? ' active' : '';?>">
+                                <a href="<?=current_url();?>?page=<?=$i;?>" title="<?=isset($completedQuestionsOBJ[$i]) ? 'Completed' : 'Pending';?>" placement="top"><?=$i;?></a>
                             </li>
                             <?php endfor; ?>
                             <?php 
@@ -429,6 +432,18 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
                         </div>
                     </div>
                         <?php
+                    } else{
+                        ?>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <p class="csF16 csB7 csInfo text-right">
+                                        Your are not a reviewer. Only an assigned reviewer can submit the answer.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
                     }
                 ?>
             </div>
@@ -451,6 +466,7 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
                         <p class="csF16 csB7 csInfo">
                             <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp; Attach supporting documents. The documents will be visible to the Reporting Managers.
                         </p>
+                        <?php if($employerId == $reviewerId){ ?>
                         <!--  -->
                         <div class="row">
                             <div class="col-sm-12">
@@ -467,6 +483,7 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
                             </div>
                             <div class="clearfix"></div>
                         </div>
+                        <?php } ?>
                         <!--  -->
                         <div class="row">
                             <div class="col-xs-12">

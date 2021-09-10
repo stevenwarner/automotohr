@@ -105,10 +105,11 @@
 <!-- Reviews listing -->
 <?php 
     if(
-        strpos($this->uri->uri_string(), 'reviews') !== false
+        $this->uri->uri_string() == 'performance-management/reviews'
         ){
             ?>
         <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/reviews/index'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
+        <script type="text/javascript" src="<?=base_url('assets/performance_management/js/theme2/reviews/review_details'.( $prefixJS ).'.js');?>?v=<?=$version;?>"></script>
         <?php
     }
     ?>

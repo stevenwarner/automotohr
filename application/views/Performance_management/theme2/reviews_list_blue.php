@@ -11,9 +11,9 @@
                 </div>
                 <div class="col-xs-12 col-md-10">
                     <span class="pull-right">
-                        <a title="Show me active reviews" placement="top" href="<?=current_url();?>?type=active" class="btn btn-orange <?=$type == 'active' ? 'active' : ''?>">Active</a>
-                        <a title="Show me archived reviews" placement="top" href="<?=current_url();?>?type=archived" class="btn btn-orange <?=$type == 'archived' ? 'active' : ''?>">Archived</a>
-                        <a title="Show me reviews that are in draft" placement="top" href="<?=current_url();?>?type=draft" class="btn btn-orange <?=$type == 'draft' ? 'active' : ''?>">Draft</a>
+                        <a title="Show me active reviews" placement="top" href="<?=current_url();?>?type=active" class="btn btn-orange <?=$type == 'active' ? 'active' : ''?>">Active Reviews</a>
+                        <a title="Show me archived reviews" placement="top" href="<?=current_url();?>?type=archived" class="btn btn-orange <?=$type == 'archived' ? 'active' : ''?>">Archived Reviews</a>
+                        <a title="Show me reviews that are in draft" placement="top" href="<?=current_url();?>?type=draft" class="btn btn-orange <?=$type == 'draft' ? 'active' : ''?>">Reviews In Draft</a>
                     </span>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                                                     <?php
                                                 }
                                                 ?>
-                                                <a href="<?=purl('review/'.$review['sid']);?>" class="btn btn-black csF16 btn-xs" title="View Review Details" placement="top">
+                                                <a href="<?=purl('review/'.$review['sid']);?>" class="btn btn-black csF16 btn-xs" title="View Reviewee(s)" placement="top">
                                                     <i class="fa fa-eye csF16" aria-hidden="true"></i>
                                                 </a>
                                                 <button class="btn btn-black csF16 btn-xs jsAddReviewers"  title="Add Reviewers" placement="top">
@@ -124,12 +124,14 @@
                                         </p>
                                         <hr />
                                         <p class="csF14 csB7 mb0">Reviewer(s) Progress <i class="fa fa-question-circle-o csF14 csB7 csCP jsHintBtn" aria-hidden="true" data-target="jsReviewerProgress<?=$review['sid'];?>"></i></p>
-                                        <p class="jsHintBody" data-hint="jsReviewerProgress<?=$review['sid'];?>">The percentage of reviewers who have submitted the review.</p>
-                                        <p class="csF14"><?=getCompletedPercentage($review['Reviewees'], 'reviewers');?>% Completed</p>
+                                        <p class="jsHintBody" data-hint="jsReviewerProgress<?=$review['sid'];?>">The percentage of reviewers who have submitted the review. Click to view details.</p>
+                                        <p class="csF14 csB7 csFC2 csCP jsShowReviews" title="Click to see Reviewees/Reviewers" placement="top"><?=getCompletedPercentage($review['Reviewees'], 'reviewers');?>% Completed</p>
                                         <hr />
                                         <p class="csF14 csB7 mb0">Manager(s) Progress <i class="fa fa-question-circle-o csF14 csB7 csCP jsHintBtn" aria-hidden="true" data-target="jsManagerProgress<?=$review['sid'];?>"></i></p>
-                                        <p class="jsHintBody" data-hint="jsManagerProgress<?=$review['sid'];?>">The percentage of reporting managers who have submitted the review.</p>
-                                        <p class="csF14"><?=getCompletedPercentage($review['Reviewees'], 'manager');?>% Completed</p>
+                                        <p class="jsHintBody" data-hint="jsManagerProgress<?=$review['sid'];?>">The percentage of reporting managers who have submitted the review. Click to view details.</p>
+                                        <p class="csF14 csB7 csFC2 csCP jsShowReviews" title="Click to see Reviewees/Reviewers" placement="top">
+                                            <?=getCompletedPercentage($review['Reviewees'], 'manager');?>% Completed
+                                        </p>
                                     </div>
                                 </div>
                             </div>

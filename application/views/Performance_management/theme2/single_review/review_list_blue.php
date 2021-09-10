@@ -89,16 +89,16 @@ $MT = getCompletedPercentage($review['Reviewees'], 'manager', true);
                             <tr data-review_id="<?=$review['sid'];?>" data-id="<?=$reviewee['reviewee_sid'];?>">
                                 <td style="vertical-align: middle">
                                     <p class="csF14">
-                                        <?=$ne[$reviewee['reviewee_sid']]['Name'];?>
+                                        <b><?=$ne[$reviewee['reviewee_sid']]['Name'];?></b>
                                     </p>
                                     <p class="csF14">
                                         <?=$ne[$reviewee['reviewee_sid']]['Role'];?>
                                     </p>
                                 </td>
                                 <td style="vertical-align: middle">
-                                    <p class="csF14 csCP">
+                                    <a class="csF14 csB7 csCP jsReviewViewReviewers" title="Click to view employees" placement="top">
                                         <?=count($reviewee['reviewers']);?> Reviewer(s) Added
-                                    </p>
+                                    </a>
                                 </td>
                                 <td style="vertical-align: middle">
                                     <p class="csF14">

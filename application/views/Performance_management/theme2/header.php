@@ -32,20 +32,39 @@
             'segment' => 'review/create'
         ];
     }
-    $tabs[] =     [
+    $tabs[] = [
         'title' => 'Reviews',
-        'url' => '/reviews',
-        'slug' => 'reviews',
-        'icon' => 'th-list',
-        'segment' => 'reviews'
+        'submenu' => [ 
+        [
+            'title' => 'All Reviews',
+            'url' => '/reviews',
+            'slug' => 'reviews',
+            'icon' => '',
+            'segment' => 'reviews'
+        ],
+        [
+            'title' => 'Assigned Reviews - Reviewer',
+            'url' => '/reviews/all',
+            'slug' => 'assigned-reviews',
+            'icon' => '',
+            'segment' => 'reviews/all'
+        ],
+        [
+            'title' => 'Assigned Reviews - Reporting Manager',
+            'url' => '/feedbacks/all',
+            'slug' => 'assigned-reviews',
+            'icon' => '',
+            'segment' => 'reviews/all'
+        ],
+        [
+            'title' => 'Reviews Completed Against Me',
+            'url' => '/my-reviews',
+            'slug' => 'my-reviews',
+            'icon' => '',
+            'segment' => 'my-reviews'
+        ]]
     ];
-    $tabs[] =     [
-        'title' => 'My Reviews',
-        'url' => '/my-reviews',
-        'slug' => 'my-reviews',
-        'icon' => 'th-list',
-        'segment' => 'my-reviews'
-    ];
+    
     $tabs[] =     [
         'title' => 'Create a Goal',
         'url' => 'javascript:void(0)',
@@ -54,6 +73,8 @@
         'segment' => 'goal/create',
         'class' => 'jsCreateGoal'
     ];
+    
+    
     $tabs[] =     [
         'title' => 'Goals',
         'url' => '/goals',
@@ -104,7 +125,7 @@
             }
             //
             $lis .= '<li class="has">';
-            $lis .= '   <a href="javascript:void(0)">More &nbsp;&nbsp;<i class="fa fa-caret-down"></i></a>';
+            $lis .= '   <a href="javascript:void(0)"><i class="fa fa-list"></i>'.($tab['title']).' &nbsp;&nbsp;<i class="fa fa-caret-down"></i></a>';
             $lis .= '   <ul>';
             $lis .=       $tmp;
             $lis .= '   </ul>';

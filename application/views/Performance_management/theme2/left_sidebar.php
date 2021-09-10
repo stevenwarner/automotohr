@@ -42,7 +42,7 @@
     <!--  -->
     <?php
         if(
-            strpos($this->uri->uri_string(), 'reviews') !== false
+            $this->uri->uri_string() == 'performance-management/reviews'
             ){
                 ?>
             <!-- Help Box -->
@@ -51,38 +51,38 @@
                     <p class="csF14">
                         <button class="btn btn-black csF14 btn-xs">
                             <i class="fa fa-play csF14" aria-hidden="true"></i>
-                        </button>
-                        Manually starts the review.
+                        </button>&nbsp;
+                        <span class="csInfo csB7">Starts the review.</span>
                     </p>
                     <p class="csF14">
                         <button class="btn btn-black csF14 btn-xs">
                             <i class="fa fa-stop csF14" aria-hidden="true"></i>
-                        </button>
-                        Manually stops the review.
+                        </button>&nbsp;
+                        <span class="csInfo csB7">End the review.</span>
                     </p>
                     <p class="csF14">
                         <button class="btn btn-black csF14 btn-xs">
                             <i class="fa fa-eye csF14" aria-hidden="true"></i>
-                        </button>
-                        View reviewers and review details.
+                        </button>&nbsp;
+                        <span class="csInfo csB7">View Reviewees.</span>
                     </p>
                     <p class="csF14">
                         <button class="btn btn-black csF14 btn-xs">
                             <i class="fa fa-plus-circle csF14" aria-hidden="true"></i>
-                        </button>
-                        Add new reviewers.
+                        </button>&nbsp;
+                        <span class="csInfo csB7">Add a new reviewer.</span>
                     </p>
                     <p class="csF14">
                         <button class="btn btn-black csF14 btn-xs">
                             <i class="fa fa-users csF14" aria-hidden="true"></i>
-                        </button>
-                        Manage review visibility.
+                        </button>&nbsp;
+                        <span class="csInfo csB7">Manage review visibility.</span>
                     </p>
                     <p class="csF14">
                         <button class="btn btn-black csF14 btn-xs">
                             <i class="fa fa-archive csF14" aria-hidden="true"></i>
-                        </button>
-                        The review will be archived
+                        </button>&nbsp;
+                        <span class="csInfo csB7">Archive the review.</span>
                     </p>
                 </div>
             </div>

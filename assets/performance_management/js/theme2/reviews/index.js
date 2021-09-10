@@ -181,7 +181,9 @@ $(function() {
                 return;
             }
             //
-            handleSuccess('You have successfully added new reviewers.');
+            handleSuccess(resp.Message, function() {
+                $('#jsAddReviewersModal .jsModalCancel').click();
+            });
             //
             ml(false, 'jsAddReviewersModalLoader');
         });

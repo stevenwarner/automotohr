@@ -1,4 +1,68 @@
 
+<?php 
+
+    //
+    $newArray = [];
+    //
+    if(!empty($graph1['Records'])){
+        //
+        foreach($graph1['Records'] as $record){
+            //
+            if($record['is_completed'] == 1){
+                continue;
+            }
+            //
+            $url = ($record['is_manager'] ? 'feedback' : 'review'). '/';
+            $url .= $record['review_sid']. '/';
+            $url .= $record['reviewee_sid']. '/';
+            $url .= $record['reviewer_sid'];
+            //
+            if(!isset($newArray[$record['review_sid']])){
+                $newArray[$record['review_sid']] = [
+                    'Name' => $record['review_title'],
+                    'Count' => 0,
+                    'Rows' => ''
+                ];
+            }
+            //
+            $newArray[$record['review_sid']]['Count']++;
+            //
+            $newArray[$record['review_sid']]['Rows'] .= '
+            <tr>
+                <td style="vertical-align: middle;">
+                    <p class="csF16">
+                        '.(ucwords($record['first_name'].' '.$record['last_name'])).'
+                    </p>
+                </td>
+                <td style="vertical-align: middle;">
+                    <p class="csF16">
+                        '.(ucwords($record['reviewee_first_name'].' '.$record['reviewee_last_name'])).'
+                    </p>
+                </td>
+                <td style="vertical-align: middle;">
+                    <p class="csF16">
+                        '.($record['is_manager'] ? 'Reporting Manager' : 'Reviewer').'
+                    </p>
+                </td>
+                <td style="vertical-align: middle;">
+                    <p class="csF14">
+                        ('.(formatDateToDB($record['review_start_date'], DB_DATE, DATE)).' - 
+                        '.(formatDateToDB($record['review_end_date'], DB_DATE, DATE)).')
+                    </p>
+                </td>
+                <td style="vertical-align: middle;">
+                    <a href="'.(purl($url)).'" class="btn btn-orange csF16" target="_blank">
+                        <i class="fa fa-eye" aria-hidden="true"></i>&nbsp; View Review
+                    </a>
+                </td>
+            </tr>';
+        }
+        
+    }
+
+?>
+
+
 <!--  -->
 <div class="col-md-9 col-sm-12 col-xs-12">
     <!--  -->
@@ -31,7 +95,7 @@
                         <canvas id="jsTimeoffPieGraph" height="300px"></canvas>
                     </div>
                     <h3 class="csF16 text-center">
-                        <i class="fa fa-info-circle csF16 csB7" aria-hidden="true"></i>&nbsp;Based on started review(s).
+                        <i class="fa fa-info-circle csF16 csB7" aria-hidden="true"></i>&nbsp;Based on the started review(s).
                     </h3>
                 </div>
                 <!-- Graph 3 -->
@@ -53,57 +117,43 @@
             <p class="csF16 csB7">
                 Reviewer(s) that haven't completed the reviews.
             </p>
-            <table class="table table-striped table-condensed">
-                <caption></caption>
-                <thead>
-                    <tr>
-                        <th scope="col" class="csF16 csB7">Review</th>
-                        <th scope="col" class="csF16 csB7">Reviewee / Reviewer</th>
-                        <th scope="col" class="csF16 csB7">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        if(!empty($graph1['Records'])){
-                            foreach($graph1['Records'] as $record){
-                                //
-                                if($record['is_completed'] == 1){
-                                    continue;
-                                }
-                                //
-                                $url = ($record['is_manager'] ? 'feedback' : 'review'). '/';
-                                $url .= $record['review_sid']. '/';
-                                $url .= $record['reviewee_sid']. '/';
-                                $url .= $record['reviewer_sid'];
-                                ?>
-                                <tr>
-                                    <td style="vertical-align: middle;">
-                                        <p class="csF16">
-                                            <?=ucwords($record['review_title']);?>
-                                        </p>
-                                        <p class="csF14">
-                                            (<?=formatDate($record['review_start_date'], 'Y-m-d', DATE);?> - 
-                                            <?=formatDate($record['review_end_date'], 'Y-m-d', DATE);?>)
-                                        </p>
-                                    </td>
-                                    <td style="vertical-align: middle;">
-                                        <p class="csF16">
-                                            <?=ucwords($record['first_name'].' '.$record['last_name']);?>&nbsp;<i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp;
-                                            <?=ucwords($record['reviewee_first_name'].' '.$record['reviewee_last_name']);?>
-                                        </p>
-                                    </td>
-                                    <td style="vertical-align: middle;">
-                                        <a href="<?=purl($url);?>" class="btn btn-orange csF16" target="_blank">
-                                            <i class="fa fa-eye" aria-hidden="true"></i>&nbsp; View Review
-                                        </a>
-                                    </td>
-                                </tr>
-                                <?php
-                            }
-                        }
-                    ?>
-                </tbody>
-            </table>
+            <?php
+                if(!empty($newArray)){
+                    foreach($newArray as $row){
+                        ?>
+                        <div class="pane panel-theme">
+                            <div class="panel-heading">
+                                <h5 class="csF16 csB7 mt0 mb0 csW">
+                                    <?=$row['Name'];?>
+                                    <span class="pull-right">
+                                        Records Found: <?=$row['Count'];?>
+                                    </span>
+                                </h5>
+                                <div class="clearfix"></div>
+                            </div>
+                            <!--  -->
+                            <div class="panel-body">
+                                <table class="table table-striped">
+                                    <caption></caption>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Reviewer</th>
+                                            <th scope="col">Reviewee</th>
+                                            <th scope="col">Cycle Period</th>
+                                            <th scope="col">Review Type</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?= $row['Rows']; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
+            ?>
         </div>
     </div>
 </div>

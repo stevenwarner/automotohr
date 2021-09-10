@@ -31,7 +31,7 @@ class Notifications extends Public_Controller {
             //
             $this->load->model('Performance_management_model', 'pmm');
             //
-            $review = $this->pmm->getMyPendingReviewCounts($ses['company_detail']['sid'], $ses['employer_detail']['sid']);
+            $review = $this->pmm->getMyReviewCounts($ses['company_detail']['sid'], $ses['employer_detail']['sid']);
             $total_goals = count($this->pmm->getMyGoals($ses['employer_detail']['sid']));
             //
             if($total_goals){
@@ -43,10 +43,10 @@ class Notifications extends Public_Controller {
             }
             
             //
-            if($review['Reviews']){
+            if($review['Total']){
                 $data[] = [
-                    'count' => $review['Reviews'],
-                    'link' => base_url('performance-management/reviews'),
+                    'count' => $review['Total'],
+                    'link' => base_url('performance-management/reviews/all'),
                     'title' => 'Pending Reviews'
                 ];
             }

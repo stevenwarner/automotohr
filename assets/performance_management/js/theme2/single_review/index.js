@@ -188,7 +188,9 @@ $(function() {
         //
         $.post(pm.urls.pbase + 'update_reviewee', data).done(function(resp) {
             //
-            handleSuccess('You have successfully updated reviewers.');
+            handleSuccess(resp.Message, function() {
+                window.location.reload();
+            });
             //
             ml(false, 'jsAddReviewersModalLoader');
         });

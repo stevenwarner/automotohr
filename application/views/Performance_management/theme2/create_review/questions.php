@@ -18,7 +18,7 @@
         <div class="col-sm-4 col-xs-12">
             <label class="csF16 csB7">Description <i class="fa fa-question-circle-o jsHintBtn csCP" data-target="help"
                     aria-hidden="true"></i></label>
-            <p class="csF14 jsHintBody" data-hint="help">Explain the to the reviewer what they need to add into the answer section.</p>
+            <p class="csF14 jsHintBody" data-hint="help">Explain to the reviewer what they need to add into the answer.</p>
         </div>
         <div class="col-sm-8 col-xs-12">
             <textarea id="jsReviewQuestionAddDescription" class="form-control" rows="5"
@@ -31,7 +31,7 @@
         <div class="col-sm-4 col-xs-12">
             <label class="csF16 csB7">Video Help <i class="fa fa-question-circle-o jsHintBtn csCP"
                     data-target="video_help" aria-hidden="true"></i></label>
-            <p class="csF14 jsHintBody" data-hint="video_help">Record/Upload a video explaining the to the reviewer what to add into the answer section.</p>
+            <p class="csF14 jsHintBody" data-hint="video_help">Record/Upload a video explaining to the reviewer what to add into the answer.</p>
         </div>
         <div class="col-sm-8 col-xs-12">
             <label class="control control--radio csF16">

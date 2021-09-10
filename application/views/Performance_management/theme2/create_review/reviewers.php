@@ -39,19 +39,20 @@
             <div class="col-md-8 col-xs-12">
                 <!--  -->
                 <label class="control control--radio csF14">
-                    <input type="radio" class="jsReviewReviewerType" name="jsReviewReviewerType" value="reporting_manager" /> Reporting Manager
+                    <input type="radio" class="jsReviewReviewerType" name="jsReviewReviewerType" value="reporting_manager" /> Reporting Manager <i class="fa fa-info-circle csCP" aria-hidden="true" data-content="The reporting managers will provide feedback. The reporting managers can be set from Departments Management." data-toggle="popover" title=""></i>
+                    <div class="control__indicator"></div>
+                </label>
+                <br>
+                <label class="control control--radio csF14">
+                    <input type="radio" class="jsReviewReviewerType" name="jsReviewReviewerType" value="self_review" /> Self Review <i class="fa fa-info-circle csCP" aria-hidden="true" data-content="The selected reviewees will provide self review." data-toggle="popover" title=""></i>
                     <div class="control__indicator"></div>
                 </label> <br>
                 <label class="control control--radio csF14">
-                    <input type="radio" class="jsReviewReviewerType" name="jsReviewReviewerType" value="self_review" /> Self Review
+                    <input type="radio" class="jsReviewReviewerType" name="jsReviewReviewerType" value="peers" /> Peers (Colleagues) <i class="fa fa-info-circle csCP" aria-hidden="true" data-content="The selected reviewers colleagues will provide feedback." data-toggle="popover" title=""></i>
                     <div class="control__indicator"></div>
                 </label> <br>
                 <label class="control control--radio csF14">
-                    <input type="radio" class="jsReviewReviewerType" name="jsReviewReviewerType" value="peers" /> Peers (Colleagues)
-                    <div class="control__indicator"></div>
-                </label> <br>
-                <label class="control control--radio csF14">
-                    <input type="radio" class="jsReviewReviewerType" name="jsReviewReviewerType" value="specific_reviewers" /> Specific Reviewers
+                    <input type="radio" class="jsReviewReviewerType" name="jsReviewReviewerType" value="specific_reviewers" /> Specific Reviewers <i class="fa fa-info-circle csCP" aria-hidden="true" data-content="The selected reviewers will provide the feedback.." data-toggle="popover" title=""></i>
                     <div class="control__indicator"></div>
                 </label> <br>
                 <!--  -->
@@ -101,12 +102,12 @@
                         <div class="col-sm-5 col-xs-12">
                             <select class="select2 jsReviewReviewerSelectBoxIncluded" multiple>
                             </select>
-                            <p class="csF14 csB7">Included Reviewers</p>
+                            <p class="csF14 csB7">Included Reviewers&nbsp;<i class="fa fa-info-circle csCP" aria-hidden="true" data-content="You can add additional reviewers to provide feedback." data-toggle="popover" title=""></i></p>
                         </div>
                         <div class="col-sm-5 col-xs-12">
                             <select class="select2 jsReviewReviewerSelectBoxExcluded" multiple>
                             </select>
-                            <p class="csF14 csB7">Excluded Reviewers</p>
+                            <p class="csF14 csB7">Excluded Reviewers&nbsp;<i class="fa fa-info-circle csCP" aria-hidden="true" data-content="The selected employees will not provide feedback against this employee." data-toggle="popover" title=""></i></p>
                         </div>
                         <div class="col-sm-2 col-xs-12">
                             <i class="fa fa-arrow-circle-left csF18 csB7 ma10 csCP jsReviewReviewerBackCountBtn" aria-hidden="true"
@@ -137,3 +138,10 @@
     </div>
     <div class="clearfix"></div>
 </div>
+
+
+<script>
+      $('[data-toggle="popover"]').popover({
+          trigger: 'hover'
+      })
+</script>

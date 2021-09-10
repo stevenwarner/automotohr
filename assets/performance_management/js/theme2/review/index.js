@@ -74,7 +74,7 @@ $(function() {
             return;
         }
         //
-        if (totalPages == completedPages || page == 0) {
+        if (totalPages - 1 == completedPages || page == 0) {
             question.completed = 1;
         }
         //

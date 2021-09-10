@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-md-9 col-sm-12">
                     <h5 class="csF16 csB7 csW jsToggleHelp" data-target="assigned_reviews">
-                        Assigned Reviews
+                        Reviews Assigned To Me - Reviewer
                     </h5>
                 </div>
                 <div class="col-md-3 col-sm-12">
@@ -14,7 +14,7 @@
                      if(!empty($AssignedReviews)){
                     ?>
                     <span class="pull-right">
-                        <a href="<?=purl("reviews");?>" class="btn btn-orange"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
+                        <a href="<?=purl("reviews/all");?>" class="btn btn-orange"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
                             Review(s)</a>
                     </span>
                     <?php } ?>
@@ -82,7 +82,7 @@
             <div class="row">
                 <div class="col-md-9 col-sm-12">
                     <h5 class="csF16 csB7 csW jsToggleHelp" data-target="feedback_reviews">
-                        Feedback Reviews
+                        Reviews Assigned To Me - Reporting Manager
                     </h5>
                 </div>
                 <div class="col-md-3 col-sm-12">
@@ -90,7 +90,7 @@
                      if(!empty($FeedbackReviews)){
                     ?>
                     <span class="pull-right">
-                        <a href="<?=purl("reviews");?>" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
+                        <a href="<?=purl("feedbacks/all");?>" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
                             Review(s)</a>
                     </span>
                     <?php } ?>
@@ -369,7 +369,7 @@
                     } else{
                         ?>
                         <div class="col-sm-12">
-                        <p class="csF26 csB7 text-center">
+                        <p class="csF16 csB7 text-center">
                             <i class="fa fa-check csF40" aria-hidden="true"></i><br />
                             You haven't created any goals yet
                         </p>

@@ -708,10 +708,12 @@ class Performance_management_model extends CI_Model{
         ->from("{$this->PRRS}")
         ->join("{$this->PRR}", "{$this->PRR}.review_sid = {$this->PRRS}.review_sid AND {$this->PRR}.reviewee_sid = {$this->PRRS}.reviewee_sid", "inner")
         ->join("{$this->R}", "{$this->R}.sid = {$this->PRR}.review_sid", "inner")
-        ->where("{$this->PRR}.is_started", 1)
-        ->where("{$this->PRRS}.reviewer_sid", $employeeId)
         ->where("{$this->R}.company_sid", $companyId)
+        ->where("{$this->PRR}.is_started", 1)
         ->where("{$this->R}.is_archived", 0)
+        ->where("{$this->R}.is_draft", 0)
+        ->where("{$this->PRRS}.reviewer_sid", $employeeId)
+        ->where("{$this->PRRS}.is_completed", 0)
         ->get();
         //
         $result = $query->result_array();
@@ -783,12 +785,17 @@ class Performance_management_model extends CI_Model{
     /**
      * 
      */
-    function GetReviewsByTypeForDashboard($employeeId, $type){
+    function GetReviewsByTypeForDashboard($employeeId, $type, $limit = 0){
+        //
+        if($limit != 0){
+            $this->db->limit($limit);
+        }
         //
         $query = 
         $this->db
         ->select("
             {$this->R}.sid,
+            {$this->R}.review_title,
             {$this->PRR}.reviewee_sid,
             {$this->PRRS}.reviewer_sid,
             {$this->PRR}.start_date,
@@ -1216,7 +1223,6 @@ class Performance_management_model extends CI_Model{
         $rt['Started'] = 
         $this->db
         ->where("{$this->R}.status", 'started')
-        
         ->where("{$this->R}.is_draft <>", 1)
         ->where("{$this->R}.is_archived <>", 1)
         ->where("{$this->R}.company_sid", $companyId)
@@ -1226,7 +1232,6 @@ class Performance_management_model extends CI_Model{
         $rt['Pending'] = 
         $this->db
         ->where("{$this->R}.status", 'pending')
-        
         ->where("{$this->R}.is_draft <>", 1)
         ->where("{$this->R}.is_archived <>", 1)
         ->where("{$this->R}.company_sid", $companyId)
@@ -1245,14 +1250,12 @@ class Performance_management_model extends CI_Model{
         $rt['Draft'] = 
         $this->db
         ->where("{$this->R}.is_draft", 1)
-        ->where("{$this->R}.is_archived <>", 1)
         ->where("{$this->R}.company_sid", $companyId)
         ->count_all_results($this->R);
         
         //
         $rt['Archived'] = 
         $this->db
-        ->where("{$this->R}.is_draft <>", 1)
         ->where("{$this->R}.is_archived", 1)
         ->where("{$this->R}.company_sid", $companyId)
         ->count_all_results($this->R);
@@ -2062,6 +2065,19 @@ class Performance_management_model extends CI_Model{
         //
         return $reviews;
     }
-
+    
+    //
+    function IsReviewStarted(
+        $reviewId,
+        $revieweeId
+    ){
+        return $this->db
+        ->where([
+            "is_started" => 1,
+            "reviewee_sid" => $revieweeId,
+            "review_sid" => $reviewId
+        ])
+        ->count_all_results($this->PRR);
+    }
     
 }
