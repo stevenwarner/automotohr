@@ -11013,7 +11013,7 @@ if (!function_exists('remakeEmployeeName')) {
         //
         $r = $i ? $first_name . ' ' . $last_name : '';
         //
-        if (!isset($o['job_title']) && $o['job_title'] != '' && $o['job_title'] != null) $r .= ' (' . ($o['job_title']) . ')';
+        if (isset($o['job_title']) && $o['job_title'] != '' && $o['job_title'] != null) $r .= ' (' . ($o['job_title']) . ')';
         //
         $r .= ' [' . remakeAccessLevel($o) . ']';
         //
