@@ -108,18 +108,18 @@ $(function() {
                 //
                 trs += '<tr>';
                 trs += '    <td style="vertical-align: middle;">';
-                trs += '        <p class="csF16">';
+                trs += '        <p class="csF16"><strong>';
                 trs += ne[reviewer['reviewer_sid']]['Name'];
-                trs += '        </p>';
-                trs += '        <p class="csF16">';
+                trs += '        </strong></p>';
+                trs += '        <p class="csF14">';
                 trs += ne[reviewer['reviewer_sid']]['Role'];
                 trs += '        </p>';
                 trs += '    </td>';
                 trs += '    <td style="vertical-align: middle;">';
-                trs += '        <p class="csF16 csB7 text-' + (reviewer['is_manager'] == 1 ? 'success' : 'warning') + '">' + (reviewer['is_manager'] == 1 ? "Reporting Manager" : "Reviewer") + '</p>';
+                trs += '        <p class="csF16 csB7">' + (reviewer['is_manager'] == 1 ? "Reporting Manager" : "Reviewer") + '</p>';
                 trs += '    </td>';
                 trs += '    <td style="vertical-align: middle;">';
-                trs += '        <p class="csF16 csB7 text-' + (reviewer['is_completed'] == 1 ? 'success' : 'warning') + '">' + (reviewer['is_completed'] == 1 ? "COMPLETED" : "PENDING") + '</p>';
+                trs += '        <p class="csF16 csB7 ' + (reviewer['is_completed'] == 1 ? 'csFC1' : 'csFC3') + '"><strong>' + (reviewer['is_completed'] == 1 ? "COMPLETED" : "PENDING") + '</strong></p>';
                 trs += '    </td>';
                 trs += '    <td style="vertical-align: middle;">';
                 trs += '        <a href="' + (link) + '" class="btn btn-orange csF16"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Review</a>';

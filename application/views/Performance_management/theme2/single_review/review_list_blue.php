@@ -96,7 +96,7 @@ $MT = getCompletedPercentage($review['Reviewees'], 'manager', true);
                                     </p>
                                 </td>
                                 <td style="vertical-align: middle">
-                                    <a class="csF14 csB7 csCP jsReviewViewReviewers" title="Click to view employees" placement="top">
+                                    <a class="csF14 csB7  csFC2 csCP jsReviewViewReviewers" title="Click to view employees" placement="top">
                                         <?=count($reviewee['reviewers']);?> Reviewer(s) Added
                                     </a>
                                 </td>

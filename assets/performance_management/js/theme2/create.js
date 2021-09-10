@@ -1706,10 +1706,13 @@ $(function() {
                         return true;
                     });
                     //
-                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').show(0);
-                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"] .select2').select2('val', null);
-                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.select2:nth-child(1)').select2('val', newInc);
-                    $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerCount').text(newInc.length);
+                    if ($('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').length) {
+                        //
+                        $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').show(0);
+                        $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"] .select2').select2('val', null);
+                        $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.select2:nth-child(1)').select2('val', newInc);
+                        $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerCount').text(newInc.length);
+                    }
                     //
                     if (obj.Reviewers.reviewees[employeeId].excluded) {
                         $('.jsReviewReviewersRow[data-id="' + (employeeId) + '"]').find('.jsReviewReviewerSelectBoxExcluded').select2('val', obj.Reviewers.reviewees[employeeId].excluded);
