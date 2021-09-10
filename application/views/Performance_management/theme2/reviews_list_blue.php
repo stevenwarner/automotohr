@@ -79,7 +79,7 @@
                                                 <a href="<?=purl('review/'.$review['sid']);?>" class="btn btn-black csF16 btn-xs" title="View Reviewee(s)" placement="top">
                                                     <i class="fa fa-eye csF16" aria-hidden="true"></i>
                                                 </a>
-                                                <button class="btn btn-black csF16 btn-xs jsAddReviewers"  title="Add Reviewers" placement="top">
+                                                <button class="btn btn-black csF16 btn-xs jsAddReviewers"  title="Add Reviewees" placement="top">
                                                     <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
                                                 </button>
                                                 <button class="btn btn-black csF16 btn-xs jsReviewVisibility"  title="Manage Visibility" placement="top">

@@ -993,14 +993,20 @@ class Performance_management_model extends CI_Model{
             return true;
         }
         //
+        $r = $this->db
+        ->select('review_start_date, review_end_date')
+        ->where('sid', $reviewId)
+        ->get($this->R)
+        ->row_array();
+        //
         $this->db->insert($this->PRR, [
             'review_sid' => $reviewId,
             'reviewee_sid' => $revieweeId,
             'created_at' => date('Y-m-d H:i:s', strtotime('now')),
             'updated_at' => date('Y-m-d H:i:s', strtotime('now')),
             'is_started' => 0,
-            'start_date' => '',
-            'end_date' => ''
+            'start_date' => $r['review_start_date'],
+            'end_date' => $r['review_end_date']
         ]);
         return $this->db->insert_id();
     }
@@ -2114,5 +2120,4 @@ class Performance_management_model extends CI_Model{
         ])
         ->count_all_results($this->PRR);
     }
-    
 }

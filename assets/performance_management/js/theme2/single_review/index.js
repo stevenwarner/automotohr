@@ -364,7 +364,9 @@ $(function() {
                 return;
             }
             //
-            handleSuccess('You have successfully added new reviewers.');
+            handleSuccess('You have successfully added new reviewers.', function() {
+                window.location.reload();
+            });
             //
             ml(false, 'jsAddReviewersModalLoader');
         });

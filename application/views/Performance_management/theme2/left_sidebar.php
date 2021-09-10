@@ -70,7 +70,7 @@
                         <button class="btn btn-black csF14 btn-xs">
                             <i class="fa fa-plus-circle csF14" aria-hidden="true"></i>
                         </button>&nbsp;
-                        <span class="csInfo csB7">Add a new reviewer.</span>
+                        <span class="csInfo csB7">Add a new reviewee.</span>
                     </p>
                     <p class="csF14">
                         <button class="btn btn-black csF14 btn-xs">
