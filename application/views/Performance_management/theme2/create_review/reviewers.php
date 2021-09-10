@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-xs-11">
                 <p class="csF16 csB7 csW mb0">Select Reviewers <small>(The reviewer's are the employee's who will
-                        provide feedback.)</small></p>
+                        provide feedback).</small></p>
             </div>
             <div class="col-xs-1">
                 <span class="pull-right">
@@ -24,7 +24,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <p class="csF16 pl10"><i class="fa fa-info-circle csF18 csB7" aria-hidden="true"></i>&nbsp;<em
-                        class="csInfo">All reviews will submit to the respective reporting managers.</em>.</p>
+                        class="csInfo">All reviews will submit to the respective reporting managers.</em></p>
             </div>
         </div>
 

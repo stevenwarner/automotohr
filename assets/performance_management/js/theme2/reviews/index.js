@@ -11,7 +11,7 @@ $(function() {
         //
         Modal({
             Id: 'jsAddReviewersModal',
-            Title: 'Add Reviewers to ' + $(this).closest('.jsReviewBox').data('title'),
+            Title: 'Add Reviewees to ' + $(this).closest('.jsReviewBox').data('title'),
             Body: getReviewerBody(),
             Loader: 'jsAddReviewersModalLoader'
         }, function() {
