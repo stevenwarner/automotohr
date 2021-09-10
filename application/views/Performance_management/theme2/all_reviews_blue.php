@@ -24,7 +24,7 @@
             $tr .= '        <p class="csF16 csB7">';
             $tr .=              formatDateToDB($review['start_date'], DB_DATE, DATE).' - '.formatDateToDB($review['end_date'], DB_DATE, DATE);
             $tr .= '            </br> ';
-            $tr .= '            Due In: '.($review['end_date'] < $now ? 'Past Date' : dateDifferenceInDays($now, $review['end_date'], '%a')).' Day(s)';
+            $tr .= '            Due In: '.($review['end_date'] < $now ? 'Due date passed' : dateDifferenceInDays($now, $review['end_date'], '%a').' Day(s)').' ';
             $tr .= '        </p>';
             $tr .= '    </td>';
             $tr .= '    <td>';
