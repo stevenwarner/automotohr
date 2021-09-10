@@ -74,7 +74,7 @@
                             <div class="col-xs-12">
                                 <div class="panel panel-success">
                                     <div class="panel-heading" style="padding-bottom: 0">
-                                        <p><strong>Q<?=$index;?>: <?=$question['question']['title'];?></strong></p>
+                                        <p><strong>Q<?=++$index;?>: <?=$question['question']['title'];?></strong></p>
                                     </div>
                                     <div class="panel-body">
                                         <p><?=$question['question']['description'];?></p>
