@@ -2,7 +2,6 @@
 
 class Payroll extends CI_Controller
 {
-
     //
     private $userDetails;
     private $data;
@@ -941,6 +940,57 @@ class Payroll extends CI_Controller
         $request['employee_compensations'] = $employeeArray;
         //
         $response = UpdatePayrollById($request, $company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            //
+            res([
+                'Status' => true,
+                'Response' => $response
+            ]);
+        }
+    }
+
+    /**
+     * 
+     */
+    function CancelPayroll(){
+        //
+        if(
+            !$this->input->is_ajax_request() &&
+            $this->input->method() != 'post' &&
+            empty($this->input->post())
+        ){
+            res($this->resp);
+        }
+        //
+        $data = [];
+        //
+        $this->checkLogin($data);
+        //
+        $post = $this->input->post(NULL, TRUE);
+        // Make request array
+        //
+        $company = $this->pm->GetCompany($data['companyId'], [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $company['payroll_id'] = $post['payrollId'];
+        //
+        $response = CancelPayrollById($company);
         //
         if(isset($response['errors'])){
             //

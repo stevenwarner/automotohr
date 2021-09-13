@@ -1382,6 +1382,7 @@ $route['payroll/employee/add/(:num)']['get'] = 'payroll/Payroll/AddEmployee/$1';
 $route['payroll/get_employee_ba/(:num)']['get'] = 'payroll/Payroll/GetEmployeeBankAccounts/$1';
 $route['payroll/get_add_bank_account/(:num)']['get'] = 'payroll/Payroll/GetAddBankAccount/$1';
 $route['payroll/get_edit_bank_account/(:num)/(:num)']['get'] = 'payroll/Payroll/GetEditBankAccount/$1/$2';
+$route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
 
 $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
 $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
