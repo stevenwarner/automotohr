@@ -85,6 +85,8 @@
                 <?php $this->load->view('payroll/partials/partial_create_step_2_taxes'); ?>
                 <!-- Worked hours -->
                 <?php $this->load->view('payroll/partials/partial_create_step_2_worked_hours'); ?>
+                <!-- Company pay -->
+                <?php $this->load->view('payroll/partials/partial_create_step_2_companies_pay'); ?>
             </div>
         </div>
     </div>

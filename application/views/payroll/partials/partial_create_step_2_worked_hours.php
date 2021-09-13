@@ -402,7 +402,7 @@
                                     <tr>
                                        <td class="vam ban">
                                            <h6 class="csF16">
-                                           <?=($emp['id']);?><?=($emp['last_name'].', '.$emp['first_name']);?>
+                                           <?=($emp['last_name'].', '.$emp['first_name']);?>
                                            </h6>
                                        </td> 
                                        <td class="vam ban">

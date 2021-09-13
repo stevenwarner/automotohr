@@ -72,6 +72,7 @@
                 </div>
                 <?php $step == 1 ? $this->load->view('payroll/partials/create_step_1') : '';?>
                 <?php $step == 2 ? $this->load->view('payroll/partials/create_step_2') : '';?>
+                <?php $step == 3 ? $this->load->view('payroll/partials/create_step_3') : '';?>
             </div>
         </div>
     </div>
