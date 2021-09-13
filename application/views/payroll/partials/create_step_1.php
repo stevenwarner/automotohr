@@ -718,11 +718,11 @@ if(!empty($Payroll['employee_compensations'])):
                 payrollEmployee.doubleOvertimeMultiplier = parseFloat(payrollEmployee.hourlyCompensations['double-overtime']['compensation_multiplier']);
             }
             //
-            payrollEmployee.bonus = parseFloat(payrollEmployee.fixedCompensations['bonus']['amount']);
-            payrollEmployee.cashTips = parseFloat(payrollEmployee.fixedCompensations['cash-tips']['amount']);
-            payrollEmployee.correctionPayments = parseFloat(payrollEmployee.fixedCompensations['correction-payment']['amount']);
-            payrollEmployee.commission = parseFloat(payrollEmployee.fixedCompensations['commission']['amount']);
-            payrollEmployee.paycheckTips = parseFloat(payrollEmployee.fixedCompensations['paycheck-tips']['amount']);
+            payrollEmployee.bonus = payrollEmployee.fixedCompensations['bonus'] !== undefined ? parseFloat(payrollEmployee.fixedCompensations['bonus']['amount']) : 0.00;
+            payrollEmployee.cashTips = payrollEmployee.fixedCompensations['cash-tips'] !== undefined ? parseFloat(payrollEmployee.fixedCompensations['cash-tips']['amount']): 0.00;
+            payrollEmployee.correctionPayments = payrollEmployee.fixedCompensations['correction-payment'] !== undefined ? parseFloat(payrollEmployee.fixedCompensations['correction-payment']['amount']): 0.00;
+            payrollEmployee.commission = payrollEmployee.fixedCompensations['commission'] !== undefined ? parseFloat(payrollEmployee.fixedCompensations['commission']['amount']): 0.00;
+            payrollEmployee.paycheckTips = payrollEmployee.fixedCompensations['paycheck-tips'] !== undefined ? parseFloat(payrollEmployee.fixedCompensations['paycheck-tips']['amount']) : 0.00;
 
             // Let's set the regular hours
             boxREF.find('.jsPayrollRowEditRHValue').text("$"+ payrollEmployee.regularHours.toFixed(2));

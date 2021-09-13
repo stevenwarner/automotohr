@@ -172,6 +172,10 @@ class Payroll_model extends CI_Model{
         $payroll
     ){
         //
+        if(empty($payroll['version'])){
+            return true;
+        }
+        //
         $isNew = false;
         $doAdd = true;
         //
@@ -242,6 +246,7 @@ class Payroll_model extends CI_Model{
         $this->db
         ->select($columns)
         ->where('payroll_id', $payrollId)
+        ->order_by('sid', 'desc')
         ->get($this->tables['PH']);
         //
         $record = $query->row_array();
