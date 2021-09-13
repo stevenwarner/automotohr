@@ -16,9 +16,16 @@
                     <div class="col-sm-12">
                         <h1 class="csF18 csB9">
                             Run Payroll
+                            <span class="pull-right">
+                                <a href="<?=current_url().'/onetime';?>" class="btn btn-orange csF16 csB7">
+                                    <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
+                                    Run A One-time Payroll
+                                </a>
+                            </span>
                         </h1>
                         <hr>
                     </div>
+                    <div class="clearfix"></div>
                 </div>
                 <!--  -->
                 <div class="row">

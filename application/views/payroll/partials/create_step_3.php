@@ -56,7 +56,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <p class="csF16">
-                    Need to cancel payroll? It’s easy to re-run if needed. Cancel this payroll 
+                    Need to cancel payroll? It’s easy to re-run if needed. <button class="btn btn-link mtn5 csFC3 jsCancelPayroll">Cancel this payroll </button>
                 </p>
             </div>
         </div>
@@ -85,3 +85,37 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    $(function(){
+        //
+        $('.jsCancelPayroll').click(function(event){
+            //
+            event.preventDefault();
+            //
+            alertify.confirm(
+                'You may cancel the July 31 - August 13 payroll now and run it again later. Just note that your employees will be paid late if you don’t run it by 4:00pm PDT on September 13, 2021.<br><strong>Don’t want to lose all your data?</strong><br>Rest assured—we’ll save all the info you entered for this payroll, in case you need to re-run it.', 
+                function(){
+                    CancelPayroll();
+                }
+            );
+        });
+        
+        //
+        function CancelPayroll(){
+            //
+            ml(true, 'jsIPLoader', 'Please wait, while we are cancelling the payroll.');
+            //
+            $.post(
+                "<?=base_url("cancel_payroll");?>", {
+                    payrollId:"<?=$payrollId;?>"
+                }
+            ).done(function(resp){
+                alertify.alert("Success!", "Payroll has been cancelled.", function(){
+                    window.location.href = window.location.origin + '/payroll/create';
+                });
+            });
+        }
+    });
+</script>
