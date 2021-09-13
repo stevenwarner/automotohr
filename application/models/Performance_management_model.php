@@ -1678,11 +1678,11 @@ class Performance_management_model extends CI_Model{
                 //
                 $question = json_decode($row['question'], true);
                 //
-                unset(
-                    $question['id'],
-                    $question['not_applicable'],
-                    $question['video_help']
-                );
+                // unset(
+                //     $question['id'],
+                //     $question['not_applicable'],
+                //     $question['video_help']
+                // );
                 //
                 if(!empty($reviewerIdArray)){
                     //
