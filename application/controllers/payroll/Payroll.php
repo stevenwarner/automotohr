@@ -170,7 +170,8 @@ class Payroll extends CI_Controller
         }else{
             if($this->data['step'] == 2){
                 // Calulate Payroll
-                $this->CalculatePayroll($this->data['companyId'], $payrolId);
+                // $this->CalculatePayroll($this->data['companyId'], $payrolId);
+                // usleep(200);
             }
             //
             $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'])['Response'];
@@ -181,7 +182,6 @@ class Payroll extends CI_Controller
                 $payrolId,
                 $this->data['Payroll']
             );
-            _e($this->data['Payroll'], true, true);
             //
             $this->data['PayrollEmployees'] = $this->GetCompanyEmployees($this->data['companyId'])['Response'];
             //
@@ -919,7 +919,7 @@ class Payroll extends CI_Controller
                 $reimbursements = $payroll['reimbursements'];
                 //
                 foreach($reimbursements as $reimbursement){
-                    $reimbursement['job_id'] = $ta['fixed_compensations'][0]['job_id'];
+                    $reimbursement['job_id'] = isset($ta['fixed_compensations'][0]['job_id']) ? $ta['fixed_compensations'][0]['job_id'] : $payroll['reimbursements'][0]['job_id'];
                     $reimbursement['name'] = 'Reimbursement';
                     $ta['fixed_compensations'][] = $reimbursement;
                 }

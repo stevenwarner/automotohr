@@ -266,7 +266,8 @@ function Model(options, cb) {
 function debounce(func, wait, immediate) {
     var timeout;
     return function() {
-        var context = this, args = arguments;
+        var context = this,
+            args = arguments;
         var later = function() {
             timeout = null;
             if (!immediate) func.apply(context, args);
@@ -280,18 +281,16 @@ function debounce(func, wait, immediate) {
 
 //
 function setCaretPosition(elem, caretPos) {
-    if(elem != null) {
-        if(elem.createTextRange) {
+    if (elem != null) {
+        if (elem.createTextRange) {
             var range = elem.createTextRange();
             range.move('character', caretPos);
             range.select();
-        }
-        else {
-            if(elem.selectionStart) {
+        } else {
+            if (elem.selectionStart) {
                 elem.focus();
                 elem.setSelectionRange(caretPos, caretPos);
-            }
-            else
+            } else
                 elem.focus();
         }
     }
@@ -300,3 +299,14 @@ function setCaretPosition(elem, caretPos) {
 function numberFormat(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+//
+$('.jsSectionTrigger').click(function(event) {
+    //
+    event.preventDefault();
+    //
+    $(this).toggleClass('fa-minus-circle');
+    $(this).toggleClass('fa-plus-circle');
+    //
+    $('.jsSectionBody[data-id="' + ($(this).data('target')) + '"]').toggleClass('dn');
+});

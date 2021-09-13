@@ -1,5 +1,4 @@
-<?php  
-?>
+
 
 <!-- Tabs -->
 <div class="jsPageTabContainer">
@@ -61,11 +60,11 @@
                         <p class="csF16 mb0">Debit Amount <i class="fa fa-info-circle csInfo csF18 csCP" aria-hidden="true" title="The debit amount is what we will withdraw from your bank account. Because it excludes anything paid by the company directly (check payments, company benefits, benefits, etc.), it might be less than the total payroll." placement="top"></i></p>
                         <p class="csF18 csB9">$<?=number_format($Payroll['totals']['company_debit'], 2);?></p>
                     </div>
-                    <div class="col-sm-2 col-xs-12">
+                    <div class="col-sm-3 col-xs-12">
                         <p class="csF16 mb0">Debit Date</p>
                         <p class="csF18 csB9"><?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></p>
                     </div>
-                    <div class="col-sm-2 col-xs-12">
+                    <div class="col-sm-3 col-xs-12">
                         <p class="csF16 mb0">Employee pay date</p>
                         <p class="csF18 csB9"><?=formatDateToDB($Payroll['check_date'], DB_DATE, DATE);?></p>
                     </div>
@@ -74,37 +73,18 @@
                 <!--  -->
                 <div class="row">
                     <div class="col-sm-12 text-left">
+                        <button class="btn btn-black">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Back
+                        </button>
                         <button class="btn btn-orange">
                             <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Submit Payroll
                         </button>
-                        <button class="btn btn-black">
-                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Cancel
-                        </button>
                     </div>
                 </div>
-                <!-- Taxes & Debits -->
-                <div class="panel panel-theme">
-                    <div class="panel-heading">
-                        <p class="csF16 csB7 csW">
-                            What Gets Taxed And Debited
-                        </p>
-                    </div>
-                    <div class="panel-body">
-                        <table class="table table-striped">
-                            <caption></caption>
-                            <thead>
-                                <tr>
-                                    <th scope="col">Tax Description</th>
-                                    <th scope="col">By Your Employees</th>
-                                    <th scope="col">By Your Company</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <!-- Tax & deductions -->
+                <?php $this->load->view('payroll/partials/partial_create_step_2_taxes'); ?>
+                <!-- Worked hours -->
+                <?php $this->load->view('payroll/partials/partial_create_step_2_worked_hours'); ?>
             </div>
         </div>
     </div>
