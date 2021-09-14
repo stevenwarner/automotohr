@@ -307,9 +307,11 @@ switch (ENVIRONMENT)
 if($_SERVER['HTTP_HOST'] == 'www.automotohr.com' || $_SERVER['HTTP_HOST'] == 'automotohr.com'){
 	error_reporting(0);
 	ini_set('display_errors', 0);
+	define('MINIFIED', '-min');
 } else{
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
+	define('MINIFIED', '');
 }
 
 //

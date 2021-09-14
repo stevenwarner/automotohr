@@ -334,5 +334,21 @@ $(function() {
                 });
         };
 
+
+
     }
 });
+
+function ml(status, target, msg) {
+    //
+    if (status) {
+        $('.jsIPLoader[data-page="' + (target) + '"]').show();
+    } else {
+        $('.jsIPLoader[data-page="' + (target) + '"]').hide();
+    }
+
+    if (msg) {
+        //
+        $('.jsIPLoader[data-page="' + (target) + '"] .jsIPLoaderText').html(msg);
+    }
+}

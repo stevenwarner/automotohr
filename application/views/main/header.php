@@ -418,7 +418,8 @@
                                         ($class == 'home' && $method == 'event') ||
                                         ($class == 'home' && $method == 'services' && $this->uri->segment(2) == 'questionnaires-tutorial') ||
                                         $class == 'performance_review' ||
-                                        $class == 'payroll'
+                                        $class == 'payroll' ||
+                                        isset($logged_in_view)
                                     ) {
                                         echo " header-position";
                                     } elseif ($class == 'demo') {

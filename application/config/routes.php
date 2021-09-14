@@ -1362,6 +1362,37 @@ $route['send_manual_reminder_email_to_employee']['post'] = 'ajax/Email_manager/S
 $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/SendManualEmailReminderToManager';
 
 
+
+//
+// $route['payroll/dashboard']['get'] = 'payroll/Payroll/Dashboard';
+// $route['payroll/accounts']['get'] = 'payroll/Payroll/Accounts';
+// $route['payroll/settings']['get'] = 'payroll/Payroll/Settings';
+// $route['payroll/create']['get'] = 'payroll/Payroll/Create';
+// $route['payroll/create/(:any)']['get'] = 'payroll/Payroll/Create/$1';
+// $route['payroll/employees']['get'] = 'payroll/Payroll/EmployeeList';
+// $route['payroll/employee/add/(:num)']['get'] = 'payroll/Payroll/AddEmployee/$1';
+
+// // AJAX Get
+// $route['payroll/get_employee_ba/(:num)']['get'] = 'payroll/Payroll/GetEmployeeBankAccounts/$1';
+// $route['payroll/get_add_bank_account/(:num)']['get'] = 'payroll/Payroll/GetAddBankAccount/$1';
+// $route['payroll/get_edit_bank_account/(:num)/(:num)']['get'] = 'payroll/Payroll/GetEditBankAccount/$1/$2';
+// $route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
+
+// $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
+// $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
+// $route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
+// $route['payroll/add_employee_to_payroll']['post'] = 'payroll/Payroll/AddEmployeeToPayroll';
+// $route['payroll/add_bc_to_payroll']['post'] = 'payroll/Payroll/AddBankAccountToPayroll';
+// $route['payroll/add_company_payroll_bank_account']['post'] = 'payroll/Payroll/AddCompanyBankAccountToPayroll';
+// $route['payroll/edit_company_payroll_bank_account']['post'] = 'payroll/Payroll/EditCompanyBankAccountToPayroll';
+// $route['payroll/remove_company_bank_account']['post'] = 'payroll/Payroll/RemoveCompanyBankAccounts';
+// $route['payroll/update_bank_account_to_payroll']['post'] = 'payroll/Payroll/UpdateCompanyBankAccount';
+// $route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';
+// //
+// $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
+// $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
+
+
 /**
  * API - Authentication
  * Authenticates the company request
@@ -1369,31 +1400,13 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
  * @param String $token
  */
 $route['verify_my_token/(:any)']['post'] = 'Authentication/VerifyToken/$1';
-//
-$route['payroll/dashboard']['get'] = 'payroll/Payroll/Dashboard';
-$route['payroll/accounts']['get'] = 'payroll/Payroll/Accounts';
-$route['payroll/settings']['get'] = 'payroll/Payroll/Settings';
-$route['payroll/create']['get'] = 'payroll/Payroll/Create';
-$route['payroll/create/(:any)']['get'] = 'payroll/Payroll/Create/$1';
-$route['payroll/employees']['get'] = 'payroll/Payroll/EmployeeList';
-$route['payroll/employee/add/(:num)']['get'] = 'payroll/Payroll/AddEmployee/$1';
 
-// AJAX Get
-$route['payroll/get_employee_ba/(:num)']['get'] = 'payroll/Payroll/GetEmployeeBankAccounts/$1';
-$route['payroll/get_add_bank_account/(:num)']['get'] = 'payroll/Payroll/GetAddBankAccount/$1';
-$route['payroll/get_edit_bank_account/(:num)/(:num)']['get'] = 'payroll/Payroll/GetEditBankAccount/$1/$2';
-$route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
 
-$route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
-$route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
-$route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
-$route['payroll/add_employee_to_payroll']['post'] = 'payroll/Payroll/AddEmployeeToPayroll';
-$route['payroll/add_bc_to_payroll']['post'] = 'payroll/Payroll/AddBankAccountToPayroll';
-$route['payroll/add_company_payroll_bank_account']['post'] = 'payroll/Payroll/AddCompanyBankAccountToPayroll';
-$route['payroll/edit_company_payroll_bank_account']['post'] = 'payroll/Payroll/EditCompanyBankAccountToPayroll';
-$route['payroll/remove_company_bank_account']['post'] = 'payroll/Payroll/RemoveCompanyBankAccounts';
-$route['payroll/update_bank_account_to_payroll']['post'] = 'payroll/Payroll/UpdateCompanyBankAccount';
-$route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';
-//
-$route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
-$route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
+/**
+ * Company Routes
+ * All the company related routes will 
+ * be defined here
+ * 
+ */
+$route['company/taxes']['get'] = 'company/Company/Taxes';
+$route['company/bank_account']['get'] = 'company/Company/BankAccount';

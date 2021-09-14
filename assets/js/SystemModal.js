@@ -15,7 +15,7 @@ function Modal(
                     </span>
                     <span class="csModalButtonWrap">
                     ${ options.Buttons !== undefined && options.Buttons.length !== 0 ? options.Buttons.join('') : '' }
-                        <button class="btn btn-black jsModalCancel" ${options.Ask === undefined ? '' : 'data-ask="no"'} title="Close this window">Cancel</button>
+                        <button class="btn btn-black btn-cancel csW jsModalCancel" ${options.Ask === undefined ? '' : 'data-ask="no"'} title="Close this window">Cancel</button>
                     </span>
                     <div class="clearfix"></div>
                 </h3>
@@ -81,11 +81,11 @@ function ml(doShow, p, msg) {
     if (doShow === undefined || doShow === false) $(p).hide();
     else $(p).show();
     //
-    if(msg !== undefined){
+    if (msg !== undefined) {
         $('.jsIPLoaderText').text(msg);
-    } 
+    }
     //
-    if(!doShow){
+    if (!doShow) {
         //
         $('.jsIPLoaderText').text('Please wait, while we are generating a preview.');
     }

@@ -13772,7 +13772,7 @@ if(!function_exists('LoginToAPI')){
                 ]
             );
             //
-            $curl = curl_init(getCreds('AHR')->API_SERVER_URL.'employee/login');
+            $curl = curl_init(getAPIUrl('login'));
             //
             curl_setopt_array($curl, [
                 CURLOPT_POST => TRUE,
@@ -13842,5 +13842,24 @@ if(!function_exists('ResetRate')){
         }
         //
         return $newRate;
+    }
+}
+
+if(!function_exists('getAPIUrl')){
+    function getAPIUrl($index){
+        //
+        $urls = [];
+        // Employee login URL
+        $urls['login'] = 'employee/login';
+        // Get Company Account
+        $urls['bank_account'] = 'company/bank_account';
+        //
+        return  getCreds('AHR')->API_SERVER_URL.(isset($urls[$index]) ? $urls[$index] : '');
+    }
+}
+
+if(!function_exists('getAPIKey')){
+    function getAPIKey(){
+        return $_SESSION['API_TOKENS'];
     }
 }

@@ -2574,3 +2574,38 @@ if(!function_exists('hasDocumentsAssigned')){
         );
     }
 }
+
+/**
+ * Check user session and set data
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/02/2021
+ *
+ * @param Reference $data
+ * @param Bool      $return (Default is 'FALSE')
+ * 
+ * @return VOID
+ */
+if(!function_exists('CheckLogin')){
+    function CheckLogin(&$data, $return = FALSE){
+        //
+        $_this = &get_instance();
+        //
+        if (!$_this->session->userdata('logged_in')) {
+            if ($return) {
+                return false;
+            }
+            redirect('login', 'refresh');
+        }
+        //
+        $data['session'] = $_this->session->userdata('logged_in');
+        //
+        if ($return) {
+            return true;
+        }
+        else {
+            //
+            $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid'], NULL, $data['session']);
+        }
+    }
+}

@@ -187,7 +187,8 @@ if ($class != 'dashboard' &&
     $this->uri->segment(2) != 'questionnaires-tutorial ' &&
     $this->uri->segment(1) != 'performance_review' &&
     $this->uri->segment(1) != 'payroll' &&
-    $this->uri->segment(1) != 'performance'
+    $this->uri->segment(1) != 'performance' &&
+    !isset($logged_in_view)
 ) { ?>
         <div class="footer-widgets hidden-print">
             <div class="container-fluid">
@@ -1002,7 +1003,14 @@ if ($class != 'dashboard' &&
         })
     </script>
     <script src="<?=base_url('assets/js/common.js?v1.0');?>"></script>
-    <script src="<?=base_url('assets/portal/app.min.js');?>?v=1.0.0"></script>
+    <script src="<?=base_url('assets/portal/app.min.js');?>?v=1.0.2"></script>
+    <?php 
+        if(isset($Assets)){
+            foreach($Assets as $asset){
+                echo $asset;
+            }
+        }
+    ?>
         </body>
 </html>
     <?php } else { ?>
