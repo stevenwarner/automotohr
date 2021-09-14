@@ -17,3 +17,10 @@ $hook['post_controller'][] = array(
     'function' => 'checkIfAppIsEnabled',
     'class' => 'AppVerify'
 );
+// Run 
+$hook['post_controller'][] = array(
+    'filepath' => 'hooks',
+    'filename' => 'AppVerify.php',
+    'function' => 'loginToAPI',
+    'class' => 'AppVerify'
+);

@@ -1360,3 +1360,12 @@ $route['manage_admin/reports/daily_activity_report/get_employee/(:num)']['post']
 // 16/8/2021
 $route['send_manual_reminder_email_to_employee']['post'] = 'ajax/Email_manager/SendManualEmailReminderToEmployee';
 $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/SendManualEmailReminderToManager';
+
+
+/**
+ * API - Authentication
+ * Authenticates the company request
+ *
+ * @param String $token
+ */
+$route['verify_my_token/(:any)']['post'] = 'Authentication/VerifyToken/$1';
