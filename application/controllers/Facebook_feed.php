@@ -936,17 +936,40 @@ class Facebook_feed extends CI_Controller
      * 
      */
     function jobsStatus(){
-        $this->makeCall(
-            'https://graph.facebook.com/v7.0/310277717149233/jobs?access_token=2211285445561045%7CCDxZYxcSQcx6mJFHiH1RRHbtyOk&fields=job_status,external_id,platform_review_status,id,wage,review_rejection_reasons,errors&limit=5000',
-            array(CURLOPT_CUSTOMREQUEST => "GET")
-        );
+        //
+        $jobs = [];
+        $feedIds = ["310277717149233","2925045904484375","1364424370612380"];
+        //
+        foreach($feedIds as  $feedId){
+            //
+            $url = 'https://graph.facebook.com/v7.0/'.($feedId).'/jobs?access_token=2211285445561045%7CCDxZYxcSQcx6mJFHiH1RRHbtyOk&fields=job_status,external_id,platform_review_status,id,wage,review_rejection_reasons,errors&limit=5000';
+            //
+            $this->makeCall(
+                $url,
+                array(CURLOPT_CUSTOMREQUEST => "GET")
+            );
+            //
+            $jobs = array_merge($jobs, $this->curl['data']);
+            //
+            usleep(200);
+        }
         //
         $ids = [];
         $inserted = 0;
         $updated = 0;
-        $total = count($this->curl['data']);
+        $total = 0;
         //
-        foreach($this->curl['data'] as $job){
+        $alreadyExists = [];
+        //
+        foreach($jobs as $job){
+            //
+            if(isset($alreadyExists[$jobs['external_id']])){
+                continue;
+            }
+            //
+            $alreadyExists[$jobs['external_id']] = true;
+            $total++;
+            //
             $t = [];
             $t['job_id'] = $job['external_id'];
             $t['external_id'] = $job['id'];
