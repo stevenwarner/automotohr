@@ -13723,3 +13723,76 @@ if(!function_exists('res')){
         exit(0);
     }
 }
+
+
+/**
+ *  Login the user to the API server
+ *  and generate tokens to be used later on
+ * 
+ *  @author  Mubashir Ahmed (14/09/2021)
+ *  @version 1.0
+ */
+if(!function_exists('LoginToAPI')){
+    function LoginToAPI(){
+        //
+        $CI =& get_instance();
+        //
+        if(isset($_SESSION['logged_in']) && isset($_SESSION['API_TOKENS'])){
+            //
+            if(
+                !$CI->db
+                ->where([
+                    'status' => 1,
+                    'token' => $_SESSION['API_TOKEN_CODE'],
+                    'user_sid' => $_SESSION['logged_in']['employer_detail']['sid']
+                ])
+                ->count_all_results('api_tokens')
+            ){
+                unset(
+                    $_SESSION['API_TOKEN_CODE'],
+                    $_SESSION['API_TOKENS']
+                );
+            }
+        }
+        //
+        if(isset($_SESSION['logged_in']) && !isset($_SESSION['API_TOKENS'])){
+            //
+            $API_TOKEN_CODE = $CI->encrypt->encode('apitoken'.$_SESSION['logged_in']['employer_detail']['sid']);
+            //
+            $_SESSION['API_TOKEN_CODE'] = $API_TOKEN_CODE;
+            // Lets store it in database
+            $CI->db
+            ->insert(
+                'api_tokens', [
+                    'user_sid' => $_SESSION['logged_in']['employer_detail']['sid'],
+                    'token' => $API_TOKEN_CODE,
+                    'status' => 1,
+                    'created_at' => date("Y-m-d H:i:s", strtotime("now")),
+                    'updated_at' => date("Y-m-d H:i:s", strtotime("now"))
+                ]
+            );
+            //
+            $curl = curl_init(getCreds('AHR')->API_SERVER_URL.'employee/login');
+            //
+            curl_setopt_array($curl, [
+                CURLOPT_POST => TRUE,
+                CURLOPT_POSTFIELDS => json_encode([
+                    'Token' => $API_TOKEN_CODE, 
+                    'Code'=> $_SESSION['logged_in']['employer_detail']['sid'],
+                    'EmployeeCode'=> $_SESSION['logged_in']['employer_detail']['sid'],
+                    'CompanyCode'=> $_SESSION['logged_in']['company_detail']['sid']
+                ]),
+                CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+                CURLOPT_RETURNTRANSFER => 1
+            ]);
+            //
+            $result = json_decode(curl_exec($curl), true);
+            //
+            curl_close($curl);
+            //
+            if($result['Status']){
+                $_SESSION['API_TOKENS'] = $result['Response'];
+            }
+        }
+    }
+}
