@@ -1385,7 +1385,10 @@ $route['payroll/get_edit_bank_account/(:num)/(:num)']['get'] = 'payroll/Payroll/
 $route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
 
 $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
+<<<<<<< HEAD
 $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
+=======
+>>>>>>> 9df066a63e39bb25f6048e4012b84e727cd50b71
 $route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
 $route['payroll/add_employee_to_payroll']['post'] = 'payroll/Payroll/AddEmployeeToPayroll';
 $route['payroll/add_bc_to_payroll']['post'] = 'payroll/Payroll/AddBankAccountToPayroll';
@@ -1395,4 +1398,8 @@ $route['payroll/remove_company_bank_account']['post'] = 'payroll/Payroll/RemoveC
 $route['payroll/update_bank_account_to_payroll']['post'] = 'payroll/Payroll/UpdateCompanyBankAccount';
 $route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';
 //
+<<<<<<< HEAD
 $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
+=======
+$route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
+>>>>>>> 9df066a63e39bb25f6048e4012b84e727cd50b71
