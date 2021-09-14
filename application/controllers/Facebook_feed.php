@@ -963,11 +963,11 @@ class Facebook_feed extends CI_Controller
         //
         foreach($jobs as $job){
             //
-            if(isset($alreadyExists[$jobs['external_id']])){
+            if(isset($alreadyExists[$job['external_id']])){
                 continue;
             }
             //
-            $alreadyExists[$jobs['external_id']] = true;
+            $alreadyExists[$job['external_id']] = true;
             $total++;
             //
             $t = [];
