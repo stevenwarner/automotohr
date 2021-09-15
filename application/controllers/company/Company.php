@@ -23,7 +23,10 @@ class Company extends CI_Controller
     }
 
     /**
+     * Set Company Bank Accounts
      * 
+     * @method CheckLogin
+     * @method Assets
      */
     function BankAccount(){
         //
@@ -39,10 +42,33 @@ class Company extends CI_Controller
         ->view('payroll/includes/bank_account')
         ->view($this->pages['footer']);
     }
-
+    
+    /**
+     * Set Company Taxes
+     * 
+     * @method CheckLogin
+     * @method Assets
+     */
+    function Taxes(){
+        //
+        CheckLogin($this->data);
+        //
+        $this->data['Assets'] = $this->Assets('taxes');
+        //
+        $this->data['title'] = 'Company Taxes';
+        $this->data['load_view'] = 0;
+        //
+        $this->load
+        ->view($this->pages['header'], $this->data)
+        ->view('payroll/includes/taxes')
+        ->view($this->pages['footer']);
+    }
 
     /**
+     * Generate Assets for the page
      * 
+     * @param String $page
+     * @return Array
      */
     private function Assets($page){
         //
@@ -55,6 +81,10 @@ class Company extends CI_Controller
         //
         $Assets['bank_account'] = [
             '<script src="'.(base_url('assets/payroll/bank_account'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+        ];
+        //
+        $Assets['taxes'] = [
+            '<script src="'.(base_url('assets/payroll/tax'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
         ];
         //
         return array_merge($Assets['common'],$Assets[$page]);

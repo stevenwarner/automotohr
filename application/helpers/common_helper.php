@@ -13853,6 +13853,8 @@ if(!function_exists('getAPIUrl')){
         $urls['login'] = 'employee/login';
         // Get Company Account
         $urls['bank_account'] = 'company/bank_account';
+        // Get Company Tax
+        $urls['tax'] = 'company/tax';
         //
         return  getCreds('AHR')->API_SERVER_URL.(isset($urls[$index]) ? $urls[$index] : '');
     }

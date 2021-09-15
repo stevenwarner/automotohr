@@ -6,7 +6,56 @@ $(function BankAccount() {
     var oldData = {};
 
     /**
-     * 
+     * Verify the bank account
+     */
+    $('.jsVerifyBankAccount').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        alertify.confirm(
+            "Verify a company bank account by confirming the two micro-deposits sent to the bank account.<br> 1- $0.02<br>2- $0.42<br>Would you like to continue?",
+            function() {
+                //
+                ml(true, LOADER, 'Please wait while we are adding a request to verify bank account.');
+                //
+                $.ajax({
+                    url: API_URL + '/verify',
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    data: JSON.stringify({ uid: oldData.PayrollUUID })
+                }).done(function(resp) {
+                    //
+                    ml(false, LOADER);
+                    //
+                    return alertify.alert("Success!", resp.response);
+                });
+            }
+        );
+    });
+
+    /**
+     * Refresh the payrol bank account status
+     */
+    $('.jsRefreshBankAccount').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        ml(true, LOADER, 'Please wait while we are fetching the status....');
+        //
+        $.ajax({
+            url: API_URL + '/refresh',
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        }).done(function() {
+            //
+            ml(false, LOADER);
+            //
+            GetBankAccount();
+        });
+    });
+
+    /**
+     * Show bank update history
      */
     $('.jsBankAccountHistory').click(function(event) {
         //
@@ -99,14 +148,6 @@ $(function BankAccount() {
             return;
         }
         //
-        if (JSON.stringify(oldData) === JSON.stringify(o)) {
-            return alertify.alert('Error!', 'You haven\'t made any change to the bank account.');
-        }
-        //
-        oldData.RoutingNumber = o.RoutingNumber;
-        oldData.AccountNumber = o.AccountNumber;
-        oldData.AccountType = o.AccountType;
-        //
         ml(true, LOADER);
         //
         $.ajax({
@@ -119,10 +160,16 @@ $(function BankAccount() {
             ml(false, LOADER);
             //
             if (!resp.status) {
-                return alertify.alert('Error!', resp.response);
+                return alertify.alert('Error!', typeof resp.response === 'object' ? resp.response.join('<br>') : resp.response);
             }
             //
-            return alertify.alert('Success!', resp.response);
+            oldData.RoutingNumber = o.RoutingNumber;
+            oldData.AccountNumber = o.AccountNumber;
+            oldData.AccountType = o.AccountType;
+            //
+            return alertify.alert('Success!', resp.response, function() {
+                GetBankAccount();
+            });
         });
     });
 
@@ -131,14 +178,14 @@ $(function BankAccount() {
      */
     function GetBankAccount() {
         //
+        ml(true, LOADER);
+        //
         $.get(API_URL)
             .done(function(resp) {
-                // Hides the loader
-                ml(false, LOADER);
                 //
                 if (resp.response) {
                     //
-                    $('.jsStatus').text(resp.response.VerifiedStatus.toUpperCase());
+                    $('.jsStatus').text(resp.response.VerifiedStatus.toUpperCase().replace(/_/, ' '));
                     //
                     $('.jsBankAccountRoutingNumber').val(resp.response.RoutingNumber);
                     //
@@ -152,12 +199,20 @@ $(function BankAccount() {
                     //
                     $('.jsLastModifiedTime').text(resp.response.LastModifiedOn);
                     //
-                    oldData = {
-                        RoutingNumber: resp.response.RoutingNumber.toString(),
-                        AccountNumber: resp.response.AccountNumber.toString(),
-                        AccountType: resp.response.AccountType
-                    };
+                    if (resp.response.PayrollUUID) {
+                        //
+                        $('.jsRefreshBankAccount').removeClass('dn');
+                    }
+                    //
+                    if (resp.response.PayrollUUID && resp.response.VerifiedStatus == 'ready_for_verification') {
+                        //
+                        $('.jsVerifyBankAccount').removeClass('dn');
+                    }
+                    //
+                    oldData = resp.response;
                 }
+                // Hides the loader
+                ml(false, LOADER);
             });
     }
 

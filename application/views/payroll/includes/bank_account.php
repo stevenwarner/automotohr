@@ -22,7 +22,7 @@
                         <div class="col-sm-12">
                             <p class="csInfo csB7 text-justify">
                                 <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                If a default bank account exists, the new bank account will replace it as the company's default funding method. Upon being created, two verification deposits are automatically sent to the bank account, and the bank account's verification_status is 'Awaiting Deposits'. When the deposits are successfully transferred, the verification_status changes to 'Ready For vVerification', at which point the verify endpoint can be used to verify the bank account. After successful verification, the bank account's verification_status is 'Verified'.
+                                If a default bank account exists, the new bank account will replace it as the company's default funding method. Upon being created, two verification deposits are automatically sent to the bank account, and the bank account's verification_status is 'Awaiting Deposits'. When the deposits are successfully transferred, the verification_status changes to 'Ready For Verification', at which point the verify endpoint can be used to verify the bank account. After successful verification, the bank account's verification_status is 'Verified'.
                             </p>
                         </div>
                     </div>
@@ -31,12 +31,20 @@
                         <?php $this->load->view('loader_new', ['id' => 'company_bank_account']); ?>
                         <!--  -->
                         <div class="row">
-                            <div class="col-md-6 col-xs-12 text-left">
+                            <div class="col-md-12 col-xs-12 text-right">
+                                <?php if(checkIfAppIsEnabled('payroll')): ?>
+                                <button class="btn btn-success csF14 csB7 jsVerifyBankAccount dn" title="Verify Bank Account For Payroll" placement="top"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Verify Bank Account</button>
+                                <button class="btn btn-success csF14 csB7 jsRefreshBankAccount dn" title="Refresh Verification Status" placement="top"><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;Refresh Status</button>
+                                <?php endif; ?>
+                                <button class="btn btn-success csF14 csB7 jsBankAccountHistory"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Show Bank Account History</button>
+                            </div>
+                        </div>
+                        <br>
+                        <!--  -->
+                        <div class="row">
+                            <div class="col-md-12 col-xs-12 text-left">
                                 <label class="csF16">Verification Status: <strong class="text-warning jsStatus">-</strong></label>
                                 <p class="csF14 jsLastModified dn">Last modified by <strong class="jsLastModifiedPerson"></strong> on <strong class="jsLastModifiedTime"></strong></p>
-                            </div>
-                            <div class="col-md-6 col-xs-12 text-right">
-                                <button class="btn btn-success csF14 csB7 jsBankAccountHistory"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Show Bank Account History</button>
                             </div>
                         </div>
                         <br>
@@ -76,13 +84,9 @@
                                 </select>
                             </div>
                         </div>
-                        <!--  -->
                         <br>
                         <div class="row">
                             <div class="col-sm-12 text-right">
-                                <button class="btn btn-success csF14 csB7 jsBankAccountUpdate">
-                                    <i class="fa fa-edit csF14" aria-hidden="true"></i>&nbsp;
-                                </button>
                                 <button class="btn btn-success csF14 csB7 jsBankAccountUpdate">
                                     <i class="fa fa-edit csF14" aria-hidden="true"></i>&nbsp;Update Bank Account
                                 </button>

@@ -350,5 +350,7 @@ function ml(status, target, msg) {
     if (msg) {
         //
         $('.jsIPLoader[data-page="' + (target) + '"] .jsIPLoaderText').html(msg);
+    } else {
+        $('.jsIPLoader .jsIPLoaderText').html("Please wait while we process your request.");
     }
 }

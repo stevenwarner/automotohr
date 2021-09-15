@@ -1002,8 +1002,8 @@ if ($class != 'dashboard' &&
             }
         })
     </script>
-    <script src="<?=base_url('assets/js/common.js?v1.0');?>"></script>
-    <script src="<?=base_url('assets/portal/app.min.js');?>?v=1.0.2"></script>
+    <script src="<?=base_url('assets/js/common.js?v1.0.1');?>"></script>
+    <script src="<?=base_url('assets/portal/app.js');?>?v=1.0.2"></script>
     <?php 
         if(isset($Assets)){
             foreach($Assets as $asset){
