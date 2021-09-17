@@ -1,22 +1,19 @@
 $(function BankAccount() {
-
     //
-    var LOADER = 'company_bank_account';
-    //
-    var oldData = {};
+    var LOADER = 'company_tax';
 
     /**
-     * 
+     * Show tax updation history
      */
-    $('.jsBankAccountHistory').click(function(event) {
+    $('.jsTaxHistory').click(function(event) {
         //
         event.preventDefault();
         //
         Modal({
-            Id: 'jsBankAccountHistoryModal',
-            Title: 'Bank Account History',
-            Body: '<div id="jsBankAccountHistoryBody"></div>',
-            Loader: "jsBankAccountHistoryModalLoader"
+            Id: 'jsTaxHistoryModal',
+            Title: 'Tax History',
+            Body: '<div id="jsTaxHistoryBody"></div>',
+            Loader: "jsTaxHistoryModalLoader"
         }, function() {
             //
             $.get(API_URL + '/history')
@@ -28,10 +25,13 @@ $(function BankAccount() {
                         resp.response.map(function(obj) {
                             rows += '<tr>';
                             rows += '   <td class="csF16 vam">' + (obj.Name) + '</td>';
-                            rows += '   <td class="csF16 vam text-right">' + (obj.RoutingNumber) + '</td>';
-                            rows += '   <td class="csF16 vam text-right">' + (obj.AccountNumber) + '</td>';
-                            rows += '   <td class="csF16 vam text-right">' + (obj.AccountType.toUpperCase()) + '</td>';
-                            rows += '   <td class="csF16 vam text-right">' + (obj.VerifiedStatus.toUpperCase()) + '</td>';
+                            rows += '   <td class="csF16 vam text-right">' + (obj.LegalName) + '</td>';
+                            rows += '   <td class="csF16 vam text-right">' + (obj.EIN) + '</td>';
+                            rows += '   <td class="csF16 vam text-right">' + (obj.TaxPayerType) + '</td>';
+                            rows += '   <td class="csF16 vam text-right">' + (obj.FillingForm) + '</td>';
+                            rows += '   <td class="csF16 vam text-right">' + (obj.Scorp ? "Yes" : "No") + '</td>';
+                            rows += '   <td class="csF16 vam text-right">' + (obj.Version) + '</td>';
+                            rows += '   <td class="csF16 vam text-right csB7 ' + (obj.VerifiedStatus ? 'csFC1' : 'csFC3') + '">' + (obj.VerifiedStatus ? "VERIFIED" : "UNVERIFIED") + '</td>';
                             rows += '</tr>';
                         });
                     } else {
@@ -51,13 +51,22 @@ $(function BankAccount() {
                     html += '                Employee';
                     html += '            </td>';
                     html += '            <td class="csBG2 csW vam csF16 csB7 text-right">';
-                    html += '                Routing Number';
+                    html += '                Legal Name';
                     html += '            </td>';
                     html += '            <td class="csBG2 csW vam csF16 csB7 text-right">';
-                    html += '                Account Number';
+                    html += '                EIN';
                     html += '            </td>';
                     html += '            <td class="csBG2 csW vam csF16 csB7 text-right">';
-                    html += '                Account Type';
+                    html += '                Tax Payer Type';
+                    html += '            </td>';
+                    html += '            <td class="csBG2 csW vam csF16 csB7 text-right">';
+                    html += '                Filling Form';
+                    html += '            </td>';
+                    html += '            <td class="csBG2 csW vam csF16 csB7 text-right">';
+                    html += '                Taxable As Scorp';
+                    html += '            </td>';
+                    html += '            <td class="csBG2 csW vam csF16 csB7 text-right">';
+                    html += '                Version';
                     html += '            </td>';
                     html += '            <td class="csBG2 csW vam csF16 csB7 text-right">';
                     html += '                Verified Status';
@@ -68,44 +77,51 @@ $(function BankAccount() {
                     html += '</table>';
                     html += '</div>';
                     //
-                    $('#jsBankAccountHistoryBody').html(html);
+                    $('#jsTaxHistoryBody').html(html);
                     //
-                    ml(false, 'jsBankAccountHistoryModalLoader');
+                    ml(false, 'jsTaxHistoryModalLoader');
                 });
         });
     });
 
     /**
-     * Update company bank account
+     * Update company tax details
      */
-    $('.jsBankAccountUpdate').click(function(event) {
+    $('.jsTaxUpdateBtn').click(function(event) {
         // Stop the default action
         event.preventDefault();
         // Set a plain object
         var o = {};
-        // Set Routing Number
-        o.RoutingNumber = $('.jsBankAccountRoutingNumber').val().trim();
-        // Set Account Number
-        o.AccountNumber = $('.jsBankAccountNumber').val().trim();
-        // Set Account type
-        o.AccountType = $('.jsBankAccountType option:selected').val();
+        // Set Legal Name
+        o.LegalName = $('.jsTaxLegalName').val().trim();
+        // Set EIN number
+        o.EIN = $('.jsTaxEIN').val().trim();
+        // Set Payer Type
+        o.TaxPayerType = $('.jsTaxPayerType option:selected').val();
+        // Set Filling Type
+        o.FillingForm = $('.jsTaxFillingForm option:selected').val();
+        // Set Scorp
+        o.Scorp = $('.jsTaxScorp').prop('checked') ? 1 : 0;
         // Validation
-        if (o.RoutingNumber.replace(/[^0-9]/g, '').length !== 9) {
-            alertify.alert('Error!', 'The provided routing number is invalid. The routing number must be of 9 digits.');
-            return;
-        }
-        if (o.AccountNumber.replace(/[^0-9]/g, '').length !== 9) {
-            alertify.alert('Error!', 'The provided account number is invalid. The account number must be of 9 digits.');
+        if (o.LegalName.length <= 3) {
+            alertify.alert('Error!', 'The legal name must be of minimum 3 characters.');
             return;
         }
         //
-        if (JSON.stringify(oldData) === JSON.stringify(o)) {
-            return alertify.alert('Error!', 'You haven\'t made any change to the bank account.');
+        if (o.EIN.replace(/[^0-9]/g, '').length !== 9) {
+            alertify.alert('Error!', 'The provided EIN is invalid. The EIN must be of 9 digits.');
+            return;
         }
         //
-        oldData.RoutingNumber = o.RoutingNumber;
-        oldData.AccountNumber = o.AccountNumber;
-        oldData.AccountType = o.AccountType;
+        if (o.TaxPayerType == '0') {
+            alertify.alert('Error!', 'Please, select a tax payer type.');
+            return;
+        }
+        //
+        if (o.FillingForm == '0') {
+            alertify.alert('Error!', 'Please, select the filling form.');
+            return;
+        }
         //
         ml(true, LOADER);
         //
@@ -119,17 +135,42 @@ $(function BankAccount() {
             ml(false, LOADER);
             //
             if (!resp.status) {
-                return alertify.alert('Error!', resp.response);
+                return alertify.alert('Error!', typeof resp.response === 'object' ? resp.response.join("<br>") : resp.response);
             }
             //
-            return alertify.alert('Success!', resp.response);
+            return alertify.alert('Success!', resp.response, function() {
+                GetTax();
+            });
+        });
+    });
+
+    /**
+     * Refresh Status
+     */
+    $('.jsTaxRefresh').click(function(event) {
+        // Stop the default action
+        event.preventDefault();
+        //
+        ml(true, LOADER, "Please wait, while we are refreshing status.");
+        //
+        $.ajax({
+            url: API_URL + '/refresh',
+            method: "get",
+            headers: { "Content-Type": "application/json" },
+        }).done(function() {
+            //
+            ml(false, LOADER);
+            //
+            GetTax();
         });
     });
 
     /**
      * Get Company Bank Account
      */
-    function GetBankAccount() {
+    function GetTax() {
+        //
+        ml(true, LOADER);
         //
         $.get(API_URL)
             .done(function(resp) {
@@ -138,29 +179,19 @@ $(function BankAccount() {
                 //
                 if (resp.response) {
                     //
-                    $('.jsStatus').text(resp.response.VerifiedStatus.toUpperCase());
+                    $('.jsStatus').text(resp.response.VerifiedStatus ? "VERIFIED" : "UNVERIFIED");
+                    $('.jsStatus').removeClass("csFC3").removeClass("csFC1");
+                    $('.jsStatus').addClass(resp.response.VerifiedStatus ? "csFC1" : "csFC3");
                     //
-                    $('.jsBankAccountRoutingNumber').val(resp.response.RoutingNumber);
+                    $('.jsTaxLegalName').val(resp.response.LegalName);
                     //
-                    $('.jsBankAccountNumber').val(resp.response.AccountNumber);
+                    $('.jsTaxEIN').val(resp.response.EIN);
                     //
-                    $('.jsBankAccountType option[value="' + (resp.response.AccountType) + '"]').prop('selected', true);
+                    $('.jsTaxPayerType option[value="' + (resp.response.TaxPayerType) + '"]').prop("selected", true);
                     //
-                    $('.jsLastModified').removeClass('dn');
+                    $('.jsTaxFillingForm option[value="' + (resp.response.FillingForm) + '"]').prop("selected", true);
                     //
-                    $('.jsLastModifiedPerson').text(resp.response.Name);
-                    //
-                    $('.jsLastModifiedTime').text(resp.response.LastModifiedOn);
-                    //
-                    if (resp.response.PayrollUUID) {
-                        $('.jsVerifyBankAccount').removeClass('dn');
-                    }
-                    //
-                    oldData = {
-                        RoutingNumber: resp.response.RoutingNumber.toString(),
-                        AccountNumber: resp.response.AccountNumber.toString(),
-                        AccountType: resp.response.AccountType
-                    };
+                    $('.jsTaxScorp').prop("checked", resp.response.Scorp);
                 }
             });
     }
@@ -173,5 +204,5 @@ $(function BankAccount() {
     /**
      * Call
      */
-    GetBankAccount();
+    GetTax();
 });

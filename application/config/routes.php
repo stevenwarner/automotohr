@@ -1410,3 +1410,4 @@ $route['verify_my_token/(:any)']['post'] = 'Authentication/VerifyToken/$1';
  */
 $route['company/taxes']['get'] = 'company/Company/Taxes';
 $route['company/bank_account']['get'] = 'company/Company/BankAccount';
+$route['company/locations']['get'] = 'company/Company/Locations';

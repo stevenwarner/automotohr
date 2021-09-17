@@ -65,6 +65,27 @@ class Company extends CI_Controller
     }
 
     /**
+     * Set Company Locations
+     * 
+     * @method CheckLogin
+     * @method Assets
+     */
+    function Locations(){
+        //
+        CheckLogin($this->data);
+        //
+        $this->data['Assets'] = $this->Assets('locations');
+        //
+        $this->data['title'] = 'Company Locations';
+        $this->data['load_view'] = 0;
+        //
+        $this->load
+        ->view($this->pages['header'], $this->data)
+        ->view('payroll/includes/locations')
+        ->view($this->pages['footer']);
+    }
+
+    /**
      * Generate Assets for the page
      * 
      * @param String $page
@@ -85,6 +106,10 @@ class Company extends CI_Controller
         //
         $Assets['taxes'] = [
             '<script src="'.(base_url('assets/payroll/tax'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+        ];
+        //
+        $Assets['locations'] = [
+            '<script src="'.(base_url('assets/payroll/locations'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
         ];
         //
         return array_merge($Assets['common'],$Assets[$page]);

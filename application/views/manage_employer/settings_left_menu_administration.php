@@ -147,10 +147,11 @@
                     <figure><i class="fa fa-bank" aria-hidden="true"></i></figure>Company Bank Account</a>
             </li>
         <?php } ?>
-
-        <li>
-            <a <?php if (strpos(base_url(uri_string()), site_url('paid_time_off/configurations')) !== false || $this->uri->segment(2) == 'group_management' || $this->uri->segment(2) == 'assign_employee' || $this->uri->segment(2) == 'assign_admin') { echo 'class="active"'; } ?> href="<?php echo base_url('paid_time_off/configurations'); ?>">
-                    <figure><i class="fa fa-clock-o"></i></figure>PTO Configurations</a>
-        </li>
+        <?php if(check_access_permissions_for_view($security_details, 'company_Addresses')) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('company/locations')) !== false) { echo 'class="active"'; } ?> href="<?php echo base_url('company/locations'); ?>">
+                    <figure><i class="fa fa-map" aria-hidden="true"></i></figure>Company Locations</a>
+            </li>
+        <?php } ?>
     </ul>
 </div>

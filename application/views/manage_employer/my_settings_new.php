@@ -244,8 +244,10 @@
                                             <li><a href="<?php echo base_url('performance-management/goals'); ?>">Goals</a></li>
                                         <?php } ?>
                                         <li><a href="<?php echo base_url('export_documents/employee'); ?>">Bulk Download Documents</a></li>
+                                        <!-- Payroll -->
                                         <li><a href="<?php echo base_url('company/taxes'); ?>">Company Taxes</a></li>
                                         <li><a href="<?php echo base_url('company/bank_account'); ?>">Company Bank Account</a></li>
+                                        <li><a href="<?php echo base_url('company/locations'); ?>">Company Locations</a></li>
                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                             <li><a href="<?php echo base_url('payroll/dashboard'); ?>">Payroll Management</a></li>
                                         <?php } ?>
