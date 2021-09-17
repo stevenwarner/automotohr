@@ -86,6 +86,27 @@ class Company extends CI_Controller
     }
 
     /**
+     * Set Company Pay Periods
+     * 
+     * @method CheckLogin
+     * @method Assets
+     */
+    function PayPeriods(){
+        //
+        CheckLogin($this->data);
+        //
+        $this->data['Assets'] = $this->Assets('pay_period');
+        //
+        $this->data['title'] = 'Company Pay Periods';
+        $this->data['load_view'] = 0;
+        //
+        $this->load
+        ->view($this->pages['header'], $this->data)
+        ->view('payroll/includes/pay_period')
+        ->view($this->pages['footer']);
+    }
+
+    /**
      * Generate Assets for the page
      * 
      * @param String $page
@@ -110,6 +131,10 @@ class Company extends CI_Controller
         //
         $Assets['locations'] = [
             '<script src="'.(base_url('assets/payroll/locations'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+        ];
+        //
+        $Assets['pay_period'] = [
+            '<script src="'.(base_url('assets/payroll/pay_period'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
         ];
         //
         return array_merge($Assets['common'],$Assets[$page]);

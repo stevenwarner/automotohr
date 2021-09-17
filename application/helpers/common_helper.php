@@ -13857,6 +13857,8 @@ if(!function_exists('getAPIUrl')){
         $urls['tax'] = 'company/tax';
         // Set company locations path
         $urls['locations'] = 'company/locations';
+        // Set payperiod paths
+        $urls['pay_period'] = 'company/pay_period';
         //
         return  getCreds('AHR')->API_SERVER_URL.(isset($urls[$index]) ? $urls[$index] : '');
     }
