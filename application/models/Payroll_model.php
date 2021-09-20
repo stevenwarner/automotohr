@@ -254,4 +254,15 @@ class Payroll_model extends CI_Model{
         //
         return $record;
     }
+
+    /**
+     * 
+     */
+    function isEmployeeOnPayroll($employeeId){
+        //
+        return $this->db
+        ->where('on_payroll', 1)
+        ->where('sid', $employeeId)
+        ->count_all_results('users');
+    }
 }

@@ -244,13 +244,16 @@
                                 <a href="<?php echo base_url('performance-management/employee/goals/'.($employer["sid"]).''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             </li>
                         <?php } ?>
-                        <?php if(checkIfAppIsEnabled('payroll')) { ?>
+                        <?php if(checkIfAppIsEnabled('payroll')) {?>
                             <li>
                                 <span class="left-addon">
-                                    <i aria-hidden="true" class="fa fa-money"></i>
+                                    <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
                                 </span>
-                                <h4><?=$employer['on_payroll'] == 0 ? 'Not ':''; ?> On Payroll</h4>
-                                <a href="<?php echo base_url('payroll/employee/add/'.($employer["sid"]).''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                <h4>Payroll Management</h4>
+                                <a href="<?php echo base_url('employee/add/'.($employer["sid"]).''); ?>">
+                                View
+                                <i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Payroll Management" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/'.($employer['on_payroll'] == 0 ? 'off' : 'on').'.gif'); ?>" alt="" />
                             </li>
                         <?php } ?>
                     </ul>

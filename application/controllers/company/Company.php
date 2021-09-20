@@ -105,6 +105,51 @@ class Company extends CI_Controller
         ->view('payroll/includes/pay_period')
         ->view($this->pages['footer']);
     }
+    
+    /**
+     * Add Emloyee To Payroll
+     * 
+     * @method CheckLogin
+     * @method Assets
+     */
+    function AddEmployee($employeeId){
+        //
+        CheckLogin($this->data);
+        //
+        $this->load->model('single/Employee_model', 'em');
+        //
+        $this->data['section'] = $this->input->get('section') ? $this->input->get('section') : 'basic_information';
+        //
+        $this->data['Employee'] = $this->em->GetEmployeeDetails(
+            $employeeId,[
+                'sid',
+                'first_name',
+                'last_name',
+                'on_payroll',
+                'access_level',
+                'profile_picture',
+                'access_level_plus',
+                'pay_plan_flag',
+            ]
+        );
+        // Check if employee is on payroll
+        $this->data['isEmployeeOnPayroll'] = $this->data['Employee']['on_payroll'];
+        //
+        if(!$this->data['isEmployeeOnPayroll']){
+            $this->data['section'] = 'basic_information';
+        }
+        //
+        $this->data['Assets'] = $this->Assets('add_employee')[$this->data['section']];
+        //
+        $this->data['title'] = 'Add Employee To Payroll';
+        $this->data['load_view'] = 0;
+        $this->data['employeeId'] = $employeeId;
+        //
+        $this->load
+        ->view($this->pages['header'], $this->data)
+        ->view('payroll/includes/add_employee')
+        ->view($this->pages['footer']);
+    }
 
     /**
      * Generate Assets for the page
@@ -135,6 +180,18 @@ class Company extends CI_Controller
         //
         $Assets['pay_period'] = [
             '<script src="'.(base_url('assets/payroll/pay_period'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+        ];
+        //
+        $Assets['add_employee'] = [
+            'basic_information' => [
+                '<script src="'.(base_url('assets/payroll/basic_information'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+            ],
+            'bank_accounts' => [
+                '<script src="'.(base_url('assets/payroll/bank_accounts'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+            ],
+            'jobs' => [
+                '<script src="'.(base_url('assets/payroll/jobs'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+            ]
         ];
         //
         return array_merge($Assets['common'],$Assets[$page]);
