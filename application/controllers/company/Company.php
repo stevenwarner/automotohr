@@ -121,7 +121,7 @@ class Company extends CI_Controller
         $this->data['section'] = $this->input->get('section') ? $this->input->get('section') : 'basic_information';
         //
         $this->data['Employee'] = $this->em->GetEmployeeDetails(
-            $employeeId,[
+            $employeeId, [
                 'sid',
                 'first_name',
                 'last_name',

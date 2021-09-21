@@ -89,5 +89,7 @@
     //
     var employeeId = <?=$employeeId;?>;
     //
+    var employeeNameWithRole = "<?=remakeEmployeeName($Employee);?>";
+    //
     var onPayroll = <?=$isEmployeeOnPayroll;?>;
 </script>

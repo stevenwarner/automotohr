@@ -2,113 +2,110 @@ $(function Employee() {
     //
     var LOADER = 'employee';
     //
-    var CompanyLocations = [];
+    var CompanyLocationsObj = {};
 
     /**
-     * 
+     * Adds a new
      */
-    $('.jsEAddBankAccount').click(function(event) {
+    $('.jsEAddNew').click(function(event) {
         //
         event.preventDefault();
         //
         Model({
-            Id: 'jsEAddBankAccountModal',
-            Title: 'Add A Bank Account',
-            Body: '<div class="jsEAddBankAccountModalBody"></div>',
-            Loader: 'jsEAddBankAccountModalLoader'
+            Id: 'jsEAddNewModal',
+            Title: 'Add A Job For ' + employeeNameWithRole,
+            Body: '<div class="jsEAddNewModalBody"></div>',
+            Loader: 'jsEAddNewModalLoader'
         }, function() {
+            //
+            var options = '';
+            options += '<option value="0">[Select]</option>';
+            //
+            for (var index in CompanyLocationsObj) {
+                options += '<option value="' + (index) + '">' + (CompanyLocationsObj[index]) + '</option>';
+            }
             //
             var html = '';
             html += '<div class="container">';
             html += '    <div class="row">';
-            html += '        <div class="col-md-12 col-xs-12">';
+            html += '        <div class="col-md-8 col-xs-12">';
             html += '            <label class="csF16 csB7">';
-            html += '                Name&nbsp;<span class="csRequired"></span>';
+            html += '                Title&nbsp;<span class="csRequired"></span>';
             html += '            </label>';
-            html += '            <input type="text" class="form-control jsEName" placeholder="BoA Checking Account" />';
+            html += '            <input type="text" class="form-control jsETitle" placeholder="Regional Manager" />';
+            html += '        </div>';
+            html += '        <div class="col-md-4 col-xs-12">';
+            html += '            <label class="csF16 csB7">';
+            html += '                Hire Date&nbsp;<span class="csRequired"></span>';
+            html += '            </label>';
+            html += '            <input type="text" class="form-control jsEHireDate" readonly placeholder="MM/DD/YYYY" />';
             html += '        </div>';
             html += '    </div><br>';
             html += '    <div class="row">';
             html += '        <div class="col-md-12 col-xs-12">';
             html += '            <label class="csF16 csB7">';
-            html += '                Routing Number&nbsp;<span class="csRequired"></span>';
+            html += '                Location&nbsp;<span class="csRequired"></span>';
             html += '            </label>';
-            html += '            <input type="text" class="form-control jsERoutingNumber" placeholder="266905059" />';
+            html += '            <select class="jsELocation">' + (options) + '</select>';
             html += '        </div>';
             html += '    </div><br>';
             html += '    <div class="row">';
-            html += '        <div class="col-md-12 col-xs-12">';
-            html += '            <label class="csF16 csB7">';
-            html += '                Account Number&nbsp;<span class="csRequired"></span>';
-            html += '            </label>';
-            html += '            <input type="text" class="form-control jsEAccountNumber" placeholder="5809431207" />';
-            html += '        </div>';
-            html += '    </div><br>';
-            html += '    <div class="row">';
-            html += '        <div class="col-md-12 col-xs-12">';
-            html += '            <label class="csF16 csB7">';
-            html += '                Account Type&nbsp;<span class="csRequired"></span>';
-            html += '            </label>';
-            html += '            <select class="form-control jsEAccountType">';
-            html += '                <option value="checking">Checking</option>';
-            html += '                <option value="saving">Savings</option>';
-            html += '            </select>';
-            html += '        </div>';
-            html += '    </div><br>';
-            html += '    <div class="row">';
-            html += '        <div class="col-md-12 col-xs-12 text-right jsSaveBankAccount">';
-            html += '            <button class="btn btn-success csF16 csB7">';
-            html += '               <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Add Bank Account';
+            html += '        <div class="col-md-12 col-xs-12 text-right">';
+            html += '            <button class="btn btn-success csF16 csB7 jsAddNewJob">';
+            html += '               <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Add Job';
             html += '            </button>';
             html += '        </div>';
             html += '    </div>';
             html += '</div>';
             //
-            $('.jsEAddBankAccountModalBody').html(html);
+            $('.jsEAddNewModalBody').html(html);
             //
-            ml(false, 'jsEAddBankAccountModalLoader');
+            $('.jsELocation').select2().select2('val', 0);
+            //
+            $('.jsEHireDate').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                yearRange: '-90:+0',
+            });
+            //
+            ml(false, 'jsEAddNewModalLoader');
         });
     });
 
     /**
-     * Adds a new bank account to payroll
+     * Adds new trigger
      */
-    $(document).on('click', '.jsSaveBankAccount', function(event) {
+    $(document).on('click', '.jsAddNewJob', function(event) {
         //
         event.preventDefault();
         //
         var o = {};
-        o.Name = $('.jsEName').val().trim();
-        o.RoutingNumber = $('.jsERoutingNumber').val().replace(/[^0-9]/g, '').trim();
-        o.AccountNumber = $('.jsEAccountNumber').val().replace(/[^0-9]/g, '').trim();
-        o.AccountType = $('.jsEAccountType option:selected').val();
+        o.Title = $('.jsETitle').val().trim();
+        o.HireDate = $('.jsEHireDate').val().trim();
+        o.LocationId = $('.jsELocation option:selected').val();
         // Validation
-        if (!o.Name) {
-            return alertify.alert('Error!', 'Name is required.');
+        if (!o.Title) {
+            return alertify.alert('Error!', 'Title is required.');
         }
-        if (!o.RoutingNumber) {
-            return alertify.alert('Error!', 'Routing number is required.');
+        if (!o.HireDate) {
+            return alertify.alert('Error!', 'Hire date is required.');
         }
-        if (o.RoutingNumber.length !== 9) {
-            return alertify.alert('Error!', 'Routing number must be of 9 digits.');
-        }
-        if (!o.AccountNumber) {
-            return alertify.alert('Error!', 'Routing number is required.');
-        }
-        if (o.AccountNumber.length !== 9) {
-            return alertify.alert('Error!', 'Account number must be of 9 digits.');
+        if (o.LocationId == 0) {
+            return alertify.alert('Error!', 'Location is required.');
         }
         //
-        ml(true, 'jsEAddBankAccountModalLoader');
+        o.EmployeeId = employeeId;
+        //
+        ml(true, 'jsEAddNewModalLoader');
         //
         $.ajax({
             method: "POST",
-            url: API_URL + '/' + employeeId + '/bank_accounts',
+            url: API_URL + '/' + employeeId + '/jobs',
             headers: { "Content-Type": "application/json" },
             data: JSON.stringify(o)
         }).done(function(resp) {
             //
-            ml(false, "jsEAddBankAccountModalLoader");
+            ml(false, "jsEAddNewModalLoader");
             //
             if (!resp.status) {
                 //
@@ -117,7 +114,7 @@ $(function Employee() {
                 //
                 return alertify.alert('Success!', resp.response, function() {
                     //
-                    $('#jsEAddBankAccountModal .jsModalCancel').click();
+                    $('#jsEAddNewModal .jsModalCancel').click();
                     //
                     Get();
                 });
@@ -126,43 +123,139 @@ $(function Employee() {
     });
 
     /**
-     * 
+     * Edit
      */
-    $(document).on('click', '.jsDeleteBankAccount', function(event) {
+    $(document).on('click', '.jsEEdit', function(event) {
         //
         event.preventDefault();
         //
-        var Id = $(this).closest('tr').data('id');
+        var jobId = $(this).closest('tr').data('id');
         //
-        return alertify.confirm("Do you really want to delete this bank account?", function() {
-            DeleteBankAccount(Id);
+        Model({
+            Id: 'jsEEditModal',
+            Title: 'Add A Job For ' + employeeNameWithRole,
+            Body: '<div class="jsEEditModalBody"></div>',
+            Loader: 'jsEEditModalLoader'
+        }, function() {
+            //
+            var options = '';
+            options += '<option value="0">[Select]</option>';
+            //
+            for (var index in CompanyLocationsObj) {
+                options += '<option value="' + (index) + '">' + (CompanyLocationsObj[index]) + '</option>';
+            }
+            //
+            var html = '';
+            html += '<div class="container">';
+            html += '    <div class="row">';
+            html += '        <div class="col-md-8 col-xs-12">';
+            html += '            <label class="csF16 csB7">';
+            html += '                Title&nbsp;<span class="csRequired"></span>';
+            html += '            </label>';
+            html += '            <input type="text" class="form-control jsETitle" placeholder="Regional Manager" />';
+            html += '        </div>';
+            html += '        <div class="col-md-4 col-xs-12">';
+            html += '            <label class="csF16 csB7">';
+            html += '                Hire Date&nbsp;<span class="csRequired"></span>';
+            html += '            </label>';
+            html += '            <input type="text" class="form-control jsEHireDate" readonly placeholder="MM/DD/YYYY" />';
+            html += '        </div>';
+            html += '    </div><br>';
+            html += '    <div class="row">';
+            html += '        <div class="col-md-12 col-xs-12">';
+            html += '            <label class="csF16 csB7">';
+            html += '                Location&nbsp;<span class="csRequired"></span>';
+            html += '            </label>';
+            html += '            <select class="jsELocation">' + (options) + '</select>';
+            html += '        </div>';
+            html += '    </div><br>';
+            html += '    <div class="row">';
+            html += '        <div class="col-md-12 col-xs-12 text-right">';
+            html += '            <input type="hidden" class="jsEUpdateId" />';
+            html += '            <button class="btn btn-success csF16 csB7 jsEUpdateJob">';
+            html += '               <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Update Job';
+            html += '            </button>';
+            html += '        </div>';
+            html += '    </div>';
+            html += '</div>';
+            //
+            $('.jsEEditModalBody').html(html);
+            //
+            $('.jsELocation').select2();
+            //
+            $('.jsEHireDate').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                yearRange: '-90:+0',
+            });
+            //
+            $.get(
+                API_URL + '/' + employeeId + '/jobs/' + jobId
+            ).done(function(resp) {
+                //
+                if (resp.status) {
+                    //
+                    $('.jsETitle').val(resp.response.Title)
+                    $('.jsEHireDate').val(resp.response.HireDate)
+                    $('.jsELocation').select2('val', resp.response.LocationId);
+                    $('.jsEUpdateId').val(resp.response.JobId);
+                }
+                //
+                ml(false, 'jsEEditModalLoader');
+            });
         });
     });
 
     /**
-     * 
-     * @param {String} accountId 
+     * Update
      */
-    function DeleteBankAccount(accountId) {
+    $(document).on('click', '.jsEUpdateJob', function(event) {
         //
-        ml(true, LOADER);
+        event.preventDefault();
+        //
+        var o = {};
+        o.Title = $('.jsETitle').val().trim();
+        o.HireDate = $('.jsEHireDate').val().trim();
+        o.LocationId = $('.jsELocation option:selected').val();
+        // Validation
+        if (!o.Title) {
+            return alertify.alert('Error!', 'Title is required.');
+        }
+        if (!o.HireDate) {
+            return alertify.alert('Error!', 'Hire date is required.');
+        }
+        if (o.LocationId == 0) {
+            return alertify.alert('Error!', 'Location is required.');
+        }
+        //
+        o.EmployeeId = employeeId;
+        //
+        ml(true, 'jsEEditModalLoader');
         //
         $.ajax({
-            method: "DELETE",
-            url: API_URL + '/' + employeeId + '/bank_accounts/' + accountId
+            method: "PUT",
+            url: API_URL + '/' + employeeId + '/jobs/' + $('.jsEUpdateId').val(),
+            headers: { "Content-Type": "application/json" },
+            data: JSON.stringify(o)
         }).done(function(resp) {
             //
-            ml(false, LOADER);
+            ml(false, "jsEEditModalLoader");
             //
             if (!resp.status) {
-                return alertify.alert('Error!', typeof resp.response === 'object' ? resp.response.join('<br>') : resp.response);
+                //
+                return alertify.alert('Error!', typeof resp.response === 'object' ? resp.response.join("<br/>") : resp.response);
+            } else {
+                //
+                return alertify.alert('Success!', resp.response, function() {
+                    //
+                    $('#jsEEditModal .jsModalCancel').click();
+                    //
+                    Get();
+                });
             }
-            //
-            return alertify.alert('Success!', resp.response, function() {
-                Get();
-            });
         });
-    }
+    });
+
 
     /**
      * Get data
@@ -182,13 +275,14 @@ $(function Employee() {
                     //
                     resp.response.map(function(record) {
                         //
-                        rows += '<tr data-id="' + (record.payroll_uuid) + '">';
-                        rows += '   <td class="csF16 vam">' + (record.name) + '</td>';
-                        rows += '   <td class="csF16 vam text-right">' + (record.routing_number) + '</td>';
-                        rows += '   <td class="csF16 vam text-right">' + (record.account_number) + '</td>';
-                        rows += '   <td class="csF16 vam text-right">' + (record.account_type) + '</td>';
+                        rows += '<tr data-id="' + (record.JobId) + '">';
+                        rows += '   <td class="csF16 csB7 vam">' + (record.Title) + '</td>';
+                        rows += '   <td class="csF16 vam text-right">' + (CompanyLocationsObj[record.LocationId]) + '</td>';
+                        rows += '   <td class="csF16 vam text-right">' + (record.HireDate) + '</td>';
+                        rows += '   <td class="csF16 vam text-right">' + (record.Name) + '<br/>' + (record.LastModifiedOn) + '</td>';
                         rows += '   <td class="csF16 vam text-right">';
-                        rows += '       <button class="btn btn-danger csF16 csB7 jsDeleteBankAccount"><i class="fa fa-times-circle csF16"></i>&nbsp;Delete</button>';
+                        rows += '       <button class="btn btn-success csF16 csB7 jsDeleteBankAccount"><i class="fa fa-money csF16"></i>&nbsp;Compensations</button>';
+                        rows += '       <button class="btn btn-warning csF16 csB7 jsEEdit"><i class="fa fa-edit csF16"></i>&nbsp;Edit</button>';
                         rows += '   </td>';
                         rows += '</tr>';
                     });
@@ -213,7 +307,21 @@ $(function Employee() {
         $.get(API_URL.replace(/employees/, 'company/locations'))
             .done(function(resp) {
                 //
-                CompanyLocations = resp.response;
+                resp.response.map(function(location) {
+                    //
+                    var address = location.Street1;
+                    //
+                    if (location.Street2) {
+                        address += ' ' + location.Street2;
+                    }
+                    //
+                    address += ', ' + location.State;
+                    address += ', ' + location.City;
+                    address += ', ' + location.Country;
+                    address += ' (' + location.Zipcode + ')';
+                    address += ' (' + location.PhoneNumber + ')';
+                    CompanyLocationsObj[location.LocationCode] = address;
+                });
                 //
                 Get();
             });
