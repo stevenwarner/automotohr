@@ -248,18 +248,18 @@ class Indeed_model extends CI_Model {
         $a = $a->free_result();
 
         //
-        $a = $this->db
-        ->select('email')
-        ->where('parent_sid', $companySid)
-        ->where("email != ''", null)
-        ->order_by('is_primary_admin', 'DESC')
-        ->get('users');
-        //
-        $d = $a->row_array();
-        $a = $a->free_result();
+        // $a = $this->db
+        // ->select('email')
+        // ->where('parent_sid', $companySid)
+        // ->where("email != ''", null)
+        // ->order_by('is_primary_admin', 'DESC')
+        // ->get('users');
+        // //
+        // $d = $a->row_array();
+        // $a = $a->free_result();
         //
         if(sizeof($b)) $r['phone_number'] = $b['phone_number'];
-        if(sizeof($d)) $r['email'] = $d['email'];
+        // if(sizeof($d)) $r['email'] = $d['email'];
         if(!sizeof($b) && sizeof($c)) $r['phone_number'] = $c['PhoneNumber'];
         //
         return $r;
