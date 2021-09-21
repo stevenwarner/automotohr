@@ -399,8 +399,8 @@ private function addLastRead($sid){
                     $job['sid'],
                     $job['user_sid']
                 );
-                if($indeed['phone_number'] != '' && empty($companyData['phone_number'])) $companyData['phone_number'] = $indeed['phone_number'];
-                if($indeed['email'] != '' && empty($companyData['email'])) $companyData['email'] = $indeed['email'];
+                if($indeed['phone_number'] != '' && empty($companyData['phone_number']) && $companyData['phone_number'] == '') $companyData['phone_number'] = $indeed['phone_number'];
+                if($indeed['email'] != '' && empty($companyData['email']) && $companyData['email'] == '') $companyData['email'] = $indeed['email'];
                 //
                 $uid = $job['sid'];
                 $publishDate = $job['activation_date'];
