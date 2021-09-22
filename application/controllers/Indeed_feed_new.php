@@ -339,8 +339,8 @@ private function addLastRead($sid){
                 //
                 $salary = remakeSalary($salary, $job['SalaryType']);
                 //
-                $isSponsored = in_array($companySid, $jobIds) ? "yes" : "no";
-                $hasBudget = in_array($companySid, $jobIds) ? $budget[$job['sid']] : "0";
+                $isSponsored = in_array($job['sid'], $jobIds) ? "yes" : "no";
+                $hasBudget = in_array($job['sid'], $jobIds) ? $budget[$job['sid']] : "0";
                 //
                 $rows .= "
                     <job>
