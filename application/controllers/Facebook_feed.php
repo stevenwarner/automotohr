@@ -422,7 +422,7 @@ class Facebook_feed extends CI_Controller
                 $min_salary = $salary;
                 $max_salary = '';
                 $salary = explode('/', $salary);
-                if (sizeof($salary)) {
+                if (count($salary) == 2) {
                     $min_salary = trim(preg_replace('/[^0-9.]/', '', $salary[0]));
                     $max_salary = trim(preg_replace('/[^0-9.]/', '', $salary[1]));
                 } else{

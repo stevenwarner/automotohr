@@ -123,12 +123,14 @@ class Indeed_model extends CI_Model {
      * @return Array
      */
     function getIndeedOrganicJobs($paidJobIds = array()){
-        $result = $this->db->where('active', 1)
-        ->where('organic_feed', 1)
-        ->where('indeed_sponsored', 0)
-        // ->where_not_in('sid', $paidJobIds)
-        ->order_by('sid', 'desc')
-        ->get('portal_job_listings');
+         $this->db->where('active', 1)
+        ->where('organic_feed', 1);
+        // ->where('indeed_sponsored', 0)
+        if(!empty($paidJobIds)){
+            $this->db->where_not_in('sid', $paidJobIds);
+        }
+        $this->db->order_by('sid', 'desc');
+        $result =$this->db->get('portal_job_listings');
         //
         $jobs = $result->result_array();
         $result = $result->free_result();
@@ -142,36 +144,25 @@ class Indeed_model extends CI_Model {
      * @return Array
      */
     function getAllActiveCompanies($feedSid){
-        $result = $this->db
-        ->select('sid')
-        ->where('parent_sid', 0)
-        ->where('career_site_listings_only', 0)
-        ->where('active', 1)
-        ->where('is_paid', 1)
-        ->group_start()
-        ->where('expiry_date > "2016-04-20 13:26:27"', null)
-        ->or_where('expiry_date IS NULL', null)
-        ->group_end()
-        ->get('users');
-        //
-        $companies = $result->result_array();
-        $result = $result->free_result();
-        //
-        if(!sizeof($companies)) return array();
-        $returnArray = array();
-        foreach ($companies as $k0 => $v0) {
-            // Check if feed is allowed
-            if($this->db
-                ->where('company_sid', $v0['sid'])
-                ->where('feed_sid', $feedSid)
-                ->where('status', 0)
-                ->count_all_results('feed_restriction')
-            ){
-                continue;
+        $result = $this->db->query("SELECT `sid` FROM `users` WHERE `parent_sid` = '0' AND `is_paid`='1' AND `career_site_listings_only` = 0 AND `active` = '1' AND (`expiry_date` > '2016-04-20 13:26:27' OR `expiry_date` IS NULL)")->result_array();
+        if (count($result) > 0) {
+            $data = array();
+            foreach ($result as $r) {
+                // Check if feed is allowed
+                if($this->db
+                    ->where('company_sid', $r['sid'])
+                    ->where('feed_sid', $feedSid)
+                    ->where('status', 0)
+                    ->count_all_results('feed_restriction')
+                ){
+                    continue;
+                }
+                $data[] = $r['sid'];
             }
-            $returnArray[] = $v0['sid'];
+            return $data;
+        } else {
+            return 0;
         }
-        return $returnArray;
     }
 
     /**

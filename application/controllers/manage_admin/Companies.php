@@ -1399,6 +1399,10 @@ class Companies extends Admin_Controller {
                 $this->data['company_portal_email_templates'] = $company_portal_email_templates;
                 $this->data['automotive_groups'] = $this->company_model->get_groups_by_company($company_sid);
     //            $this->data['company_card'] = $company_card;
+                
+                //
+                $this->data['CompanyEmail'] = $this->company_model->GetCompanyEmail($company_sid);
+
 
                 // Get dynamic modules
                 $this->data['dynamicModules'] = $this->company_model->getDynamicModulesByCompany($company_sid);
@@ -3002,5 +3006,16 @@ class Companies extends Admin_Controller {
         $res['Response'] = 'Approver is added.';
         echo json_encode($res);
         exit(0);
+    }
+
+
+    function update_company_email(){
+        //
+        $this->company_model->UpdateCompanyEmail(
+            $_POST['email'],
+            $_POST['companyId']
+        );
+
+        echo 'success';
     }
 }

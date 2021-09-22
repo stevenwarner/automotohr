@@ -201,23 +201,19 @@ private function addLastRead($sid){
     private function newIndex(){
         $sid = $this->isActiveFeed();
         $this->addLastRead(7);
+        //
+        $featuredJobs = $this->all_feed_model->get_all_company_jobs_ams();
         // Get Indeed Paid Job Ids
         $indeedPaidJobIds = $this->indeed_model->getIndeedPaidJobIds();
-        $indeedPaidJobs = array();
         if(sizeof($indeedPaidJobIds['Ids'])){
             // Get Indeed Paid Jobs
             $jobIds = $indeedPaidJobIds['Ids'];
             $budget = $indeedPaidJobIds['Budget'];
-            // $indeedPaidJobs = $this->indeed_model->getIndeedPaidJobs($jobIds);
-            $indeedPaidJobs = $this->indeed_model->getIndeedPaidJobs();
         } else $budget = $jobIds = array();
         // Get Indeed Organic Jobs
-        // $indeedOrganicJobs = $this->indeed_model->getIndeedOrganicJobs( $jobIds );
-        $indeedOrganicJobs = $this->indeed_model->getIndeedOrganicJobs();
+        $indeedOrganicJobs = $this->indeed_model->getIndeedOrganicJobs($featuredJobs);
         // Get Active companies
         $activeCompanies = $this->indeed_model->getAllActiveCompanies($sid);
-
-        
         //
         $rows = '';
         //
@@ -226,147 +222,12 @@ private function addLastRead($sid){
         $infoArray['Skipped']['Organic'] = array();
         $infoArray['Listed']['Paid'] = array();
         $infoArray['Listed']['Organic'] = array();
-        // Loop through Paid Jobs
-        if(sizeof($indeedPaidJobs)){
-            foreach ($indeedPaidJobs as $k0 => $job) {
-                // Check for active company
-                if(!in_array($job['user_sid'], $activeCompanies)) {
-                    $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company In-active');
-                    continue;
-                }
-                //
-                $companySid = $job['user_sid'];
-                // Check if company details exists
-                $companyPortal = $this->indeed_model->getPortalDetail( $companySid );
-                //
-                if(empty($companyPortal)) {
-                    $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company details not found');
-                    continue;
-                }
-                //
-                $companyData = $this->indeed_model->getCompanyNameAndJobApproval($companySid);
-                $companyName = $companyData['CompanyName'];
-                $hasJobApprovalRights = $companyData['has_job_approval_rights'];
-                // Check for approval rights
-                if($hasJobApprovalRights ==  1) {
-                    $approvalRightStatus = $job['approval_status'];
-                    //
-                    if($approvalRightStatus != 'approved') {
-                        $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Job not approved');
-                        continue;
-                    }
-                }
-                // Get phone number from indeed table
-                $indeed = $this->indeed_model->getPhonenumber(
-                    $job['sid'],
-                    $job['user_sid']
-                );
-                if($indeed['phone_number'] != '') $companyData['phone_number'] = $indeed['phone_number'];
-                if($indeed['email'] != '') $companyData['email'] = $indeed['email'];
-
-                //
-                $uid = $job['sid'];
-                $publishDate = $job['activation_date'];
-                $feedData = $this->indeed_model->fetchUidFromJobSid($uid);
-                //
-                if(sizeof($feedData)){
-                    $uid = $feedData['uid'];
-                    $publishDate = $feedData['publish_date'];
-                }
-                //
-                $jobDesc ='<br><br>Job Description:<br><br>'.$job['JobDescription'];
-                $country['country_code'] = "US";
-                $state['state_name'] = "";
-                $city = "";
-                $zipcode = "";
-                $salary = "";
-                $jobType = "";
-                //
-                if (isset($job['JobRequirements']) && $job['JobRequirements'] != NULL) {
-                    $jobDesc .= '<br><br>Job Requirements:<br><br>' . strip_tags($job['JobRequirements'], '<br><br>');
-                }
-                //
-                if (isset($job['Location_Country']) && $job['Location_Country'] != NULL) {
-                    $country = db_get_country_name($job['Location_Country']);
-                }
-                //
-                if (isset($job['Location_State']) && $job['Location_State'] != NULL) {
-                    $state = db_get_state_name($job['Location_State']);
-                }
-                //
-                if (isset($job['Location_City']) && $job['Location_City'] != NULL) {
-                    $city = $job['Location_City'];
-                }
-                //
-                if (isset($job['Location_ZipCode']) && $job['Location_ZipCode'] != NULL) {
-                    $zipcode = $job['Location_ZipCode'];
-                }
-                //
-                if (isset($job['Salary']) && $job['Salary'] != NULL) {
-                    $salary = $job['Salary'];
-                }
-                //
-                if (isset($job['SalaryType']) && $job['SalaryType'] != NULL) {
-                    $job['SalaryType'] = trim($job['SalaryType']);
-                    if ($job['SalaryType'] == 'per_hour') {
-                        $jobType = "Per Hour";
-                    } elseif ($job['SalaryType'] == 'per_week') {
-                        $jobType = "Per Week";
-                    } elseif ($job['SalaryType'] == 'per_month') {
-                        $jobType = "Per Month   ";
-                    } elseif ($job['SalaryType'] == 'per_year') {
-                        $jobType = "Per Year";
-                    }
-                }
-                //
-                $JobCategorys = $job['JobCategory'];
-                //
-                if ($JobCategorys != null) {
-                    $cat_id = explode(',', $JobCategorys);
-                    $job_category_array = array();
-                    //
-                    foreach ($cat_id as $id) {
-                        $job_cat_name = $this->all_feed_model->get_job_category_name_by_id($id);
-                        $job_category_array[] = $job_cat_name[0]['value'];
-                    }
-
-                    $job_category = implode(', ', $job_category_array);
-                }
-                //
-                $infoArray['Listed']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid']);
-                //
-                $salary = remakeSalary($salary, $job['SalaryType']);
-                //
-                $rows .= "
-                    <job>
-                        <title><![CDATA[" . db_get_job_title($companySid, $job['Title'], false) . "]]></title>
-                        <sponsored><![CDATA[yes]]></sponsored>
-                        <budget><![CDATA[" . $budget[$job['sid']] . "]]></budget>
-                        <date><![CDATA[" . dateTime::createFromFormat('Y-m-d H:i:s', $publishDate)->format('D, d M Y H:i:s') . " PST]]></date>
-                        <referencenumber><![CDATA[" . $uid . "]]></referencenumber>
-                        <url><![CDATA[" . STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid . "]]></url>
-                        <company><![CDATA[" . $companyName . "]]></company>
-                        <sourcename><![CDATA[" . STORE_NAME . "]]></sourcename>
-                        <city><![CDATA[" . $city . "]]></city>
-                        <state><![CDATA[" . $state['state_name'] . "]]></state>
-                        <country><![CDATA[" . $country['country_code'] . "]]></country>
-                        <postalcode><![CDATA[" . $zipcode . "]]></postalcode>
-                        <salary><![CDATA[" . $salary . "]]></salary>
-                        <jobtype><![CDATA[" . $jobType . "]]></jobtype>
-                        <category><![CDATA[" . $job_category . "]]></category>
-                        <description><![CDATA[" . $jobDesc . "]]></description>
-                        <metadata><![CDATA[]]></metadata>
-                        <email><![CDATA[". $companyData['email'] ."]]></email>
-                        <phonenumber><![CDATA[". $companyData['phone_number'] ."]]></phonenumber>
-                        <contact><![CDATA[". $companyData['full_name'] ."]]></contact>
-                        <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($companySid, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "/indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required&indeed-apply-allow-apply-on-indeed=1]]></indeed-apply-data>
-                    </job>";
-            }
-        }
+        //
+        $totalJobsForFeed = 0;
 
         // Loop through Organic Jobs
         if(sizeof($indeedOrganicJobs)){
-            foreach ($indeedOrganicJobs as $k0 => $job) {
+            foreach ($indeedOrganicJobs as $job) {
                 // Check for active company
                 if(!in_array($job['user_sid'], $activeCompanies)) {
                     $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company In-active');
@@ -399,8 +260,12 @@ private function addLastRead($sid){
                     $job['sid'],
                     $job['user_sid']
                 );
-                if($indeed['phone_number'] != '' && empty($companyData['phone_number']) && $companyData['phone_number'] == '') $companyData['phone_number'] = $indeed['phone_number'];
-                if($indeed['email'] != '' && empty($companyData['email']) && $companyData['email'] == '') $companyData['email'] = $indeed['email'];
+                if($indeed['phone_number'] != '' && empty($companyData['phone_number']) && $companyData['phone_number'] == '') {
+                    $companyData['phone_number'] = $indeed['phone_number'];
+                }
+                if($indeed['email'] != '' && empty($companyData['email']) && $companyData['email'] == '') {
+                    $companyData['email'] = $indeed['email'];
+                }
                 //
                 $uid = $job['sid'];
                 $publishDate = $job['activation_date'];
@@ -474,11 +339,14 @@ private function addLastRead($sid){
                 //
                 $salary = remakeSalary($salary, $job['SalaryType']);
                 //
+                $isSponsored = in_array($companySid, $jobIds) ? "yes" : "no";
+                $hasBudget = in_array($companySid, $jobIds) ? $budget[$job['sid']] : "0";
+                //
                 $rows .= "
                     <job>
                         <title><![CDATA[" . db_get_job_title($companySid, $job['Title'], false) . "]]></title>
-                        <sponsored><![CDATA[no]]></sponsored>
-                        <budget><![CDATA[0]]></budget>
+                        <sponsored><![CDATA[".($isSponsored)."]]></sponsored>
+                        <budget><![CDATA[".($hasBudget)."]]></budget>
                         <date><![CDATA[" . (DateTime::createFromFormat('Y-m-d H:i:s', $publishDate)->format('D, d M Y H:i:s')) . " PST]]></date>
                         <referencenumber><![CDATA[" . $uid . "]]></referencenumber>
                         <url><![CDATA[" . STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid . "]]></url>
@@ -498,13 +366,10 @@ private function addLastRead($sid){
                         <contact><![CDATA[". $companyData['full_name'] ."]]></contact>
                         <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($companySid, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "/indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required&indeed-apply-allow-apply-on-indeed=1]]></indeed-apply-data>
                     </job>";
+
+                $totalJobsForFeed++;
             }
         }
-
-        // _e($infoArray, true);
-        // _e($indeedPaidJobIds, true);
-        // _e($indeedPaidJobs, true);
-        // _e($indeedOrganicJobs, true);
 
         // Post data to browser
         header('Content-type: text/xml');

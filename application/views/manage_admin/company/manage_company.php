@@ -1269,7 +1269,15 @@
                                                     <article class="col-sm-6 information-box">
                                                         <header class="hr-box-header">
                                                             <?=$v['module_name'];?>
+                                                            <?php if($v['sid'] == 3): ?>
+                                                                <span class="pull-right">
+                                                                    <button class="btn btn-success jsModifyFeedEmail">
+                                                                        <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update Company Email
+                                                                    </button>
+                                                                </span>
+                                                            <?php endif; ?>
                                                         </header>
+                                                        <div class="clearfix"></div>
                                                         <div class="table-outer">
                                                             <div class="info-row">
                                                                 <ul>
@@ -1810,4 +1818,99 @@
             });
         });
     })
+
+    //
+    $(function(){
+        //
+        $('.jsModifyFeedEmail').click(function(event){
+            //
+            event.preventDefault();
+            //
+            var modal = $('#jsModalContainer').html();
+            $('#jsModalContainer').remove();
+            $('body').append(modal)
+            //
+            $('#jsEmailModal .jsEmail').val("<?=$CompanyEmail['email'];?>");
+            //
+            $('#jsEmailModal').modal();
+        });
+
+        //
+        var xhr = null;
+
+        //
+        $(document).on('click', '.jsSaveEmail', function(event){
+            //
+            event.preventDefault();
+            //
+            if(xhr !== null){
+                return;
+            }
+            //
+            var o = {};
+            o.email = $('#jsEmailModal .jsEmail').val().trim();
+            o.companyId = <?=$company_sid;?>;
+            //
+            if(!o.email){
+                return alertify.alert(
+                    'Error!',
+                    'Email is required.'
+                );
+            }
+            //
+            if(!validateEmail(o.email)){
+                return alertify.alert(
+                    'Error!',
+                    'Email is not valid.'
+                );
+            }
+            //
+            $(this).text('Updating email...');
+            //
+            xhr = $.post(
+                "<?=base_url("manage_admin/companies/update_company_email");?>",
+                o
+            ).done(function(resp){
+                alertify.alert(
+                    "Success!",
+                    "You have successfully updated the email.", 
+                    function(){
+                        window.location.reload();
+                    }
+                );
+            });
+        });
+
+        function validateEmail(email) {
+            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
+    });
 </script>
+
+
+<!-- Email Modal -->
+<div id="jsModalContainer">
+    <div class="modal fade" id="jsEmailModal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Update email for indeed feed</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Email Address <span>*</span></label>
+                            <input type="email" required class="form-control jsEmail"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success jsSaveEmail">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

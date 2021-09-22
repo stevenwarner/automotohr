@@ -2137,4 +2137,25 @@ class Company_model extends CI_Model {
         ->get('portal_company_sms_module')
         ->row_array();
     }
+
+    //
+    function GetCompanyEmail($companyId){
+        //
+        $query = $this->db->select('email')
+        ->where('sid', $companyId)
+        ->get('users');
+        //
+        $b = $query->row_array();
+        //
+        $query = $query->free_result();
+        //
+        return $b;
+    }
+
+    //
+    function UpdateCompanyEmail($email, $companyId){
+        //
+        $this->db->where('sid', $companyId)
+        ->update('users', ['email' => $email]);
+    }
 }
