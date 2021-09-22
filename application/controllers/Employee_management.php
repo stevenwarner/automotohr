@@ -994,6 +994,27 @@ class Employee_management extends Public_Controller {
                 $data['employer_sid'] = $security_sid;
                 $data['main_employer_id'] = $security_sid;
                 $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
+
+                //
+                if(!empty($data['employer']['full_employment_application'])){
+                    //
+                    $updateArray = [];
+                    //
+                    $fullEmploymentForm = unserialize($data['employer']['full_employment_application']);
+                    // Check for DOB
+                    if(!empty($fullEmploymentForm['TextBoxDOB']) && empty($data['employer']['dob'])){
+                        $data['employer']['dob'] = $updateArray['dob'] = DateTime::createfromformat('m-d-Y',$fullEmploymentForm['TextBoxDOB'])->format('Y-m-d');
+                    }
+                    // Check for SSN
+                    if(!empty($fullEmploymentForm['TextBoxSSN']) && empty($data['employer']['ssn'])){
+                        $data['employer']['ssn'] = $updateArray['ssn'] = $fullEmploymentForm['TextBoxSSN'];
+                    }
+                    //
+                    if($updateArray){
+                        $this->db->where('sid', $data['employer']['sid'])
+                        ->update('users', $updateArray);
+                    }
+                }
                 $employee_detail = $data['employer'];
 
                 // Check and set the company sms module

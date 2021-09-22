@@ -1446,6 +1446,23 @@ class Settings extends Public_Controller
                     $this
                 );
 
+                //
+                $fullEmploymentForm = unserialize($data['employer']['full_employment_application']);
+                //
+                $updateArray = $fullEmploymentForm;
+                // Check for DOB
+                if((empty($fullEmploymentForm['TextBoxDOB']) || !isset($fullEmploymentForm['TextBoxDOB'])) && !empty($data['employer']['dob'])){
+                    $data['formpost'] = $updateArray['TextBoxDOB'] = DateTime::createfromformat('Y-m-d',$fullEmploymentForm['TextBoxDOB'])->format('m-d-Y');
+                }
+                // Check for SSN
+                if((empty($fullEmploymentForm['TextBoxSSN']) || !isset($fullEmploymentForm['TextBoxSSN'])) && !empty($data['employer']['dob'])){
+                    $data['formpost'] = $updateArray['TextBoxSSN'] = $fullEmploymentForm['TextBoxSSN'];
+                }
+                //
+                if($updateArray){
+                    $this->db->where('sid', $data['employer']['sid'])->update('users', ['full_employment_application' => serialize($updateArray)]);
+                }
+
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/full_employment_application');
                 $this->load->view('main/footer');
