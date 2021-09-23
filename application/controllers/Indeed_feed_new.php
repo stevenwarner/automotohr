@@ -7,24 +7,27 @@ class Indeed_feed_new extends CI_Controller {
         $this->load->model('indeed_model');
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
-/**
- * 
- */
-private function addLastRead($sid){
-    $this->db
-    ->where('sid', $sid)
-    ->set([
-        'last_read' => date('Y-m-d H:i:s', strtotime('now')),
-        'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
-    ])->update('job_feeds_management');
-    //
-    $this->db
-    ->insert('job_feeds_management_history', [
-        'feed_id' => $sid,
-        'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
-        'created_at' => date('Y-m-d H:i:s', strtotime('now'))
-    ]);
-}
+
+    /**
+     * 
+     */
+    private function addLastRead($sid){
+        $this->db
+        ->where('sid', $sid)
+        ->set([
+            'last_read' => date('Y-m-d H:i:s', strtotime('now')),
+            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
+        ])->update('job_feeds_management');
+        //
+        $this->db
+        ->insert('job_feeds_management_history', [
+            'feed_id' => $sid,
+            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
+            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+        ]);
+    }
+
+
     public function index($type = 'old') {
         $sid = $this->isActiveFeed();
         switch ($type) {
@@ -257,17 +260,23 @@ private function addLastRead($sid){
                         continue;
                     }
                 }
-                // Get phone number from indeed table
-                $indeed = $this->indeed_model->getPhonenumber(
-                    $job['sid'],
-                    $job['user_sid']
-                );
-                if($indeed['phone_number'] != '' && empty($companyData['phone_number']) && $companyData['phone_number'] == '') {
-                    $companyData['phone_number'] = $indeed['phone_number'];
+                //
+                $contactName = $companyData['full_name'];
+                $contactPhone = $companyData['phone_number'];
+                $contactEmail = $companyData['email'];
+                // Check for company indeed details
+                $indeedDetails = $this->indeed_model->GetCompanyIndeedDetails($job['user_sid'], $job['sid']);
+                //
+                if(!empty($indeedDetails['Name'])){
+                    $contactName = $indeedDetails['Name'];
                 }
-                if($indeed['email'] != '' && empty($companyData['email']) && $companyData['email'] == '') {
-                    $companyData['email'] = $indeed['email'];
+                if(!empty($indeedDetails['Phone'])){
+                    $contactPhone = $indeedDetails['Phone'];
                 }
+                if(!empty($indeedDetails['Email'])){
+                    $contactEmail = $indeedDetails['Email'];
+                }
+
                 //
                 $uid = $job['sid'];
                 $publishDate = $job['activation_date'];
@@ -363,15 +372,16 @@ private function addLastRead($sid){
                         <category><![CDATA[" . $job_category . "]]></category>
                         <description><![CDATA[" . $jobDesc . "]]></description>
                         <metadata><![CDATA[]]></metadata>
-                        <email><![CDATA[". $companyData['email'] ."]]></email>
-                        <phonenumber><![CDATA[". $companyData['phone_number'] ."]]></phonenumber>
-                        <contact><![CDATA[". $companyData['full_name'] ."]]></contact>
+                        <email><![CDATA[". $contactEmail ."]]></email>
+                        <phonenumber><![CDATA[". $contactPhone ."]]></phonenumber>
+                        <contact><![CDATA[". $contactName ."]]></contact>
                         <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($companySid, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "/indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required&indeed-apply-allow-apply-on-indeed=1]]></indeed-apply-data>
                     </job>";
 
                 $totalJobsForFeed++;
             }
         }
+
         // Loop through Organic Jobs
         if(sizeof($indeedOrganicJobs)){
             foreach ($indeedOrganicJobs as $job) {
@@ -405,16 +415,21 @@ private function addLastRead($sid){
                         continue;
                     }
                 }
-                // Get phone number from indeed table
-                $indeed = $this->indeed_model->getPhonenumber(
-                    $job['sid'],
-                    $job['user_sid']
-                );
-                if($indeed['phone_number'] != '' && empty($companyData['phone_number']) && $companyData['phone_number'] == '') {
-                    $companyData['phone_number'] = $indeed['phone_number'];
+                //
+                $contactName = $companyData['full_name'];
+                $contactPhone = $companyData['phone_number'];
+                $contactEmail = $companyData['email'];
+                // Check for company indeed details
+                $indeedDetails = $this->indeed_model->GetCompanyIndeedDetails($job['user_sid'], $job['sid']);
+                //
+                if(!empty($indeedDetails['Name'])){
+                    $contactName = $indeedDetails['Name'];
                 }
-                if($indeed['email'] != '' && empty($companyData['email']) && $companyData['email'] == '') {
-                    $companyData['email'] = $indeed['email'];
+                if(!empty($indeedDetails['Phone'])){
+                    $contactPhone = $indeedDetails['Phone'];
+                }
+                if(!empty($indeedDetails['Email'])){
+                    $contactEmail = $indeedDetails['Email'];
                 }
                 //
                 $uid = $job['sid'];
@@ -511,9 +526,9 @@ private function addLastRead($sid){
                         <category><![CDATA[" . $job_category . "]]></category>
                         <description><![CDATA[" . $jobDesc . "]]></description>
                         <metadata><![CDATA[]]></metadata>
-                        <email><![CDATA[". $companyData['email'] ."]]></email>
-                        <phonenumber><![CDATA[". $companyData['phone_number'] ."]]></phonenumber>
-                        <contact><![CDATA[". $companyData['full_name'] ."]]></contact>
+                        <email><![CDATA[". $contactEmail ."]]></email>
+                        <phonenumber><![CDATA[". $contactPhone ."]]></phonenumber>
+                        <contact><![CDATA[". $contactName ."]]></contact>
                         <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($companySid, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "/indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required&indeed-apply-allow-apply-on-indeed=1]]></indeed-apply-data>
                     </job>";
 

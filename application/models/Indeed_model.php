@@ -299,4 +299,30 @@ class Indeed_model extends CI_Model {
             'indeed_sponsored' => 1
         ));
     }
+
+    //
+    function GetCompanyIndeedDetails($companyId, $jobId){
+        //
+        $r = ['Phone' => '', 'Email' => '', 'Name' => ''];
+        //
+        $details = $this->db->where('company_sid', $companyId)->get('company_indeed_details')->row_array();
+        //
+        if(!empty($details)){
+            $r['Name'] = $details['contact_name'];
+            $r['Email'] = $details['contact_email'];
+            $r['Phone'] = $details['contact_phone'];
+        } else{
+            $details = $this->db
+            ->select('phone_number')
+            ->where('job_sid', $jobId)
+            ->get('portal_job_indeed')
+            ->row_array();
+            //
+            if(!empty($details)){
+                $r['Phone'] = $details['phone_number'];
+            }
+        }
+
+        return $r;
+    }
 }

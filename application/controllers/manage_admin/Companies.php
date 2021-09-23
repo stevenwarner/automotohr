@@ -1401,8 +1401,7 @@ class Companies extends Admin_Controller {
     //            $this->data['company_card'] = $company_card;
                 
                 //
-                $this->data['CompanyEmail'] = $this->company_model->GetCompanyEmail($company_sid);
-
+                $this->data['CompanyIndeedDetails'] = $this->company_model->GetCompanyIndeedDetails($company_sid);
 
                 // Get dynamic modules
                 $this->data['dynamicModules'] = $this->company_model->getDynamicModulesByCompany($company_sid);
@@ -3011,8 +3010,10 @@ class Companies extends Admin_Controller {
 
     function update_company_email(){
         //
-        $this->company_model->UpdateCompanyEmail(
+        $this->company_model->UpdateCompanyIndeed(
+            $_POST['name'],
             $_POST['email'],
+            $_POST['phone'],
             $_POST['companyId']
         );
 

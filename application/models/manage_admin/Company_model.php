@@ -2153,9 +2153,38 @@ class Company_model extends CI_Model {
     }
 
     //
-    function UpdateCompanyEmail($email, $companyId){
+    function UpdateCompanyIndeed(
+        $name, 
+        $email, 
+        $phone, 
+        $companyId
+    ){
         //
-        $this->db->where('sid', $companyId)
-        ->update('users', ['email' => $email]);
+        if($this->db->where('company_sid', $companyId)->count_all_results('company_indeed_details')){
+            //
+            $this->db->where('company_sid', $companyId)
+            ->update('company_indeed_details', [
+                'contact_name' => $name,
+                'contact_email' => $email,
+                'contact_phone' => $phone,
+                'updated_at' => date("Y-m-d H:i:s", strtotime('now'))
+            ]);
+        } else{
+            //
+            $this->db
+            ->insert('company_indeed_details', [
+                'contact_name' => $name,
+                'contact_email' => $email,
+                'contact_phone' => $phone,
+                'company_sid' => $companyId,
+                'created_at' => date("Y-m-d H:i:s", strtotime('now')),
+                'updated_at' => date("Y-m-d H:i:s", strtotime('now'))
+            ]);
+        }
+    }
+
+    //
+    function GetCompanyIndeedDetails($companyId){
+        return $this->db->where('company_sid', $companyId)->get('company_indeed_details')->row_array();
     }
 }

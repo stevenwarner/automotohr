@@ -1272,7 +1272,7 @@
                                                             <?php if($v['sid'] == 3): ?>
                                                                 <span class="pull-right">
                                                                     <button class="btn btn-success jsModifyFeedEmail">
-                                                                        <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update Company Email
+                                                                        <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update Details
                                                                     </button>
                                                                 </span>
                                                             <?php endif; ?>
@@ -1830,7 +1830,9 @@
             $('#jsModalContainer').remove();
             $('body').append(modal)
             //
-            $('#jsEmailModal .jsEmail').val("<?=$CompanyEmail['email'];?>");
+            $('#jsEmailModal .jsName').val("<?=$CompanyIndeedDetails['contact_name'];?>");
+            $('#jsEmailModal .jsPhone').val("<?=$CompanyIndeedDetails['contact_phone'];?>");
+            $('#jsEmailModal .jsEmail').val("<?=$CompanyIndeedDetails['contact_email'];?>");
             //
             $('#jsEmailModal').modal();
         });
@@ -1849,7 +1851,23 @@
             //
             var o = {};
             o.email = $('#jsEmailModal .jsEmail').val().trim();
+            o.name = $('#jsEmailModal .jsName').val().trim();
+            o.phone = $('#jsEmailModal .jsPhone').val().trim();
             o.companyId = <?=$company_sid;?>;
+            //
+            if(!o.name){
+                return alertify.alert(
+                    'Error!',
+                    'Name is required.'
+                );
+            }
+            //
+            if(!o.phone){
+                return alertify.alert(
+                    'Error!',
+                    'Phone is required.'
+                );
+            }
             //
             if(!o.email){
                 return alertify.alert(
@@ -1901,8 +1919,22 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-sm-12">
-                            <label>Email Address <span>*</span></label>
-                            <input type="email" required class="form-control jsEmail"/>
+                            <label>Contact Person <span>*</span></label>
+                            <input type="text" required class="form-control jsName" placeholder="Jhon Doe"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Contact Phone Number <span>*</span></label>
+                            <input type="email" required class="form-control jsPhone" placeholder="+1 (123)-4567891"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Contact Email Address <span>*</span></label>
+                            <input type="email" required class="form-control jsEmail" placeholder="jhon.doe@automotohr.com"/>
                         </div>
                     </div>
                 </div>
