@@ -23,13 +23,13 @@
                                                             <table class="table table-bordered table-hover table-striped">
                                                                 <thead>
                                                                 <tr>
-                                                                    <th><input type="checkbox" id="check_all"></th>
-                                                                    <th class="text-center">ID</th>
-                                                                    <th>Access Level</th>
-                                                                    <th>Email</th>
-                                                                    <th>Registration Date</th>
-                                                                    <th>Contact Name</th>
-                                                                    <th>Permissions</th>
+                                                                    <th scope="col" class="text-center"><input type="checkbox" id="check_all"></th>
+                                                                    <th scope="col"  class="text-center">ID</th>
+                                                                    <th scope="col" class="text-left">Contact Name</th>
+                                                                    <th scope="col" class="text-center">Access Level</th>
+                                                                    <th scope="col" class="text-center">Email</th>
+                                                                    <th scope="col" class="text-center">Registration Date</th>
+                                                                    <th scope="col" class="text-center">Permissions</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -39,7 +39,7 @@
                                                                         $value['pay_plan_flag'] ? ($configured_pp[] = (int)$value['sid']) : '';
                                                                         ?>
                                                                         <tr id="parent_<?= $value['sid'] ?>">
-                                                                            <td><input type="checkbox" name="checklist[]" value="<?php echo $value['sid']; ?>" data-attr="<?php echo $value['sid']; ?>" class="my_checkbox access_change" <?php if(in_array($value['sid'],$configured_employees)) echo 'checked="checked"';?>></td>
+                                                                            <td style="vertical-align: middle; text-align: center"><input type="checkbox" name="checklist[]" value="<?php echo $value['sid']; ?>" data-attr="<?php echo $value['sid']; ?>" class="my_checkbox access_change" <?php if(in_array($value['sid'],$configured_employees)) echo 'checked="checked"';?>></td>
                                                                             <td class="text-center">
                                                                                 <div class="employee-profile-info profile-img">
                                                                                     <figure>
@@ -50,14 +50,17 @@
                                                                                         <?php } ?>
                                                                                     </figure>
                                                                                 </div>
+                                                                                <br>
                                                                                 <b><?php echo $value['sid']; ?></b>
                                                                             </td>
-                                                                            <td><?php if($value['is_executive_admin']) { echo 'Executive Admin'; }
+                                                                            <td style="vertical-align: middle; text-align: left"><strong><?php echo ucwords($value['first_name'] . ' ' . $value['last_name']); ?></strong></td>
+                                                                            <td style="vertical-align: middle; text-align: center"><?php if($value['is_executive_admin']) { echo 'Executive Admin'; }
                                                                                 else { echo ucwords($value['access_level']);  }?></td>
-                                                                            <td><?php echo $value['email']?></td>
-                                                                            <td><?php echo date('m-d-Y',strtotime($value['registration_date'])); ?></td>
-                                                                            <td><?php echo ucwords($value['first_name'] . ' ' . $value['last_name']); ?></td>
-                                                                            <td>Pay Roll <?= '<input id="'.$value['sid'].'" type="checkbox" name="pay-plan[]" value="'.$value['sid'].'" class="my_checkbox" ' . ($value['pay_plan_flag'] ? ("checked='checked'") : "") .'>';?></td>
+                                                                            <td style="vertical-align: middle; text-align: center"><?php echo $value['email']?></td>
+                                                                            <td style="vertical-align: middle; text-align: center"><?php echo formatDateToDB($value['registration_date'], DB_DATE_WITH_TIME, DATE); ?></td>
+                                                                            <td style="vertical-align: middle; text-align: center">
+                                                                                Pay Roll <?= '<input id="'.$value['sid'].'" type="checkbox" name="pay-plan[]" value="'.$value['sid'].'" class="my_checkbox" ' . ($value['pay_plan_flag'] ? ("checked='checked'") : "") .'>';?>
+                                                                            </td>
 
                                                                         </tr>
                                                                     <?php }?>
