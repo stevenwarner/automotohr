@@ -1861,13 +1861,7 @@
                     'Name is required.'
                 );
             }
-            //
-            if(!o.phone){
-                return alertify.alert(
-                    'Error!',
-                    'Phone is required.'
-                );
-            }
+           
             //
             if(!o.email){
                 return alertify.alert(
@@ -1914,7 +1908,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Update email for indeed feed</h4>
+                    <h4 class="modal-title">Update details for Indeed feed</h4>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -1926,7 +1920,7 @@
                     <br>
                     <div class="row">
                         <div class="col-sm-12">
-                            <label>Contact Phone Number <span>*</span></label>
+                            <label>Contact Phone Number</label>
                             <input type="email" required class="form-control jsPhone" placeholder="+1 (123)-4567891"/>
                         </div>
                     </div>
