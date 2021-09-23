@@ -1854,23 +1854,11 @@
             o.name = $('#jsEmailModal .jsName').val().trim();
             o.phone = $('#jsEmailModal .jsPhone').val().trim();
             o.companyId = <?=$company_sid;?>;
-            //
-            if(!o.name){
-                return alertify.alert(
-                    'Error!',
-                    'Name is required.'
-                );
-            }
+         
            
+         
             //
-            if(!o.email){
-                return alertify.alert(
-                    'Error!',
-                    'Email is required.'
-                );
-            }
-            //
-            if(!validateEmail(o.email)){
+            if(o.email && !validateEmail(o.email)){
                 return alertify.alert(
                     'Error!',
                     'Email is not valid.'
@@ -1913,22 +1901,22 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-sm-12">
-                            <label>Contact Person <span>*</span></label>
-                            <input type="text" required class="form-control jsName" placeholder="Jhon Doe"/>
+                            <label>Contact Person</label>
+                            <input type="text" class="form-control jsName" placeholder="Jhon Doe"/>
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Contact Phone Number</label>
-                            <input type="email" required class="form-control jsPhone" placeholder="+1 (123)-4567891"/>
+                            <input type="email" class="form-control jsPhone" placeholder="+1 (123)-4567891"/>
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="col-sm-12">
-                            <label>Contact Email Address <span>*</span></label>
-                            <input type="email" required class="form-control jsEmail" placeholder="jhon.doe@automotohr.com"/>
+                            <label>Contact Email Address</label>
+                            <input type="email" class="form-control jsEmail" placeholder="jhon.doe@automotohr.com"/>
                         </div>
                     </div>
                 </div>
