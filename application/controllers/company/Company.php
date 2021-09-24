@@ -170,38 +170,41 @@ class Company extends CI_Controller
      */
     private function Assets($page){
         //
+        $version = MINIFIED == '' ? time() : '1.0';
+        //
         $Assets = [];
         //
         $Assets['common'] = [
-            '<link href="'.(base_url('assets/css/SystemModel'.(MINIFIED).'.css?v='.(MINIFIED == '' ? time() : '1.0').'')).'" rel="stylesheet">',
-            '<script src="'.(base_url('assets/js/SystemModal'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+            '<link href="'.(base_url('assets/css/SystemModel'.(MINIFIED).'.css?v='.($version).'')).'" rel="stylesheet">',
+            '<script src="'.(base_url('assets/js/SystemModal'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
         ];
         //
         $Assets['bank_account'] = [
-            '<script src="'.(base_url('assets/payroll/bank_account'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+            '<script src="'.(base_url('assets/payroll/bank_account'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
         ];
         //
         $Assets['taxes'] = [
-            '<script src="'.(base_url('assets/payroll/tax'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+            '<script src="'.(base_url('assets/payroll/tax'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
         ];
         //
         $Assets['locations'] = [
-            '<script src="'.(base_url('assets/payroll/locations'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+            '<script src="'.(base_url('assets/payroll/locations'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
         ];
         //
         $Assets['pay_period'] = [
-            '<script src="'.(base_url('assets/payroll/pay_period'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+            '<script src="'.(base_url('assets/payroll/pay_period'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
         ];
         //
         $Assets['add_employee'] = [
             'basic_information' => [
-                '<script src="'.(base_url('assets/payroll/basic_information'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+                '<script src="'.(base_url('assets/payroll/basic_information'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
             ],
             'bank_accounts' => [
-                '<script src="'.(base_url('assets/payroll/bank_accounts'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+                '<script src="'.(base_url('assets/payroll/bank_accounts'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
             ],
             'jobs' => [
-                '<script src="'.(base_url('assets/payroll/jobs'.(MINIFIED).'.js?v='.(MINIFIED == '' ? time() : '1.0').'')).'" type="text/javascript"></script>'
+                '<script src="'.(base_url('assets/payroll/jobs'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>',
+                '<script src="'.(base_url('assets/payroll/compensations'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>',
             ]
         ];
         //

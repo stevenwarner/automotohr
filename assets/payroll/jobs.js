@@ -278,6 +278,9 @@ $(function Employee() {
             ).done(function(html) {
                 //
                 $('#jsViewModalBody').html(html);
+                //
+                GetJobDetails(jobId);
+                //
             }).error(function() {
                 ml(false, 'jsViewModalLoader');
                 return alertify.alert("Error", "Something went wrong.");

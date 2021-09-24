@@ -310,3 +310,15 @@ $('.jsSectionTrigger').click(function(event) {
     //
     $('.jsSectionBody[data-id="' + ($(this).data('target')) + '"]').toggleClass('dn');
 });
+
+/**
+ * 
+ */
+$(document).on('keyup', '.jsAmountField', function(){
+    //
+    if($(this).val()){
+        $(this).val(
+            $(this).val().replace(/[^\d.]/g, '')
+        );
+    }
+});
