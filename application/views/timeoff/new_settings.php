@@ -96,7 +96,7 @@
                 </div>
                 
                 <!--  -->
-                <div class="form-group">
+                <div class="form-group dn">
                     <div class="row">
                         <div class="col-sm-6">
                             <hr />
@@ -104,6 +104,21 @@
                                 <input type="checkbox" class="checkbox-sizing" name="send_email"
                                 id="js-send-email-check">
                                 <span>Do not send notifications</span>
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--  -->
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <hr />
+                            <label class="control control--checkbox">
+                                <input type="checkbox" class="checkbox-sizing" name="send_email"
+                                id="js-team-visibility-check">
+                                <span>Employees can see their colleagues' time offs.</span>
                                 <div class="control__indicator"></div>
                             </label>
                         </div>

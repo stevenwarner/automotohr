@@ -7966,6 +7966,7 @@ class Timeoff_model extends CI_Model
             send_email_to_supervisor,
             accrue_start_date,
             timeoff_format_sid,
+            team_visibility_check,
             theme
         ')
         ->from('timeoff_settings')
@@ -8010,6 +8011,7 @@ class Timeoff_model extends CI_Model
         $dataArray['pto_approval_check'] = $post['approvalCheck'];
         $dataArray['send_email_to_supervisor'] = $post['emailSendCheck'];
         $dataArray['pto_email_receiver'] = $post['emailCheck'];
+        $dataArray['team_visibility_check'] = $post['teamVisibility'];
         $dataArray['timeoff_format_sid'] = $post['format'];
         $dataArray['off_days'] = !isset($post['offDays']) || $post['offDays'] == null ? null : implode(',', $post['offDays']);
         $dataArray['theme'] = $post['theme'];
@@ -11111,7 +11113,7 @@ class Timeoff_model extends CI_Model
 
         // Get company default time
         $a = $this->db
-            ->select('timeoff_settings.default_timeslot, timeoff_formats.slug')
+            ->select('timeoff_settings.default_timeslot, timeoff_formats.slug, timeoff_settings.team_visibility_check')
             ->from('timeoff_settings')
             ->join('timeoff_formats', 'timeoff_formats.sid = timeoff_settings.timeoff_format_sid')
             ->where('company_sid', $company_id)
@@ -11119,6 +11121,7 @@ class Timeoff_model extends CI_Model
             ->get();
         //
         $slug = isset($a->row_array()['slug']) ? $a->row_array()['slug'] : 'H:M';
+        $timeoffSettings = $a->row_array();
         $a->free_result();
         //
         $timeoff_requests = array();
@@ -11129,8 +11132,11 @@ class Timeoff_model extends CI_Model
             if( $employer_detail['access_level_plus'] == 0 && $employer_detail['pay_plan_flag'] == 0 ){
                 // Check if the employee is part of team
                 $isTeamMember = $this->isTeamMember($v['employee_sid'], $employer_id);
-                // $isColleague = $this->isColleague($v['employee_sid'], $employer_id);
                 $isColleague = 0;
+                //
+                if(!empty($timeoffSettings) && $timeoffSettings['team_visibility_check'] == '1'){
+                    $isColleague = $this->isColleague($v['employee_sid'], $employer_id);
+                }
                 $isSame = $v['employee_sid'] != $employer_id ? 0 : 1;
                 //
                 if($isColleague) $asApprover = 2;

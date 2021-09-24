@@ -51,6 +51,7 @@ $(function() {
         settingOBJ.forAllEmployees = Number($('.js-for-all-employees').prop('checked'));
         settingOBJ.emailSendCheck = Number($('#js-send-email-check').prop('checked'));
         settingOBJ.emailCheck = Number($('#js-email-check').prop('checked'));
+        settingOBJ.teamVisibility = Number($('#js-team-visibility-check').prop('checked'));
         //
         $.post(
             handlerURL,
@@ -112,6 +113,7 @@ $(function() {
                     // $('#js-email-check').prop('checked', resp.Data.Settings.email_check == '0' ? true : false);
                     $('#js-send-email-check').prop('checked', resp.Data.Settings.send_email_to_supervisor == '1' ? true : false);
                     $('#js-formats').select2('val', resp.Data.Settings.timeoff_format_sid);
+                    $('#js-team-visibility-check').prop('checked', resp.Data.Settings.team_visibility_check == '1' ? true : false);
                     //
                     $('#js-off-days').select2('val', resp.Data.Settings.off_days.split(','));
                     $('#js-themes').select2('val', resp.Data.Settings.theme);

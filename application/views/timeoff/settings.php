@@ -117,11 +117,22 @@
                                         <div class="info-custom">&nbsp;<i class="fa  fa-question-circle"></i></div>
                                     </a>
                                 </div> -->
-                                <div class="">
+                                <div class="dn">
                                     <div class="col-lg-12 checkbox-styling-setting info-styling-custom margin-top">
                                         <label class="control control--checkbox">
                                             <input type="checkbox" class="checkbox-sizing" name="send_email"
                                                 id="js-send-email-check"> <span>Do not send notifications</span>
+                                            <div class="control__indicator"></div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!--  -->
+                                <div>
+                                    <div class="col-lg-12 checkbox-styling-setting info-styling-custom margin-top">
+                                        <label class="control control--checkbox">
+                                            <input type="checkbox" class="checkbox-sizing" name="team_visibility"
+                                                id="js-team-visibility-check"> <span>Employees can see their colleagues' time offs.</span>
                                             <div class="control__indicator"></div>
                                         </label>
                                     </div>
