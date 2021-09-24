@@ -1,8 +1,9 @@
+//
+var CompanyLocationsObj = {};
+
 $(function Employee() {
     //
     var LOADER = 'employee';
-    //
-    var CompanyLocationsObj = {};
 
     /**
      * Adds a new
@@ -256,6 +257,34 @@ $(function Employee() {
         });
     });
 
+    /**
+     * Compensations
+     */
+    $(document).on('click', '.jsView', function(event) {
+        //
+        event.preventDefault();
+        //
+        var jobId = $(this).closest('tr').data('id');
+        //
+        Model({
+            Id: "jsViewModal",
+            Loader: "jsViewModalLoader",
+            Body: '<div id="jsViewModalBody"></div>',
+            Title: "Job Details"
+        }, function() {
+            //
+            $.get(
+                window.location.origin + '/get_job_detail/' + jobId
+            ).done(function(html) {
+                //
+                $('#jsViewModalBody').html(html);
+            }).error(function() {
+                ml(false, 'jsViewModalLoader');
+                return alertify.alert("Error", "Something went wrong.");
+            });
+        });
+    });
+
 
     /**
      * Get data
@@ -281,7 +310,7 @@ $(function Employee() {
                         rows += '   <td class="csF16 vam text-right">' + (record.HireDate) + '</td>';
                         rows += '   <td class="csF16 vam text-right">' + (record.Name) + '<br/>' + (record.LastModifiedOn) + '</td>';
                         rows += '   <td class="csF16 vam text-right">';
-                        rows += '       <button class="btn btn-success csF16 csB7 jsDeleteBankAccount"><i class="fa fa-money csF16"></i>&nbsp;Compensations</button>';
+                        rows += '       <button class="btn btn-success csF16 csB7 jsView"><i class="fa fa-eye csF16"></i>&nbsp;Details</button>';
                         rows += '       <button class="btn btn-warning csF16 csB7 jsEEdit"><i class="fa fa-edit csF16"></i>&nbsp;Edit</button>';
                         rows += '   </td>';
                         rows += '</tr>';

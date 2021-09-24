@@ -1414,3 +1414,5 @@ $route['company/locations']['get'] = 'company/Company/Locations';
 $route['company/pay_periods']['get'] = 'company/Company/PayPeriods';
 // 
 $route['employee/add/(:num)']['get'] = 'company/Company/AddEmployee/$1';
+//
+$route['get_job_detail/(:num)']['get'] = 'company/Company/GetJobDetailPage/$1';

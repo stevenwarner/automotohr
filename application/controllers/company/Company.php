@@ -13,6 +13,8 @@ class Company extends CI_Controller
         // Call the model
         $this->load->model("Payroll_model", "pm");
         //
+        $this->load->library('user_agent');
+        //
         $this->data = [];
         $this->data['logged_in_view'] = true;
         //
@@ -149,6 +151,15 @@ class Company extends CI_Controller
         ->view($this->pages['header'], $this->data)
         ->view('payroll/includes/add_employee')
         ->view($this->pages['footer']);
+    }
+
+
+    /**
+     * 
+     */
+    function GetJobDetailPage($jobId){
+        //
+        echo $this->load->view("payroll/job_detail_view", ['jobId' => $jobId], true);
     }
 
     /**
