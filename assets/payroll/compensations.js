@@ -5,6 +5,8 @@ $(function Compensations() {
     var JobId;
     //
     var type;
+    //
+    var compensationId = 0;
 
     /**
      * Show compensation add/edit
@@ -15,9 +17,11 @@ $(function Compensations() {
         //
         type = $(this).data('type');
         //
+        compensationId = type === 'Add' ? 0 : $(this).closest('tr').data('id');
+        //
         Model({
             Id: 'jsJobDetails' + type + 'Modal',
-            Title: (type == 'add' ? 'Add' : 'Edit') + ' Compensation Against Job - ' + JobDetails.Title,
+            Title: (type) + ' Compensation Against Job - ' + JobDetails.Title,
             Body: '<div id="jsJobDetails' + type + 'Body">' + (GetBody()) + '</div>',
             Loader: 'jsJobDetails' + type + 'ModalLoader',
         }, function() {
@@ -35,17 +39,23 @@ $(function Compensations() {
                 $('tr[data-id="' + (JobId) + '"] .jsView').trigger('click');
             });
             //
-            if (type === 'add') {
+            if (type === 'Add') {
                 //
                 ml(false, 'jsJobDetails' + type + 'ModalLoader');
             } else {
                 // Fetch single compensation
-                $.get(API_URL + 'compensation/' + jobId)
+                $.get(API_URL.replace(/employees/, '') + 'compensation/' + compensationId)
                     .done(function(resp) {
                         //
                         if (resp.status !== false) {
-
+                            //
+                            $('.jsRate').val(resp.response.Rate);
+                            $('.jsPaymentUnit').select2('val', resp.response.PaymentUnit);
+                            $('.jsFLSAStatus').select2('val', resp.response.FlsaStatus);
+                            $('.jsEffectiveDate').val(resp.response.EffectiveDate);
                         }
+                        //
+                        ml(false, 'jsJobDetails' + type + 'ModalLoader');
                     });
             }
         });
@@ -71,16 +81,12 @@ $(function Compensations() {
         if (!o.EffectiveDate) {
             return alertify.alert('Error!', 'Effective date is required.');
         }
-        // Check Id
-        if ($('.jsCompensationId').length) {
-            o.Id = $('.jsCompensationId').val();
-        }
         // Set job Id
         o.JobId = JobId;
         //
         ml(true, 'jsJobDetails' + type + 'ModalLoader');
         //
-        if (o.Id) {
+        if (compensationId !== 0) {
             UpdateCompensation(o);
         } else {
             AddCompensation(o);
@@ -91,7 +97,29 @@ $(function Compensations() {
      * Update Compensation
      * @param {Object} o 
      */
-    function UpdateCompensation(o) {}
+    function UpdateCompensation(o) {
+        //
+        $.ajax({
+            method: "PUT",
+            url: API_URL.replace(/employees/, '') + 'compensation/' + compensationId,
+            headers: { 'Content-Type': 'application/json' },
+            data: JSON.stringify(o)
+        }).done(function(resp) {
+            //
+            ml(false, 'jsJobDetails' + type + 'ModalLoader');
+            //
+            if (!resp.status) {
+                return alertify.alert('Error!', typeof resp.response === 'object' ? resp.response.join("<br>") : resp.response);
+            }
+            //
+            return alertify.alert('Success!', resp.response, function() {
+                //
+                $('#jsJobDetails' + type + 'Modal .jsModalCancel').trigger('click');
+                //
+                GetJobDetails();
+            });
+        });
+    }
 
     /**
      * Add Compensation
@@ -113,12 +141,15 @@ $(function Compensations() {
             }
             //
             return alertify.alert('Success!', resp.response, function() {
-                // GetJobDetails();
+                GetJobDetails();
             });
         });
     }
 
-    //
+    /**
+     * 
+     * @param {Integer} jobId 
+     */
     function GetJobDetails(jobId) {
         //
         JobId = jobId;
@@ -147,7 +178,7 @@ $(function Compensations() {
                     trs += '    <td class="vam csF16 text-right">' + (compensation.FlsaStatus) + '</td>';
                     trs += '    <td class="vam csF16 text-right">' + (compensation.EffectiveDate) + '</td>';
                     trs += '    <td class="vam csF16 text-right">';
-                    trs += '        <button class="btn btn-warning csF16 csB7 jsCompensation" data-type="edit">';
+                    trs += '        <button class="btn btn-warning csF16 csB7 jsCompensation" data-type="Edit">';
                     trs += '            <i class="fa fa-edit csF16" aria-hidden="true"></i>&nbsp;Edit';
                     trs += '        </button>';
                     trs += '    </td>';
@@ -219,11 +250,8 @@ $(function Compensations() {
         html += '    <div class="row">';
         html += '        <div class="col-sm-12 text-right">';
         html += '            <button class="btn btn-success csF16 csB7 jsSave">';
-        html += '                <i class="fa fa-save csF16" aria-hidden="true"></i>&nbsp;' + (type === 'edit' ? 'Update' : 'Save') + '';
+        html += '                <i class="fa fa-save csF16" aria-hidden="true"></i>&nbsp;' + (type === 'Edit' ? 'Update' : 'Save') + '';
         html += '            </button>';
-        if (type === 'edit') {
-            html += '<input type="hidden" class="jsCompensationId" />';
-        }
         html += '        </div>';
         html += '    </div>';
         html += '</div>';
@@ -231,5 +259,6 @@ $(function Compensations() {
         return html;
     }
 
+    //
     window.GetJobDetails = GetJobDetails;
 });

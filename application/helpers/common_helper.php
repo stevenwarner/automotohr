@@ -11124,6 +11124,13 @@ if (!function_exists('stringToSlug')) {
     }
 }
 
+if (!function_exists('SlugToString')) {
+    function SlugToString($i)
+    {
+        return ucwords(trim(preg_replace('/_/', ' ', $i)));
+    }
+}
+
 // Check if the logged in user
 // has PP flag or ALP flag 'on'
 if (!function_exists('getSSV')) {

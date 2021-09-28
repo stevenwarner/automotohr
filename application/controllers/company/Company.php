@@ -25,89 +25,25 @@ class Company extends CI_Controller
     }
 
     /**
-     * Set Company Bank Accounts
-     * 
-     * @method CheckLogin
-     * @method Assets
+     * Company Onboard
      */
-    function BankAccount(){
+    function CompanyOnboard(){
         //
         CheckLogin($this->data);
         //
-        $this->data['Assets'] = $this->Assets('bank_account');
+        $this->data['section'] = $this->input->get('section') ? $this->input->get('section', true) : 'taxes';
         //
-        $this->data['title'] = 'Company Bank Account';
+        $this->data['Assets'] = $this->Assets($this->data['section']);
+        //
+        $this->data['title'] = 'Company - '.(SlugToString($this->data['section']));
         $this->data['load_view'] = 0;
         //
         $this->load
         ->view($this->pages['header'], $this->data)
-        ->view('payroll/includes/bank_account')
-        ->view($this->pages['footer']);
-    }
-    
-    /**
-     * Set Company Taxes
-     * 
-     * @method CheckLogin
-     * @method Assets
-     */
-    function Taxes(){
-        //
-        CheckLogin($this->data);
-        //
-        $this->data['Assets'] = $this->Assets('taxes');
-        //
-        $this->data['title'] = 'Company Taxes';
-        $this->data['load_view'] = 0;
-        //
-        $this->load
-        ->view($this->pages['header'], $this->data)
-        ->view('payroll/includes/taxes')
+        ->view('payroll/company_onboard')
         ->view($this->pages['footer']);
     }
 
-    /**
-     * Set Company Locations
-     * 
-     * @method CheckLogin
-     * @method Assets
-     */
-    function Locations(){
-        //
-        CheckLogin($this->data);
-        //
-        $this->data['Assets'] = $this->Assets('locations');
-        //
-        $this->data['title'] = 'Company Locations';
-        $this->data['load_view'] = 0;
-        //
-        $this->load
-        ->view($this->pages['header'], $this->data)
-        ->view('payroll/includes/locations')
-        ->view($this->pages['footer']);
-    }
-
-    /**
-     * Set Company Pay Periods
-     * 
-     * @method CheckLogin
-     * @method Assets
-     */
-    function PayPeriods(){
-        //
-        CheckLogin($this->data);
-        //
-        $this->data['Assets'] = $this->Assets('pay_period');
-        //
-        $this->data['title'] = 'Company Pay Periods';
-        $this->data['load_view'] = 0;
-        //
-        $this->load
-        ->view($this->pages['header'], $this->data)
-        ->view('payroll/includes/pay_period')
-        ->view($this->pages['footer']);
-    }
-    
     /**
      * Add Emloyee To Payroll
      * 
@@ -179,7 +115,7 @@ class Company extends CI_Controller
             '<script src="'.(base_url('assets/js/SystemModal'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
         ];
         //
-        $Assets['bank_account'] = [
+        $Assets['bank_accounts'] = [
             '<script src="'.(base_url('assets/payroll/bank_account'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
         ];
         //
@@ -191,7 +127,7 @@ class Company extends CI_Controller
             '<script src="'.(base_url('assets/payroll/locations'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
         ];
         //
-        $Assets['pay_period'] = [
+        $Assets['pay_periods'] = [
             '<script src="'.(base_url('assets/payroll/pay_period'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
         ];
         //

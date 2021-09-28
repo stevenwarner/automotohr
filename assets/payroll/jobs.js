@@ -33,12 +33,14 @@ $(function Employee() {
             html += '            <label class="csF16 csB7">';
             html += '                Title&nbsp;<span class="csRequired"></span>';
             html += '            </label>';
+            html += '            <p class="csF14">The title for the job.</p>';
             html += '            <input type="text" class="form-control jsETitle" placeholder="Regional Manager" />';
             html += '        </div>';
             html += '        <div class="col-md-4 col-xs-12">';
             html += '            <label class="csF16 csB7">';
             html += '                Hire Date&nbsp;<span class="csRequired"></span>';
             html += '            </label>';
+            html += '            <p class="csF14">The date when the employee was hired for the job.</p>';
             html += '            <input type="text" class="form-control jsEHireDate" readonly placeholder="MM/DD/YYYY" />';
             html += '        </div>';
             html += '    </div><br>';
@@ -153,12 +155,14 @@ $(function Employee() {
             html += '            <label class="csF16 csB7">';
             html += '                Title&nbsp;<span class="csRequired"></span>';
             html += '            </label>';
+            html += '            <p class="csF14">The title for the job.</p>';
             html += '            <input type="text" class="form-control jsETitle" placeholder="Regional Manager" />';
             html += '        </div>';
             html += '        <div class="col-md-4 col-xs-12">';
             html += '            <label class="csF16 csB7">';
             html += '                Hire Date&nbsp;<span class="csRequired"></span>';
             html += '            </label>';
+            html += '            <p class="csF14">The date when the employee was hired for the job.</p>';
             html += '            <input type="text" class="form-control jsEHireDate" readonly placeholder="MM/DD/YYYY" />';
             html += '        </div>';
             html += '    </div><br>';
@@ -330,13 +334,16 @@ $(function Employee() {
                         //
                         rows += '<tr data-id="' + (record.JobId) + '">';
                         rows += '   <td class="csF16 csB7 vam">' + (record.Title) + '</td>';
-                        rows += '   <td class="csF16 vam text-right">' + (CompanyLocationsObj[record.LocationId]) + '</td>';
+                        rows += '   <td class="csF16 vam text-right text-' + (record.IsPrimary ? 'success' : 'danger') + '">' + (record.IsPrimary ? 'Yes' : 'No') + '</td>';
                         rows += '   <td class="csF16 vam text-right">' + (record.HireDate) + '</td>';
+                        rows += '   <td class="csF16 vam text-right">' + (CompanyLocationsObj[record.LocationId]) + '</td>';
                         rows += '   <td class="csF16 vam text-right">' + (record.Name) + '<br/>' + (record.LastModifiedOn) + '</td>';
-                        rows += '   <td class="csF16 vam text-center">';
+                        rows += '   <td class="csF16 vam text-right">';
                         rows += '       <button class="btn btn-success csF16 csB7 jsView"><i class="fa fa-eye csF16"></i>&nbsp;Details</button>';
                         rows += '       <button class="btn btn-warning csF16 csB7 jsEEdit"><i class="fa fa-edit csF16"></i>&nbsp;Edit</button>';
-                        rows += '       <button class="btn btn-danger csF16 csB7 jsEDelete"><i class="fa fa-times-circle csF16"></i>&nbsp;Delete</button>';
+                        if (!record.IsPrimary) {
+                            rows += '       <button class="btn btn-danger csF16 csB7 jsEDelete"><i class="fa fa-times-circle csF16"></i>&nbsp;Delete</button>';
+                        }
                         rows += '   </td>';
                         rows += '</tr>';
                     });

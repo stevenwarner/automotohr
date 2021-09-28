@@ -294,6 +294,16 @@
                                                             </a>
                                                             <?php } ?>
                                                             <?php } ?>
+                                                            <?php if(checkIfAppIsEnabled('payroll', FALSE)){ ?>
+                                                            <?php 
+                                                                if(
+                                                                    ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1)
+                                                                ) { ?>
+                                                                <a title="Payroll Management" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('employee/add') . '/' . $employee['sid']; ?>">
+                                                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                            </a>
+                                                            <?php } ?>
+                                                            <?php } ?>
                                                     <?php } else { ?>
                                                             <a title="Send HR Documents" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm"  href="<?php echo base_url('send_offer_letter_documents') . '/' . $employee['sid']; ?>">
                                                                 <i class="fa fa-file"></i>

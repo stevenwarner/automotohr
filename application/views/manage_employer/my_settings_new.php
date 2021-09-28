@@ -246,12 +246,7 @@
                                         <li><a href="<?php echo base_url('export_documents/employee'); ?>">Bulk Download Documents</a></li>
                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                             <!-- Payroll -->
-                                            <li><a href="<?php echo base_url('company/taxes'); ?>">Company Taxes</a></li>
-                                            <li><a href="<?php echo base_url('company/bank_account'); ?>">Company Bank Account</a></li>
-                                            <li><a href="<?php echo base_url('company/locations'); ?>">Company Locations</a></li>
-                                            <li><a href="<?php echo base_url('company/pay_periods'); ?>">Company Pay Pariods</a></li>
-                                            <!--  -->
-                                            <li><a href="<?php echo base_url('payroll/dashboard'); ?>">Payroll Management</a></li>
+                                            <li><a href="<?php echo base_url('company_payroll'); ?>">Company Payroll</a></li>
                                         <?php } ?>
                                     </ul>
                                 </article>

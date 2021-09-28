@@ -24,8 +24,9 @@
                 <thead>
                     <tr>
                         <th scope="col" class="csBG1 csF16 csB7 csW">Title</th>
-                        <th scope="col" class="csBG1 csF16 csB7 csW text-right">Location</th>
+                        <th scope="col" class="csBG1 csF16 csB7 csW text-right">Primary Job?</th>
                         <th scope="col" class="csBG1 csF16 csB7 csW text-right">Hire Date</th>
+                        <th scope="col" class="csBG1 csF16 csB7 csW text-right">Location</th>
                         <th scope="col" class="csBG1 csF16 csB7 csW text-right">Last Modified</th>
                         <th scope="col" class="csBG1 csF16 csB7 csW text-right">Actions</th>
                     </tr>
