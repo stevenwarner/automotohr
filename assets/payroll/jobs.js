@@ -280,12 +280,33 @@ $(function Employee() {
                 $('#jsViewModalBody').html(html);
                 //
                 GetJobDetails(jobId);
-                //
             }).error(function() {
+                //
                 ml(false, 'jsViewModalLoader');
+                //
                 return alertify.alert("Error", "Something went wrong.");
             });
         });
+    });
+
+    /**
+     * Deletes a job
+     */
+    $(document).on('click', '.jsEDelete', function(event) {
+        //
+        event.preventDefault();
+        //
+        var JobId = $(this).closest('tr').data('id');
+        // Lets mark it the end of function
+        return alertify.confirm(
+            "This action will delete the job and the compensations attached to the job.<br><br>Would you like to continue?",
+            function() {
+                // Yes was triggered
+                ml(true, LOADER, 'Please wait while we delete the job and compensations.');
+                //
+                DeleteJobWithCompensations(JobId);
+            }
+        ).setHeader('Confirm!');
     });
 
 
@@ -312,9 +333,10 @@ $(function Employee() {
                         rows += '   <td class="csF16 vam text-right">' + (CompanyLocationsObj[record.LocationId]) + '</td>';
                         rows += '   <td class="csF16 vam text-right">' + (record.HireDate) + '</td>';
                         rows += '   <td class="csF16 vam text-right">' + (record.Name) + '<br/>' + (record.LastModifiedOn) + '</td>';
-                        rows += '   <td class="csF16 vam text-right">';
+                        rows += '   <td class="csF16 vam text-center">';
                         rows += '       <button class="btn btn-success csF16 csB7 jsView"><i class="fa fa-eye csF16"></i>&nbsp;Details</button>';
                         rows += '       <button class="btn btn-warning csF16 csB7 jsEEdit"><i class="fa fa-edit csF16"></i>&nbsp;Edit</button>';
+                        rows += '       <button class="btn btn-danger csF16 csB7 jsEDelete"><i class="fa fa-times-circle csF16"></i>&nbsp;Delete</button>';
                         rows += '   </td>';
                         rows += '</tr>';
                     });
@@ -357,6 +379,32 @@ $(function Employee() {
                 //
                 Get();
             });
+    }
+
+    /**
+     * Delete job with compensations
+     * @param {Integer} JobId 
+     */
+    function DeleteJobWithCompensations(JobId) {
+        //
+        $.ajax({
+            method: "DELETE",
+            url: API_URL.replace(/employees/, '') + 'job/' + JobId,
+        }).done(function(resp) {
+            //
+            ml(false, LOADER);
+            //
+            if (!resp.status) {
+                //
+                return alertify.alert('Error!', typeof resp.response === 'object' ? resp.response.join("<br/>") : resp.response);
+            } else {
+                //
+                return alertify.alert('Success!', resp.response, function() {
+                    //
+                    Get();
+                });
+            }
+        });
     }
 
     /**

@@ -17,7 +17,7 @@ $(function Compensations() {
         //
         Model({
             Id: 'jsJobDetails' + type + 'Modal',
-            Title: 'Add Compensation Against Job - ' + JobDetails.Title,
+            Title: (type == 'add' ? 'Add' : 'Edit') + ' Compensation Against Job - ' + JobDetails.Title,
             Body: '<div id="jsJobDetails' + type + 'Body">' + (GetBody()) + '</div>',
             Loader: 'jsJobDetails' + type + 'ModalLoader',
         }, function() {
@@ -35,7 +35,19 @@ $(function Compensations() {
                 $('tr[data-id="' + (JobId) + '"] .jsView').trigger('click');
             });
             //
-            ml(false, 'jsJobDetails' + type + 'ModalLoader');
+            if (type === 'add') {
+                //
+                ml(false, 'jsJobDetails' + type + 'ModalLoader');
+            } else {
+                // Fetch single compensation
+                $.get(API_URL + 'compensation/' + jobId)
+                    .done(function(resp) {
+                        //
+                        if (resp.status !== false) {
+
+                        }
+                    });
+            }
         });
     });
 
@@ -128,12 +140,12 @@ $(function Compensations() {
                 //
                 job.response.compensations.map(function(compensation) {
                     //
-                    trs += '<tr>';
-                    trs += '    <td class="vam csF16">13121233132132132</td>';
-                    trs += '    <td class="vam csF16 text-right">$20.00</td>';
-                    trs += '    <td class="vam csF16 text-right">Hourly</td>';
-                    trs += '    <td class="vam csF16 text-right">Exempt</td>';
-                    trs += '    <td class="vam csF16 text-right">Jan 09 2013, Wed</td>';
+                    trs += '<tr data-id="' + (compensation.CompensationId) + '">';
+                    trs += '    <td class="vam csF16">' + (compensation.CompensationId) + '</td>';
+                    trs += '    <td class="vam csF16 text-right"><strong>$' + (parseFloat(compensation.Rate).toFixed(2)) + '</strong></td>';
+                    trs += '    <td class="vam csF16 text-right">' + (compensation.PaymentUnit) + '</td>';
+                    trs += '    <td class="vam csF16 text-right">' + (compensation.FlsaStatus) + '</td>';
+                    trs += '    <td class="vam csF16 text-right">' + (compensation.EffectiveDate) + '</td>';
                     trs += '    <td class="vam csF16 text-right">';
                     trs += '        <button class="btn btn-warning csF16 csB7 jsCompensation" data-type="edit">';
                     trs += '            <i class="fa fa-edit csF16" aria-hidden="true"></i>&nbsp;Edit';
