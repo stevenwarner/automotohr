@@ -271,6 +271,13 @@ if(!empty($Payroll['employee_compensations'])):
             //
             const boxREF = $(this).closest('.jsPayrollRowId');
             //
+            if(!payrollOBJ[employeeId]['fixedCompensations']['bonus']){
+                payrollOBJ[employeeId]['fixedCompensations']['bonus'] = {
+                    name: 'bonus',
+                    amount: 0
+                };
+            }
+            //
             payrollOBJ[employeeId]['fixedCompensations']['bonus']['amount'] = parseFloat(boxREF.find('.jsPayrollBInput').val().trim());
             //
             UpdatePayrollRow(employeeId);
@@ -306,6 +313,13 @@ if(!empty($Payroll['employee_compensations'])):
             ml(true, 'jsPayrollEditLoader'+employeeId)
             //
             const boxREF = $(this).closest('.jsPayrollRowId');
+             //
+            if(!payrollOBJ[employeeId]['fixedCompensations']['cash-tips']){
+                payrollOBJ[employeeId]['fixedCompensations']['cash-tips'] = {
+                    name: 'cash tips',
+                    amount: 0
+                };
+            }
             //
             payrollOBJ[employeeId]['fixedCompensations']['cash-tips']['amount'] = parseFloat(boxREF.find('.jsPayrollCTInput').val().trim());
             //
@@ -414,7 +428,7 @@ if(!empty($Payroll['employee_compensations'])):
             html +='</div>';
             //
             Modal({
-                Title: "Other Earnings for "+(payrollEmployee.lastName+', '+payrollEmployee.firstName),
+                Title: "Reimbursements for "+(payrollEmployee.lastName+', '+payrollEmployee.firstName),
                 Id: "jsPayrollOEModel",
                 Loader:"jsPayrollOEModelLoader",
                 Body: '<div id="jsPayrollOEModel">'+(html)+'</div>'
@@ -563,7 +577,7 @@ if(!empty($Payroll['employee_compensations'])):
             html += '            </p>';
             html += '            <div class="input-group">';
             html += '                <span class="input-group-addon">$</span>';
-            html += '                <input type="text" id="jsPayrollPaycheckTips'+(payrollEmployee.employeeId)+'" value="'+(payrollEmployee.cashTips)+'" class="form-control jsInputCMN" style="padding-right: 25px;"/>';
+            html += '                <input type="text" id="jsPayrollPaycheckTips'+(payrollEmployee.employeeId)+'" value="'+(payrollEmployee.paycheckTips)+'" class="form-control jsInputCMN" style="padding-right: 25px;"/>';
             html += '            </div>';
             html += '        </div>';
             html += '    </div><br>';
@@ -603,6 +617,27 @@ if(!empty($Payroll['employee_compensations'])):
             ml(true, 'jsPayrollOEModelLoader');
             //
             var employeeId = $(this).data('id');
+            //
+            if(!payrollOBJ[employeeId]['fixedCompensations']['commission']){
+                payrollOBJ[employeeId]['fixedCompensations']['commission'] = {
+                    name: 'commission',
+                    amount: 0
+                };
+            }
+            //
+            if(!payrollOBJ[employeeId]['fixedCompensations']['paycheck-tips']){
+                payrollOBJ[employeeId]['fixedCompensations']['paycheck-tips'] = {
+                    name: 'paycheck tips',
+                    amount: 0
+                };
+            }
+            //
+            if(!payrollOBJ[employeeId]['fixedCompensations']['correction-payment']){
+                payrollOBJ[employeeId]['fixedCompensations']['correction-payment'] = {
+                    name: 'correction payment',
+                    amount: 0
+                };
+            }
             //
             payrollOBJ[employeeId]['fixedCompensations']['commission']['amount'] = parseFloat($('#jsPayrollCommission'+employeeId).val().trim() || 0);
             payrollOBJ[employeeId]['fixedCompensations']['correction-payment']['amount'] = parseFloat($('#jsPayrollCorrectionPayment'+employeeId).val().trim() || 0);
@@ -666,9 +701,12 @@ if(!empty($Payroll['employee_compensations'])):
                     function(){
                         ml(false, 'main_loader');
                         if(doNext === undefined){
-                            window.location.reload();
+                            //
+                            window.location.href = window.location.href;
+                            // window.location.href = window.location.href.replace(payrollVersion, resp.Response.version);
                         } else{
-                            window.location = window.location.origin +'/'+window.location.pathname+'?step=2';
+                            // window.location.href = window.location.href.replace(payrollVersion, resp.Response.version).replace('?step=1', '')+'?step=2';
+                            window.location.href = window.location.href.replace('?step=1', '')+'?step=2';
                         }
                     }
                 );
@@ -695,7 +733,7 @@ if(!empty($Payroll['employee_compensations'])):
             const boxREF = $('.jsPayrollRowId[data-id="'+(employeeId)+'"]');
 
             // Reset the index to be used
-            payrollEmployee.regularHours = 0.00;
+            payrollEmployee.regularHours = payrollEmployee.regularHours || 0.00;
             payrollEmployee.overtime = 0.00;
             payrollEmployee.overtimeMultiplier = 0.00;
             payrollEmployee.doubleOvertime = 0.00;
@@ -706,7 +744,7 @@ if(!empty($Payroll['employee_compensations'])):
             payrollEmployee.commission = 0.00;
             payrollEmployee.paycheckTips = 0.00;
             //
-            payrollEmployee.regularHours = parseFloat(payrollEmployee.hourlyCompensations['regular-hours']['hours']);
+            payrollEmployee.regularHours = parseFloat(payrollEmployee.regularHours || payrollEmployee.hourlyCompensations['regular-hours']['hours']);
             //
             if(payrollEmployee.hourlyCompensations.overtime !== undefined){
                 payrollEmployee.overtime = parseFloat(payrollEmployee.hourlyCompensations['overtime']['hours']);

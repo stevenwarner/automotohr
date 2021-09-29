@@ -11,7 +11,7 @@
                     You did it, AutomotoHR!
                 </h1>
                 <p class="csF16">
-                    Time to kick back. Gusto will debit $<span class="csFC2"><?=number_format($Payroll['totals']['gross_pay'], 2);?></span> from AutomotoHR Demo Company on <span class="csFC2"><?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></span>. Please make sure you have these funds available.
+                    Time to kick back. Payroll will be debited $<span class="csFC2"><?=number_format($Payroll['totals']['gross_pay'], 2);?></span> from AutomotoHR Demo Company on <span class="csFC2"><?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></span>. Please make sure you have these funds available.
                 </p>
             </div>
         </div>
@@ -41,7 +41,7 @@
             </div>
         </div>
         <!-- Info -->
-        <div class="row">
+        <div class="row dn">
             <div class="col-sm-12">
                 <button class="btn btn-black">
                     Back To Dashboard
