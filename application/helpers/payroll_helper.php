@@ -529,6 +529,47 @@ if(!function_exists('CancelPayrollById')){
 }
 
 //
+if(!function_exists('SubmitPayrollById')){
+    function SubmitPayrollById($company){
+        //
+        $url = PayrollURL('SubmitPayrollById', $company['gusto_company_uid'], $company['payroll_id']);
+        //
+        $response =  MakeCall(
+            $url, [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                SubmitPayrollById($company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            //
+            return $response;
+        }
+    }
+}
+
+//
 if(!function_exists('RefreshToken')){
     function RefreshToken($request){
         //
@@ -617,6 +658,7 @@ if(!function_exists('PayrollURL')){
         $urls['UpdatePayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1);
         $urls['CalculatePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/calculate';
         $urls['CancelPayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/cancel';
+        $urls['SubmitPayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/submit';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }
@@ -645,11 +687,11 @@ if(!function_exists('CacheHolder')){
         //
         $_this =&get_instance();
         //
-        if($_this->session->userdata($url)){
-            return $_this->session->userdata($url);
-        }
-        if(!empty($data)){
-            $_this->session->set_userdata($url, $data);
-        }
+        // if($_this->session->userdata($url)){
+        //     return $_this->session->userdata($url);
+        // }
+        // if(!empty($data)){
+        //     $_this->session->set_userdata($url, $data);
+        // }
     }
 }

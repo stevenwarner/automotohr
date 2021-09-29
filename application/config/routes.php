@@ -1364,16 +1364,9 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
 
 
 //
-// $route['payroll/dashboard']['get'] = 'payroll/Payroll/Dashboard';
-// $route['payroll/accounts']['get'] = 'payroll/Payroll/Accounts';
-// $route['payroll/settings']['get'] = 'payroll/Payroll/Settings';
-// $route['payroll/create']['get'] = 'payroll/Payroll/Create';
-// $route['payroll/create/(:any)']['get'] = 'payroll/Payroll/Create/$1';
-// $route['payroll/employees']['get'] = 'payroll/Payroll/EmployeeList';
-// $route['payroll/employee/add/(:num)']['get'] = 'payroll/Payroll/AddEmployee/$1';
+
 
 // // AJAX Get
-// $route['payroll/get_employee_ba/(:num)']['get'] = 'payroll/Payroll/GetEmployeeBankAccounts/$1';
 // $route['payroll/get_add_bank_account/(:num)']['get'] = 'payroll/Payroll/GetAddBankAccount/$1';
 // $route['payroll/get_edit_bank_account/(:num)/(:num)']['get'] = 'payroll/Payroll/GetEditBankAccount/$1/$2';
 // $route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
@@ -1387,10 +1380,22 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
 // $route['payroll/edit_company_payroll_bank_account']['post'] = 'payroll/Payroll/EditCompanyBankAccountToPayroll';
 // $route['payroll/remove_company_bank_account']['post'] = 'payroll/Payroll/RemoveCompanyBankAccounts';
 // $route['payroll/update_bank_account_to_payroll']['post'] = 'payroll/Payroll/UpdateCompanyBankAccount';
-// $route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';
 // //
 // $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
-// $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
+
+
+
+//Payrol Routes
+$route['payroll/create']['get'] = 'payroll/Payroll/Create';
+$route['payroll/create/(:any)/(:any)']['get'] = 'payroll/Payroll/Create/$1/$2';
+
+// AJAX Get
+$route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';
+$route['payroll/submit']['post'] = 'payroll/Payroll/SubmitPayroll';
+$route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
+$route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
+$route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
+
 
 
 /**

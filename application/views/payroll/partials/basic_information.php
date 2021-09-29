@@ -23,7 +23,7 @@
             </div>
             <div class="col-md-4 col-xs-12">
                 <label class="csF16 csB7">
-                    Middle Initial <span class="csF18 csRequired"></span>
+                    Middle Initial
                 </label>
                 <input type="text" class="form-control jsEMiddleInitial" />
             </div>

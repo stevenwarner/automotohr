@@ -30,14 +30,7 @@ $(function Employee() {
             );
         }
         //
-        if (!o.MiddleInitial) {
-            return alertify.alert(
-                "Error!",
-                "Middle initial is required."
-            );
-        }
-        //
-        if (o.MiddleInitial.length !== 1) {
+        if (o.MiddleInitial && o.MiddleInitial.length !== 1) {
             return alertify.alert(
                 "Error!",
                 "Middle initial must be of 1 character."

@@ -13856,6 +13856,7 @@ if(!function_exists('getAPIUrl')){
     function getAPIUrl($index){
         //
         $urls = [];
+        $urls['partner'] = 'partner_managed_company';
         // Employee login URL
         $urls['login'] = 'employee/login';
         // Get Company Account

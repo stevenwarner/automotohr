@@ -33,6 +33,16 @@ class Company extends CI_Controller
         //
         $this->data['section'] = $this->input->get('section') ? $this->input->get('section', true) : 'taxes';
         //
+        $IsPayrollActive = $this->pm->GetCompanyPayrollDetails(
+            $this->data['session']['company_detail']['sid'],
+            true
+        );
+        //
+        if(!$IsPayrollActive){
+            $this->data['section'] = 'onboard';
+            $this->data['PrimaryAdmin'] = $this->pm->GetCompanyPrimaryAdmin($this->data['session']['company_detail']['sid']);
+        }
+        //
         $this->data['Assets'] = $this->Assets($this->data['section']);
         //
         $this->data['title'] = 'Company - '.(SlugToString($this->data['section']));
@@ -40,7 +50,7 @@ class Company extends CI_Controller
         //
         $this->load
         ->view($this->pages['header'], $this->data)
-        ->view('payroll/company_onboard')
+        ->view($IsPayrollActive ? 'payroll/company_onboard' : 'payroll/set')
         ->view($this->pages['footer']);
     }
 
@@ -131,12 +141,19 @@ class Company extends CI_Controller
             '<script src="'.(base_url('assets/payroll/pay_period'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
         ];
         //
+        $Assets['onboard'] = [
+            '<script src="'.(base_url('assets/payroll/onboard'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
+        ];
+        //
         $Assets['add_employee'] = [
             'basic_information' => [
                 '<script src="'.(base_url('assets/payroll/basic_information'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
             ],
             'bank_accounts' => [
                 '<script src="'.(base_url('assets/payroll/bank_accounts'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
+            ],
+            'other' => [
+                '<script src="'.(base_url('assets/payroll/other'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>'
             ],
             'jobs' => [
                 '<script src="'.(base_url('assets/payroll/jobs'.(MINIFIED).'.js?v='.($version).'')).'" type="text/javascript"></script>',

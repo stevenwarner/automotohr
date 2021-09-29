@@ -56,7 +56,7 @@
                                     if(!empty($UnProcessedPayrolls)):
                                         foreach($UnProcessedPayrolls as $payroll):
                                 ?>
-                                    <option value="<?=$payroll['payroll_uuid'];?>"><?=formatDateToDB(
+                                    <option value="<?=$payroll['payroll_uuid'];?>" data-version="<?=$payroll['version'];?>"><?=formatDateToDB(
                                         $payroll['pay_period']['start_date'],
                                         DB_DATE,
                                         DATE
@@ -105,7 +105,7 @@
                 return;
             }
             //
-            window.location = window.location.origin + '/payroll/create/'+$('#jsPayrollSelect').val()+'?step=1';
+            window.location = window.location.origin + '/payroll/create/'+$('#jsPayrollSelect').val()+'/'+$('#jsPayrollSelect option[value="'+($('#jsPayrollSelect').val())+'"]').data('version')+'?step=1';
         });
     });
 </script>

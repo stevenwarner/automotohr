@@ -67,7 +67,7 @@
                                 aria-valuemax="100" style="width:<?=$step3;?>%">
                             </div>
                         </div>
-                        <p class="csF14 csB7" style="margin-top: 5px;">2. Confirmation</p>
+                        <p class="csF14 csB7" style="margin-top: 5px;">3. Confirmation</p>
                     </div>
                 </div>
                 <?php $step == 1 ? $this->load->view('payroll/partials/create_step_1') : '';?>

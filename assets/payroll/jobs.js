@@ -350,7 +350,7 @@ $(function Employee() {
                 } else {
                     //
                     rows += '<tr>';
-                    rows += '   <td class="csF16 vam" colspan="5"><p class="alert alert-info text-center csF16 csB7">No records found</p></td>';
+                    rows += '   <td class="csF16 vam" colspan="6"><p class="alert alert-info text-center csF16 csB7">No records found</p></td>';
                     rows += '</tr>';
                 }
                 //

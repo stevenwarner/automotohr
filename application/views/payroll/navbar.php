@@ -3,41 +3,41 @@
     $navpills = [];
     // Dashboard
     $navpills[] = [
-        'title' => 'Overview',
-        'url' => '/dashboard',
+        'title' => 'Run Payroll',
+        'url' => '/payroll/create',
         'slug' => '',
-        'icon' => 'dashboard',
-        'segment' => 'dashboard'
+        'icon' => 'calendar',
+        'segment' => 'payroll'
     ];
-    // Company
-    $navpills['company'] =  [
-        'title' => 'Company',
-        'icon' => 'users',
-        'submenu' => []
-    ];
-    // Company Locations
-    $navpills['company']['submenu'][] = [
-        'title' => 'Locations',
-        'url' => '/locations',
-        'slug' => 'locations',
-        'icon' => 'map',
-        'segment' => 'locations'
-    ];
+    // // Company
+    // $navpills['company'] =  [
+    //     'title' => 'Company',
+    //     'icon' => 'users',
+    //     'submenu' => []
+    // ];
+    // // Company Locations
+    // $navpills['company']['submenu'][] = [
+    //     'title' => 'Locations',
+    //     'url' => '/locations',
+    //     'slug' => 'locations',
+    //     'icon' => 'map',
+    //     'segment' => 'locations'
+    // ];
 
-    // Employee
-    $navpills['employee'] =  [
-        'title' => 'Employee',
-        'icon' => 'users',
-        'submenu' => []
-    ];
-    // Employee Locations
-    $navpills['employee']['submenu'][] = [
-        'title' => 'Listings',
-        'url' => '/locations',
-        'slug' => 'locations',
-        'icon' => 'map',
-        'segment' => 'locations'
-    ];
+    // // Employee
+    // $navpills['employee'] =  [
+    //     'title' => 'Employee',
+    //     'icon' => 'users',
+    //     'submenu' => []
+    // ];
+    // // Employee Locations
+    // $navpills['employee']['submenu'][] = [
+    //     'title' => 'Listings',
+    //     'url' => '/locations',
+    //     'slug' => 'locations',
+    //     'icon' => 'map',
+    //     'segment' => 'locations'
+    // ];
 
 
     //
@@ -67,7 +67,6 @@
     }
 ?>
 <div class="clearfix"></div>
-<div class="csPageWrap">
     <div class="csPageNav">
         <nav class="csNavBar ">
             <div class="container-fluid">

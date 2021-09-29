@@ -73,10 +73,10 @@
                 <!--  -->
                 <div class="row">
                     <div class="col-sm-12 text-left">
-                        <button class="btn btn-black">
+                        <a href="<?=current_url();?>?step=1" class="btn btn-black">
                             <i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Back
-                        </button>
-                        <button class="btn btn-orange">
+                        </a>
+                        <button class="btn btn-orange jsSubmitPayroll">
                             <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Submit Payroll
                         </button>
                     </div>
@@ -91,3 +91,34 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    $(function PayrollSubmit(){
+        //
+        $('.jsSubmitPayroll').click(function(event){
+            //
+            event.preventDefault();
+            //
+            ml(true, 'main_loader');
+            //
+            $.ajax({
+                method:"POST",
+                url: "<?=base_url("payroll/submit");?>",
+                data: {
+                    payrollId: "<?=$payrollId;?>",
+                    payrollVersion: "<?=$payrollVersion;?>",
+                }
+            }).done(function(resp){
+                //
+                if(!resp.Status){
+                    return alertify.alert('Error!', 'Something went wrong while submitting the payroll.');
+                }
+                //
+                return alertify.alert('Success!', 'You have successfully submitted the payroll.', function(){
+                    window.location.href = window.location.href.replace(/step=2/, 'step=3');
+                });
+            });
+        });
+    });
+</script>

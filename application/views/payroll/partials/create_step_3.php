@@ -11,7 +11,7 @@
                     You did it, AutomotoHR!
                 </h1>
                 <p class="csF16">
-                    Time to kick back. Gusto will debit $<span class="csFC2"><?=$Payroll['totals']['gross_pay'];?></span> from AutomotoHR Demo Company on <span class="csFC2"><?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></span>. Please make sure you have these funds available.
+                    Time to kick back. Gusto will debit $<span class="csFC2"><?=number_format($Payroll['totals']['gross_pay'], 2);?></span> from AutomotoHR Demo Company on <span class="csFC2"><?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></span>. Please make sure you have these funds available.
                 </p>
             </div>
         </div>
@@ -105,7 +105,7 @@
         //
         function CancelPayroll(){
             //
-            ml(true, 'jsIPLoader', 'Please wait, while we are cancelling the payroll.');
+            ml(true, 'main_loader', 'Please wait, while we are cancelling the payroll.');
             //
             $.post(
                 "<?=base_url("cancel_payroll");?>", {

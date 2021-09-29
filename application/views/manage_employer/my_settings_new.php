@@ -247,6 +247,7 @@
                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                             <!-- Payroll -->
                                             <li><a href="<?php echo base_url('company_payroll'); ?>">Company Payroll</a></li>
+                                            <li><a href="<?php echo base_url('payroll/create'); ?>">Payrolls</a></li>
                                         <?php } ?>
                                     </ul>
                                 </article>

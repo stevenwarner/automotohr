@@ -130,12 +130,12 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function Create($payrolId = false){
+    function Create($payrolId = false, $version = false){
         //
         $this->checkLogin($this->data);
         //
         $this->data['title'] = 'Payroll | Create';
-        $this->data['load_view'] = 1;
+        $this->data['load_view'] = 0;
         $this->data['hide_employer_section'] = 1;
         //
         $this->data['step'] = $this->input->get('step', true) ? $this->input->get('step', true) : '1';
@@ -169,8 +169,8 @@ class Payroll extends CI_Controller
         }else{
             if($this->data['step'] == 2){
                 // Calulate Payroll
-                // $this->CalculatePayroll($this->data['companyId'], $payrolId);
-                // usleep(200);
+                $this->CalculatePayroll($this->data['companyId'], $payrolId);
+                usleep(200);
             }
             //
             $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'])['Response'];
@@ -223,7 +223,7 @@ class Payroll extends CI_Controller
             }
             //
             $this->data['payrollId'] = $payrolId;
-            $this->data['payrollVersion'] = $this->data['Payroll']['version'];
+            $this->data['payrollVersion'] = $version;
         }
         // Get Gusto Company Details
         $this->load
@@ -905,7 +905,7 @@ class Payroll extends CI_Controller
             $ta['employee_id'] = $payroll['employeeId'];
             $ta['fixed_compensations'] = array_values($payroll['fixedCompensations']);
             $ta['hourly_compensations'] = array_values($payroll['hourlyCompensations']);
-            $ta['paid_time_off'] = array_values($payroll['paidTimeOff']);
+            $ta['paid_time_off'] = isset($payroll['paidTimeOff']) ? array_values($payroll['paidTimeOff']) : [];
             //
             if(!isset($payroll['reimbursements'])){
                 $ta['fixed_compensations'][] = [
@@ -991,6 +991,57 @@ class Payroll extends CI_Controller
         $company['payroll_id'] = $post['payrollId'];
         //
         $response = CancelPayrollById($company);
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            //
+            res([
+                'Status' => true,
+                'Response' => $response
+            ]);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function SubmitPayroll(){
+        //
+        if(
+            !$this->input->is_ajax_request() &&
+            $this->input->method() != 'post' &&
+            empty($this->input->post())
+        ){
+            res($this->resp);
+        }
+        //
+        $data = [];
+        //
+        $this->checkLogin($data);
+        //
+        $post = $this->input->post(NULL, TRUE);
+        // Make request array
+        //
+        $company = $this->pm->GetCompany($data['companyId'], [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $company['payroll_id'] = $post['payrollId'];
+        //
+        $response = SubmitPayrollById($company);
         //
         if(isset($response['errors'])){
             //

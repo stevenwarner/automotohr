@@ -633,25 +633,6 @@ class logs extends Admin_Controller
                         'company_sid' => $post['companyId']
                     ]
                 );
-                // Check if company exists on Gusto
-                $exists = $this->pm->GetCompany($post['companyId'], 'sid');
-                //
-                if(empty($exists)){
-                    // Load Curl Helper
-                    $this->load->helper('curl');
-                    //
-                    SendRequest(
-                        base_url('create_partner_company'), [
-                            CURLOPT_CUSTOMREQUEST => 'POST',
-                            CURLOPT_POSTFIELDS => array(
-                                'sid' => $post['companyId']
-                            ),
-                            CURLOPT_HTTPHEADER => [
-                                'X-Requested-With: XMLHttpRequest'
-                            ]
-                        ]
-                    );
-                 }
                 //
                 $this->resp['Status'] = true;
                 $this->resp['Response'] = 'You have successfully '.( $post['status'] ? 'disabled' : 'enabled' ).' the company for payroll.';

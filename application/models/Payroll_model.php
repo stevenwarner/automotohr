@@ -15,6 +15,53 @@ class Payroll_model extends CI_Model{
         $this->tables['PCE'] = 'payroll_employees'; 
         $this->tables['U'] = 'users'; 
     }
+
+    /**
+     * Check wether the payroll is activated
+     * against aspecific company
+     * or not
+     * 
+     * @param Integer $companyId
+     * @param Booleon $doCount
+     * 
+     * @return
+     */
+    function GetCompanyPayrollDetails($companyId, $doCount = FALSE){
+        //
+        $query = $this
+        ->db
+        ->where('company_sid', $companyId)
+        ->from($this->tables['PC']);
+        //
+        if($doCount){
+            return $query->count_all_results();
+        }
+        //
+        return $query->get()->row_array();
+    }
+    
+    /**
+     * Get the primary admin of a company
+     * 
+     * @param Integer $companyId
+     * 
+     * @return
+     */
+    function GetCompanyPrimaryAdmin($companyId){
+        //
+        $query = $this
+        ->db
+        ->select('first_name, last_name, email, PhoneNumber')
+        ->where('parent_sid', $companyId)
+        ->where('is_primary_admin', 1)
+        ->from($this->tables['U']);
+        //
+        return $query->get()->row_array();
+    }
+
+
+    // Deprecated functions
+    // need to verify and delete
     
     /**
      * 

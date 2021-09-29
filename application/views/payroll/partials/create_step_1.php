@@ -728,7 +728,7 @@ if(!empty($Payroll['employee_compensations'])):
             boxREF.find('.jsPayrollRowEditRHValue').text("$"+ payrollEmployee.regularHours.toFixed(2));
             boxREF.find('.jsPayrollRHInput').val(payrollEmployee.regularHours.toFixed(2));
             // Let's set the overtime
-            boxREF.find('.jsPayrollRowEditOTValue').text("$"+ payrollEmployee.overtime.toFixed(2));
+            boxREF.find('.jsPayrollRowEditOTValue').text("$"+ (payrollEmployee.overtime * payrollEmployee.rateByHour * payrollEmployee.overtimeMultiplier).toFixed(2));
             boxREF.find('.jsPayrollOTInput').val(payrollEmployee.overtime.toFixed(2));
             //
             if(parseInt(payrollEmployee.overtime) != 0){
@@ -740,7 +740,7 @@ if(!empty($Payroll['employee_compensations'])):
             }
 
             // Let's set the double overtime
-            boxREF.find('.jsPayrollRowEditDOTValue').text("$"+ payrollEmployee.doubleOvertime.toFixed(2));
+            boxREF.find('.jsPayrollRowEditDOTValue').text("$"+ (payrollEmployee.doubleOvertime * payrollEmployee.rateByHour * payrollEmployee.doubleOvertimeMultiplier).toFixed(2));
             boxREF.find('.jsPayrollDOTInput').val(payrollEmployee.doubleOvertime.toFixed(2));
             //
             if(parseInt(payrollEmployee.doubleOvertime) != 0){
