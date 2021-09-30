@@ -378,6 +378,12 @@ class Users extends CI_Controller
             $contact_message = strip_tags($this->input->post('message'));
             $is_blocked_email = $this->users_model->check_if_blocked($contact_email);
 
+            //
+            if(preg_match('/.ru$/', $contact_email)){
+                $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your enquiry. We will get back to you!');
+                redirect(base_url('contact_us'), "refresh");
+            }
+
             if($is_blocked_email == 'not-blocked') {
                 $from = FROM_EMAIL_DEV;
                 $subject = "Contact Us enquiry - ".STORE_NAME;
