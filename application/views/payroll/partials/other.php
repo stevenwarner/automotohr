@@ -1,2 +1,4 @@
+<!-- Employee Garnishments -->
+<?php $this->load->view('payroll/partials/employee_garnishments');?>
 <!-- Employee Benefits -->
-<?php $this->load->view('payroll/partials/employee_benefits');?>
+<?php //echo $this->load->view('payroll/partials/employee_benefits', [], false);?>

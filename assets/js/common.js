@@ -314,11 +314,25 @@ $('.jsSectionTrigger').click(function(event) {
 /**
  * 
  */
-$(document).on('keyup', '.jsAmountField', function(){
+$(document).on('keyup', '.jsAmountField', function() {
     //
-    if($(this).val()){
+    if ($(this).val()) {
         $(this).val(
             $(this).val().replace(/[^\d.]/g, '')
         );
     }
+});
+
+/**
+ * 
+ */
+$(document).on('click', '.jsLayoutChange', function(event) {
+    //
+    event.preventDefault();
+    //
+    $('.jsLayoutChange').removeClass('active');
+    $(this).addClass('active');
+    //
+    $('.jsLayoutArea').hide();
+    $('.jsLayoutArea[data-id="' + ($(this).data('target')) + '"]').show();
 });

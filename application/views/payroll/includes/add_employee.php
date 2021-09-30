@@ -51,12 +51,12 @@
                                                 'slug' => 'jobs',
                                                 'url' => $isEmployeeOnPayroll ? base_url("employee/add/".($employeeId)."?section=jobs") : 'javascript:void(0)'
                                             ],
-                                            // [
-                                            //     'text' => 'Other',
-                                            //     'sub_text' => 'Benefits, Garnishments, etc',
-                                            //     'slug' => 'other',
-                                            //     'url' => $isEmployeeOnPayroll ? base_url("employee/add/".($employeeId)."?section=other") : 'javascript:void(0)'
-                                            // ]
+                                            [
+                                                'text' => 'Other',
+                                                'sub_text' => 'Address, Benefits, Garnishments, etc',
+                                                'slug' => 'other',
+                                                'url' => $isEmployeeOnPayroll ? base_url("employee/add/".($employeeId)."?section=other") : 'javascript:void(0)'
+                                            ]
                                         ],
                                         'prop_class' => 'arrow-green',
                                         'active' => $section
@@ -64,7 +64,9 @@
                                 ); ?>
                             </div>
                         </div>
+                        <?php if($section !== 'other'){?>
                         <?php $this->load->view('loader_new', ['id' => 'employee']); ?>
+                        <?php } ?>
                         <br>
                         <br>
                         <!--  -->

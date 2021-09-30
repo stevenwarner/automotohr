@@ -167,7 +167,7 @@ class Payroll extends CI_Controller
                 $this->data['UnProcessedPayrolls'] = $payrolls;
             }
         }else{
-            if($this->data['step'] == 2){
+            if($this->data['step'] == 3){
                 // Calulate Payroll
                 $this->CalculatePayroll($this->data['companyId'], $payrolId);
                 usleep(200);
@@ -219,6 +219,7 @@ class Payroll extends CI_Controller
                     $this->data['Payroll']['employee_compensations'][$index]['fixed_compensations'] = $fixed_compensations;
                     $this->data['Payroll']['employee_compensations'][$index]['hourly_compensations'] = $hourly_compensations;
                     $this->data['Payroll']['employee_compensations'][$index]['paid_time_off'] = $paid_time_off;
+                    $this->data['Payroll']['employee_compensations'][$index]['job_id'] = $this->data['PayrollEmployees'][$payroll['employee_id']]['jobs'][0]['compensations'][0]['job_id'];
                 }
             }
             //
@@ -907,21 +908,21 @@ class Payroll extends CI_Controller
             $ta['hourly_compensations'] = array_values($payroll['hourlyCompensations']);
             $ta['paid_time_off'] = isset($payroll['paidTimeOff']) ? array_values($payroll['paidTimeOff']) : [];
             //
-            if(!isset($payroll['reimbursements'])){
-                $ta['fixed_compensations'][] = [
-                    'job_id' => $ta['fixed_compensations'][0]['job_id'],
-                    'name' => 'Reimbursement',
-                    'amount' => 0.00
-                ];
-            } else{
+            if(isset($payroll['reimbursements'])){                
                 //
                 $reimbursements = $payroll['reimbursements'];
                 //
                 foreach($reimbursements as $reimbursement){
-                    $reimbursement['job_id'] = isset($ta['fixed_compensations'][0]['job_id']) ? $ta['fixed_compensations'][0]['job_id'] : $payroll['reimbursements'][0]['job_id'];
+                    $reimbursement['job_id'] = isset($ta['fixed_compensations'][0]['job_id']) ? $ta['fixed_compensations'][0]['job_id'] : $payroll['jobId'];
                     $reimbursement['name'] = 'Reimbursement';
                     $ta['fixed_compensations'][] = $reimbursement;
                 }
+            } else{
+                $ta['fixed_compensations'][] = [
+                    'job_id' => $payroll['jobId'],
+                    'name' => 'Reimbursement',
+                    'amount' => 0.00
+                ];
             }
             //
             $employeeArray[] = $ta;
@@ -952,6 +953,13 @@ class Payroll extends CI_Controller
             res([
                 'Status' => false,
                 'Errors' => $errors
+            ]);
+        } else if(isset($response['message'])){
+           
+            // Error took place
+            res([
+                'Status' => false,
+                'Message' => $response['message']
             ]);
         } else{
             //

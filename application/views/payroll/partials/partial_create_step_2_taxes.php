@@ -10,6 +10,10 @@
     //
     foreach($Payroll['employee_compensations'] as $Row){
         //
+        if(!isset($Row['taxes'])){
+            continue;
+        }
+        //
         foreach($Row['taxes'] as $tax){
             //
             if(!isset($taxDebitArray['taxes'][$tax['name']])){
@@ -35,8 +39,8 @@
 <div class="row">
     <div class="col-sm-12">
         <!-- Taxes & Debits -->
-        <div class="panel panel-theme">
-            <div class="panel-heading">
+        <div class="panel">
+            <div class="panel-heading csBG4">
                 <div class="row">
                     <div class="col-sm-10">
                         <p class="csF16 csB7 csW mt0 mb0">

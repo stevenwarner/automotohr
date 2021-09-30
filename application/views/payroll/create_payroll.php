@@ -1,6 +1,7 @@
 <?php 
     $step1 = 
     $step2 = 
+    $step4 = 
     $step3 = 0;
     //
     if($step == 4){
@@ -58,7 +59,7 @@
                                 aria-valuemax="100" style="width:<?=$step2;?>%">
                             </div>
                         </div>
-                        <p class="csF14 csB7" style="margin-top: 5px;">2. Review and submit</p>
+                        <p class="csF14 csB7" style="margin-top: 5px;">2. Time off</p>
                     </div>
 
                     <div class="col-sm-3">
@@ -67,12 +68,22 @@
                                 aria-valuemax="100" style="width:<?=$step3;?>%">
                             </div>
                         </div>
-                        <p class="csF14 csB7" style="margin-top: 5px;">3. Confirmation</p>
+                        <p class="csF14 csB7" style="margin-top: 5px;">3. Review and submit</p>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="progress mb0">
+                            <div class="progress-bar csBG3" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                aria-valuemax="100" style="width:<?=$step4;?>%">
+                            </div>
+                        </div>
+                        <p class="csF14 csB7" style="margin-top: 5px;">4. Confirmation</p>
                     </div>
                 </div>
                 <?php $step == 1 ? $this->load->view('payroll/partials/create_step_1') : '';?>
-                <?php $step == 2 ? $this->load->view('payroll/partials/create_step_2') : '';?>
-                <?php $step == 3 ? $this->load->view('payroll/partials/create_step_3') : '';?>
+                <?php $step == 2 ? $this->load->view('payroll/partials/create_step_4') : '';?>
+                <?php $step == 3 ? $this->load->view('payroll/partials/create_step_2') : '';?>
+                <?php $step == 4 ? $this->load->view('payroll/partials/create_step_3') : '';?>
             </div>
         </div>
     </div>
@@ -81,34 +92,3 @@
 <!-- Add Models -->
 <link rel="stylesheet" href="<?=base_url('assets/css/SystemModel.css');?>">
 <script src="<?=base_url("assets/js/SystemModal.js");?>"></script>
-
-<script>
-    $(function(){
-        //
-        var step = "<?=$step;?>";
-        //
-        const MAIN_LOADER = 'main_loader';
-        //
-        var isAJAX = null;
-        //
-        function fetchPayrollView(){
-            //
-            if(isAJAX !== null){
-                return;
-            }
-            //
-            ml(true, MAIN_LOADER);
-            //
-            isAJAX = $.get(
-                "<?=base_url("get_payroll_step");?>/"+step
-            ).done(function(resp){
-                //
-                isAJAX = null;
-                //
-                console.log(resp);
-            });
-        }
-        // 
-        // fetchPayrollView();
-    });
-</script>
