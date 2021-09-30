@@ -113,6 +113,12 @@ class Employee_management extends Public_Controller {
             if (isset($_GET['order'])) {
                 $order = $_GET['order'];
             }
+            if(empty($order_by)){
+                $order_by = 'sid';
+            }
+            if(empty($order)){
+                $order = 'desc';
+            }
             $data['order_by'] = $order_by;
             $data['order'] = $order;
             //
@@ -123,9 +129,6 @@ class Employee_management extends Public_Controller {
             $data['archived'] = 0;
             if(empty($order_by)){
                 $order_by = 'users.sid';
-            }
-            if(empty($order)){
-                $order = 'desc';
             }
 
             $data['archived'] = 1;

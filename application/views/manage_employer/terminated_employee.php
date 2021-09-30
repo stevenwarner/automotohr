@@ -40,9 +40,9 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 custom-col">
                                             <div class="hr-select-dropdown">
                                                 <select name="order_by" class="invoice-fields">
+                                                    <option value="sid" <?= $order_by == 'sid' ? 'selected="selected"' : ''?>>Created Date</option>
                                                     <option value="first_name" <?= $order_by == 'first_name' ? 'selected="selected"' : ''?>>Name</option>
                                                     <option value="termination_date" <?= $order_by == 'termination_date' ? 'selected="selected"' : ''?>>Termination Date</option>
-                                                    <option value="sid" <?= $order_by == 'sid' ? 'selected="selected"' : ''?>>Created Date</option>
                                                 </select>
                                             </div>
                                         </div>
