@@ -10,6 +10,60 @@
                     <div class="page-header-area">
                         <span class="page-heading down-arrow"><?php echo $title; ?></span>
                     </div>
+                    
+                    <!--  -->
+                    <div class="filter-form-wrp">
+                        <span>Search Employee(s):</span>
+                        <div class="tracking-filter">
+                            <form action="" method="GET">
+                                <div class="row">
+                                    <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
+                                        <input type="text" placeholder="Search Employee by Name or Email" name="keyword" class="invoice-fields search-job" value="<?php echo $keyword; ?>">
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 custom-col">
+                                        <input type="hidden" name="employee_type" value="<?php echo $employee_type; ?>">
+                                        <input type="hidden" name="order_by" value="<?php echo $order_by; ?>">
+                                        <input type="hidden" name="order" value="<?php echo $order; ?>">
+                                        <input type="submit" value="Search" class="form-btn">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="filter-form-wrp">
+                        <span>Sort Order:</span>
+                        <div class="tracking-filter">
+                            <form action="" method="GET">
+                                <div class="row">
+                                    <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
+                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 custom-col">
+                                            <div class="hr-select-dropdown">
+                                                <select name="order_by" class="invoice-fields">
+                                                    <option value="first_name" <?= $order_by == 'first_name' ? 'selected="selected"' : ''?>>Name</option>
+                                                    <option value="termination_date" <?= $order_by == 'termination_date' ? 'selected="selected"' : ''?>>Termination Date</option>
+                                                    <option value="sid" <?= $order_by == 'sid' ? 'selected="selected"' : ''?>>Created Date</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 custom-col">
+                                            <div class="hr-select-dropdown">
+                                                <select name="order" class="invoice-fields">
+                                                    <option value="desc" <?= $order == 'desc' ? 'selected="selected"' : ''?>>Descending</option>
+                                                    <option value="asc" <?= $order == 'asc' ? 'selected="selected"' : ''?>>Ascending</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 custom-col">
+                                        <input type="hidden" name="employee_type" value="<?php echo $employee_type; ?>">
+                                        <input type="hidden" name="keyword" value="<?php echo $keyword; ?>">
+                                        <input type="submit" value="Search" class="form-btn">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <div class="btn-panel text-right">
                         <div class="row">
                             <div class="col-xs-4"></div>
@@ -40,7 +94,7 @@
                                             <th width="25%">Designation</th>
                                             <th class="text-center">Access Level</th>
                                             <th class="text-center">Starting Date</th>
-<!--                                            <th colspan="2" class="text-center">Actions</th>-->
+                                            <th class="text-center">Termination Date</th>
                                         </tr> 
                                     </thead>
                                     <tbody>
@@ -89,6 +143,7 @@
                                                                                 } ?>
                                                 </td>
                                                 <td class="text-center"><?php echo my_date_format($employee["registration_date"]); ?></td>
+                                                <td class="text-center"><?php echo formatDateToDB($employee["termination_date"], DB_DATE, DATE); ?></td>
 <!--                                                <td class="text-center">-->
                                                     <!-- <a class="action-btn"  href="<?php //echo base_url('send_offer_letter_documents'); ?>/<?php //echo $employee["sid"]; ?>">
                                                             <i class="fa fa-file"></i>

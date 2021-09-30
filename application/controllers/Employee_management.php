@@ -93,11 +93,46 @@ class Employee_management extends Public_Controller {
                 $employee_type = $_GET['employee_type'];
             }
 
+            $keyword = '';
+            $order_by = '';
+            $order = '';
+            $employee_type = 'active';
+
+            if (isset($_GET['keyword'])) {
+                $keyword = $_GET['keyword'];
+            }
+
+            if (isset($_GET['employee_type'])) {
+                $employee_type = $_GET['employee_type'];
+            }
+
+            if (isset($_GET['order_by'])) {
+                $order_by = $_GET['order_by'];
+            }
+
+            if (isset($_GET['order'])) {
+                $order = $_GET['order'];
+            }
+            $data['order_by'] = $order_by;
+            $data['order'] = $order;
+            //
+            if($order_by == 'termination_date'){
+                $order_by = 'terminated_employees.termination_date';
+            }
+
+            $data['archived'] = 0;
+            if(empty($order_by)){
+                $order_by = 'users.sid';
+            }
+            if(empty($order)){
+                $order = 'desc';
+            }
+
             $data['archived'] = 1;
             $data['keyword'] = $keyword;
             $data['employee_type'] = $employee_type;
 //            $data["employees"] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 1);
-            $data["employees"] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 1);
+            $data["employees"] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 1, $order_by, $order);
             $data['title'] = "Terminated Employee / Team Members";
 
             if (isset($_POST['deactivate_employees']) && $_POST['deactivate_employees'] == 'true') {

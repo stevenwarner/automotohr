@@ -44,19 +44,17 @@
         return $all_employees;
     }
 
-    function get_terminated_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0) {
+    function get_terminated_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0, $orderType = 'users.sid', $order="DESC") {
         $keyword = trim($keyword);
-        $this->db->select('*');
-        $this->db->where('parent_sid', $parent_sid);
-//        $this->db->where('active', '0');
-        $this->db->where('terminated_status', 1);
-        //$this->db->where('is_executive_admin', 0);
+        $this->db->select('users.*, terminated_employees.termination_date');
+        $this->db->where('users.parent_sid', $parent_sid);
+        $this->db->where('users.terminated_status', 1);
         if ($keyword != null) {
             $this->db->where("(lower(concat(first_name,'',last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($keyword)))."%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
-            // $this->db->where("(first_name LIKE '%" . $keyword . "%' or last_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
         }
-        $this->db->where('sid != ' . $sid);
-        $this->db->order_by('sid', 'desc');
+        $this->db->where('users.sid != ' . $sid);
+        $this->db->order_by($orderType, $order);
+        $this->db->join('terminated_employees', 'terminated_employees.employee_sid = users.sid', 'inner');
         $all_employees = $this->db->get('users')->result_array();
         $all_employees = $this->verify_executive_admin_status($all_employees);
         return $all_employees;
