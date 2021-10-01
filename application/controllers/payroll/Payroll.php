@@ -5,6 +5,9 @@ class Payroll extends CI_Controller
     //
     private $userDetails;
     private $data;
+    private $pages;
+    //
+    private $version;
     //
     private $models;
     //
@@ -31,6 +34,26 @@ class Payroll extends CI_Controller
         //
         $this->models = [];
         $this->models['sem'] = 'single/Employee_model';
+        //
+        $this->pages['header'] = 'main/header';
+        $this->pages['footer'] = 'main/footer';
+        //
+        $this->version = 'v='.(MINIFIED ? '1.0' : time());
+    }
+
+
+    function CompanyTax(){
+        //
+        CheckLogin($this->data);
+        //
+        $this->data['title'] = 'Company - Tax';
+        $this->data['load_view'] = 0;
+        $this->data['Assets'] = ['<script src="'.(base_url('assets/payroll/tax'.(MINIFIED).'.js?v='.($this->version).'')).'" type="text/javascript"></script>'];
+        //
+        $this->load
+        ->view($this->pages['header'], $this->data)
+        ->view('payroll/company_tax')
+        ->view($this->pages['footer']);
     }
 
     /**
@@ -470,6 +493,7 @@ class Payroll extends CI_Controller
             $insertArray['updated_at'] = $date;
             //
             $insertId = $this->pm->AddCompany($insertArray);
+            $this->pm->UpdateCompany($companyId, ['on_payroll' => 1]);
             //
             res([
                 'Status' => true,

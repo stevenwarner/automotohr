@@ -1371,7 +1371,6 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
 // $route['payroll/get_edit_bank_account/(:num)/(:num)']['get'] = 'payroll/Payroll/GetEditBankAccount/$1/$2';
 // $route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
 
-// $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
 // $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
 // $route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
 // $route['payroll/add_employee_to_payroll']['post'] = 'payroll/Payroll/AddEmployeeToPayroll';
@@ -1386,6 +1385,7 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
 
 
 //Payrol Routes
+$route['company_tax']['get'] = 'payroll/Payroll/CompanyTax';
 $route['payroll/create']['get'] = 'payroll/Payroll/Create';
 $route['payroll/create/(:any)/(:any)']['get'] = 'payroll/Payroll/Create/$1/$2';
 
@@ -1395,6 +1395,7 @@ $route['payroll/submit']['post'] = 'payroll/Payroll/SubmitPayroll';
 $route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
 $route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
 $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
+$route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
 
 
 

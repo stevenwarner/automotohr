@@ -108,7 +108,7 @@ $(function BankAccount() {
             return;
         }
         //
-        if (o.EIN.replace(/[^0-9]/g, '').length !== 9) {
+        if (o.EIN.replace(/[^\d]/g, '').length !== 9) {
             alertify.alert('Error!', 'The provided EIN is invalid. The EIN must be of 9 digits.');
             return;
         }
@@ -183,9 +183,9 @@ $(function BankAccount() {
                     $('.jsStatus').removeClass("csFC3").removeClass("csFC1");
                     $('.jsStatus').addClass(resp.response.VerifiedStatus ? "csFC1" : "csFC3");
                     //
-                    $('.jsTaxLegalName').val(resp.response.LegalName);
+                    $('.jsTaxLegalName').val(resp.response.LegalName || company.Name);
                     //
-                    $('.jsTaxEIN').val(resp.response.EIN);
+                    $('.jsTaxEIN').val(resp.response.EIN || company.Ein);
                     //
                     $('.jsTaxPayerType option[value="' + (resp.response.TaxPayerType) + '"]').prop("selected", true);
                     //

@@ -1001,9 +1001,18 @@ if ($class != 'dashboard' &&
                 });
             }
         })
+        // 
+        window.company = {};
+        window.company.Id = <?=$session['company_detail']['sid']?>;
+        window.company.Name = "<?=$session['company_detail']['CompanyName']?>";
+        window.company.Ein = "<?=$session['company_detail']['ssn']?>";
     </script>
     <script src="<?=base_url('assets/js/common.js?v1.0.1');?>"></script>
     <script src="<?=base_url('assets/portal/app.js');?>?v=1.0.2"></script>
+    <?php if($session['company_detail']['on_payroll'] == 0){?>
+        <!-- Payroll -->
+        <script src="<?=base_url('assets/js/payroll.js');?>?v=<?=time();?>"></script>
+    <?php } ?>
     <?php 
         if(isset($Assets)){
             foreach($Assets as $asset){

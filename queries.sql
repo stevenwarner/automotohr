@@ -262,3 +262,7 @@ ALTER TABLE `documents_group_management_history` ADD `is_moved` TINYINT(1) NOT N
 ALTER TABLE `documents_category_management` ADD `is_moved` TINYINT(1) NOT NULL DEFAULT '0' AFTER `ip_address`;
 ALTER TABLE `documents_category_management_history` ADD `is_moved` TINYINT(1) NOT NULL DEFAULT '0' AFTER `ip_address`;
 
+
+-- Add week off days columns to employees table
+--
+ALTER TABLE `users` ADD `off_days` VARCHAR(80) NOT NULL DEFAULT '[\"saturday\",\"sunday\"]' AFTER `middle_initial`;

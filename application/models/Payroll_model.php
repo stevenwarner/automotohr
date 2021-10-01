@@ -13,6 +13,7 @@ class Payroll_model extends CI_Model{
         $this->tables['PH'] = 'payroll_history'; 
         $this->tables['PC'] = 'payroll_companies'; 
         $this->tables['PCE'] = 'payroll_employees'; 
+        $this->tables['PCTD'] = 'payroll_company_tax_details'; 
         $this->tables['U'] = 'users'; 
     }
 
@@ -140,6 +141,16 @@ class Payroll_model extends CI_Model{
      * 
      */
     function UpdateCompanyEIN($companyId, $array){
+        //
+        $this->db
+        ->where('sid', $companyId)
+        ->update($this->tables['U'], $array);
+    }
+   
+    /**
+     * 
+     */
+    function UpdateCompany($companyId, $array){
         //
         $this->db
         ->where('sid', $companyId)
@@ -311,5 +322,12 @@ class Payroll_model extends CI_Model{
         ->where('on_payroll', 1)
         ->where('sid', $employeeId)
         ->count_all_results('users');
+    }
+
+
+    function UpdateCompanyTax($updateArray, $whereArray){
+        //
+        $this->db->where($whereArray)
+        ->update($this->tables['PCTD'], $updateArray);
     }
 }
