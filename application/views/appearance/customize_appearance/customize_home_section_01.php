@@ -10,14 +10,6 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div>
-
-<!--                        <div class="form-col-100 autoheight">
-                            <label for="job_opportunities">
-                                <input type="checkbox" id="job_opportunities" name="job_opportunities" <?php // echo ($page['job_opportunities'] == 1 ? 'checked="checked"' : ''); ?>  />
-                                  Job Opportunities
-                            </label>
-                        </div>-->
-
                         <h2>Textual Content</h2>
 
                         <div class="universal-form-style-v2">

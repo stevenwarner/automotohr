@@ -491,7 +491,6 @@ ul.select2-selection__rendered li{
 
 
 <script>
-alert('asdasd');
     // Plugin for video uploader
     (function(w, d){
         $.fn.videoOpt = function(opt){

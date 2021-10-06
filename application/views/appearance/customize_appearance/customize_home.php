@@ -1,4 +1,5 @@
     <?php 
+    $this->load->view('appearance/customize_appearance/common_config');
     $this->load->view('appearance/customize_appearance/customize_home_section_01');
     $view_data = array();
     $view_data['box'] = $section_02_meta;

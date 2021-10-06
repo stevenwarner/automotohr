@@ -221,6 +221,18 @@ class Appearance extends Public_Controller {
                 }
             }
 
+            if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_site_configuration') {
+                //
+                $postData = $this->input->post(null, true);
+                $theme_name = $postData["theme_name"];
+                $page_name = $postData["page_name"];
+                $enableHeaderBG = $postData['enable_header_bg'];
+                
+                $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'site_settings', ['enable_header_bg' => $enableHeaderBG ? 1: 0]);
+                $this->session->set_flashdata('message', '<b>Success:</b> You have successfully updated the site settings!');
+                redirect('customize_appearance/' . $theme_id, 'refresh');
+            }
+
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_config_section_01') {
                 $theme_name = $_POST["theme_name"];
                 $page_name = $_POST["page_name"];
@@ -816,6 +828,7 @@ class Appearance extends Public_Controller {
 
                 $pages = $this->themes_pages_model->GetAllCompanySpecific($company_id);
                 $testimonials = $this->testimonials_model->GetAllCompanySpecific($company_id);
+                $site_settings = $this->customize_appearance_model->fGetThemeMetaData($company_id, 'theme-4', 'site_settings', 'site_settings');
                 $section_01_meta = $this->customize_appearance_model->fGetThemeMetaData($company_id, 'theme-4', 'home', 'section_01');
                 $section_02_meta = $this->customize_appearance_model->fGetThemeMetaData($company_id, 'theme-4', 'home', 'section_02');
                 $section_03_meta = $this->customize_appearance_model->fGetThemeMetaData($company_id, 'theme-4', 'home', 'section_03');
@@ -858,8 +871,8 @@ class Appearance extends Public_Controller {
                 if (!isset($section_03_meta['column_type'])) {
                     $section_03_meta['column_type'] = 'left_right';
                 }
-
                 //Pass data to view
+                $data['site_settings'] = $site_settings;
                 $data['section_01_meta'] = $section_01_meta;
                 $data['section_02_meta'] = $section_02_meta;
                 $data['section_03_meta'] = $section_03_meta;

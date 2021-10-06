@@ -417,6 +417,7 @@ class Home extends CI_Controller {
                 }
 
                 $data['pageName'] = $pageName;
+                $data['site_settings'] = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'site_settings', 'site_settings');
                 
                 switch (strtoupper($pageName)) {
                     case 'HOME':
@@ -591,7 +592,9 @@ class Home extends CI_Controller {
         $data['customize_career_site'] = $this->themes_pages_model->getCustomizeCareerSiteData($company_sid);
         company_phone_regex_module_check($company_sid, $data, $this);
 
+        
         $theme_name = $data['theme_name'];
+        $data['site_settings'] = $this->theme_meta_model->fGetThemeMetaData($company_sid, $theme_name, 'site_settings', 'site_settings');
         $data['dealership_website'] = '';
         $data['pageName'] = 'contact_us';
         $data['isPaid'] = $data['is_paid'];
@@ -676,6 +679,7 @@ class Home extends CI_Controller {
         $data['customize_career_site'] = $this->themes_pages_model->getCustomizeCareerSiteData($company_sid);
         company_phone_regex_module_check($company_sid, $data, $this);
         $theme_name = $data['theme_name'];
+        $data['site_settings'] = $this->theme_meta_model->fGetThemeMetaData($company_sid, $theme_name, 'site_settings', 'site_settings');
         $data['dealership_website'] = '';
         $website = $data['company_details']['WebSite'];
         $company_id = $data['company_details']['sid'];
@@ -989,8 +993,9 @@ class Home extends CI_Controller {
         $server_name = clean_domain($_SERVER['SERVER_NAME']);
         $data = $this->check_domain->check_portal_status($server_name);
         $theme_name = $data['theme_name'];
-
+        
         $company_sid = $data['company_details']['sid'];
+        $data['site_settings'] = $this->theme_meta_model->fGetThemeMetaData($company_sid, $theme_name, 'site_settings', 'site_settings');
         $company_name = $data['company_details']['CompanyName'];
         $data['customize_career_site'] = $this->themes_pages_model->getCustomizeCareerSiteData($company_sid);
         $data['remarket_company_settings'] = $this->themes_pages_model->get_remarket_company_settings();
