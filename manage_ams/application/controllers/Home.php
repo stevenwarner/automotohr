@@ -3147,7 +3147,8 @@ class Home extends CI_Controller {
             }
         }
 
-        $list = $this->job_details->get_all_company_jobs_ams_cron($number_of_jobs, $job_ids);
+        // $list = $this->job_details->get_all_company_jobs_ams_cron($number_of_jobs, $job_ids);
+        $list = $this->job_details->get_all_company_jobs_ams_cron_2($job_ids);
         foreach($list as $key => $value){
             if(!in_array($value['sid'],$job_ids)){
                  $list[$key]['TitleOnly'] = $list[$key]['Title'];
