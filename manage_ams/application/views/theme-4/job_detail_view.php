@@ -11,30 +11,32 @@ if(preg_replace('/[^0-9]/', '', $job_details['activation_date']) == '' && $job_d
         $job_details['approval_status_change_datetime']
     )->format('m-d-Y');
 }
+//
+$job_details['Title'] = preg_replace('/\s+/', ' ', $job_details['Title']);
 
 $googleJobOBJ = [];
 // Basic job details
+$googleJobOBJ['@context'] = '"@context": "http://schema.org",';
 $googleJobOBJ['@type'] = 'JobPosting';
 $googleJobOBJ['title'] = $job_details['Title'];
+$googleJobOBJ['description'] = htmlentities($job_details['JobDescription'].' '.$job_details['JobRequirements']);
 $googleJobOBJ['employmentType'] = strtoupper(str_replace(' ', '_', $job_details['JobType'])); // FULL_TIME, PART_TIME, CONTRACTOR, TEMPORARY, INTERN, VOLUNTEER, PER_DIEM, OTHER [FULL_TIME,PART_TIME]
-$googleJobOBJ['datePosted'] = DateTime::createFromFormat('m-d-Y', $acDate)->format('Y-m-d');
-$googleJobOBJ['validThrough'] = DateTime::createFromFormat('m-d-Y', $acDate)->add(new DateInterval('P15D'))->format('Y-m-dT00:00'); // Add interval of one month
-$googleJobOBJ['description'] = $job_details['JobDescription'].' '.$job_details['JobRequirements'];
-// $googleJobOBJ['logo'] = $job_details['JobDescription'].' '.$job_details['JobRequirements'];
+$googleJobOBJ['industry'] = 'business';
+$googleJobOBJ['datePosted'] = DateTime::createFromFormat('m-d-Y', $acDate)->format('Y-m-d\TH:i:s\Z');
+$googleJobOBJ['validThrough'] = DateTime::createFromFormat('m-d-Y', $acDate)->add(new DateInterval('P30D'))->format('Y-m-d'); // Add interval of one month
+$googleJobOBJ['url'] = 'https://www.automotosocial.com/display-job/'.(preg_replace('/\s+/', '-',preg_replace('/[^0-9a-zA-Z]/', ' ', strtolower($job_details['Title'])))).'-'.$job_details['sid']; // Add interval of one month
 // Organization details
 $googleJobOBJ['hiringOrganization'] = [];
 $googleJobOBJ['hiringOrganization']['@type'] = 'Organization';
 $googleJobOBJ['hiringOrganization']['name'] = $company_details['CompanyName'];
-$googleJobOBJ['hiringOrganization']['sameAs'] = $company_details['sub_domain'];
+$googleJobOBJ['hiringOrganization']['sameAs'] = 'https://'.$company_details['sub_domain'];
 $googleJobOBJ['hiringOrganization']['logo'] = AWS_S3_BUCKET_URL.$company_details['Logo'];
 // Job location details
 $googleJobOBJ['jobLocation']['@type'] = 'Place';
 $googleJobOBJ['jobLocation']['address'] = [];
 $googleJobOBJ['jobLocation']['address']['@type'] = 'PostalAddress';
 $googleJobOBJ['jobLocation']['address']['streetAddress'] = $job_details['Location'] != '' ? $job_details['Location'] : $job_details['Location_City'];
-// $googleJobOBJ['jobLocation']['addressLocality'] = '';
-// $googleJobOBJ['jobLocation']['addressRegion'] = '';
-$googleJobOBJ['jobLocation']['address']['postalCode'] = !empty($job_details['Location_ZipCode']) ? $job_details['Location_ZipCode'] : 'N/A';
+$googleJobOBJ['jobLocation']['address']['postalCode'] = !empty($job_details['Location_ZipCode']) ? $job_details['Location_ZipCode'] : '';
 $googleJobOBJ['jobLocation']['address']['addressCountry'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CA" : "US";
 // Applicant location details
 $googleJobOBJ['applicantLocationRequirements']['@type'] = 'Country';
@@ -76,15 +78,13 @@ if($job_details['Salary'] != ''){
 // Company identifier
 $googleJobOBJ['identifier'] = [];
 $googleJobOBJ['identifier']['@type'] = 'PropertyValue';
-$googleJobOBJ['identifier']['name'] = $company_details['CompanyName'];
+$googleJobOBJ['identifier']['name'] = 'jid';
 $googleJobOBJ['identifier']['value'] = $job_details['user_sid'];
 // Industry
+$googleJobOBJ['industry'] = [];
 $googleJobOBJ['industry']['@type'] = 'JobPosting';
 $googleJobOBJ['industry']['value'] = $job_details['JobCategory'];
-
-// _e($company_details, true);
-// _e($job_details, true);
-// _e($googleJobOBJ, true, true);
+$googleJobOBJ['directApply'] = true;
 
 echo '<script type="application/ld+json">';
 echo json_encode($googleJobOBJ);
