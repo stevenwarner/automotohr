@@ -246,4 +246,4 @@ ALTER TABLE `timeoff_settings` ADD `team_visibility_check` TINYINT NOT NULL DEFA
 -- 10/04/2021
 ALTER TABLE `users` ADD `middle_name` VARCHAR(225) NULL DEFAULT NULL AFTER `first_name`;
 ALTER TABLE `users` ADD `break_hours` INT NOT NULL DEFAULT '1' AFTER `shift_end_time`, ADD `break_mins` INT NOT NULL DEFAULT '0' AFTER `break_hours`, ADD `weekly_hours` INT NOT NULL DEFAULT '0' AFTER `break_mins`;
-ALTER TABLE `users` ADD `offdays` VARCHAR(225) NULL DEFAULT NULL AFTER `weekly_hours`;
+ALTER TABLE `users` ADD `offdays` VARCHAR(225) NULL DEFAULT 'Sunday' AFTER `weekly_hours`;
