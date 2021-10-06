@@ -7,6 +7,7 @@ class Background_check extends CI_Controller {
         parent::__construct();
         if ($this->session->userdata('logged_in')) {
             $this->load->helper('accurate_background');
+            $this->load->helper('assurehire');
             $this->load->model('background_check_model');
             //$this->load->model('application_tracking_model');
             $this->load->model('application_tracking_system_model');
@@ -110,10 +111,22 @@ class Background_check extends CI_Controller {
                 //Start==> Checking purchased and not purchased backgroung Check products//
                 $this->load->model('dashboard_model');
                 $product_type = 'background-checks';
-                $data_function['purchasedProducts'] = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
+                $purchasedProducts = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
                 //Update Order Status on Load - start
                 $appliedProductsQueryObject = $this->background_check_model->getProductsAlreadyAppliedOn($sid, $type, $product_type);
                 $appliedProductsArray = $appliedProductsQueryObject->result_array();
+
+                if (checkAssureHireEnable($company_id)) {
+                    $assurehire = $this->background_check_model->getAssurehireActiveProducts("background-checks");
+                    $purchasedProducts = array_merge($purchasedProducts,$assurehire);
+                    // echo "<pre>";
+                    // print_r($purchasedProducts);
+                    // print_r($assurehire);
+                    // print_r(array_merge($purchasedProducts,$assurehire));
+                    // die();
+                }
+                //
+                $data_function['purchasedProducts'] = $purchasedProducts;
 
                 foreach ($appliedProductsArray as $order) {
                     $ab_order_sid = $order['sid'];
@@ -122,8 +135,8 @@ class Background_check extends CI_Controller {
                 }
                 //Update Order Status on Load - end
 
-                $appliedProductsQueryObject = $this->background_check_model->getProductsAlreadyAppliedOn($sid, $type, $product_type);
-                $appliedProductsArray = $appliedProductsQueryObject->result_array();
+                // $appliedProductsQueryObject = $this->background_check_model->getProductsAlreadyAppliedOn($sid, $type, $product_type);
+                // $appliedProductsArray = $appliedProductsQueryObject->result_array();
 
                 if (!empty($appliedProductsArray)) {
                     foreach ($appliedProductsArray as $key => $product) {

@@ -530,4 +530,17 @@ class Background_check_model extends CI_Model {
         return $do_count ? array( 'TotalRecords' => count($result_arr), 'StatusArray' => $status_array ) : $rows;
     }
 
+    function getAssurehireActiveProducts($productType)
+    {
+        $this->db->select('sid as product_sid, expiry_days as no_of_days, product_image, name');
+        $this->db->where('product_type', $productType);
+        $this->db->where('in_market', 1);
+        $this->db->where('active', 1);
+        $this->db->where('LOWER(name) regexp "assurehire"', NULL, NULL);
+        //
+        $this->db->order_by('sort_order', 'ASC');
+        return $this->db->get('products')->result_array();
+    }
+
+
 }

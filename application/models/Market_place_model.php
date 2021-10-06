@@ -11,6 +11,7 @@ class market_place_model extends CI_Model
         $this->db->where('featured', 1);
         $this->db->where('active', 1);
         $this->db->where('in_market', 1);
+        $this->db->where('LOWER(name) not regexp "assurehire"',NULL,NULL);
         $this->db->order_by('sort_order', 'ASC');
         return $this->db->get('products')->result_array();
     }
@@ -93,6 +94,7 @@ class market_place_model extends CI_Model
 
         $this->db->where('in_market', 1);
         $this->db->where('active', 1);
+        $this->db->where('LOWER(name) not regexp "assurehire"', NULL, NULL);
         //
         // if(!in_array($company_id, [51, 57])) $this->db->where('product_brand != ', 'assurehire');
         $this->db->order_by('sort_order', 'ASC');
