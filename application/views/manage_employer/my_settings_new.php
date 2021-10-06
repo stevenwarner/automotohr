@@ -237,7 +237,7 @@
                                             <li><a href="<?php echo base_url('attendance/'); ?>">Attendance</a></li>
                                         <?php } ?>
 
-                                        <?php if (checkIfAppIsEnabled('performance_management', true)) { ?>
+                                        <?php if (checkIfAppIsEnabled('performance_management')) { ?>
                                             <li><a href="<?php echo base_url('performance-management/dashboard'); ?>">Performance Management</a></li>
                                         <?php } ?>
                                         <?php if (checkIfAppIsEnabled('performance_management')) { ?>
