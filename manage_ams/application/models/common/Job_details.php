@@ -748,8 +748,8 @@ class Job_details extends CI_Model {
         $this->db->where('users.active', 1);
         $this->db->where('users.is_paid', 1);
         $this->db->group_start();
-        $this->db->where('portal_job_listings.expiry_date > "' . date('Y-m-d H:i:s') . '"');
-        $this->db->or_where('portal_job_listings.expiry_date IS NULL', NULL, NULL);
+        $this->db->where('portal_job_listings.expiration_date > "' . date('Y-m-d 00:00:00') . '"');
+        $this->db->or_where('portal_job_listings.expiration_date IS NULL', NULL, NULL);
         $this->db->group_end();
 
         $this->db->join('users', 'users.sid = portal_job_listings.user_sid', 'left');
