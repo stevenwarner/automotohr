@@ -151,6 +151,39 @@
                                                     </div>
                                                 </div>        
                                             </div>  
+                                            
+                                            
+
+                                            <div id="generated_offer_letter" style="display: none">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label>Letter Body<span class="staric">*</span></label>
+                                                            <textarea id="letter_body" name="letter_body" class="ckeditor"></textarea>
+                                                        </div>
+                                                        <span id="body_error" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="generated_offer_letter" style="display: none">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label>Authorized Management Signers </label>
+                                                            <select name="js-signers[]" id="js-signers" multiple="">
+                                                                <?php 
+                                                                    if(sizeof($managers_list)){
+                                                                        foreach ($managers_list as $key => $value) {
+                                                                            echo '<option value="'.( $value['sid'] ).'" '.( in_array($value['sid'], empty($currentOfferLetter['signers']) ? [] :  explode(',', $currentOfferLetter['signers'])) ? 'selected' : '' ).'>'.( remakeEmployeeName($value) ).'</option>';
+                                                                        }
+                                                                    }
+                                                                    ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <!-- Visibility Block -->
                                             <br />
                                             <div class="row">
@@ -234,36 +267,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
-
-                                            <div id="generated_offer_letter" style="display: none">
-                                                <div class="row">
-                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                        <div class="form-group">
-                                                            <label>Letter Body<span class="staric">*</span></label>
-                                                            <textarea id="letter_body" name="letter_body" class="ckeditor"></textarea>
-                                                        </div>
-                                                        <span id="body_error" class="text-danger"></span>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                        <div class="form-group">
-                                                            <label>Authorized Management Signers </label>
-                                                            <select name="js-signers[]" id="js-signers" multiple="">
-                                                                <?php 
-                                                                    if(sizeof($managers_list)){
-                                                                        foreach ($managers_list as $key => $value) {
-                                                                            echo '<option value="'.( $value['sid'] ).'" '.( in_array($value['sid'], empty($currentOfferLetter['signers']) ? [] :  explode(',', $currentOfferLetter['signers'])) ? 'selected' : '' ).'>'.( remakeEmployeeName($value) ).'</option>';
-                                                                        }
-                                                                    }
-                                                                ?>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
+                                                
+                                            <div class="generated_offer_letter" style="display: none">
 
                                                 <div class="row">
                                                     <div class="col-lg-12">
@@ -335,16 +340,6 @@
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group autoheight">
-                                                                        <input type="text" class="form-control tag" readonly="" value="{{authorized_signature}}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group autoheight">
-                                                                        <input type="text" class="form-control tag" readonly="" value="{{authorized_signature_date}}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group autoheight">
                                                                         <input type="text" class="form-control tag" readonly="" value="{{signature}}">
                                                                     </div>
                                                                 </div>
@@ -361,6 +356,16 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group autoheight">
                                                                         <input type="text" class="form-control tag" readonly="" value="{{sign_date}}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group autoheight">
+                                                                        <input type="text" class="form-control tag" readonly="" value="{{authorized_signature}}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group autoheight">
+                                                                        <input type="text" class="form-control tag" readonly="" value="{{authorized_signature_date}}">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
@@ -389,6 +394,8 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            
                                             
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right" style="top: 0;">
@@ -486,6 +493,7 @@
             if (l.letter_type == 'hybrid_document') {
                 $("#uploaded_offer_letter").show();
                 $("#generated_offer_letter").show();
+                $(".generated_offer_letter").show();
                 //
                 $("#uploaded_offer_letter_iframe").html( f.getHTML() );
                 $('#selected_document_s3_name').val(l.uploaded_document_s3_name);
@@ -498,6 +506,7 @@
                 CKEDITOR.instances['letter_body'].setData(l.letter_body);
             } else if (l.letter_type == 'generated') {
                 $("#generated_offer_letter").show();
+                $(".generated_offer_letter").show();
                 $("#uploaded_offer_letter").hide();
                 //
                 $('#selected_document_s3_name').val('');
@@ -507,6 +516,7 @@
             } else {
                 $("#uploaded_offer_letter").show();
                 $("#generated_offer_letter").hide();
+                $(".generated_offer_letter").hide();
                 //
                 $("#uploaded_offer_letter_iframe").html( f.getHTML() );
                 $('#selected_document_s3_name').val(l.uploaded_document_s3_name);
@@ -531,6 +541,7 @@
 
             if (selected_offer_letter_type == 'generated') {
                 $("#generated_offer_letter").show();
+                $(".generated_offer_letter").show();
                 $("#uploaded_offer_letter").hide();
                 
                 var body = $('#letter_body_' + selected).val();
@@ -540,6 +551,7 @@
             } else {
                 $("#uploaded_offer_letter").show();
                 $("#generated_offer_letter").hide();
+                $(".generated_offer_letter").hide();
                 var selected_offer_letter_url = $(this).find(':selected').attr('data-olt-url');
                 $("#uploaded_offer_letter_iframe").attr("src", selected_offer_letter_url);
                 $('#selected_document_s3_name').val(selected_offer_letter_s3_url);
@@ -553,6 +565,7 @@
         // if (offer_letter_type == 'generated') {
         //     $('#selected_letter_type').val(offer_letter_type);
         //     $("#generated_offer_letter").show();
+        //     $(".generated_offer_letter").show();
         // } else {
         //     $('#selected_document_s3_name').val("<?php echo $assign_offer_letter_s3_url; ?>");
         //     $('#selected_document_original_name').val("<?php echo $assign_offer_letter_name; ?>");
