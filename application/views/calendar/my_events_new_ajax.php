@@ -52,18 +52,22 @@
                     <!--  -->
                     <div class="ma10">
                         <ul class="text-center csCalendarTypes">
-                            <li>
-                                <label class="control control--checkbox">
-                                    <input type="checkbox" name="goals" class="jsCalendarTypes" checked="true" /> Goals
-                                    <div class="control__indicator"></div>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="control control--checkbox">
-                                    <input type="checkbox" name="timeoff" class="jsCalendarTypes" checked="true" /> Time Off
-                                    <div class="control__indicator"></div>
-                                </label>
-                            </li>
+                            <?php if(checkIfAppIsEnabled('performance_management')) {?>
+                                <li>
+                                    <label class="control control--checkbox">
+                                        <input type="checkbox" name="goals" class="jsCalendarTypes" checked="true" /> Goals
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </li>
+                            <?php } ?>
+                            <?php if(checkIfAppIsEnabled('timeoff')) {?>
+                                <li>
+                                    <label class="control control--checkbox">
+                                        <input type="checkbox" name="timeoff" class="jsCalendarTypes" checked="true" /> Time Off
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </li>
+                            <?php } ?>
                         </ul>
                     </div>
                 </div>
