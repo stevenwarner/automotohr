@@ -3134,21 +3134,12 @@ class Home extends CI_Controller {
     function create_sitemap($vf){
         if($vf != 'ljfgdkuhgksadgfowetroyu2t352g5jhwegrwjkfgewkjgrk23gfhsdgfgdkjgfkjfg2373t4kwgfkhdsgfhd') return ;
         $number_of_jobs = 20;
-        $xmlOldString = @file_get_contents('sitemap.xml');
-        $job_ids = array();
-        $oldXml = '';
+
         $newXml = '';
-        if(!empty($xmlOldString)){
-            $xml=simplexml_load_string($xmlOldString) or die("Error: Cannot create object");
-
-            foreach($xml->url as $url){
-                $oldXml .= '<url><loc>'.$url->loc.'</loc></url>';
-                $job_ids[] = @end(explode("-",$url->loc));
-            }
-        }
-
         // $list = $this->job_details->get_all_company_jobs_ams_cron($number_of_jobs, $job_ids);
-        $list = $this->job_details->get_all_company_jobs_ams_cron_2($job_ids);
+        $list = $this->job_details->get_all_company_jobs_ams_cron_2();
+        //
+        $job_ids = array_column($list, 'sid');
         foreach($list as $key => $value){
             if(!in_array($value['sid'],$job_ids)){
                  $list[$key]['TitleOnly'] = $list[$key]['Title'];
@@ -3206,8 +3197,32 @@ class Home extends CI_Controller {
             }
         }
         if(!empty($newXml)){
-            $xmlString = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-            $xmlString .= $newXml.$oldXml;
+            $xmlString = '<?xml version="1.0" encoding="UTF-8"?>
+            <urlset
+                  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+                        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+                        
+                    <url>
+                    <loc>https://www.automotosocial.com/</loc>
+                    </url>
+                    <url>
+                    <loc>https://www.automotosocial.com/jobs</loc>
+                    </url>
+                    <url>
+                    <loc>https://www.automotosocial.com/about-us</loc>
+                    </url>
+                    <url>
+                    <loc>https://www.automotosocial.com/Jobs</loc>
+                    </url>
+                    <url>
+                    <loc>https://www.automotosocial.com/terms-of-use</loc>
+                    </url>
+                    <url>
+                    <loc>https://www.automotosocial.com/site-map</loc>
+                    </url>';
+            $xmlString .= $newXml;
             $xmlString .= '</urlset>';
             file_put_contents('sitemap.xml', $xmlString);
             $submit_to_google = getFileData("https://www.google.com/ping?sitemap=https://www.automotosocial.com/sitemap.xml");

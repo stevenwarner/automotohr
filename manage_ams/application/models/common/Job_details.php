@@ -742,18 +742,15 @@ class Job_details extends CI_Model {
     }
     
     function get_all_company_jobs_ams_cron_2(
-        $ids
         ) {
         $this->db->select('portal_job_listings.*, users.CompanyName, users.YouTubeVideo, users.Logo, users.ContactName, users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, portal_employer.domain_type, users.has_job_approval_rights');
         $this->db->where('portal_job_listings.active', 1);
-        // $this->db->where('portal_job_listings.organic_feed', 1);
-        // $this->db->where('portal_job_listings.published_on_career_page', 1);
         $this->db->where('users.active', 1);
-        // $this->db->where('users.career_site_listings_only', 0);
-
-        $this->db->where_not_in('portal_job_listings.sid', $ids);
-
-        // $this->db->limit($numberOfPages);
+        $this->db->where('users.is_paid', 1);
+        $this->db->group_start();
+        $this->db->where('portal_job_listings.expiry_date > "' . date('Y-m-d H:i:s') . '"');
+        $this->db->or_where('portal_job_listings.expiry_date IS NULL', NULL, NULL);
+        $this->db->group_end();
 
         $this->db->join('users', 'users.sid = portal_job_listings.user_sid', 'left');
         $this->db->join('portal_employer', 'portal_employer.user_sid = portal_job_listings.user_sid', 'left');
