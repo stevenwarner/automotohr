@@ -549,7 +549,22 @@ class Form_full_employment_application extends CI_Controller {
                             'full_employment_application' => serialize($full_employment_application)
                         );
                     }
-//                    $this->form_full_employment_application_model->update_applicant($user_sid, $data);
+                    //
+                    //
+                    if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB'])) {
+                        $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $formpost['TextBoxDOB'])));
+                        $dataToUpdate['dob'] = $DOB;
+                    }
+                    //
+                    if (isset($formpost['TextBoxNameMiddle']) && !empty($formpost['TextBoxNameMiddle'])) {
+                        $dataToUpdate['middle_name'] = $formpost['TextBoxNameMiddle'];
+                    }
+                    //
+                    if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN'])) {
+                        $dataToUpdate['ssn'] = $formpost['TextBoxSSN'];
+                    }
+                    //
+                    //  $this->form_full_employment_application_model->update_applicant($user_sid, $data);
                     $this->form_full_employment_application_model->update_form_details($company_sid, $user_sid, $user_type, $dataToUpdate);
                     $this->form_full_employment_application_model->update_form_status($verification_key, 'signed');
                     $this->documents_model->insert_document_ip_tracking_record($company_sid, $user_sid, getUserIP(), 'full_employment_application', 'signed', $_SERVER['HTTP_USER_AGENT'], $user_sid, $user_type);
@@ -1102,6 +1117,20 @@ class Form_full_employment_application extends CI_Controller {
                         'extra_info' => serialize($extras),
                         'full_employment_application' => serialize($full_employment_application)
                     );
+                    //
+                    if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB'])) {
+                        $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $formpost['TextBoxDOB'])));
+                        $data['dob'] = $DOB;
+                    }
+                    //
+                    if (isset($formpost['TextBoxNameMiddle']) && !empty($formpost['TextBoxNameMiddle'])) {
+                        $data['middle_name'] = $formpost['TextBoxNameMiddle'];
+                    }
+                    //
+                    if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN'])) {
+                        $data['ssn'] = $formpost['TextBoxSSN'];
+                    }
+                    //
 
                     //
                     if(!$_ssv && !empty($formpost['TextBoxDOB'])) $data['dob'] = DateTime::createFromFormat('m-d-Y', $formpost['TextBoxDOB'])->format('Y-d-m');

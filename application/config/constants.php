@@ -590,3 +590,10 @@ define('TIMEOFF_UPDATE_FOR_APPROVER', 393); // when the requestw as updated
 define('USER_TIMEOFF_REQUEST', 414); // Send approve email to employee
 define('APPROVER_TIMEOFF_REQUEST_UPDATE', 412); // Send approve/reject email to approvers
 define('APPROVER_TIMEOFF_REQUEST', 413); // Send request email
+
+//
+define('SHIFT_START', '9:00 AM'); // Default Shift Start
+define('SHIFT_END', '6:00 PM'); // Default Shift End
+define('DAY_OFF', 'Sunday'); // Default Day Off
+define('BREAK_HOURS', '1'); // Default Break Hours
+define('BREAK_MINUTES', '0'); // Default Break Minutes

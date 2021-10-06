@@ -1532,7 +1532,20 @@ class Settings extends Public_Controller
                     'extra_info' => serialize($data["employer"]['extra_info']),
                     'full_employment_application' => serialize($full_employment_application)
                 );
-
+                //
+                if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB'])) {
+                    $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $formpost['TextBoxDOB'])));
+                    $data['dob'] = $DOB;
+                }
+                //
+                if (isset($formpost['TextBoxNameMiddle']) && !empty($formpost['TextBoxNameMiddle'])) {
+                    $data['middle_name'] = $formpost['TextBoxNameMiddle'];
+                }
+                //
+                if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN'])) {
+                    $data['ssn'] = $formpost['TextBoxSSN'];
+                }
+                //
                 $this->dashboard_model->update_user($id, $data);
                 $this->session->set_flashdata('message', '<b>Success:</b> Full employment form updated successfully');
                 redirect($reload_location, "location");

@@ -1238,6 +1238,8 @@ class Employee_management extends Public_Controller {
                 $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
                 $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean');
                 $this->form_validation->set_rules('access_level', 'Access Level', 'trim|xss_clean');
+                $this->form_validation->set_rules('break_hours', 'break_hours', 'trim|xss_clean|min_length[1]|max_length[24]');
+                $this->form_validation->set_rules('break_mins', 'break_mins', 'trim|xss_clean|min_length[1]|max_length[59]');
                 //$this->form_validation->set_rules('CompanyDescription', 'Description', 'trim|xss_clean');
                 //
                 $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
@@ -1320,6 +1322,14 @@ class Employee_management extends Public_Controller {
                     //$this->load->view('manage_employer/employee_profile_view');
                     $this->load->view('main/footer');
                 } else {
+                    $shf_hr = $this->input->post('shift_hours');
+                    $br_hr = $this->input->post('break_hours');
+                    $br_min = $this->input->post('break_mins');
+                    if ($br_hr > $shf_hr || ($br_hr == $shf_hr && $br_min > 1)) {
+                        $this->session->set_flashdata("message", "<b>Error:</b> The break time can not be greater than the employees' shift time");
+                        redirect("employee_profile/" . $sid, "location");
+                    }
+
 
                     $sid = $this->input->post('id');
                     $pictures = $this->input->post('old_profile_picture');
@@ -1430,6 +1440,9 @@ class Employee_management extends Public_Controller {
                         'ssn' => $this->input->post('SSN'),
                         'employee_number' => $this->input->post('employee_number'),
                         'department_sid' => $this->input->post('department'),
+                        'break_hours' => $this->input->post('break_hours'),
+                        'break_mins' => $this->input->post('break_mins'),
+                        'weekly_hours' => $this->input->post('weekly_hours'),
                         // 'team_sid' => $this->input->post('team')
                     );
 
@@ -1515,8 +1528,25 @@ class Employee_management extends Public_Controller {
                         $new_timezone = $this->input->post('timezone', true);
                         if($new_timezone != '') $data_to_insert['timezone'] = $new_timezone;
                     }
-//Ful Employment Application Form Update data
+                    //Ful Employment Application Form Update data
                     $full_emp_app = isset($employee_detail['full_employment_application']) && !empty($employee_detail['full_employment_application']) ? unserialize($employee_detail['full_employment_application']) : array();
+                    if (isset($_POST['DOB']) && !empty($_POST['DOB'])) {
+                        $full_emp_app['TextBoxDOB'] = $this->input->post('DOB');
+                    }
+                    //
+                    if (isset($_POST['middle_name']) && !empty($_POST['middle_name'])) {
+                        $full_emp_app['TextBoxNameMiddle'] = $this->input->post('middle_name');
+                        $data_to_insert['middle_name'] = $this->input->post('middle_name');
+                    }
+                    //
+                    if (isset($_POST['SSN']) && !empty($_POST['SSN'])) {
+                        $full_emp_app['TextBoxSSN'] = $this->input->post('SSN');
+                    }
+                    //
+                    if (isset($_POST['offdays']) && !empty($_POST['offdays'])) {
+                        $data_to_insert['offdays'] = implode(",", $this->input->post('offdays'));
+                    }
+                    //
                     $full_emp_app['PhoneNumber'] = $this->input->post('PhoneNumber');
                     $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                     $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
