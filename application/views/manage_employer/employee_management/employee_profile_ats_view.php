@@ -639,6 +639,7 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="clearfix"></div>
                                             <?php } ?>
 
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group dn">
