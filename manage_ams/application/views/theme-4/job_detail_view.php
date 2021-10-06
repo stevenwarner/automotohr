@@ -16,10 +16,10 @@ $job_details['Title'] = preg_replace('/\s+/', ' ', $job_details['Title']);
 
 $googleJobOBJ = [];
 // Basic job details
-$googleJobOBJ['@context'] = '"@context": "http://schema.org",';
+$googleJobOBJ['@context'] = 'http://schema.org';
 $googleJobOBJ['@type'] = 'JobPosting';
 $googleJobOBJ['title'] = $job_details['Title'];
-$googleJobOBJ['description'] = htmlentities($job_details['JobDescription'].' '.$job_details['JobRequirements']);
+$googleJobOBJ['description'] = ($job_details['JobDescription'].' '.$job_details['JobRequirements']);
 $googleJobOBJ['employmentType'] = strtoupper(str_replace(' ', '_', $job_details['JobType'])); // FULL_TIME, PART_TIME, CONTRACTOR, TEMPORARY, INTERN, VOLUNTEER, PER_DIEM, OTHER [FULL_TIME,PART_TIME]
 $googleJobOBJ['industry'] = 'business';
 $googleJobOBJ['datePosted'] = DateTime::createFromFormat('m-d-Y', $acDate)->format('Y-m-d\TH:i:s\Z');
