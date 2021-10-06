@@ -40,6 +40,7 @@
         if($dob != '') $dob = DateTime::createFromFormat('m-d-Y', $dob)->format('M d Y, D');
     }
 ?>
+
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
@@ -90,6 +91,10 @@
                                         <li class="col-sm-6">
                                             <label>first name:</label>
                                             <p><?php echo $employer["first_name"]; ?></p>
+                                        </li>
+                                        <li class="col-sm-6">
+                                            <label>Middle name:</label>
+                                            <p><?php echo $employer["middle_name"]; ?></p>
                                         </li>
                                         <li class="col-sm-6">
                                             <label>last name:</label>
@@ -178,27 +183,27 @@
                                             ?></p>
                                         </li>
 
-<!--                                        <li class="col-sm-6">-->
-<!--                                            <label>Title:</label>-->
-<!--                                            --><?php //if(isset($extra_info["title"])) { ?>
-<!--                                                <p>--><?php //echo $extra_info["title"]; ?><!--</p>-->
-<!--                                            --><?php //} ?>
-<!--                                        </li>-->
+                                        <!-- <li class="col-sm-6">-->
+                                        <!-- <label>Title:</label>-->
+                                        <!-- --><?php //if(isset($extra_info["title"])) { ?>
+                                        <!--<p>--><?php //echo $extra_info["title"]; ?><!--</p>-->
+                                        <!----><?php //} ?>
+                                        <!--</li>-->
 
-<li class="col-sm-6">
-    <label>Department:</label>
-    <?php if(isset($department_name)) { ?>
-        <p><?php echo $department_name; ?></p>
-        <?php } ?>
-    </li>
-    <li class="col-sm-6">
-        <label>Team:</label>
-        <?php if(isset($team_names) && !empty($team_names)) { ?>
-            <p><?php echo $team_names; ?></p>
-        <?php } else if(isset($team_name)) { ?>
-            <p><?php echo $team_name; ?></p>
-        <?php } ?>
-    </li>
+                                        <li class="col-sm-6">
+                                            <label>Department:</label>
+                                            <?php if(isset($department_name)) { ?>
+                                                <p><?php echo $department_name; ?></p>
+                                            <?php } ?>
+                                        </li>
+                                        <li class="col-sm-6">
+                                            <label>Team:</label>
+                                            <?php if(isset($team_names) && !empty($team_names)) { ?>
+                                                <p><?php echo $team_names; ?></p>
+                                            <?php } else if(isset($team_name)) { ?>
+                                                <p><?php echo $team_name; ?></p>
+                                            <?php } ?>
+                                        </li>
                                         <li class="col-sm-12">
                                             <label>Office Location:</label>
                                             <?php if(isset($extra_info["office_location"])) { ?>
@@ -222,6 +227,18 @@
                                             <label>Shift Duration:</label>
                                             <?php if(isset($employer["user_shift_hours"])) { ?>
                                                 <p><?php echo $employer["user_shift_hours"] .( $employer['user_shift_hours'] == 1 ? ' hour' : ' hours' ).' & '.$employer["user_shift_minutes"] .( $employer['user_shift_minutes'] == 1 ? ' minute' : ' minutes' ); ?></p>
+                                            <?php } ?>
+                                        </li>
+                                        <li class="col-sm-6 auto-height text-justify">
+                                            <label>Break Duration:</label>
+                                            <?php if(isset($employer["user_shift_hours"])) { ?>
+                                                <p><?php echo $employer["break_hours"] .( $employer['break_hours'] == 1 ? ' hour' : ' hours' ).' & '.$employer["break_mins"] .( $employer['break_mins'] == 1 ? ' minute' : ' minutes' ); ?></p>
+                                            <?php } ?>
+                                        </li>
+                                        <li class="col-sm-6 auto-height text-justify">
+                                            <label>Day Off:</label>
+                                            <?php if(isset($employer["offdays"])) { ?>
+                                                <p><?php echo str_replace(",", ", ", $employer["offdays"]); ?></p>
                                             <?php } ?>
                                         </li>
                                         <?php if(IS_TIMEZONE_ACTIVE && $show_timezone != '') { ?>
@@ -327,67 +344,72 @@
                                 <div <?php if ($edit_form) { ?>style="display: block;"
                                      <?php } else { ?>style="display: none;" <?php } ?>
                                      class="universal-form-style-v2 info_edit">
-                                    <ul>
-                                        <form id="edit_employer" method="POST" enctype="multipart/form-data">
-                                            <div class="form-title-section">
-                                                <h2>Personal Information</h2>
-                                                <div class="form-btns">
-                                                    <input type="submit" value="Save" onclick="return validate_employers_form()">
-                                                    <input type="button" value="cancel" class="view_button">
-                                                </div>
+                                    <form id="edit_employer" method="POST" enctype="multipart/form-data">
+                                        <div class="form-title-section">
+                                            <h2>Personal Information</h2>
+                                            <div class="form-btns">
+                                                <input type="submit" value="Save" onclick="return validate_employers_form()">
+                                                <input type="button" value="cancel" class="view_button">
                                             </div>
-                                            <li class="col-sm-6">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
                                                 <label>First Name:<span class="staric">*</span></label>
                                                 <input type="text" class="invoice-fields" name="first_name" id="first_name" value="<?php if(isset($employer['first_name'])) { echo $employer['first_name']; } ?>">
                                                 <?php echo form_error('first_name'); ?>
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div> 
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
+                                                <label>Middle name:</label>
+                                                <input class="invoice-fields  <?php if (form_error('middle_name') !== "") { ?> error <?php } ?>" value="<?php echo set_value('middle_name', $employer["middle_name"]); ?>" type="text" name="middle_name">
+                                                <?php echo form_error('middle_name'); ?>
+                                            </div> 
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">   
                                                 <label>last name:<samp class="red"> * </samp></label>
                                                 <input class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>" value="<?php echo set_value('last_name', $employer["last_name"]); ?>" type="text" name="last_name">
                                                 <?php echo form_error('last_name'); ?>
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div> 
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>email: <!--<samp class="red"> * </samp>--></label>
                                                 <input class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>" value="<?php echo set_value('email', $employer["email"]); ?>" type="email" name="email">
                                                 <?php echo form_error('email'); ?>
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Mobile number:</label>
                                                     <?=$input_group_start;?>
                                                     <input class="invoice-fields" id="PhoneNumber" value="<?php echo set_value('PhoneNumber', $primary_phone_number); ?>" type="text" name="PhoneNumber">
                                                     <?=$input_group_end;?>
                                                 <?php echo form_error('PhoneNumber'); ?>
-                                            </li>
-                                            <li class="col-sm-12">
+                                            </div>
+                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
                                                 <label>address:</label>
                                                 <input class="invoice-fields" value="<?php echo set_value('Location_Address', $employer["Location_Address"]); ?>" type="text" name="Location_Address">
                                                 <?php echo form_error('Location_Address'); ?>
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>city:</label>
                                                 <input class="invoice-fields" value="<?php echo set_value('Location_City', $employer["Location_City"]); ?>" type="text" name="Location_City">
                                                 <?php echo form_error('Location_City'); ?>
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>zipcode:</label>
                                                 <input class="invoice-fields" value="<?php echo set_value('Location_ZipCode', $employer["Location_ZipCode"]); ?>" type="text" name="Location_ZipCode">
                                                 <?php echo form_error('Location_ZipCode'); ?>
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>country:</label>
                                                 <div class="hr-select-dropdown">
                                                     <select class="invoice-fields" name="Location_Country" id="country" onchange="getStates(this.value, <?php echo $states; ?>)">
-                                                            <option value="">Select Country</option>
-                                                    <?php   foreach ($active_countries as $active_country) { ?>
-                                                                <option value="<?= $active_country["sid"]; ?>"
-                                                                    <?php if ($employer['Location_Country'] == $active_country["sid"]) { echo 'selected'; } ?> >
-                                                                    <?= $active_country["country_name"]; ?>
-                                                                </option>
-                                                    <?php   } ?>
+                                                        <option value="">Select Country</option>
+                                                        <?php foreach ($active_countries as $active_country) { ?>
+                                                            <option value="<?= $active_country["sid"]; ?>"
+                                                                <?php if ($employer['Location_Country'] == $active_country["sid"]) { echo 'selected'; } ?> >
+                                                                <?= $active_country["country_name"]; ?>
+                                                            </option>
+                                                        <?php } ?>
                                                     </select>
                                                 </div>
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>state:</label>
                                                 <p style="display: none;" id="state_id"><?php echo $employer['Location_State']; ?></p>
                                                 <div class="hr-select-dropdown">
@@ -396,85 +418,76 @@
                                                         <option value="">Please Select your country</option>
                                                     </select>
                                                 </div>
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Jobs Title:</label>
                                                 <input class="invoice-fields" value="<?php echo set_value('job_title', $employer["job_title"]); ?>" type="text" name="job_title">
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Profile picture:</label>
                                                 <div class="upload-file invoice-fields">
                                                     <span class="selected-file" id="name_pictures">No file selected</span>
                                                     <input type="file" name="pictures" id="pictures" onchange="check_file_all('pictures')">
                                                     <a href="javascript:;">Choose File</a>
                                                 </div>
-                                                <!-- <input type="file" name="pictures">-->
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>secondary email:</label>
-                                                <input class="invoice-fields <?php if (form_error('secondary_email') !== "") { ?> error <?php } ?>"
-                                                    value="<?php echo set_value('secondary_email', (isset($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : '')); ?>" type="email" name="secondary_email">
-                                            </li>
-                                            <li class="col-sm-6">
+                                                <input class="invoice-fields <?php if (form_error('secondary_email') !== "") { ?> error <?php } ?>" value="<?php echo set_value('secondary_email', (isset($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : '')); ?>" type="email" name="secondary_email">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">  
                                                 <label>secondary mobile number:</label>
-                                                    <input class="invoice-fields"
-                                                       id="secondary_PhoneNumber"
-                                                       value="<?php echo set_value('secondary_PhoneNumber', isset($extra_info["secondary_PhoneNumber"]) ? $extra_info["secondary_PhoneNumber"] : ''); ?>" type="text" name="secondary_PhoneNumber">
-                                            </li>
-                                            <li class="col-sm-6">
+                                                <input class="invoice-fields" id="secondary_PhoneNumber" value="<?php echo set_value('secondary_PhoneNumber', isset($extra_info["secondary_PhoneNumber"]) ? $extra_info["secondary_PhoneNumber"] : ''); ?>" type="text" name="secondary_PhoneNumber">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">  
                                                 <label>other email:</label>
-                                                <input class="invoice-fields"
-                                                       value="<?php echo set_value('other_email', isset($extra_info["other_email"]) ? $extra_info["other_email"] : ''); ?>" type="email" name="other_email">
-                                            </li>
-                                            <li class="col-sm-6">
+                                                <input class="invoice-fields" value="<?php echo set_value('other_email', isset($extra_info["other_email"]) ? $extra_info["other_email"] : ''); ?>" type="email" name="other_email">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">     
                                                 <label>telephone number:</label>
-                                                    <input class="invoice-fields"
-                                                       id="other_PhoneNumber"
-                                                       value="<?php echo isset($extra_info["other_PhoneNumber"]) ? $extra_info["other_PhoneNumber"] : ''; ?>" type="text" name="other_PhoneNumber">
-                                            </li>
-                                            <li class="col-sm-6">
+                                                <input class="invoice-fields" id="other_PhoneNumber" value="<?php echo isset($extra_info["other_PhoneNumber"]) ? $extra_info["other_PhoneNumber"] : ''; ?>" type="text" name="other_PhoneNumber">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">     
                                                 <label>Linkedin Public Profile URL:</label>
-                                                <input class="invoice-fields"
-                                                       value="<?php echo set_value('linkedin_profile_url', $employer["linkedin_profile_url"]); ?>" type="text" name="linkedin_profile_url">
-                                            </li>
-                                            <li class="col-sm-6">
+                                                <input class="invoice-fields" value="<?php echo set_value('linkedin_profile_url', $employer["linkedin_profile_url"]); ?>" type="text" name="linkedin_profile_url">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Employee Number:</label>
-                                                <input class="invoice-fields"
-                                                       value="<?php echo set_value('employee_number', $employer["employee_number"]); ?>" type="text" name="employee_number">
-                                            </li>
-                                            <li class="col-sm-6">
+                                                <input class="invoice-fields" value="<?php echo set_value('employee_number', $employer["employee_number"]); ?>" type="text" name="employee_number">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">     
                                                 <label>Social Security Number:</label>
                                                 <input class="invoice-fields" type="text" name="SSN" value="<?php echo isset($employer["ssn"]) ? $employer["ssn"] : ''; ?>">
-                                            </li>
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">   
                                                 <label>Date of Birth:</label>
                                                 <input class="invoice-fields" id="date_of_birth" readonly="" type="text" name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
-                                            </li>
-
-<!--                                            <li class="col-sm-6">-->
-<!--                                                --><?php //$title = isset($extra_info["title"]) ? $extra_info["title"] : ''; ?>
-<!--                                                <label>Title:</label>-->
-<!--                                                <input class="invoice-fields" value="--><?php //echo set_value('title', $title); ?><!--" type="text" name="title" id="title">-->
-<!--                                            </li>-->
-
-<li class="col-sm-6">
-    <label>Department:</label>
-    <div class="hr-select-dropdown">
-        <select class="invoice-fields" name="department" id="department" onchange="get_teams(this.value)">
-            <option value="0">Select Department</option>
-            <?php if (!empty($departments)) { ?>
-                <?php foreach ($departments as $department) { ?>
-                    <option value="<?php echo $department["sid"]; ?>" <?php if ($employer['department_sid'] == $department["sid"]) { echo 'selected'; } ?>>
-                        <?php echo $department["name"]; ?>
-                    </option>
-                <?php } ?>
-            <?php } else { ?>
-                <option value="0">No Department Found</option>
-            <?php } ?>
-        </select>
-    </div>
-</li>
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <!-- <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">      -->
+                                                <!-- <li class="col-sm-6">-->
+                                                <!-- --><?php //$title = isset($extra_info["title"]) ? $extra_info["title"] : ''; ?>
+                                                <!-- <label>Title:</label>-->
+                                                <!-- <input class="invoice-fields" value="--><?php //echo set_value('title', $title); ?><!--" type="text" name="title" id="title">-->
+                                                <!-- </li>-->
+                                            <!-- </div> -->
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">   
+                                                <label>Department:</label>
+                                                <div class="hr-select-dropdown">
+                                                    <select class="invoice-fields" name="department" id="department" onchange="get_teams(this.value)">
+                                                        <option value="0">Select Department</option>
+                                                        <?php if (!empty($departments)) { ?>
+                                                            <?php foreach ($departments as $department) { ?>
+                                                                <option value="<?php echo $department["sid"]; ?>" <?php if ($employer['department_sid'] == $department["sid"]) { echo 'selected'; } ?>>
+                                                                    <?php echo $department["name"]; ?>
+                                                                </option>
+                                                            <?php } ?>
+                                                        <?php } else { ?>
+                                                            <option value="0">No Department Found</option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Team:</label>
                                                 <div class="hr-select-dropdown">
                                                     <p style="display: none;" id="team_sid"><?php echo $employer['team_sid']; ?></p>
@@ -483,126 +496,171 @@
                                                         <option value="">Please Select your Department</option>  
                                                     </select>
                                                 </div>
-                                            </li>
-
-                                            <li class="col-sm-6">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">  
                                                 <?php $office_location = isset($extra_info["office_location"]) ? $extra_info["office_location"] : ''; ?>
                                                 <label>Office Location:</label>
                                                 <input class="invoice-fields" value="<?php echo set_value('office_location', $office_location); ?>" type="text" name="office_location" id="office_location">
-
-                                            <?php if($access_level_plus == 1) {?>
-                                                <!-- Joining date -->
-                                                <li class="col-sm-6">
+                                            </div>        
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">                      
+                                                <?php if($access_level_plus == 1) {?>
+                                                    <!-- Joining date -->
                                                     <?php $joining_date = isset($employer["joined_at"]) && $employer["joined_at"] != '' ? DateTime::createFromFormat('Y-m-d', $employer["joined_at"])->format('m-d-Y') : ''; ?>
                                                     <?php $registration_date = isset($employer["registration_date"]) && $employer["registration_date"] != '' ? DateTime::createFromFormat('Y-m-d H:i:s', $employer["registration_date"])->format('m-d-Y') : ''; ?>
                                                     <label>Joining Date:</label>
                                                     <input class="invoice-fields js-joining-date" readonly="true" value="<?php echo $employer["joined_at"]=='' ? $registration_date : $joining_date ?>" type="text" name="joining_date" id="joining_date">
-                                                </li>
-                                            <?php } ?>
-                                            <?php if(IS_TIMEZONE_ACTIVE && $show_timezone != '') { ?>
-                                            <!-- Timezone -->
-                                            <?php if($employer_sid == $employer["sid"] || $access_level_plus == 1) { ?>
-                                            <li class="col-sm-6">
-                                                <?php $timezone = isset($employer["timezone"]) ? $employer["timezone"] : ''; ?>
-                                                <label>TimeZone:</label>
-                                                <?=timezone_dropdown(
-                                                    $timezone,
-                                                    array(
-                                                         'class' => 'invoice-fields js-timezone',
-                                                         'name' => 'timezone',
-                                                         'id' => 'timezone'
-                                                     )
-                                                );?>
-                                            </li>
-                                            <?php } } ?>
+                                                <?php } ?>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">     
+                                                <?php if(IS_TIMEZONE_ACTIVE && $show_timezone != '') { ?>
+                                                <!-- Timezone -->
+                                                    <?php if($employer_sid == $employer["sid"] || $access_level_plus == 1) { ?>
+                                                        <?php $timezone = isset($employer["timezone"]) ? $employer["timezone"] : ''; ?>
+                                                        <label>TimeZone:</label>
+                                                        <?=timezone_dropdown(
+                                                            $timezone,
+                                                            array(
+                                                                'class' => 'invoice-fields js-timezone',
+                                                                'name' => 'timezone',
+                                                                'id' => 'timezone'
+                                                            )
+                                                        );?>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            </div>    
 
-                                               <!-- <li class="col-sm-6">
-                                                <?php //$office_location = isset($extra_info["office_location"]) ? $extra_info["office_location"] : ''; ?>
-                                                <label>Shift</label>
+                                            <!-- <li class="col-sm-6">
+                                            <?php //$office_location = isset($extra_info["office_location"]) ? $extra_info["office_location"] : ''; ?>
+                                            <label>Shift</label>
+                                            <div class="col-sm-6">
+                                                    <div class="form-col-25-left">
+                                                        <p style="display: inline-block;float: left;font-size: 16px;font-weight: 600;">Hours</p>
+                                                    </div>
+                                                    <div class="form-col-75-left">
+                                                    <input type="number" name="shift_hours" min="1" max="23" class="invoice-fields" style="margin-left: 10px;">
+                                                    </div>
+                                            </div>
                                                 <div class="col-sm-6">
-                                                      <div class="form-col-25-left">
-                                                         <p style="display: inline-block;float: left;font-size: 16px;font-weight: 600;">Hours</p>
-                                                       </div>
-                                                      <div class="form-col-75-left">
-                                                        <input type="number" name="shift_hours" min="1" max="23" class="invoice-fields" style="margin-left: 10px;">
-                                                      </div>
-                                                </div>
-                                                    <div class="col-sm-6">
-                                                         <div class="form-col-25-left">
-                                                           <p style="display: inline-block;float: left;font-size: 16px;font-weight: 600;">Minutes</p>
-                                                         </div>
-                                                        <div class="form-col-75-left">
-                                                           <input type="number" name="shift_minutes" min="00" max="59" class="invoice-fields" style="margin-left: 10px;">
+                                                        <div class="form-col-25-left">
+                                                        <p style="display: inline-block;float: left;font-size: 16px;font-weight: 600;">Minutes</p>
                                                         </div>
-                                                  </div>
+                                                    <div class="form-col-75-left">
+                                                        <input type="number" name="shift_minutes" min="00" max="59" class="invoice-fields" style="margin-left: 10px;">
+                                                    </div>
+                                                </div>
                                             </li> -->
 
-
-                                               <li class="col-sm-6">
-                                                    <label>Shift</label>
-                                                    <div class="col-sm-6 shift_div" style="padding-left: 0px;">
-                                                        <div class="input-group">
-                                                            <input min="0" max="23" oninput="this.value = Math.abs(this.value)" id="sh_hours" type="number" value="<?php echo  $employer["user_shift_hours"] ?>"  name="shift_hours"  class="invoice-fields">
-                                                            <div class="input-group-addon" >  Hours </div>
-                                                        </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group" style="display:none;">
+                                                <label>Shift</label>
+                                                <div class="col-sm-6 shift_div" style="padding-left: 0px;">
+                                                    <div class="input-group">
+                                                        <input min="0" max="23" oninput="this.value = Math.abs(this.value)" id="sh_hours" type="number" value="<?php echo  $employer["user_shift_hours"] ?>"  name="shift_hours"  class="invoice-fields">
+                                                        <div class="input-group-addon" >  Hours </div>
                                                     </div>
-                                                    <div class="col-sm-6 shift_div shift_end" style="padding-right: 0px;">
-                                                        <div class="input-group">
-                                                            <input min="0" max="59" oninput="this.value = Math.abs(this.value)" type="number" value="<?php echo  $employer["user_shift_minutes"] ?>" id="sh_mins" name="shift_mins"  class="invoice-fields">
-                                                            <div class="input-group-addon">Minutes</div>
-                                                        </div>
+                                                </div>
+                                                <div class="col-sm-6 shift_div shift_end" style="padding-right: 0px;">
+                                                    <div class="input-group">
+                                                        <input min="0" max="59" oninput="this.value = Math.abs(this.value)" type="number" value="<?php echo  $employer["user_shift_minutes"] ?>" id="sh_mins" name="shift_mins"  class="invoice-fields">
+                                                        <div class="input-group-addon">Minutes</div>
                                                     </div>
-                                                </li>
+                                                </div>
+                                            </div>    
 
 
-                                                <!-- <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="col-md-6 error"  id="sh_hours_globe">
-                                                        </div>
-                                                        <div class="col-md-6 error"  id="sh_mins_globe" >
-                                                        </div>
-                                                    </div>s
-                                                </div> -->
+                                            <!-- <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="col-md-6 error"  id="sh_hours_globe">
+                                                    </div>
+                                                    <div class="col-md-6 error"  id="sh_mins_globe" >
+                                                    </div>
+                                                </div>s
+                                            </div> -->
 
-                                              <?php if(IS_NOTIFICATION_ENABLED == 1 && $phone_sid != '') { ?>
-                                              <li class="col-sm-6">
-                                                <label>Notified By:</label>
-                                                <div class="hr-select-dropdown">
-                                                    <select class="invoice-fields" name="notified_by[]" id="notified_by" multiple="true">
-                                                        <option value="email" <?php if(in_array('email', explode(',', $employer['notified_by']))){echo 'selected' ;}?>>Email</option>
-                                                        <option value="sms" <?php if(in_array('sms', explode(',', $employer['notified_by']))){echo 'selected' ;}?>>SMS</option>
-                                                    </select>
+                                            <?php if(IS_NOTIFICATION_ENABLED == 1 && $phone_sid != '') { ?>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group"> 
+                                                    <label>Notified By:</label>
+                                                    <div class="hr-select-dropdown">
+                                                        <select class="invoice-fields" name="notified_by[]" id="notified_by" multiple="true">
+                                                            <option value="email" <?php if(in_array('email', explode(',', $employer['notified_by']))){echo 'selected' ;}?>>Email</option>
+                                                            <option value="sms" <?php if(in_array('sms', explode(',', $employer['notified_by']))){echo 'selected' ;}?>>SMS</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                              <?php };?>
-                                            </li>
-                                            <li class="col-sm-6" style="padding: 0px;">
-                                                <div class="col-sm-6">
-                                                    <label>Shift start time:</label>
-                                                    <input class="invoice-fields js-shift-start-time" readonly="true" value="<?php echo $employer['shift_start_time'] ? $employer['shift_start_time'] : ''  ?>" type="text" name="shift_start_time" >
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <label>Shift End time:</label>
-                                                    <input class="invoice-fields js-shift-end-time" readonly="true" value="<?php echo $employer['shift_end_time'] ? $employer['shift_end_time'] : ''  ?>" type="text" name="shift_end_time" >
-                                                </div>
-                                             </li>
-                                            <li class="col-sm-6 hidden">
+                                            <?php } ?>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 hidden form-group">
                                                 <label>Employment Status:</label>
                                                 <select class="invoice-fields" name="employee-status" id="employee-status">
                                                     <?php foreach($employment_statuses as $key => $employee_status) { ?>
                                                         <option value="<?= $key ?>" <?php if(strtolower($employer['employee_status']) == $key){echo 'selected' ;}?>><?= $employee_status ?></option>
                                                     <?php } ?>
                                                 </select>
-                                            </li>    
-                                            <li class="col-sm-6">
+                                            </div>  
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Employment Type:</label>
                                                 <select class="invoice-fields" name="employee-type" id="employee-type">
                                                     <?php foreach($employment_types as $key => $employment_type) { ?>
                                                         <option value="<?= $key ?>" <?php if(strtolower($employer['employee_type']) == $key){echo 'selected' ;}?>><?= $employment_type ?></option>
                                                     <?php } ?>
                                                 </select>
-                                             </li>
-                                            <!-- Time off policies -->
-                                            <li class="col-sm-12">
+                                            </div> 
+                                            <div class="row">   
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">  
+                                                    <?php 
+                                                        $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
+                                                        $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
+                                                    ?>
+                                                    <div class="col-sm-6">
+                                                        <label>Shift start time:</label>
+                                                        <input class="invoice-fields js-shift-start-time show_employee_working_info" readonly="true" value="<?php echo $shift_start; ?>" type="text" name="shift_start_time" >
+                                                    </div>
+                                                    <div class="col-sm-6" style="padding-right: 0px;">
+                                                        <label>Shift End time:</label>
+                                                        <input class="invoice-fields js-shift-end-time show_employee_working_info" readonly="true" value="<?php echo $shift_end; ?>" type="text" name="shift_end_time" >
+                                                    </div>
+                                                </div>  
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">  
+                                                    <label>Break</label>
+                                                    <?php 
+                                                        $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
+                                                        $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
+                                                    ?>
+                                                    <div class="col-sm-6 shift_div" style="padding-left: 0px;">
+                                                        <div class="input-group">
+                                                            <input min="0" max="23" oninput="this.value = Math.abs(this.value)" id="br_hours" type="number" value="<?php echo  $break_hours; ?>"  name="break_hours"  class="invoice-fields show_employee_working_info emp_break_info" data-type="hours">
+                                                            <div class="input-group-addon" >  Hours </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6 shift_div shift_end">
+                                                        <div class="input-group">
+                                                            <input min="0" max="59" oninput="this.value = Math.abs(this.value)" type="number" value="<?php echo  $break_minutes; ?>" id="br_mins" name="break_mins"  class="invoice-fields show_employee_working_info emp_break_info" data-type="minutes">
+                                                            <div class="input-group-addon">Minutes</div>
+                                                        </div>
+                                                    </div>
+                                                </div>  
+                                            </div>    
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">    
+                                                <label>Day Off:</label>
+                                                <?php 
+                                                    $dayoffs = isset($employer['offdays']) && !empty($employer['offdays']) ? explode(',', $employer['offdays']) : [DAY_OFF];
+                                                ?>
+                                                <select class="show_employee_working_info" name="offdays[]" id="js_offdays" multiple="true">
+                                                    <option value="Monday" <?php echo in_array("Monday", $dayoffs) ? 'selected="true"' : ''; ?>>Monday</option>
+                                                    <option value="Tuesday" <?php echo in_array("Tuesday", $dayoffs) ? 'selected="true"' : ''; ?>>Tuesday</option>
+                                                    <option value="Wednesday" <?php echo in_array("Wednesday", $dayoffs) ? 'selected="true"' : ''; ?>>Wednesday</option>
+                                                    <option value="Thursday" <?php echo in_array("Thursday", $dayoffs) ? 'selected="true"' : ''; ?>>Thursday</option>
+                                                    <option value="Friday" <?php echo in_array("Friday", $dayoffs) ? 'selected="true"' : ''; ?>>Friday</option>
+                                                    <option value="Saturday" <?php echo in_array("Saturday", $dayoffs) ? 'selected="true"' : ''; ?>>Saturday</option>
+                                                    <option value="Sunday" <?php echo in_array("Sunday", $dayoffs) ? 'selected="true"' : ''; ?>>Sunday</option>
+                                                </select>
+                                            </div>  
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">    
+                                                <div class="update_employee_info_container">
+                                                    <strong id="update_employee_info"></strong>
+                                                    <input type="hidden" name="weekly_hours" id="employee_weekly_hours">
+                                                </div>
+                                            </div> 
+                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
+                                                <!-- Time off policies -->
                                                 <label>
                                                     Policies:
                                                 </label>
@@ -623,18 +681,18 @@
                                                     ?>
                                                 </select>
                                                 <div class="clearfix"></div>
-                                            </li>
-                                            <li class="col-sm-12 auto-height">
+                                            </div>  
+                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 auto-height form-group">  
                                                 <?php $interests = isset($extra_info["interests"]) ? $extra_info["interests"] : ''; ?>
                                                 <label>Interests:</label>
                                                 <textarea id="interests" name="interests" class="invoice-fields auto-height" rows="6"><?php echo set_value('interests', $interests); ?></textarea>
-                                            </li>
-                                            <li class="col-sm-12 auto-height">
+                                            </div>  
+                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 auto-height form-group"> 
                                                 <?php $short_bio = isset($extra_info["short_bio"]) ? $extra_info["short_bio"] : ''; ?>
                                                 <label>Short Bio:</label>
                                                 <textarea id="short_bio" id="short_bio" name="short_bio" class="invoice-fields auto-height" rows="6"><?php echo set_value('short_bio', $short_bio); ?></textarea>
-                                            </li>
-                                            <li class="col-sm-12 auto-height">
+                                            </div>  
+                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 auto-height form-group">    
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight">
                                                     <div class="form-group">
                                                         <div class="row">
@@ -748,8 +806,7 @@
                                                         </div>
                                                     </div>
                                                 <?php } ?>
-                                            </li>
-
+                                            </div>  
                                             <div class="form-title-section">
                                                 <div class="form-btns">
                                                     <input type="hidden" name="old_profile_picture" value="<?php echo $employer['profile_picture']; ?>">
@@ -758,8 +815,8 @@
                                                     <input type="button" value="cancel" class="view_button">
                                                 </div>
                                             </div>
-                                        </form>
-                                    </ul>
+                                        </div>    
+                                    </form>
                                 </div>
                                 <!--Edit part Ends-->
                             </div>
@@ -1289,6 +1346,92 @@ $('#js-policies').select2({
     closeOnSelect: false
 });
 
+$('#js_offdays').select2({
+    closeOnSelect: false
+});
+
+$(".emp_break_info").on("keyup", function () {
+    var type = $(this).data("type");
+    validateBreakTime(type);
+
+});
+
+function validateBreakTime (type) {
+    //
+    var break_hours = $("#br_hours").val();
+    var break_minutes = $("#br_mins").val();
+    //
+    var shift_start = $(".js-shift-start-time").val();
+    var shift_end = $(".js-shift-end-time").val();
+    //
+    //create date format          
+    var timeStart = new Date("01/01/2007 " + shift_start).getHours();
+    var timeEnd = new Date("01/01/2007 " + shift_end).getHours();
+    //
+    var hourDiff = timeEnd - timeStart;
+
+    var is_error = "no";  
+    //  
+    if (type == "minutes" && break_minutes > 59) {
+        is_error = "yes";
+        alertify.alert("Notice", "Break minutes always less than 59 minutes!");
+    }  else if (type == "hours" && break_hours > 23) {
+        is_error = "yes";
+        alertify.alert("Notice", "Break hours always less than 23 hours!");
+    } else if (break_hours > hourDiff || (break_hours == hourDiff && break_minutes > 1)) {
+        is_error = "yes";
+        alertify.alert("Notice", "The break time can not be greater than the employees' shift time.!");
+    }
+
+    return is_error;
+}
+
+$(document).ready(function () {
+    generateEmployeeWorkLog();
+});
+
+$('#js_offdays').select2('val', <?=json_encode($dayoffs);?>);
+
+function generateEmployeeWorkLog () {
+    var shift_start = $(".js-shift-start-time").val();
+    var shift_end = $(".js-shift-end-time").val();
+    var break_hours = $("#br_hours").val();
+    var break_minutes = $("#br_mins").val();
+    var dayoffs = $("#js_offdays").val();
+
+    if (break_minutes.toString().length == 1) {
+        break_minutes = '0' + break_minutes;
+    }
+
+    //create date format          
+    var timeStart = new Date("01/01/2007 " + shift_start).getHours();
+    var timeEnd = new Date("01/01/2007 " + shift_end).getHours();
+
+    var hourDiff = timeEnd - timeStart;
+    var week_total = hourDiff * (7 - dayoffs.length);
+
+    $("#sh_hours").val(hourDiff);
+    $("#employee_weekly_hours").val(week_total);
+
+    var row = "";
+    row += "The employee shift time is of "+hourDiff+" hours, including a break of ";
+    row += break_hours;
+    row += break_hours > 1 ? " hours" : " hour";
+    if(break_minutes > 0) {
+        row += " and " + break_minutes;
+        row += break_minutes > 1 ? " minutes" : " minute";
+    }
+    
+    row += ". Employee's weekly workable time is " + week_total;
+    row += week_total > 1 ? " hours." : " hour.";
+
+    $("#update_employee_info").text(row);
+}
+
+$(".show_employee_working_info").on("change", function() {
+    generateEmployeeWorkLog();
+});
+
 <?php if($access_level_plus == 1 && IS_PTO_ENABLED ==1) {?>
     $('.js-shift-start-time').datetimepicker({
                 datepicker: false,
@@ -1362,6 +1505,9 @@ $('#js-policies').select2({
                     required: true,
                     pattern: /[a-zA-Z\-,' ]+$/
                 },
+                middle_name: {
+                    pattern: /^[a-zA-Z\-,' ]+$/
+                },
                 last_name: {
                     required: true,
                     pattern: /^[a-zA-Z\-,' ]+$/
@@ -1386,6 +1532,16 @@ $('#js-policies').select2({
                 },
                 Location_ZipCode: {
                     pattern: /^[0-9\-]+$/
+                },
+                break_hours: {
+                    number:true,
+                    min:0,
+                    max:23
+                },
+                break_mins: {
+                    number:true,
+                    min:0,
+                    max:59
                 },
                 <?php if($access_level_plus == 1 && IS_PTO_ENABLED==1)  {?>
                 shift_hours: {
@@ -1419,6 +1575,9 @@ $('#js-policies').select2({
             messages: {
                 first_name: {
                     required: 'First name is required',
+                    pattern: 'Letters, numbers, and dashes only please'
+                },
+                first_name: {
                     pattern: 'Letters, numbers, and dashes only please'
                 },
                 last_name: {
@@ -1455,6 +1614,16 @@ $('#js-policies').select2({
                 YouTubeVideo: {
                     pattern: 'Please Enter a Valid Youtube Video Url.'
                 },
+                break_hours: {
+                    number:"please enter a number",
+                    min:"Minimum allowed hours are 1",
+                    max:"Maximum allowed hours are 23"
+                },
+                break_mins: {
+                    number:"please enter a number",
+                    min:"Minimum allowed minutes are 0",
+                    max:"Maximum allowed minutes are 59"
+                },
                 <?php if($access_level_plus == 1 && IS_PTO_ENABLED==1) {?>
                 shift_hours: {
                     required:"This field in required",
@@ -1487,6 +1656,13 @@ $('#js-policies').select2({
             },
             submitHandler: function (form) {
 
+                var breakValidationError = validateBreakTime("validation");
+                //
+                if (breakValidationError == "yes") {
+                    is_error = true;
+                    return;
+                }
+
                 <?php if($is_regex === 1) { ?>
                     // TODO
                     var is_error = false;
@@ -1497,9 +1673,6 @@ $('#js-policies').select2({
                         is_error = true;
                         return;
                     }
-
-
-
 
                     // Check for secondary number
                     // if(_spn.val() != '' && _spn.val().trim() != '(___) ___-____' && !fpn(_spn.val(), '', true)){
@@ -2281,6 +2454,16 @@ $('#js-policies').select2({
 }
 .select2-container--default .select2-selection--multiple .select2-selection__rendered{ height: 40px; }
 .select2-selection__choice__remove{ color: #ffffff !important; }
+
+.select2-selection__rendered li {
+    height: 24px !important;
+}
+
+.update_employee_info_container{
+    height: 28px !important;
+    font-size: 18px;
+    padding-top: 26px;
+}
 
 @media screen and (max-width: 768px) {
   .shift_end {

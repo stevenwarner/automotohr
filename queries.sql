@@ -241,3 +241,9 @@ ALTER TABLE `facebook_jobs_status` ADD `job_status` VARCHAR(10) NOT NULL AFTER `
 -- Add column to timeoff_settings
 -- 09/24/2021
 ALTER TABLE `timeoff_settings` ADD `team_visibility_check` TINYINT NOT NULL DEFAULT '0' AFTER `theme`;
+
+-- Add column to Users
+-- 10/04/2021
+ALTER TABLE `users` ADD `middle_name` VARCHAR(225) NULL DEFAULT NULL AFTER `first_name`;
+ALTER TABLE `users` ADD `break_hours` INT NOT NULL DEFAULT '1' AFTER `shift_end_time`, ADD `break_mins` INT NOT NULL DEFAULT '0' AFTER `break_hours`, ADD `weekly_hours` INT NOT NULL DEFAULT '0' AFTER `break_mins`;
+ALTER TABLE `users` ADD `offdays` VARCHAR(225) NULL DEFAULT NULL AFTER `weekly_hours`;
