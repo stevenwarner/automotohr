@@ -95,7 +95,7 @@
                                             <p><?php echo $employer["first_name"]; ?></p>
                                         </li>
                                         <li class="col-sm-6">
-                                            <label>Middle name:</label>
+                                            <label>Middle name / initial:</label>
                                             <p><?php echo $employer["middle_name"]; ?></p>
                                         </li>
                                         <li class="col-sm-6">
@@ -385,7 +385,7 @@
                                                 <?php echo form_error('first_name'); ?>
                                             </div>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
-                                                <label>Middle name:</label>
+                                                <label>Middle name / initial:</label>
                                                 <input
                                                     class="invoice-fields  <?php if (form_error('middle_name') !== "") { ?> error <?php } ?>"
                                                     value="<?php echo set_value('middle_name', $employer["middle_name"]); ?>"
