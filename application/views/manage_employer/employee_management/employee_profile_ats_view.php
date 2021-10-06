@@ -1608,10 +1608,9 @@ function generateEmployeeWorkLog() {
     //create date format          
     var timeStart = new Date("01/01/2007 " + shift_start).getHours();
     var timeEnd = new Date("01/01/2007 " + shift_end).getHours();
-    var breakHoursTotal =  Math.floor(((break_hours * 60) + parseInt(break_minutes)) / 60);
-    
+    var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
     var hourDiff = timeEnd - timeStart - breakHoursTotal;
-    var week_total = (hourDiff) * (7 - dayoffs.length);
+    var week_total = ((hourDiff) * (7 - dayoffs.length)).toFixed(1);
    
     $("#sh_hours").val(hourDiff);
     $("#employee_weekly_hours").val(week_total);
