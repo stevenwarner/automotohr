@@ -39,42 +39,42 @@ $googleJobOBJ['jobLocation']['address']['streetAddress'] = $job_details['Locatio
 $googleJobOBJ['jobLocation']['address']['postalCode'] = !empty($job_details['Location_ZipCode']) ? $job_details['Location_ZipCode'] : '';
 $googleJobOBJ['jobLocation']['address']['addressCountry'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CA" : "US";
 // Applicant location details
-$googleJobOBJ['applicantLocationRequirements']['@type'] = 'Country';
-$googleJobOBJ['applicantLocationRequirements']['name'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CAN" : "USA";
-$googleJobOBJ['jobLocationType']['@type'] = 'JobPosting';
-$googleJobOBJ['jobLocationType']['name'] = 'TELECOMMUTE';
+// $googleJobOBJ['applicantLocationRequirements']['@type'] = 'Country';
+// $googleJobOBJ['applicantLocationRequirements']['name'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CAN" : "USA";
+// $googleJobOBJ['jobLocationType']['@type'] = 'JobPosting';
+// $googleJobOBJ['jobLocationType']['name'] = 'TELECOMMUTE';
 // Salary
-$googleJobOBJ['baseSalary'] = [];
-$googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
-$googleJobOBJ['baseSalary']['currency'] = 'USD';
-$googleJobOBJ['baseSalary']['value'] = [];
-$googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
-$googleJobOBJ['baseSalary']['value']['currency'] = 'USD';
-$googleJobOBJ['baseSalary']['value']['value'] = '20';
-$googleJobOBJ['baseSalary']['value']['unitText'] = 'HOUR';
+// $googleJobOBJ['baseSalary'] = [];
+// $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
+// $googleJobOBJ['baseSalary']['currency'] = 'USD';
+// $googleJobOBJ['baseSalary']['value'] = [];
+// $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
+// $googleJobOBJ['baseSalary']['value']['currency'] = 'USD';
+// $googleJobOBJ['baseSalary']['value']['value'] = '20';
+// $googleJobOBJ['baseSalary']['value']['unitText'] = 'HOUR';
 
-if($job_details['Salary'] != ''){
-    $googleJobOBJ['baseSalary'] = [];
-    $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
-    $googleJobOBJ['baseSalary']['currency'] = 'USD';
-    $googleJobOBJ['baseSalary']['value'] = [];
-    $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
-    //
-    $tmp = explode(' ', strtolower($job_details['Salary']));
-    if(sizeof($tmp) > 1){
-        $googleJobOBJ['baseSalary']['value']['minValue'] = str_replace('$', '', trim($tmp[0]));
-        $googleJobOBJ['baseSalary']['value']['maxValue'] = str_replace('$', '', trim($tmp[2] ? $tmp[2] : $tmp[1]));
-    } else $googleJobOBJ['baseSalary']['value']['value'] = $job_details['Salary'];
-    if($job_details['SalaryType'] != ''){
-        $salaryType = 'MONTH';
-        switch ($job_details['SalaryType']) {
-            case 'per_hour': $salaryType = 'HOUR'; break;
-            case 'per_week': $salaryType = 'WEEK'; break;
-            case 'per_year': $salaryType = 'YEAR'; break;
-        }
-        $googleJobOBJ['baseSalary']['value']['unitText'] = $salaryType; // HOUR, DAY, WEEK, MONTH, YEAR
-    }
-}
+// if($job_details['Salary'] != ''){
+//     $googleJobOBJ['baseSalary'] = [];
+//     $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
+//     $googleJobOBJ['baseSalary']['currency'] = 'USD';
+//     $googleJobOBJ['baseSalary']['value'] = [];
+//     $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
+//     //
+//     $tmp = explode(' ', strtolower($job_details['Salary']));
+//     if(sizeof($tmp) > 1){
+//         $googleJobOBJ['baseSalary']['value']['minValue'] = str_replace('$', '', trim($tmp[0]));
+//         $googleJobOBJ['baseSalary']['value']['maxValue'] = str_replace('$', '', trim($tmp[2] ? $tmp[2] : $tmp[1]));
+//     } else $googleJobOBJ['baseSalary']['value']['value'] = $job_details['Salary'];
+//     if($job_details['SalaryType'] != ''){
+//         $salaryType = 'MONTH';
+//         switch ($job_details['SalaryType']) {
+//             case 'per_hour': $salaryType = 'HOUR'; break;
+//             case 'per_week': $salaryType = 'WEEK'; break;
+//             case 'per_year': $salaryType = 'YEAR'; break;
+//         }
+//         $googleJobOBJ['baseSalary']['value']['unitText'] = $salaryType; // HOUR, DAY, WEEK, MONTH, YEAR
+//     }
+// }
 // Company identifier
 $googleJobOBJ['identifier'] = [];
 $googleJobOBJ['identifier']['@type'] = 'PropertyValue';
