@@ -901,7 +901,7 @@ class Calendar extends Public_Controller {
             );
             $events = array_merge(!is_array($events) ? array() : $events ,$timeoffs);
         }
-        if(checkIfAppIsEnabled('performance_review')) { 
+        if(checkIfAppIsEnabled('performance_management')) { 
             $this->load->model('performance_management_model', 'pmm');
             // $goals = $this->pmm->getGoalsByPerm(
             //     $this->input->post('type'),

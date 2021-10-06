@@ -106,7 +106,7 @@
                                                     </div>
                                                 </div> 
                                             <?php } ?> 
-                                            <?php if (checkIfAppIsEnabled('performance_review')) { ?>      
+                                            <?php if (checkIfAppIsEnabled('performance_management')) { ?>      
                                                 <div class="form-group autoheight">
                                                     <label for="name">Reporting Manager(s) <i
                                                     class="fa fa-question-circle-o help"

@@ -226,7 +226,7 @@
                             </li>
                         <?php } ?>
 
-                        <?php if(checkIfAppIsEnabled('performance_review')) { ?>
+                        <?php if(checkIfAppIsEnabled('performance_management')) { ?>
                             <li>
                                 <span class="left-addon">
                                     <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
@@ -235,7 +235,7 @@
                                 <a href="<?php echo base_url('performance-management/employee/reviews/'.($employer["sid"]).''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             </li>
                         <?php } ?>
-                        <?php if(checkIfAppIsEnabled('performance_review')) { ?>
+                        <?php if(checkIfAppIsEnabled('performance_management')) { ?>
                             <li>
                                 <span class="left-addon">
                                     <i aria-hidden="true" class="fa fa-bullseye"></i>

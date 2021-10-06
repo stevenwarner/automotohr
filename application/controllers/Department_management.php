@@ -88,7 +88,7 @@ class Department_management extends Public_Controller {
                 $perform_action = $this->input->post('perform_action');
                 //
                 $isTA = checkIfAppIsEnabled('timeoff');
-                $isPA = checkIfAppIsEnabled('performance_review');
+                $isPA = checkIfAppIsEnabled('performance_management');
     
                 switch ($perform_action) {
                     case 'add_department':
@@ -277,7 +277,7 @@ class Department_management extends Public_Controller {
                 $perform_action = $this->input->post('perform_action');
                 //
                 $isTA = checkIfAppIsEnabled('timeoff');
-                $isPA = checkIfAppIsEnabled('performance_review');
+                $isPA = checkIfAppIsEnabled('performance_management');
     
                 switch ($perform_action) {
                     case 'add_department_team':

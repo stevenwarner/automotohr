@@ -77,7 +77,7 @@
                                                     <span id="add_teamlead_error" class="text-danger person_error"></span>
                                                 </div>
                                             </div> 
-                                            <?php if (checkIfAppIsEnabled('performance_review')) { ?>  
+                                            <?php if (checkIfAppIsEnabled('performance_management')) { ?>  
                                             <div class="form-group autoheight">
                                                 <label for="name">Approvers <i
                                                     class="fa fa-question-circle-o help"
@@ -95,7 +95,7 @@
                                                 </div>
                                             </div> 
                                             <?php } ?>
-                                            <?php if (checkIfAppIsEnabled('performance_review')) { ?>  
+                                            <?php if (checkIfAppIsEnabled('performance_management')) { ?>  
                                             <div class="form-group autoheight">
                                                 <label for="name">Reporting Managers <i
                                                     class="fa fa-question-circle-o help"
