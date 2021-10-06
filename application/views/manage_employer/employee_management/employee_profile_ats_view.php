@@ -1604,26 +1604,28 @@ function generateEmployeeWorkLog() {
         break_minutes = '0' + break_minutes;
     }
 
+    
     //create date format          
     var timeStart = new Date("01/01/2007 " + shift_start).getHours();
     var timeEnd = new Date("01/01/2007 " + shift_end).getHours();
-
-    var hourDiff = timeEnd - timeStart;
-    var week_total = hourDiff * (7 - dayoffs.length);
-
+    var breakHoursTotal =  Math.floor(((break_hours * 60) + parseInt(break_minutes)) / 60);
+    
+    var hourDiff = timeEnd - timeStart - breakHoursTotal;
+    var week_total = (hourDiff) * (7 - dayoffs.length);
+   
     $("#sh_hours").val(hourDiff);
     $("#employee_weekly_hours").val(week_total);
 
     var row = "";
-    row += "The employee shift time is of " + hourDiff + " hours, including a break of ";
-    row += break_hours;
-    row += break_hours > 1 ? " hours" : " hour";
-    if (break_minutes > 0) {
-        row += " and " + break_minutes;
-        row += break_minutes > 1 ? " minutes" : " minute";
-    }
+    row += "The employee's daily workable time is of " + hourDiff + " hours. ";
+    // row += break_hours;
+    // row += break_hours > 1 ? " hours" : " hour";
+    // if (break_minutes > 0) {
+    //     row += " and " + break_minutes;
+    //     row += break_minutes > 1 ? " minutes" : " minute";
+    // }
 
-    row += ". Employee's weekly workable time is " + week_total;
+    row += "Employee's weekly workable time is " + week_total;
     row += week_total > 1 ? " hours." : " hour.";
 
     $("#update_employee_info").text(row);
