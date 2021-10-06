@@ -3209,7 +3209,7 @@ class Home extends CI_Controller {
             $xmlString .= $newXml.$oldXml;
             $xmlString .= '</urlset>';
             file_put_contents('sitemap.xml', $xmlString);
-            $submit_to_google = file_get_contents("https://www.google.com/ping?sitemap=https://www.automotosocial.com/sitemap.xml");
+            $submit_to_google = getFileData("https://www.google.com/ping?sitemap=https://www.automotosocial.com/sitemap.xml");
             echo $submit_to_google;
 
             echo " Sitemap Updated";

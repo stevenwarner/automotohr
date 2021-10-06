@@ -1405,3 +1405,21 @@ if(!function_exists('sendResumeEmailToApplicant')){
         }
     }
 }
+
+if (!function_exists('getFileData')) {
+    function getFileData($url)
+    {
+        //make a curl call to fetch content
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , FALSE);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        //
+        return $data;
+    }
+}
