@@ -400,6 +400,9 @@
                                                     type="text" name="last_name">
                                                 <?php echo form_error('last_name'); ?>
                                             </div>
+                                            
+                                            <div class="clearfix"></div>
+                                            
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>email:
                                                     <!--<samp class="red"> * </samp>-->
@@ -419,6 +422,7 @@
                                                 <?=$input_group_end;?>
                                                 <?php echo form_error('PhoneNumber'); ?>
                                             </div>
+                                            <div class="clearfix"></div>
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
                                                 <label>address:</label>
                                                 <input class="invoice-fields"
@@ -433,6 +437,7 @@
                                                     type="text" name="Location_City">
                                                 <?php echo form_error('Location_City'); ?>
                                             </div>
+                                            <div class="clearfix"></div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>zipcode:</label>
                                                 <input class="invoice-fields"
@@ -455,6 +460,7 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="clearfix"></div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>state:</label>
                                                 <p style="display: none;" id="state_id">
@@ -472,6 +478,7 @@
                                                     value="<?php echo set_value('job_title', $employer["job_title"]); ?>"
                                                     type="text" name="job_title">
                                             </div>
+                                            <div class="clearfix"></div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Profile picture:</label>
                                                 <div class="upload-file invoice-fields">
@@ -489,6 +496,7 @@
                                                     value="<?php echo set_value('secondary_email', (isset($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : '')); ?>"
                                                     type="email" name="secondary_email">
                                             </div>
+                                            <div class="clearfix"></div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>secondary mobile number:</label>
                                                 <input class="invoice-fields" id="secondary_PhoneNumber"
@@ -501,6 +509,7 @@
                                                     value="<?php echo set_value('other_email', isset($extra_info["other_email"]) ? $extra_info["other_email"] : ''); ?>"
                                                     type="email" name="other_email">
                                             </div>
+                                            <div class="clearfix"></div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>telephone number:</label>
                                                 <input class="invoice-fields" id="other_PhoneNumber"
@@ -513,6 +522,7 @@
                                                     value="<?php echo set_value('linkedin_profile_url', $employer["linkedin_profile_url"]); ?>"
                                                     type="text" name="linkedin_profile_url">
                                             </div>
+                                            <div class="clearfix"></div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Employee Number:</label>
                                                 <input class="invoice-fields"
@@ -524,6 +534,7 @@
                                                 <input class="invoice-fields" type="text" name="SSN"
                                                     value="<?php echo isset($employer["ssn"]) ? $employer["ssn"] : ''; ?>">
                                             </div>
+                                            <div class="clearfix"></div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Date of Birth:</label>
                                                 <input class="invoice-fields" id="date_of_birth" readonly="" type="text"
@@ -548,6 +559,7 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="clearfix"></div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Team:</label>
                                                 <div class="hr-select-dropdown">
@@ -567,6 +579,7 @@
                                                     value="<?php echo set_value('office_location', $office_location); ?>"
                                                     type="text" name="office_location" id="office_location">
                                             </div>
+                                            <div class="clearfix"></div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <?php if($access_level_plus == 1) {?>
                                                 <!-- Joining date -->
@@ -596,6 +609,7 @@
                                                 <?php } ?>
                                                 <?php } ?>
                                             </div>
+                                            <div class="clearfix"></div>
                                             <!--  -->
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group dn">
                                                 <label>Shift</label>
@@ -654,6 +668,7 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="clearfix"></div>
                                             <!--  -->
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Employment Type:</label>
