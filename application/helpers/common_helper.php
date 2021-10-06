@@ -12,6 +12,7 @@ if(!function_exists('getUserNameBySID')){
                 'first_name' => $user_info[0]['first_name'],
                 'last_name' => $user_info[0]['last_name'],
                 'access_level' => $user_info[0]['access_level'],
+                'timezone' => isset($user_info[0]['timezone']) ? $user_info[0]['timezone'] : '',
                 'access_level_plus' => $user_info[0]['access_level_plus'],
                 'is_executive_admin' => $user_info[0]['is_executive_admin'],
                 'pay_plan_flag' => $user_info[0]['pay_plan_flag'],
@@ -11017,6 +11018,15 @@ if (!function_exists('remakeEmployeeName')) {
         //
         $r .= ' [' . remakeAccessLevel($o) . ']';
         //
+        if(isset($o['timezone'])){
+            //
+            $tz = !empty($o['timezone']) 
+            ? $o['timezone']
+            : STORE_DEFAULT_TIMEZONE_ABBR;
+            //
+            $r .= ' (' . ($tz) . ')';
+        }
+        //
         return $r;
     }
 }
@@ -11918,6 +11928,7 @@ if(!function_exists('getUserFields')){
         $fields .= 'users.access_level_plus,';
         $fields .= 'users.pay_plan_flag,';
         $fields .= 'users.is_executive_admin,';
+        $fields .= 'users.timezone,';
         $fields .= 'users.job_title,';
         $fields .= 'users.profile_picture,';
         $fields .= 'users.user_shift_hours,';

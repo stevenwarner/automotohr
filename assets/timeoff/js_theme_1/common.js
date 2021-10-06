@@ -104,6 +104,10 @@ function remakeEmployeeName(
     //
     r += ']';
     //
+    if (o.timezone) {
+        r += ' (' + (o.timezone) + ')';
+    }
+    //
     return r;
 }
 

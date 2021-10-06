@@ -162,6 +162,10 @@ function remakeEmployeeName(o, d) {
     //
     r += ']';
     //
+    if (o.timezone) {
+        r += ' (' + (o.timezone) + ')';
+    }
+    //
     return r;
 }
 

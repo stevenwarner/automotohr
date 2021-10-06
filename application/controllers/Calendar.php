@@ -1286,7 +1286,7 @@ class Calendar extends Public_Controller {
 
         foreach($employees as $key => $employee)
         {
-            $employees[$key]['full_name'] =  $employee['full_name']  . " (" . (!empty($employee['timezone']) ? $employee['timezone'] : $data['company_timezone']) .")";
+            $employees[$key]['full_name'] = remakeEmployeeName($employee)." (" . (!empty($employee['timezone']) ? $employee['timezone'] : $data['company_timezone']) .")";
         }
         $data['employees'] = $data['interviewers'] = $employees;
         //
