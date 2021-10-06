@@ -3139,10 +3139,9 @@ class Home extends CI_Controller {
         // $list = $this->job_details->get_all_company_jobs_ams_cron($number_of_jobs, $job_ids);
         $list = $this->job_details->get_all_company_jobs_ams_cron_2();
         //
-        $job_ids = array_column($list, 'sid');
         foreach($list as $key => $value){
-            if(!in_array($value['sid'],$job_ids)){
-                 $list[$key]['TitleOnly'] = $list[$key]['Title'];
+            // if(!in_array($value['sid'],$job_ids)){
+                $list[$key]['TitleOnly'] = $list[$key]['Title'];
                 $has_job_approval_rights                        = $value['has_job_approval_rights'];
 
                 if($has_job_approval_rights ==  1) {
@@ -3194,7 +3193,7 @@ class Home extends CI_Controller {
                 }
                 $job_url = 'https://www.automotosocial.com'.job_title_uri($list[$key]);
                 $newXml .= '<url><loc>'.$job_url.'</loc></url>';
-            }
+            // }
         }
         if(!empty($newXml)){
             $xmlString = '<?xml version="1.0" encoding="UTF-8"?>
