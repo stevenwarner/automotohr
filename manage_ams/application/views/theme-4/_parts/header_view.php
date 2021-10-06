@@ -46,7 +46,11 @@
         <link rel="stylesheet" href="<?php echo base_url('assets/' . $theme_name . '/css/responsive.css'); ?>">        
         <script src="<?php echo base_url('assets/' . $theme_name . '/js/jquery-1.11.2.min.js'); ?>"></script> <!-- Include jQuery Js -->        
         <script src="<?php echo base_url('assets/' . $theme_name . '/js/bootstrap.min.js'); ?>"></script>
-        <script src="<?php echo base_url('assets/' . $theme_name . '/js/custom.js'); ?>"></script><!-- Include Custom Js </-->
+        <!--  -->
+        <script>
+            stopWindowScrollForHeader = <?=isset($site_settings['enable_header_bg']) && $site_settings['enable_header_bg'] == 1 ? 1 : 0?>;
+        </script>
+        <script src="<?php echo base_url('assets/' . $theme_name . '/js/custom.js?v=1.0.0'); ?>"></script><!-- Include Custom Js </-->
         
         <?php   $custom_body_style = '';
                 

@@ -817,6 +817,7 @@ class Home extends CI_Controller {
 
                 if (!empty($list)) {
                     $company_sid                                                = $list['user_sid'];
+                    $data['site_settings'] = $this->theme_meta_model->fGetThemeMetaData($company_sid, $theme_name, 'site_settings', 'site_settings');
                     $data['remarket_company_settings'] = $this->themes_pages_model->get_remarket_company_settings();
                     $company_email_templates                                    = $this->check_domain->portal_email_templates($company_sid);
                     $application_acknowledgement_letter                         = array();

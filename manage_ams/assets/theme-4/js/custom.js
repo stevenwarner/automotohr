@@ -1,13 +1,18 @@
 $(document).ready(function(){
     // Add Background Change Class To Navbar
     var nav = $('#masthead');
-    $(window).scroll(function(e) {
-        if($(window).scrollTop() > 2 ){
-            nav.addClass("bg-change animated");
-        }else if($(window).scrollTop() < 1){
-            nav.removeClass("bg-change animated");
-        }
-    });  
+    if(stopWindowScrollForHeader === 0){
+      $(window).scroll(function(e) {
+          if($(window).scrollTop() > 2 ){
+              nav.addClass("bg-change animated");
+            }else if($(window).scrollTop() < 1){
+              nav.removeClass("bg-change animated");
+            }
+          });  
+        } else{
+      nav.addClass("bg-change animated");
+
+    }   
     // .modal-backdrop classes
     $(".modal-transparent").on('show.bs.modal', function () {
       setTimeout( function() {

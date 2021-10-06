@@ -64,7 +64,7 @@
         <script>
             stopWindowScrollForHeader = <?=isset($site_settings['enable_header_bg']) && $site_settings['enable_header_bg'] == 1 ? 1 : 0?>;
         </script>
-        <script src="<?php echo base_url('assets/' . $theme_name . '/js/custom.js?v='.time()); ?>"></script><!-- Include Custom Js </-->
+        <script src="<?php echo base_url('assets/' . $theme_name . '/js/custom.js?v=1.0'); ?>"></script><!-- Include Custom Js </-->
 
         
         <?php $custom_body_style = '';
