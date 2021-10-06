@@ -81,9 +81,9 @@ $googleJobOBJ['identifier']['@type'] = 'PropertyValue';
 $googleJobOBJ['identifier']['name'] = 'jid';
 $googleJobOBJ['identifier']['value'] = $job_details['user_sid'];
 // Industry
-$googleJobOBJ['industry'] = [];
-$googleJobOBJ['industry']['@type'] = 'JobPosting';
-$googleJobOBJ['industry']['value'] = $job_details['JobCategory'];
+// $googleJobOBJ['industry'] = [];
+// $googleJobOBJ['industry']['@type'] = 'JobPosting';
+// $googleJobOBJ['industry']['value'] = $job_details['JobCategory'];
 $googleJobOBJ['directApply'] = true;
 
 echo '<script type="application/ld+json">';
