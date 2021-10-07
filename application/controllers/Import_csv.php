@@ -335,19 +335,14 @@ class Import_csv extends Public_Controller {
                 //
                 foreach ($formpost['employees'] as $k0 => $v0) {
                     // Set default insert array
-                    $withoutEmial = 0;
                     $insertArray = array();
                     if(sizeof($v0) <=1){
                         continue;
                     }
-                    // If email is not set then skip
-//                    if(!isset($v0['email'])) {$failCount++; continue;}
                     // Clean
                     $to = $insertArray['email'] = isset($v0['email']) ? trim(strtolower($v0['email'])) : NULL;
-                    // Check for empty
-//                    if($insertArray['email'] === null) { $existCount++; continue; }
                     // lets check if email already exists
-                    $existed = $this->import_csv_model->CheckIfEmployeeExists($companyId, $insertArray['email']);
+                    $existed = $this->import_csv_model->CheckIfEmployeeExists($companyId, $insertArray['email'] ? $insertArray['email'] :  $v0['ssn'], $insertArray['email'] ? true : false);
                     if ($existed != false && sizeof($existed) && !empty($v0['email']) && $v0['email'] != NULL) {
                         $this->updateUser($existed,$v0);
                         $existCount++; continue;
@@ -360,7 +355,6 @@ class Import_csv extends Public_Controller {
                         if($existed_other){
                             $existCount++; continue;
                         }
-                        $withoutEmial = 1;
                     }
                     $insertArray['access_level'] = 'Employee';
                     // Check for access level columns
@@ -523,21 +517,8 @@ class Import_csv extends Public_Controller {
                     //New Fields End
                     // Insert employee
                     $employeeId = $this->import_csv_model->InsertNewUser($insertArray);
-                    // $companyName = $session['company_detail']['CompanyName']; //sending email to user
-                    // $emailTemplateData = get_email_template(CSV_EMPLOYER_IMPORT);
-                    // $emailTemplateBody = convert_email_template($emailTemplateData['text'], $employeeId);
-                    // $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
-                    // $subject           = $emailTemplateData['subject'];
-                    // //
-                    // $emailData = array( 'date' => $insertArray['registration_date'],
-                    //                     'subject' => $subject,
-                    //                     'email' => $to,
-                    //                     'message' => $emailTemplateBody,
-                    //                     'username' => $session['employer_detail']['sid']);
                     //
                     $insertCount++;
-                    //
-                    // !$withoutEmial ? save_email_log_common($emailData) : '';
                 }
                 //
                 $resp['Status'] = TRUE;

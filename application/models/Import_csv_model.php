@@ -6,9 +6,13 @@ class Import_csv_model extends CI_Model {
         parent::__construct();
     }
 
-    function CheckIfEmployeeExists($company_sid, $emailAddress) {
+    function CheckIfEmployeeExists($company_sid, $emailAddress, $isEmail = true) {
         $this->db->select('sid,extra_info');
-        $this->db->where('email', $emailAddress);
+        if($isEmail){
+            $this->db->where('email', $emailAddress);
+        } else{
+            $this->db->where('ssn', $emailAddress);
+        }
         $this->db->where('parent_sid', $company_sid);
         $data = $this->db->get('users')->result_array();
 
