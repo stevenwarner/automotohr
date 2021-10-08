@@ -512,3 +512,4 @@ $(document).ready(loadTitles);
 </style>
 
 <script src="<?=base_url("assets/js/common.js");?>"></script>
+<script src="<?=base_url('assets/payroll/js/payroll_company_onboard.js');?>?v=<?=time();?>"></script>

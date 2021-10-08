@@ -234,13 +234,13 @@ function Model(options, cb) {
     var html = '';
     html += '<!-- Custom Modal -->';
     html += '<div class="csModal" id="' + (options.Id) + '">';
-    html += '    <div class="container">';
+    html += '    <div class="' + (options.Container || 'container') + '">';
     html += '        <div class="csModalHeader">';
     html += '            <h3 class="csModalHeaderTitle csF20 csB7">';
     html += options.Title;
     html += '                <span class="csModalButtonWrap">';
     html += options.Buttons !== undefined && options.Buttons.length !== 0 ? options.Buttons.join('') : '';
-    html += '                    <button class="btn btn-black btn-lg jsModalCancel csF16"><em class="fa fa-times-circle csF16"></em> ' + (options.Cancel ? options.Cancel : 'Cancel') + '</button>';
+    html += '                    <button class="btn ' + (options.CancelClass || 'btn-black') + ' btn-lg jsModalCancel csF16"><em class="fa fa-times-circle csF16"></em> ' + (options.Cancel ? options.Cancel : 'Cancel') + '</button>';
     html += '                </span>';
     html += '                <div class="clearfix"></div>';
     html += '            </h3>';

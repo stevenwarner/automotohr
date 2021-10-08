@@ -247,14 +247,7 @@
                                         <?php } ?>
                                         <li><a href="<?php echo base_url('export_documents/employee'); ?>">Bulk Download Documents</a></li>
                                         <?php if (checkIfAppIsEnabled('payroll')) {?>
-                                            <li><a href="<?php echo base_url('company_tax'); ?>">Company Tax</a></li>
-                                            <!-- Payroll -->
-                                            <?php if($session['company_detail']['on_payroll'] == 0){?>
-                                            <li><a href="javascript:void(0)" class="jsEnablePayroll">Enable Payroll</a></li>
-                                            <?php } else { ?>
-                                                <li><a href="<?php echo base_url('company_payroll'); ?>">Company Payroll</a></li>
-                                                <li><a href="<?php echo base_url('payroll/create'); ?>">Payrolls</a></li>
-                                                <?php } ?>
+                                            <li><a href="javascript:void(0)" class="jsPayrollCompanyOnboard" data-cid="<?=$session['company_detail']['sid'];?>">Company Payroll Onboarding</a></li>
                                             <?php } ?>
                                     </ul>
                                 </article>

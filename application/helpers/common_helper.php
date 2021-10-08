@@ -13879,3 +13879,29 @@ if(!function_exists('getAPIKey')){
         return $_SESSION['API_TOKENS'];
     }
 }
+
+if(!function_exists('SendResponse')){
+    /**
+     * Send response to the client
+     * @param integer $type
+     * @param string|array $data
+     */
+    function SendResponse($status, $data = '', $type = 'application/json'){
+        //
+        if($status == 401){
+            return header("HTTP/1.0 401 Unauthorized");
+        }
+        //
+        if($status == 400){
+            return header("HTTP/1.0 400 Bad Request");
+        }
+        //
+        if($type == 'html'){
+            $type = 'text/html';
+        }
+        //
+        header("HTTP/1.0 200 OK");
+        header("Content-type: {$type}");
+        echo json_encode($data);
+    }
+}

@@ -49,31 +49,34 @@ class Employee_model extends CI_Model{
             $redo = true;
             //
             $columns = [];
-            $columns[] = 'sid';
-            $columns[] = 'first_name';
-            $columns[] = 'last_name';
-            $columns[] = 'email';
-            $columns[] = 'joined_at';
-            $columns[] = 'registration_date';
-            $columns[] = 'ssn';
-            $columns[] = 'dob';
-            $columns[] = 'profile_picture';
-            $columns[] = 'access_level';
-            $columns[] = 'access_level_plus';
-            $columns[] = 'is_executive_admin';
-            $columns[] = 'job_title';
-            $columns[] = 'pay_plan_flag';
-            $columns[] = 'full_employment_application';
-            $columns[] = 'on_payroll';
+            $columns[] = "{$this->U}.sid";
+            $columns[] = "{$this->U}.first_name";
+            $columns[] = "{$this->U}.last_name";
+            $columns[] = "{$this->U}.email";
+            $columns[] = "{$this->U}.joined_at";
+            $columns[] = "{$this->U}.registration_date";
+            $columns[] = "{$this->U}.ssn";
+            $columns[] = "{$this->U}.timezone";
+            $columns[] = "company.timezone as company_timezone";
+            $columns[] = "{$this->U}.dob";
+            $columns[] = "{$this->U}.profile_picture";
+            $columns[] = "{$this->U}.access_level";
+            $columns[] = "{$this->U}.access_level_plus";
+            $columns[] = "{$this->U}.is_executive_admin";
+            $columns[] = "{$this->U}.job_title";
+            $columns[] = "{$this->U}.pay_plan_flag";
+            $columns[] = "{$this->U}.full_employment_application";
+            $columns[] = "{$this->U}.on_payroll";
         }
         //
         $query = 
         $this->db
         ->select($columns)
-        ->where('parent_sid', $companyId)
-        ->where('active', 1)
-        ->where('terminated_status', 0)
-        ->order_by('first_name', 'asc')
+        ->join("{$this->U} as company", "{$this->U}.parent_sid = company.sid", 'inner')
+        ->where("{$this->U}.parent_sid", $companyId)
+        ->where("{$this->U}.active", 1)
+        ->where("{$this->U}.terminated_status", 0)
+        ->order_by("{$this->U}.first_name", 'asc')
         ->get($this->U);
         //
         $records = $query->result_array();
@@ -89,35 +92,42 @@ class Employee_model extends CI_Model{
             foreach($records as $record){
                 //
                 $newRecords[$record['sid']] = [
-                    'Id' => $record['sid'],
-                    'FirstName' => ucwords($record['first_name']),
-                    'LastName' => ucwords($record['last_name']),
-                    'Name' => ucwords($record['first_name'].' '.$record['last_name']),
-                    'Role' => remakeEmployeeName($record, false),
-                    'Plus' => $record['access_level_plus'],
-                    'Email' => $record['email'],
-                    'Image' => getImageURL($record['profile_picture']),
-                    'JoinedOn' => $record['joined_at'],
-                    'SSN' => $record['ssn'],
-                    'DOB' => $record['dob'],
-                    'OnPayroll' => $record['on_payroll']
+                    'sid' => $record['sid'],
+                    'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                    'first_name' => ucwords($record['first_name']),
+                    'last_name' => ucwords($record['last_name']),
+                    'name' => ucwords($record['first_name'].' '.$record['last_name']),
+                    'role' => remakeEmployeeName($record, false),
+                    'plus' => $record['access_level_plus'],
+                    'email' => $record['email'],
+                    'image' => getImageURL($record['profile_picture']),
+                    'joined_on' => $record['joined_at'],
+                    'ssn' => $record['ssn'],
+                    'dob' => $record['dob'],
+                    'on_payroll' => $record['on_payroll']
                 ];
+                //
+                if(!empty($record['timezone'])){
+                    $newRecords[$record['sid']]['timezone'] = $record['timezone'];
+                } else if(!empty($record['company_timezone'])){
+                    $newRecords[$record['sid']]['timezone'] = $record['company_timezone'];
+                }
                 //
                 if(!empty($record['full_employment_application'])){
                     //
                     $fef = unserialize($record['full_employment_application']);
                     //
-                    if(empty($newRecords[$record['sid']]['SSN']) && isset($fef['TextBoxSSN'])){
-                        $newRecords[$record['sid']]['SSN'] = $fef['TextBoxSSN'];
+                    if(empty($newRecords[$record['sid']]['ssn']) && isset($fef['TextBoxSSN'])){
+                        $newRecords[$record['sid']]['ssn'] = $fef['TextBoxSSN'];
                         //
                         $updateArray[$record['sid']]['sid'] = $record['sid'];
                         $updateArray[$record['sid']]['ssn'] = $fef['TextBoxSSN'];
                     }
                     //
-                    if(empty($newRecords[$record['sid']]['DOB']) && isset($fef['TextBoxDOB'])){
-                        $newRecords[$record['sid']]['DOB'] = DateTime::createfromformat('m-d-Y', $fef['TextBoxDOB'])->format('Y-m-d');
+                    if(empty($newRecords[$record['sid']]['dob']) && isset($fef['TextBoxDOB'])){
+                        $newRecords[$record['sid']]['dob'] = DateTime::createfromformat('m-d-Y', $fef['TextBoxDOB'])->format('Y-m-d');
                         $updateArray[$record['sid']]['sid'] = $record['sid'];
-                        $updateArray[$record['sid']]['dob'] = $newRecords[$record['sid']]['DOB'];
+                        $updateArray[$record['sid']]['dob'] = $newRecords[$record['sid']]['dob'];
                     }
                 }
             }

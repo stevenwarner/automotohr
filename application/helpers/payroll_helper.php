@@ -77,6 +77,47 @@ if(!function_exists('AddEmployeeToCompany')){
 }
 
 //
+if(!function_exists('AddCompanyLocation')){
+    function AddCompanyLocation($request, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('AddCompanyLocation', $company['gusto_company_uid']),[
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                AddCompanyLocation($request, $company);
+                //
+                return false;
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+//
 if(!function_exists('PayPeriods')){
     function PayPeriods($company){
         //
@@ -405,6 +446,48 @@ if(!function_exists('GetCompanyEmployees')){
 }
 
 //
+if(!function_exists('GetCompany')){
+    function GetCompany($company){
+        //
+        $url = PayrollURL('GetCompany', $company['gusto_company_uid']);
+        //
+        $response =  MakeCall(
+            $url, [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                GetCompany($company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            CacheHolder($url, $response);
+            //
+            return $response;
+        }
+    }
+}
+
+//
 if(!function_exists('UpdatePayrollById')){
     function UpdatePayrollById($request, $company){
         //
@@ -659,6 +742,8 @@ if(!function_exists('PayrollURL')){
         $urls['CalculatePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/calculate';
         $urls['CancelPayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/cancel';
         $urls['SubmitPayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/submit';
+        $urls['GetCompany'] = 'v1/companies/'.($key);
+        $urls['AddCompanyLocation'] = 'v1/companies/'.($key).'/locations';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }
@@ -693,5 +778,40 @@ if(!function_exists('CacheHolder')){
         if(!empty($data)){
             $_this->session->set_userdata($url, $data);
         }
+    }
+}
+
+/**
+ * 
+ */
+if(!function_exists('MakeErrorArray')){
+    function MakeErrorArray($errorObj){
+        //
+        $errorArray = [];
+        //
+        foreach ($errorObj as $index => $value) {
+            //
+            if (is_array($value)) {
+                //
+                foreach ($value as $index2 => $value2) {
+                    //
+                    if ($value2['message']) {
+                        $errorArray = array_merge($errorArray, [$value2['message']]);
+                    } else {
+                        $errorArray = array_merge($errorArray, $value2);
+                    }
+                }
+            } else {
+                //
+                if ($errorObj['common']) {
+                    $errorArray = array_merge($errorArray, $errorObj['common']);
+                } else {
+                    //
+                    $errorArray = array_merge($errorArray, $value);
+                }
+            }
+        }
+        //
+        return $errorArray;
     }
 }

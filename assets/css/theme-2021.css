@@ -2180,3 +2180,48 @@ color: #333;
 
 
 /*-----Arrows Links-----*/
+
+
+/* Multi list */
+
+ul.csSidebarUL {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.csSidebarUL li {
+    display: block;
+}
+
+ul.csSidebarUL li a {
+    padding: 10px;
+    display: block;
+}
+
+ul.csSidebarUL li ul {
+    margin-left: 10px;
+    display: none;
+}
+
+ul.csSidebarUL li:hover>ul,
+ul.csSidebarUL li.active>ul {
+    display: block;
+}
+
+ul.csSidebarUL li a:hover {
+    color: #fff;
+    background-color: #3554DC;
+}
+
+ul.csSidebarUL li.active>a {
+    color: #fff;
+    background-color: #3554DC;
+}
+
+ul.csSidebarUL li.active>ul li.active,
+ul.csSidebarUL li.active>ul li.active a {
+    font-weight: 900;
+    background-color: #fff;
+    color: #444;
+}

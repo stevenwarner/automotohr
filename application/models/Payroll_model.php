@@ -14,7 +14,10 @@ class Payroll_model extends CI_Model{
         $this->tables['PC'] = 'payroll_companies'; 
         $this->tables['PCE'] = 'payroll_employees'; 
         $this->tables['PCTD'] = 'payroll_company_tax_details'; 
+        // 
         $this->tables['U'] = 'users'; 
+        $this->tables['PayrollCompanyAdmin'] = 'payroll_company_admin'; 
+        $this->tables['PayrollCompanyLocations'] = 'payroll_company_locations'; 
     }
 
     /**
@@ -329,5 +332,113 @@ class Payroll_model extends CI_Model{
         //
         $this->db->where($whereArray)
         ->update($this->tables['PCTD'], $updateArray);
+    }
+
+    // As of 10-2021
+
+    /**
+     * Check if company has a primary admin
+     * to handle payroll
+     * 
+     * @param integer $companyId
+     * @return
+     */
+    function HasPrimaryAdmin($companyId){
+        //
+        return $this->db
+        ->where('company_sid', $companyId)
+        ->count_all_results($this->tables['PayrollCompanyAdmin']);
+    }
+
+    /**
+     * Insert company payroll amdin
+     * @param array $dataArray
+     * @return integer
+     */
+    function InsertAdmin($dataArray){
+        $this->db->insert($this->tables['PayrollCompanyAdmin'], $dataArray);
+        return $this->db->insert_id();
+    }
+
+    /**
+     * Check if company has a primary admin
+     * to handle payroll
+     * 
+     * @param integer $companyId
+     * @return
+     */
+    function GetPrimaryAdmin($companyId){
+        //
+        return $this->db
+        ->where('company_sid', $companyId)
+        ->get($this->tables['PayrollCompanyAdmin'])
+        ->row_array();
+    }
+
+    /**
+     * Get all active states
+     * @return
+     */
+    function GetStates(){
+        return $this->db
+        ->select('state_code, state_name')
+        ->where('active', 1)
+        ->order_by('state_name')
+        ->get('states')
+        ->result_array();
+    }
+
+    /**
+     * Get company payroll details
+     * @param integer $companyId
+     * @return
+     */
+    function GetPayrollCompany($companyId){
+        //
+        return $this->db
+        ->select('refresh_token, access_token, gusto_company_uid')
+        ->where('company_sid', $companyId)
+        ->get($this->tables['PC'])
+        ->row_array();
+    }
+    
+    /**
+     * Get company payroll details
+     * @param integer $companyId
+     * @return
+     */
+    function GetCompanyLocations($companyId){
+        //
+        return $this->db
+        ->select('
+            street_1,
+            street_2,
+            city,
+            state,
+            zip,
+            mailing_address,
+            filing_address,
+            phone_number,
+            gusto_location_id
+        ')
+        ->where('company_sid', $companyId)
+        ->get($this->tables['PayrollCompanyLocations'])
+        ->row_array();
+    }
+
+    /**
+     * Add company location to system
+     * 
+     * @param array $insertArray
+     * @return
+     */
+    function AddCompanyLocation($insertArray){
+        //
+        $this->db->insert(
+            $this->tables['PayrollCompanyLocations'],
+            $insertArray
+        );
+        //
+        return $this->db->insert_id();
     }
 }

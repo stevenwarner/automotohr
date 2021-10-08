@@ -1009,17 +1009,7 @@ if ($class != 'dashboard' &&
     </script>
     <script src="<?=base_url('assets/js/common.js?v1.0.1');?>"></script>
     <script src="<?=base_url('assets/portal/app.js');?>?v=1.0.2"></script>
-    <?php if($session['company_detail']['on_payroll'] == 0){?>
-        <!-- Payroll -->
-        <script src="<?=base_url('assets/js/payroll.js');?>?v=<?=time();?>"></script>
-    <?php } ?>
-    <?php 
-        if(isset($Assets)){
-            foreach($Assets as $asset){
-                echo $asset;
-            }
-        }
-    ?>
+    <script src="<?=base_url('assets/payroll/js/payroll_company_onboard.js');?>?v=<?=time();?>"></script>
         </body>
 </html>
     <?php } else { ?>
