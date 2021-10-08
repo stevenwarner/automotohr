@@ -119,11 +119,6 @@ class Background_check extends CI_Controller {
                 if (checkAssureHireEnable($company_id)) {
                     $assurehire = $this->background_check_model->getAssurehireActiveProducts("background-checks");
                     $purchasedProducts = array_merge($purchasedProducts,$assurehire);
-                    // echo "<pre>";
-                    // print_r($purchasedProducts);
-                    // print_r($assurehire);
-                    // print_r(array_merge($purchasedProducts,$assurehire));
-                    // die();
                 }
                 //
                 $data_function['purchasedProducts'] = $purchasedProducts;
@@ -131,7 +126,7 @@ class Background_check extends CI_Controller {
                 foreach ($appliedProductsArray as $order) {
                     $ab_order_sid = $order['sid'];
                     $package_id = $order['package_id'];
-                    if($order['product_brand'] != 'assurehire') $this->get_order_status($package_id, $ab_order_sid);
+                    if(empty($order['report_url'])) $this->get_order_status($package_id, $ab_order_sid);
                 }
                 //Update Order Status on Load - end
 
@@ -159,7 +154,7 @@ class Background_check extends CI_Controller {
                         $appliedProductsArray[$key]['package_response'] = $package_response;
                     }
                 }
-// 149 + 892
+                // 149 + 892
                 // get all applied products that are not refunded.
                 $data_function['appliedProducts'] = $appliedProductsArray;
 
@@ -212,10 +207,16 @@ class Background_check extends CI_Controller {
                 $data_function['job_list_sid'] = $jobs_listing;
                 //form data valdation ends
                 if ($this->form_validation->run() === FALSE) {
+                    $data_function['title'] = 'background_report';
                     $this->load->view('main/header', $data_function);
                     $this->load->view('manage_employer/background_check');
                     $this->load->view('main/footer');
                 } else {
+                    if (checkProductBrand($_POST["productId"])) {
+                        $this->placeOrderOnAssurehire($_POST, $company_id, $employer_sid, $type, $sid, $jobs_listing);
+                        return;
+                    }
+                    //
                     $perform_action = $this->input->post('perform_action');
                     switch ($perform_action) {
                         case 'place_background_check_order':
@@ -486,7 +487,7 @@ class Background_check extends CI_Controller {
         $data['title'] = 'Background Check Activation';
         $application_Id = $_SESSION['applicant_id'];
         $application_Type = $_SESSION['applicant_type'];
-//        $_SESSION['applicant_id'] = $_SESSION['applicant_type'] = NULL;
+        //  $_SESSION['applicant_id'] = $_SESSION['applicant_type'] = NULL;
 
         $data['cancel_location'] = base_url($application_Type . '/' . $application_Id);
         $document_request = $this->background_check_model->getBackgroundDocument($company_sid);
@@ -847,6 +848,7 @@ class Background_check extends CI_Controller {
                                 "convictionDate": "",
                                 "description": "",
                                 "location": {
+
                                     "countryCode": "",
                                     "region": "",
                                     "region2": "",
@@ -1032,7 +1034,7 @@ class Background_check extends CI_Controller {
                         $appliedProductsArray[$key]['package_response'] = $package_response;
                     }
                 }
-// 149 + 892
+                // 149 + 892
                 $data_function['appliedProducts'] = $appliedProductsArray;
                 $product_ids = NULL;
 
@@ -1417,6 +1419,195 @@ class Background_check extends CI_Controller {
         echo '<pre>';
         print_r($packages);
         exit;
+    }
+
+    private function placeOrderOnAssurehire ($input, $company_id, $employer_sid, $user_type, $user_sid, $jobs_listing) {
+        
+      
+       
+
+        $perform_action = $input['perform_action'];
+        switch ($perform_action) {
+            case 'place_background_check_order':
+                $formpost = array($this->input->post('productId'));
+                $dataToSave['employer_sid'] = $employer_sid;
+                $dataToSave['company_sid'] = $company_id;
+                $dataToSave['users_sid'] = $user_sid;
+                $dataToSave['users_type'] = $user_type;
+                $dataToSave['date_applied'] = date('Y-m-d H:i:s');
+
+                $portalDetails = $this->dashboard_model->get_portal_detail($company_id);
+
+                if ($user_type == 'employee') {
+                    $user_info = $this->dashboard_model->get_company_detail($user_sid);
+                    if (!empty($user_info)) {
+                        $full_employment_application = $user_info['full_employment_application'];
+    
+                        if ($full_employment_application != '') {
+                            $full_employment_application = unserialize($full_employment_application);
+                            $user_info['full_employment_application'] = $full_employment_application;
+                        } else {
+                            $user_info['full_employment_application'] = array();
+                        }
+                    }
+                    $data_employer = $user_info;
+                }
+    
+                if ($user_type == 'applicant') {
+                    $user_info = $this->dashboard_model->get_applicants_details($user_sid);
+    
+                    if (!empty($user_info)) {
+                        $full_employment_application = $user_info['full_employment_application'];
+    
+                        if ($full_employment_application != '') {
+                            $full_employment_application = unserialize($full_employment_application);
+                            $user_info['full_employment_application'] = $full_employment_application;
+                        } else {
+                            $user_info['full_employment_application'] = array();
+                        }
+                    }
+    
+                    $data_employer = array(
+                        'sid' => $user_info['sid'],
+                        'first_name' => $user_info['first_name'],
+                        'last_name' => $user_info['last_name'],
+                        'email' => $user_info['email'],
+                        'Location_Address' => $user_info['address'],
+                        'Location_City' => $user_info['city'],
+                        'Location_Country' => $user_info['country'],
+                        'Location_State' => $user_info['state'],
+                        'Location_ZipCode' => $user_info['zipcode'],
+                        'PhoneNumber' => $user_info['phone_number'],
+                        'full_employment_application' => $user_info['full_employment_application']
+                    );
+                }
+
+                if (isset($user_info) && !empty($user_info['full_employment_application'])) {
+                    $productId = $input['productId'];
+                    $res = $this->dashboard_model->productDetail($productId);
+                    $package_code = $res[0]['package_code'];
+                    $session = $this->session->userdata('logged_in');
+                    $json_data = createAssurehireJson($data_employer, $session, $portalDetails, $user_info, $package_code);
+                    
+
+                    
+                    //
+                    // mail(TO_EMAIL_DEV, 'Accurate Background Check Order ' . date('Y-m-d H:i:s'), $json_data);
+                    
+                    $result = placeOrderAH($json_data);
+                    //
+                    $package_response = json_decode($result,true);
+                    //
+                    $response_info = $package_response['orderInfo'];
+                    $response_status = $package_response['orderStatus'];
+                    //
+                    if (empty($response_status)) {
+                        $this->session->set_flashdata('message', '<b>Error:</b> Invalide Json formate Provide.');
+                        //
+                        $email_message = '<pre>' . print_r($input, true) . print_r($package_response, true) . '</pre>';
+                        // mail(TO_EMAIL_DEV, 'Accurate Background Check Order Error ' . date('Y-m-d H:i:s'), $email_message);
+                        //
+                    } else if (!empty($response_status) && isset($response_status['message'])) {
+                        $this->session->set_flashdata('message', '<b>Error:</b> '. $response_status['message']);
+                    } else if (!empty($response_status) && isset($response_status['status'])) {
+
+                        $dataToSave['package_response'] = serialize($package_response);
+                        $dataToSave['package_id'] = $response_info['packageId'];
+
+                        if ($dataToSave['package_id'] == '' || $dataToSave['package_id'] == NULL) {
+                            unset($dataToSave['package_id']);
+                        }
+                        //Checking BG check order Response
+                        if(isset($response_status['orderId'])) {
+                            $dataToSave['external_id'] = $response_status['orderId'];
+                        }
+
+                        if(isset($response_status['orderId'])) {
+                            $dataToSave['report_url'] = $response_status['report_url'];
+                        }
+
+                        $dataToSave['order_response_status'] = '';
+
+                        if (isset($res)) {
+                            $dataToSave['product_sid'] = $productId;
+                            $dataToSave['product_price'] = $res[0]['price'];
+                            $dataToSave['product_name'] = $res[0]['name'];
+                            $dataToSave['product_type'] = $res[0]['product_type'];
+                            $dataToSave['product_image'] = $res[0]['product_image'];
+                        }
+
+                        //saving BG-Check data to table
+                        $this->background_check_model->saveBackgroundOrder($dataToSave);
+                        //
+                        $this->session->set_flashdata('message', '<b>Success:</b> Request placed for Background Check, you can check status after one Hour.');
+                    }
+                    //
+                    
+                    switch ($user_type) {
+                        case 'applicant':
+                            redirect('background_check/applicant/' . $user_sid.'/'.$jobs_listing, 'refresh');
+                            break;
+                        case 'employee':
+                            redirect('background_check/employee/'. $user_sid, 'refresh');
+                            break;
+                    }
+                } else {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Please Fill Full Employment Application in Order to process Background Check.');
+                    switch ($user_type) {
+                        case 'applicant':
+                            redirect('background_check/applicant/' . $user_sid.'/'.$jobs_listing, 'refresh');
+                            break;
+                        case 'employee':
+                            redirect('background_check/employee/'. $user_sid, 'refresh');
+                            break;
+                    }
+                }
+                break;
+            case 'get_order_status':
+                $package_id = $this->input->post('package_id');
+                $ab_order_sid = $this->input->post('ab_order_sid');
+                $this->get_order_status($package_id, $ab_order_sid);
+                /* Comented on purpose
+                    $order_details = $this->background_check_model->get_order_details($ab_order_sid);
+                    $order_status = ab_get_order_status($package_id, $this->api_mode);
+
+                    if (!empty($order_status) || $order_status != '') {
+                    $order_status = json_decode($order_status, true);
+                    //Check Order Status if Cancelled Refund Item
+                    if(isset($order_status['orderStatus'])){
+                    $status = strtolower($order_status['orderStatus']['status']);
+                    if($status == 'cancelled' && $order_details['order_refunded'] == 0){
+                    $product_sid = $order_details['product_sid'];
+                    $company_sid = $order_details['company_sid'];
+                    $employer_sid = $order_details['employer_sid'];
+                    $this->background_check_model->generate_new_market_place_refund_invoice($company_sid, $employer_sid, $product_sid, 1);
+                    $this->background_check_model->update_order_refund_status($ab_order_sid, 1);
+                    }
+                    }
+                    } else {
+                    $order_status = array();
+                    }
+
+                    $order_status = serialize($order_status);
+                    $this->background_check_model->update_order_status($ab_order_sid, $order_status);
+                    */
+
+                $this->session->set_flashdata('message', '<strong>Success: </strong> Order Status successfully fetched.');
+                redirect('background_check/' . $user_type . '/' . $user_sid . '/' .$jobs_listing, 'refresh');
+                break;
+            case 'get_report':
+                $search_id = $this->input->post('search_id');
+                $report = ab_get_report($search_id, 'pdf', $this->api_mode);
+                $report_data = json_decode($report, true);
+
+                if (!empty($report_data)) {
+                    $pdf_report = base64_decode($report_data['resultReport']);
+                    header('Content-Type: application/pdf');
+                    header('Content-Disposition: attachment; filename="report.pdf"');
+                    echo $pdf_report;
+                }
+                break;
+        }
     }
 
 }

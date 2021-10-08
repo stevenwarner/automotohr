@@ -252,7 +252,9 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                             <article class="purchased-product">
                                                                 <input type="hidden" id="already_applied_<?php echo $product['product_sid'] ?>" value="<?php echo $product['appliedOn']; ?>" />
                                                                 <input class="product-checkbox" name="productId" id="productId" value="<?php echo $product['product_sid']; ?>" type="radio">
-                                                                <p class="remaining-qty">Remaining Qty: <?php echo isset($product['remaining_qty']) ? $product['remaining_qty'] : ""; ?></p>
+                                                                <?php if (isset($product['remaining_qty'])) { ?>
+                                                                    <p class="remaining-qty">Remaining Qty: <?php echo isset($product['remaining_qty']) ? $product['remaining_qty'] : ""; ?></p>
+                                                                <?php } ?>
                                                                 <h2 class="post-title"><?php echo $product['name']; ?></h2>
                                                                 <figure>
                                                                     <img src="<?php echo !is_null($product['product_image']) ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>" alt="Category images">

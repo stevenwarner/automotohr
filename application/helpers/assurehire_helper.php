@@ -66,7 +66,7 @@ if(!function_exists('callAH')){
 }
 
 
-// Send curl request
+// Check Company AssureHire Module is active or not
 if(!function_exists('checkAssureHireEnable')){
     function checkAssureHireEnable($company_sid){
         $CI = &get_instance();
@@ -90,5 +90,119 @@ if(!function_exists('checkAssureHireEnable')){
         } else {
             return false;
         }
+    }
+}
+
+// Check Company AssureHire Module is active or not
+if(!function_exists('checkProductBrand')){
+    function checkProductBrand($product_sid){
+        $CI = &get_instance();
+        $CI->db->where('sid', $product_sid);
+        $CI->db->where('LOWER(name) regexp "assurehire"', NULL, NULL);
+        $product_count = $CI->db->count_all_results('products');
+
+        if ($product_count) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+
+// Check Company AssureHire Module is active or not
+if(!function_exists('createAssurehireJson')){
+    function createAssurehireJson($data_employer, $session, $portalDetails, $user_info, $package_code){
+        //getting country and state details
+        $stateCountry = db_get_state_name($data_employer['Location_State']);
+        $company_name = $session["company_detail"]["CompanyName"];
+
+        if (strlen($company_name) > 24) {
+            $company_name = substr($company_name, 0, 24);
+        }
+
+        $employer_name = $session["employer_detail"]["first_name"] . ' ' . $session["employer_detail"]["last_name"];
+        if (strlen($employer_name) > 24) {
+            $employer_name = substr($employer_name, 0, 24);
+        }
+
+        $sub_domain = $portalDetails['sub_domain'];
+        if (strlen($sub_domain) > 24) {
+            $sub_domain = substr($sub_domain, 0, 24);
+        }
+
+        $user_name = $user_info['first_name'] . ' ' . $user_info['last_name'];
+
+        if (strlen($user_name) > 24) {
+            $user_name = substr($user_name, 0, 24);
+        }
+        //
+        $orderReference = generateRandomString(8);
+        //
+        $json_data = '{
+            "orderReference": "'.($orderReference).'",
+            "packageId": "'.( $package_code ).'",
+            "callback_url": "https://www.automotohr.com/assurehire/cb",
+            "requestor": {
+                "company": "' . $company_name . '",
+                "name": "' . $employer_name . '",
+                "email": "'.(ASSUREHIR_USR ).'",
+                "address": {
+                    "countryCode": "' . $stateCountry['country_code'] . '",
+                    "region": "' . $stateCountry['state_code'] . '",
+                    "city": "' . $data_employer['Location_City'] . '",
+                    "street": "' . $data_employer['Location_Address'] . '",
+                    "postalCode": "' . $data_employer['Location_ZipCode'] . '"
+                }
+            },
+            "candidate": {
+                "name": {
+                    "firstname": "' . $data_employer['first_name'] . '",
+                    "lastname": "' . $data_employer['last_name'] . '",
+                    "middlename": ""
+                },
+                "aka": [],
+                "dateOfBirth": "' . date('Y-m-d', strtotime($data_employer['full_employment_application']['TextBoxDOB'])) . '",
+                "ssn": "' . $data_employer['full_employment_application']['TextBoxSSN'] . '",
+                "governmentId": {
+                    "countryCode": "",
+                    "type": "",
+                    "number": ""
+                },
+                "contact": {
+                    "email": "' . $data_employer['email'] . '",
+                    "phone": "' . $data_employer['PhoneNumber'] . '"
+                },
+                "address": {
+                    "street": "' . $data_employer['Location_Address'] . '",
+                    "street2": "' . $data_employer['Location_Address'] . '",
+                    "city": "' . $data_employer['Location_City'] . '",
+                    "region": "' . $stateCountry['state_code'] . '",
+                    "country": "' . $stateCountry['country_code'] . '",
+                    "postalCode": "' . $data_employer['Location_ZipCode'] . '"
+                }
+            },
+            "convicted": "",
+            "conviction": [
+                {
+                    "convictionDate": "",
+                    "description": "",
+                    "location": {
+
+                        "countryCode": "",
+                        "region": "",
+                        "region2": "",
+                        "city": ""
+                    }
+                }
+            ],
+            "specialInstruction": "some optional text goes here",
+            "copyOfReport": {
+                "email": "dev@automotohr.com"
+            }
+        }
+        ';
+
+        return $json_data;
     }
 }
