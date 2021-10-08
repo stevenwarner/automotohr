@@ -102,6 +102,12 @@
                                         </div>
                                     </div>
                                 </li>
+                                <li class="form-col-100">
+                                    <label class="control control--checkbox">
+                                        <input type="checkbox" name="do_show_image"  <?php echo !isset($box['do_show_image']) || $box['do_show_image'] == 'on' ? 'checked="checked"' : '';?> /> Enable banner/video
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </li>
                             </ul>
                             <div class="btn-panel text-right">
                                 <input type="hidden" name="theme_name" id="theme_name" value="<?php echo $theme['theme_name']; ?>"/>

@@ -318,6 +318,8 @@ class Appearance extends Public_Controller {
                         }
                     }
                 }
+                //
+                $data_to_store['do_show_image'] = isset($_POST['do_show_image']) ? 'on' : 'off';
 
                 $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, $section_id, $data_to_store);
                 redirect('customize_appearance/' . $theme_id, 'refresh');
