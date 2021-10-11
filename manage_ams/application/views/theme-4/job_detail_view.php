@@ -41,6 +41,14 @@ $googleJobOBJ['jobLocation']['address']['addressLocality'] = !empty($job_details
 // Applicant location details
 // Salary
 
+$googleJobOBJ['baseSalary'] = [];
+$googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
+$googleJobOBJ['baseSalary']['currency'] = 'USD';
+$googleJobOBJ['baseSalary']['value'] = [];
+$googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
+$googleJobOBJ['baseSalary']['value']['@type']['unitText'] = '';
+$googleJobOBJ['baseSalary']['value']['@type']['value'] = '';
+
 if(!empty($job_details['Salary'])){
     //
     $salary = preg_replace('/\s+/', ' ', str_replace('-',' ',trim($job_details['Salary'])));
