@@ -53,8 +53,6 @@ $route['job-feed'] = 'Home/job_feed';
 $route['job-feed/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'Home/job_feed/$1/$2/$3/$4/$5';
 $route['job_feed/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'Home/job_feed/$1/$2/$3/$4/$5';
 $route['job-feed-details/(:any)'] = 'Home/job_feed_details/$1';
-// $route['job-feed/(:any)'] = 'Home/job_feed/$1';
-// $route['job-feed/(:any)/(:any)'] = 'Home/job_feed/$1/$2';
 
 $route['cron_ams'] = 'Home/cron';
 $route['cron_ams/(:any)'] = 'Home/cron/$1';
@@ -68,10 +66,10 @@ $route['organic_feed_test'] = 'home/organic_feed_test';
 $route['contact'] = 'home/contact_us';
 $route['terms-of-use'] = 'home/terms_of_use';
 $route['site-map'] = 'home/sitemap';
+$route['sitemap'] = 'home/sitemap';
 $route['join_our_talent_network'] = 'home/join_our_talent_network';
 $route['job_fair'] = 'home/job_fair';
 $route['print_ad/(:any)'] = 'home/print_ad/$1';
-//$route['job_details'] = 'home/job_details';
 $route['index/(:num)'] = 'home/index/$1';
 $route['job_details/(:any)'] = 'home/job_details/$1';
 $route['job_details/(:any)/(:any)'] = 'home/job_details/$1/$2';
@@ -80,9 +78,9 @@ $route['display-job/(:any)/(:any)'] = 'home/job_details/$1/$2';
 $route['listing_feeds'] = 'home/listing_feeds_sjb';
 $route['listing-feeds'] = 'home/listing_feeds_sjb';
 //route for search
-//$route['jobs/([^/]*)/([^/]*)/(.*)'] = 'home/index/';s
 $route['jobs/(.*)'] = 'home/index/';
 $route['recommend_job/(:any)'] = 'home/recommend_job/$1';
 //route for pages
 $route[':any'] = 'home/index/'; //For All pages.
 $route[':any/(:num)'] = 'home/index/'; //For Testimonials Page
+$route['(jobs-at)'] = 'Home/index/Jobs';

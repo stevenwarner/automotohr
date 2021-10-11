@@ -1,8 +1,6 @@
 <?php
 
 $acDate = $job_details['activation_date'];
-
-//echo $acDate;
 if(!preg_match('/[0-9]/',$acDate)) $acDate = date('m-d-Y');
 
 if(preg_replace('/[^0-9]/', '', $job_details['activation_date']) == '' && $job_details['approval_status_change_datetime'] != ''){
@@ -12,7 +10,7 @@ if(preg_replace('/[^0-9]/', '', $job_details['activation_date']) == '' && $job_d
     )->format('m-d-Y');
 }
 //
-$job_details['Title'] = preg_replace('/\s+/', ' ', $job_details['Title']);
+$job_details['Title'] = job_title_uri($job_details, true);
 
 $googleJobOBJ = [];
 // Basic job details
@@ -39,55 +37,55 @@ $googleJobOBJ['jobLocation']['address']['streetAddress'] = $job_details['Locatio
 $googleJobOBJ['jobLocation']['address']['postalCode'] = !empty($job_details['Location_ZipCode']) ? $job_details['Location_ZipCode'] : '';
 $googleJobOBJ['jobLocation']['address']['addressCountry'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CA" : "US";
 // Applicant location details
-// $googleJobOBJ['applicantLocationRequirements']['@type'] = 'Country';
-// $googleJobOBJ['applicantLocationRequirements']['name'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CAN" : "USA";
-// $googleJobOBJ['jobLocationType']['@type'] = 'JobPosting';
-// $googleJobOBJ['jobLocationType']['name'] = 'TELECOMMUTE';
 // Salary
-// $googleJobOBJ['baseSalary'] = [];
-// $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
-// $googleJobOBJ['baseSalary']['currency'] = 'USD';
-// $googleJobOBJ['baseSalary']['value'] = [];
-// $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
-// $googleJobOBJ['baseSalary']['value']['currency'] = 'USD';
-// $googleJobOBJ['baseSalary']['value']['value'] = '20';
-// $googleJobOBJ['baseSalary']['value']['unitText'] = 'HOUR';
 
-// if($job_details['Salary'] != ''){
-//     $googleJobOBJ['baseSalary'] = [];
-//     $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
-//     $googleJobOBJ['baseSalary']['currency'] = 'USD';
-//     $googleJobOBJ['baseSalary']['value'] = [];
-//     $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
-//     //
-//     $tmp = explode(' ', strtolower($job_details['Salary']));
-//     if(sizeof($tmp) > 1){
-//         $googleJobOBJ['baseSalary']['value']['minValue'] = str_replace('$', '', trim($tmp[0]));
-//         $googleJobOBJ['baseSalary']['value']['maxValue'] = str_replace('$', '', trim($tmp[2] ? $tmp[2] : $tmp[1]));
-//     } else $googleJobOBJ['baseSalary']['value']['value'] = $job_details['Salary'];
-//     if($job_details['SalaryType'] != ''){
-//         $salaryType = 'MONTH';
-//         switch ($job_details['SalaryType']) {
-//             case 'per_hour': $salaryType = 'HOUR'; break;
-//             case 'per_week': $salaryType = 'WEEK'; break;
-//             case 'per_year': $salaryType = 'YEAR'; break;
-//         }
-//         $googleJobOBJ['baseSalary']['value']['unitText'] = $salaryType; // HOUR, DAY, WEEK, MONTH, YEAR
-//     }
-// }
+$job_details['Salary'] = '2000';
+
+if(!empty($job_details['Salary'])){
+    //
+    $salary = preg_replace('/\s+/', ' ', str_replace('-',' ',trim($job_details['Salary'])));
+    //
+    $salary = preg_replace('/((\d\.?)\s)(?=\d[^>]*(<|$))/', '$2$3', $salary);
+    //
+    $salary = trim(preg_replace('/[^0-9\s]/', '', $salary));
+    //
+    if(!empty($salary)){
+        //
+        $salaryArray = explode(' ', $salary);
+        //
+        $salaryType = 'MONTH';
+        //
+        switch ($job_details['SalaryType']) {
+            case 'per_hour': $salaryType = 'HOUR'; break;
+            case 'per_week': $salaryType = 'WEEK'; break;
+            case 'per_year': $salaryType = 'YEAR'; break;
+        }
+        $googleJobOBJ['baseSalary'] = [];
+        $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
+        $googleJobOBJ['baseSalary']['value'] = [];
+        $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
+        $googleJobOBJ['baseSalary']['value']['currency'] = 'USD';
+        //
+        $googleJobOBJ['baseSalary']['value']['unitText'] = $salaryType;
+        //
+        if(count($salaryArray) == 1){
+            $googleJobOBJ['baseSalary']['value']['value'] = number_format($salaryArray[0], 2, '.', '');
+        } else {
+            $googleJobOBJ['baseSalary']['value']['minValue'] = number_format($salaryArray[0], 2, '.', '');
+            $googleJobOBJ['baseSalary']['value']['maxValue'] = number_format($salaryArray[1], 2, '.', '');
+        }
+    }
+}
+
 // Company identifier
 $googleJobOBJ['identifier'] = [];
 $googleJobOBJ['identifier']['@type'] = 'PropertyValue';
 $googleJobOBJ['identifier']['name'] = 'jid';
 $googleJobOBJ['identifier']['value'] = $job_details['user_sid'];
-// Industry
-// $googleJobOBJ['industry'] = [];
-// $googleJobOBJ['industry']['@type'] = 'JobPosting';
-// $googleJobOBJ['industry']['value'] = $job_details['JobCategory'];
 $googleJobOBJ['directApply'] = true;
-
+//
 echo '<script type="application/ld+json">';
-echo json_encode($googleJobOBJ);
+echo json_encode($googleJobOBJ, JSON_PRETTY_PRINT);
 echo '</script>';
 ?>
 

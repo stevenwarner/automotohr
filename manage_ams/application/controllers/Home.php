@@ -12,16 +12,14 @@ class Home extends CI_Controller {
         require_once(APPPATH . 'libraries/aws/aws.php');
         $server_name = clean_domain($_SERVER['SERVER_NAME']);
 
-        // // $_SERVER['HTTP_REFERER'] = 'https://www.google.com';
-
-        // _e($this->session->userdata('last_referral'), true);
-        // _e($this->session->userdata('referral_details'), true);
 
         if (isset($_SERVER['HTTP_REFERER'])) { // Check that the referer is external or internal
             $referral = $_SERVER['HTTP_REFERER'];
             $clean_referral = clean_domain($referral);
 
-            if(!$this->session->userdata('last_referral')) $this->session->set_userdata('last_referral', $referral);
+            if(!$this->session->userdata('last_referral')) {
+                $this->session->set_userdata('last_referral', $referral);
+            }
 
             if ($clean_referral != $server_name) {
                 $this->session->set_userdata('referral_details', $referral);
@@ -52,20 +50,6 @@ class Home extends CI_Controller {
 
         if ($data['status'] == 1 && $data['maintenance_mode'] == 0) {
             $isPaid                                                             = $data['is_paid'];
-            $data['meta_title']                                                 = $data['meta_title']; //#region MetaTags Information
-            $data['meta_description']                                           = $data['meta_description'];
-            $data['meta_keywords']                                              = $data['meta_keywords'];
-            $data['embedded_code']                                              = $data['embedded_code'];
-            // $data_countries                                                     = db_get_active_countries();
-            //
-            // foreach ($data_countries as $value) {
-            //    $data_states[$value['sid']]                                     = db_get_active_states($value['sid']);
-            // }
-
-            // $data_states_encode                                                 = htmlentities(json_encode($data_states));
-            // $data['active_countries']                                           = $data_countries;
-            // $data['active_states']                                              = $data_states;
-            // $data['states']                                                     = $data_states_encode;
             $country                                                            = '';
             $state                                                              = '';
             $city                                                               = '';
@@ -73,9 +57,28 @@ class Home extends CI_Controller {
             $keyword                                                            = '';
             $pageName                                                           = '';
             $segment1                                                           = $this->uri->segment(1);
+            //
+            $filter = [];
+            $filter['key'] = '';
+            $filter['value'] = '';
 
             if (!empty($segment1)) {
-                $pageName                                                       = urldecode($segment1);
+                if(preg_match('/jobs-at/', $segment1)){
+                    //
+                    $pageName = 'JOBS';
+                    $filter['key'] = 'company';
+                    $filter['value'] = strtolower(
+                        trim(
+                            preg_replace(
+                                '/-/',
+                                ' ',
+                                preg_replace('/jobs-at-/', '', $segment1)
+                            )
+                        )
+                    );
+                } else{
+                    $pageName                                                       = urldecode($segment1);
+                }
             }
 
             $segment2                                                           = $this->uri->segment(2);
@@ -225,24 +228,24 @@ class Home extends CI_Controller {
                         }
 
                         if (!empty($segment6)) { // if search is applied
-                            $list                                               = $this->job_details->get_all_company_jobs_ams($paid_jobs, $country, $state, $city, $categoryId, $keyword, $career_site_company_sid, $per_page, $offset);
-                            $list_count                                         = $this->job_details->get_all_company_jobs_ams($paid_jobs, $country, $state, $city, $categoryId, $keyword, $career_site_company_sid, $per_page, $offset, true);
+                            $list                                               = $this->job_details->get_all_company_jobs_ams($paid_jobs, $country, $state, $city, $categoryId, $keyword, $career_site_company_sid, $per_page, $offset, false, $filter);
+                            $list_count                                         = $this->job_details->get_all_company_jobs_ams($paid_jobs, $country, $state, $city, $categoryId, $keyword, $career_site_company_sid, $per_page, $offset, true, $filter);
 
                             if(!empty($paid_jobs)) {
-                                $featured_jobs                                  = $this->job_details->paid_job_details($paid_jobs, $country, $state, $city, $categoryId, $keyword, $per_page, $offset);
-                                $featured_jobs_count                            = $this->job_details->paid_job_details($paid_jobs, $country, $state, $city, $categoryId, $keyword, $per_page, $offset, true);
+                                $featured_jobs                                  = $this->job_details->paid_job_details($paid_jobs, $country, $state, $city, $categoryId, $keyword, $per_page, $offset, false, $filter);
+                                $featured_jobs_count                            = $this->job_details->paid_job_details($paid_jobs, $country, $state, $city, $categoryId, $keyword, $per_page, $offset, true, $filter);
                             }
                         } else {
-                            $list                                               = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid, $per_page, $offset);
-                            $list_count                                         = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid, $per_page, $offset, true);
+                            $list                                               = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid, $per_page, $offset, false, $filter);
+                            $list_count                                         = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid, $per_page, $offset, true, $filter);
 
                             if(!empty($paid_jobs)) {
-                                $featured_jobs                                  = $this->job_details->paid_job_details($paid_jobs, NULL, NULL, NULL, NULL, NULL, $per_page, $offset);
-                                $featured_jobs_count                            = $this->job_details->paid_job_details($paid_jobs, NULL, NULL, NULL, NULL, NULL, $per_page, $offset, true);
+                                $featured_jobs                                  = $this->job_details->paid_job_details($paid_jobs, NULL, NULL, NULL, NULL, NULL, $per_page, $offset, false, $filter);
+                                $featured_jobs_count                            = $this->job_details->paid_job_details($paid_jobs, NULL, NULL, NULL, NULL, NULL, $per_page, $offset, true, $filter);
                             }
                         }
 
-                        $all_active_jobs                                        = $this->job_details->filters_of_active_jobs($career_site_company_sid);
+                        $all_active_jobs                                        = $this->job_details->filters_of_active_jobs($career_site_company_sid, $filter);
 
                         if (!empty($all_active_jobs)) { // we need it for search filters as we only need to show filters as per active jobs only
                             for($i=0; $i<count($all_active_jobs); $i++) {
@@ -547,12 +550,9 @@ class Home extends CI_Controller {
                         $data['job_listings_count']                             = $list_count;
                         $data['total_calls']                                    = ceil($list_count+$featured_jobs_count)/$per_page;
                         if(!empty($ajax_flag) && $ajax_flag){
-                            // print_r(json_encode($data['featured_jobs']));
                             print_r(json_encode($data['job_listings']));
                             die();
                         }
-                        // $jobCategories                                          = db_get_job_category($company_id);
-                        // $data['job_categories']                                 = $jobCategories;
                         function array_sort_state_name($a, $b) {
                             return strnatcmp($a['state_name'], $b['state_name']);
                           }
@@ -568,9 +568,10 @@ class Home extends CI_Controller {
                               usort($ca_states, 'array_sort_state_name'); // sort alphabetically by name
                               $counntry_states_array['38'] = $ca_states;
                           }
-
                         $data['job_categories']                                 = array();
-                        asort($categories_in_active_jobs);
+                        if(!empty($categories_in_active_jobs)) {
+                            asort($categories_in_active_jobs);
+                        }
                         $data['categories_in_active_jobs']                      = $categories_in_active_jobs;
                         $data_states_encode                                     = htmlentities(json_encode($counntry_states_array));
                         $data['active_countries']                               = $countries_array;
@@ -581,7 +582,6 @@ class Home extends CI_Controller {
                         $jobs_page_title                                        = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'jobs', 'jobs_page_title');
                         $jobs_page_title                                        = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
                         $data['jobs_page_title']                                = $jobs_page_title;
-                        // echo $company_id.'<br>'.$jobs_page_title; exit;
                         $footer_content                                         = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'home', 'footer_content');
                         $footer_content['title']                                = str_replace("{{company_name}}", $company_name, $footer_content['title']);
                         $footer_content['content']                              = str_replace("{{company_name}}", $company_name, $footer_content['content']);
@@ -916,8 +916,8 @@ class Home extends CI_Controller {
                             $list['q_passing']                                  = $portal_screening_questionnaires[0]['passing_score'];
                             $list['q_send_pass']                                = $portal_screening_questionnaires[0]['auto_reply_pass'];
                             $list['q_send_fail']                                = $portal_screening_questionnaires[0]['auto_reply_fail'];
-                            $list['q_pass_text']                                = '';//$portal_screening_questionnaires[0]['email_text_pass'];
-                            $list['q_fail_text']                                = '';//$portal_screening_questionnaires[0]['email_text_fail'];
+                            $list['q_pass_text']                                = '';
+                            $list['q_fail_text']                                = '';
                             $list['my_id']                                      = 'q_question_' . $questionnaire_sid;
                             $screening_questions_numrows                        = $this->job_details->get_screenings_count_by_id($questionnaire_sid);
 
@@ -955,8 +955,6 @@ class Home extends CI_Controller {
                     $data['company_details']                                    = $this->job_details->get_company_details($list['user_sid']);
                     $data['next_job']                                           = ''; //getting next and previous jobs link STARTS
                     $data['prev_job']                                           = '';
-                    $next_job_anchor                                            = '';
-                    $prev_job_anchor                                            = '';
                     $next_job_id                                                = $this->job_details->next_job($list['sid'], $list['user_sid']);
                     $prev_job_id                                                = $this->job_details->previous_job($list['sid'], $list['user_sid']);
 
@@ -975,13 +973,11 @@ class Home extends CI_Controller {
                     $fb_google_share_url                                        = str_replace(':','%3A',$portal_job_url);
                     $btn_facebook                                               = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . $fb_google_share_url . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-2.png"></a>';
                     $btn_twitter                                                = '<a target="_blank" href="https://twitter.com/intent/tweet?text=' . urlencode($list['Title']) . '&amp;url=' . urlencode($portal_job_url) . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-3.png"></a>';
-                   // $btn_google                                                 = '<a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=' . $fb_google_share_url . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-1.png"></a>';
                     $btn_linkedin                                               = '<a target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=' . urlencode($portal_job_url) . '&amp;title=' . urlencode($list['Title']) . '&amp;summary=' . urlencode($list['Title']) . '&amp;source=' . $portal_job_url . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/theme-1/images/social-4.png"></a>';
                     $btn_job_link                                               = '<a target="_blank" href="' . $portal_job_url . '">' . ucwords($list['Title']) . '</a>';
                     $btn_tell_a_friend                                          = '<a class="tellafrien-popup" href="javascript:;" data-toggle="modal" data-target="#tellAFriendModal"><span><i class="fa fa-hand-o-right"></i></span>Tell A Friend</a>';
                     $links                                                      = '';
                     $links                                                      .= '<ul>';
-                   // $links                                                      .= '<li>' . $btn_google . '</li>';
                     $links                                                      .= '<li>' . $btn_facebook . '</li>';
                     $links                                                      .= '<li>' . $btn_linkedin . '</li>';
                     $links                                                      .= '<li>' . $btn_twitter . '</li>';
@@ -993,7 +989,6 @@ class Home extends CI_Controller {
                     $links                                                      .= '</ul>';
                     $list['share_links']                                        = $links; //Generate Share Links - end
                     $data['job_details']                                        = $list;
-
                     if (empty($data['job_details']['pictures'])) {
                         $data['image']                                          = base_url('assets/theme-1/images/new_logo.JPG');
                     } else {
@@ -2848,6 +2843,21 @@ class Home extends CI_Controller {
         if (!empty($website)) {
             $data['dealership_website']                                         = $website;
         }
+        // Get all active companies
+        $activeCompanies = $this->job_details->GetAllActiveCompanies();
+        //
+        $companyJobs = [];
+        //
+        foreach($activeCompanies as $comp){
+            $companyJobs[] = [
+                'title' => 'Jobs at '.ucwords($comp['CompanyName']),
+                'slug' => slug('jobs at '.$comp['CompanyName'])
+            ];
+        }
+        //
+        $data['companyJobs'] = $companyJobs;
+        //
+        unset($activeCompanies, $companyJobs);
 
         if ($data['status'] == 1 && $data['maintenance_mode'] == 0) {
             $data['heading_title']                                              = 'Automoto Social Jobs: Site Map';

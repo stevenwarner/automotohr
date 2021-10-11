@@ -844,37 +844,38 @@ if(!function_exists('phonenumber_format')){
 
 if(!function_exists('job_title_uri')){
     function job_title_uri($job, $is_title = false){
-        $brand = "AutomotoSocial";
-        $location = " jobs in";
-        if (!empty($job['Location_City'])) {
-            $location .= ' '.$job['Location_City'];
+        //
+        $companyName = strtolower(trim($job['CompanyName']));
+        //
+        $title = ucwords(trim(preg_replace('/'.($companyName).'/', '', explode('-',preg_replace('/\s+/i', ' ', trim(strtolower(str_replace(',', '-',$job['Title'])))))[0]))).'';
+        //
+        $postfix = ' Job in';
+        //
+        if(!empty($job['Location_City'])){
+            $postfix .= ' '.$job['Location_City'].',';
+        } 
+        if(!empty($job['Location_State'])){
+            $postfix .= ' '.$job['Location_State'].' at';
+        } else {
+            $postfix .= ' '.$job['Location_Country'].' at ';
         }
-        
-        if (empty($job['Location_City']) && !empty($job['Location_State'])) {
-            $location .=  ' '.$job['Location_State'];
-        }
-        if (strpos($job['TitleOnly'], "-") !== FALSE) {
-            $exploded = explode('-', $job['TitleOnly']); 
-            $brand = trim(@end($exploded));
-            $job['TitleOnly'] = isset($exploded[0]) ? $exploded[0] : $job['TitleOnly'];
-        }
-        $job['TitleOnly'] = trim($job['TitleOnly']);
-        $job['TitleOnly'] = preg_replace('!\s+!', ' ', $job['TitleOnly']);
-        $job_title = $job['TitleOnly'].$location;
-        
+        //
+        $postfix .= ' '.$job['CompanyName'];
+        //
+        $title .= ''.$postfix;
+        //
         if($is_title){
-            return $job_title." | ".$brand;
+            return $title;
         }else{
-            if($brand != "AutomotoSocial")
-                $job_title = $job_title." at ".$brand;
-            $job_title = preg_replace("/[^A-Za-z0-9 ]/", '', $job_title);
-            $job_title = str_replace(" ","-",$job_title);
-            $job_title = strtolower($job_title);
-            return '/display-job/' . $job_title."-".$job['sid'];
+            $title = preg_replace("/[^A-Za-z0-9 ]/", '', $title);
+            $title = str_replace(" ","-",$title);
+            $title = strtolower($title);
+            return '/display-job/' . $title."-".$job['sid'];
         }
         
     }
 }
+
 if(!function_exists('job_meta_keywords')){
     function job_meta_keywords($job){
         $meta_keywords = "Job";
@@ -1421,5 +1422,21 @@ if (!function_exists('getFileData')) {
         curl_close($ch);
         //
         return $data;
+    }
+}
+
+//
+if(!function_exists('slug')){
+    function slug($string){
+        return 
+        preg_replace(
+            '/[^a-zA-Z0-9]/i',
+            '-',
+            preg_replace(
+                '/\s+/',
+                ' ',
+                strtolower(trim($string))
+            )
+        );
     }
 }

@@ -198,15 +198,15 @@ class Job_details extends CI_Model {
     }
 
     function fetch_company_jobs_details($sid, $user_sid = NULL) {
-        $this->db->select('*');
-        $this->db->where('sid', $sid);
+        $this->db->select('portal_job_listings.*, users.CompanyName');
+        $this->db->where('portal_job_listings.sid', $sid);
+        $this->db->join('users', 'users.sid = portal_job_listings.user_sid', 'inner');
 
         if($user_sid != NULL){
-            $this->db->where('user_sid', $user_sid);
+            $this->db->where('portal_job_listings.user_sid', $user_sid);
         }
 
-        $this->db->where('active', 1);
-        //$this->db->where('published_on_career_page', 1);
+        $this->db->where('portal_job_listings.active', 1);
         $this->db->from('portal_job_listings');
         $result = $this->db->get()->result_array();
 
@@ -649,7 +649,7 @@ class Job_details extends CI_Model {
         return $record_arr;
     }
 
-    function get_all_company_jobs_ams($paid_jobs, $country = NULL, $state = NULL, $city = NULL, $categoryId = NULL, $keyword = NULL, $career_site_company_sid = array(), $limit = null, $offset = null, $count_record = false) {
+    function get_all_company_jobs_ams($paid_jobs, $country = NULL, $state = NULL, $city = NULL, $categoryId = NULL, $keyword = NULL, $career_site_company_sid = array(), $limit = null, $offset = null, $count_record = false, $filter = []) {
 //        echo $country.' - '.$state.' - '.$city.' - '.$categoryId.' - '.$keyword.'';
         if(!$count_record){
             $this->db->select('portal_job_listings.*, users.CompanyName, users.YouTubeVideo, users.Logo, users.ContactName, users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, portal_employer.domain_type, users.has_job_approval_rights');
@@ -700,6 +700,11 @@ class Job_details extends CI_Model {
         $this->db->order_by('activation_date', 'DESC');
         if(!$count_record) $this->db->group_by('portal_job_listings.sid');
         $this->db->from('portal_job_listings');
+        
+        //
+        if(!empty($filter) && $filter['key'] == 'company'){
+            $this->db->where('LOWER(users.CompanyName)', $filter['value']);
+        }
 
         if($count_record){
             $record_arr = $this->db->count_all_results();
@@ -764,7 +769,7 @@ class Job_details extends CI_Model {
         return $record_arr;
     }
 
-    function paid_job_details($paid_jobs, $country = NULL, $state = NULL, $city = NULL, $categoryId = NULL, $keyword = NULL, $limit = null, $offset = null, $count_record = false) {
+    function paid_job_details($paid_jobs, $country = NULL, $state = NULL, $city = NULL, $categoryId = NULL, $keyword = NULL, $limit = null, $offset = null, $count_record = false, $filter = []) {
         if(!$count_record){
             $this->db->select('portal_job_listings.*, users.CompanyName, users.YouTubeVideo, users.Logo, users.ContactName, users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, portal_employer.domain_type, users.has_job_approval_rights');
         }
@@ -800,6 +805,11 @@ class Job_details extends CI_Model {
         $this->db->join('portal_employer', 'portal_employer.user_sid = portal_job_listings.user_sid', 'left');
         $this->db->order_by('activation_date', 'DESC');
         $this->db->from('portal_job_listings');
+
+        //
+        if(!empty($filter) && $filter['key'] == 'company'){
+            $this->db->where('LOWER(users.CompanyName)', $filter['value']);
+        }
 
         if($count_record){
             $record_arr = $this->db->count_all_results();
@@ -868,6 +878,10 @@ class Job_details extends CI_Model {
         } else {
             return 0;
         }
+    }
+   
+    function GetAllActiveCompanies() {
+        return $this->db->query("SELECT `sid`, `CompanyName` FROM `users` WHERE `parent_sid` = '0' AND `active` = '1' AND `is_paid` = '1' AND (`expiry_date` > '2016-04-20 13:26:27' OR `expiry_date` IS NULL) ORDER BY CompanyName ASC")->result_array();
     }
 
     function get_portal_detail($company_id) {
@@ -998,7 +1012,7 @@ class Job_details extends CI_Model {
         return $record_arr[0]['career_site_listings_only'];
     }
 
-    function filters_of_active_jobs($career_site_company_sid = array()) {
+    function filters_of_active_jobs($career_site_company_sid = array(), $filter = []) {
         $this->db->select('portal_job_listings.Location_Country, portal_job_listings.Location_State, portal_job_listings.JobCategory, users.has_job_approval_rights');
         $this->db->where('portal_job_listings.active', 1);
         $this->db->where('portal_job_listings.organic_feed', 1);
@@ -1007,6 +1021,12 @@ class Job_details extends CI_Model {
         if(!empty($career_site_company_sid)) {
             $this->db->where_not_in('portal_job_listings.user_sid', $career_site_company_sid);
         }
+
+        //
+        if(!empty($filter) && $filter['key'] == 'company'){
+            $this->db->where('LOWER(users.CompanyName)', $filter['value']);
+        }
+
 
         $this->db->where('users.active', 1);
         $this->db->where('users.career_site_listings_only', 0);
