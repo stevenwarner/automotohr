@@ -36,10 +36,10 @@ $googleJobOBJ['jobLocation']['address']['@type'] = 'PostalAddress';
 $googleJobOBJ['jobLocation']['address']['streetAddress'] = $job_details['Location'] != '' ? $job_details['Location'] : $job_details['Location_City'];
 $googleJobOBJ['jobLocation']['address']['postalCode'] = !empty($job_details['Location_ZipCode']) ? $job_details['Location_ZipCode'] : '';
 $googleJobOBJ['jobLocation']['address']['addressCountry'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CA" : "US";
+$googleJobOBJ['jobLocation']['address']['addressRegion'] = !empty($job_details['Location_State']) ? $job_details['Location_State'] : '';
+$googleJobOBJ['jobLocation']['address']['addressLocality'] = !empty($job_details['Location_City']) ? $job_details['Location_City'] : '';
 // Applicant location details
 // Salary
-
-$job_details['Salary'] = '2000';
 
 if(!empty($job_details['Salary'])){
     //
@@ -62,9 +62,9 @@ if(!empty($job_details['Salary'])){
         }
         $googleJobOBJ['baseSalary'] = [];
         $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
+        $googleJobOBJ['baseSalary']['currency'] = 'USD';
         $googleJobOBJ['baseSalary']['value'] = [];
         $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
-        $googleJobOBJ['baseSalary']['value']['currency'] = 'USD';
         //
         $googleJobOBJ['baseSalary']['value']['unitText'] = $salaryType;
         //
