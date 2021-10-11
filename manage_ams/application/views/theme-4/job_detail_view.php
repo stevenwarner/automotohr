@@ -46,8 +46,8 @@ $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
 $googleJobOBJ['baseSalary']['currency'] = 'USD';
 $googleJobOBJ['baseSalary']['value'] = [];
 $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
-$googleJobOBJ['baseSalary']['value']['@type']['unitText'] = '';
-$googleJobOBJ['baseSalary']['value']['@type']['value'] = '';
+$googleJobOBJ['baseSalary']['value']['unitText'] = '';
+$googleJobOBJ['baseSalary']['value']['value'] = '';
 
 if(!empty($job_details['Salary'])){
     //
