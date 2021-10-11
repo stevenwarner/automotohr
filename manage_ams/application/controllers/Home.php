@@ -3194,7 +3194,8 @@ class Home extends CI_Controller {
                 $newXml .= "</url>";
         }
         //
-        $xmlString = '<?xml version="1.0" encoding="UTF-8" ?>';
+        $xmlString = '<?xml version="1.0" encoding="utf-8"?>';
+        $xmlString .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
         // Companies jobs
         $activeCompaniesWithJobs = $this->job_details->GetAllActiveCompaniesWithActiveJobs();
         //
@@ -3211,7 +3212,6 @@ class Home extends CI_Controller {
         }
         //
         $xmlString .= '</urlset>';
-        echo utf8_encode(trim(preg_replace('/\s+/', ' ', $xmlString)));
         echo " Sitemap Updated";
         file_put_contents('sitemap.xml', $xmlString);
         $submit_to_google = getFileData("https://www.google.com/ping?sitemap=https://www.automotosocial.com/sitemap.xml");
