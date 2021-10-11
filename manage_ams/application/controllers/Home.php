@@ -66,7 +66,7 @@ class Home extends CI_Controller {
                 if(preg_match('/jobs-at/', $segment1)){
                     //
                     $pageName = 'JOBS';
-                    $filter['key'] = 'company';
+                    $filter['key'] = 'users.CompanyName';
                     $filter['value'] = strtolower(
                         trim(
                             preg_replace(
@@ -2844,18 +2844,7 @@ class Home extends CI_Controller {
             $data['dealership_website']                                         = $website;
         }
         // Get all active companies
-        $activeCompanies = $this->job_details->GetAllActiveCompanies();
-        //
-        $companyJobs = [];
-        //
-        foreach($activeCompanies as $comp){
-            $companyJobs[] = [
-                'title' => 'Jobs at '.ucwords($comp['CompanyName']),
-                'slug' => slug('jobs at '.$comp['CompanyName'])
-            ];
-        }
-        //
-        $data['companyJobs'] = $companyJobs;
+        $data['companyJobs'] = $this->job_details->GetAllActiveCompaniesWithActiveJobs();
         //
         unset($activeCompanies, $companyJobs);
 
@@ -3143,14 +3132,11 @@ class Home extends CI_Controller {
     //create sitemap for goole
     function create_sitemap($vf){
         if($vf != 'ljfgdkuhgksadgfowetroyu2t352g5jhwegrwjkfgewkjgrk23gfhsdgfgdkjgfkjfg2373t4kwgfkhdsgfhd') return ;
-        $number_of_jobs = 20;
 
         $newXml = '';
-        // $list = $this->job_details->get_all_company_jobs_ams_cron($number_of_jobs, $job_ids);
         $list = $this->job_details->get_all_company_jobs_ams_cron_2();
         //
         foreach($list as $key => $value){
-            // if(!in_array($value['sid'],$job_ids)){
                 $list[$key]['TitleOnly'] = $list[$key]['Title'];
                 $has_job_approval_rights                        = $value['has_job_approval_rights'];
 
@@ -3184,7 +3170,7 @@ class Home extends CI_Controller {
                 $state_id                                       = $value['Location_State'];
 
                 if (!empty($state_id) && $state_id != 'undefined') {
-                    $list[$key]['Location_State']           = $this->job_details->get_statename_by_id($state_id); // get state name
+                    $list[$key]['Location_State']           = $this->job_details->get_statename_by_id($state_id)[0]['state_name']; // get state name
                     ;
                 }
 
@@ -3201,46 +3187,35 @@ class Home extends CI_Controller {
                     $job_category                               = implode(', ', $job_category_array);
                     $list[$key]['JobCategory']                  = $job_category;
                 }
+                //
                 $job_url = 'https://www.automotosocial.com'.job_title_uri($list[$key]);
-                $newXml .= '<url><loc>'.$job_url.'</loc></url>';
-            // }
+                $newXml .= "<url>";
+                $newXml .= '    <loc>'.$job_url."</loc>\n";
+                $newXml .= "</url>";
         }
+        //
+        $xmlString = '<?xml version="1.0" encoding="UTF-8" ?>';
+        // Companies jobs
+        $activeCompaniesWithJobs = $this->job_details->GetAllActiveCompaniesWithActiveJobs();
+        //
+        if(!empty($activeCompaniesWithJobs)){
+            foreach($activeCompaniesWithJobs as $comp){
+                $xmlString .= "<url>";
+                $xmlString .= '     <loc>https://www.automotosocial.com/'.($comp['slug'])."</loc>";
+                $xmlString .= "</url>";
+            }
+        }
+        //
         if(!empty($newXml)){
-            $xmlString = '<?xml version="1.0" encoding="UTF-8"?>
-            <urlset
-                  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-                        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-                        
-                    <url>
-                    <loc>https://www.automotosocial.com/</loc>
-                    </url>
-                    <url>
-                    <loc>https://www.automotosocial.com/jobs</loc>
-                    </url>
-                    <url>
-                    <loc>https://www.automotosocial.com/about-us</loc>
-                    </url>
-                    <url>
-                    <loc>https://www.automotosocial.com/Jobs</loc>
-                    </url>
-                    <url>
-                    <loc>https://www.automotosocial.com/terms-of-use</loc>
-                    </url>
-                    <url>
-                    <loc>https://www.automotosocial.com/site-map</loc>
-                    </url>';
             $xmlString .= $newXml;
-            $xmlString .= '</urlset>';
-            file_put_contents('sitemap.xml', $xmlString);
-            $submit_to_google = getFileData("https://www.google.com/ping?sitemap=https://www.automotosocial.com/sitemap.xml");
-            echo $submit_to_google;
-
-            echo " Sitemap Updated";
-        }else{
-            echo "No new jobs found for sitemap";
         }
+        //
+        $xmlString .= '</urlset>';
+        echo utf8_encode(trim(preg_replace('/\s+/', ' ', $xmlString)));
+        echo " Sitemap Updated";
+        file_put_contents('sitemap.xml', $xmlString);
+        $submit_to_google = getFileData("https://www.google.com/ping?sitemap=https://www.automotosocial.com/sitemap.xml");
+        echo $submit_to_google;
         mail(TO_EMAIL_DEV, 'Google Hire Cron Job at '.date('Y-m-d H:i:s').'', print_r($list, true));
 
     }

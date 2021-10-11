@@ -55,6 +55,8 @@ manage_portal/assets/cgi-bin
 
 manage_ams/assets/temp_files
 manage_ams/assets/cgi-bin
+manage_ams/sitemap.xml
+manage_portal/sitemap.xml
 
 
 manage_ams/10-23-2019PDT23-59-59-gapi.txt
