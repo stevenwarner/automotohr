@@ -586,6 +586,12 @@ class Home extends CI_Controller {
                         $footer_content['title']                                = str_replace("{{company_name}}", $company_name, $footer_content['title']);
                         $footer_content['content']                              = str_replace("{{company_name}}", $company_name, $footer_content['content']);
                         $data['footer_content']                                 = $footer_content;
+                        //
+                        if($filter['key'] == 'users.CompanyName'){
+                            $data['meta_title'] = 'Jobs at '.ucwords($filter['value']).', Automotosocial';
+                        } else{
+                            $data['meta_title'] = 'Jobs in USA, Canada at Automotosocial';
+                        }
 
                         $this->load->view($theme_name . '/_parts/header_view', $data);
                         $this->load->view($theme_name . '/_parts/page_banner');
