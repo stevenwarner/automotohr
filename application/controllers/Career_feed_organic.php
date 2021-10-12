@@ -126,7 +126,7 @@ mail(TO_EMAIL_DEV, 'Feed XML - Career: ' . date('Y-m-d H:i:s'), 'Pinged');
 
                 $rows .=  "
                     <job>
-                    <title><![CDATA[" . db_get_job_title($company_id, $job['Title'], false). "]]></title>
+                    <title><![CDATA[" . $job['Title']. "]]></title>
                     <date><![CDATA[" . date_with_time($publish_date) . " PST]]></date>
                     <job_id><![CDATA[" . $uid . "]]></job_id>
                     <url><![CDATA[" . STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid . "]]></url>

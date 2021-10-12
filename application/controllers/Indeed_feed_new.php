@@ -171,7 +171,7 @@ class Indeed_feed_new extends CI_Controller {
 
                 $rows .=  "
                     <job>
-                    <title><![CDATA[" . db_get_job_title($company_id, $job['Title'], false) . "]]></title>
+                    <title><![CDATA[" . $job['Title'] . "]]></title>
                     <date><![CDATA[" . date_with_time($publish_date) . " PST]]></date>
                     <referencenumber><![CDATA[" . $uid . "]]></referencenumber>
                     <url><![CDATA[" . STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid . "]]></url>
@@ -355,7 +355,7 @@ class Indeed_feed_new extends CI_Controller {
                 //
                 $rows .= "
                     <job>
-                        <title><![CDATA[" . db_get_job_title($companySid, $job['Title'], false) . "]]></title>
+                        <title><![CDATA[" . $job['Title'] . "]]></title>
                         <sponsored><![CDATA[".($isSponsored)."]]></sponsored>
                         <budget><![CDATA[".($hasBudget)."]]></budget>
                         <date><![CDATA[" . (DateTime::createFromFormat('Y-m-d H:i:s', $publishDate)->format('D, d M Y H:i:s')) . " PST]]></date>
@@ -509,7 +509,7 @@ class Indeed_feed_new extends CI_Controller {
                 //
                 $rows .= "
                     <job>
-                        <title><![CDATA[" . db_get_job_title($companySid, $job['Title'], false) . "]]></title>
+                        <title><![CDATA[" . $job['Title'] . "]]></title>
                         <sponsored><![CDATA[".($isSponsored)."]]></sponsored>
                         <budget><![CDATA[".($hasBudget)."]]></budget>
                         <date><![CDATA[" . (DateTime::createFromFormat('Y-m-d H:i:s', $publishDate)->format('D, d M Y H:i:s')) . " PST]]></date>

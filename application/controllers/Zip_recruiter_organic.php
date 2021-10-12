@@ -88,7 +88,6 @@ private function addLastRead($sid){
                 $company_id = $job['user_sid'];
                 $companyPortal = $this->all_feed_model->get_portal_detail($company_id);
                 if(!isset($companyPortal['sub_domain'])) continue;
-                //$companyName = $this->all_feed_model->get_company_name_by_id($company_id);
                 $companyDetail = $this->all_feed_model->get_company_detail($company_id);
                 $companyName = $companyDetail['CompanyName'];
                 $has_job_approval_rights = $companyDetail['has_job_approval_rights'];
@@ -161,38 +160,13 @@ private function addLastRead($sid){
                     $jobType = "";
                 }
 
-                // $JobCategorys = $job['JobCategory'];
-                //
-                // if ($JobCategorys != null) {
-                //     $cat_id = explode(',', $JobCategorys);
-                //     $job_category_array = array();
-                //
-                //     foreach ($cat_id as $id) {
-                //         $job_cat_name = $this->all_feed_model->get_job_category_name_by_id($id);
-                //         $job_category_array[] = $job_cat_name[0]['value'];
-                //     }
-                //
-                //     $job_category = implode(', ', $job_category_array);
-                // }
-
                 $jobDescription ="Job Description:".'<br /><br />'.str_replace('"', "'", strip_tags($job['JobDescription'], '<br>'));
-                // _e($jobDescription,true);
                 if (isset($job['JobRequirements']) && $job['JobRequirements'] != NULL) {
                     $jobDescription .= '<br /><br />'." Job Requirement:".str_replace('"', "'", strip_tags($job['JobRequirements'], '<br>'));
                 } else {
                     $jobRequirements = "";
                 }
                 //
-                // if (!empty($companyDetail['YouTubeVideo'])) {
-                //     $companyYoutube = "https://www.youtube.com/watch?v=" . $companyDetail['YouTubeVideo'];
-                // } else {
-                //     $companyYoutube = $companyDetail['YouTubeVideo'];
-                // }
-                //
-                // if (!empty($job['YouTube_Video'])) {
-                //     $job['YouTube_Video'] = "https://www.youtube.com/watch?v=" . $job['YouTube_Video'];
-                // }
-
                 $newArray[] = array(
                     'title' => $job['Title'],
                     'dateo'  =>  ($publish_date),
@@ -205,38 +179,9 @@ private function addLastRead($sid){
                     'postalcode'  => $zipcode,
                     'description'  => $jobDescription
                 );
-
-                // $job_url = STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . '/job_details/' . $uid;
-                // $row = "<job>
-                // <title><![CDATA[" . $job['Title'] . "]]></title>
-                // <date><![CDATA[" . date_with_time($publish_date) . " PST]]></date>
-                // <referencenumber><![CDATA[" . $uid . "]]></referencenumber>
-                // <company><![CDATA[" . $companyName . "]]></company>
-                // <city><![CDATA[" . $city . "]]></city>
-                // <state><![CDATA[" . $state['state_name'] . "]]></state>
-                // <country><![CDATA[" . $country['country_code'] . "]]></country>
-                // <postalcode><![CDATA[" . $zipcode . "]]></postalcode>
-                // <description><![CDATA[" . strip_tags($job['JobDescription'], '<br>') . "]]></description>
-                // </job>";
-
-                // $row = trim($row);
-                // $row = preg_replace('/\s+/', '', trim($row));
-                // Insert data into database
-                // $this->all_feed_model->setXmlJob(array(
-                //     'job_content' => $row,
-                //     'job_sid' => $job['sid'],
-                //     'company_sid' => $company_id,
-                //     'is_ziprecruiter_job' => 1
-                // ), $job['sid'], 'zipcrecuiter');
-                // $rows .= $row;
             }
         }
 
-        // Sort array bt date
-        // function sortByDateDESC($a, $b){
-        //     return ($a['date'] <= $b["date"]) ? -1 : 1;
-        // }
-        // usort($newArray, "sortByDateDESC");
         $rows = '';
         if(sizeof($newArray)){
             $columns = array_column($newArray, 'dateo');

@@ -44,6 +44,7 @@ class Zip_recruiter_feed extends CI_Controller {
 
         foreach ($jobData as $job) {
             if (in_array($job['user_sid'], $activeCompaniesArray)) {
+                //
                 $company_id = $job['user_sid'];
                 $companyPortal = $this->all_feed_model->get_portal_detail($company_id);
 
@@ -95,7 +96,7 @@ class Zip_recruiter_feed extends CI_Controller {
 
                 $rows .=  "<job>
                 <trafficboost>double</trafficboost>
-                <title><![CDATA[" . db_get_job_title($company_id, $job['Title'], false) . "]]></title>
+                <title><![CDATA[" . $job['Title'] . "]]></title>
                 <date><![CDATA[" . date_with_time($job['activation_date']) . " PST]]></date>
                 <referencenumber><![CDATA[" . $job['sid'] . "]]></referencenumber>
                 <url><![CDATA[" . $companyPortal['sub_domain'] . "/job_details/" . $job['sid'] . "]]></url>
@@ -104,7 +105,7 @@ class Zip_recruiter_feed extends CI_Controller {
                 <state><![CDATA[" . $state['state_name'] . "]]></state>
                 <country><![CDATA[" . $country['country_code'] . "]]></country>
                 ".( $zipcode == '' ? '<postalcode />' :  '<postalcode><![CDATA[' . $zipcode . ']]></postalcode>' )."
-                <description><![CDATA[" . $jobDescription. "]]></description>
+                <description><![CDATA[" . $JobDescription. "]]></description>
 				<email />
 				<url />
 				<category />

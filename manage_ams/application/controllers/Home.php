@@ -2543,7 +2543,7 @@ class Home extends CI_Controller {
                     }
 
                     if($job_title_location == 1) {
-                        $title                                                  = $list[$key]['Title'] . '  - ' . ucfirst($list[$key]['Location_City']) . ', ' . $list[$key]['Location_State'] . ', ' . $list[$key]['Location_Country'] ;
+                        $title                                                  = $list[$key]['Title'];
                     } else {
                         $title                                                  = $list[$key]['Title'];
                     }
@@ -2697,7 +2697,7 @@ class Home extends CI_Controller {
                     }
 
                     if($job_title_location == 1) {
-                        $title                                                  = $list[$key]['Title'] . '  - ' . ucfirst($list[$key]['Location_City']) . ', ' . $state . ', ' . $country_name;
+                        $title                                                  = $list[$key]['Title'];
                     } else {
                         $title                                                  = $list[$key]['Title'];
                     }
