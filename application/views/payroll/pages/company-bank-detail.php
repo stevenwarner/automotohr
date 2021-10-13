@@ -3,40 +3,46 @@
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->
-            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "company", "subIndex" =>"federal_tax_info"]);?>
+            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "bank", "subIndex" =>""]);?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
                 <!-- Heading -->
                 <div class="row">
                     <div class="col-sm-12">
                         <h1 class="csF18 csB7">
-                            Federal tax confirmation
+                            Bank account information
                         </h1>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h1 class="csF18 csB7">
+                            Bank account
+                        </h1>
+                        <p class="csF16">
+                            We create bank account varifications at 5:00pm PT everyday. If you finish this step before then, you will see the test deposits by the morning of the next business day. If you enter this information after 5:00pm PT, we will create the test deposits the next business dat at 5:oopm PT.
+                        </p>
+                    </div>
+                </div>
+                <br>
                 <!-- Body -->
-                <?php if (!empty($taxInfo)) { ?>
+                <?php if (!empty($bankInfo)) { ?>
                     <div class="row">
                         <div class="col-sm-12">
                             <p class="csF16">
-                                <b><?php echo $taxInfo['ein_number']; ?></b>
+                                <b><?php echo $bankInfo['ein_number']; ?></b>
                                 <br>
-                                <span>Federal EIN</span>
+                                <span>Routing number (9 digits)</span>
                             </p>
                             <p class="csF16">
-                                <b><?php echo $taxInfo['tax_payer_type']; ?></b>
+                                <b><?php echo $bankInfo['tax_payer_type']; ?></b>
                                 <br>
-                                <span>Company type</span>
+                                <span>Account number</span>
                             </p>
                             <p class="csF16">
-                                <b><?php echo $taxInfo['filling_form']; ?></b>
+                                <b><?php echo $bankInfo['filling_form']; ?></b>
                                 <br>
-                                <span>Federal filing form</span>
-                            </p>
-                            <p class="csF16">
-                                <b><?php echo $taxInfo['legal_name']; ?></b>
-                                <br>
-                                <span>Legal entity name</span>
+                                <span>Account type</span>
                             </p>
                         </div>
                     </div>

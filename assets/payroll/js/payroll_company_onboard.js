@@ -140,6 +140,10 @@ $(function PayrollCompanyOnboard() {
                     if (resp.onbording_level == "industry") {
                         GetCompanyIndustry();
                     }
+
+                    if (resp.onbording_level == "bank_info") {
+                        GetCompanyBankInfo();
+                    }
                 }
                 
             })
@@ -871,6 +875,31 @@ $(function PayrollCompanyOnboard() {
     }
 
     /**
+     * Company industry type
+     */
+     function GetCompanyBankInfo() {
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/company_bank_info/' + companyId),
+            })
+            .done(function(resp) {
+                //
+                xhr = null
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    $('.jsSaveCompanyIndustry').click(UpdateCompanyIndustry);
+                    //  
+                    ml(false, modalLoader);
+                });
+            })
+            .error(HandleError);
+    }
+
+    /**
      * Trigger when cancel is pressed
      */
        $(document).on('click', '.jsNavBarAction', function(event) {
@@ -890,6 +919,10 @@ $(function PayrollCompanyOnboard() {
 
         if (type == "industry") {
             GetCompanyIndustry();
+        }
+
+        if (type == "bank_info") {
+            GetCompanyBankInfo();
         }
     });
 

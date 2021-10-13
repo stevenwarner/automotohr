@@ -56,7 +56,11 @@ class Payroll_ajax extends CI_Controller
                     
                 case 2:
                     $level = "industry";
-                    break;         
+                    break;  
+                    
+                case 3:
+                    $level = "bank_info";
+                    break;    
             }
             //
             if(!isset($_SESSION['GUSTO_COMPANY'])){
@@ -318,6 +322,17 @@ class Payroll_ajax extends CI_Controller
         }
         //
         if($page === 'company-industry'){
+            //
+            $industries = $this->pm->GetJobIndustries($companyId);
+            //
+            $data['industries'] = $industries;
+            //
+            return SendResponse(200,[
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
+        if($page === 'company-bank-info'){
             //
             $industries = $this->pm->GetJobIndustries($companyId);
             //

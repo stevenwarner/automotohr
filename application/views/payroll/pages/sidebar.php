@@ -34,7 +34,7 @@
             <ul class="csSidebarUL">
             <?php foreach($menuArray as $index => $value): ?>
                 <li <?=$index == $mainIndex ? 'class="active"' : ''; ?>>
-                    <a class="csF16 js" data-id="<?=$value['slug'];?>" href="javascript:void(0)"><?=$value['name'];?></a>
+                    <a class="csF16 js jsNavBarAction" data-id="<?=$value['slug'];?>" href="javascript:void(0)"><?=$value['name'];?></a>
                     <?php if(isset($value['sub'])): ?>
                     <ul>
                         <?php foreach($value['sub'] as $index2 => $value2):  ?>
