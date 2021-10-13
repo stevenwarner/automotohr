@@ -449,6 +449,72 @@ class Form_full_employment_application extends CI_Controller {
                         $applicant_profile = db_get_employee_profile($user_sid)[0];
                         $profile_link = '<a style="background-color: #15c; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('employee_profile/' . $user_sid) . '"> Employee Profile</a>';
                     }
+                    //
+                    $folder = APPPATH.'../../applicant/FFA';
+                    //
+                    if(!is_dir($folder)) {
+                        mkdir($folder, 0777, true);
+                    }
+                    // 
+                    $categories_file = fopen($folder.'/FFA_'.$user_type . '_' . $user_sid. '_' .date('Y_m_d_H_i_s') . '.json', 'w');
+                    //
+                    fwrite($categories_file, json_encode($full_employment_application));
+                    //
+                    fclose($categories_file);
+
+                    $data['extra_info']['other_email'] = $formpost['TextBoxAddressStreetFormer3'];
+                    $data['extra_info']['other_PhoneNumber'] = $formpost['TextBoxTelephoneOther'];
+
+                    if($user_type == 'employee'){
+                        $dataToUpdate = array(
+                            'first_name' => $formpost['first_name'],
+                            'last_name' => $formpost['last_name'],
+                            'email' => $formpost['email'],
+                            'Location_Address' => $formpost['Location_Address'],
+                            'Location_City' => $formpost['Location_City'],
+                            'Location_State' => $formpost['Location_State'],
+                            'Location_Country' => $formpost['Location_Country'],
+                            'Location_ZipCode' => $formpost['Location_ZipCode'],
+                            'PhoneNumber' => isset($formpost['txt_phonenumber']) ? $formpost['txt_phonenumber'] : $formpost['PhoneNumber'],
+                            'extra_info' => serialize($data['extra_info']),
+                            'full_employment_application' => serialize($full_employment_application)
+                        );
+                    }else{
+                        $dataToUpdate = array(
+                            'first_name' => $formpost['first_name'],
+                            'last_name' => $formpost['last_name'],
+                            'email' => $formpost['email'],
+                            'address' => $formpost['Location_Address'],
+                            'city' => $formpost['Location_City'],
+                            'state' => $formpost['Location_State'],
+                            'country' => $formpost['Location_Country'],
+                            'zipcode' => $formpost['Location_ZipCode'],
+                            'phone_number' => $formpost['PhoneNumber'],
+                            'referred_by_name' => $full_employment_application['TextBoxReferenceName1'],
+                            'referred_by_email' => $full_employment_application['TextBoxReferenceEmail1'],
+                            'extra_info' => serialize($data['extra_info']),
+                            'full_employment_application' => serialize($full_employment_application)
+                        );
+                    }
+                    //
+                    //
+                    if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB'])) {
+                        $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $formpost['TextBoxDOB'])));
+                        $dataToUpdate['dob'] = $DOB;
+                    }
+                    //
+                    if (isset($formpost['TextBoxNameMiddle']) && !empty($formpost['TextBoxNameMiddle'])) {
+                        $dataToUpdate['middle_name'] = $formpost['TextBoxNameMiddle'];
+                    }
+                    //
+                    if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN'])) {
+                        $dataToUpdate['ssn'] = $formpost['TextBoxSSN'];
+                    }
+                    //
+                    //  $this->form_full_employment_application_model->update_applicant($user_sid, $data);
+                    $this->form_full_employment_application_model->update_form_details($company_sid, $user_sid, $user_type, $dataToUpdate);
+                    $this->form_full_employment_application_model->update_form_status($verification_key, 'signed');
+                    $this->documents_model->insert_document_ip_tracking_record($company_sid, $user_sid, getUserIP(), 'full_employment_application', 'signed', $_SERVER['HTTP_USER_AGENT'], $user_sid, $user_type);
 
                     if ($applicant_notifications_status == 1) {
 
@@ -515,59 +581,7 @@ class Form_full_employment_application extends CI_Controller {
                         }
                     }
 
-                    $data['extra_info']['other_email'] = $formpost['TextBoxAddressStreetFormer3'];
-                    $data['extra_info']['other_PhoneNumber'] = $formpost['TextBoxTelephoneOther'];
-
-                    if($user_type == 'employee'){
-                        $dataToUpdate = array(
-                            'first_name' => $formpost['first_name'],
-                            'last_name' => $formpost['last_name'],
-                            'email' => $formpost['email'],
-                            'Location_Address' => $formpost['Location_Address'],
-                            'Location_City' => $formpost['Location_City'],
-                            'Location_State' => $formpost['Location_State'],
-                            'Location_Country' => $formpost['Location_Country'],
-                            'Location_ZipCode' => $formpost['Location_ZipCode'],
-                            'PhoneNumber' => isset($formpost['txt_phonenumber']) ? $formpost['txt_phonenumber'] : $formpost['PhoneNumber'],
-                            'extra_info' => serialize($data['extra_info']),
-                            'full_employment_application' => serialize($full_employment_application)
-                        );
-                    }else{
-                        $dataToUpdate = array(
-                            'first_name' => $formpost['first_name'],
-                            'last_name' => $formpost['last_name'],
-                            'email' => $formpost['email'],
-                            'address' => $formpost['Location_Address'],
-                            'city' => $formpost['Location_City'],
-                            'state' => $formpost['Location_State'],
-                            'country' => $formpost['Location_Country'],
-                            'zipcode' => $formpost['Location_ZipCode'],
-                            'phone_number' => $formpost['PhoneNumber'],
-                            'referred_by_name' => $full_employment_application['TextBoxReferenceName1'],
-                            'referred_by_email' => $full_employment_application['TextBoxReferenceEmail1'],
-                            'extra_info' => serialize($data['extra_info']),
-                            'full_employment_application' => serialize($full_employment_application)
-                        );
-                    }
-                    //
-                    //
-                    if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB'])) {
-                        $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $formpost['TextBoxDOB'])));
-                        $dataToUpdate['dob'] = $DOB;
-                    }
-                    //
-                    if (isset($formpost['TextBoxNameMiddle']) && !empty($formpost['TextBoxNameMiddle'])) {
-                        $dataToUpdate['middle_name'] = $formpost['TextBoxNameMiddle'];
-                    }
-                    //
-                    if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN'])) {
-                        $dataToUpdate['ssn'] = $formpost['TextBoxSSN'];
-                    }
-                    //
-                    //  $this->form_full_employment_application_model->update_applicant($user_sid, $data);
-                    $this->form_full_employment_application_model->update_form_details($company_sid, $user_sid, $user_type, $dataToUpdate);
-                    $this->form_full_employment_application_model->update_form_status($verification_key, 'signed');
-                    $this->documents_model->insert_document_ip_tracking_record($company_sid, $user_sid, getUserIP(), 'full_employment_application', 'signed', $_SERVER['HTTP_USER_AGENT'], $user_sid, $user_type);
+                    
                     $this->session->set_flashdata('message', '"FOR TAKING THE TIME TO COMPLETE THIS DOCUMENT"');
                     redirect('thank_you', 'refresh');
                 }
