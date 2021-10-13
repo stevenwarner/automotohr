@@ -532,7 +532,7 @@ class Background_check_model extends CI_Model {
 
     function getAssurehireActiveProducts($productType)
     {
-        $this->db->select('sid as product_sid, expiry_days as no_of_days, product_image, name');
+        $this->db->select('sid as product_sid, expiry_days as no_of_days, product_image, name, short_description');
         $this->db->where('product_type', $productType);
         $this->db->where('in_market', 1);
         $this->db->where('active', 1);

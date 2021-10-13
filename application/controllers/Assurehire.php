@@ -13,7 +13,9 @@ class Assurehire extends CI_Controller {
         //
         $list = getPackagesList();
         //
-        if(!sizeof($list)) exit(0);
+        if(!sizeof($list)) {
+            exit(0);
+        }
         //
         $ids = [];
         //
@@ -74,23 +76,31 @@ class Assurehire extends CI_Controller {
             $this->resp($r);
         }
         //
-        $order_status = json_decode($json_params, true);
+        $order_status = json_decode($json_params, true, 512, JSON_BIGINT_AS_STRING);
+        // Let's save the response for later
+        $path = APPPATH.'../../AHR_DATA/assurehire';
         //
-        $file = fopen('assurehire.json', 'w');
+        if(!is_dir($path)){
+            mkdir($path, DIR_WRITE_MODE, true);
+        }
+        //
+        $file_name = $path.'/'.$order_status['orderId'].'.json';
+        //
+        $file = fopen($file_name, 'w');
+        //
         fwrite($file, $json_params);
+        //
         fclose($file);
         //
-        $t = $this->assurehire_model->validateId($order_status['orderReference'], $order_status['orderId']);
+        $t = $this->assurehire_model->validateId($orderReference, $order_status['orderId']);
         //
-        if(!count($t)){
+        if(!$t){
             $r['error'] = 'Invalid order Id / order reference.';
             $this->resp($r);
         }
-        $s = unserialize($t[0]['package_response']);
-        $s['orderStatus'] = $order_status;
         //
-        $this->assurehire_model->update_order_status($order_status['orderId'], serialize($s));
-        // echo 'Received json object';
+        $this->assurehire_model->update_order_status($order_status['orderId'], serialize($order_status));
+        //
         $r['status'] = 'RECEIVED';
         //
         $this->resp($r);

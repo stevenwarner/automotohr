@@ -115,24 +115,21 @@ class Background_check extends CI_Controller {
                 //Update Order Status on Load - start
                 $appliedProductsQueryObject = $this->background_check_model->getProductsAlreadyAppliedOn($sid, $type, $product_type);
                 $appliedProductsArray = $appliedProductsQueryObject->result_array();
-
-                if (checkAssureHireEnable($company_id)) {
+                //
+                if (checkIfAppIsEnabled('assurehire')) {
                     $assurehire = $this->background_check_model->getAssurehireActiveProducts("background-checks");
                     $purchasedProducts = array_merge($purchasedProducts,$assurehire);
                 }
                 //
                 $data_function['purchasedProducts'] = $purchasedProducts;
-
                 foreach ($appliedProductsArray as $order) {
                     $ab_order_sid = $order['sid'];
                     $package_id = $order['package_id'];
-                    if(empty($order['report_url'])) $this->get_order_status($package_id, $ab_order_sid);
+                    if($order['product_brand'] !== 'assurehire') {
+                        $this->get_order_status($package_id, $ab_order_sid);
+                    }
                 }
                 //Update Order Status on Load - end
-
-                // $appliedProductsQueryObject = $this->background_check_model->getProductsAlreadyAppliedOn($sid, $type, $product_type);
-                // $appliedProductsArray = $appliedProductsQueryObject->result_array();
-
                 if (!empty($appliedProductsArray)) {
                     foreach ($appliedProductsArray as $key => $product) {
                         $order_status = $product['order_response'];
@@ -142,6 +139,11 @@ class Background_check extends CI_Controller {
                             $order_status = unserialize($order_status);
                         } else {
                             $order_status = array();
+                        }
+                        //
+                        if($product['product_brand'] == 'assurehire'){
+                            //
+                            $appliedProductsArray[$key]['order_response'] = unserialize($product['order_response']);
                         }
 
                         if ($package_response != '') {
@@ -1004,14 +1006,18 @@ class Background_check extends CI_Controller {
                 foreach ($appliedProductsArray as $order) {
                     $ab_order_sid = $order['sid'];
                     $package_id = $order['package_id'];
-                    $this->get_order_status($package_id, $ab_order_sid);
+                    if(empty($order['report_url'])) $this->get_order_status($package_id, $ab_order_sid);
                 }
 
                 //Update Order Status on Load - end
-                $data_function['purchasedProducts'] = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
+                $purchasedProducts = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
+                //
+                if (checkIfAppIsEnabled('assurehire')) {
+                    $assurehire = $this->background_check_model->getAssurehireActiveProducts("background-checks");
+                    $purchasedProducts = array_merge($purchasedProducts,$assurehire);
+                }
 
-                $appliedProductsQueryObject = $this->background_check_model->getProductsAlreadyAppliedOn($sid, $type, $product_type);
-                $appliedProductsArray = $appliedProductsQueryObject->result_array();
+                $data_function['purchasedProducts'] = $purchasedProducts;
 
                 if (!empty($appliedProductsArray)) {
                     foreach ($appliedProductsArray as $key => $product) {
@@ -1022,6 +1028,10 @@ class Background_check extends CI_Controller {
                             $order_status = unserialize($order_status);
                         } else {
                             $order_status = array();
+                        }
+                        //
+                        if($product['product_brand'] == 'assurehire'){
+                            $order_status = unserialize($order_status);
                         }
 
                         if ($package_response != '') {
@@ -1422,14 +1432,11 @@ class Background_check extends CI_Controller {
     }
 
     private function placeOrderOnAssurehire ($input, $company_id, $employer_sid, $user_type, $user_sid, $jobs_listing) {
-        
-      
-       
-
+        //
         $perform_action = $input['perform_action'];
+        //
         switch ($perform_action) {
             case 'place_background_check_order':
-                $formpost = array($this->input->post('productId'));
                 $dataToSave['employer_sid'] = $employer_sid;
                 $dataToSave['company_sid'] = $company_id;
                 $dataToSave['users_sid'] = $user_sid;
@@ -1466,7 +1473,7 @@ class Background_check extends CI_Controller {
                             $user_info['full_employment_application'] = array();
                         }
                     }
-    
+                    //
                     $data_employer = array(
                         'sid' => $user_info['sid'],
                         'first_name' => $user_info['first_name'],
@@ -1481,19 +1488,14 @@ class Background_check extends CI_Controller {
                         'full_employment_application' => $user_info['full_employment_application']
                     );
                 }
-
+                //
                 if (isset($user_info) && !empty($user_info['full_employment_application'])) {
                     $productId = $input['productId'];
                     $res = $this->dashboard_model->productDetail($productId);
                     $package_code = $res[0]['package_code'];
                     $session = $this->session->userdata('logged_in');
                     $json_data = createAssurehireJson($data_employer, $session, $portalDetails, $user_info, $package_code);
-                    
-
-                    
                     //
-                    // mail(TO_EMAIL_DEV, 'Accurate Background Check Order ' . date('Y-m-d H:i:s'), $json_data);
-                    
                     $result = placeOrderAH($json_data);
                     //
                     $package_response = json_decode($result,true);
@@ -1503,10 +1505,6 @@ class Background_check extends CI_Controller {
                     //
                     if (empty($response_status)) {
                         $this->session->set_flashdata('message', '<b>Error:</b> Invalide Json formate Provide.');
-                        //
-                        $email_message = '<pre>' . print_r($input, true) . print_r($package_response, true) . '</pre>';
-                        // mail(TO_EMAIL_DEV, 'Accurate Background Check Order Error ' . date('Y-m-d H:i:s'), $email_message);
-                        //
                     } else if (!empty($response_status) && isset($response_status['message'])) {
                         $this->session->set_flashdata('message', '<b>Error:</b> '. $response_status['message']);
                     } else if (!empty($response_status) && isset($response_status['status'])) {
@@ -1542,7 +1540,6 @@ class Background_check extends CI_Controller {
                         $this->session->set_flashdata('message', '<b>Success:</b> Request placed for Background Check, you can check status after one Hour.');
                     }
                     //
-                    
                     switch ($user_type) {
                         case 'applicant':
                             redirect('background_check/applicant/' . $user_sid.'/'.$jobs_listing, 'refresh');

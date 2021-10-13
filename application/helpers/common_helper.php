@@ -534,17 +534,17 @@ if (!function_exists('db_get_active_states')) {
 
 if (!function_exists('db_get_state_name_only')) {
 
-    function db_get_state_name_only($state_sid)
+    function db_get_state_name_only($state_sid, $column = 'state_name')
     {
         $CI = &get_instance();
-        $CI->db->select('state_name');
+        $CI->db->select($column);
         $CI->db->where('sid', $state_sid);
         $CI->db->from('states');
         $data = $CI->db->get()->result_array();
 
         if (!empty($data)) {
             $data = $data[0];
-            return $data['state_name'];
+            return $data[$column];
         } else {
             return '';
         }

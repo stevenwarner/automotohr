@@ -1116,7 +1116,6 @@ class Settings extends Public_Controller
             $company_name = $data['session']['company_detail']['CompanyName'];
             $employer_access_level = $data["session"]["employer_detail"]["access_level"];
             $full_employment_app_print = $data["session"]["portal_detail"]["full_employment_app_print"];
-            $access_level = $data['session']['employer_detail']['access_level'];
 
             if ($sid == NULL) {
                 $employer_id = $data["session"]["employer_detail"]["sid"];
@@ -1416,12 +1415,9 @@ class Settings extends Public_Controller
                 $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
             }
             $this->load->model('manage_admin/documents_model');
-
             //
-            $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
-
-           
-
+            $data['_ssv'] = getSSV($data['session']['employer_detail']);
+            //
             if ($this->form_validation->run() === FALSE) {
                 $data_countries = db_get_active_countries(); //Get Countries and States - Start
 
@@ -1445,23 +1441,6 @@ class Settings extends Public_Controller
                     $data,
                     $this
                 );
-
-                //
-                // $fullEmploymentForm = unserialize($data['employer']['full_employment_application']);
-                // //
-                // $updateArray = $fullEmploymentForm;
-                // // Check for DOB
-                // if((empty($fullEmploymentForm['TextBoxDOB']) || !isset($fullEmploymentForm['TextBoxDOB'])) && !empty($data['employer']['dob'])){
-                //     $data['formpost'] = $updateArray['TextBoxDOB'] = DateTime::createfromformat('Y-m-d',$fullEmploymentForm['TextBoxDOB'])->format('m-d-Y');
-                // }
-                // // Check for SSN
-                // if((empty($fullEmploymentForm['TextBoxSSN']) || !isset($fullEmploymentForm['TextBoxSSN'])) && !empty($data['employer']['dob'])){
-                //     $data['formpost'] = $updateArray['TextBoxSSN'] = $fullEmploymentForm['TextBoxSSN'];
-                // }
-                // //
-                // if($updateArray){
-                //     $this->db->where('sid', $data['employer']['sid'])->update('users', ['full_employment_application' => serialize($updateArray)]);
-                // }
 
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/full_employment_application');

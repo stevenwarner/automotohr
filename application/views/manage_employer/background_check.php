@@ -29,16 +29,9 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                             </header>
                                             <?php foreach ($appliedProducts as $product) {
                                                 // Needs to be removed
-                                                //$product['product_brand'] = "assurehire";
-                                                $product['report_url'] = isset($product['package_response']['orderStatus']['report_url']) ? $product['package_response']['orderStatus']['report_url'] : 'javascript:;';
-                                                if (!$hasAccess && $product['product_brand'] == 'assurehire') continue;
-
-                                                if ($product['product_brand'] == 'assurehire') {
-
-                                                    $product['order_response']['orderStatus']['percentageComplete'] = $product['order_response']['orderStatus']['percentageCompleted'];
-                                                    if (strtolower($product['order_response']['orderStatus']['status']) == 'completed') {
-                                                        $product['order_response']['orderStatus']['percentageComplete'] = 100;
-                                                    }
+                                                if($product['product_brand'] == 'assurehire'){
+                                                    $this->load->view("manage_employer/assurehire_box", ['product'=>$product]);
+                                                    continue;
                                                 }
                                             ?>
                                                 <div class="accurate-background-box">
@@ -66,9 +59,7 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                                                 <input type="hidden" name="users_type" id="users_type" value="<?php echo $product['users_type'] ?>" />
                                                                                 <input type="hidden" name="users_sid" id="users_sid" value="<?php echo $product['users_sid'] ?>" />
                                                                                 <input type="hidden" name="package_id" id="package_id" value="<?php echo $product['package_id'] ?>" />
-                                                                                <?php if ($product['product_brand'] != 'assurehire') { ?>
-                                                                                    <button type="submit" class="btn btn-success">Refresh Status</button>
-                                                                                <?php } ?>
+                                                                                <button type="submit" class="btn btn-success">Refresh Status</button>
                                                                             </form>
                                                                         </span>
                                                                     <?php } ?>
@@ -81,9 +72,6 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                                 <div class="accurate-background-box">
                                                                     <h2 class="post-title text-left">Current Saved Status
                                                                         <div class="pull-right">
-                                                                            <?php if ($product['product_brand'] == 'assurehire') { ?>
-                                                                                <a href="javascript:void(0)" class="btn btn-success js_view_report" data-url="<?= $product['report_url']; ?>">View Report </a>
-                                                                            <?php } else { ?>
                                                                                 <?php if ($percent_complete == 100) { // Get Report for Accurate Background 
                                                                                 ?>
                                                                                     <form action="<?php echo current_url(); ?>" method="post" enctype="multipart/form-data">
@@ -106,7 +94,6 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                                                         <button class="btn btn-warning btn-sm pull-left" type="submit">Download Partial Report</button>
                                                                                     </form>
                                                                                 <?php   } ?>
-                                                                            <?php }  ?>
                                                                         </div>
                                                                     </h2>
                                                                     <table class="table table-bordered table-striped table-hover">
@@ -128,11 +115,7 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                                                             ?>
                                                                                             <?php $pos = strpos($status, 'draft');
 
-                                                                                            if (strpos($status, 'draft') === false || ($product['product_brand'] == 'assurehire' && strpos($status, 'pending') === TRUE)) {
-                                                                                                echo ($status == '' || $status == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $status));
-                                                                                            } else {
                                                                                                 echo 'Awaiting Candidate Input';
-                                                                                            }
                                                                                             //                                                                                        echo (strtolower($status) == 'draft' ? 'Awaiting Candidate Input' : ($status == '' || $status == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $status))); 
                                                                                             ?>
                                                                                             <?php
@@ -247,7 +230,6 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                             <div class="pre-purchased-products advertising-boxes">
                                                 <?php if (!empty($purchasedProducts)) { ?>
                                                     <?php foreach ($purchasedProducts as $product) { ?>
-                                                        <?php //if (!$hasAccess && $product['product_brand'] == 'assurehire') continue; ?>
                                                         <?php if (isset($product['remaining_qty']) && $product['remaining_qty'] > 0 || strpos(strtolower($product['name']), 'assurehire') !== false) { ?>
                                                             <article class="purchased-product">
                                                                 <input type="hidden" id="already_applied_<?php echo $product['product_sid'] ?>" value="<?php echo $product['appliedOn']; ?>" />
@@ -256,10 +238,15 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                                     <p class="remaining-qty">Remaining Qty: <?php echo isset($product['remaining_qty']) ? $product['remaining_qty'] : ""; ?></p>
                                                                 <?php } ?>
                                                                 <h2 class="post-title"><?php echo $product['name']; ?></h2>
+                                                                <?php 
+                                                                    if(strpos(strtolower($product['name']), 'assurehire') !== false){
+                                                                        echo '<p>'.($product['short_description']).'</p>';
+                                                                    }
+                                                                ?>
                                                                 <figure>
                                                                     <img src="<?php echo !is_null($product['product_image']) ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>" alt="Category images">
                                                                 </figure>
-                                                                <?php if ($product['appliedOn'] == 'true') { ?>
+                                                                <?php if ($product['appliedOn'] == 'true' && strpos(strtolower($product['name']), 'assurehire') === false) { ?>
                                                                     <div class="already-incart disabled-products"><i class="fa fa-check-circle"></i>Done</div>
                                                                 <?php } ?>
                                                             </article>
@@ -335,11 +322,11 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
 <?php $this->load->view('iframeLoader'); ?>
 
 <script>
-    $('.js_view_report').click(function(e) {
+    $('.jsViewReport').click(function(e) {
         //
         e.preventDefault();
         //
-        var url = $(this).data('url');
+        var url = $(this).prop('href');
         //
         var rows = '';
         rows += `
@@ -377,6 +364,5 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
         $('#js-report-modal').modal(true);
         //
         loadIframe(url, '#js-report-iframe', true);
-        console.log(url);
     });
 </script>
