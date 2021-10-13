@@ -18,7 +18,8 @@ class Payroll_model extends CI_Model{
         $this->tables['U'] = 'users'; 
         $this->tables['PayrollCompanyAdmin'] = 'payroll_company_admin'; 
         $this->tables['PayrollCompanyLocations'] = 'payroll_company_locations'; 
-    }
+        $this->tables['JCI'] = 'job_category_industries'; 
+    }    
 
     /**
      * Check wether the payroll is activated
@@ -158,6 +159,16 @@ class Payroll_model extends CI_Model{
         $this->db
         ->where('sid', $companyId)
         ->update($this->tables['U'], $array);
+    }
+
+    /**
+     * 
+     */
+    function UpdateOndordingLevel($companyId, $array){
+        //
+        $this->db
+        ->where('company_sid', $companyId)
+        ->update($this->tables['PC'], $array);
     }
 
     //
@@ -396,7 +407,7 @@ class Payroll_model extends CI_Model{
     function GetPayrollCompany($companyId){
         //
         return $this->db
-        ->select('refresh_token, access_token, gusto_company_uid')
+        ->select('refresh_token, access_token, gusto_company_uid, onbording_level, onboarding_status')
         ->where('company_sid', $companyId)
         ->get($this->tables['PC'])
         ->row_array();
@@ -411,6 +422,7 @@ class Payroll_model extends CI_Model{
         //
         return $this->db
         ->select('
+            sid,
             street_1,
             street_2,
             city,
@@ -423,7 +435,71 @@ class Payroll_model extends CI_Model{
         ')
         ->where('company_sid', $companyId)
         ->get($this->tables['PayrollCompanyLocations'])
+        ->result_array();
+    }
+
+    /**
+     * Get company location by ID
+     * @param integer $companyId
+     * @param integer $locationId
+     * @return
+     */
+    function GetCompanyLocationById($companyId, $locationId){
+        //
+        return $this->db
+        ->select('
+            street_1,
+            street_2,
+            city,
+            state,
+            zip,
+            mailing_address,
+            filing_address,
+            phone_number,
+            gusto_location_id
+        ')
+        ->where('company_sid', $companyId)
+        ->where('sid', $locationId)
+        ->get($this->tables['PayrollCompanyLocations'])
         ->row_array();
+    }
+
+    /**
+     * Get company location by ID
+     * @param integer $companyId
+     * @param integer $locationId
+     * @return
+     */
+    function GetCompanyFedralTaxInfo($companyId){
+        //
+        return $this->db
+        ->select('
+            sid,
+            ein_number,
+            legal_name,
+            tax_payer_type,
+            filling_form,
+            taxable_as_scorp
+        ')
+        ->where('company_sid', $companyId)
+        ->get($this->tables['PCTD'])
+        ->row_array();
+    }
+
+    /**
+     * Get Job Industries
+     * @return
+     */
+    function GetJobIndustries(){
+        //
+        return $this->db
+        ->select('
+            sid,
+            industry_name
+        ')
+        ->where('status', 1)
+        ->get($this->tables['JCI'])
+        ->result_array();
     }
 
     /**

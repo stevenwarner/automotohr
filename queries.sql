@@ -266,3 +266,5 @@ ALTER TABLE `documents_category_management_history` ADD `is_moved` TINYINT(1) NO
 -- Add week off days columns to employees table
 --
 ALTER TABLE `users` ADD `off_days` VARCHAR(80) NOT NULL DEFAULT '[\"saturday\",\"sunday\"]' AFTER `middle_initial`;
+
+ALTER TABLE `payroll_companies` ADD `onbording_level` INT(11) NOT NULL DEFAULT '0' AFTER `is_active`, ADD `onboarding_status` INT(11) NOT NULL DEFAULT '0' AFTER `onbording_level`;

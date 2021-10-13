@@ -66,7 +66,7 @@
                         </label>
                         <select class="form-control jsState">
                             <?php foreach($states as $state): ?>
-                                <option value="<?=$state['state_code'];?>" <?=!empty($location) &&  $location['state'] === $state['state_code'] ? 'checked' : '';?>><?=$state['state_name'];?></option>
+                                <option value="<?=$state['state_code'];?>" <?=!empty($location) &&  $location['state'] === $state['state_code'] ? 'selected="selected"' : '';?>><?=$state['state_name'];?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -84,9 +84,9 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Phone
+                            Phone <span class="csRequired"></span>
                         </label>
-                        <input type="email" class="form-control jsPhoneNumber" value="<?=!empty($location) ? $location['phone_number'] : '';?>" placeholder="e.g. (123) 456-7896" />
+                        <input type="email" class="form-control jsPhoneNumber" value="<?=!empty($location) ? $location['phone_number'] : '';?>" placeholder="e.g. 8009360383" />
                     </div>
                 </div>
                 <br>
@@ -115,7 +115,7 @@
                         </button>
                         <button class="btn btn-orange csF16 csB7 jsPayrollSaveCompanyLocation">
                             <i class="fa fa-save" aria-hidden="true"></i>&nbsp;
-                            Save & continue
+                            <span id="jsSaveBtnTxt">Save & continue</span>
                         </button>
                     </div>
                 </div>

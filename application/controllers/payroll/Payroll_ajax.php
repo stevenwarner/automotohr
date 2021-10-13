@@ -40,6 +40,25 @@ class Payroll_ajax extends CI_Controller
             // Get company details
             $companyDetails = $this->scm->GetCompanyDetails($companyId, 'on_payroll, CompanyName');
             //
+           // Get company details
+            $details = $this->pm->GetPayrollCompany($companyId);
+            //
+            $status = $details['onboarding_status'] == 0 ? "incomplete" : "complete";
+            //
+            switch ($details['onbording_level']) {
+                case 0:
+                    $level = "company_address";
+                    break;
+
+                case 1:
+                    $level = "federal_tax";
+                    break;
+                    
+                case 2:
+                    $level = "industry";
+                    break;         
+            }
+            //
             if(!isset($_SESSION['GUSTO_COMPANY'])){
                 // Get company details
                 $details = $this->pm->GetPayrollCompany($companyId);
@@ -47,7 +66,19 @@ class Payroll_ajax extends CI_Controller
                 $_SESSION['GUSTO_COMPANY'] = GetCompany($details);
             }
             //
-            return SendResponse(200, ['payroll_enabled' => $companyDetails['on_payroll'],'name' => $companyDetails['CompanyName']]);
+            return SendResponse(200, [
+                'payroll_enabled' => $companyDetails['on_payroll'],
+                'name' => $companyDetails['CompanyName'],
+                'onboarding_status' => $status,
+                'onbording_level' => $level
+            ]);
+        }
+        //
+        if ($page === 'change-level') {
+            $updateArray = [];
+            $updateArray['onbording_level'] = $_GET['next_level'];
+            $this->pm->UpdateOndordingLevel($companyId, $updateArray);
+            return SendResponse(200, true);
         }
         //
         if($page === 'employees'){
@@ -132,12 +163,45 @@ class Payroll_ajax extends CI_Controller
                 return SendResponse(200, true);
             }
         }
+        //
+        if($page === 'add-company-location'){
+            $data['location'] = array();
+            $page = "company-details";
+            $data['states'] = $this->pm->GetStates();
+            
+            //
+            if($_GET["location_id"] > 0){
+                $data['location'] = $this->pm->GetCompanyLocationById($companyId, $_GET["location_id"]);
+            }
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'location_url' => getAPIUrl("locations"),
+                'location_id' => $_GET["location_id"],
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+
         // After payroll enabled pages
         //
         if($page === 'company-details'){
             //
             $data['states'] = $this->pm->GetStates();
-            $data['location'] = $this->pm->GetCompanyLocations($companyId);
+            $locations = $this->pm->GetCompanyLocations($companyId);
+            $location_type = 'new';
+            //
+            if (!empty($locations)) {
+                $page = "company-address-listing";
+                $data['locations'] = $locations;
+                $location_type = 'listing';
+            }
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'location_type' => $location_type,
+                'location_url' => getAPIUrl("locations"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
         }
         //
         if($page === 'set-company-location'){
@@ -213,6 +277,55 @@ class Payroll_ajax extends CI_Controller
             _e($details, true, true);
             //
             $data['location'] = $this->pm->GetCompanyLocations($companyId);
+        }
+        //
+        if($page === 'fedral-tax-detail'){
+            //
+            $taxInfo = $this->pm->GetCompanyFedralTaxInfo($companyId);
+            //
+            $page_type = '';
+            //
+            if (!empty($taxInfo)) {
+                $page = "federal-tax-detail";
+                $data['taxInfo'] = $taxInfo;
+                $page_type = "tax_detail";
+            } else {
+                $page = "federal-tax-info";
+                $data['taxInfo'] = $taxInfo;
+                $page_type = "tax_form";
+            }
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'TAX_URL' => getAPIUrl("tax"),
+                'page_type' => $page_type,
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
+        if($page === 'fedral-tax-edit'){
+            //
+            $taxInfo = $this->pm->GetCompanyFedralTaxInfo($companyId);
+            //
+            $page = "federal-tax-info";
+            $data['taxInfo'] = $taxInfo;
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'TAX_URL' => getAPIUrl("tax"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
+        if($page === 'company-industry'){
+            //
+            $industries = $this->pm->GetJobIndustries($companyId);
+            //
+            $data['industries'] = $industries;
+            //
+            return SendResponse(200,[
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
         }
         //
         SendResponse(200, $this->load->view($this->path.$page, $data, false), 'html');
