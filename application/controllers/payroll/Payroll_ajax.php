@@ -45,21 +45,28 @@ class Payroll_ajax extends CI_Controller
             //
             $status = $details['onboarding_status'] == 0 ? "incomplete" : "complete";
             //
+            $level = '';
+            $level_id = '';
+            //
             switch ($details['onbording_level']) {
                 case 0:
                     $level = "company_address";
+                    $level_id = 0;
                     break;
 
                 case 1:
                     $level = "federal_tax";
+                    $level_id = 1;
                     break;
                     
                 case 2:
-                    $level = "industry";
+                    $level = "bank_info";
+                    $level_id = 2;
                     break;  
                     
                 case 3:
-                    $level = "bank_info";
+                    $level = "employee";
+                    $level_id = 3;
                     break;    
             }
             //
@@ -74,7 +81,9 @@ class Payroll_ajax extends CI_Controller
                 'payroll_enabled' => $companyDetails['on_payroll'],
                 'name' => $companyDetails['CompanyName'],
                 'onboarding_status' => $status,
-                'onbording_level' => $level
+                'onbording_level' => $level,
+                'onbording_level_id' => $level_id,
+
             ]);
         }
         //
@@ -307,7 +316,7 @@ class Payroll_ajax extends CI_Controller
             ]);
         }
         //
-        if($page === 'fedral-tax-edit'){
+        if($page === 'edit-fedral-tax'){
             //
             $taxInfo = $this->pm->GetCompanyFedralTaxInfo($companyId);
             //
@@ -334,14 +343,57 @@ class Payroll_ajax extends CI_Controller
         //
         if($page === 'company-bank-info'){
             //
-            $industries = $this->pm->GetJobIndustries($companyId);
+            $bankInfo = $this->pm->GetCompanyBankAccount($companyId);
             //
-            $data['industries'] = $industries;
+            $page_type = "new";
+            //
+            if (!empty($bankInfo)) {
+                $data['bankInfo'] = $bankInfo;
+                $page = "company-bank-detail";
+                $page_type = "detail";
+            }
+            //
+            
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'BANK_URL' => getAPIUrl("bank_account"),
+                'page_type' => $page_type,
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
+        if($page === 'edit-bank-info'){
+            //
+            $bankInfo = $this->pm->GetCompanyBankAccount($companyId);
+            //
+            $data['bankInfo'] = $bankInfo;
+            $page = "company-bank-info";   
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'BANK_URL' => getAPIUrl("bank_account"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
+        if($page === 'start-employee-onboarding'){  
             //
             return SendResponse(200,[
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
         }
+        if($page === 'add-company-employee'){
+            //
+            $data['locations'] = $this->pm->GetCompanyLocations($companyId);
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'BANK_URL' => getAPIUrl("bank_account"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
         //
         SendResponse(200, $this->load->view($this->path.$page, $data, false), 'html');
     }

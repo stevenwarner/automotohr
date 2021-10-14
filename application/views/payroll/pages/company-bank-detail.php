@@ -30,17 +30,17 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <p class="csF16">
-                                <b><?php echo $bankInfo['ein_number']; ?></b>
+                                <b><?php echo $bankInfo['routing_number']; ?></b>
                                 <br>
                                 <span>Routing number (9 digits)</span>
                             </p>
                             <p class="csF16">
-                                <b><?php echo $bankInfo['tax_payer_type']; ?></b>
+                                <b><?php echo $bankInfo['account_number']; ?></b>
                                 <br>
                                 <span>Account number</span>
                             </p>
                             <p class="csF16">
-                                <b><?php echo $bankInfo['filling_form']; ?></b>
+                                <b><?php echo ucfirst($bankInfo['account_type']); ?></b>
                                 <br>
                                 <span>Account type</span>
                             </p>
@@ -50,11 +50,11 @@
                 <?php } ?></b>  
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
-                        <button class="btn btn-orange csF16 csB7 jsFederalTaxEdit" data-location_id="0">
+                        <button class="btn btn-orange csF16 csB7 jsFederalTaxEdit">
                             <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
                             Edit tax information
                         </button>
-                        <button class="btn btn-orange csF16 csB7 jsPayrollConfirmContinue" data-id="2">
+                        <button class="btn btn-orange csF16 csB7 jsPayrollConfirmContinue" data-id="3">
                             <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;
                             Save & continue
                         </button>

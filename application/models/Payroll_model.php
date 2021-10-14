@@ -14,6 +14,7 @@ class Payroll_model extends CI_Model{
         $this->tables['PC'] = 'payroll_companies'; 
         $this->tables['PCE'] = 'payroll_employees'; 
         $this->tables['PCTD'] = 'payroll_company_tax_details'; 
+        $this->tables['PCBA'] = 'payroll_company_bank_accounts'; 
         // 
         $this->tables['U'] = 'users'; 
         $this->tables['PayrollCompanyAdmin'] = 'payroll_company_admin'; 
@@ -500,6 +501,25 @@ class Payroll_model extends CI_Model{
         ->where('status', 1)
         ->get($this->tables['JCI'])
         ->result_array();
+    }
+
+     /**
+     * Get company bank account info
+     * @param integer $companyId
+     * @return
+     */
+    function GetCompanyBankAccount($companyId){
+        //
+        return $this->db
+        ->select('
+            sid,
+            routing_number,
+            account_number,
+            account_type
+        ')
+        ->where('company_sid', $companyId)
+        ->get($this->tables['PCBA'])
+        ->row_array();
     }
 
     /**

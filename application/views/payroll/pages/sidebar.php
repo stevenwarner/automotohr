@@ -14,13 +14,18 @@
         'name' => 'Federal Tax Info',
         'slug'=> 'federal_tax_info'
     ];
-    $menuArray['company']['sub'][] = [
-        'name' => 'Industry',
-        'slug'=> 'industry'
-    ];
+    // $menuArray['company']['sub'][] = [
+    //     'name' => 'Industry',
+    //     'slug'=> 'industry'
+    // ];
     $menuArray['bank'] = [
         'name' => 'Bank info',
         'slug' => 'bank_info',
+        'sub' => []
+    ];
+    $menuArray['employee'] = [
+        'name' => 'Employees',
+        'slug' => 'employee',
         'sub' => []
     ];
 

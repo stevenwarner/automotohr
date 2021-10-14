@@ -62,7 +62,7 @@
                         <select class="form-control jsAccountType">
                             <option value="0">[Select]</option>
                             <option value="checking" <?=!empty($bankInfo) &&  $bankInfo['account_type'] === "checking" ? 'selected="selected"' : '';?>>Checking</option>
-                            <option value="saving" <?=!empty($bankInfo) &&  $bankInfo['account_type'] === "saving" ? 'selected="selected"' : '';?>>Saving</option>
+                            <option value="savings" <?=!empty($bankInfo) &&  $bankInfo['account_type'] === "savings" ? 'selected="selected"' : '';?>>Savings</option>
                         </select>
                     </div>
                 </div>
@@ -75,11 +75,11 @@
                 <br>
                 <div class="row">
                     <div class="col-sm-12 text-right">
-                        <button class="btn btn-black csF16 csB7 jsFederalTaxCancel">
-                            <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;
+                        <button class="btn btn-black csF16 csB7 jsBankInfoCancel">
+                            <i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;
                             Back
                         </button>
-                        <button class="btn btn-orange csF16 csB7 jsFederalTaxUpdate">
+                        <button class="btn btn-orange csF16 csB7 jsBankInfoUpdate">
                             <i class="fa fa-save" aria-hidden="true"></i>&nbsp;
                             <span id="jsSaveBtnTxt">Save & continue</span>
                         </button>
