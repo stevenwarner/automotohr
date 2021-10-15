@@ -21,7 +21,7 @@
                             Add your employees
                         </h1>
                         <p class="csF16">
-                            You'll need to gather information from your employeees so we can add them to payroll and set up direct deposit. (If you'd prefer printed paychecks, you can skip the banking information.) Feel free to enter some or all of your employees before proceeding to next step. 
+                        You'll need to gather information from your employees so we can add them to payroll and set up direct deposit. (If you'd prefer printed paychecks, you can skip the banking information.) Feel free to enter some or all of your employees before proceeding to the next step. 
                         </p>
                         <ul style="padding-left: 18px;">
                             <li>Personal information (i.e. name, SSN)</li>

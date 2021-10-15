@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="csF16">
-                            Fields marked with asterisk (<span class="csRequired"></span>) are mendatory.
+                            Fields marked with an asterisk (<span class="csRequired"></span>) are mandatory.
                         </p>
                     </div>
                 </div>

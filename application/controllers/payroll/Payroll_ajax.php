@@ -19,6 +19,7 @@ class Payroll_ajax extends CI_Controller
         }
         // Call the model
         $this->load->model("Payroll_model", "pm");
+        $this->load->model('single/Employee_model', 'em');
         // Call helper
         $this->load->helper("payroll_helper");
         //
@@ -95,8 +96,6 @@ class Payroll_ajax extends CI_Controller
         }
         //
         if($page === 'employees'){
-            //
-            $this->load->model('single/Employee_model', 'em');
             // Fetch employees
             $data['employees'] = $this->em->GetCompanyEmployees($companyId, [
                 "users.sid",
@@ -382,14 +381,67 @@ class Payroll_ajax extends CI_Controller
             return SendResponse(200,[
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
+            //
         }
-        if($page === 'add-company-employee'){
+        //
+        if ($page === 'show-company-employee-list') {
+            //
+            $payrollEmployees = $this->pm->GetCompanyPayrollEmployees($companyId);
+            //
+            $payrollEmployeesList = array_column($payrollEmployees, "employee_sid");
+            //
+            $companyEmployees = $this->em->GetCompanyEmployees($companyId, [
+                "users.sid",
+                "users.first_name",
+                "users.last_name",
+                "users.access_level",
+                "users.access_level_plus",
+                "users.is_executive_admin",
+                "users.job_title",
+                "users.pay_plan_flag",
+                "users.on_payroll"
+            ]);
+            //
+            $employees_onboard = array();
+            //
+            foreach ($payrollEmployees as $pe) {
+                $employees_onboard[$pe['employee_sid']] = $pe['onboard_level'];
+            }
+            //
+            foreach ($companyEmployees as $key => $employee) {
+                $employee_level = 0;
+                if (in_array($employee['sid'], $payrollEmployeesList)) {
+                    $employee_level = $employees_onboard[$employee['sid']];
+                }
+                $companyEmployees[$key]['onboarding_level'] = $employee_level;
+            }
+            //
+            $data['companyEmployees'] = $companyEmployees;
+            //
+            return SendResponse(200,[
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+
+        if($page === 'get-company-employee'){
             //
             $data['locations'] = $this->pm->GetCompanyLocations($companyId);
             //
+            $data['Employee_info'] = $this->em->GetEmployeeDetails($_GET["employee_id"], [
+                "users.sid",
+                "users.first_name",
+                "users.last_name",
+                "users.middle_name",
+                "users.email",
+                "users.	dob",
+                "users.ssn",
+                "users.registration_date",
+                "users.joined_at"
+            ]);
+            //
             return SendResponse(200,[
                 'API_KEY' => getAPIKey(),
-                'BANK_URL' => getAPIUrl("bank_account"),
+                'EMPLOYEE_URL' => getAPIUrl("employees"),
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
         }

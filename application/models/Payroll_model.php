@@ -522,6 +522,23 @@ class Payroll_model extends CI_Model{
         ->row_array();
     }
 
+     /**
+     * Get company Payroll employee
+     * @param integer $companyId
+     * @return
+     */
+    function GetCompanyPayrollEmployees($companyId){
+        //
+        return $this->db
+        ->select('
+            employee_sid,
+            onboard_level
+        ')
+        ->where('company_sid', $companyId)
+        ->get($this->tables['PCE'])
+        ->result_array();
+    }
+
     /**
      * Add company location to system
      * 

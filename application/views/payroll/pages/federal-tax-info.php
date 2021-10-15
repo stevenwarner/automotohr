@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="csF16">
-                            Fields marked with asterisk (<span class="csRequired"></span>) are mendatory.
+                            Fields marked with an asterisk (<span class="csRequired"></span>) are mandatory.
                         </p>
                     </div>
                 </div>
@@ -36,7 +36,7 @@
                         <label class="csF16 csB7">
                             Federal EIN <span class="csRequired"></span>
                         </label>
-                        <p class="csF14">Your Company's federal Employer identification number(EIN). If you do not have one, please apply online.</p>
+                        <p class="csF14">Your Company's Federal Employer identification number(EIN). If you do not have one, please apply online.</p>
                         <input type="text" class="form-control jsTaxEIN" placeholder="__-_________"  value="<?=!empty($taxInfo) ? $taxInfo['ein_number'] : '';?>"/>
                     </div>
                 </div>

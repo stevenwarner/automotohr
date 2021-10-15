@@ -21,15 +21,21 @@
                             Company bank account
                         </h1>
                         <p class="csF16">
-                            We'll use your checking acount into to debit for wagesand taxes. Your account must be linked to a checking bank account. Credit payments, credit cards, and savings accounts are not accepted.
+                            We'll use your checking account into to debit for wages and taxes. Your account must be linked to a checking bank account. Credit payments, credit cards, and savings accounts are not accepted.
                         </p>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <img src="<?php echo base_url('assets/images/payroll/bank_info.jpeg');?>" alt="">
                     </div>
                 </div>
                 <br>
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="csF16">
-                            Fields marked with asterisk (<span class="csRequired"></span>) are mendatory.
+                            Fields marked with an asterisk (<span class="csRequired"></span>) are mandatory.
                         </p>
                     </div>
                 </div>
@@ -39,7 +45,6 @@
                         <label class="csF16 csB7">
                         Routing number (9 digits) <span class="csRequired"></span>
                         </label>
-                        <p class="csF14">Your Company's federal Employer identification number(EIN). If you do not have one, please apply online.</p>
                         <input type="text" class="form-control jsRoutingNumber" placeholder=""  value="<?=!empty($bankInfo) ? $bankInfo['routing_number'] : '';?>"/>
                     </div>
                 </div>
@@ -49,7 +54,6 @@
                         <label class="csF16 csB7">
                         Account number <span class="csRequired"></span>
                         </label>
-                        <p class="csF14">Your Company's federal Employer identification number(EIN). If you do not have one, please apply online.</p>
                         <input type="text" class="form-control jsAccountNumber" placeholder=""  value="<?=!empty($bankInfo) ? $bankInfo['account_number'] : '';?>"/>
                     </div>
                 </div>
@@ -69,7 +73,7 @@
                 <br>
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
-                        <p class="csF14">By selecting continue I acknowledge I won't be able to run payroll for up to 2 business days untill the bank varification completes.</p>
+                        <p class="csF14">By selecting continue I acknowledge I won't be able to run payroll for up to 2 business days until the bank verification completes.</p>
                     </div>
                 </div>
                 <br>

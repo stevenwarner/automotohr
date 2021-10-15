@@ -28,7 +28,7 @@
                 <!-- Body -->
                 <?php if (!empty($bankInfo)) { ?>
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <p class="csF16">
                                 <b><?php echo $bankInfo['routing_number']; ?></b>
                                 <br>
@@ -44,6 +44,12 @@
                                 <br>
                                 <span>Account type</span>
                             </p>
+                        </div>
+                        <div class="col-sm-6 ">
+                            <button class="btn btn-orange csF16 csB7 jsEditBankInfo" data-location_id="<?php echo $bankInfo['sid']; ?>">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
+                                Edit
+                            </button>
                         </div>
                     </div>
                     <br>

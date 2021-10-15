@@ -28,6 +28,14 @@
         'slug' => 'employee',
         'sub' => []
     ];
+    $menuArray['employee']['sub'][] = [
+        'name' => 'Profile',
+        'slug'=> 'employee_profile'
+    ];
+    $menuArray['employee']['sub'][] = [
+        'name' => 'Address',
+        'slug'=> 'employee_address'
+    ];
 
 ?>
 <div class="col-md-2 col-sm-12">

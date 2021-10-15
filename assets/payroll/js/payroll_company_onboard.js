@@ -43,16 +43,28 @@ $(function PayrollCompanyOnboard() {
       var API_URL;
 
     /**
-     * Saves the application key object
-     * @type {null|string}
+     * Saves the application page location
+     * @type {null|int}
      */
-       var locationSid;
+    var locationSid;
 
     /**
-     * Saves the application key object
+     * Saves the application Level
      * @type {null|string}
      */
-     var LEVEL;   
+    var LEVEL;
+
+    /**
+     * Saves the employee ID
+     * @type {null|int}
+     */
+    var EMPLOYEEID;   
+
+    /**
+     * Saves the employee action
+     * @type {null|string}
+     */
+    var EMPLOYEEACTION; 
 
     /**
      * Triggers company onboard process
@@ -231,6 +243,22 @@ $(function PayrollCompanyOnboard() {
         if (type == "employee") {
             StartEmployeeOnboarding();
         }
+    });
+
+    /**
+     * Trigger when cancel is pressed
+     */
+     $(document).on('click', '.jsFederalTaxCancel', function(event) {
+        //
+        event.preventDefault();
+        //
+        return alertify.confirm('Any unsaved changes to this content will be lost. Are you sure you want to close this page?', function() {
+            //
+            xhr = null;
+            //
+            GetFederalTaxInfo();
+            
+        }).setHeader('Confirm!');
     });
 
     /**
@@ -507,6 +535,41 @@ $(function PayrollCompanyOnboard() {
     }
 
     /**
+     * Company details
+     */
+    function CompanyDetailPage() {
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/company_details/' + companyId),
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                API_KEY = resp.API_KEY;
+                API_URL = resp.location_url;
+                var location_type = resp.location_type;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    if (location_type == "new") {
+                        $('.jsPayrollSaveCompanyLocation').click(SaveCompanyLocation);
+                    }
+
+                    if (location_type == "listing") {
+                        $('.jsPayrollAddCompanyLocation').click(AddUpdateCompanyLocation);
+                        $('.jsPayrollUpdateCompanyLocation').click(AddUpdateCompanyLocation);
+                    }
+                    //  
+                    ml(false, modalLoader);
+                });
+            })
+            .error(HandleError);
+    }
+
+    /**
      * Add company location 
      * get company location add view
      * @param {object} event
@@ -551,44 +614,9 @@ $(function PayrollCompanyOnboard() {
             .error();
     }
 
-    /**
-     * Company details
-     */
-    function CompanyDetailPage() {
-        //
-        ml(true, modalLoader);
-        //
-        xhr = $.ajax({
-                method: "GET",
-                url: GetURL('get_payroll_page/company_details/' + companyId),
-            })
-            .done(function(resp) {
-                //
-                xhr = null;
-                API_KEY = resp.API_KEY;
-                API_URL = resp.location_url;
-                var location_type = resp.location_type;
-                //
-                LoadContent(resp.html, function() {
-                    //
-                    if (location_type == "new") {
-                        $('.jsPayrollSaveCompanyLocation').click(SaveCompanyLocation);
-                    }
-
-                    if (location_type == "listing") {
-                        $('.jsPayrollAddCompanyLocation').click(AddUpdateCompanyLocation);
-                        $('.jsPayrollUpdateCompanyLocation').click(AddUpdateCompanyLocation);
-                    }
-                    //  
-                    ml(false, modalLoader);
-                });
-            })
-            .error(HandleError);
-    }
-
 
     /**
-     * Add company location
+     * Save company location
      * @param {object} event 
      * @returns 
      */
@@ -840,23 +868,6 @@ $(function PayrollCompanyOnboard() {
         .error(HandleError);
         //
     }
-
-    /**
-     * Trigger when cancel is pressed
-     */
-    $(document).on('click', '.jsFederalTaxCancel', function(event) {
-        //
-        event.preventDefault();
-        //
-        return alertify.confirm('Any unsaved changes to this content will be lost. Are you sure you want to close this page?', function() {
-            //
-            xhr = null;
-            //
-            GetFederalTaxInfo();
-            
-        }).setHeader('Confirm!');
-    });
-
     
     /**
      * Company industry type
@@ -953,7 +964,8 @@ $(function PayrollCompanyOnboard() {
                     }
                     //
                     if (page_type == 'detail') {
-                        $('.jsFederalTaxEdit').click(EditCompanyBankInfo);
+                        $('.jsEditBankInfo').click(EditCompanyBankInfo);
+                        $('.jsBankInfoCancel').click(GetFederalTaxInfo);
                     }
                     //  
                     ml(false, modalLoader);
@@ -1065,33 +1077,7 @@ $(function PayrollCompanyOnboard() {
                 LoadContent(resp.html, function() {
                     //
                     $('.jsEmployeeOnboardCancel').click(GetCompanyBankInfo);
-                    $('.jsAddCompanyEmployee').click(AddCompanyEmployee);
-                    //  
-                    ml(false, modalLoader);
-                });
-            })
-            .error(HandleError);
-    }
-
-    /**
-     * Add employee to onboarding
-     */
-     function StartEmployeeOnboarding() {
-        //
-        ml(true, modalLoader);
-        //
-        xhr = $.ajax({
-                method: "GET",
-                url: GetURL('get_payroll_page/start_employee_onboarding/' + companyId),
-            })
-            .done(function(resp) {
-                //
-                xhr = null;
-                //
-                LoadContent(resp.html, function() {
-                    //
-                    $('.jsEmployeeOnboardCancel').click(GetCompanyBankInfo);
-                    $('.jsAddCompanyEmployee').click(AddCompanyEmployee);
+                    $('.jsAddCompanyEmployee').click(ShowCompanyEmployeeList);
                     //  
                     ml(false, modalLoader);
                 });
@@ -1102,13 +1088,13 @@ $(function PayrollCompanyOnboard() {
     /**
      * Start employee onboarding
      */
-     function AddCompanyEmployee() {
+    function ShowCompanyEmployeeList() {
         //
         ml(true, modalLoader);
         //
         xhr = $.ajax({
                 method: "GET",
-                url: GetURL('get_payroll_page/add_company_employee/' + companyId),
+                url: GetURL('get_payroll_page/show_company_employee_list/' + companyId),
             })
             .done(function(resp) {
                 //
@@ -1116,13 +1102,118 @@ $(function PayrollCompanyOnboard() {
                 //
                 LoadContent(resp.html, function() {
                     //
-                    $('.jsEmployeeOnboardCancel').click(GetCompanyBankInfo);
-                    $('.jsCompanyEmployee').click(AddCompanyEmployee);
+                    $('.jsPayrollEditCompanyEmployee').click(AddUpdateCompanyEmployee);
+                    $('.jsPayrollAddCompanyEmployee').click(AddUpdateCompanyEmployee);
+                    $('.jsEmployeeListCancel').click(StartEmployeeOnboarding);
                     //  
                     ml(false, modalLoader);
                 });
             })
             .error(HandleError);
+    }
+
+    /**
+     * Add employee onboarding
+     */
+    function AddUpdateCompanyEmployee() {
+        //
+        ml(true, modalLoader);
+        //
+        var employeeId = $(this).data("employee_id");
+        var action = $(this).data("action_type");
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_company_employee/' + companyId),
+                data: { employee_id: employeeId }
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                API_KEY = resp.API_KEY;
+                API_URL = resp.EMPLOYEE_URL;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    $('.jsAddEmployeeCancel').click(ShowCompanyEmployeeList);
+                    $('.jsPayrollSaveCompanyEmployee').click(SaveCompanyEmployee);
+                    //
+                    $('.jsDatePicker').datepicker({
+                        format: 'm/d/Y',
+                        changeMonth: true,
+                        changeYear: true,
+                    });
+                    //
+                    EMPLOYEEID = employeeId;
+                    EMPLOYEEACTION = action;
+                    //  
+                    ml(false, modalLoader);
+                });
+            })
+            .error(HandleError);
+    }
+
+    /**
+     * Save company Employee
+     * @param {object} event 
+     * @returns 
+     */
+     function SaveCompanyEmployee(event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        o.FirstName = $('.jsFirstName').val().trim();
+        o.MiddleInitial = $('.jsMiddleName').val().trim();
+        o.LastName = $('.jsLastName').val().trim();
+        o.StartDate = $('.jsStartDate').val().trim();
+        o.SSN = $('.jsEmployeeSSN').val().replace(/[^\d]/g,'');
+        o.DOB = $('.jsEDOB').val().trim();
+        o.EWA = $('.jsEWD option:selected').val();
+        o.Email = $('.jsEmail').val().trim();
+        o.CompanyId = companyId;
+        // Validation
+        if (!o.FirstName) {
+            return alertify.alert('Warning!', 'First name is mendatory.',AlertifyHandler);
+        }
+        if (!o.LastName) {
+            return alertify.alert('Warning!', 'Last name is mendatory.',AlertifyHandler);
+        }
+        if (!o.Email) {
+            return alertify.alert('Warning!', 'Email address is mendatory.',AlertifyHandler);
+        }
+        if (!o.SSN) {
+            return alertify.alert('Warning!', 'SSN is mendatory.',AlertifyHandler);
+        }
+        if (o.SSN.length != 9) {
+            return alertify.alert('Warning!', 'SSN number must be of 9 digits.',AlertifyHandler);
+        }
+        if (!o.DOB) {
+            return alertify.alert('Warning!', 'Date of birth is mendatory.',AlertifyHandler);
+        }
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Key" : API_KEY },
+            url: API_URL+"/"+EMPLOYEEID,
+            data: JSON.stringify(o)
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            ml(false, modalLoader);
+            // 
+            if (!resp.status) {
+                return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+            } 
+            
+            return alertify.alert('Success!',  resp.response, ShowCompanyEmployeeList);
+        })
+        .error(HandleError);
+        //
     }
 
     /**
@@ -1198,7 +1289,7 @@ $(function PayrollCompanyOnboard() {
      */
      function AlertifyHandler() {
         //
-        return false;
+        return true;
     }
 
     //
