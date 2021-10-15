@@ -431,21 +431,29 @@ class Accurate_background_model extends CI_Model
                 return $a['date_applied'] < $b['date_applied'];
             });
         }
-            
-        //  _e($result_arr, true, true);
-
+        
         foreach ($result_arr as $k0 => $v0) {
+            //
             $tmp_array = @unserialize($v0['order_response']);
-            if (!sizeof($tmp_array)) $in_status = 'pending';
-            else if (!isset($tmp_array['orderStatus'])) $in_status = 'pending';
-            else if ($tmp_array['orderStatus']['status'] == '' || $tmp_array['orderStatus']['status'] == NULL) $in_status = 'pending';
-            else
+            //
+            if (
+                empty($tmp_array) ||
+                !isset($tmp_array['orderStatus']) ||
+                ($tmp_array['orderStatus']['status'] == '' || $tmp_array['orderStatus']['status'] == NULL)
+            ) {
+                $in_status = 'pending';
+            }
+            else{
                 $in_status = strtolower($tmp_array['orderStatus']['status']);
+            }
 
+            // For Assurehire
+            if(isset($tmp_array['status'])){
+                $in_status = strtolower($tmp_array['status']);
+            }
+            //
             $in_status = $in_status == 'draft' ? 'awaiting_candidate_input' : $in_status;
-
-
-
+            //
             if ($do_count) $status_array[$in_status][] = $v0['order_sid'];
 
             if (!in_array($in_status, $status) && !in_array('all', $status)) {
@@ -510,16 +518,18 @@ class Accurate_background_model extends CI_Model
                 $rows .= '    <td ' . $status_color . '>' . ($v0['status'] == 'Draft' ? 'Awaiting Candidate Input' : ($v0['status'] == '' || $v0['status'] == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $v0['status']))) . '</td>';
                 $rows .= '    <td class="no-print">
                 <a class="btn btn-success btn-sm" href="' . base_url() . 'manage_admin/accurate_background/order_status/' . $v0['order_sid'] . '" >Order Status</a>';
-                if(isset($v0['is_deleted_status'])){
-                    $rows .='
-                    <button class="btn btn-success btn-sm jsRevertBGC" data-id="'.($v0['order_sid']).'">
-                        Revert
-                    </button>';
-                } else{
-                    $rows .='
-                    <button class="btn btn-danger btn-sm jsRemoveBGC" data-id="'.($v0['order_sid']).'">
-                        Cancel & Credit Back
-                    </button>';
+                if(!isset($tmp_array['status'])){
+                    if(isset($v0['is_deleted_status'])){
+                        $rows .='
+                        <button class="btn btn-success btn-sm jsRevertBGC" data-id="'.($v0['order_sid']).'">
+                            Revert
+                        </button>';
+                    } else{
+                        $rows .='
+                        <button class="btn btn-danger btn-sm jsRemoveBGC" data-id="'.($v0['order_sid']).'">
+                            Cancel & Credit Back
+                        </button>';
+                    }
                 }
                 $rows .= '</td>';
                 $rows .= '</tr>';

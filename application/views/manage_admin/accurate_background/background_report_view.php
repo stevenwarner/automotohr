@@ -1,16 +1,21 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+
+<?php
+    if($background_order['product_brand'] == 'assurehire'){
+        $this->load->view('manage_admin/accurate_background/background_report_view_assurehire');
+    } else{
+?>
 <?php
 
-if (isset($background_order['order_response']['orderStatus']['percentageCompleted'])) $background_order['order_response']['orderStatus']['percentageComplete'] = $background_order['order_response']['orderStatus']['percentageCompleted'];
-// $background_order['package_response']['orderStatus']['status'] = 'completed';
+if (isset($background_order['order_response']['orderStatus']['percentageCompleted'])) {
+    $background_order['order_response']['orderStatus']['percentageComplete'] = $background_order['order_response']['orderStatus']['percentageCompleted'];
+}
 //
 if (isset($background_order['package_response']['orderStatus']['status']) && strtolower($background_order['package_response']['orderStatus']['status']) == 'completed') {
     $background_order['order_response']['orderStatus']['percentageComplete'] = 100;
 }
 // Needs to be removed
-$background_order['report_url'] = isset($background_order['package_response']['orderStatus']['report_url']) ? $background_order['package_response']['orderStatus']['report_url'] : 'javascript:;' ;
-// $background_order['product_brand'] = 'assurehire';
- 
+$background_order['report_url'] = isset($background_order['package_response']['orderStatus']['report_url']) ? $background_order['package_response']['orderStatus']['report_url'] : 'javascript:;' ; 
 ?>
 <div class="main">
     <div class="container-fluid">
@@ -465,3 +470,4 @@ $background_order['report_url'] = isset($background_order['package_response']['o
         );
     });
 </script>
+<?php } ?>
