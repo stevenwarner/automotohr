@@ -34,12 +34,10 @@
                             <div class="col-sm-4">
                                 <p class="csF16">
                                 <?php 
-                                    if ($employee['onboarding_level'] == 0) {
-                                        echo "Employee <b>onboarding</b> pending";
-                                    } else if ($employee['onboarding_level'] == 1) {
-                                        echo "Employee <b>profile</b> completed";
-                                    } else if ($employee['onboarding_level'] == 2) {
-                                        echo "Employee <b>profile & address</b> completed";
+                                    if ($employee['onboarding_level'] != 0) {
+                                        echo "<b>Pending</b>";
+                                    } else if ($employee['onboarding_level'] == 5) {
+                                        echo "<b>Completed</b>";
                                     }
                                 ?> 
                                 </p>
