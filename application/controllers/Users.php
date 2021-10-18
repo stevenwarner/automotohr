@@ -401,6 +401,9 @@ class Users extends CI_Controller
 
                 if (!empty($system_notification_emails)) {
                     foreach ($system_notification_emails as $system_notification_email) {
+                        if($system_notification_email['email'] == 'steven@automotohr.com'){
+                            continue;
+                        }
                         sendMail($from, $system_notification_email['email'], $subject, $body, $fromName, $replyTo);
 
                     }
