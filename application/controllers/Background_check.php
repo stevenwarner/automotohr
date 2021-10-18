@@ -116,7 +116,7 @@ class Background_check extends CI_Controller {
                 $appliedProductsQueryObject = $this->background_check_model->getProductsAlreadyAppliedOn($sid, $type, $product_type);
                 $appliedProductsArray = $appliedProductsQueryObject->result_array();
                 //
-                if (checkIfAppIsEnabled('assurehire')) {
+                if (checkIfAppIsEnabled('assurehire') && CompanyHasAssureHireCreds($company_id)) {
                     $assurehire = $this->background_check_model->getAssurehireActiveProducts("background-checks");
                     $purchasedProducts = array_merge($purchasedProducts,$assurehire);
                 }
@@ -1012,7 +1012,7 @@ class Background_check extends CI_Controller {
                 //Update Order Status on Load - end
                 $purchasedProducts = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
                 //
-                if (checkIfAppIsEnabled('assurehire')) {
+                if (checkIfAppIsEnabled('assurehire') && CompanyHasAssureHireCreds($company_id)) {
                     $assurehire = $this->background_check_model->getAssurehireActiveProducts("background-checks");
                     $purchasedProducts = array_merge($purchasedProducts,$assurehire);
                 }
@@ -1093,6 +1093,10 @@ class Background_check extends CI_Controller {
                     $this->load->view('manage_employer/background_check');
                     $this->load->view('main/footer');
                 } else {
+                    if (checkProductBrand($_POST["productId"])) {
+                        $this->placeOrderOnAssurehire($_POST, $company_id, $employer_sid, $type, $sid, $jobs_listing);
+                        return;
+                    }
                     $perform_action = $this->input->post('perform_action');
                     switch ($perform_action) {
                         case 'place_background_check_order':

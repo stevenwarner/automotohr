@@ -1269,6 +1269,17 @@
                                                     <article class="col-sm-6 information-box">
                                                         <header class="hr-box-header">
                                                             <?=$v['module_name'];?>
+                                                            <?php 
+                                                                if($v['module_slug'] == 'assurehire'){
+                                                                    ?>
+                                                                    <span class="pull-right">
+                                                                        <button class="btn btn-success jsAssurehireCredentials">
+                                                                            <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Set Credentials
+                                                                        </button>
+                                                                    </span>
+                                                                    <?php
+                                                                }
+                                                            ?>
                                                             <?php if($v['sid'] == 3): ?>
                                                                 <span class="pull-right">
                                                                     <button class="btn btn-success jsModifyFeedEmail">
@@ -1886,6 +1897,58 @@
             return re.test(String(email).toLowerCase());
         }
     });
+
+    //
+    $(function Assurehire(){
+        //
+        var 
+        companyId = <?=$company_sid;?>;
+        //
+        $('.jsAssurehireCredentials').click(function(event){
+            //
+            event.preventDefault();
+            //
+            var modal = $('#jsModalContainer2').html();
+            $('#jsModalContainer2').remove();
+            $('body').append(modal)
+            //
+            $('#jsModaleContainer2').modal('show');
+        });
+        //
+        $(document).on('click', '.jsSaveCredentials', function(event){
+            //
+            event.preventDefault();
+            //
+            var o = {};
+            o.username = $('.jsUsername').val().trim();
+            o.password = $('.jsPassword').val().trim();
+            //
+            if(!o.username){
+                return alertify.alert('Error!', 'Username is required.', function(){ return true; });
+            }
+            //
+            if(!o.password){
+                return alertify.alert('Error!', 'Password is required.', function(){ return true; });
+            }
+            //
+            $(this).text('Saving.....');
+            //
+            $.post(
+                "<?=base_url("manage_admin/companies/assurehire_creds/".($company_sid)."");?>", 
+                o
+            ).done(function(resp){
+                //
+                if(!resp.status){
+                    return alertify.alert('Error!', resp.response, function(){ return true; });
+                }
+                //
+                return alertify.alert('Success!', resp.response, function(){ 
+                    $('#jsModaleContainer2').modal('hide');
+                    window.location.reload();
+                 });
+            });
+        });
+    });
 </script>
 
 
@@ -1923,6 +1986,39 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-success jsSaveEmail">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assure Modal -->
+<div id="jsModalContainer2">
+    <div class="modal fade" id="jsModaleContainer2">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Update Assurehire credentials for <?=$company_info['CompanyName'];?></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Username <span class="csRequired">*</span> </label>
+                            <input type="text" class="form-control jsUsername" value="<?=!empty($assurehire_creds) ? $assurehire_creds['username'] : '';?>"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Password <span class="csRequired">*</span> </label>
+                            <input type="text" class="form-control jsPassword" value="<?=!empty($assurehire_creds) ? $assurehire_creds['password'] : '';?>"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success jsSaveCredentials">Save changes</button>
                 </div>
             </div>
         </div>

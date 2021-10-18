@@ -43,4 +43,34 @@ class Assurehire_model extends CI_Model {
     function updateProduct($upd, $condition){
         $this->db->update('products', $upd, $condition);
     }
+
+    //
+    function GetCreds($companyId = null){
+        //
+        $this->db->select('company_sid, username, password');
+        //
+        if($companyId){
+            $this->db->where('company_sid', $companyId);
+        }
+        //
+        $result = $this->db->get('assurehire_companies');
+        //
+        $records = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        if(!empty($records)){
+            //
+            $tmp = [];
+            //
+            foreach($records as $record){
+                //
+                $tmp[$record['company_sid']] = $record;
+            }
+            //
+            $records = $tmp;
+        }
+        //
+        return $records;
+    }
 }    

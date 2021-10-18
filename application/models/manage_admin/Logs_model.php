@@ -327,9 +327,30 @@ class logs_model extends CI_Model
     }
 
     function getModuleInfo($sid){
-        return $this->db->select('sid, module_name')
+        return $this->db->select('sid, module_name, module_slug')
         ->where('sid', $sid)
         ->get('modules')
         ->row_array();
+    }
+
+    //
+    function GetAllAssureHireCredentials(){
+        $records = $this->db
+        ->select('company_sid, username, password')
+        ->get('assurehire_companies')
+        ->result_array();
+        //
+        if(empty($records)){
+            return [];
+        }
+        //
+        $returnArray = [];
+        //
+        foreach($records as $record){
+            //
+            $returnArray[$record['company_sid']] = $record;
+        }
+        //
+        return $returnArray;
     }
 }

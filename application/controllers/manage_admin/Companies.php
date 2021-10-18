@@ -1406,6 +1406,7 @@ class Companies extends Admin_Controller {
                 // Get dynamic modules
                 $this->data['dynamicModules'] = $this->company_model->getDynamicModulesByCompany($company_sid);
                 $this->data['configured_companies'] = $this->company_model->get_reassign_configured_companies($company_sid);
+                $this->data['assurehire_creds'] = $this->company_model->GetAssureHireCredentials($company_sid);
                 $this->render('manage_admin/company/manage_company');
             } else {
                 $perform_action = $this->input->post('perform_action');
@@ -3018,5 +3019,12 @@ class Companies extends Admin_Controller {
         );
 
         echo 'success';
+    }
+
+    function assurehire_creds($companyId){
+        //
+        $this->company_model->CheckAndAddAssureHireCredentials($companyId, $this->input->post(NULL, TRUE));
+
+        res(['status' => true, 'response' => 'Added successfully.']);
     }
 }

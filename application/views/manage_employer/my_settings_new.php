@@ -244,6 +244,9 @@
                                             <li><a href="<?php echo base_url('performance-management/goals'); ?>">Goals</a></li>
                                         <?php } ?>
                                         <li><a href="<?php echo base_url('export_documents/employee'); ?>">Bulk Download Documents</a></li>
+                                        <?php if (checkIfAppIsEnabled('assurehire')) { ?>
+                                            <li><a href="javascript:void(0)" class="jsAssurehireCredentials">AssureHire Credentials</a></li>
+                                        <?php } ?>
                                     </ul>
                                 </article>
                             <?php } ?>
@@ -339,3 +342,104 @@
         </div>
     </div>
 </div>
+
+<?php if(checkIfAppIsEnabled('assurehire')) {?>
+
+    <script>
+        //
+        $(function Assurehire() {
+            var
+                companyId = <?=$session['company_detail']['sid']?>,
+                companyName = "<?=$session['company_detail']['CompanyName']?>",
+                credOBJ = <?=json_encode($assureHireCreds)?>;
+            //
+            $('.jsAssurehireCredentials').click(function(event) {
+                //
+                event.preventDefault();
+                //
+                var modal = $('#jsModalContainer2').html();
+                $('#jsModalContainer2').remove();
+                $('body').append(modal)
+                //
+                $('.jsCompanyName').html('<strong>'+(companyName)+'</strong>');
+                $('.jsUsername').val(credOBJ[companyId] !== undefined ? credOBJ[companyId]['username'] : '');
+                $('.jsPassword').val(credOBJ[companyId] !== undefined ? credOBJ[companyId]['password'] : '');
+                //
+                $('#jsModaleContainer2').modal('show');
+            });
+            //
+            $(document).on('click', '.jsSaveCredentials', function(event) {
+                //
+                event.preventDefault();
+                //
+                var o = {};
+                o.username = $('.jsUsername').val().trim();
+                o.password = $('.jsPassword').val().trim();
+                //
+                if (!o.username) {
+                    return alertify.alert('Error!', 'Username is required.', function() {
+                        return true;
+                    });
+                }
+                //
+                if (!o.password) {
+                    return alertify.alert('Error!', 'Password is required.', function() {
+                        return true;
+                    });
+                }
+                //
+                $(this).text('Saving.....');
+                //
+                $.post(
+                    "<?=base_url("manage_admin/companies/assurehire_creds");?>/"+(companyId)+"",
+                    o
+                ).done(function(resp) {
+                    //
+                    if (!resp.status) {
+                        return alertify.alert('Error!', resp.response, function() {
+                            return true;
+                        });
+                    }
+                    //
+                    return alertify.alert('Success!', resp.response, function() {
+                        $('#jsModaleContainer2').modal('hide');
+                        window.location.reload();
+                    });
+                });
+            });
+        });
+    </script>
+
+<!-- Assure Modal -->
+<div id="jsModalContainer2">
+    <div class="modal fade" id="jsModaleContainer2">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Update Assurehire credentials for <span class="jsCompanyName" ></span></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Username <span class="csRequired"></span> </label>
+                            <input type="text" class="form-control jsUsername"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Password <span class="csRequired"></span> </label>
+                            <input type="text" class="form-control jsPassword"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success jsSaveCredentials">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>

@@ -13796,3 +13796,14 @@ if(!function_exists('LoginToAPI')){
         }
     }
 }
+
+
+if(!function_exists('CompanyHasAssureHireCreds')){
+    function CompanyHasAssureHireCreds($companyId){
+        //
+        $_this = &get_instance();
+        //
+        return $_this->db->where('company_sid', $companyId)
+        ->count_all_results('assurehire_companies');
+    }
+}

@@ -1938,7 +1938,7 @@ class Company_model extends CI_Model {
     //
     function getDynamicModulesByCompany($companyId){
         $a = $this->db
-        ->select('sid, module_name, "0" as status')
+        ->select('sid, module_name, "0" as status, module_slug')
         ->where('is_disabled', 0)
         ->where('stage', 'production')
         ->order_by('module_name', 'ASC')
@@ -2186,5 +2186,50 @@ class Company_model extends CI_Model {
     //
     function GetCompanyIndeedDetails($companyId){
         return $this->db->where('company_sid', $companyId)->get('company_indeed_details')->row_array();
+    }
+
+    //
+    function CheckAndAddAssureHireCredentials(
+        $companyId,
+        $data
+    ){
+        //
+        if(
+            !$this->db->where('company_sid', $companyId)
+            ->count_all_results('assurehire_companies')
+        ){
+            // Insert
+            $this->db->insert(
+                'assurehire_companies', [
+                    'company_sid' => $companyId,
+                    'username' => $data['username'],
+                    'password' => $data['password'],
+                    'status' => 1,
+                    'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                    'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]
+            );
+        } else{
+            // Update
+            $this->db
+            ->where('company_sid', $companyId)
+            ->update(
+                'assurehire_companies', [
+                    'username' => $data['username'],
+                    'password' => $data['password'],
+                    'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]
+            );
+        }
+    }
+    
+    //
+    function GetAssureHireCredentials(
+        $companyId
+    ){
+        return $this->db
+        ->where('company_sid', $companyId)
+        ->get('assurehire_companies')
+        ->row_array();
     }
 }

@@ -85,6 +85,12 @@ class Settings extends Public_Controller
             //Fetch Contact Info for logged in company
             $this->load->model('manage_admin/company_model');
             $data['company_info'] = $this->company_model->get_contact_info($company_id);
+            //
+            if(checkIfAppIsEnabled('assurehire')){
+                //
+                $this->load->model('Assurehire_model', 'assurehire_model');
+                $data['assureHireCreds'] = $this->assurehire_model->GetCreds($company_id);
+            }
             // ob_flush();
             // ob_start();
             $this->load->view('main/header', $data);

@@ -380,7 +380,7 @@ class logs extends Admin_Controller
                     'value'     =>  0
                 );
             }
-            $this->company_model->update_user_status($sid,$data);
+            $this->company_model->update_user_status($comany_sid,$data);
             print_r(json_encode($return_data));
     }
      public function company_module($sid){
@@ -396,6 +396,14 @@ class logs extends Admin_Controller
         $companies=$this->logs_model->get_all_companies($sid);
         $this->data['company_data']=$companies;
         $this->data['module_data']= $this->logs_model->getModuleInfo($sid);
+        //
+        if($this->data['module_data']['module_slug'] == 'assurehire'){
+            $this->load->model('Assurehire_model', 'assurehire_model');
+            //
+            $this->data['assureHireCreds'] = $this->assurehire_model->GetCreds();
+        }
+        //
+        $this->data['assurehire_creds'] = $this->logs_model->GetAllAssureHireCredentials();
         $this->render('manage_admin/modules/company_module'); 
      }
      public function notification_email_log ($email = 'all', $start_date = 'all', $end_date = 'all') {
