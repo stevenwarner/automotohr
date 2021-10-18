@@ -207,6 +207,12 @@ class Background_check extends CI_Controller {
                 $data_function['questions_sent'] = $this->application_tracking_system_model->check_sent_video_questionnaires($sid, $company_id);
                 $data_function['questions_answered'] = $this->application_tracking_system_model->check_answered_video_questionnaires($sid, $company_id);
                 $data_function['job_list_sid'] = $jobs_listing;
+                //
+                if(checkIfAppIsEnabled('assurehire')){
+                    //
+                    $this->load->model('Assurehire_model', 'assurehire_model');
+                    $data_function['assureHireCreds'] = $this->assurehire_model->GetCreds($company_id);
+                }
                 //form data valdation ends
                 if ($this->form_validation->run() === FALSE) {
                     $data_function['title'] = 'background_report';
@@ -1031,7 +1037,7 @@ class Background_check extends CI_Controller {
                         }
                         //
                         if($product['product_brand'] == 'assurehire'){
-                            $order_status = unserialize($order_status);
+                            $order_status = !empty($order_status) ? unserialize($order_status) : $order_status;
                         }
 
                         if ($package_response != '') {
@@ -1087,6 +1093,12 @@ class Background_check extends CI_Controller {
                 }
                 $data_function['job_list_sid'] = $jobs_listing;
                 $data_function['market_place_url'] = 'market_place/drug-testing';
+                //
+                if(checkIfAppIsEnabled('assurehire')){
+                    //
+                    $this->load->model('Assurehire_model', 'assurehire_model');
+                    $data_function['assureHireCreds'] = $this->assurehire_model->GetCreds($company_id);
+                }
                 //form data valdation ends
                 if ($this->form_validation->run() === FALSE) {
                     $this->load->view('main/header', $data_function);

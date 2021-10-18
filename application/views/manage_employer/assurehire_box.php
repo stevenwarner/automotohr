@@ -96,6 +96,15 @@
                             <th scope="col" class="col-xs-4">Notes</th>
                             <td class="text-left"><?=$product['package_response']['orderInfo']['specialInstruction']?></td>
                         </tr>
+                        <tr>
+                            <th scope="col" class="col-xs-4">Upload File</th>
+                            <td class="text-left">
+                                <div>
+                                    <input type="file" name="files[]" class="hidden" />
+                                </div>
+                                <button class="btn btn-success jsUploadFile">Upload File</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -129,3 +138,66 @@
     </div>
     <?php } ?>
 </div>
+
+<script>
+    $(function(){
+        //
+        var hasError = false;
+        var fileOBJ = {};
+        var xhr = null;
+        //
+        $('input[type="file"]').mFileUploader({
+            allowedTypes: ['pdf','jpg','jpeg','png'],
+            onError: function(error){
+                hasError = error;
+            },
+            onSuccess: function(file){
+                hasError = false;
+                fileOBJ = file;
+            }
+        });
+        //
+        $('.jsUploadFile').click(function(event){
+            //
+            event.preventDefault();
+            //            
+            if(hasError){
+                return alertify.alert("Error!", hasError, function() {});
+            }
+            //            
+            if(Object.keys(fileOBJ).length === 0){
+                return alertify.alert("Error!", 'Please select a file first.', function() {});
+            }
+            //
+            $(this).text('Uploading file...');
+            //
+            UploadFile($(this), fileOBJ);
+        });
+
+        //
+        function UploadFile(_this, fileOBJ){
+            //
+            var formData = new FormData();
+            //
+            var postfix = [];
+            postfix.push( "<?=$employer['user_type'];?>");
+            postfix.push( "<?=$employer['first_name'].' '.$employer['last_name'];?>");
+            postfix.push( "<?=$product['external_id'];?>");
+            //
+            formData.append('file', fileOBJ);
+            formData.append('postfix', postfix);
+            //
+            xhr = $.ajax({
+                method: "POST",
+                url: "<?=base_url('upload_secure_file');?>",
+                processData: false,
+                contentType: false,
+                data: formData
+            }).done(function(resp){
+                //
+                console.log(resp);
+                _this.text('Upload File');
+            });
+        }
+    });
+</script>

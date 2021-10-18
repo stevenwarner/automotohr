@@ -51,9 +51,9 @@
                 instances[_this.selector] = oFile;
                 //
                 options['s3'] = opt !== undefined && opt.s3 || `https://automotohrattachments.s3.amazonaws.com/`;
-                options['path'] = opt.path === undefined ? true : opt.path;
+                options['path'] = opt === undefined || opt.path === undefined ? true : opt.path;
                 options['placeholderImage'] = opt !== undefined && opt.placeholderImage || '';
-                options['fileLimit'] = $.inArray('mp4', opt.allowedTypes) === -1 ? -1 : opt.fileLimit;
+                options['fileLimit'] = $.inArray('mp4', opt === undefined ? [] : opt.allowedTypes) === -1 ? -1 : opt.fileLimit;
                 options['allowedTypes'] = opt !== undefined && opt.allowedTypes || ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv']
                 options['text'] = opt !== undefined && opt.text || `Click / Drag to upload`;
                 options['onSuccess'] = opt !== undefined && opt.onSuccess || function() {};

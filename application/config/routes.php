@@ -1375,3 +1375,7 @@ $route['manage_admin/companies/update_company_email']['post'] = 'manage_admin/Co
 
 // Assurehire callback url
 $route['assurehire/cb/(:any)'] = 'Assurehire/cb/$1';
+
+
+//
+$route['upload_secure_file']['post'] = 'Upload_file/UploadFile';

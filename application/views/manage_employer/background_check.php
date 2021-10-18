@@ -1,6 +1,9 @@
 <?php
 $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
 ?>
+
+<link rel="stylesheet" href="<?=base_url("assets/mFileUploader/index.css");?>">
+<script src="<?=base_url("assets/mFileUploader/index.js");?>"></script>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -321,12 +324,16 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
 
 <?php $this->load->view('iframeLoader'); ?>
 
+<?php if(isset($assureHireCreds)) { ?>
 <script>
     $('.jsViewReport').click(function(e) {
         //
         e.preventDefault();
         //
         var url = $(this).prop('href');
+        //
+        var username = "<?=$session['employer_detail']['access_level_plus'] == 1 ? $assureHireCreds[$session['company_detail']['sid']]['username']: '';?>";
+        var password = "<?=$session['employer_detail']['access_level_plus'] == 1 ? $assureHireCreds[$session['company_detail']['sid']]['password']: '';?>";
         //
         var rows = '';
         rows += `
@@ -337,18 +344,19 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         <h4 class="modal-title">Background Report</h4>
                     </div>
-                    <div class="modal-body">
-                        
-                        <div class="row">
-                            
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <h4>Use the below details to login.</h4>
-                                <p><strong>Username:</strong> <?php echo ASSUREHIR_USR ?></p>    
-                                <p><strong>Password:</strong> <?php echo ASSUREHIR_PWD ?></p>    
-                            </div>
-                        </div>
-                        
-                        
+                    <div class="modal-body">`;
+        if(username){
+
+        rows +=`
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <h4>Use the below details to login.</h4>
+                    <p><strong>Username:</strong> ${username}</p>    
+                    <p><strong>Password:</strong> ${password}</p>    
+                </div>
+            </div>`;
+        }
+        rows +=`
                         <iframe id="js-report-iframe" style="width: 100%; height: 500px;" frameBorder="0"></iframe>
                     </div>
                     <div class="modal-footer">
@@ -365,4 +373,6 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
         //
         loadIframe(url, '#js-report-iframe', true);
     });
+
 </script>
+<?php } ?>
