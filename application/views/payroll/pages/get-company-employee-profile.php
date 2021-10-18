@@ -41,7 +41,7 @@
                         <label class="csF16 csB7">
                             First name <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsFirstName" value="<?=!empty($Employee_info) ? $Employee_info['first_name'] : '';?>" placeholder="John" />
+                        <input type="text" class="form-control jsFirstName" value="<?=!empty($employee_info) ? $employee_info['first_name'] : '';?>" placeholder="John" />
                     </div>
                 </div>
                 <br>
@@ -50,7 +50,7 @@
                         <label class="csF16 csB7">
                             Middle name / initial 
                         </label>
-                        <input type="text" class="form-control jsMiddleName" value="<?=!empty($Employee_info) ? $Employee_info['middle_name'] : '';?>" placeholder="B" />
+                        <input type="text" class="form-control jsMiddleName" value="<?=!empty($employee_info) ? $employee_info['middle_name'] : '';?>" placeholder="B" />
                     </div>
                 </div>
                 <br>
@@ -59,7 +59,7 @@
                         <label class="csF16 csB7">
                             Last name <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsLastName" value="<?=!empty($Employee_info) ? $Employee_info['last_name'] : '';?>" placeholder="Doe" />
+                        <input type="text" class="form-control jsLastName" value="<?=!empty($employee_info) ? $employee_info['last_name'] : '';?>" placeholder="Doe" />
                     </div>
                 </div>
                 <br>
@@ -70,11 +70,11 @@
                         </label>
                         <?php 
                             $start_date = "";
-                            if(isset($Employee_info)){
-                                if (!empty($Employee_info['joined_at'])) {
-                                    $start_date = date('m/d/Y',strtotime($Employee_info['joined_at']));
-                                } else if (!empty($Employee_info['registration_date'])) {
-                                    $start_date = date('m/d/Y',strtotime($Employee_info['registration_date']));
+                            if(isset($employee_info)){
+                                if (!empty($employee_info['joined_at'])) {
+                                    $start_date = date('m/d/Y',strtotime($employee_info['joined_at']));
+                                } else if (!empty($employee_info['registration_date'])) {
+                                    $start_date = date('m/d/Y',strtotime($employee_info['registration_date']));
                                 }
                             }
                         ?>
@@ -101,7 +101,7 @@
                         <label class="csF16 csB7">
                             Personal email address <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsEmail" value="<?=!empty($Employee_info) ? $Employee_info['email'] : '';?>" placeholder="We may use this email address to send them critical information about payroll" />
+                        <input type="text" class="form-control jsEmail" value="<?=!empty($employee_info) ? $employee_info['email'] : '';?>" placeholder="We may use this email address to send them critical information about payroll" />
                     </div>
                 </div>
                 <br>
@@ -110,7 +110,7 @@
                         <label class="csF16 csB7">
                             Employee's Social Security number <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsEmployeeSSN" value="<?=!empty($Employee_info) ? $Employee_info['ssn'] : '';?>" placeholder="123456789" />
+                        <input type="text" class="form-control jsEmployeeSSN" value="<?=!empty($employee_info) ? $employee_info['ssn'] : '';?>" placeholder="123456789" />
                     </div>
                 </div>
                 <br>
@@ -119,7 +119,7 @@
                         <label class="csF16 csB7">
                             Birthday <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsEDOB jsDatePicker" value="<?=!empty($Employee_info) ? date('m/d/Y',strtotime($Employee_info['dob'])) : '';?>" placeholder="MM/DD/YYYY" />
+                        <input type="text" class="form-control jsEDOB jsDatePicker" value="<?=!empty($employee_info) ? date('m/d/Y',strtotime($employee_info['dob'])) : '';?>" placeholder="MM/DD/YYYY" />
                     </div>
                 </div>
                 <br>

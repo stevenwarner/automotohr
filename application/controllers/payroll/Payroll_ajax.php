@@ -422,12 +422,12 @@ class Payroll_ajax extends CI_Controller
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
         }
-
-        if($page === 'get-company-employee'){
+        //
+        if($page === 'get-company-employee-profile'){
             //
             $data['locations'] = $this->pm->GetCompanyLocations($companyId);
             //
-            $data['Employee_info'] = $this->em->GetEmployeeDetails($_GET["employee_id"], [
+            $data['employee_info'] = $this->em->GetEmployeeDetails($_GET["employee_id"], [
                 "users.sid",
                 "users.first_name",
                 "users.last_name",
@@ -446,6 +446,42 @@ class Payroll_ajax extends CI_Controller
             ]);
         }
         //
+        if($page === 'get-company-employee-address'){
+            //
+            $data['employee_sid'] = $_GET["employee_id"];
+            //
+            $data['states'] = $this->pm->GetStates();
+            //
+            $data['employee_address_info'] = $this->em->GetEmployeeDetails($_GET["employee_id"], [
+                "users.sid",
+                "users.Location_Country",
+                "users.Location_State",
+                "users.Location_City",
+                "users.Location_Address",
+                "users.	PhoneNumber",
+                "users.Location_ZipCode",
+                "users.Location_Address_2"
+            ]);
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'EMPLOYEE_URL' => getAPIUrl("employees"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+
+        if ($page === "get-company-employee-compensation") {
+            //
+            $data['employee_sid'] = $_GET["employee_id"];
+            //
+            $data['employee_address_info'] = $this->pm->GetEmployeeJobDetails($_GET["employee_id"]);
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'EMPLOYEE_URL' => getAPIUrl("employees"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
         //
         SendResponse(200, $this->load->view($this->path.$page, $data, false), 'html');
     }

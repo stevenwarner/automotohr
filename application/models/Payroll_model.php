@@ -20,6 +20,8 @@ class Payroll_model extends CI_Model{
         $this->tables['PayrollCompanyAdmin'] = 'payroll_company_admin'; 
         $this->tables['PayrollCompanyLocations'] = 'payroll_company_locations'; 
         $this->tables['JCI'] = 'job_category_industries'; 
+        $this->tables['PEJ'] = 'payroll_employee_jobs'; 
+        $this->tables['PEJC'] = 'payroll_employee_job_compensations'; 
     }    
 
     /**
@@ -553,5 +555,28 @@ class Payroll_model extends CI_Model{
         );
         //
         return $this->db->insert_id();
+    }
+
+    //
+    function GetEmployeeJobDetails($employee_sid){
+        //
+        $query = 
+        $this->db
+        ->select("
+            {$this->tables['PEJ']}.sid,
+            {$this->tables['PEJ']}.title,
+            {$this->tables['PEJC']}.rate,
+            {$this->tables['PEJC']}.payment_unit,
+            {$this->tables['PEJC']}.flsa_status,
+        ")
+        ->from($this->tables['PEJ'])
+        ->join("{$this->tables['PEJC']}", "{$this->tables['PEJ']}.sid = {$this->tables['PEJC']}.payroll_job_sid", 'left')
+        ->where("{$this->tables['PEJ']}.employee_sid", $employee_sid)
+        ->get();
+        //
+        $jobInfo = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $jobInfo;
     }
 }

@@ -43,17 +43,10 @@
                                 </p>
                             </div>    
                             <div class="col-sm-2 ">
-                                <?php if ($employee['onboarding_level'] == 0) { ?>
-                                    <button class="btn btn-orange csF16 csB7 jsPayrollAddCompanyEmployee" data-employee_id="<?php echo $employee['sid']; ?>" data-level="<?php echo $employee['onboarding_level']; ?>">
-                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
-                                        Add
-                                    </button>
-                                <?php } else { ?>
-                                    <button class="btn btn-orange csF16 csB7 jsPayrollEditCompanyEmployee" data-employee_id="<?php echo $employee['sid']; ?>" data-level="<?php echo $employee['onboarding_level']; ?>">
-                                        <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
-                                        Edit
-                                    </button>
-                                <?php } ?>
+                                <button class="btn btn-orange csF16 csB7 jsPayrollEmployeeOnboard" data-employee_id="<?php echo $employee['sid']; ?>" data-level="<?php echo $employee['onboarding_level']; ?>">
+                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
+                                    <?php echo $employee['onboarding_level'] == 0 ? "Add" : "Edit"; ?>
+                                </button>
                             </div>
                         </div>
                     <?php } ?> 

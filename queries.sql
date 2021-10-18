@@ -272,3 +272,4 @@ ALTER TABLE `payroll_companies` ADD `onbording_level` INT(11) NOT NULL DEFAULT '
 
 ALTER TABLE `payroll_employees` ADD `work_address_sid` TEXT NULL DEFAULT NULL AFTER `employee_sid`;
 ALTER TABLE `payroll_employees` ADD `onboard_level` INT NOT NULL DEFAULT '0' AFTER `created_at`;
+ALTER TABLE `users` ADD `Location_Address_2` TEXT NULL DEFAULT NULL AFTER `Location_Address`;
