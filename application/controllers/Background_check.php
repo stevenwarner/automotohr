@@ -1013,7 +1013,7 @@ class Background_check extends CI_Controller {
                 $purchasedProducts = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
                 //
                 if (checkIfAppIsEnabled('assurehire') && CompanyHasAssureHireCreds($company_id)) {
-                    $assurehire = $this->background_check_model->getAssurehireActiveProducts("background-checks");
+                    $assurehire = $this->background_check_model->getAssurehireActiveProducts("drug-testing");
                     $purchasedProducts = array_merge($purchasedProducts,$assurehire);
                 }
 
@@ -1094,7 +1094,7 @@ class Background_check extends CI_Controller {
                     $this->load->view('main/footer');
                 } else {
                     if (checkProductBrand($_POST["productId"])) {
-                        $this->placeOrderOnAssurehire($_POST, $company_id, $employer_sid, $type, $sid, $jobs_listing);
+                        $this->placeOrderOnAssurehire($_POST, $company_id, $employer_sid, $type, $sid, $jobs_listing, 'drug-testing');
                         return;
                     }
                     $perform_action = $this->input->post('perform_action');
@@ -1435,9 +1435,11 @@ class Background_check extends CI_Controller {
         exit;
     }
 
-    private function placeOrderOnAssurehire ($input, $company_id, $employer_sid, $user_type, $user_sid, $jobs_listing) {
+    private function placeOrderOnAssurehire ($input, $company_id, $employer_sid, $user_type, $user_sid, $jobs_listing, $product_type = 'background-checks') {
         //
         $perform_action = $input['perform_action'];
+        //
+        $baseTo = $product_type == 'drug-testing' ? 'drug_test' : 'background_check';
         //
         switch ($perform_action) {
             case 'place_background_check_order':
@@ -1546,20 +1548,20 @@ class Background_check extends CI_Controller {
                     //
                     switch ($user_type) {
                         case 'applicant':
-                            redirect('background_check/applicant/' . $user_sid.'/'.$jobs_listing, 'refresh');
+                            redirect($baseTo.'/applicant/' . $user_sid.'/'.$jobs_listing, 'refresh');
                             break;
                         case 'employee':
-                            redirect('background_check/employee/'. $user_sid, 'refresh');
+                            redirect($baseTo.'/employee/'. $user_sid, 'refresh');
                             break;
                     }
                 } else {
                     $this->session->set_flashdata('message', '<b>Error:</b> Please Fill Full Employment Application in Order to process Background Check.');
                     switch ($user_type) {
                         case 'applicant':
-                            redirect('background_check/applicant/' . $user_sid.'/'.$jobs_listing, 'refresh');
+                            redirect($baseTo.'/applicant/' . $user_sid.'/'.$jobs_listing, 'refresh');
                             break;
                         case 'employee':
-                            redirect('background_check/employee/'. $user_sid, 'refresh');
+                            redirect($baseTo.'/employee/'. $user_sid, 'refresh');
                             break;
                     }
                 }
