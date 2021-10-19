@@ -235,6 +235,18 @@ class Background_check extends CI_Controller {
                             //Placing BG check order
                             $package_response = $this->place_bg_check_order($package_code, $sid, $type, $jobs_listing, $res);
                             $package_response = json_decode($package_response, true);
+                            // Error occuresd
+                            if(json_last_error() !== JSON_ERROR_NONE){
+                                $email_message = '<pre>' . print_r($this->input->post(), true) . print_r($package_response, true) . '</pre>';
+                                mail(TO_EMAIL_DEV, 'Accurate Background Check Order Error ' . date('Y-m-d H:i:s'), $email_message);
+                                $this->session->set_flashdata('message', '<b>Error!:</b> Failed to place a background check.');
+                                if ($type == 'applicant') {
+                                    redirect('background_check/applicant/' . $sid . '/' .$jobs_listing, 'refresh');
+                                } else {
+                                    redirect('background_check/employee/' . $sid, 'refresh');
+                                }
+                                return;
+                            }
                             $dataToSave['package_response'] = serialize($package_response);
                             $dataToSave['package_id'] = isset($package_response['packageId']) ? $package_response['packageId'] : $package_response['orderInfo']['packageId'];
 
@@ -1099,6 +1111,18 @@ class Background_check extends CI_Controller {
                             //Placing BG check order
                             $package_response = $this->place_bg_check_order($package_code, $sid, $type, $jobs_listing);
                             $package_response = json_decode($package_response, true);
+                            // Error occuresd
+                            if(json_last_error() !== JSON_ERROR_NONE){
+                                $email_message = '<pre>' . print_r($this->input->post(), true) . print_r($package_response, true) . '</pre>';
+                                mail(TO_EMAIL_DEV, 'Accurate Background Check Order Error ' . date('Y-m-d H:i:s'), $email_message);
+                                $this->session->set_flashdata('message', '<b>Error!:</b> Failed to place a drug test.');
+                                if ($type == 'applicant') {
+                                    redirect('drug_test/applicant/' . $sid, 'refresh');
+                                } else {
+                                    redirect('drug_test/employee/' . $sid, 'refresh');
+                                }
+                                return;
+                            }
                             $dataToSave['package_response'] = serialize($package_response);
                             $dataToSave['package_id'] = $package_response['orderInfo']['packageId'];
                             //Checking BG check order Response
