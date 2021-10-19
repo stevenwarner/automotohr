@@ -101,7 +101,7 @@
                             <th scope="col" class="col-xs-4">Upload File</th>
                             <td class="text-left">
                                 <div>
-                                    <input type="file" name="files[]" class="hidden" />
+                                    <input type="file" name="files_<?=$product['external_id'];?>" class="hidden" />
                                 </div>
                                 <button class="btn btn-success jsUploadFile">Upload File</button>
                             </td>
@@ -190,7 +190,7 @@
         <?php } ?>
         //
         <?php if($session['employer_detail']['access_level_plus'] == 1) {?>
-        $('input[type="file"]').mFileUploader(options);
+        $('input[name="files_<?=$product['external_id'];?>"]').mFileUploader(options);
         <?php } ?>
         <?php if($session['employer_detail']['access_level_plus'] == 1) {?>
         //
