@@ -152,8 +152,6 @@
     <?php } ?>
 </div>
 
-<?php $this->load->view('iframeLoader'); ?>
-
 <script>
     $(function(){
         //

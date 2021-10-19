@@ -1,6 +1,7 @@
 <?php
 $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
 ?>
+<?php $this->load->view('iframeLoader'); ?>
 
 <link rel="stylesheet" href="<?=base_url("assets/mFileUploader/index.css");?>">
 <script src="<?=base_url("assets/mFileUploader/index.js");?>"></script>
