@@ -285,6 +285,8 @@ class Form_full_employment_application extends CI_Controller {
                 $data['affiliate'] = 0;
                 $data['d_license'] = 0;
                 $data['l_employment'] = 0;
+                $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
+                $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
                 
                 if(isset($ei['affiliate'])){
                     $data['affiliate'] = $ei['affiliate'];
@@ -297,6 +299,16 @@ class Form_full_employment_application extends CI_Controller {
                 }
                 if(isset($ei['l_employment'])){
                     $data['l_employment'] = $ei['l_employment'];
+                }
+                //
+                if($data['ssn_required'] == 1){
+                    //
+                    $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
+                }
+                //
+                if($data['dob_required'] == 1){
+                    //
+                    $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
                 }
                 
                 //
@@ -687,16 +699,13 @@ class Form_full_employment_application extends CI_Controller {
             $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
             //
             if ($sid > 0) {
+                
                 $applicant_info = $this->form_full_employment_application_model->get_applicants_details($sid);
                 $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
                 //$this->form_validation->set_rules('TextBoxNameMiddle', 'Middle Name', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('suffix', 'Suffix', 'trim|xss_clean');
-                //
-                if(!$data['_ssv']){
-                    $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
-                    $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
-                }
+               
 
                 if (isset($_POST['email']) && $_POST['email'] == $applicant_info['email']) {
                     $this->form_validation->set_rules('email', 'Email Address', 'required|trim|xss_clean');
@@ -869,6 +878,18 @@ class Form_full_employment_application extends CI_Controller {
             $data['affiliate'] = 0;
             $data['d_license'] = 0;
             $data['l_employment'] = 0;
+            $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
+            $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
+            //
+            if($data['ssn_required'] == 1){
+                //
+                $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
+            }
+            //
+            if($data['dob_required'] == 1){
+                //
+                $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
+            }
             
             if(isset($ei['affiliate'])){
                 $data['affiliate'] = $ei['affiliate'];
@@ -882,6 +903,7 @@ class Form_full_employment_application extends CI_Controller {
             if(isset($ei['l_employment'])){
                 $data['l_employment'] = $ei['l_employment'];
             }
+
             
             //
             if($data['d_license']){

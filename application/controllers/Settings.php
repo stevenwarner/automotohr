@@ -1191,8 +1191,6 @@ class Settings extends Public_Controller
             //$this->form_validation->set_rules('TextBoxNameMiddle', 'Middle Name', 'required|trim|xss_clean');
             $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|xss_clean');
             $this->form_validation->set_rules('suffix', 'Suffix', 'trim|xss_clean');
-            $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
-            $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
 
             if (isset($_POST['email']) && $_POST['email'] == $data["employer"]['email']) {
                 $this->form_validation->set_rules('email', 'Email Address', 'required|trim|xss_clean');
@@ -1365,6 +1363,18 @@ class Settings extends Public_Controller
             $data['affiliate'] = 0;
             $data['d_license'] = 0;
             $data['l_employment'] = 0;
+            $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
+            $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
+            //
+            if($data['ssn_required'] == 1){
+                //
+                $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
+            }
+            //
+            if($data['dob_required'] == 1){
+                //
+                $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
+            }
             
             if(isset($ei['affiliate'])){
                 $data['affiliate'] = $ei['affiliate'];

@@ -148,8 +148,8 @@
                                                 </div>
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
-                                                        <label>Social Security Number <span class="staric">*</span></label>
-                                                        <input class="invoice-fields" type="text" name="TextBoxSSN" required="true" value="<?php
+                                                        <label>Social Security Number <?=$ssn_required == 1 ? '<span class="staric">*</span>' : '';?> </label>
+                                                        <input class="invoice-fields" type="text" name="TextBoxSSN"  <?=$ssn_required == 1 ? 'required="true"' : ''?> value="<?php
                                                         if (isset($formpost['TextBoxSSN'])) {
                                                             echo $formpost['TextBoxSSN'];
                                                         } else if($employer['ssn'] != ''){
@@ -161,8 +161,8 @@
                                                 </div>
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
-                                                        <label>Date of Birth <span class="staric">*</span></label>
-                                                        <input class="invoice-fields" id="dob"  readonly="" type="text" name="TextBoxDOB" required="true" value="<?php
+                                                        <label>Date of Birth <?=$dob_required == 1 ? '<span class="staric">*</span>' : '';?></label>
+                                                        <input class="invoice-fields" id="dob"  readonly="" type="text" name="TextBoxDOB"  <?=$dob_required == 1 ? 'required="true"' : ''?> value="<?php
                                                         if (isset($formpost['TextBoxDOB'])) {
                                                             echo $formpost['TextBoxDOB'];
                                                         }
@@ -3642,12 +3642,6 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
                     TextBoxNameMiddle: {
                         pattern: /^[a-zA-Z0-9\ '-]+$/
                     },
-                    TextBoxSSN: {
-                        required: true
-                    },
-                    TextBoxDOB: {
-                        required: true
-                    },
                     email: {
                         required: true,
                         email: true
@@ -3704,12 +3698,6 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
                     TextBoxAddressEmailConfirm: {
                         equalTo: 'Confirm E-mail does not match E-mail'
                     },
-                    TextBoxSSN: {
-                        required: 'Social Security Number is required'
-                    },
-                    TextBoxDOB: {
-                        required: 'Date of Birth is required'
-                    },
                     Location_City: {
                         required: 'City is required'
                     },
@@ -3739,6 +3727,17 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
                     }
                 };
 
+    //
+    if("<?=$ssn_required?>" == 1){
+        rules['TextBoxSSN'] = { required: true };
+        messages['TextBoxSSN'] = { required: "Social Security Number is required." };
+    }
+    //
+    if("<?=$dob_required?>" == 1){
+        rules['TextBoxDOB'] = { required: true };
+        messages['TextBoxDOB'] = { required: "Date of Birth is required." };
+    }
+    
     //
     if("<?=$eight_plus?>" == 1){
         rules['RadioButtonListWorkOver18'] = { required: true };

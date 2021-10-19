@@ -415,12 +415,14 @@
                                                        value="<?php echo set_value('employee_number', phonenumber_format($applicant_info["employee_number"], true)); ?>" type="text" name="employee_number">
                                             </li>
                                             <li class="form-col-50-left">
-                                                <label>Social Security Number:</label>
-                                                <input class="invoice-fields" type="text" name="SSN" value="<?php echo isset($applicant_info["ssn"]) ? $applicant_info["ssn"] : ''; ?>">
+                                                <label>Social Security Number:<?=$ssn_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
+                                                <input class="invoice-fields" type="text" name="SSN" <?=$ssn_required == 1 ? 'required' : '';?> value="<?php echo isset($applicant_info["ssn"]) ? $applicant_info["ssn"] : ''; ?>">
+                                                <?php echo form_error('SSN'); ?>
                                             </li>
                                             <li class="form-col-50-right">
-                                                <label>Date of Birth:</label>
-                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text" name="DOB" value="<?php echo $dob != 'Not Specified' ? $dob : ''; ?>">
+                                                <label>Date of Birth:<?=$dob_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
+                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text" name="DOB" <?=$dob_required == 1 ? 'required' : '';?> value="<?php echo $dob != 'Not Specified' ? $dob : ''; ?>">
+                                                <?php echo form_error('DOB'); ?>
                                             </li>
                                             <?php if(IS_NOTIFICATION_ENABLED == 1 && $phone_sid != ''){ ?>
                                             <li class="form-col-50-left">

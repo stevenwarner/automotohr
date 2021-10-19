@@ -639,6 +639,20 @@ class Application_tracking_system extends Public_Controller {
 
             $data['ats_full_url']                                               = $ats_full_url;
 
+            $data['l_employment'] = 0;
+            $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
+            $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
+            //
+            if($data['ssn_required'] == 1){
+                //
+                $this->form_validation->set_rules('SSN', 'SSN', 'required|trim|xss_clean');
+            }
+            //
+            if($data['dob_required'] == 1){
+                //
+                $this->form_validation->set_rules('DOB', 'DOB', 'required|trim|xss_clean');
+            }
+
             if ($this->form_validation->run() == FALSE) { //checking if the form is submitted so i can open the form screen again
                 $data['edit_form']                                              = false;
 

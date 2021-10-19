@@ -2,17 +2,6 @@
     $field_phone = 'PhoneNumber';
     $field_sphone = 'secondary_PhoneNumber';
     $field_ophone = 'other_PhoneNumber';
-    // Replace '+1' with ''
-    // if(isset($employer[$field_phone]) && $employer[$field_phone] != ''){
-        // $employer[$field_phone] = str_replace('+1', '', $employer[$field_phone]);
-    // }
-    // if(isset($employer[$field_sphone]) && $employer[$field_sphone] != ''){
-    //     $employer[$field_sphone] = str_replace('+1', '', $employer[$field_sphone]);
-    // }
-    // if(isset($employer[$field_ophone]) && $employer[$field_ophone] != ''){
-    //     $employer[$field_ophone] = str_replace('+1', '', $employer[$field_ophone]);
-    // }
-
     //
     $is_regex = 0;
     $input_group_start = $input_group_end = '';
@@ -520,14 +509,16 @@
                                                     type="text" name="employee_number">
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Social Security Number:</label>
-                                                <input class="invoice-fields" type="text" name="SSN"
+                                                <label>Social Security Number: <?=$ssn_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
+                                                <input class="invoice-fields" type="text" name="SSN" <?=$ssn_required == 1 ? 'required' : '';?>
                                                     value="<?php echo isset($employer["ssn"]) ? $employer["ssn"] : ''; ?>">
+                                                    <?php echo form_error('SSN'); ?>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Date of Birth:</label>
-                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text"
+                                                <label>Date of Birth:<?=$dob_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
+                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?=$dob_required == 1 ? 'required' : '';?>
                                                     name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
+                                                    <?php echo form_error('DOB'); ?>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Department:</label>

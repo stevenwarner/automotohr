@@ -1243,6 +1243,20 @@ class Employee_management extends Public_Controller {
                 //$this->form_validation->set_rules('CompanyDescription', 'Description', 'trim|xss_clean');
                 //
                 $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
+                //
+                $data['l_employment'] = 0;
+                $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
+                $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
+                //
+                if($data['ssn_required'] == 1){
+                    //
+                    $this->form_validation->set_rules('SSN', 'SSN', 'required|trim|xss_clean');
+                }
+                //
+                if($data['dob_required'] == 1){
+                    //
+                    $this->form_validation->set_rules('DOB', 'DOB', 'required|trim|xss_clean');
+                }
                 
                 if ($this->form_validation->run() === FALSE) { //checking if the form is submitted so i can open the form screen again
                     $this->load->model('portal_email_templates_model');
