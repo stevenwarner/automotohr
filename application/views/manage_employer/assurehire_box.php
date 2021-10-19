@@ -213,6 +213,10 @@
         //
         function UploadFile(_this, fileOBJ){
             //
+            if(xhr !== null){
+                return;
+            }
+            //
             var formData = new FormData();
             //
             var postfix = [];
@@ -234,6 +238,7 @@
                 contentType: false,
                 data: formData
             }).done(function(resp){
+                xhr = null;
                 //
                 if(!resp.Status){
                     return alertify.alert('Error!', resp.Response, function(){});
@@ -244,12 +249,13 @@
         }
         //
         function SaveFileToBackground(_this, name){
-            $.post(
+            xhr = $.post(
                 "<?=base_url('background_check/save_image');?>", {
                     sid: "<?=$product['sid'];?>",
                     name: name
                 }
             ).done(function(){
+                xhr = null;
                 return alertify.alert('Success!', 'You have successfully uploaded a file.', function(){
                     _this.text('Upload File');
                 });
