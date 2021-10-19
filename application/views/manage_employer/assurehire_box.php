@@ -96,6 +96,7 @@
                             <th scope="col" class="col-xs-4">Notes</th>
                             <td class="text-left"><?=$product['package_response']['orderInfo']['specialInstruction']?></td>
                         </tr>
+                        <?php if($session['employer_detail']['access_level_plus'] == 1) {?>
                         <tr>
                             <th scope="col" class="col-xs-4">Upload File</th>
                             <td class="text-left">
@@ -105,6 +106,18 @@
                                 <button class="btn btn-success jsUploadFile">Upload File</button>
                             </td>
                         </tr>
+                        <?php } else {?>
+                            <tr>
+                                <th scope="col" class="col-xs-4">Uploaded File</th>
+                                <td class="text-left">
+                                    <?php if(!empty($product['s3_filename'])) { ?>
+                                        <button data-file="<?=$product['s3_filename'];?>" class="btn btn-success jsViewUploadedFile">View File</button>
+                                    <?php } else {?>
+                                        N/A
+                                    <?php }?>
+                                </td>
+                            </tr>
+                        <?php }?>
                     </tbody>
                 </table>
             </div>
@@ -139,6 +152,8 @@
     <?php } ?>
 </div>
 
+<?php $this->load->view('iframeLoader'); ?>
+
 <script>
     $(function(){
         //
@@ -146,7 +161,7 @@
         var fileOBJ = {};
         var xhr = null;
         //
-        $('input[type="file"]').mFileUploader({
+        var options = {
             allowedTypes: ['pdf','jpg','jpeg','png'],
             onError: function(error){
                 hasError = error;
@@ -155,7 +170,29 @@
                 hasError = false;
                 fileOBJ = file;
             }
+        };
+
+        //
+        $('.jsViewUploadedFile').click(function(event){
+            //
+            event.preventDefault();
+            //
+            var file = $(this).data('file');
+            $('#modal-id').modal('show')
+            $('#modal-id .modal-title').html(file.replace(/_/g, ' '))
+            //
+            loadIframe("<?=AWS_S3_BUCKET_URL;?>"+file, '#jsFileViewer')
         });
+
+        //
+        <?php if(!empty($product['s3_filename'])) { ?>
+            options.placeholderImage = "<?=$product['s3_filename'];?>";
+        <?php } ?>
+        //
+        <?php if($session['employer_detail']['access_level_plus'] == 1) {?>
+        $('input[type="file"]').mFileUploader(options);
+        <?php } ?>
+        <?php if($session['employer_detail']['access_level_plus'] == 1) {?>
         //
         $('.jsUploadFile').click(function(event){
             //
@@ -173,19 +210,22 @@
             //
             UploadFile($(this), fileOBJ);
         });
-
         //
         function UploadFile(_this, fileOBJ){
             //
             var formData = new FormData();
             //
             var postfix = [];
-            postfix.push( "<?=$employer['user_type'];?>");
             postfix.push( "<?=$employer['first_name'].' '.$employer['last_name'];?>");
+            postfix.push( "<?=$employer['user_type'];?>");
             postfix.push( "<?=$product['external_id'];?>");
             //
             formData.append('file', fileOBJ);
+            formData.append('user_sid', "<?=$employer['sid'];?>");
+            formData.append('user_type', "<?=$employer['user_type'];?>");
+            formData.append('creator_sid', "<?=$session['employer_detail']['sid'];?>");
             formData.append('postfix', postfix);
+            formData.append('module_name', 'background');
             //
             xhr = $.ajax({
                 method: "POST",
@@ -195,9 +235,44 @@
                 data: formData
             }).done(function(resp){
                 //
-                console.log(resp);
-                _this.text('Upload File');
+                if(!resp.Status){
+                    return alertify.alert('Error!', resp.Response, function(){});
+                }
+                //
+                SaveFileToBackground(_this, resp.File.Name)
             });
         }
+        //
+        function SaveFileToBackground(_this, name){
+            $.post(
+                "<?=base_url('background_check/save_image');?>", {
+                    sid: "<?=$product['sid'];?>",
+                    name: name
+                }
+            ).done(function(){
+                return alertify.alert('Success!', 'You have successfully uploaded a file.', function(){
+                    _this.text('Upload File');
+                });
+            });
+        }
+        <?php } ?>
     });
 </script>
+
+
+<div class="modal fade" id="modal-id">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <iframe id="jsFileViewer" frameborder="0" style="width: 100%; height: 500px;"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

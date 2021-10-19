@@ -1379,3 +1379,4 @@ $route['assurehire/cb/(:any)'] = 'Assurehire/cb/$1';
 
 //
 $route['upload_secure_file']['post'] = 'Upload_file/UploadFile';
+$route['background_check/save_image']['post'] = 'Background_check/SaveImage';

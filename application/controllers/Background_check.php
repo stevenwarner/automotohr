@@ -1625,4 +1625,13 @@ class Background_check extends CI_Controller {
         }
     }
 
+
+    function SaveImage(){
+        //
+        $this->db->where('sid', $this->input->post('sid', TRUE))
+        ->update('background_check_orders', [
+            's3_filename' => $this->input->post('name', TRUE)
+        ]);
+    }
+
 }

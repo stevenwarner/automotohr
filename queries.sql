@@ -243,3 +243,8 @@ ALTER TABLE `facebook_jobs_status` ADD `job_status` VARCHAR(10) NOT NULL AFTER `
 ALTER TABLE `timeoff_settings` ADD `team_visibility_check` TINYINT NOT NULL DEFAULT '0' AFTER `theme`;
 
 ALTER TABLE `background_check_orders` ADD `report_url` TEXT NULL DEFAULT NULL AFTER `external_id`;
+
+-- Assure hire file upload
+-- files_library
+ALTER TABLE `background_check_orders` ADD `s3_filename` VARCHAR(255) NULL DEFAULT NULL AFTER `report_url`;
+ALTER TABLE `background_check_orders_history` ADD `s3_filename` VARCHAR(255) NULL DEFAULT NULL AFTER `report_url`;
