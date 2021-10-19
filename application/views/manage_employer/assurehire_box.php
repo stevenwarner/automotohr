@@ -103,7 +103,7 @@
                                 <div>
                                     <input type="file" name="files_<?=$product['external_id'];?>" class="hidden" />
                                 </div>
-                                <button class="btn btn-success jsUploadFile">Upload File</button>
+                                <button class="btn btn-success jsUploadFile<?=$product['external_id'];?>">Upload File</button>
                             </td>
                         </tr>
                         <?php } else {?>
@@ -194,7 +194,7 @@
         <?php } ?>
         <?php if($session['employer_detail']['access_level_plus'] == 1) {?>
         //
-        $('.jsUploadFile').click(function(event){
+        $('.jsUploadFile<?=$product['external_id'];?>').click(function(event){
             //
             event.preventDefault();
             //            
