@@ -176,7 +176,7 @@
         <?php } ?>
         </style>
 
-         <!--  -->
+        <!--  -->
         <?php 
             //
             if($this->uri->segment(1) == 'job_details'){

@@ -47,6 +47,13 @@
                 publisher: "1be703d3-9992-4d1e-b33b-aa77ebec1707", doNotHash: false, doNotCopy: false, hashAddressBar: false
             });
         </script>-->
+        <!--  -->
+        <?php 
+            //
+            if($this->uri->segment(1) == 'job_details'){
+                GetJobHeaderForGoogle($job_details, $company_details);
+            }
+        ?>
     </head>
     <body>
         <div class="wrapper">
