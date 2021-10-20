@@ -26,10 +26,12 @@ class Sitemaps extends CI_Controller
             //
             if(!isset($xmlArray[$job['user_sid']])){
                 $xmlArray[$job['user_sid']] = [
-                    'XML_NAME' => 'sitemap_'.preg_replace('/[^a-zA-Z]/','_',(str_replace('automotohr.com', '', $job['sub_domain']))).'.xml',
+                    'XML_NAME' => 'sitemap_'.preg_replace('/[^a-zA-Z]/','_',(str_replace('.automotohr.com', '', $job['sub_domain']))).'.xml',
                     'XML' => []
                 ];
             }
+            //
+
             // Reset title
             $job['Title'] = job_title_uri($job, false, true);
             //

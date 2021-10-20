@@ -3620,9 +3620,11 @@ class Home extends CI_Controller {
     function sitemap(){
         
         $domain = $_SERVER['SERVER_NAME'];
+
+        $domain = 'allentown-kiaisuzu-truck-of-the-lehigh-valley.automotohr.com';
         //
         $domain = preg_replace('/-/', '_', str_replace(['.local', '.automotohr.com'], '', $domain));
-        
+
         $path = APPPATH.'../../sitemaps/sitemap_'.$domain.'.xml';
         //
         if(!file_exists($path)){
