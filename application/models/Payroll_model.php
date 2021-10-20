@@ -22,6 +22,8 @@ class Payroll_model extends CI_Model{
         $this->tables['JCI'] = 'job_category_industries'; 
         $this->tables['PEJ'] = 'payroll_employee_jobs'; 
         $this->tables['PEJC'] = 'payroll_employee_job_compensations'; 
+        $this->tables['PEFT'] = 'payroll_employee_federal_tax'; 
+        $this->tables['PEST'] = 'payroll_employee_state_tax'; 
     }    
 
     /**
@@ -578,5 +580,68 @@ class Payroll_model extends CI_Model{
         $query = $query->free_result();
         //
         return $jobInfo;
+    }
+
+    //
+    function GetEmployeeFederalTaxDetails($employee_sid){
+        //
+        $query = 
+        $this->db
+        ->select("
+            filing_status,
+            multiple_jobs,
+            dependent,
+            other_income,
+            deductions,
+            extra_withholding,
+        ")
+        ->from($this->tables['PEFT'])
+        ->where("employee_sid", $employee_sid)
+        ->get();
+        //
+        $taxInfo = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $taxInfo;
+    }
+
+    //
+    function GetEmployeeStateTaxDetails($employee_sid){
+        //
+        $query = 
+        $this->db
+        ->select("
+            filing_status,
+            withholding_allowance,
+            additional_withholding,
+        ")
+        ->from($this->tables['PEST'])
+        ->where("employee_sid", $employee_sid)
+        ->get();
+        //
+        $taxInfo = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $taxInfo;
+    }
+
+    //
+    function GetEmployeeBankDetails($employee_sid){
+        //
+        $query = 
+        $this->db
+        ->select("
+            filing_status,
+            withholding_allowance,
+            additional_withholding,
+        ")
+        ->from($this->tables['PEST'])
+        ->where("employee_sid", $employee_sid)
+        ->get();
+        //
+        $taxInfo = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $taxInfo;
     }
 }

@@ -36,6 +36,22 @@
         'name' => 'Address',
         'slug'=> 'employee_address'
     ];
+    $menuArray['employee']['sub'][] = [
+        'name' => 'Compensation',
+        'slug'=> 'employee_compensation'
+    ];
+    $menuArray['employee']['sub'][] = [
+        'name' => 'Federal Tax',
+        'slug'=> 'employee_federal_tax'
+    ];
+    $menuArray['employee']['sub'][] = [
+        'name' => 'State Tax',
+        'slug'=> 'employee_state_tax'
+    ];
+    $menuArray['employee']['sub'][] = [
+        'name' => 'Payment',
+        'slug'=> 'employee_payment'
+    ];
 
 ?>
 <div class="col-md-2 col-sm-12">

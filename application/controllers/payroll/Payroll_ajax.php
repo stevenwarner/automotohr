@@ -474,7 +474,59 @@ class Payroll_ajax extends CI_Controller
             //
             $data['employee_sid'] = $_GET["employee_id"];
             //
-            $data['employee_address_info'] = $this->pm->GetEmployeeJobDetails($_GET["employee_id"]);
+            $data['employee_job_info'] = $this->pm->GetEmployeeJobDetails($_GET["employee_id"]);
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'EMPLOYEE_URL' => getAPIUrl("employees"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
+        if ($page === "get-company-employee-federal-tax") {
+            //
+            $data['employee_sid'] = $_GET["employee_id"];
+            //
+            $data['federal_tax_info'] = $this->pm->GetEmployeeFederalTaxDetails($_GET["employee_id"]);
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'EMPLOYEE_URL' => getAPIUrl("employees"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
+        if ($page === "get-company-employee-state-tax") {
+            //
+            $data['employee_sid'] = $_GET["employee_id"];
+            //
+            $data['state_tax_info'] = $this->pm->GetEmployeeStateTaxDetails($_GET["employee_id"]);
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'EMPLOYEE_URL' => getAPIUrl("employees"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
+        if ($page === "get-company-employee-payment-method") {
+            //
+            $data['employee_sid'] = $_GET["employee_id"];
+            //
+            // $data['bank_info'] = $this->pm->GetEmployeePaymentMethod($_GET["employee_id"]);
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'EMPLOYEE_URL' => getAPIUrl("employees"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
+        if ($page === "get-company-employee-bank-detail") {
+            //
+            $data['employee_sid'] = $_GET["employee_id"];
+            //
+            $data['bank_info'] = $this->pm->GetEmployeeBankDetails($_GET["employee_id"]);
             //
             return SendResponse(200,[
                 'API_KEY' => getAPIKey(),

@@ -273,3 +273,41 @@ ALTER TABLE `payroll_companies` ADD `onbording_level` INT(11) NOT NULL DEFAULT '
 ALTER TABLE `payroll_employees` ADD `work_address_sid` TEXT NULL DEFAULT NULL AFTER `employee_sid`;
 ALTER TABLE `payroll_employees` ADD `onboard_level` INT NOT NULL DEFAULT '0' AFTER `created_at`;
 ALTER TABLE `users` ADD `Location_Address_2` TEXT NULL DEFAULT NULL AFTER `Location_Address`;
+
+--
+CREATE TABLE `payroll_employee_federal_tax` (
+  `sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `filing_status` varchar(128) DEFAULT NULL,
+  `multiple_jobs` varchar(128) DEFAULT NULL,
+  `dependent` int(11) NOT NULL DEFAULT '0',
+  `other_income` int(11) NOT NULL DEFAULT '0',
+  `deductions` int(11) NOT NULL DEFAULT '0',
+  `extra_withholding` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `payroll_employee_federal_tax`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `payroll_employee_federal_tax`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `payroll_employee_state_tax` (
+  `sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `filing_status` varchar(128) DEFAULT NULL,
+  `withholding_allowance` int(11) NOT NULL DEFAULT '0',
+  `additional_withholding` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `payroll_employee_state_tax`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `payroll_employee_state_tax`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
