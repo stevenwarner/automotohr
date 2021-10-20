@@ -26,7 +26,7 @@ class Sitemaps extends CI_Controller
             //
             if(!isset($xmlArray[$job['user_sid']])){
                 $xmlArray[$job['user_sid']] = [
-                    'XML_NAME' => 'sitemap_'.stringToSlug($job['sub_domain'], '_').'.xml',
+                    'XML_NAME' => 'sitemap_'.preg_replace('/[^a-zA-Z]/','_',(str_replace('automotohr.com', '', $job['sub_domain']))).'.xml',
                     'XML' => []
                 ];
             }
@@ -63,11 +63,11 @@ class Sitemaps extends CI_Controller
             fclose($handler);
             // Send it to Google
             $submit_to_google = getFileData("https://www.google.com/ping?sitemap={$sitePath}${xml['XML_NAME']}");
-            // echo $submit_to_google;
             mail(TO_EMAIL_DEV, 'Google Hire Cron Job For Sub domains at '.date('Y-m-d H:i:s').'', print_r($xml, true));
             //
             usleep(800);
-
+            
+            // echo $submit_to_google;
             echo $xml['XML_NAME'].'<br/>';
         }
     }
