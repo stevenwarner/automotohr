@@ -843,11 +843,15 @@ if(!function_exists('phonenumber_format')){
 }
 
 if(!function_exists('job_title_uri')){
-    function job_title_uri($job, $is_title = false){
+    function job_title_uri($job, $is_title = false, $onlyTitle = false){
         //
         $companyName = strtolower(trim($job['CompanyName']));
         //
         $title = ucwords(trim(preg_replace('/'.($companyName).'/', '', explode('-',preg_replace('/\s+/i', ' ', trim(strtolower(str_replace(',', '-',$job['Title'])))))[0]))).'';
+        //
+        if($onlyTitle){
+            return $title;
+        }
         //
         $postfix = ' Job in';
         //
@@ -1438,5 +1442,111 @@ if(!function_exists('slug')){
                 strtolower(trim($string))
             )
         );
+    }
+}
+
+
+//
+if(!function_exists('GetJobHeaderForGoogle')){
+    function GetJobHeaderForGoogle($job_details, $company_details){
+        $acDate = $job_details['activation_date'];
+        if(!preg_match('/[0-9]/',$acDate)) $acDate = date('m-d-Y');
+
+        if(preg_replace('/[^0-9]/', '', $job_details['activation_date']) == '' && $job_details['approval_status_change_datetime'] != ''){
+            $acDate = DateTime::createFromFormat(
+                'Y-m-d H:i:s',
+                $job_details['approval_status_change_datetime']
+            )->format('m-d-Y');
+        }
+        //
+        $job_details['Title'] = job_title_uri($job_details, true, true);
+
+        $googleJobOBJ = [];
+        // Basic job details
+        $googleJobOBJ['@context'] = 'http://schema.org';
+        $googleJobOBJ['@type'] = 'JobPosting';
+        $googleJobOBJ['title'] = $job_details['Title'];
+        $googleJobOBJ['description'] = ($job_details['JobDescription'].' '.$job_details['JobRequirements']);
+        $googleJobOBJ['employmentType'] = strtoupper(str_replace(' ', '_', $job_details['JobType'])); // FULL_TIME, PART_TIME, CONTRACTOR, TEMPORARY, INTERN, VOLUNTEER, PER_DIEM, OTHER [FULL_TIME,PART_TIME]
+        $googleJobOBJ['industry'] = 'business';
+        $googleJobOBJ['datePosted'] = DateTime::createFromFormat('m-d-Y', $acDate)->format('Y-m-d\TH:i:s\Z');
+        $googleJobOBJ['validThrough'] = DateTime::createFromFormat('m-d-Y', $acDate)->add(new DateInterval('P30D'))->format('Y-m-d'); // Add interval of one month
+        $googleJobOBJ['url'] = 'https://www.automotosocial.com/display-job/'.(preg_replace('/\s+/', '-',preg_replace('/[^0-9a-zA-Z]/', ' ', strtolower($job_details['Title'])))).'-'.$job_details['sid']; // Add interval of one month
+        // Organization details
+        $googleJobOBJ['hiringOrganization'] = [];
+        $googleJobOBJ['hiringOrganization']['@type'] = 'Organization';
+        $googleJobOBJ['hiringOrganization']['name'] = $company_details['CompanyName'];
+        $googleJobOBJ['hiringOrganization']['sameAs'] = 'https://'.$company_details['sub_domain'];
+        $googleJobOBJ['hiringOrganization']['logo'] = AWS_S3_BUCKET_URL.$company_details['Logo'];
+        // Job location details
+        $googleJobOBJ['jobLocation']['@type'] = 'Place';
+        $googleJobOBJ['jobLocation']['address'] = [];
+        $googleJobOBJ['jobLocation']['address']['@type'] = 'PostalAddress';
+        $googleJobOBJ['jobLocation']['address']['streetAddress'] = $job_details['Location'] != '' ? $job_details['Location'] : $job_details['Location_City'];
+        $googleJobOBJ['jobLocation']['address']['postalCode'] = !empty($job_details['Location_ZipCode']) ? $job_details['Location_ZipCode'] : '';
+        $googleJobOBJ['jobLocation']['address']['addressCountry'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CA" : "US";
+        $googleJobOBJ['jobLocation']['address']['addressRegion'] = !empty($job_details['Location_Code']) ? $job_details['Location_Code'] : '';
+        $googleJobOBJ['jobLocation']['address']['addressLocality'] = !empty($job_details['Location_City']) ? $job_details['Location_City'] : '';
+        // Applicant location details
+        // Salary
+
+        $googleJobOBJ['baseSalary'] = [];
+        $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
+        $googleJobOBJ['baseSalary']['currency'] = 'USD';
+        $googleJobOBJ['baseSalary']['value'] = [];
+        $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
+        $googleJobOBJ['baseSalary']['value']['unitText'] = 'HOUR';
+        $googleJobOBJ['baseSalary']['value']['value'] = '20';
+
+        if(!empty($job_details['Salary'])){
+            //
+            $salary = preg_replace('/\s+/', ' ', str_replace('-',' ',trim($job_details['Salary'])));
+            //
+            $salary = preg_replace('/((\d\.?)\s)(?=\d[^>]*(<|$))/', '$2$3', $salary);
+            //
+            $salary = trim(preg_replace('/[^0-9\s]/', '', $salary));
+            //
+            if(!empty($salary)){
+                //
+                $salaryArray = explode(' ', $salary);
+                //
+                $salaryType = 'MONTH';
+                //
+                switch ($job_details['SalaryType']) {
+                    case 'per_hour': $salaryType = 'HOUR'; break;
+                    case 'per_week': $salaryType = 'WEEK'; break;
+                    case 'per_year': $salaryType = 'YEAR'; break;
+                }
+                $googleJobOBJ['baseSalary'] = [];
+                $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
+                $googleJobOBJ['baseSalary']['currency'] = 'USD';
+                $googleJobOBJ['baseSalary']['value'] = [];
+                $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
+                //
+                $googleJobOBJ['baseSalary']['value']['unitText'] = $salaryType;
+                //
+                if(count($salaryArray) == 1){
+                    $googleJobOBJ['baseSalary']['value']['value'] = number_format($salaryArray[0], 2, '.', '');
+                } else {
+                    $googleJobOBJ['baseSalary']['value']['minValue'] = number_format($salaryArray[0], 2, '.', '');
+                    $googleJobOBJ['baseSalary']['value']['maxValue'] = number_format($salaryArray[1], 2, '.', '');
+                }
+            }
+        }
+
+        // Company identifier
+        $googleJobOBJ['identifier'] = [];
+        $googleJobOBJ['identifier']['@type'] = 'PropertyValue';
+        $googleJobOBJ['identifier']['name'] = 'jid';
+        $googleJobOBJ['identifier']['value'] = $job_details['user_sid'];
+        $googleJobOBJ['directApply'] = true;
+        //
+        echo '<script type="application/ld+json">';
+        echo str_replace(
+            ['\/', '\r\n', '\u00a0', '&#39;'],
+            ['/', '', '&nbsp;', "'"],
+            json_encode($googleJobOBJ, JSON_PRETTY_PRINT)
+        );
+        echo '</script>';
     }
 }

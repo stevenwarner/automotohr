@@ -156,6 +156,13 @@
         <?php       }
                 } ?>
         </style>
+        <!--  -->
+        <?php 
+            //
+            if($this->uri->segment(1) == 'display-job'){
+                GetJobHeaderForGoogle($job_details, $company_details);
+            }
+        ?>
     </head>
     
     <body <?php echo $custom_body_style; ?>>

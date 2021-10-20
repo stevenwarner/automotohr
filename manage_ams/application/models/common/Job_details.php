@@ -216,7 +216,7 @@ class Job_details extends CI_Model {
     }
 
     function get_statename_by_id($sid) {
-            $this->db->select('state_name');
+            $this->db->select('state_name, state_code');
             $this->db->where('sid', $sid);
 //            $this->db->where('active', '1');
             $this->db->from('states');

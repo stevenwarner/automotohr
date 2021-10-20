@@ -11128,9 +11128,9 @@ if (!function_exists('putFileOnAWSBase64')) {
 }
 
 if (!function_exists('stringToSlug')) {
-    function stringToSlug($i)
+    function stringToSlug($i, $to = '-')
     {
-        return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $i)));
+        return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', $to, $i)));
     }
 }
 
@@ -13805,5 +13805,16 @@ if(!function_exists('LoginToAPI')){
                 $_SESSION['API_TOKENS'] = $result['Response'];
             }
         }
+    }
+}
+
+if(!function_exists('job_title_uri')){
+    function job_title_uri($job){
+        //
+        $companyName = strtolower(trim($job['CompanyName']));
+        //
+        $title = ucwords(trim(preg_replace('/'.($companyName).'/', '', explode('-',preg_replace('/\s+/i', ' ', trim(strtolower(str_replace(',', '-',$job['Title'])))))[0]))).'';
+        //
+        return $title;
     }
 }

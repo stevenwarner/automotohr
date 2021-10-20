@@ -1372,3 +1372,5 @@ $route['verify_my_token/(:any)']['post'] = 'Authentication/VerifyToken/$1';
 
 //
 $route['manage_admin/companies/update_company_email']['post'] = 'manage_admin/Companies/update_company_email';
+//
+$route['create-company-site-map']['get'] = 'Sitemaps/CreateCompanySitemaps';
