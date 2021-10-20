@@ -5,8 +5,6 @@ class Sitemap_model extends CI_Model {
     function __construct() {
         parent::__construct();
     }
-
-
     //
     function GetCompaniesWithJobs() {
         $this->db->select('
@@ -26,6 +24,7 @@ class Sitemap_model extends CI_Model {
         $this->db->where('users.active', 1);
         $this->db->where('users.is_paid', 1);
         $this->db->where('users.career_site_listings_only', 0);
+        $this->db->where('portal_employer.domain_type', 'subdomain');
         $this->db->order_by('activation_date', 'DESC');
         $this->db->group_by('portal_job_listings.sid');
         //

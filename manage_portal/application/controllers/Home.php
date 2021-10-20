@@ -3615,4 +3615,22 @@ class Home extends CI_Controller {
             else redirect('/', 'refresh');
         }
     }
+
+    //
+    function sitemap(){
+        
+        $domain = $_SERVER['SERVER_NAME'];
+        //
+        $domain = preg_replace('/-/', '_', str_replace(['.local', '.automotohr.com'], '', $domain));
+        
+        $path = APPPATH.'../../sitemaps/sitemap_'.$domain.'.xml';
+        //
+        if(!file_exists($path)){
+            die;
+        }
+
+        header("content-type: xml");
+
+        echo file_get_contents($path);
+    }
 }
