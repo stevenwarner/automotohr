@@ -33,9 +33,9 @@ class Sitemaps extends CI_Controller
             // Reset title
             $job['Title'] = job_title_uri($job, false, true);
             //
-            $row = "<loc>";
-            $row .= "\r\n\t<url>https://".( $job['sub_domain'] )."/job_details/".(stringToSlug($job['Title']))."-".($job['sid'])."</url>\r\n";
-            $row .= "</loc>\r\n";
+            $row = "<url>";
+            $row .= "\r\n\t<loc>https://".( $job['sub_domain'] )."/job_details/".(stringToSlug($job['Title']))."-".($job['sid'])."</loc>\r\n";
+            $row .= "</url>\r\n";
             //
             $xmlArray[$job['user_sid']]['XML'][] = $row;
         }
