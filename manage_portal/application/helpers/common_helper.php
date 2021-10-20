@@ -1542,8 +1542,8 @@ if(!function_exists('GetJobHeaderForGoogle')){
         $googleJobOBJ['description'] = ($job_details['JobDescription'].' '.$job_details['JobRequirements']);
         $googleJobOBJ['employmentType'] = strtoupper(str_replace(' ', '_', $job_details['JobType'])); // FULL_TIME, PART_TIME, CONTRACTOR, TEMPORARY, INTERN, VOLUNTEER, PER_DIEM, OTHER [FULL_TIME,PART_TIME]
         $googleJobOBJ['industry'] = 'business';
-        $googleJobOBJ['datePosted'] = DateTime::createFromFormat('m-d-Y', $acDate)->format('Y-m-d\TH:i:s\Z');
-        $googleJobOBJ['validThrough'] = DateTime::createFromFormat('m-d-Y', $acDate)->add(new DateInterval('P30D'))->format('Y-m-d'); // Add interval of one month
+        $googleJobOBJ['datePosted'] = DateTime::createFromFormat('m-d-Y', $acDate)->format('c');
+        $googleJobOBJ['validThrough'] = DateTime::createFromFormat('m-d-Y', $acDate)->add(new DateInterval('P60D'))->format('c'); // Add interval of one month
         $googleJobOBJ['url'] = 'https://'.($company_details['sub_domain']).'/job_details/'.(preg_replace('/\s+/', '-',preg_replace('/[^0-9a-zA-Z]/', ' ', strtolower($job_details['Title'])))).'-'.$job_details['sid']; // Add interval of one month
         // Organization details
         $googleJobOBJ['hiringOrganization'] = [];
@@ -1555,7 +1555,7 @@ if(!function_exists('GetJobHeaderForGoogle')){
         $googleJobOBJ['jobLocation']['@type'] = 'Place';
         $googleJobOBJ['jobLocation']['address'] = [];
         $googleJobOBJ['jobLocation']['address']['@type'] = 'PostalAddress';
-        $googleJobOBJ['jobLocation']['address']['streetAddress'] = $job_details['Location'] != '' ? $job_details['Location'] : $job_details['Location_City'];
+        $googleJobOBJ['jobLocation']['address']['streetAddress'] = $job_details['Location'] != '' ? $job_details['Location'] : '';
         $googleJobOBJ['jobLocation']['address']['postalCode'] = !empty($job_details['Location_ZipCode']) ? $job_details['Location_ZipCode'] : '';
         $googleJobOBJ['jobLocation']['address']['addressCountry'] = preg_match('/canada/', strtolower($job_details['Location_Country'])) ? "CA" : "US";
         $googleJobOBJ['jobLocation']['address']['addressRegion'] = !empty($job_details['Location_Code']) ? $job_details['Location_Code'] : '';
