@@ -1245,8 +1245,10 @@ class Employee_management extends Public_Controller {
                 $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
                 //
                 $data['l_employment'] = 0;
-                $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
-                $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
+                $data['ssn_required'] = 0;
+                $data['dob_required'] = 0;
+                // $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
+                // $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
                 //
                 if($data['ssn_required'] == 1){
                     //

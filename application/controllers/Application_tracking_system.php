@@ -640,8 +640,10 @@ class Application_tracking_system extends Public_Controller {
             $data['ats_full_url']                                               = $ats_full_url;
 
             $data['l_employment'] = 0;
-            $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
-            $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
+            $data['ssn_required'] = 0;
+            $data['dob_required'] = 0;
+            // $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
+            // $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
             //
             if($data['ssn_required'] == 1){
                 //
