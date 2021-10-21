@@ -1083,6 +1083,7 @@ class Home extends CI_Controller {
                     if (!empty($state_id) && $state_id != 'undefined') {
                         $state_name                                             = $this->job_details->get_statename_by_id($state_id); // get state name
                         $list['Location_State']                                 = $state_name[0]['state_name'];
+                        $list['Location_Code']                                 = $state_name[0]['state_code'];
                     }
 
                     $JobCategorys                                               = $list['JobCategory'];
