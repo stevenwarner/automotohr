@@ -1568,8 +1568,6 @@ if(!function_exists('GetJobHeaderForGoogle')){
         $googleJobOBJ['baseSalary']['currency'] = 'USD';
         $googleJobOBJ['baseSalary']['value'] = [];
         $googleJobOBJ['baseSalary']['value']['@type'] = 'QuantitativeValue';
-        $googleJobOBJ['baseSalary']['value']['unitText'] = 'HOUR';
-        $googleJobOBJ['baseSalary']['value']['value'] = '20';
 
         if(!empty($job_details['Salary'])){
             //
