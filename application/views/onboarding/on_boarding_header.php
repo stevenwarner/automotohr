@@ -229,14 +229,12 @@
             </div>
         <?php } else if ( isset($employee)) { ?>
             <header class="header <?=in_array('iframe', $this->uri->segment_array()) ? 'hidden' : '';?>">
-                <div class="container<?=strtolower($this->router->fetch_class()) == 'performance_management' ? '-fluid' : '';?>">
+                <div class="container<?=strtolower($this->router->fetch_class()) == 'performance_management' || strtolower($this->router->fetch_class()) == 'employee_engagement_survey' ? '-fluid' : '';?>">
                     <div class="row">
                         <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
                             <div class="logo">
                                 <?php if(isset($session['company_detail']) && $session['portal_detail']['enable_company_logo'] == 1) { ?>
-                                        <a href="javascript:;"><img src="<?php echo AWS_S3_BUCKET_URL . $session['company_detail']['Logo']; ?>"></a>
-                                <?php } else { ?>
-                                        <!-- <a href="javascript:;"><img src="<?php //echo base_url('assets/employee_panel/images/logo.jpg'); ?>"></a> -->
+                                        <a href="javascript:;"><img src="<?php echo AWS_S3_BUCKET_URL . $session['company_detail']['Logo']; ?>" alt="company logo"></a>
                                 <?php } ?>
                             </div>
                         </div>
@@ -270,19 +268,12 @@
 
                                                     <li><a href="<?php echo base_url('hr_documents_management/my_documents'); ?>"><i class="fa fa-fw fa-file"></i>&nbsp;&nbsp;Documents</a></li>
                                                     <li><a href="<?php echo base_url('calendar/my_events'); ?>"><i class="fa fa-fw fa-calendar"></i>&nbsp;&nbsp;Calendar</a></li>
-                                                    <!-- <li><a href="<?php //echo base_url('emergency_contacts'); ?>"><i class="fa fa-fw fa-ambulance"></i>&nbsp;&nbsp;Emergency Contacts</a></li> -->
-                                                    <!-- <li><a href="<?php //echo base_url('drivers_license_info'); ?>"><i class="fa fa-fw fa-automobile"></i>&nbsp;&nbsp;Drivers License Info</a></li> -->
-                                                    <!-- <li><a href="<?php //echo base_url('occupational_license_info'); ?>"><i class="fa fa-fw fa-industry"></i>&nbsp;&nbsp;Occupational License Info</a></li> -->
-                                                    <!-- <li><a href="<?php //echo base_url('dependants'); ?>"><i class="fa fa-fw fa-child"></i>&nbsp;&nbsp;Dependants</a></li> -->
-                                                    <!-- <li><a href="<?php //echo base_url('direct_deposit'); ?>"><i class="fa fa-fw fa-bank"></i>&nbsp;&nbsp;Direct Deposit</a></li> -->
-                                                    <!--<li><a href="<?php /*echo base_url('my_learning_center'); */?>">Learning and Training Center</a></li>-->
 
                                                     <li><a href="<?php echo base_url('e_signature'); ?>"><i class="fa fa-fw fa-check"></i>&nbsp;&nbsp;E Signature</a></li>
                                                     <li><a href="<?php echo base_url('my_referral_network'); ?>"><i class="fa fa-fw fa-link"></i>&nbsp;&nbsp;My Referral Network</a></li>
 
                                                     <?php $incident = $this->session->userdata('incident_config'); if($incident > 0){ ?>
                                                     <li><a href="<?php echo base_url('incident_reporting_system'); ?>"><i class="fa fa-fw fa-file-text"></i>&nbsp;&nbsp;Incidents</a></li>
-                                                    <!-- <li><a href="<?php //echo base_url('incident_reporting_system/assigned_incidents'); ?>"><i class="fa fa-fw fa-file-text"></i>&nbsp;&nbsp;Assigned Incidents</a></li> -->
                                                     <?php } ?>
 
                                                     <li><a href="<?php echo base_url('private_messages'); ?>"><i class="fa fa-fw fa-envelope"></i>&nbsp;&nbsp;Private Messages</a></li>

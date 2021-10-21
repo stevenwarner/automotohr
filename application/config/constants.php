@@ -597,3 +597,7 @@ define('SHIFT_END', '6:00 PM'); // Default Shift End
 define('DAY_OFF', 'Sunday'); // Default Day Off
 define('BREAK_HOURS', '1'); // Default Break Hours
 define('BREAK_MINUTES', '0'); // Default Break Minutes
+
+
+//
+define('EMPLOYEE_SURVEY_SLUG', 'employee_survey');

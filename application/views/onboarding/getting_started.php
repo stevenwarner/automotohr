@@ -663,6 +663,27 @@
                         </div>
                         <?php } ?>
 
+                        <?php if (checkIfAppIsEnabled(EMPLOYEE_SURVEY_SLUG)) { ?>
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6" id="js-to-box">
+                            <a href="<?= base_url('employee_survey/overview'); ?>">
+                                <div class="widget-box">
+                                    <div class="link-box  bg-pr full-width">
+                                    <div class="link-box bg-redish full-width">
+                                        <h2>Employee Survey(s)</h2>
+                                        <div class="current-date">
+                                            <span>0<sub>Pending</sub></span>
+                                        </div>
+                                        <div class="status-panel">
+                                            <h3>Survey(s)</h3>
+                                            <span>Assigned to You</span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php } ?>
+
                         <?php if (checkIfAppIsEnabled('timeoff')) { ?>
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6" id="js-to-box">
                             <a href="<?=base_url('timeoff/lms');?>">

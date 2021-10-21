@@ -731,7 +731,6 @@
                                 ?>
 
                                 <!-- Performance Review -->
-
                                 <?php if (checkIfAppIsEnabled('performance_management') ) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
@@ -746,6 +745,26 @@
                                                 </div>
                                                 <div class="button-panel">
                                                     <a href="<?= base_url("performance-management/dashboard"); ?>" class="site-btn">Show</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+
+                                <!-- Employee Survey -->
+                                <?php if (checkIfAppIsEnabled(EMPLOYEE_SURVEY_SLUG) ) { ?>
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure><i class="fa fa-pie-chart <?php echo $review['Reviews'] > 0? 'start_animation' : ''; ?>" aria-hidden="true"></i></figure>
+                                                <h2 class="post-title" style="margin: 2px 0;">
+                                                    <a href="<?php echo base_url('employee_survey/overview'); ?>">Employee Survey</a>
+                                                </h2>
+                                                <div class="count-box" style="font-size: 12px">
+                                                    <small style="font-size: 12px"><?php echo $review['Reviews']; ?> Pending Survey(s)</small><br>
+                                                </div>
+                                                <div class="button-panel">
+                                                    <a href="<?= base_url("employee_survey/overview"); ?>" class="site-btn">Show</a>
                                                 </div>
                                             </div>
                                         </div>
