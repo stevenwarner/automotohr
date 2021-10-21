@@ -24,6 +24,9 @@ class Payroll_model extends CI_Model{
         $this->tables['PEJC'] = 'payroll_employee_job_compensations'; 
         $this->tables['PEFT'] = 'payroll_employee_federal_tax'; 
         $this->tables['PEST'] = 'payroll_employee_state_tax'; 
+        $this->tables['PEPM'] = 'payroll_employee_payment_method'; 
+        $this->tables['PEBA'] = 'payroll_employee_bank_accounts'; 
+        $this->tables['BAD'] = 'bank_account_details'; 
     }    
 
     /**
@@ -626,17 +629,81 @@ class Payroll_model extends CI_Model{
     }
 
     //
+    function GetEmployeePaymentMethod($employee_sid){
+        //
+        $query = 
+        $this->db
+        ->select("
+            payment_method,
+            split_method,
+            version,
+        ")
+        ->from($this->tables['PEPM'])
+        ->where("employee_sid", $employee_sid)
+        ->get();
+        //
+        $taxInfo = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $taxInfo;
+    }
+
+    //
     function GetEmployeeBankDetails($employee_sid){
         //
         $query = 
         $this->db
         ->select("
-            filing_status,
-            withholding_allowance,
-            additional_withholding,
+            sid,
+            routing_transaction_number,
+            account_number,
+            account_type,
         ")
-        ->from($this->tables['PEST'])
+        ->from($this->tables['BAD'])
+        ->where("users_sid", $employee_sid)
+        ->where("users_type", "employee")
+        ->where("is_payroll", 0)
+        ->get();
+        //
+        $taxInfo = $query->result_array();
+        $query = $query->free_result();
+        //
+        return $taxInfo;
+    }
+
+    function GetEmployeePayrollBankDetails($employee_sid){
+        //
+        $query = 
+        $this->db
+        ->select("
+            payroll_bank_uuid,
+            routing_number,
+            account_number,
+            account_type
+        ")
+        ->from($this->tables['PEBA'])
         ->where("employee_sid", $employee_sid)
+        ->where("is_deleted", 0)
+        ->get();
+        //
+        $taxInfo = $query->result_array();
+        $query = $query->free_result();
+        //
+        return $taxInfo;
+    }
+
+    function GetEmployeeDirectDeposit($id){
+        //
+        $query = 
+        $this->db
+        ->select("
+            account_title,
+            routing_transaction_number,
+            account_number,
+            account_type,
+        ")
+        ->from($this->tables['BAD'])
+        ->where("sid", $id)
         ->get();
         //
         $taxInfo = $query->row_array();

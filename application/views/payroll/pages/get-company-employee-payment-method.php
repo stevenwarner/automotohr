@@ -3,7 +3,7 @@
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->
-            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "bank", "subIndex" =>""]);?>
+            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee", "subIndex" =>"employee_payment"]);?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
                 <!-- Heading -->
@@ -33,60 +33,115 @@
                         </label>
                         <select class="form-control jsPaymentMethod">
                             <option value="0">[Select]</option>
-                            <option value="Direct Deposit" <?=!empty($bankInfo) &&  $bankInfo['account_type'] === "Direct Deposit" ? 'selected="selected"' : '';?>>Direct Deposit</option>
-                            <option value="check" <?=!empty($bankInfo) &&  $bankInfo['account_type'] === "check" ? 'selected="selected"' : '';?>>check</option>
+                            <option value="Direct Deposit" <?=!empty($payment_method) &&  $payment_method['payment_method'] === "Direct Deposit" ? 'selected="selected"' : 'selected="selected"';?>>Direct Deposit</option>
+                            <option value="Check" <?=!empty($payment_method) &&  $payment_method['payment_method'] === "Check" ? 'selected="selected"' : '';?>>Check</option>
                         </select>
                     </div>
                 </div>
                 <br>  
-                <div class="row">
+                <?php
+                    $addBankAccount = "";
+                    $addSplitType = "";
+
+                    if (!empty($payment_method) && $payment_method['payment_method'] === "Check") {
+                        $addBankAccount = 'style="display:none;"';
+                        $addSplitType = 'style="display:none;"';
+                    }
+                ?>
+                <div class="row jsBaseOnDD" <?=$addSplitType?>>
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Split method <span class="csRequired"></span>
+                            Split method
                         </label>
                         <select class="form-control jsSplitType">
                             <option value="0">[Select]</option>
-                            <option value="Amount" <?=!empty($bankInfo) &&  $bankInfo['account_type'] === "Amount" ? 'selected="selected"' : '';?>>Amount</option>
-                            <option value="Percentage" <?=!empty($bankInfo) &&  $bankInfo['account_type'] === "Percentage" ? 'selected="selected"' : '';?>>Percentage</option>
+                            <option value="Amount" <?=!empty($payment_method) &&  $payment_method['split_method'] === "Amount" ? 'selected="selected"' : '';?>>Amount</option>
+                            <option value="Percentage" <?=!empty($payment_method) &&  $payment_method['split_method'] === "Percentage" ? 'selected="selected"' : '';?>>Percentage</option>
                         </select>
                     </div>
                 </div>
-                <br> 
-                <?php if (!empty($bankInfo)) { ?>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <p class="csF16">
-                                <b><?php echo $bankInfo['routing_number']; ?></b>
-                                <br>
-                                <span>Routing number (9 digits)</span>
-                            </p>
-                            <p class="csF16">
-                                <b><?php echo $bankInfo['account_number']; ?></b>
-                                <br>
-                                <span>Account number</span>
-                            </p>
-                            <p class="csF16">
-                                <b><?php echo ucfirst($bankInfo['account_type']); ?></b>
-                                <br>
-                                <span>Account type</span>
-                            </p>
-                        </div>
-                        <div class="col-sm-6 ">
-                            <button class="btn btn-orange csF16 csB7 jsEditBankInfo" data-location_id="<?php echo $bankInfo['sid']; ?>">
-                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
-                                Edit
-                            </button>
-                        </div>
+                <br>
+                <div class="row jsBaseOnDD" <?=$addBankAccount?>>
+                    <div class="col-md-12 col-xs-12">
+                        <label class="csF16 csB7">
+                            Employee bank account
+                        </label>
+                        <p>
+                            Enter the details of the bank account the epmloyee wishes to be paid with. Multiple accounts can be added after contuining this page.
+                        </p>
+                        <span style="<?=!empty($payment_method) ? 'displayed:none;' : '';?>">
+                            <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;</i><a href="javascript:;" class="jsAddEmployeeBankAccount" data-account_id="0">Add bank account</a>
+                        </span>
                     </div>
-                    <br>
-                <?php } ?></b>  
+                </div>
+                <br>
+                <?php if (!empty($bank_account)) { ?>
+                    <?php foreach ($bank_account as $account) { ?>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <p class="csF16">
+                                    <b><?php echo $account['routing_transaction_number']; ?></b>
+                                    <br>
+                                    <span>Routing number (9 digits)</span>
+                                </p>
+                                <p class="csF16">
+                                    <b><?php echo $account['account_number']; ?></b>
+                                    <br>
+                                    <span>Account number</span>
+                                </p>
+                                <p class="csF16">
+                                    <b><?php echo ucfirst($account['account_type']); ?></b>
+                                    <br>
+                                    <span>Account type</span>
+                                </p>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <button class="btn btn-orange csF16 csB7 jsAddEmployeeBankAccount" data-account_id="<?php echo $account['sid']; ?>">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+                        <br>
+                    <?php } ?>
+                <?php } ?>
+                <?php if (!empty($payroll_bank_account)) { ?>
+                    <?php foreach ($payroll_bank_account as $account) { ?>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <p class="csF16">
+                                    <b><?php echo $account['routing_number']; ?></b>
+                                    <br>
+                                    <span>Routing number (9 digits)</span>
+                                </p>
+                                <p class="csF16">
+                                    <b><?php echo $account['account_number']; ?></b>
+                                    <br>
+                                    <span>Account number</span>
+                                </p>
+                                <p class="csF16">
+                                    <b><?php echo ucfirst($account['account_type']); ?></b>
+                                    <br>
+                                    <span>Account type</span>
+                                </p>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <button class="btn btn-orange csF16 csB7 jsDeleteEmployeeBankAccount" data-account_id="<?php echo $account['payroll_bank_uuid']; ?>">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                        <br>
+                    <?php } ?>
+                <?php } ?>
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <button class="btn btn-black csF16 csB7 jsPayrollEmployeeOnboard" data-employee_id="<?php echo $employee_sid; ?>" data-level="4">
                             <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;
                             Back
                         </button>
-                        <button class="btn btn-orange csF16 csB7 jsPayrollConfirmContinue" data-id="3">
+                        <button class="btn btn-orange csF16 csB7 jsPayrollEmployeePaymentMethod" data-id="3">
                             <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;
                             Save & continue
                         </button>

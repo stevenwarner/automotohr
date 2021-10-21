@@ -513,7 +513,11 @@ class Payroll_ajax extends CI_Controller
             //
             $data['employee_sid'] = $_GET["employee_id"];
             //
-            // $data['bank_info'] = $this->pm->GetEmployeePaymentMethod($_GET["employee_id"]);
+            $data['payment_method'] = $this->pm->GetEmployeePaymentMethod($_GET["employee_id"]);
+            //
+            $data['bank_account'] = $this->pm->GetEmployeeBankDetails($_GET["employee_id"]);
+            //
+            $data['payroll_bank_account'] = $this->pm->GetEmployeePayrollBankDetails($_GET["employee_id"]);
             //
             return SendResponse(200,[
                 'API_KEY' => getAPIKey(),
@@ -526,7 +530,13 @@ class Payroll_ajax extends CI_Controller
             //
             $data['employee_sid'] = $_GET["employee_id"];
             //
-            $data['bank_info'] = $this->pm->GetEmployeeBankDetails($_GET["employee_id"]);
+            $bank_detail = array();
+            //
+            if ($_GET["row_id"] != 0) {
+                $bank_detail = $this->pm->GetEmployeeDirectDeposit($_GET["row_id"]);
+            }
+            //
+            $data["bank_detail"] = $bank_detail;
             //
             return SendResponse(200,[
                 'API_KEY' => getAPIKey(),

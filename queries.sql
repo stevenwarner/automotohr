@@ -311,3 +311,24 @@ ALTER TABLE `payroll_employee_state_tax`
 
 ALTER TABLE `payroll_employee_state_tax`
   MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
+
+DROP TABLE IF EXISTS `payroll_employee_payment_method`;
+CREATE TABLE `payroll_employee_payment_method` (
+  `sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `payment_method` varchar(128) DEFAULT NULL,
+  `split_method` varchar(128) DEFAULT NULL,
+  `version` varchar(128) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `payroll_employee_payment_method`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `payroll_employee_payment_method`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;  
+
+ALTER TABLE `bank_account_details` ADD `is_payroll` INT(1) NOT NULL DEFAULT '0' AFTER `updated_by`;
+ALTER TABLE `payroll_employee_bank_accounts` ADD `direct_deposit_id` INT(11) NOT NULL DEFAULT '0' AFTER `account_number`;

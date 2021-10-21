@@ -61,6 +61,12 @@ $(function PayrollCompanyOnboard() {
     var employeeID;  
 
     /**
+     * Saves the employee bank row ID
+     * @type {null|int}
+     */
+     var addBankID;
+
+    /**
      * Triggers company onboard process
      */
     $('.jsPayrollCompanyOnboard').click(function(event) {
@@ -97,6 +103,24 @@ $(function PayrollCompanyOnboard() {
             }
             
         }).setHeader('Confirm!');
+    });
+
+    /**
+     * Trigger when cancel is pressed
+     */
+     $(document).on('change', '.jsPaymentMethod', function(event) {
+        //
+        var type = $(this).val();
+        //
+        console.log(type);
+        //
+        if (type == "Check") {
+            $(".jsBaseOnDD").hide();
+        }
+
+        if (type == "Direct Deposit") {
+            $(".jsBaseOnDD").show();
+        }
     });
 
     /**
@@ -1563,33 +1587,9 @@ $(function PayrollCompanyOnboard() {
               LoadContent(resp.html, function() {
                   //
                   $('.jsPayrollEmployeeOnboard').click(SendEmployeeToOnboardProcess);
-                  $('.jsSaveEmployeeBankInfo').click(SaveCompanyEmployeeBankDetail);
-                  //  
-                  ml(false, modalLoader);
-              });
-          })
-          .error(HandleError);
-    }
-
-    function UpdateEmployeeBankDetail () {
-        //
-      ml(true, modalLoader);
-      //
-      xhr = $.ajax({
-              method: "GET",
-              url: GetURL('get_payroll_page/get_company_employee_bank_detail/' + companyId),
-              data: { employee_id: employeeID }
-          })
-          .done(function(resp) {
-              //
-              xhr = null;
-              API_KEY = resp.API_KEY;
-              API_URL = resp.EMPLOYEE_URL;
-              //
-              LoadContent(resp.html, function() {
-                  //
-                  $('.jsPayrollEmployeeOnboard').click(SendEmployeeToOnboardProcess);
-                  $('.jsSaveEmployeeBankInfo').click(SaveCompanyEmployeeBankDetail);
+                  $('.jsPayrollEmployeePaymentMethod').click(SaveCompanyEmployeePaymentMethod);
+                  $('.jsAddEmployeeBankAccount').click(AddEmployeeBankAccount);
+                  $('.jsDeleteEmployeeBankAccount').click(DeleteEmployeeoBankAccount);
                   //  
                   ml(false, modalLoader);
               });
@@ -1598,11 +1598,87 @@ $(function PayrollCompanyOnboard() {
     }
 
     /**
-     * Save company Employee Bank Detail
+     * Save company Employee payment method
      * @param {object} event 
      * @returns 
      */
-     function SaveCompanyEmployeeBankDetail(event) {
+    function SaveCompanyEmployeePaymentMethod(event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        o.PaymentMethod = $('.jsPaymentMethod option:selected').val();
+        o.SplitType = $('.jsSplitType option:selected').val();
+        o.CompanyId = companyId;
+        // Validation
+        if (!o.PaymentMethod || o.PaymentMethod == 0) {
+            return alertify.alert('Warning!', 'Please select payment method.',AlertifyHandler);
+        }
+        //
+        if (o.PaymentMethod == "Direct Deposit") {
+            if (!o.SplitType || o.SplitType == 0) {
+                return alertify.alert('Warning!', 'Please select split type.',AlertifyHandler);
+            }
+        }
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Key" : API_KEY },
+            url: API_URL+"/"+employeeID+"/payment_method",
+            data: JSON.stringify(o)
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            ml(false, modalLoader);
+            // 
+            if (!resp.status) {
+                return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+            } 
+            
+            return alertify.alert('Success!',  resp.response, UpdateEmployeePaymentMethod);
+        })
+        .error(HandleError);
+        //
+    }
+
+    function AddEmployeeBankAccount () {
+        //
+        ml(true, modalLoader);
+        //
+        addBankID = $(this).data("account_id");
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_company_employee_bank_detail/' + companyId),
+                data: { employee_id: employeeID, row_id: addBankID}
+            })
+        .done(function(resp) {
+            //
+            xhr = null;
+            API_KEY = resp.API_KEY;
+            API_URL = resp.EMPLOYEE_URL;
+            //
+            LoadContent(resp.html, function() {
+                //
+                $('.jsBackToPaymentMethod').click(UpdateEmployeePaymentMethod);
+                $('.jsSaveEmployeeBankInfo').click(SaveEmployeeBankDetail);
+                //  
+                ml(false, modalLoader);
+            });
+        })
+        .error(HandleError);
+    }
+
+    /**
+     * Save company Employee Bank Detail
+     * @param {object} event 
+     * @returns 
+     */    
+    function SaveEmployeeBankDetail (event) {
         //
         event.preventDefault();
         //
@@ -1610,10 +1686,14 @@ $(function PayrollCompanyOnboard() {
         o.RoutingNumber = $('.jsRoutingNumber').val().replace(/[^\d]/g,'');
         o.AccountNumber = $('.jsAccountNumber').val().replace(/[^\d]/g,'');
         o.AccountType = $('.jsAccountType option:selected').val();
-        o.DisplayName = $('.jsDisplayName').val().replace(/[^\d]/g,'');
+        o.AccountName = $('.jsAccountName').val().trim();
         o.CompanyId = companyId;
+        o.DDSID = addBankID;
         // Validation
-        
+
+        if (!o.AccountName) {
+            return alertify.alert('Warning!', 'Account name is mendatory.', AlertifyHandler);
+        }
         if (!o.RoutingNumber) {
             return alertify.alert('Warning!', 'Routing number is mendatory.', AlertifyHandler);
         }
@@ -1629,9 +1709,6 @@ $(function PayrollCompanyOnboard() {
         if (!o.AccountType) {
             return alertify.alert('Warning!', 'Please, select the account type.', AlertifyHandler);
         }
-        if (!o.DisplayName) {
-            return alertify.alert('Warning!', 'Account name is mendatory.', AlertifyHandler);
-        }
         //
         ml(true, modalLoader);
         //
@@ -1639,6 +1716,45 @@ $(function PayrollCompanyOnboard() {
             method: "POST",
             headers: { "Content-Type": "application/json", "Key" : API_KEY },
             url: API_URL+"/"+employeeID+"/bank_accounts",
+            data: JSON.stringify(o)
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            ml(false, modalLoader);
+            // 
+            if (!resp.status) {
+                return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+            } 
+            
+            return alertify.alert('Success!',  resp.response, UpdateEmployeePaymentMethod);
+        })
+        .error(HandleError);
+        //
+    }
+
+    /**
+     * Delete company Employee Bank Detail
+     * @param {object} event 
+     * @returns 
+     */    
+     function DeleteEmployeeoBankAccount (event) {
+        //
+        event.preventDefault();
+        //
+
+        //
+        var o = {};
+        o.payroll_bank_uuid = $(this).data("account_id");
+        o.CompanyId = companyId;
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "DELETE",
+            headers: { "Content-Type": "application/json", "Key" : API_KEY },
+            url: API_URL+"/"+employeeID+"/bank_accounts/"+o.payroll_bank_uuid,
             data: JSON.stringify(o)
         })
         .done(function(resp) {

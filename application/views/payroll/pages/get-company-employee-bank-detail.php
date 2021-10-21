@@ -40,9 +40,18 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
+                        Account Name <span class="csRequired"></span>
+                        </label>
+                        <input type="text" class="form-control jsAccountName" placeholder=""  value="<?=!empty($bank_detail) ? $bank_detail['account_title'] : '';?>"/>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <label class="csF16 csB7">
                         Routing number (9 digits) <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsRoutingNumber" placeholder=""  value="<?=!empty($bankInfo) ? $bankInfo['routing_number'] : '';?>"/>
+                        <input type="text" class="form-control jsRoutingNumber" placeholder=""  value="<?=!empty($bank_detail) ? $bank_detail['routing_transaction_number'] : '';?>"/>
                     </div>
                 </div>
                 <br>
@@ -51,7 +60,7 @@
                         <label class="csF16 csB7">
                         Account number <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsAccountNumber" placeholder=""  value="<?=!empty($bankInfo) ? $bankInfo['account_number'] : '';?>"/>
+                        <input type="text" class="form-control jsAccountNumber" placeholder=""  value="<?=!empty($bank_detail) ? $bank_detail['account_number'] : '';?>"/>
                     </div>
                 </div>
                 <br>
@@ -62,24 +71,15 @@
                         </label>
                         <select class="form-control jsAccountType">
                             <option value="0">[Select]</option>
-                            <option value="checking" <?=!empty($bankInfo) &&  $bankInfo['account_type'] === "checking" ? 'selected="selected"' : '';?>>Checking</option>
-                            <option value="savings" <?=!empty($bankInfo) &&  $bankInfo['account_type'] === "savings" ? 'selected="selected"' : '';?>>Savings</option>
+                            <option value="checking" <?=!empty($bank_detail) &&  $bank_detail['account_type'] === "checking" ? 'selected="selected"' : '';?>>Checking</option>
+                            <option value="savings" <?=!empty($bank_detail) &&  $bank_detail['account_type'] === "savings" ? 'selected="selected"' : '';?>>Savings</option>
                         </select>
                     </div>
                 </div>
                 <br>
                 <div class="row">
-                    <div class="col-md-12 col-xs-12">
-                        <label class="csF16 csB7">
-                        Display Name <span class="csRequired"></span>
-                        </label>
-                        <input type="text" class="form-control jsDisplayName" placeholder=""  value="<?=!empty($bankInfo) ? $bankInfo['account_number'] : '';?>"/>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
                     <div class="col-sm-12 text-right">
-                        <button class="btn btn-black csF16 csB7 jsPayrollEmployeeOnboard" data-employee_id="<?php echo $employee_sid; ?>" data-level="4">
+                        <button class="btn btn-black csF16 csB7 jsBackToPaymentMethod">
                             <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;
                             Back
                         </button>
