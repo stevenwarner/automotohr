@@ -87,7 +87,7 @@
                             Enter the results for line 3 from the <a href="https://www.irs.gov/individuals/tax-withholding-estimator">IRS calculator</a> or <a href="https://www.irs.gov/pub/irs-pdf/fw4.pdf">form W-4.</a>
                         </p>
                         <div class="input-group">
-                            <span class="input-group-addon text-module__inputGroupAddon___2DuMQ">$</span>
+                            <span class="input-group-addon">$</span>
                             <input type="text" class="form-control jsDependentTotal" placeholder="0.00" value="<?=!empty($federal_tax_info)  ? $federal_tax_info['dependent'] : '';?>">
                         </div>
                     </div>
@@ -102,7 +102,7 @@
                             Enter the results for line 4a from the <a href="https://www.irs.gov/individuals/tax-withholding-estimator">IRS calculator</a> or <a href="https://www.irs.gov/pub/irs-pdf/fw4.pdf">form W-4.</a>
                         </p>
                         <div class="input-group">
-                            <span class="input-group-addon text-module__inputGroupAddon___2DuMQ">$</span>
+                            <span class="input-group-addon">$</span>
                             <input type="text" class="form-control jsOtherIncome" placeholder="0.00" value="<?=!empty($federal_tax_info)  ? $federal_tax_info['other_income'] : '';?>">
                         </div>
                     </div>
@@ -117,7 +117,7 @@
                             Enter the results for line 4b from the <a href="https://www.irs.gov/individuals/tax-withholding-estimator">IRS calculator</a> or <a href="https://www.irs.gov/pub/irs-pdf/fw4.pdf">form W-4.</a>
                         </p>
                         <div class="input-group">
-                            <span class="input-group-addon text-module__inputGroupAddon___2DuMQ">$</span>
+                            <span class="input-group-addon">$</span>
                             <input type="text" class="form-control jsDeductions" placeholder="0.00" value="<?=!empty($federal_tax_info)  ? $federal_tax_info['deductions'] : '';?>">
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                             Enter the results for line 4c from the <a href="https://www.irs.gov/individuals/tax-withholding-estimator">IRS calculator</a> or <a href="https://www.irs.gov/pub/irs-pdf/fw4.pdf">form W-4.</a>
                         </p>
                         <div class="input-group">
-                            <span class="input-group-addon text-module__inputGroupAddon___2DuMQ">$</span>
+                            <span class="input-group-addon">$</span>
                             <input type="text" class="form-control jsExtraWithholding" placeholder="0.00" value="<?=!empty($federal_tax_info)  ? $federal_tax_info['extra_withholding'] : '';?>">
                         </div>
                     </div>

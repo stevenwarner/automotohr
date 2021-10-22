@@ -679,7 +679,8 @@ class Payroll_model extends CI_Model{
             payroll_bank_uuid,
             routing_number,
             account_number,
-            account_type
+            account_type,
+            direct_deposit_id,
         ")
         ->from($this->tables['PEBA'])
         ->where("employee_sid", $employee_sid)
@@ -701,6 +702,7 @@ class Payroll_model extends CI_Model{
             routing_transaction_number,
             account_number,
             account_type,
+            account_percentage
         ")
         ->from($this->tables['BAD'])
         ->where("sid", $id)

@@ -54,9 +54,8 @@
                             Split method
                         </label>
                         <select class="form-control jsSplitType">
-                            <option value="0">[Select]</option>
-                            <option value="Amount" <?=!empty($payment_method) &&  $payment_method['split_method'] === "Amount" ? 'selected="selected"' : '';?>>Amount</option>
                             <option value="Percentage" <?=!empty($payment_method) &&  $payment_method['split_method'] === "Percentage" ? 'selected="selected"' : '';?>>Percentage</option>
+                            <option value="Amount" <?=!empty($payment_method) &&  $payment_method['split_method'] === "Amount" ? 'selected="selected"' : '';?>>Amount</option>
                         </select>
                     </div>
                 </div>
@@ -75,66 +74,68 @@
                     </div>
                 </div>
                 <br>
-                <?php if (!empty($bank_account)) { ?>
-                    <?php foreach ($bank_account as $account) { ?>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <p class="csF16">
-                                    <b><?php echo $account['routing_transaction_number']; ?></b>
-                                    <br>
-                                    <span>Routing number (9 digits)</span>
-                                </p>
-                                <p class="csF16">
-                                    <b><?php echo $account['account_number']; ?></b>
-                                    <br>
-                                    <span>Account number</span>
-                                </p>
-                                <p class="csF16">
-                                    <b><?php echo ucfirst($account['account_type']); ?></b>
-                                    <br>
-                                    <span>Account type</span>
-                                </p>
+                <div class="jsBaseOnDD">
+                    <?php if (!empty($bank_account)) { ?>
+                        <?php foreach ($bank_account as $account) { ?>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p class="csF16">
+                                        <b><?php echo $account['routing_transaction_number']; ?></b>
+                                        <br>
+                                        <span>Routing number (9 digits)</span>
+                                    </p>
+                                    <p class="csF16">
+                                        <b><?php echo $account['account_number']; ?></b>
+                                        <br>
+                                        <span>Account number</span>
+                                    </p>
+                                    <p class="csF16">
+                                        <b><?php echo ucfirst($account['account_type']); ?></b>
+                                        <br>
+                                        <span>Account type</span>
+                                    </p>
+                                </div>
+                                <div class="col-sm-6 ">
+                                    <button class="btn btn-orange csF16 csB7 jsAddEmployeeBankAccount" data-account_id="<?php echo $account['sid']; ?>">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
+                                        Edit
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-sm-6 ">
-                                <button class="btn btn-orange csF16 csB7 jsAddEmployeeBankAccount" data-account_id="<?php echo $account['sid']; ?>">
-                                    <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
-                                    Edit
-                                </button>
-                            </div>
-                        </div>
-                        <br>
+                            <br>
+                        <?php } ?>
                     <?php } ?>
-                <?php } ?>
-                <?php if (!empty($payroll_bank_account)) { ?>
-                    <?php foreach ($payroll_bank_account as $account) { ?>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <p class="csF16">
-                                    <b><?php echo $account['routing_number']; ?></b>
-                                    <br>
-                                    <span>Routing number (9 digits)</span>
-                                </p>
-                                <p class="csF16">
-                                    <b><?php echo $account['account_number']; ?></b>
-                                    <br>
-                                    <span>Account number</span>
-                                </p>
-                                <p class="csF16">
-                                    <b><?php echo ucfirst($account['account_type']); ?></b>
-                                    <br>
-                                    <span>Account type</span>
-                                </p>
+                    <?php if (!empty($payroll_bank_account)) { ?>
+                        <?php foreach ($payroll_bank_account as $account) { ?>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p class="csF16">
+                                        <b><?php echo $account['routing_number']; ?></b>
+                                        <br>
+                                        <span>Routing number (9 digits)</span>
+                                    </p>
+                                    <p class="csF16">
+                                        <b><?php echo $account['account_number']; ?></b>
+                                        <br>
+                                        <span>Account number</span>
+                                    </p>
+                                    <p class="csF16">
+                                        <b><?php echo ucfirst($account['account_type']); ?></b>
+                                        <br>
+                                        <span>Account type</span>
+                                    </p>
+                                </div>
+                                <div class="col-sm-6 ">
+                                    <button class="btn btn-orange csF16 csB7 jsDeleteEmployeeBankAccount" data-account_id="<?php echo $account['payroll_bank_uuid']; ?>" data-ddid="<?php echo $account['direct_deposit_id']; ?>">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
+                                        Delete
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-sm-6 ">
-                                <button class="btn btn-orange csF16 csB7 jsDeleteEmployeeBankAccount" data-account_id="<?php echo $account['payroll_bank_uuid']; ?>">
-                                    <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                        <br>
+                            <br>
+                        <?php } ?>
                     <?php } ?>
-                <?php } ?>
+                </div>
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <button class="btn btn-black csF16 csB7 jsPayrollEmployeeOnboard" data-employee_id="<?php echo $employee_sid; ?>" data-level="4">

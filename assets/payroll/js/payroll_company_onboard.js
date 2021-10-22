@@ -66,6 +66,12 @@ $(function PayrollCompanyOnboard() {
      */
      var addBankID;
 
+     /**
+     * Saves the split type
+     * @type {null|int}
+     */
+      var splitType;
+
     /**
      * Triggers company onboard process
      */
@@ -108,7 +114,7 @@ $(function PayrollCompanyOnboard() {
     /**
      * Trigger when cancel is pressed
      */
-     $(document).on('change', '.jsPaymentMethod', function(event) {
+    $(document).on('change', '.jsPaymentMethod', function(event) {
         //
         var type = $(this).val();
         //
@@ -1096,6 +1102,7 @@ $(function PayrollCompanyOnboard() {
                     //
                     $('.jsEmployeeOnboardCancel').click(GetCompanyBankInfo);
                     $('.jsAddCompanyEmployee').click(ShowCompanyEmployeeList);
+                    $('.jsPayrollEmployeeOnboard').click(SendEmployeeToOnboardProcess);
                     //  
                     ml(false, modalLoader);
                 });
@@ -1639,7 +1646,7 @@ $(function PayrollCompanyOnboard() {
                 return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
             } 
             
-            return alertify.alert('Success!',  resp.response, UpdateEmployeePaymentMethod);
+            return alertify.alert('Success!',  resp.response, ShowCompanyEmployeeList);
         })
         .error(HandleError);
         //
@@ -1650,11 +1657,12 @@ $(function PayrollCompanyOnboard() {
         ml(true, modalLoader);
         //
         addBankID = $(this).data("account_id");
+        splitType = $('.jsSplitType option:selected').val();
         //
         xhr = $.ajax({
                 method: "GET",
                 url: GetURL('get_payroll_page/get_company_employee_bank_detail/' + companyId),
-                data: { employee_id: employeeID, row_id: addBankID}
+                data: { employee_id: employeeID, row_id: addBankID, type: splitType}
             })
         .done(function(resp) {
             //
@@ -1687,6 +1695,8 @@ $(function PayrollCompanyOnboard() {
         o.AccountNumber = $('.jsAccountNumber').val().replace(/[^\d]/g,'');
         o.AccountType = $('.jsAccountType option:selected').val();
         o.AccountName = $('.jsAccountName').val().trim();
+        o.SplitType = splitType;
+        o.SplitAmount = $('.jsSplitAmount').val().replace(/[^\d]/g,'');
         o.CompanyId = companyId;
         o.DDSID = addBankID;
         // Validation
@@ -1708,6 +1718,9 @@ $(function PayrollCompanyOnboard() {
         }
         if (!o.AccountType) {
             return alertify.alert('Warning!', 'Please, select the account type.', AlertifyHandler);
+        }
+        if (!o.SplitAmount) {
+            return alertify.alert('Warning!', 'Split amount or percentage is mendatory.', AlertifyHandler);
         }
         //
         ml(true, modalLoader);
@@ -1747,30 +1760,41 @@ $(function PayrollCompanyOnboard() {
         //
         var o = {};
         o.payroll_bank_uuid = $(this).data("account_id");
+        o.DDID = $(this).data("ddid");
         o.CompanyId = companyId;
-        //
-        ml(true, modalLoader);
-        //
-        xhr = $.ajax({
-            method: "DELETE",
-            headers: { "Content-Type": "application/json", "Key" : API_KEY },
-            url: API_URL+"/"+employeeID+"/bank_accounts/"+o.payroll_bank_uuid,
-            data: JSON.stringify(o)
-        })
-        .done(function(resp) {
-            //
-            xhr = null;
-            //
-            ml(false, modalLoader);
-            // 
-            if (!resp.status) {
-                return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
-            } 
-            
-            return alertify.alert('Success!',  resp.response, UpdateEmployeePaymentMethod);
-        })
-        .error(HandleError);
-        //
+        var message = [];
+        message.push("Are you sure you want to delete this bank Account?");
+        console.log(o.DDID)
+        if (o.DDID > 0) {
+            message.push("This action may also delete the direct deposit bank account.");
+        }
+        alertify.confirm('Confirmation', message.join('<br/>'),
+            function () {
+                ml(true, modalLoader);
+                //
+                xhr = $.ajax({
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json", "Key" : API_KEY },
+                    url: API_URL+"/"+employeeID+"/bank_accounts/"+o.payroll_bank_uuid,
+                    data: JSON.stringify(o)
+                })
+                .done(function(resp) {
+                    //
+                    xhr = null;
+                    //
+                    ml(false, modalLoader);
+                    // 
+                    if (!resp.status) {
+                        return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+                    } 
+                    
+                    return alertify.alert('Success!',  resp.response, UpdateEmployeePaymentMethod);
+                })
+                .error(HandleError);
+            },
+            function () {
+
+            });
     }
 
     /**

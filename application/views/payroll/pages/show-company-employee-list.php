@@ -34,9 +34,9 @@
                             <div class="col-sm-4">
                                 <p class="csF16">
                                 <?php 
-                                    if ($employee['onboarding_level'] != 0) {
+                                    if ($employee['onboarding_level'] != 0 && $employee['onboarding_level'] < 6) {
                                         echo "<b>Pending</b>";
-                                    } else if ($employee['onboarding_level'] == 5) {
+                                    } else if ($employee['onboarding_level'] == 6) {
                                         echo "<b>Completed</b>";
                                     }
                                 ?> 
@@ -57,10 +57,6 @@
                         <button class="btn btn-orange csF16 csB7 jsEmployeeListCancel">
                             <i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;
                             Back
-                        </button>
-                        <button class="btn btn-orange csF16 csB7 jsPayrollConfirmContinue" data-id="4">
-                            <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;
-                            Save & continue
                         </button>
                     </div>
                 </div>

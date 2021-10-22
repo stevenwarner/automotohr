@@ -378,6 +378,44 @@ class Payroll_ajax extends CI_Controller
         //
         if($page === 'start-employee-onboarding'){  
             //
+            $payrollEmployees = $this->pm->GetCompanyPayrollEmployees($companyId);
+            //
+            $payrollEmployeesList = array_column($payrollEmployees, "employee_sid");
+            //
+            $companyEmployees = $this->em->GetCompanyEmployees($companyId, [
+                "users.sid",
+                "users.first_name",
+                "users.last_name",
+                "users.access_level",
+                "users.access_level_plus",
+                "users.is_executive_admin",
+                "users.job_title",
+                "users.pay_plan_flag",
+                "users.on_payroll"
+            ]);
+            //
+            $employees_onboard = array();
+            //
+            foreach ($payrollEmployees as $pe) {
+                $employees_onboard[$pe['employee_sid']] = $pe['onboard_level'];
+            }
+            //
+            foreach ($companyEmployees as $key => $employee) {
+                $employee_level = 0;
+                if (in_array($employee['sid'], $payrollEmployeesList)) {
+                    $employee_level = $employees_onboard[$employee['sid']];
+                }
+
+                $companyEmployees[$key]['onboarding_level'] = $employee_level;
+
+                if ($employee_level < 6) {
+                    unset($companyEmployees[$key]);
+                }
+                
+            }
+            //
+            $data['companyEmployees'] = $companyEmployees;
+            //
             return SendResponse(200,[
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
@@ -529,6 +567,7 @@ class Payroll_ajax extends CI_Controller
         if ($page === "get-company-employee-bank-detail") {
             //
             $data['employee_sid'] = $_GET["employee_id"];
+            $data['type'] = $_GET["type"];
             //
             $bank_detail = array();
             //

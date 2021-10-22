@@ -74,7 +74,7 @@
                             You can withhold an additional amount of California income taxes here.
                         </p>
                         <div class="input-group">
-                            <span class="input-group-addon text-module__inputGroupAddon___2DuMQ">$</span>
+                            <span class="input-group-addon">$</span>
                             <input type="text" class="form-control jsAdditionalWithholding" placeholder="0.00" value="<?=!empty($state_tax_info)  ? $state_tax_info['additional_withholding'] : '';?>">
                         </div>
                     </div>

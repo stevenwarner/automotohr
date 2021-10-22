@@ -78,6 +78,18 @@
                 </div>
                 <br>
                 <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <label class="csF16 csB7">
+                        <?=$type === "Percentage" ? 'Split Percentage' : 'Split Amount';?> <span class="csRequired"></span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><?=$type === "Percentage" ? '%' : '$';?></span>
+                            <input type="text" class="form-control jsSplitAmount" placeholder=""  value="<?=!empty($bank_detail) ? $bank_detail['account_percentage'] : '';?>"/>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
                     <div class="col-sm-12 text-right">
                         <button class="btn btn-black csF16 csB7 jsBackToPaymentMethod">
                             <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;

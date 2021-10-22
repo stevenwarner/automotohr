@@ -37,16 +37,43 @@
                 <br>
                 <div class="row">
                     <div class="col-sm-12 text-right">
-                        <button class="btn btn-orange csF16 csB7 jsEmployeeOnboardCancel">
-                            <i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;
-                            Back
-                        </button>
+                        <?php if (!empty($companyEmployees)) { ?>
+                            <button class="btn btn-orange csF16 csB7 jsPayrollConfirmContinue" data-id="5">
+                                <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;
+                                Save & continue
+                            </button>
+                        <?php } else { ?>
+                            <button class="btn btn-orange csF16 csB7 jsEmployeeOnboardCancel">
+                                <i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;
+                                Back
+                            </button>
+                        <?php } ?>
                         <button class="btn btn-orange csF16 csB7 jsAddCompanyEmployee">
                             <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
                             Add employee
                         </button>
                     </div>
                 </div>
+                <?php if (!empty($companyEmployees)) { ?>
+                    <h1>Recently added</h1>
+                    <hr>
+                    <?php foreach ($companyEmployees as $employee) { ?>
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    <p class="csF16">
+                                    <?=remakeEmployeeName($employee);?> 
+                                    </p>
+                                </div>    
+                                <div class="col-sm-2 ">
+                                    <button class="btn btn-orange csF16 csB7 jsPayrollEmployeeOnboard" data-employee_id="<?php echo $employee['sid']; ?>" data-level="0">
+                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
+                                        <?php echo $employee['onboarding_level'] == 0 ? "Add" : "Edit"; ?>
+                                    </button>
+                                </div>
+                            </div>
+                    <?php } ?> 
+                    <br>
+                <?php } ?> 
             </div>
         </div>
 
