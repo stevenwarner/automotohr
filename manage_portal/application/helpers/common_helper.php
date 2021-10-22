@@ -1533,6 +1533,32 @@ if(!function_exists('GetJobHeaderForGoogle')){
         }
         //
         $job_details['Title'] = job_title_uri($job_details, true, true);
+        //
+        $locationAddress = '';
+        //
+        $stateCountryArray = empty($company_details['Location_State']) ? [] : db_get_state_name($company_details['Location_State']);
+        //
+        if(!empty($company_details['Location_Address'])){
+            $locationAddress .= $company_details['Location_Address'];
+        }
+        //
+        if(!empty($company_details['Location_Address_2'])){
+            $locationAddress .= ', '.$company_details['Location_Address_2'];
+        }
+        //
+        if(!empty($company_details['Location_City'])){
+            $locationAddress .= ', '.$company_details['Location_City'];
+        }
+        //
+        if(!empty($company_details['Location_State'])){
+            $locationAddress .= ', '.$stateCountryArray['state_name'];
+        }
+        //
+        if(!empty($company_details['Location_State'])){
+            $locationAddress .= ', '.$stateCountryArray['country_name'];
+        }
+        //
+        $job_details['Location'] = $locationAddress;
 
         $googleJobOBJ = [];
         // Basic job details
@@ -1541,7 +1567,7 @@ if(!function_exists('GetJobHeaderForGoogle')){
         $googleJobOBJ['title'] = $job_details['Title'];
         $googleJobOBJ['description'] = ($job_details['JobDescription'].' '.$job_details['JobRequirements']);
         $googleJobOBJ['employmentType'] = strtoupper(str_replace(' ', '_', $job_details['JobType'])); // FULL_TIME, PART_TIME, CONTRACTOR, TEMPORARY, INTERN, VOLUNTEER, PER_DIEM, OTHER [FULL_TIME,PART_TIME]
-        $googleJobOBJ['industry'] = 'business';
+        $googleJobOBJ['industry'] = 'Automotive';
         $googleJobOBJ['datePosted'] = DateTime::createFromFormat('m-d-Y', $acDate)->format('c');
         $googleJobOBJ['validThrough'] = DateTime::createFromFormat('m-d-Y', $acDate)->add(new DateInterval('P60D'))->format('c'); // Add interval of one month
         $googleJobOBJ['url'] = 'https://'.($company_details['sub_domain']).'/job_details/'.(preg_replace('/\s+/', '-',preg_replace('/[^0-9a-zA-Z]/', ' ', strtolower($job_details['Title'])))).'-'.$job_details['sid']; // Add interval of one month

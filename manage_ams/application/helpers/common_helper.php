@@ -1460,6 +1460,32 @@ if(!function_exists('GetJobHeaderForGoogle')){
         }
         //
         $job_details['Title'] = job_title_uri($job_details, true, true);
+        //
+        $locationAddress = '';
+        //
+        $stateCountryArray = empty($company_details['Location_State']) ? [] : db_get_state_name($company_details['Location_State']);
+        //
+        if(!empty($company_details['Location_Address'])){
+            $locationAddress .= $company_details['Location_Address'];
+        }
+        //
+        if(!empty($company_details['Location_Address_2'])){
+            $locationAddress .= ', '.$company_details['Location_Address_2'];
+        }
+        //
+        if(!empty($company_details['Location_City'])){
+            $locationAddress .= ', '.$company_details['Location_City'];
+        }
+        //
+        if(!empty($company_details['Location_State'])){
+            $locationAddress .= ', '.$stateCountryArray['state_name'];
+        }
+        //
+        if(!empty($company_details['Location_State'])){
+            $locationAddress .= ', '.$stateCountryArray['country_name'];
+        }
+        //
+        $job_details['Location'] = $locationAddress;
 
         $googleJobOBJ = [];
         // Basic job details
