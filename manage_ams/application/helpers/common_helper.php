@@ -937,24 +937,24 @@ if(!function_exists('mailAWSSES')){
         $mail->ReturnPath = 'no-reply@automotohr.com';
         $mail->Sender = 'no-reply@automotohr.com';
         // Set Host
-        $mail->isSMTP();
-        $mail->SMTPAuth   = true;
-        $mail->Host       = $creds->SES->Host;
-        $mail->Username   = $creds->SES->User;
-        $mail->Password   = $creds->SES->Password;
-        $mail->SMTPSecure = $creds->SES->Method;
-        $mail->Port       = $creds->SES->Port; 
+        // $mail->isSMTP();
+        // $mail->SMTPAuth   = true;
+        // $mail->Host       = $creds->SES->Host;
+        // $mail->Username   = $creds->SES->User;
+        // $mail->Password   = $creds->SES->Password;
+        // $mail->SMTPSecure = $creds->SES->Method;
+        // $mail->Port       = $creds->SES->Port; 
         //
         // For local machines
         if(in_array($_SERVER['HTTP_HOST'], ['localhost', 'automotohr.local'])){
-            $mail->SMTPOptions = array(
-                'ssl' => array(
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                    )
-                );  
-            $mail->clearAddresses();
+            // $mail->SMTPOptions = array(
+            //     'ssl' => array(
+            //         'verify_peer' => false,
+            //         'verify_peer_name' => false,
+            //         'allow_self_signed' => true
+            //         )
+            //     );  
+            // $mail->clearAddresses();
             $mail->addAddress('mubashir.saleemi123@gmail.com');
         }
     }
