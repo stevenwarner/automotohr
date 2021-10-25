@@ -318,7 +318,7 @@ if (!function_exists('sendMail')) {
         
         $mail->addAddress($to);
         $mail->CharSet = 'UTF-8';
-        mailAWSSES($mail, $to);
+        // mailAWSSES($mail, $to);
         //$mail->addBCC('prosaifhasi@gmail.com');
         $mail->isHTML(true);
         $mail->Subject = $subject;
@@ -354,7 +354,7 @@ if (!function_exists('sendMailMultipleRecipients')) {
         $mail->CharSet = 'UTF-8';
         //$mail->addBCC('prosaifhasi@gmail.com');
         $mail->isHTML(true);
-        mailAWSSES($mail, $to);
+        // mailAWSSES($mail, $to);
         $mail->Subject = $subject;
         $mail->Body = $body;
         $mail->send();
@@ -382,7 +382,7 @@ if (!function_exists('sendMailWithCC')) {
         $mail->addAddress($to);
         $mail->addCC($cc);
         $mail->CharSet = 'UTF-8';
-        mailAWSSES($mail, $to);
+        // mailAWSSES($mail, $to);
         //$mail->addBCC('prosaifhasi@gmail.com');
         $mail->isHTML(true);
         $mail->Subject = $subject;
@@ -410,7 +410,7 @@ if (!function_exists('sendMailWithAttachment')) {
         $mail->addAddress($to);
         $mail->CharSet = 'UTF-8';
         //
-        mailAWSSES($mail, $to);
+        // mailAWSSES($mail, $to);
         //$mail->addBCC('prosaifhasi@gmail.com');
         $mail->isHTML(true);
         //
@@ -460,7 +460,7 @@ if (!function_exists('sendMailWithAttachmentRealPath')) {
         }
 
         //
-        mailAWSSES($mail, $to);
+        // mailAWSSES($mail, $to);
 
         $mail->Subject = $subject;
         $mail->Body = $body;
@@ -492,7 +492,7 @@ if (!function_exists('sendMailWithStringAttachment')) {
         $mail->isHTML(true);
 
         //
-        mailAWSSES($mail, $to);
+        // mailAWSSES($mail, $to);
 
         foreach ($files as $file) {
             $string = file_get_contents(AWS_S3_BUCKET_URL . urlencode($file['document_name']));
@@ -12160,10 +12160,10 @@ if(!function_exists('mailAWSSES')){
         //
         $creds = getCreds('AHR');
         // Set XMailer
-        $mail->XMailer = 'mail.automotohr.com';
-        $mail->Mailer = 'mail.automotohr.com';
-        $mail->ReturnPath = 'no-reply@automotohr.com';
-        $mail->Sender = 'no-reply@automotohr.com';
+        // $mail->XMailer = 'mail.automotohr.com';
+        // $mail->Mailer = 'mail.automotohr.com';
+        // $mail->ReturnPath = 'no-reply@automotohr.com';
+        // $mail->Sender = 'no-reply@automotohr.com';
         // Set Host
         // $mail->isSMTP();
         // $mail->SMTPAuth   = true;
@@ -12182,8 +12182,8 @@ if(!function_exists('mailAWSSES')){
             //         'allow_self_signed' => true
             //         )
             //     );  
-            $mail->clearAddresses();
-            $mail->addAddress('mubashir.saleemi123@gmail.com');
+            // $mail->clearAddresses();
+            // $mail->addAddress('mubashir.saleemi123@gmail.com');
         }
     }
 }
