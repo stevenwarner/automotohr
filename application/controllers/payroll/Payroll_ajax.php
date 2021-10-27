@@ -69,6 +69,11 @@ class Payroll_ajax extends CI_Controller
                     $level = "employee";
                     $level_id = 3;
                     break;    
+                
+                case 4:
+                    $level = "payroll";
+                    $level_id = 4;
+                    break;     
             }
             //
             if(!isset($_SESSION['GUSTO_COMPANY'])){
@@ -581,6 +586,271 @@ class Payroll_ajax extends CI_Controller
                 'API_KEY' => getAPIKey(),
                 'EMPLOYEE_URL' => getAPIUrl("employees"),
                 'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //get_company_payroll_setting
+        if ($page === "get-company-payroll-setting") {
+            //
+            $payrollInfo = $this->pm->GetCompanyPayrollSetting($companyId);
+            //
+            $page_type = '';
+            //
+            if (!empty($payrollInfo)) {
+                $page = "payroll_info_detail";
+                $data['payrollInfo'] = $payrollInfo;
+                $page_type = "payroll_detail";
+            } else {
+                $page = "add_edit_payroll_info";
+                $data['payrollInfo'] = $payrollInfo;
+                $page_type = "payroll_form";
+            }
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'COMPANIES_URL' => getAPIUrl("companies"),
+                'page_type' => $page_type,
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //get_company_payroll_setting
+        if ($page === "update-company-payroll-setting") {
+            //
+            $payrollInfo = $this->pm->GetCompanyPayrollSetting($companyId);
+            //
+            $page = "add_edit_payroll_info";
+            $data['payrollInfo'] = $payrollInfo;
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'COMPANIES_URL' => getAPIUrl("companies"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
+        if ($page === "get-date-list") {
+            $week =  date("W");
+            $year = date("Y");
+            $day = $_GET['day'];
+            //
+            $dateTime = new DateTime();
+            $dateTime->setISODate($year, $week);
+            $dateTime->format('Y-m-d');
+            //
+            $row = '<option value="0">[select]</option>';
+            //
+            for ($x = 0; $x <= 25; $x++) {
+
+                if ($day == 1 && $x == 0) {
+                    $weekdate = $dateTime->modify('+7 days')->format('Y-m-d');
+                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                }
+
+                if ($day == 2 && $x == 0) {
+                    $weekdate = $dateTime->modify('+8 days')->format('Y-m-d');
+                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                }
+
+                if ($day == 3 && $x == 0) {
+                    $weekdate = $dateTime->modify('+9 days')->format('Y-m-d');
+                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                }
+
+                if ($day == 4 && $x == 0) {
+                    $weekdate = $dateTime->modify('+10 days')->format('Y-m-d');
+                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                }
+
+                if ($day == 5 && $x == 0) {
+                    $weekdate = $dateTime->modify('+11 days')->format('Y-m-d');
+                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                }
+
+                if ($x > 0) {
+                    $weekdate = $dateTime->modify('+7 days')->format('Y-m-d');
+                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                }
+                //8
+            }
+            
+            return SendResponse(200,[
+                'rows' =>  $row
+            ]);
+        }
+        //
+        if ($page === "get-twice-month-dates") {
+            
+            $row = '<option value="0">[select]</option>';
+            //
+            $currentDate =  date("d");
+            //
+            if ($currentDate < 11) {
+                $midDate = date("Y").'-'.date("m").'-15';
+                $row .= '<option value="'.$midDate.'">'.date("m/d/Y", strtotime($midDate)).'</option>';
+            }
+            if ($currentDate < 25) {
+                $lastDate =  date('Y-m-t');
+                $row .= '<option value="'.$lastDate.'">'.date("m/d/Y", strtotime($lastDate)).'</option>';
+            }
+            //
+            for ($x = 1; $x <= 7; $x++) {
+                $month = date('m',strtotime('first day of +'.$x.' month'));
+                $year =  date('Y',strtotime('first day of +'.$x.' month'));
+                //
+                $midDate = $year.'-'.$month.'-15';
+                $lastDate =  date('Y-m-t',strtotime('first day of +'.$x.' month'));
+                //
+                $row .= '<option value="'.$midDate.'">'.date("m/d/Y", strtotime($midDate)).'</option>';
+                $row .= '<option value="'.$lastDate.'">'.date("m/d/Y", strtotime($lastDate)).'</option>';
+
+            }
+            //
+            
+            return SendResponse(200,[
+                'rows' =>  $row
+            ]);
+        }
+        //
+        if ($page === "get-next-month-dates") {
+            //
+            $row = '<option value="0">[select]</option>';
+            //
+            for ($x = 1; $x <= 7; $x++) {
+                $day = $_GET["day"];
+                if ($day == "last_day_of_month") {
+                    $day = date('t',strtotime('first day of +'.$x.' month'));
+                }
+                $month = date('m',strtotime('first day of +'.$x.' month'));
+                $year =  date('Y',strtotime('first day of +'.$x.' month'));
+                //
+                $nextDate = $year.'-'.$month.'-'.$day;
+                //
+                $row .= '<option value="'.$nextDate.'">'.date("m/d/Y", strtotime($nextDate)).'</option>';
+
+            }
+            //
+            return SendResponse(200,[
+                'rows' =>  $row
+            ]);
+        }
+        //
+        if ($page === "get-upcoming-months") {
+            //
+            $row = '<option value="0">[select]</option>';
+            $row .= '<option value="'.date("m,Y").'">'.date("F Y").'</option>';
+            //
+            for ($x = 1; $x <= 7; $x++) {
+                
+                $displayMonth = date('F',strtotime('first day of +'.$x.' month'));
+                $month = date('m',strtotime('first day of +'.$x.' month'));
+                $year =  date('Y',strtotime('first day of +'.$x.' month'));
+                //
+                $row .= '<option value="'.$month.','.$year.'">'.$displayMonth.' '.$year.'</option>';
+
+            }
+            //
+            return SendResponse(200,[
+                'rows' =>  $row
+            ]);
+        }
+        //
+        if ($page === "get-selected-month-dates") {
+            //
+            $values = explode(",",$_GET["value"]); 
+            //
+            $currentMonth = date('m');
+            $currentYear = date('Y');
+            //
+            $start = 1;
+            $end = 30;
+            //
+            if ($currentMonth == $values[0] && $currentYear == $values[1]) {
+                $start = date('d');
+                $end = date('t');
+            } else {
+                $midDate = '15-'.$values[0].'-'.$values[1];
+                $end = date("t", strtotime($midDate));
+            }
+            //
+            $row = '<option value="0">[select]</option>';
+            //
+            for ($x = $start; $x <= $end; $x++) {
+                
+                $monthDate = $values[1].'-'.$values[0].'-'.$x;
+                //
+                $row .= '<option value="'.$monthDate.'">'.date("m/d/Y", strtotime($monthDate)).'</option>';
+
+            }
+            //
+            return SendResponse(200,[
+                'rows' =>  $row
+            ]);
+        }
+        //
+        if ($page === "get-payroll-deadline") {
+            //
+            $applyDate = $_GET["date"]; 
+            $type = $_GET["type"]; 
+            //
+            $deadline = '';
+            $row = '<option value="0">[select]</option>';
+            //
+            if ($type == "Every week") {
+                //
+                $deadlineSafe1 =  date("m/d", strtotime('-7 days', strtotime($applyDate)));
+                $deadlineSafe2 =  date("m/d", strtotime('-6 days', strtotime($deadlineSafe1)));
+                $deadline =  date("m/d/Y", strtotime('-6 days', strtotime($applyDate)));
+                //
+                $row .= '<option value="deadline_safe">'.$deadlineSafe2.' - '.$deadlineSafe1.'</option>';
+                $row .= '<option value="current">'.date("m/d", strtotime($deadline)).' - '.date("m/d", strtotime($applyDate)).'</option>';
+                $row .= '<option value="other">Other</option>';
+            } else if ($type == "Every other week") {
+                //
+                $deadlineSafe1 =  date("m/d", strtotime('-7 days', strtotime($applyDate)));
+                $deadlineSafe2 =  date("m/d", strtotime('-13 days', strtotime($deadlineSafe1)));
+                $deadlineCurrent =  date("m/d", strtotime('-13 days', strtotime($applyDate)));
+                $deadline =  date("m/d/Y", strtotime('-6 days', strtotime($applyDate)));
+                //
+                $row .= '<option value="deadline_safe">'.$deadlineSafe2.' - '.$deadlineSafe1.'</option>';
+                $row .= '<option value="current">'.$deadlineCurrent.' - '.date("m/d", strtotime($applyDate)).'</option>';
+                $row .= '<option value="other">Other</option>';
+            } else if ($type == "Twice per month") {
+                //
+                $deadlineSafe1 =  date("m/d", strtotime('-7 days', strtotime($applyDate)));
+                $deadlineSafe2 =  date("m/d", strtotime('-14 days', strtotime($deadlineSafe1)));
+                $deadlineCurrent =  date("m/d", strtotime('-14 days', strtotime($applyDate)));
+                $deadline =  date("m/d/Y", strtotime('-6 days', strtotime($applyDate)));
+                //
+                $row .= '<option value="deadline_safe">'.$deadlineSafe2.' - '.$deadlineSafe1.'</option>';
+                $row .= '<option value="current">'.$deadlineCurrent.' - '.date("m/d", strtotime($applyDate)).'</option>';
+                $row .= '<option value="other">Other</option>';
+            } else if ($type == "Monthly") {
+                //
+                $deadlineSafe1 =  date("m/d", strtotime('-7 days', strtotime($applyDate)));
+                $deadlineSafe2 =  date("m/d", strtotime('-14 days', strtotime($deadlineSafe1)));
+                $deadlineCurrent =  date("m/d", strtotime('-14 days', strtotime($applyDate)));
+                $deadline =  date("m/d/Y", strtotime('-6 days', strtotime($applyDate)));
+                //
+                $row .= '<option value="deadline_safe">'.$deadlineSafe2.' - '.$deadlineSafe1.'</option>';
+                $row .= '<option value="current">'.$deadlineCurrent.' - '.date("m/d", strtotime($applyDate)).'</option>';
+                $row .= '<option value="other">Other</option>';
+            } else if ($type == "Quarterly") {
+                //
+                $deadlineSafe1 =  date("m/d", strtotime('-7 days', strtotime($applyDate)));
+                $deadlineSafe2 =  date("m/d", strtotime('-14 days', strtotime($deadlineSafe1)));
+                $deadlineCurrent =  date("m/d", strtotime('-14 days', strtotime($applyDate)));
+                $deadline =  date("m/d/Y", strtotime('-6 days', strtotime($applyDate)));
+                //
+                $row .= '<option value="deadline_safe">'.$deadlineSafe2.' - '.$deadlineSafe1.'</option>';
+                $row .= '<option value="current">'.$deadlineCurrent.' - '.date("m/d", strtotime($applyDate)).'</option>';
+                $row .= '<option value="other">Other</option>';
+            }
+            
+            //
+            
+            //
+            return SendResponse(200,[
+                'deadline' =>  $deadline,
+                'row' => $row
             ]);
         }
         //

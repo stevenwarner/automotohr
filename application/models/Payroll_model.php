@@ -27,6 +27,7 @@ class Payroll_model extends CI_Model{
         $this->tables['PEPM'] = 'payroll_employee_payment_method'; 
         $this->tables['PEBA'] = 'payroll_employee_bank_accounts'; 
         $this->tables['BAD'] = 'bank_account_details'; 
+        $this->tables['PCPP'] = 'payroll_company_pay_periods'; 
     }    
 
     /**
@@ -706,6 +707,26 @@ class Payroll_model extends CI_Model{
         ")
         ->from($this->tables['BAD'])
         ->where("sid", $id)
+        ->get();
+        //
+        $taxInfo = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $taxInfo;
+    }
+
+    function GetCompanyPayrollSetting($companyId){
+        //
+        $query = 
+        $this->db
+        ->select("
+            sid,
+            frequency,
+            anchor_pay_date,
+            anchor_end_of_pay_period
+        ")
+        ->from($this->tables['PCPP'])
+        ->where("company_sid", $companyId)
         ->get();
         //
         $taxInfo = $query->row_array();

@@ -191,6 +191,10 @@ $(function PayrollCompanyOnboard() {
                         StartEmployeeOnboarding();
                     }
 
+                    if (resp.onbording_level == "payroll") {
+                        AddUpdateCompanyPayrollSetting();
+                    }
+
                     LEVEL = resp.onbording_level_id;
                 }
                 
@@ -241,7 +245,7 @@ $(function PayrollCompanyOnboard() {
     /**
      * Trigger when side bar event click
      */
-     $(document).on('click', '.jsNavBarAction', function(event) {
+    $(document).on('click', '.jsNavBarAction', function(event) {
         //
         event.preventDefault();
         //
@@ -266,6 +270,10 @@ $(function PayrollCompanyOnboard() {
 
         if (type == "employee") {
             StartEmployeeOnboarding();
+        }
+
+        if (type == "payroll") {
+            AddUpdateCompanyPayrollSetting();
         }
     });
 
@@ -1031,7 +1039,7 @@ $(function PayrollCompanyOnboard() {
      * @param {object} event 
      * @returns 
      */
-     function UpdateCompanyBankInfo(event) {
+    function UpdateCompanyBankInfo(event) {
         //
         event.preventDefault();
         //
@@ -1753,6 +1761,322 @@ $(function PayrollCompanyOnboard() {
      * @returns 
      */    
      function DeleteEmployeeoBankAccount (event) {
+        //
+        event.preventDefault();
+        //
+
+        //
+        var o = {};
+        o.payroll_bank_uuid = $(this).data("account_id");
+        o.DDID = $(this).data("ddid");
+        o.CompanyId = companyId;
+        var message = [];
+        message.push("Are you sure you want to delete this bank Account?");
+        console.log(o.DDID)
+        if (o.DDID > 0) {
+            message.push("This action may also delete the direct deposit bank account.");
+        }
+        alertify.confirm('Confirmation', message.join('<br/>'),
+            function () {
+                ml(true, modalLoader);
+                //
+                xhr = $.ajax({
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json", "Key" : API_KEY },
+                    url: API_URL+"/"+employeeID+"/bank_accounts/"+o.payroll_bank_uuid,
+                    data: JSON.stringify(o)
+                })
+                .done(function(resp) {
+                    //
+                    xhr = null;
+                    //
+                    ml(false, modalLoader);
+                    // 
+                    if (!resp.status) {
+                        return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+                    } 
+                    
+                    return alertify.alert('Success!',  resp.response, UpdateEmployeePaymentMethod);
+                })
+                .error(HandleError);
+            },
+            function () {
+
+            });
+    }
+
+    /**
+     * Add company payroll
+     */
+    function AddUpdateCompanyPayrollSetting() {
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_company_payroll_setting/' + companyId),
+                data: { employee_id: employeeID }
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                API_KEY = resp.API_KEY;
+                API_URL = resp.COMPANIES_URL;
+                var page_type = resp.page_type;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    if (page_type == "payroll_detail") {
+                        $('.jsPayrollInfoCancel').click(StartEmployeeOnboarding);
+                        $('.jsEditPayrollInfo').click(UpdatePayrollSetting);
+                    }
+
+                    if (page_type == "payroll_form") {
+                        $('.jsPayrollSave').click(SaveCompaniesPayrollSetting);
+                        ('.jsPayrollCancel').click(StartEmployeeOnboarding);
+
+                        $('.jsDatePicker').datepicker({
+                            format: 'm/d/Y',
+                            changeMonth: true,
+                            changeYear: true,
+                        });
+                    }
+                    //  
+                    ml(false, modalLoader);
+                });
+            })
+            .error(HandleError);
+    }
+
+    function UpdatePayrollSetting() {
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/update_company_payroll_setting/' + companyId),
+                data: { employee_id: employeeID }
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                API_KEY = resp.API_KEY;
+                API_URL = resp.COMPANIES_URL;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    
+                        $('.jsPayrollSave').click(SaveCompaniesPayrollSetting);
+                        $('.jsPayrollCancel').click(AddUpdateCompanyPayrollSetting);
+
+                        $(".jsFrequencyDays").show();
+                        $(".jsTwicePerMonth").hide();
+                        $(".jsMonthlyCycle").hide();
+                        $(".jsQuarterlyCycle").hide();
+                        $("#jsPayrollDeadline").hide();
+                        $("#jsPayrollPayPeriod").hide();
+                        $(".jsOtherHalfMonthCycle").hide();
+                    //  
+                    ml(false, modalLoader);
+                });
+            })
+            .error(HandleError);
+    }
+
+    /**
+     * Trigger when Pay frequency change
+     */
+     $(document).on('change', '.jsPayFrequency', function(event) {
+        //
+        var type = $(this).val();
+        //
+        $("#jsPayrollDeadline").hide();
+        $("#jsPayrollPayPeriod").hide();
+        //
+        if (type == "Every week") {
+            $(".jsFrequencyDays").show();
+            $(".jsTwicePerMonth").hide();
+            $(".jsMonthlyCycle").hide();
+            $(".jsQuarterlyCycle").hide();
+        }
+
+        if (type == "Every other week") {
+            $(".jsFrequencyDays").show();
+            $(".jsTwicePerMonth").hide();
+            $(".jsMonthlyCycle").hide();
+            $(".jsQuarterlyCycle").hide();
+        }
+
+        if (type == "Twice per month") {
+            $(".jsFrequencyDays").hide();
+            $(".jsTwicePerMonth").show();
+            $(".jsMonthlyCycle").hide();
+            $(".jsQuarterlyCycle").hide();
+
+            $('.jsWeekCalendar').html("");
+            $(".jsOtherHalfMonthCycle").hide();
+            //
+            xhr = $.ajax({
+                    method: "GET",
+                    url: GetURL('get_payroll_page/get_twice_month_dates/' + companyId)
+                })
+                .done(function(resp) {
+                    //
+                    xhr = null;
+                    var weekdates = resp.rows;
+                    //
+                    $('.jsWeekCalendar').html(weekdates);
+                    //  
+                    ml(false, modalLoader);
+                })
+                .error(HandleError);
+        }
+
+        if (type == "Monthly") {
+            $(".jsFrequencyDays").hide();
+            $(".jsTwicePerMonth").hide();
+            $(".jsMonthlyCycle").show();
+            $(".jsQuarterlyCycle").hide();
+        }
+
+        if (type == "Quarterly") {
+            $(".jsFrequencyDays").hide();
+            $(".jsTwicePerMonth").hide();
+            $(".jsMonthlyCycle").hide();
+            $(".jsQuarterlyCycle").show();
+
+            $('.jsUpcomingMonth').html("");
+            //
+            xhr = $.ajax({
+                    method: "GET",
+                    url: GetURL('get_payroll_page/get_upcoming_months/' + companyId)
+                })
+                .done(function(resp) {
+                    //
+                    xhr = null;
+                    var get_upcoming_months = resp.rows;
+                    //
+                    $('.jsUpcomingMonth').html(get_upcoming_months);
+                    //  
+                    ml(false, modalLoader);
+                })
+                .error(HandleError);
+        }
+    });
+
+    $(document).on('change', '.jsDayOfWeek', function(event) {
+        ml(true, modalLoader);
+        //
+        var selectedDay = $(this).val();
+        $('.jsWeekCalendar').html("");
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_date_list/' + companyId),
+                data: { day: selectedDay }
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                var weekdates = resp.rows;
+                //
+                $('.jsWeekCalendar').html(weekdates);
+                //  
+                ml(false, modalLoader);
+            })
+            .error(HandleError);
+    });
+
+    $(document).on('change', '.jsDayOfMonth', function(event) {
+        ml(true, modalLoader);
+        //
+        var selectedDay = $(this).val();
+        $('.jsWeekCalendar').html("");
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_next_month_dates/' + companyId),
+                data: { day: selectedDay }
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                var weekdates = resp.rows;
+                //
+                $('.jsWeekCalendar').html(weekdates);
+                //  
+                ml(false, modalLoader);
+            })
+            .error(HandleError);
+    });
+
+    $(document).on('change', '.jsUpcomingMonth', function(event) {
+        ml(true, modalLoader);
+        //
+        var selectedMonth = $(this).val();
+        $('.jsWeekCalendar').html("");
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_selected_month_dates/' + companyId),
+                data: { value: selectedMonth }
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                var weekdates = resp.rows;
+                //
+                $('.jsWeekCalendar').html(weekdates);
+                //  
+                ml(false, modalLoader);
+            })
+            .error(HandleError);
+    });
+
+    $(document).on('change', '.jsWeekCalendar', function(event) {
+        ml(true, modalLoader);
+        //
+        var selectedDate = $(this).val();
+        var frequency = $('.jsPayFrequency option:selected').val();
+        $('.jsPayrollDeadlineDate').text("");
+        $('.jsPayPeriods').html("");
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_payroll_deadline/' + companyId),
+                data: { date: selectedDate, type: frequency }
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                var deadline = resp.deadline;
+                var payPeriods = resp.row;
+                //
+                $("#jsPayrollDeadline").show();
+                $("#jsPayrollPayPeriod").show();
+                $(".jsPayrollDeadlineDate").text(deadline);
+                $('.jsPayPeriods').html(payPeriods);
+                //  
+                ml(false, modalLoader);
+            })
+            .error(HandleError);
+    });
+
+    $('input[type=radio][name=default_semimonthly_pay_days]').change(function() {
+        if (this.value == 'default') {
+            $(".jsOtherHalfMonthCycle").hide();
+        }
+        else if (this.value == 'other') {
+            $(".jsOtherHalfMonthCycle").show();
+        }
+    });
+
+    /**
+     * Delete company Employee Bank Detail
+     * @param {object} event 
+     * @returns 
+     */    
+    function SaveCompaniesPayrollSetting (event) {
         //
         event.preventDefault();
         //

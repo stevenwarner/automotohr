@@ -38,7 +38,7 @@
                 <div class="row">
                     <div class="col-sm-12 text-right">
                         <?php if (!empty($companyEmployees)) { ?>
-                            <button class="btn btn-orange csF16 csB7 jsPayrollConfirmContinue" data-id="5">
+                            <button class="btn btn-orange csF16 csB7 jsPayrollConfirmContinue" data-id="4">
                                 <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;
                                 Save & continue
                             </button>

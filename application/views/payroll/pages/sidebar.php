@@ -52,6 +52,11 @@
         'name' => 'Payment',
         'slug'=> 'employee_payment'
     ];
+    $menuArray['payroll'] = [
+        'name' => 'Payroll',
+        'slug' => 'payroll',
+        'sub' => []
+    ];
 
 ?>
 <div class="col-md-2 col-sm-12">
