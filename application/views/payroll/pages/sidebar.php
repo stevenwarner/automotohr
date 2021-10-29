@@ -57,6 +57,21 @@
         'slug' => 'payroll',
         'sub' => []
     ];
+    $menuArray['tax_details'] = [
+        'name' => 'Tax Details',
+        'slug' => 'tax_details',
+        'sub' => []
+    ];
+    $menuArray['sign_documents'] = [
+        'name' => 'Sign Documents',
+        'slug' => 'sign_documents',
+        'sub' => []
+    ];
+    $menuArray['bank_verification'] = [
+        'name' => 'Bank Verification',
+        'slug' => 'bank_verification',
+        'sub' => []
+    ];
 
 ?>
 <div class="col-md-2 col-sm-12">

@@ -28,6 +28,7 @@ class Payroll_model extends CI_Model{
         $this->tables['PEBA'] = 'payroll_employee_bank_accounts'; 
         $this->tables['BAD'] = 'bank_account_details'; 
         $this->tables['PCPP'] = 'payroll_company_pay_periods'; 
+        $this->tables['PSI'] = 'payroll_signatory_information'; 
     }    
 
     /**
@@ -726,6 +727,21 @@ class Payroll_model extends CI_Model{
             anchor_end_of_pay_period
         ")
         ->from($this->tables['PCPP'])
+        ->where("company_sid", $companyId)
+        ->get();
+        //
+        $taxInfo = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $taxInfo;
+    }
+
+    function GetSignatoryInfo($companyId){
+        //
+        $query = 
+        $this->db
+        ->select("*")
+        ->from($this->tables['PSI'])
         ->where("company_sid", $companyId)
         ->get();
         //

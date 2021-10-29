@@ -23,6 +23,9 @@
                         <p class="csF16">
                             Enter the pay schedule for your employees. This will be a combination of their pay period and pay date. We use this info to know how much to pay your employees and when.
                         </p>
+                        <p class="csF16">
+                            Be sure to <a href="https://www.dol.gov/agencies/whd/state/payday" target="_blank"><b>check state laws</b></a> check state laws to know what schedule is right for your customers.
+                        </p>
                     </div>
                 </div>
                 <br>
@@ -43,7 +46,7 @@
                             How often your employees are paid.
                         </p>
                         <select class="form-control jsPayFrequency">
-                            <option value="0">[Select]</option>
+                            <option value="0">Please select pay frequency</option>
                             <option value="Every week">Every week</option>
                             <option value="Every other week">Every other week</option>
                             <option value="Twice per month">Twice per month</option>
@@ -62,7 +65,7 @@
                             The day they get paid.
                         </p>
                         <select class="form-control jsDayOfWeek">
-                            <option value="0">[Select]</option>
+                            <option value="0">Please select week day</option>
                             <option value="1">Monday</option>
                             <option value="2">Tuesday</option>
                             <option value="3">Wednesday</option>
@@ -98,8 +101,8 @@
                         <p>
                             This is the day of the month that you would like your employees to be paid.
                         </p>
-                        <select class="form-control jsFirstPayDay">
-                            <option value="0">[Select]</option>
+                        <select class="form-control jsFirstPayDay jsOthertPayDay">
+                            <option value="0">Please select a day</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -126,8 +129,8 @@
                         <label class="csF16 csB7">
                             Second pay day of month <span class="csRequired"></span>
                         </label>
-                        <select class="form-control jsSecondPayDay">
-                            <option value="0">[Select]</option>
+                        <select class="form-control jsSecondPayDay jsOthertPayDay">
+                        <option value="0">Please select a day</option>
                             <option value="14">14</option>
                             <option value="15">15</option>
                             <option value="16">16</option>
@@ -158,7 +161,7 @@
                             This is the day of the month that you would like your employees to be paid.
                         </p>
                         <select class="form-control jsDayOfMonth">
-                            <option value="0">[Select]</option>
+                            <option value="0">Please select a day</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -234,6 +237,19 @@
                             This is the time period your employees worked.
                         </p>
                         <select class="form-control jsPayPeriods">
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <div class="row jsPayrollPayPeriodOther">
+                    <div class="col-md-12 col-xs-12">
+                        <label class="csF16 csB7">
+                            First pay period ends on
+                        </label>
+                        <p>
+                            This is the last date of your company's first pay period. For work done during the pay period ending on this date, your employees will be paid on the above pay date.
+                        </p>
+                        <select class="form-control jsPayPeriodsOther">
                         </select>
                     </div>
                 </div>

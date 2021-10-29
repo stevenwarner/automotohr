@@ -334,3 +334,36 @@ ALTER TABLE `bank_account_details` ADD `is_payroll` INT(1) NOT NULL DEFAULT '0' 
 ALTER TABLE `payroll_employee_bank_accounts` ADD `direct_deposit_id` INT(11) NOT NULL DEFAULT '0' AFTER `account_number`;
 ALTER TABLE `payroll_employee_bank_accounts` ADD `account_percentage` INT(11) NOT NULL DEFAULT '0' AFTER `account_number`;
 ALTER TABLE `bank_account_details` ADD `is_deleted` INT(1) NOT NULL DEFAULT '0' AFTER `is_payroll`;
+
+
+DROP TABLE IF EXISTS `payroll_signatory_information`;
+CREATE TABLE `payroll_signatory_information` (
+  `sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `first_name` varchar(128) DEFAULT NULL,
+  `middle_name` varchar(3) DEFAULT NULL,
+  `last_name` varchar(128) DEFAULT NULL,
+  `email` varchar(128) DEFAULT NULL,
+  `title` varchar(128) DEFAULT NULL,
+  `dob` datetime NOT NULL,
+  `phone` varchar(128) DEFAULT NULL,
+  `ssn` varchar(128) DEFAULT NULL,
+  `street1` text DEFAULT NULL,
+  `street2` text DEFAULT NULL,
+  `city` varchar(128) DEFAULT NULL,
+  `state` varchar(128) DEFAULT NULL,
+  `country` varchar(128) DEFAULT NULL,
+  `zipCode` int(11) NOT NULL DEFAULT '0',
+  `signatory_uuid` varchar(128) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `payroll_signatory_information`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `payroll_signatory_information`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;

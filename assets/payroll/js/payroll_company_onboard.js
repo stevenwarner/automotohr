@@ -195,6 +195,18 @@ $(function PayrollCompanyOnboard() {
                         AddUpdateCompanyPayrollSetting();
                     }
 
+                    if (resp.onbording_level == "tax_details") {
+                        GoTotaxDetail();
+                    }
+
+                    if (resp.onbording_level == "sign_documents") {
+                        GoToSignDocument();
+                    }
+
+                    if (resp.onbording_level == "bank_verification") {
+                        GoToBankVerification();
+                    }
+
                     LEVEL = resp.onbording_level_id;
                 }
                 
@@ -240,6 +252,22 @@ $(function PayrollCompanyOnboard() {
         if (id == 3) {
             StartEmployeeOnboarding();
         }
+
+        if (id == 4) {
+            AddUpdateCompanyPayrollSetting();
+        }
+
+        if (id == 5) {
+            GoTotaxDetail();
+        }
+
+        if (id == 6) {
+            GoToSignDocument();
+        }
+
+        if (id == 7) {
+            GoToBankVerification();
+        }
     }
 
     /**
@@ -274,6 +302,18 @@ $(function PayrollCompanyOnboard() {
 
         if (type == "payroll") {
             AddUpdateCompanyPayrollSetting();
+        }
+
+        if (type == "tax_deyails") {
+            GoTotaxDetail();
+        }
+
+        if (type == "sign_documents") {
+            GoToSignDocument();
+        }
+
+        if (type == "bank_verification") {
+            GoToBankVerification();
         }
     });
 
@@ -1876,6 +1916,7 @@ $(function PayrollCompanyOnboard() {
                         $("#jsPayrollDeadline").hide();
                         $("#jsPayrollPayPeriod").hide();
                         $(".jsOtherHalfMonthCycle").hide();
+                        $(".jsPayrollPayPeriodOther").hide();
                     //  
                     ml(false, modalLoader);
                 });
@@ -1886,18 +1927,24 @@ $(function PayrollCompanyOnboard() {
     /**
      * Trigger when Pay frequency change
      */
-     $(document).on('change', '.jsPayFrequency', function(event) {
+    $(document).on('change', '.jsPayFrequency', function(event) {
         //
         var type = $(this).val();
         //
         $("#jsPayrollDeadline").hide();
         $("#jsPayrollPayPeriod").hide();
+        $(".jsOtherHalfMonthCycle").hide();
+        $(".jsPayrollPayPeriodOther").hide();
+        $(".jsWeekCalendar").html("");
+        $(".jsPayPeriods").html("");
+        $(".jsPayPeriodsOther").html("");
         //
         if (type == "Every week") {
             $(".jsFrequencyDays").show();
             $(".jsTwicePerMonth").hide();
             $(".jsMonthlyCycle").hide();
             $(".jsQuarterlyCycle").hide();
+            $('.jsDayOfWeek').prop('selectedIndex', 0);
         }
 
         if (type == "Every other week") {
@@ -1905,6 +1952,7 @@ $(function PayrollCompanyOnboard() {
             $(".jsTwicePerMonth").hide();
             $(".jsMonthlyCycle").hide();
             $(".jsQuarterlyCycle").hide();
+            $('.jsDayOfWeek').prop('selectedIndex', 0);
         }
 
         if (type == "Twice per month") {
@@ -1915,6 +1963,9 @@ $(function PayrollCompanyOnboard() {
 
             $('.jsWeekCalendar').html("");
             $(".jsOtherHalfMonthCycle").hide();
+            $('.jsFirstPayDay').prop('selectedIndex', 0);
+            $('.jsSecondPayDay').prop('selectedIndex', 0);
+            $("#jsDefaultSemimonthly").prop("checked", true);
             //
             xhr = $.ajax({
                     method: "GET",
@@ -1937,6 +1988,7 @@ $(function PayrollCompanyOnboard() {
             $(".jsTwicePerMonth").hide();
             $(".jsMonthlyCycle").show();
             $(".jsQuarterlyCycle").hide();
+            $('.jsDayOfMonth').prop('selectedIndex', 0);
         }
 
         if (type == "Quarterly") {
@@ -1944,7 +1996,6 @@ $(function PayrollCompanyOnboard() {
             $(".jsTwicePerMonth").hide();
             $(".jsMonthlyCycle").hide();
             $(".jsQuarterlyCycle").show();
-
             $('.jsUpcomingMonth').html("");
             //
             xhr = $.ajax({
@@ -2062,12 +2113,119 @@ $(function PayrollCompanyOnboard() {
             .error(HandleError);
     });
 
-    $('input[type=radio][name=default_semimonthly_pay_days]').change(function() {
-        if (this.value == 'default') {
+    $(document).on('change', '.gusto-radio-input', function(event) {
+        var type = $(this).val();
+        $('.jsWeekCalendar').html("");
+        $(".jsPayrollPayPeriodOther").hide();
+        $("#jsPayrollDeadline").hide();
+        $("#jsPayrollPayPeriod").hide();
+        $(".jsWeekCalendar").html("");
+        $(".jsPayPeriods").html("");
+        $(".jsPayPeriodsOther").html("");
+        //
+        if (type == 'default') {
             $(".jsOtherHalfMonthCycle").hide();
+            $('.jsFirstPayDay').prop('selectedIndex', 0);
+            $('.jsSecondPayDay').prop('selectedIndex', 0);
+
+            xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_twice_month_dates/' + companyId)
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                var weekdates = resp.rows;
+                //
+                $('.jsWeekCalendar').html(weekdates);
+                //  
+                ml(false, modalLoader);
+            })
+            .error(HandleError);
         }
-        else if (this.value == 'other') {
+        else if (type == 'other') {
             $(".jsOtherHalfMonthCycle").show();
+
+            var firstDay = $(".jsFirstPayDay").val();
+            var secondDay = $(".jsSecondPayDay").val();
+            //
+            if (firstDay != 0 && secondDay != 0) {
+                $('.jsWeekCalendar').html("");
+                //
+                xhr = $.ajax({
+                    method: "GET",
+                    url: GetURL('get_payroll_page/get_other_semimonthly_dates/' + companyId),
+                    data: { dayOne: firstDay, dayTwo: secondDay }
+                })
+                .done(function(resp) {
+                    //
+                    xhr = null;
+                    var payPeriods = resp.row;
+                    //
+                    $('.jsWeekCalendar').html(payPeriods);
+                    //  
+                    ml(false, modalLoader);
+                })
+                .error(HandleError);
+            }
+        }
+    });
+
+    $(document).on('change', '.jsOthertPayDay', function(event) {
+        var firstDay = $(".jsFirstPayDay").val();
+        var secondDay = $(".jsSecondPayDay").val();
+        //
+        if (firstDay != 0 && secondDay != 0) {
+            $('.jsWeekCalendar').html("");
+            //
+            xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_other_semimonthly_dates/' + companyId),
+                data: { dayOne: firstDay, dayTwo: secondDay }
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                var payPeriods = resp.row;
+                //
+                $('.jsWeekCalendar').html(payPeriods);
+                //  
+                ml(false, modalLoader);
+            })
+            .error(HandleError);
+        }
+    });
+
+    $(document).on('change', '.jsPayPeriods', function(event) {
+        var value = $(this).val();
+        //
+        if (value == "other") {
+            $(".jsPayrollPayPeriodOther").show();
+
+            $('.jsPayPeriodsOther').html("");
+            //
+            ml(true, modalLoader);
+            //
+            var selectedDate = $(".jsWeekCalendar").val();
+            var frequencyType = $('.jsPayFrequency option:selected').val();
+            //
+            xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_other_payperiod_dates/' + companyId),
+                data: { date: selectedDate, frequency: frequencyType }
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                var payPeriods = resp.row;
+                //
+                $('.jsPayPeriodsOther').html(payPeriods);
+                //  
+                ml(false, modalLoader);
+            })
+            .error(HandleError);
+        } else {
+            $(".jsPayrollPayPeriodOther").hide();
         }
     });
 
@@ -2080,45 +2238,288 @@ $(function PayrollCompanyOnboard() {
         //
         event.preventDefault();
         //
-
-        //
         var o = {};
-        o.payroll_bank_uuid = $(this).data("account_id");
-        o.DDID = $(this).data("ddid");
+        o.Frequency = $(".jsPayFrequency").val();
+        o.AnchorDate = $(".jsWeekCalendar").val();
+        o.AnchorEndDate = $(".jsPayPeriods").val();
         o.CompanyId = companyId;
-        var message = [];
-        message.push("Are you sure you want to delete this bank Account?");
-        console.log(o.DDID)
-        if (o.DDID > 0) {
-            message.push("This action may also delete the direct deposit bank account.");
+        //
+        if (!o.Frequency || o.Frequency == 0) {
+            return alertify.alert('Warning!', 'Please, select the pay frequency.', AlertifyHandler);
         }
-        alertify.confirm('Confirmation', message.join('<br/>'),
-            function () {
-                ml(true, modalLoader);
+        if (!o.AnchorDate) {
+            return alertify.alert('Warning!', 'Please, select the pay date.', AlertifyHandler);
+        }
+        if (!o.AnchorEndDate) {
+            return alertify.alert('Warning!', 'Please, select the pay period.', AlertifyHandler);
+        }
+
+        if (o.AnchorEndDate == "other") {
+            o.AnchorEndDate = $(".jsPayPeriodsOther").val();
+        }
+
+        if (o.Frequency == "Twice per month") {
+            var split_pay = $('input[name="default_semimonthly_pay_days"]:checked').val();
+            //
+            if (split_pay == "other") {
+                o.Day1 = $(".jsFirstPayDay").val();
+                o.Day2 = $(".jsSecondPayDay").val();
+            } else {
+                o.Day1 = "15";
+                o.Day2 = "30";
+            }
+        }
+
+        if (o.Frequency == "Monthly") {
+            o.Day1 = $(".jsDayOfMonth").val();
+        }
+        //
+        console.log(o);
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Key" : API_KEY },
+            url: API_URL+"/pay_period",
+            data: JSON.stringify(o)
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            ml(false, modalLoader);
+            // 
+            if (!resp.status) {
+                return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+            } 
+            //
+            return alertify.alert('Success!',  resp.response, AddUpdateCompanyPayrollSetting);
+        })
+        .error(HandleError);
+    }
+
+    function GoTotaxDetail () {
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_company_tax_detail_link_page/' + companyId),
+            })
+            .done(function(resp) {
                 //
-                xhr = $.ajax({
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json", "Key" : API_KEY },
-                    url: API_URL+"/"+employeeID+"/bank_accounts/"+o.payroll_bank_uuid,
-                    data: JSON.stringify(o)
-                })
-                .done(function(resp) {
+                xhr = null;
+                //
+                LoadContent(resp.html, function() { 
+                    ml(false, modalLoader);
+                });
+            })
+            .error(HandleError);
+    }
+
+    function GoToSignDocument () {
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_company_signatory_page/' + companyId),
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                API_KEY = resp.API_KEY;
+                API_URL = resp.SIGN_URL;
+                //
+                LoadContent(resp.html, function() { 
                     //
-                    xhr = null;
+                    $('.jsAddSignatoryCancel').click(GoTotaxDetail);
+                    $('.jsPayrollSaveCompanySignatory').click(SaveCompanySignatory);
+                    //
+                    $('.jsDatePicker').datepicker({
+                        format: 'm/d/Y',
+                        changeMonth: true,
+                        changeYear: true,
+                    });
                     //
                     ml(false, modalLoader);
-                    // 
-                    if (!resp.status) {
-                        return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
-                    } 
-                    
-                    return alertify.alert('Success!',  resp.response, UpdateEmployeePaymentMethod);
-                })
-                .error(HandleError);
-            },
-            function () {
+                    //
+                });
+            })
+            .error(HandleError);
+    }
 
-            });
+    function SaveCompanySignatory (event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        o.FirstName = $('.jsFirstName').val().trim();
+        o.MiddleInitial = $('.jsMiddleName').val().trim();
+        o.LastName = $('.jsLastName').val().trim();
+        o.Email = $('.jsEmail').val().trim();
+        o.Title = $('.jsTitle option:selected').val();
+        o.DOB = $('.jsSignatoryDOB').val().trim();
+        o.PhoneNumber = $('.jsPhone').val().replace(/[^\d]/g,'');
+        o.SSN = $('.jsSignatorySSN').val().replace(/[^\d]/g,'');
+        //
+        o.Street1 = $('.jsStreet1').val().trim();
+        o.Street2 = $('.jsStreet2').val().trim();
+        o.City = $('.jsCity').val().trim();
+        o.State = $('.jsState option:selected').val();
+        o.Country = "USA";
+        o.Zipcode = $('.jsZip').val().trim();
+        o.CompanyId = companyId;
+
+        // Validation
+        if (!o.FirstName) {
+            return alertify.alert('Warning!', 'First name is mendatory.',AlertifyHandler);
+        }
+        if (!o.LastName) {
+            return alertify.alert('Warning!', 'Last name is mendatory.',AlertifyHandler);
+        }
+        if (!o.Email) {
+            return alertify.alert('Warning!', 'Email is mendatory.',AlertifyHandler);
+        }
+        if (!o.Title || o.Title == "0") {
+            return alertify.alert('Warning!', 'Title is mendatory.',AlertifyHandler);
+        }
+        if (!o.DOB) {
+            return alertify.alert('Warning!', 'Date of birth is mendatory.',AlertifyHandler);
+        }
+        if (o.PhoneNumber && o.PhoneNumber.length != 10) {
+            return alertify.alert('Warning!', 'Phone number must be of 10 digits',AlertifyHandler);
+        }
+        if (!o.SSN) {
+            return alertify.alert('Warning!', 'SSN is mendatory.',AlertifyHandler);
+        }
+        if (o.SSN.length != 9) {
+            return alertify.alert('Warning!', 'SSN number must be of 9 digits.',AlertifyHandler);
+        }
+        //
+        if (!o.Street1) {
+            return alertify.alert('Warning!', 'Street 1 is mendatory.',AlertifyHandler);
+        }
+        if (!o.City) {
+            return alertify.alert('Warning!', 'City is mendatory.',AlertifyHandler);
+        }
+        if (!o.State) {
+            return alertify.alert('Warning!', 'State is mendatory.',AlertifyHandler);
+        }
+        if (!o.Zipcode) {
+            return alertify.alert('Warning!', 'Zip is mendatory.',AlertifyHandler);
+        }
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Key" : API_KEY },
+            url: API_URL+"/add_signatory",
+            data: JSON.stringify(o)
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            ml(false, modalLoader);
+            // 
+            if (!resp.status) {
+                return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+            } 
+            
+            return alertify.alert('Success!',  resp.response, GoToBankVerification);
+        })
+        .error(HandleError);
+        //
+    }
+
+    function GoToBankVerification () {
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_company_bank_verification_page/' + companyId),
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                API_KEY = resp.API_KEY;
+                API_URL = resp.COMPANY_URL;
+                //
+                LoadContent(resp.html, function() { 
+                    //
+                    $('.jsVerifyBankDeposit').click(verifyTheBankAccount);
+                    //
+                    ml(false, modalLoader);
+                });
+            })
+            .error(HandleError);
+    }
+
+    function verifyTheBankAccount (event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        o.DepositOne = $(".jsDepositOne").val();
+        o.DepositTwo = $(".jsDepositTwo").val();
+        o.CompanyId = companyId;
+        //
+        if (!o.DepositOne) {
+            return alertify.alert('Warning!', 'Please, enter test deposit #1.', AlertifyHandler);
+        }
+        //
+        if (!o.DepositTwo) {
+            return alertify.alert('Warning!', 'Please, enter test deposit #2.', AlertifyHandler);
+        }
+        //
+        console.log(o);
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "PUT",
+            headers: { "Content-Type": "application/json", "Key" : API_KEY },
+            url: API_URL+"/bank_account/verify",
+            data: JSON.stringify(o)
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            ml(false, modalLoader);
+            // 
+            if (!resp.status) {
+                return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+            } 
+            //
+            return alertify.alert('Success!',  resp.response, ShowCompleteProcessPage);
+        })
+        .error(HandleError);
+    }
+
+    function ShowCompleteProcessPage () {
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_prosess_complete_page/' + companyId),
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                LoadContent(resp.html, function() { 
+                    //
+                    ml(false, modalLoader);
+                    //
+                });
+            })
+            .error(HandleError);
     }
 
     /**
