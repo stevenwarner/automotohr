@@ -5,7 +5,7 @@
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->
-            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee", "subIndex" =>"employee_profile"]);?>
+            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "sign_documents", "subIndex" =>""]);?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
                 <!-- Heading -->

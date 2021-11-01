@@ -928,6 +928,16 @@ class Payroll_ajax extends CI_Controller
             ]);
         }
         //
+        if ($page === "get-company-sign-document-page") {
+            //
+            return SendResponse(200,[
+                'IP_ADDRESS' => $_SERVER['REMOTE_ADDR'],
+                'API_KEY' => getAPIKey(),
+                'SIGN_URL' => getAPIUrl("company"),
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+        }
+        //
         if ($page === "get-company-tax-detail-link-page") {
             //
             return SendResponse(200,[
@@ -950,6 +960,7 @@ class Payroll_ajax extends CI_Controller
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
         }
+        
         //
         SendResponse(200, $this->load->view($this->path.$page, $data, false), 'html');
     }

@@ -367,3 +367,31 @@ ALTER TABLE `payroll_signatory_information`
 
 ALTER TABLE `payroll_signatory_information`
   MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
+
+
+DROP TABLE IF EXISTS `payroll_company_sign_form`;
+CREATE TABLE `payroll_company_sign_form` (
+  `sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(128) DEFAULT NULL,
+  `title` varchar(128) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `requires_signing` varchar(12) DEFAULT NULL,
+  `document_path` text DEFAULT NULL,
+  `sign_document_path` text DEFAULT NULL,
+  `document_uuid` varchar(128) DEFAULT NULL,
+  `ip_address` varchar(128) DEFAULT NULL,
+  `signature` varchar(128) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `payroll_company_sign_form`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `payroll_company_sign_form`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;  
+

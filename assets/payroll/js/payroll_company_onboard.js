@@ -73,6 +73,12 @@ $(function PayrollCompanyOnboard() {
       var splitType;
 
     /**
+     * Saves the ip address
+     * @type {null|string}
+     */
+     var IPADDRESS;
+
+    /**
      * Triggers company onboard process
      */
     $('.jsPayrollCompanyOnboard').click(function(event) {
@@ -315,6 +321,8 @@ $(function PayrollCompanyOnboard() {
         if (type == "bank_verification") {
             GoToBankVerification();
         }
+
+        console.log(type);
     });
 
     /**
@@ -1234,6 +1242,7 @@ $(function PayrollCompanyOnboard() {
                         format: 'm/d/Y',
                         changeMonth: true,
                         changeYear: true,
+                        yearRange: "-100:+50"
                     });
                     //  
                     ml(false, modalLoader);
@@ -1270,6 +1279,9 @@ $(function PayrollCompanyOnboard() {
         }
         if (!o.Email) {
             return alertify.alert('Warning!', 'Email address is mendatory.',AlertifyHandler);
+        }
+        if (!o.StartDate) {
+            return alertify.alert('Warning!', 'Start date is mendatory.',AlertifyHandler);
         }
         if (!o.SSN) {
             return alertify.alert('Warning!', 'SSN is mendatory.',AlertifyHandler);
@@ -1333,6 +1345,7 @@ $(function PayrollCompanyOnboard() {
                         format: 'm/d/Y',
                         changeMonth: true,
                         changeYear: true,
+                        yearRange: "-100:+50"
                     });
                     //  
                     ml(false, modalLoader);
@@ -1879,6 +1892,7 @@ $(function PayrollCompanyOnboard() {
                             format: 'm/d/Y',
                             changeMonth: true,
                             changeYear: true,
+                            yearRange: "-100:+50"
                         });
                     }
                     //  
@@ -2341,6 +2355,7 @@ $(function PayrollCompanyOnboard() {
                         format: 'm/d/Y',
                         changeMonth: true,
                         changeYear: true,
+                        yearRange: "-100:+50"
                     });
                     //
                     ml(false, modalLoader);
@@ -2429,11 +2444,126 @@ $(function PayrollCompanyOnboard() {
                 return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
             } 
             
-            return alertify.alert('Success!',  resp.response, GoToBankVerification);
+            return alertify.alert('Success!',  resp.response, GetCompanySignDocuments);
         })
         .error(HandleError);
         //
     }
+
+    function GetCompanySignDocuments () {
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_company_sign_document_page/' + companyId),
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                IPADDRESS = resp.IP_ADDRESS;
+                API_KEY = resp.API_KEY;
+                API_URL = resp.SIGN_URL;
+                //
+                LoadContent(resp.html, function() { 
+                    //
+                    $('.jsSignDocumentCancel').click(GoToSignDocument);
+                    $('.jsPayrollSaveCompanySignDocuments').click(GoToBankVerification);
+                    //
+                    var o = {};
+                    o.CompanyId = companyId;
+                    console.log('abc')
+                    //
+                    xhr = $.ajax({
+                        method: "GET",
+                        headers: { "Content-Type": "application/json", "Key" : API_KEY },
+                        url: API_URL+"/add_signatory/"+companyId
+                    })
+                    .done(function(resp) {
+                        //
+                        xhr = null;
+                        // 
+                        if (!resp.status) {
+                            return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+                        } 
+                        //
+                        if (resp.status && resp.response.length > 0) {
+                            var row = "";
+                            resp.response.map(function(v){
+                                row += '<tr>';
+                                row += '    <td>';
+                                row +=          v.title;
+                                row += '    </td>';
+                                row += '    <td>';
+                                row +=          v.description;
+                                row += '    </td>';
+                                row += '    <td>';
+                                if (v.requires_signing) {
+                                    row += '<button class="btn btn-orange csF16 csB7 jsSignDoc" data-UUID="'+v.uuid+'">Sign</button>';
+                                }
+                                row += '    </td>';
+                                row += '</tr>';
+                            });
+
+                            $("#jsDataBody").html(row);
+                            ml(false, modalLoader);
+                        }
+                    })
+                    .error(HandleError);
+                    //
+                });
+            })
+            .error(HandleError);
+    }
+
+    $(document).on('click', '.jsSignDoc', function(event) {
+        var uuid = $(this).data("uuid");
+        
+        $('#JsSignaturemodal').modal('toggle');
+        $("#document_uuid").val(uuid);
+
+        
+    });
+
+    $(document).on('click', '.jsSaveSign', function(event) {
+        var o = {};
+        o.Signature = $(".jsSignature").val();
+        o.DocumentId = $("#document_uuid").val();
+
+        if (!o.Signature) {
+            return alertify.alert('Warning!', 'Please, enter your signature.', AlertifyHandler);
+        }
+
+        if($(".jsAgreeOnSign").prop('checked') == true){
+            o.Agree = true;
+        } else {
+            return alertify.alert('Warning!', 'Please, Agree with term and conditions.', AlertifyHandler);
+        }
+        //
+        o.IPAddress = IPADDRESS;
+        o.CompanyId = companyId;
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Key" : API_KEY },
+            url: API_URL+"/add_signatory/add_document_signature",
+            data: JSON.stringify(o)
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            ml(false, modalLoader);
+            // 
+            if (!resp.status) {
+                return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+            } 
+            
+            return alertify.alert('Success!',  resp.response, GetCompanySignDocuments);
+        })
+        .error(HandleError);
+    });
 
     function GoToBankVerification () {
         //

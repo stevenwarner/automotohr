@@ -66,7 +66,7 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Start date
+                            Start date <span class="csRequired"></span>
                         </label>
                         <?php 
                             $start_date = "";

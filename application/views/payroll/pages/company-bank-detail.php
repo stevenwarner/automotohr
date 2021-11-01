@@ -56,8 +56,8 @@
                 <?php } ?></b>  
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
-                        <button class="btn btn-orange csF16 csB7 jsBankInfoCancel">
-                            <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
+                        <button class="btn btn-black csF16 csB7 jsBankInfoCancel">
+                            <i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;
                             Back
                         </button>
                         <button class="btn btn-orange csF16 csB7 jsPayrollConfirmContinue" data-id="3">
