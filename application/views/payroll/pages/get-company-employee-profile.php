@@ -85,12 +85,12 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Work address
+                            Work address <span class="csRequired"></span>
                         </label>
                         <select class="form-control jsEWD">
                             <option value="0">[Select]</option>
                             <?php foreach($locations as $location): ?>
-                                <option value="<?=$location['sid'];?>"><?php echo $location['street_1'].', '.$location['city'].', '.$location['state'].' - '.$location['zip']; ?></option>
+                                <option value="<?=$location['sid'];?>" <?php echo $workAddressId == $location['sid'] ? 'selected="selected"' : ''; ?>><?php echo $location['street_1'].', '.$location['city'].', '.$location['state'].' - '.$location['zip']; ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

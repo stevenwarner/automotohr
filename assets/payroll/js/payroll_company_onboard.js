@@ -285,6 +285,7 @@ $(function PayrollCompanyOnboard() {
         //
         xhr = null;
         var type = $(this).data('id');
+        console.log(type);
         //
         if (type == "company_address") {
             CompanyDetailPage();
@@ -306,11 +307,59 @@ $(function PayrollCompanyOnboard() {
             StartEmployeeOnboarding();
         }
 
+        if (type == "employee_profile") {
+            if (employeeID) {
+                GoToEmployeeSection(0);
+            } else {
+                return alertify.alert('Note!', "Please select any employee first.", AlertifyHandler);
+            }
+        }
+
+        if (type == "employee_address") {
+            if (employeeID) {
+                GoToEmployeeSection(1);
+            } else {
+                return alertify.alert('Note!', "Please select any employee first.", AlertifyHandler);
+            }
+        }
+
+        if (type == "employee_compensation") {
+            if (employeeID) {
+                GoToEmployeeSection(2);
+            } else {
+                return alertify.alert('Note!', "Please select any employee first.", AlertifyHandler);
+            }
+        }
+
+        if (type == "employee_federal_tax") {
+            if (employeeID) {
+                GoToEmployeeSection(3);
+            } else {
+                return alertify.alert('Note!', "Please select any employee first.", AlertifyHandler);
+            }
+        }
+
+        if (type == "employee_state_tax") {
+            if (employeeID) {
+                GoToEmployeeSection(4);
+            } else {
+                return alertify.alert('Note!', "Please select any employee first.", AlertifyHandler);
+            }
+        }
+
+        if (type == "employee_payment") {
+            if (employeeID) {
+                GoToEmployeeSection(5);
+            } else {
+                return alertify.alert('Note!', "Please select any employee first.", AlertifyHandler);
+            }
+        }
+
         if (type == "payroll") {
             AddUpdateCompanyPayrollSetting();
         }
 
-        if (type == "tax_deyails") {
+        if (type == "tax_details") {
             GoTotaxDetail();
         }
 
@@ -322,7 +371,6 @@ $(function PayrollCompanyOnboard() {
             GoToBankVerification();
         }
 
-        console.log(type);
     });
 
     /**
@@ -1197,9 +1245,13 @@ $(function PayrollCompanyOnboard() {
      */
      function SendEmployeeToOnboardProcess() {
         employeeID = $(this).data("employee_id");
-        console.log(employeeID)
+        //
         var level = $(this).data("level");
+        //
+        GoToEmployeeSection(level);
+     }
 
+     function GoToEmployeeSection (level) {
         if (level == 0) {
             AddUpdateCompanyEmployeeProfile();
         } else if (level == 1) {
@@ -1291,6 +1343,9 @@ $(function PayrollCompanyOnboard() {
         }
         if (!o.DOB) {
             return alertify.alert('Warning!', 'Date of birth is mendatory.',AlertifyHandler);
+        }
+        if (!o.EWA) {
+            return alertify.alert('Warning!', 'Employee work address is required.',AlertifyHandler);
         }
         //
         ml(true, modalLoader);
@@ -1921,7 +1976,7 @@ $(function PayrollCompanyOnboard() {
                     //
                     
                         $('.jsPayrollSave').click(SaveCompaniesPayrollSetting);
-                        $('.jsPayrollCancel').click(AddUpdateCompanyPayrollSetting);
+                        $('.jsCompanyPayrollCancel').click(AddUpdateCompanyPayrollSetting);
 
                         $(".jsFrequencyDays").show();
                         $(".jsTwicePerMonth").hide();

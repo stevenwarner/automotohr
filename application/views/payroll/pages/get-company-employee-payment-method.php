@@ -82,7 +82,7 @@
                                     <p class="csF16">
                                         <b><?php echo $account['routing_transaction_number']; ?></b>
                                         <br>
-                                        <span>Routing number (9 digits)</span>
+                                        <span>Routing number</span>
                                     </p>
                                     <p class="csF16">
                                         <b><?php echo $account['account_number']; ?></b>
@@ -124,6 +124,11 @@
                                         <br>
                                         <span>Account type</span>
                                     </p>
+                                    <p class="csF16">
+                                        <b><?php echo $account['account_percentage']; ?></b>
+                                        <br>
+                                        <span>percentage/Amount</span>
+                                    </p>
                                 </div>
                                 <div class="col-sm-6 ">
                                     <button class="btn btn-orange csF16 csB7 jsDeleteEmployeeBankAccount" data-account_id="<?php echo $account['payroll_bank_uuid']; ?>" data-ddid="<?php echo $account['direct_deposit_id']; ?>">
@@ -139,11 +144,11 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <button class="btn btn-black csF16 csB7 jsPayrollEmployeeOnboard" data-employee_id="<?php echo $employee_sid; ?>" data-level="4">
-                            <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;
+                            <i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;
                             Back
                         </button>
                         <button class="btn btn-orange csF16 csB7 jsPayrollEmployeePaymentMethod" data-id="3">
-                            <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;
+                            <i class="fa fa-save" aria-hidden="true"></i>&nbsp;
                             Save & continue
                         </button>
                     </div>

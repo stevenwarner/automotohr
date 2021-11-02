@@ -43,9 +43,15 @@
                                 </p>
                             </div>    
                             <div class="col-sm-2 ">
-                                <button class="btn btn-orange csF16 csB7 jsPayrollEmployeeOnboard" data-employee_id="<?php echo $employee['sid']; ?>" data-level="<?php echo $employee['onboarding_level']; ?>">
-                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
-                                    <?php echo $employee['onboarding_level'] == 0 ? "Add" : "Edit"; ?>
+                                <?php $level = $employee['onboarding_level'] == 6 ? 0 : $employee['onboarding_level']; ?>
+                                <button class="btn btn-orange csF16 csB7 jsPayrollEmployeeOnboard" data-employee_id="<?php echo $employee['sid']; ?>" data-level="<?php echo $level; ?>">
+                                    <?php if ($employee['onboarding_level'] == 0) { ?>
+                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
+                                        Add
+                                    <?php } else { ?>
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
+                                        Edit
+                                    <?php } ?>
                                 </button>
                             </div>
                         </div>
@@ -54,7 +60,7 @@
                 <?php } ?> 
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
-                        <button class="btn btn-orange csF16 csB7 jsEmployeeListCancel">
+                        <button class="btn btn-black csF16 csB7 jsEmployeeListCancel">
                             <i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;
                             Back
                         </button>

@@ -262,7 +262,7 @@
                 <br>
                 <div class="row">
                     <div class="col-sm-12 text-right">
-                        <button class="btn btn-black csF16 csB7 jsPayrollCancel">
+                        <button class="btn btn-black csF16 csB7 jsCompanyPayrollCancel">
                             <i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;
                             Back
                         </button>

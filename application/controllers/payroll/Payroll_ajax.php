@@ -480,6 +480,8 @@ class Payroll_ajax extends CI_Controller
             //
             $data['locations'] = $this->pm->GetCompanyLocations($companyId);
             //
+            $data['workAddressId'] = $this->pm->GetWorkAddressId($_GET["employee_id"]);
+            //
             $data['employee_info'] = $this->em->GetEmployeeDetails($_GET["employee_id"], [
                 "users.sid",
                 "users.first_name",

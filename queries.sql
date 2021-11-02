@@ -395,3 +395,7 @@ ALTER TABLE `payroll_company_sign_form`
 ALTER TABLE `payroll_company_sign_form`
   MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;  
 
+
+ALTER TABLE `payroll_employees` ADD `location_version` VARCHAR(128) NULL DEFAULT NULL AFTER `version`;
+
+

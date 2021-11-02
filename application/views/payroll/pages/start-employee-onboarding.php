@@ -39,7 +39,7 @@
                     <div class="col-sm-12 text-right">
                         <?php if (!empty($companyEmployees)) { ?>
                             <button class="btn btn-orange csF16 csB7 jsPayrollConfirmContinue" data-id="4">
-                                <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;
+                                <i class="fa fa-save" aria-hidden="true"></i>&nbsp;
                                 Save & continue
                             </button>
                         <?php } else { ?>
@@ -66,8 +66,8 @@
                                 </div>    
                                 <div class="col-sm-2 ">
                                     <button class="btn btn-orange csF16 csB7 jsPayrollEmployeeOnboard" data-employee_id="<?php echo $employee['sid']; ?>" data-level="0">
-                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
-                                        <?php echo $employee['onboarding_level'] == 0 ? "Add" : "Edit"; ?>
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
+                                        Edit
                                     </button>
                                 </div>
                             </div>

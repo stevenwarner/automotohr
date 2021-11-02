@@ -102,8 +102,8 @@
                 <div class="row">
                     <div class="col-sm-12 text-right">
                         <button class="btn btn-black csF16 csB7 jsFederalTaxCancel">
-                            <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;
-                            Cancel
+                            <i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;
+                            Back
                         </button>
                         <button class="btn btn-orange csF16 csB7 jsFederalTaxUpdate">
                             <i class="fa fa-save" aria-hidden="true"></i>&nbsp;

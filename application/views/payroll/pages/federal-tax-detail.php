@@ -49,7 +49,7 @@
                             Edit tax information
                         </button>
                         <button class="btn btn-orange csF16 csB7 jsPayrollConfirmContinue" data-id="2">
-                            <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;
+                            <i class="fa fa-save" aria-hidden="true"></i>&nbsp;
                             Save & continue
                         </button>
                     </div>

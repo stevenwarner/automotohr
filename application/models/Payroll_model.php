@@ -587,6 +587,28 @@ class Payroll_model extends CI_Model{
         return $jobInfo;
     }
 
+    /**
+     * Get company Payroll employee
+     * @param integer $companyId
+     * @return
+     */
+    function GetWorkAddressId($employeeId){
+        //
+        $result = $this->db
+        ->select('
+            work_address_sid
+        ')
+        ->where('employee_sid', $employeeId)
+        ->get($this->tables['PCE'])
+        ->row_array();
+
+        if(!empty($result)) {
+            return $result['work_address_sid'];
+        } else {
+            return 0;
+        }
+    }
+
     //
     function GetEmployeeFederalTaxDetails($employee_sid){
         //
@@ -682,6 +704,7 @@ class Payroll_model extends CI_Model{
             routing_number,
             account_number,
             account_type,
+            account_percentage,
             direct_deposit_id,
         ")
         ->from($this->tables['PEBA'])
