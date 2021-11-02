@@ -20,7 +20,7 @@
                             Bank account
                         </h1>
                         <p class="csF16">
-                            We create bank account varifications at 5:00pm PT everyday. If you finish this step before then, you will see the test deposits by the morning of the next business day. If you enter this information after 5:00pm PT, we will create the test deposits the next business dat at 5:oopm PT.
+                            We create bank account verification at 5:00 pm PST every day. If you finish this step before then, you will see the test deposits by the morning of the next business day. If you enter this information after 5:00 pm PST, we will create the test deposits on the next business day at 5:00 pm PST.
                         </p>
                     </div>
                 </div>

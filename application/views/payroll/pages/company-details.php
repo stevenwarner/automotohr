@@ -103,15 +103,15 @@
                             <input type="checkbox" class="jsFilingAddress" <?=!empty($location) && $location['filing_address'] == 1 ? 'checked' : ''; ?> /> Filing address
                             <div class="control__indicator"></div>
                         </label>
-                        <p class="csF14">We will need to collect and add any employee's physical working address in the US including remote employees and employees who work from home.</p>
+                        <p class="csF14">We will need to collect and add an employee's physical working address in the US including remote employees and employees who work from home.</p>
                     </div>
                 </div>
                 <br>
                 <div class="row">
                     <div class="col-sm-12 text-right">
                         <button class="btn btn-black csF16 csB7 jsPayrollCancel">
-                            <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;
-                            Cancel
+                            <i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp;
+                            Back
                         </button>
                         <button class="btn btn-orange csF16 csB7 jsPayrollSaveCompanyLocation">
                             <i class="fa fa-save" aria-hidden="true"></i>&nbsp;

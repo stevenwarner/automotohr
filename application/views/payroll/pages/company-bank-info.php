@@ -21,7 +21,7 @@
                             Company bank account
                         </h1>
                         <p class="csF16">
-                            We'll use your checking account into to debit for wages and taxes. Your account must be linked to a checking bank account. Credit payments, credit cards, and savings accounts are not accepted.
+                        We'll use your checking account to debit for wages and taxes. Your account must be linked to a checking bank account. Credit payments, credit cards, and savings accounts are not accepted.
                         </p>
                     </div>
                 </div>
