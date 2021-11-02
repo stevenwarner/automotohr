@@ -30,14 +30,16 @@ class Form_end_user_license_agreement extends CI_Controller {
                     $this->form_validation->set_rules('the_client', 'Client', 'xss_clean|trim');
                     $this->form_validation->set_rules('development_fee', 'Fee', 'xss_clean|trim|numeric');
                     $this->form_validation->set_rules('monthly_fee', 'Fee', 'xss_clean|trim|numeric');
+                    $this->form_validation->set_rules('number_of_rooftops_locations', 'Rooftop Locations', 'xss_clean|trim|numeric');
                     
                     if($this->input->post('payment_method') == 'trial_period'){  
                         $this->form_validation->set_rules('trial_fee', 'Trial Fee', 'xss_clean|trim|numeric');
                         $this->form_validation->set_rules('recurring_payment_day', 'Recurring Trial Payment Day', 'xss_clean|trim|numeric');
                         $this->form_validation->set_rules('payment_method', 'Method', 'xss_clean|trim');
                         $this->form_validation->set_rules('trial_limit', 'Trial Limit', 'xss_clean|trim|numeric');
+                        $this->form_validation->set_rules('number_of_rooftops_locations_trial', 'Rooftop Locations', 'xss_clean|trim|numeric');
                     }
-
+                    
                     $this->form_validation->set_rules('company_by', 'By', 'xss_clean|trim');
                     $this->form_validation->set_rules('company_name', 'Name', 'xss_clean|trim');
                     $this->form_validation->set_rules('company_title', 'Title', 'xss_clean|trim');
@@ -53,12 +55,14 @@ class Form_end_user_license_agreement extends CI_Controller {
                     $this->form_validation->set_rules('the_client', 'Client', 'xss_clean|trim');
                     $this->form_validation->set_rules('development_fee', 'Fee', 'xss_clean|trim|numeric');
                     $this->form_validation->set_rules('monthly_fee', 'Fee', 'xss_clean|trim|numeric');
+                    $this->form_validation->set_rules('number_of_rooftops_locations', 'Rooftop Locations', 'xss_clean|trim|numeric');
                     
                     if($this->input->post('payment_method') == 'trial_period'){    
                         $this->form_validation->set_rules('trial_fee', 'Trial Fee', 'xss_clean|trim|numeric');
                         $this->form_validation->set_rules('recurring_payment_day', 'Recurring Trial Payment Day', 'xss_clean|trim|numeric');
                         $this->form_validation->set_rules('payment_method', 'Method', 'xss_clean|trim');
                         $this->form_validation->set_rules('trial_limit', 'Trial Limit', 'xss_clean|trim|numeric');
+                        $this->form_validation->set_rules('number_of_rooftops_locations_trial', 'Rooftop Locations', 'xss_clean|trim|numeric');
                     }
 
                     $this->form_validation->set_rules('company_by', 'By', 'xss_clean|trim');
@@ -73,7 +77,7 @@ class Form_end_user_license_agreement extends CI_Controller {
                     $this->form_validation->set_rules('acknowledgement', 'Acknowledgement', 'required|xss_clean|trim');
                 }
 
-                if($this->form_validation->run() == false){
+                if(!$this->form_validation->run()){
                     $document_record['payment_method'] = $this->input->post('payment_method');
                 } else {
                     $dataToSave = array();
@@ -85,13 +89,15 @@ class Form_end_user_license_agreement extends CI_Controller {
                     if($this->input->post('payment_method') == 'monthly_subscription') {
                         $dataToSave['monthly_fee'] = $this->input->post('monthly_fee');
                         $dataToSave['is_trial_period'] = 0;
+                        $dataToSave['number_of_rooftops_locations'] = $this->input->post('number_of_rooftops_locations');
                     } else { 
                         $dataToSave['monthly_fee'] = $this->input->post('trial_fee');
                         $dataToSave['recurring_payment_day'] = $this->input->post('recurring_payment_day');
                         $dataToSave['is_trial_period'] = 1;
                         $dataToSave['trial_limit'] = $this->input->post('trial_limit');
+                        $dataToSave['number_of_rooftops_locations'] = $this->input->post('number_of_rooftops_locations_trial');
                     }
-
+                    
                     $dataToSave['company_by'] = $this->input->post('company_by');
                     $dataToSave['company_name'] = $this->input->post('company_name');
                     $dataToSave['company_title'] = $this->input->post('company_title');

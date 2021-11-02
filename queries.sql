@@ -247,3 +247,10 @@ ALTER TABLE `timeoff_settings` ADD `team_visibility_check` TINYINT NOT NULL DEFA
 ALTER TABLE `users` ADD `middle_name` VARCHAR(225) NULL DEFAULT NULL AFTER `first_name`;
 ALTER TABLE `users` ADD `break_hours` INT NOT NULL DEFAULT '1' AFTER `shift_end_time`, ADD `break_mins` INT NOT NULL DEFAULT '0' AFTER `break_hours`, ADD `weekly_hours` INT NOT NULL DEFAULT '0' AFTER `break_mins`;
 ALTER TABLE `users` ADD `offdays` VARCHAR(225) NULL DEFAULT 'Sunday' AFTER `weekly_hours`;
+
+
+-- Added rooftop option in end user agreement
+-- 02/11/2021
+-- Mubashir Ahmed
+ALTER TABLE `form_document_eula` ADD `number_of_rooftops_locations` INT NOT NULL DEFAULT '1' AFTER `client_signature_timestamp`;
+ALTER TABLE `form_document_eula_history` ADD `number_of_rooftops_locations` INT NOT NULL DEFAULT '1' AFTER `client_signature_timestamp`;
