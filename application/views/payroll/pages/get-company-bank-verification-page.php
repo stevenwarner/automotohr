@@ -58,6 +58,10 @@
                             <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;
                             Verify Deposits
                         </button>
+                        <button class="btn btn-orange csF16 csB7 jsSyncCompanyOnboarding">
+                            <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;
+                            Sync Company
+                        </button>
                     </div>
                 </div>
             </div>

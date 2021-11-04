@@ -10,7 +10,8 @@ $(function PayrollCompanyOnboard() {
      * Set default company Id
      * @type {number}
      */
-    var companyId = 15598;
+    // var companyId = 15598;
+    var companyId = 15555;
 
     /**
      * Set modal id
@@ -2637,11 +2638,38 @@ $(function PayrollCompanyOnboard() {
                 LoadContent(resp.html, function() { 
                     //
                     $('.jsVerifyBankDeposit').click(verifyTheBankAccount);
+                    $('.jsSyncCompanyOnboarding').click(SyncCompanyOnboarding);
                     //
                     ml(false, modalLoader);
                 });
             })
             .error(HandleError);
+    }
+
+    function SyncCompanyOnboarding (event) {
+        //
+        event.preventDefault();
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "GET",
+            headers: { "Content-Type": "application/json", "Key" : API_KEY },
+            url: API_URL+"/sync_company/"+companyId
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            ml(false, modalLoader);
+            // 
+            if (!resp.status) {
+                return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response, AlertifyHandler);
+            } 
+            //
+            return alertify.alert('Success!',  resp.response);
+        })
+        .error(HandleError);
     }
 
     function verifyTheBankAccount (event) {
