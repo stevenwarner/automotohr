@@ -11,7 +11,7 @@ $(function PayrollCompanyOnboard() {
      * @type {number}
      */
     // var companyId = 15598;
-    var companyId = 15555;
+    // var companyId = 15555;
 
     /**
      * Set modal id
@@ -2812,6 +2812,6 @@ $(function PayrollCompanyOnboard() {
     }
 
     //
-    StartOnboardProcess();
+    // StartOnboardProcess();
 
 });
