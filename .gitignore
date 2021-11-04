@@ -95,8 +95,6 @@ application/logs/*
 executive_admin/application/logs/*
 manage_ams/application/logs/*
 manage_portal/application/logs/*
-
-
 manage_ams/sitemap.xml
 
 staging
@@ -106,5 +104,8 @@ assets/performance_management/videos
 assets/performance_management/videos/*
 
 apis
-
 sitemaps
+
+# Sonarqube ignore
+.scannerwork
+.scannerwork/*
