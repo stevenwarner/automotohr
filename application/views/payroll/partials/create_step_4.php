@@ -46,6 +46,11 @@ if(!empty($Payroll['employee_compensations'])):
             $tmp['reimbursement'] = $tot;
         }
         //
+        if(isset($payrollEmployee['fixed_compensations']['paid-time-off']) && !empty($payrollEmployee['fixed_compensations']['paid-time-off'])){
+            //
+            $tmp['paid_time_off_amount'] = $payrollEmployee['fixed_compensations']['paid-time-off']['amount'];
+        }
+        //
         if(isset($payrollEmployee['hourly_compensations']) && !empty($payrollEmployee['hourly_compensations'])){
             $tmp['hourlyCompensations'] = $payrollEmployee['hourly_compensations'];
         } else{
@@ -58,6 +63,8 @@ if(!empty($Payroll['employee_compensations'])):
         }
         //
         $payrollOBJ[$payrollEmployee['employee_id']] = $tmp;
+        // echo "<pre>";
+        // print_r($tmp);
     endforeach;
 endif;
 ?>
@@ -111,39 +118,26 @@ endif;
                         <tr>
                             <th scope="col" class="csF16 csB7 csBG4 csW">Employee</th>
                             <th scope="col" class="csF16 csB7 csBG4 csW text-right">Paid Time Off Hours (PTO)</th>
-                            <th scope="col" class="csF16 csB7 csBG4 csW text-right">Sick Hours (S)</th>
                             <th scope="col" class="csF16 csB7 csBG4 csW text-right">Additional Time Off</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php for($i=0;$i<=20;$i++){?>
-                        <tr>
-                            <td class="vam">
-                                <strong>John Doe [Employee]</strong>
-                            </td>
-                            <td class="vam text-right">
-                                <!--  -->
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="0"/>
-                                    <div class="input-group-addon">hr</div>
-                                </div>
-                                <p class="csF14 text-left ma10">114 hrs remaining</p>
-                            </td>
-                            <td class="vam text-right">
-                                <!--  -->
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="0"/>
-                                    <div class="input-group-addon">hr</div>
-                                </div>
-                                <p class="csF14 text-left ma10">2 hrs remaining</p>
-                            </td>
-                            <td class="vam text-right">
-                                <strong class="csFC4 csF16">0 hrs</strong>
-                                <p class="csF16 csCP ma10 csFC2">
-                                    <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Details
-                                </p>
-                            </td>
-                        </tr>
+                        <?php foreach ($payrollOBJ as $key => $obj) { ?>
+                            <tr>
+                                <td class="vam">
+                                    <strong><?php echo $obj["lastName"].", ".$obj["firstName"]; ?></strong>
+                                </td>
+                                <td class="vam text-right">
+                                    <!--  -->
+                                    <div class="input-group">
+                                        <div class="input-group-addon">$</div>
+                                        <input type="text" class="form-control jsPaidTimeOffInput" name="paid_time_offs[]" placeholder="0" value="<?php echo $obj["paid_time_off_amount"]; ?>" data-row_id="<?php echo $key; ?>"/>
+                                    </div>
+                                </td>
+                                <td class="vam text-right">
+                                    <strong class="csFC4 csF16"><span id="row_id_<?php echo $key; ?>"><?php echo $obj["paid_time_off_amount"]; ?></span> $</strong>
+                                </td>
+                            </tr>
                         <?php } ?>
                     </tbody>
                 </table>
@@ -152,7 +146,7 @@ endif;
                     <div class="col-sm-12 text-right">
                         <!--  -->
                         <div class="csPB">
-                            <button class="btn btn-orange jsPayrollSaveBTN">
+                            <button class="btn btn-orange jsPayrollSaveBTN" data-type="save_only">
                                 <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save
                             </button>
                             <button class="btn btn-orange jsPayrollSaveBTN" data-type="next">
@@ -177,19 +171,55 @@ endif;
     //
     var payrollVersion = "<?=$payrollVersion;?>";
     //
-   
+
     //
-    function upd(){
+    function upd(type){
         //
         $.post(
             "<?=base_url("payroll/update_payroll");?>", {
                 payrollId: payrollCode,
                 payrollVersion: payrollVersion,
-                payroll: payrollOBJ
+                payroll: payrollOBJ,
+                postType: type,
             }
         ).done(function(resp){
             //
             console.log(resp);
+            ml(false, 'main_loader');
         });
     };
+
+    $(".jsPaidTimeOffInput").on("keyup", function () {
+        var row_id = $(this).data("row_id");
+        var amount = $(this).val();
+
+        if (amount != '' && !/^[0-9.]+$/.test(amount)) {
+            alertify.alert("Note", "Only number are accepted");
+        } else if (amount == '0') {
+            alertify.alert("Note", "Please enter value greater than 0.");
+        } else {
+            //
+            $("#row_id_"+row_id).text(amount);
+
+            $.each(payrollOBJ, function(i, v){
+                //
+                if(v.employeeId == row_id) {
+                    $.each(v.fixedCompensations, function(i, vfc){
+                        if(vfc.name == "Paid Time Off"){
+                            vfc.amount = amount;
+                        }
+                    });
+                }
+            });
+        }
+            
+
+        
+    });
+
+    $(".jsPayrollSaveBTN").on("click", function () {
+        ml(true, 'main_loader');
+        var type = $(this).data("type");
+        upd(type);
+    })
 </script>

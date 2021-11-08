@@ -363,9 +363,9 @@ if(!function_exists('GetUnProcessedPayrolls')){
 
 //
 if(!function_exists('GetSinglePayroll')){
-    function GetSinglePayroll($query, $company){
+    function GetSinglePayroll($query, $company, $step){
         //
-        $url = PayrollURL('GetSinglePayroll', $company['gusto_company_uid'], $company['payroll_id']);
+        $url = PayrollURL('GetSinglePayroll', $company['gusto_company_uid'], $company['payroll_id'], $step);
         //
         $response =  MakeCall(
             $url, [
@@ -723,7 +723,7 @@ if(!function_exists('MakeCall')){
 
 //
 if(!function_exists('PayrollURL')){
-    function PayrollURL($index, $key = 0, $key1 = 0){
+    function PayrollURL($index, $key = 0, $key1 = 0, $step = null){
         //
         $urls = [];
         $urls['Me'] = 'v1/me';
@@ -736,7 +736,11 @@ if(!function_exists('PayrollURL')){
         $urls['DeleteBankAccountToPayroll'] = 'v1/employees/'.($key).'/bank_accounts/'.$key1;
         $urls['AddCompanyBankAccountToPayroll'] = 'v1/companies/'.($key).'/bank_accounts';
         $urls['GetUnProcessedPayrolls'] = 'v1/companies/'.($key).'/payrolls'.($key1);
-        $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'?show_calculation=true&include=benefits,deductions,taxes';
+        if ($step == 3) {
+            $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'?show_calculation=true&include=benefits,deductions,taxes';
+        } else {
+            $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'?show_calculation=false&include=benefits,deductions,taxes';
+        }
         $urls['GetCompanyEmployees'] = 'v1/companies/'.($key).'/employees';
         $urls['UpdatePayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1);
         $urls['CalculatePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/calculate';

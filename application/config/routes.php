@@ -1388,6 +1388,7 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
 $route['company_tax']['get'] = 'payroll/Payroll/CompanyTax';
 $route['payroll/create']['get'] = 'payroll/Payroll/Create';
 $route['payroll/create/(:any)/(:any)']['get'] = 'payroll/Payroll/Create/$1/$2';
+$route['payroll/create/(:any)']['get'] = 'payroll/Payroll/Create/$1';
 
 // AJAX Get
 $route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';

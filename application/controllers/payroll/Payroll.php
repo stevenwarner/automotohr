@@ -196,7 +196,7 @@ class Payroll extends CI_Controller
                 usleep(200);
             }
             //
-            $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'])['Response'];
+            $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'], $this->data['step'])['Response'];
             //
             $this->pm->CheckAndInsertPayroll(
                 $this->data['companyId'],
@@ -925,6 +925,7 @@ class Payroll extends CI_Controller
         foreach($post['payroll'] as $payroll){
             //
             unset($payroll['fixedCompensations']['reimbursement']);
+            unset($payroll['paid_time_off_amount']);
             // Temporary Array
             $ta = [];
             $ta['employee_id'] = $payroll['employeeId'];
@@ -964,7 +965,7 @@ class Payroll extends CI_Controller
         $request['version'] = $post['payrollVersion'];
         $request['employee_compensations'] = $employeeArray;
         //
-        $response = UpdatePayrollById($request, $company);
+        // $response = UpdatePayrollById($request, $company);
         //
         if(isset($response['errors'])){
             //
@@ -989,7 +990,7 @@ class Payroll extends CI_Controller
             //
             res([
                 'Status' => true,
-                'Response' => $response
+                'Response' => $post['payroll']
             ]);
         }
     }
@@ -1136,7 +1137,7 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    private function GetSinglePayroll($payrollId, $companyId){
+    private function GetSinglePayroll($payrollId, $companyId, $step){
         //
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
@@ -1148,7 +1149,7 @@ class Payroll extends CI_Controller
         //
         $query = '';
         //
-        $response = GetSinglePayroll($query, $company);
+        $response = GetSinglePayroll($query, $company, $step);
         //
         if(isset($response['errors'])){
             //
