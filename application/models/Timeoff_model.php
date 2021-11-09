@@ -9722,9 +9722,18 @@ class Timeoff_model extends CI_Model
             if($post['level'] == 0 && empty($notIds)) return [];
         }
         //
-        // if($post['level'] == 0 && empty($notIds)) return [];
-        //
-        if(!empty($notIds)) $this->db->where_in('timeoff_requests.employee_sid', $notIds);
+        if(!empty($notIds)) {
+            //
+            if(isset($post['filter']['employees']) && !empty($post['filter']['employees']) && $post['filter']['employees'] != 'all'){
+
+                $notIds = array_intersect([$post['filter']['employees']], $notIds);
+                //
+                if(empty($notIds)){
+                    return [];
+                }
+            }
+            $this->db->where_in('timeoff_requests.employee_sid', $notIds);
+        }
         else if($post['filter']['employees'] != 'all'){
             $this->db->where('timeoff_requests.employee_sid', $post['filter']['employees']);
         }
@@ -9738,8 +9747,23 @@ class Timeoff_model extends CI_Model
             $this->db->order_by('timeoff_requests.request_from_date', 'DESC', false);
         }
         //
-        $this->db->where('timeoff_requests.request_from_date >= "'.(date('Y')).'-01-01"', null);
-        // $this->db->where('timeoff_requests.request_from_date <= "'.(date('Y')).'-12-31"', null);
+        if(
+            isset($post['filter']['startDate'], $post['filter']['endDate']) && 
+            !empty($post['filter']['startDate']) && 
+            !empty($post['filter']['endDate'])
+        ){
+            $newDate = formatDateToDB($post['filter']['startDate'], 'm-d-Y', 'Y-m-d');
+            $endDate = formatDateToDB($post['filter']['endDate'], 'm-d-Y', 'Y-m-d');
+            //
+            $this->db->where('timeoff_requests.request_from_date >=', $newDate);
+            $this->db->where('timeoff_requests.request_from_date <=', $endDate);
+        } else{
+            //
+            if($post['type'] != 'pending'){
+                $this->db->where('timeoff_requests.request_from_date >= "'.(date('Y')).'-01-01"', null);
+                $this->db->where('timeoff_requests.request_from_date <= "'.(date('Y')).'-12-31"', null);
+            }
+        }
         //
         $requests = $this->db->get('timeoff_requests')
         ->result_array();
@@ -9803,10 +9827,6 @@ class Timeoff_model extends CI_Model
             }
         }
         //
-        // echo '<pre>';
-        // print_r(db_get_employee_profile($post['employerId']));
-        // print_r($post);
-        // die();
         return $requests;
     }
 
