@@ -62,9 +62,19 @@
                                                                                 Update EIN Number
                                                                             </button>
                                                                             <?php if($company['access_token']) { ?>
-                                                                            <button class="btn btn-success jsDetails">
-                                                                                Details
-                                                                            </button>
+                                                                                <button class="btn btn-success jsDetails">
+                                                                                    Details
+                                                                                </button>
+                                                                                <button class="btn btn-success jsSyncWithGusto" data-company_sid="<?php echo $company['sid'] ?>">
+                                                                                    Sync
+                                                                                </button>
+                                                                                <button class="btn btn-success jsOnboardCompany" data-company_sid="<?php echo $company['sid'] ?>">
+                                                                                    Onboarding
+                                                                                </button>
+                                                                            <?php } else { ?>
+                                                                                <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company['sid'] ?>">
+                                                                                    Add Gusto
+                                                                                </button>
                                                                             <?php } ?>
                                                                         </td>
                                                                      </tr>
@@ -99,6 +109,11 @@
 <script src="<?=base_url("assets/js/SystemModal.js");?>"></script>
 <!-- Include moment -->
 <script src="<?=base_url("assets/js/moment.min.js");?>"></script>
+
+<script src="<?=base_url('assets/js/common.js?v1.0.1');?>"></script>
+<script src="<?=base_url('assets/portal/app.js');?>?v=1.0.2"></script>
+<!-- Include moment -->
+<script src="<?=base_url("assets/payroll/js/payroll_company_onboard.js");?>"></script>
 
 <script>
 

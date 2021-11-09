@@ -2646,9 +2646,11 @@ $(function PayrollCompanyOnboard() {
             .error(HandleError);
     }
 
-    function SyncCompanyOnboarding (event) {
-        //
-        event.preventDefault();
+    function StartCompanyOnboardProcess () {
+        
+    }
+
+    function SyncCompanyOnboarding () {
         //
         ml(true, modalLoader);
         //
@@ -2810,6 +2812,27 @@ $(function PayrollCompanyOnboard() {
         //
         return true;
     }
+
+    $('.jsSyncWithGusto').click(function(event){
+        var company_sid = $(this).data("company_sid");
+        //
+        companyId = company_sid;
+        SyncCompanyOnboarding();
+    });
+
+    $('.jsOnboardCompany').click(function(event){
+        var company_sid = $(this).data("company_sid");
+        //
+        companyId = company_sid;
+        StartCompanyOnboardProcess();
+    });
+
+    $('.jsAddCompanyToGusto').click(function(event){
+        var company_sid = $(this).data("company_sid");
+        //
+        companyId = company_sid;
+        StartOnboardProcess();
+    });
 
     //
     // StartOnboardProcess();
