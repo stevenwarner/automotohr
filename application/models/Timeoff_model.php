@@ -9739,7 +9739,7 @@ class Timeoff_model extends CI_Model
         }
         //
         $this->db->where('timeoff_requests.request_from_date >= "'.(date('Y')).'-01-01"', null);
-        $this->db->where('timeoff_requests.request_from_date <= "'.(date('Y')).'-12-31"', null);
+        // $this->db->where('timeoff_requests.request_from_date <= "'.(date('Y')).'-12-31"', null);
         //
         $requests = $this->db->get('timeoff_requests')
         ->result_array();
