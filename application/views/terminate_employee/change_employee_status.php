@@ -117,8 +117,20 @@
 </div>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script type="text/javascript">
-    $('#termination_date').datepicker();
-    $('#status_change_date').datepicker();
+
+    
+$('#status_change_date').datepicker({
+    dateFormat: 'mm-dd-yy',
+    changeMonth: true,
+    changeYear: true,
+    yearRange: "<?php echo DOB_LIMIT; ?>"
+});
+$('#termination_date').datepicker({
+    dateFormat: 'mm-dd-yy',
+    changeMonth: true,
+    changeYear: true,
+    yearRange: "<?php echo DOB_LIMIT; ?>"
+});
     $(document).ready(function(){
         $('#termination_reason_section').hide();
         $('#termination_date_section').hide();
@@ -132,7 +144,6 @@
         var termination_date_check = '';
 
 
-        console.log(emp_status);
         $("#loginform").validate({
             ignore: ":hidden:not(select)",
             rules: {
