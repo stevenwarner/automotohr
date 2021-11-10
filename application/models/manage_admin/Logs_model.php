@@ -362,4 +362,12 @@ class logs_model extends CI_Model
                 ]
             );
     }
+
+    function getCompanyPayrollInfo($company_sid){
+        return $this->db
+        ->select('refresh_token, access_token, gusto_company_uid')
+        ->where('company_sid', $company_sid)
+        ->get("payroll_companies")
+        ->row_array();
+    }
 }

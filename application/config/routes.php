@@ -603,6 +603,7 @@ $route['manage_admin/modules/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admi
 $route['manage_admin/edit_module/(:num)'] = 'manage_admin/logs/edit_module/$1';
 $route['manage_admin/company_module/(:num)'] = 'manage_admin/logs/company_module/$1';
 $route['manage_admin/change_company_status'] = 'manage_admin/logs/change_company_status';
+$route['manage_admin/company_onboarding/(:num)'] = 'manage_admin/logs/company_onboarding/$1';
 //Notification Email logs
 $route['manage_admin/notification_email_log'] = 'manage_admin/logs/notification_email_log';
 $route['manage_admin/notification_email_log_view/(:num)'] = 'manage_admin/logs/notification_log/$1';

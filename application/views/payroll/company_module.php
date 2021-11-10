@@ -68,9 +68,9 @@
                                                                                 <button class="btn btn-success jsSyncWithGusto" data-company_sid="<?php echo $company['sid'] ?>">
                                                                                     Sync
                                                                                 </button>
-                                                                                <button class="btn btn-success jsOnboardCompany" data-company_sid="<?php echo $company['sid'] ?>">
+                                                                                <a class="btn btn-success" target="_blank" href="<?php echo base_url("manage_admin/company_onboarding")."/".$company['sid']; ?>">
                                                                                     Onboarding
-                                                                                </button>
+                                                                                </a>
                                                                             <?php } else { ?>
                                                                                 <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company['sid'] ?>">
                                                                                     Add Gusto

@@ -392,6 +392,9 @@ class logs extends Admin_Controller
     }
      public function company_module($sid){
         $this->load->helper('url');
+        //
+        $this->load->helper('common_helper');
+        //
         $redirect_url = 'manage_admin';
         $function_name = 'email_enquiries_log';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -659,6 +662,42 @@ class logs extends Admin_Controller
         endswitch;
         //
         res($this->resp);
+    }
+
+    function company_onboarding ($company_sid) {
+        //
+        $this->load->helper("payroll_helper");
+        //
+        $company = $this->logs_model->getCompanyPayrollInfo($company_sid);
+        //
+        $url = PayrollURL('GetCompanyFlows', $company['gusto_company_uid']);
+        //
+        $request = [
+            "flow_type" => "company_onboarding",
+            "entity_type" => "Company",
+            "entity_uuid" => $company['gusto_company_uid']
+        ];
+        //
+        $response =  MakeCall(
+            $url ,[
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            $this->data["iframe_url"] = "https://gws-flows.gusto-demo.com/flows/lO2BHHAMCScPVV9G5WEURW0Im_nP9mGYloQgjUWbenQ"; 
+        } else {
+            $this->data["iframe_url"] = $response["url"];
+        }
+        $this->render('payroll/payroll_company_flow');
+
+
+        
     }
 
 }

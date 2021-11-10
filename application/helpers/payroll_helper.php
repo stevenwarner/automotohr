@@ -748,6 +748,7 @@ if(!function_exists('PayrollURL')){
         $urls['SubmitPayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/submit';
         $urls['GetCompany'] = 'v1/companies/'.($key);
         $urls['AddCompanyLocation'] = 'v1/companies/'.($key).'/locations';
+        $urls['GetCompanyFlows'] = 'v1/companies/'.($key).'/flows';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }

@@ -2647,7 +2647,7 @@ $(function PayrollCompanyOnboard() {
     }
 
     function StartCompanyOnboardProcess () {
-        
+
     }
 
     function SyncCompanyOnboarding () {
@@ -2818,13 +2818,6 @@ $(function PayrollCompanyOnboard() {
         //
         companyId = company_sid;
         SyncCompanyOnboarding();
-    });
-
-    $('.jsOnboardCompany').click(function(event){
-        var company_sid = $(this).data("company_sid");
-        //
-        companyId = company_sid;
-        StartCompanyOnboardProcess();
     });
 
     $('.jsAddCompanyToGusto').click(function(event){
