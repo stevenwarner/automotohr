@@ -50,7 +50,7 @@
                                             </li>
                                             <li class="form-col-100 autoheight" id="termination_date_section">
                                                 <label>Termination Date <span class="hr-required">*</span></label>
-                                                <?php echo form_input('termination_date', set_value('termination_date',$status_data['termination_date'] != NULL ? date('m/d/Y',strtotime($status_data['termination_date'])) :''), 'class="invoice-fields" id="termination_date" autocomplete="off" readonly'); ?>
+                                                <?php echo form_input('termination_date', set_value('termination_date',$status_data['termination_date'] != NULL ? date('m-d-Y',strtotime($status_data['termination_date'])) :''), 'class="invoice-fields" id="termination_date" autocomplete="off" readonly'); ?>
                                                 <?php echo form_error('termination_date'); ?>
                                             </li>
 
@@ -74,7 +74,7 @@
                                             </li>
                                             <li class="form-col-100 autoheight">
                                                 <label>Status Change Date <span class="hr-required">*</span></label>
-                                                <?php echo form_input('status_change_date', set_value('status_change_date',date('m/d/Y',strtotime($status_data['status_change_date']))), 'class="invoice-fields" id="status_change_date" autocomplete="off" readonly'); ?>
+                                                <?php echo form_input('status_change_date', set_value('status_change_date',date('m-d-Y',strtotime($status_data['status_change_date']))), 'class="invoice-fields" id="status_change_date" autocomplete="off" readonly'); ?>
                                                 <?php echo form_error('status_change_date'); ?>
                                             </li>
                                             <li class="form-col-100 autoheight">
