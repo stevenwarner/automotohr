@@ -119,18 +119,20 @@
 <script type="text/javascript">
 
     
-$('#status_change_date').datepicker({
-    dateFormat: 'mm-dd-yy',
-    changeMonth: true,
-    changeYear: true,
-    yearRange: "<?php echo DOB_LIMIT; ?>"
-});
-$('#termination_date').datepicker({
-    dateFormat: 'mm-dd-yy',
-    changeMonth: true,
-    changeYear: true,
-    yearRange: "<?php echo DOB_LIMIT; ?>"
-});
+    $('#status_change_date').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
+    });
+    //
+    $('#termination_date').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
+    });
+    //
     $(document).ready(function(){
         $('#termination_reason_section').hide();
         $('#termination_date_section').hide();

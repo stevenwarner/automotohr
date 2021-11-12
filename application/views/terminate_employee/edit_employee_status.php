@@ -175,8 +175,18 @@
             $('#system_access').prop('checked', false);
         <?php }?>
     });
-    $('#termination_date').datepicker();
-    $('#status_change_date').datepicker();
+    $('#termination_date').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
+    });
+    $('#status_change_date').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
+    });
     function validate_form() {
         var emp_status = $('#status').val();
         var terminated_reason_check = '';

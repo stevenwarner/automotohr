@@ -115,14 +115,13 @@ class Terminate_employee extends Public_Controller {
                 $data_to_insert = array();
                 $data_to_insert['employee_status'] = $status;
                 $data_to_insert['termination_reason'] = empty($termination_reason) ? 0 : $termination_reason;
-                
                 if ($status == 1) {
-                    $data_to_insert['termination_date'] = date('Y-m-d', strtotime($termination_date));
+                    $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y'); //date('Y-m-d', strtotime($termination_date));
                 }
                 
                 $data_to_insert['involuntary_termination'] = $involuntary;
                 $data_to_insert['do_not_hire'] = $rehire;
-                $data_to_insert['status_change_date'] = date('Y-m-d', strtotime($status_change_date));
+                $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y');// date('Y-m-d', strtotime($status_change_date));
                 $data_to_insert['details'] = htmlentities($termination_details);
                 $data_to_insert['employee_sid'] = $sid;
                 $data_to_insert['changed_by'] = $employer_sid;
@@ -133,7 +132,7 @@ class Terminate_employee extends Public_Controller {
                 if ($status == 1) {
                     if($system_access == 1){
                         $data_to_update['active'] = 0;
-                    }elseif(date('m/d/Y') >= $termination_date){
+                    }elseif(date('m-d-Y') >= $termination_date){
                         $data_to_update['active'] = 0;
                     }
                     $data_to_update['terminated_status'] = 1;
@@ -231,14 +230,14 @@ class Terminate_employee extends Public_Controller {
                 $data_to_insert['termination_reason'] = empty($termination_reason) ? 0 : $termination_reason;
 
                 if ($status == 1) {
-                    $data_to_insert['termination_date'] = date('Y-m-d', strtotime($termination_date));
+                    $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y');// date('Y-m-d', strtotime($termination_date));
                 }else{
                     $data_to_insert['termination_date'] = NULL;
                 }
 
                 $data_to_insert['involuntary_termination'] = $involuntary;
                 $data_to_insert['do_not_hire'] = $rehire;
-                $data_to_insert['status_change_date'] = date('Y-m-d', strtotime($status_change_date));
+                $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y');// date('Y-m-d', strtotime($status_change_date));
                 $data_to_insert['details'] = htmlentities($termination_details);
                 $data_to_insert['employee_sid'] = $sid;
                 $data_to_insert['changed_by'] = $employer_sid;
@@ -249,7 +248,7 @@ class Terminate_employee extends Public_Controller {
                 if ($status == 1) {
                     if($system_access == 1){
                         $data_to_update['active'] = 0;
-                    }elseif(date('m/d/Y') >= $termination_date){
+                    }elseif(date('m-d-Y') >= $termination_date){
                         $data_to_update['active'] = 0;
                     }else{
                         $data_to_update['active'] = 1;
