@@ -142,7 +142,12 @@
                                                                                     echo $employee["access_level"];
                                                                                 } ?>
                                                 </td>
-                                                <td class="text-center"><?php echo my_date_format($employee["registration_date"]); ?></td>
+                                                <td class="text-center"><?php 
+                                                
+                                                if(isset($employee["joined_at"])) {
+                                                    echo formatDateToDB($employee['joined_at'], DB_DATE, DATE);
+                                                }
+                                                 ?></td>
                                                 <td class="text-center"><?php echo formatDateToDB($employee["termination_date"], DB_DATE, DATE); ?></td>
 <!--                                                <td class="text-center">-->
                                                     <!-- <a class="action-btn"  href="<?php //echo base_url('send_offer_letter_documents'); ?>/<?php //echo $employee["sid"]; ?>">
