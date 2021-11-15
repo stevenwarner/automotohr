@@ -144,6 +144,14 @@
                             <div class="col-xs-12">
                                 <div class="form-group autoheight">
                                      <div class="form-group autoheight">
+                                        <div class="g-recaptcha" data-sitekey="6Les2Q0TAAAAAAyeysl-dZsPUm98_6K2fNkyNCwI"></div>
+                                    </div>
+                                    <?php echo form_error('g-recaptcha-response'); ?>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="form-group autoheight">
+                                     <div class="form-group autoheight">
                                         <input type="submit" value="SCHEDULE MY FREE DEMO" class="demo-form-fields demo-form-fields-btn" id="schedule-free-demo-form-submit">
                                     </div>
                                 </div>
@@ -165,6 +173,7 @@
         </div>
     </div>
 </div>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 <script type="text/javascript">
     $('#schedule-free-demo-form-submit').click(function () {
        $("#schedule-free-demo-form").validate({

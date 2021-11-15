@@ -34,6 +34,7 @@ class Demo extends CI_Controller {
         $this->form_validation->set_rules('title', 'Please provide your Title', 'trim|xss_clean');
         $this->form_validation->set_rules('company_size', 'Please provide your Company Size', 'trim|xss_clean');
         $this->form_validation->set_rules('newsletter_subscribe', 'Please select your choice', 'trim|xss_clean');
+        $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha[' . $this->input->post('g-recaptcha-response') . ']');
         
         /*if ($this->uri->segment(1) == 'demo') {
            $this->form_validation->set_rules('schedule_date', 'Please select schedule date', 'trim|required|xss_clean');
@@ -131,6 +132,27 @@ class Demo extends CI_Controller {
                 // $this->session->set_flashdata('message', '<strong>Success: </strong> Schedule Successfully Saved');
                 redirect('/schedule_your_free_demo', 'refresh');
             }
+        }
+    }
+
+    public function recaptcha($str) {
+        $google_url = "https://www.google.com/recaptcha/api/siteverify";
+        $secret = '6Les2Q0TAAAAAPpmnngcC7RdzvAq1CuAVLqic_ei';
+        $url = $google_url . "?secret=" . $secret . "&response=" . $str;
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.16) Gecko/20110319 Firefox/3.6.16");
+        $res = curl_exec($curl);
+        curl_close($curl);
+        $res = json_decode($res, true);
+        
+        if ($res['success']) {
+            return TRUE;
+        } else {
+            $this->form_validation->set_message('recaptcha', 'The reCAPTCHA field is telling me that you are a robot. Shall we give it another try?');
+            return $str;
         }
     }
     
