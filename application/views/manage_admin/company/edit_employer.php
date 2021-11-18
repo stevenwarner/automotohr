@@ -258,7 +258,10 @@
  
     $(document).ready(function () {
         $('.datepicker').datepicker({
-            dateFormat: 'mm-dd-yy'
+            changeYear: true,
+            changeMonth: true,
+            dateFormat: 'mm-dd-yy',
+            yearRange: "<?=JOINING_DATE_LIMIT;?>"
         });
 
         <?php if(IS_NOTIFICATION_ENABLED == 1) {?>
