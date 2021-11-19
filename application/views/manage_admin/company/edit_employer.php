@@ -108,7 +108,12 @@
                                                 <li>
                                                     <label>Start Date</label>
                                                     <div class="hr-fields-wrap">
-                                                        <?php $registration_date = $data['registration_date'] != NULL && $data['registration_date'] != '0000-00-00 00:00:00' ? DateTime::createFromFormat('Y-m-d H:i:s', $data['registration_date'])->format('m-d-Y') : ''; ?>
+                                                        <?php 
+                                                        $registration_date = $data['joined_at'] != NULL && $data['joined_at'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d H:i:s', $data['joined_at'])->format('m-d-Y') : ''; 
+                                                        if(empty($registration_date)){
+                                                            $registration_date = $data['registration_date'] != NULL && $data['registration_date'] != '0000-00-00 00:00:00' ? DateTime::createFromFormat('Y-m-d H:i:s', $data['registration_date'])->format('m-d-Y') : ''; 
+                                                        }
+                                                        ?>
                                                         <input class="invoice-fields datepicker" id="registration_date" name="registration_date" value="<?php echo set_value('registration_date', $registration_date); ?>" />
                                                         <?php echo form_error('direct_business_number'); ?>
                                                     </div>
