@@ -347,7 +347,9 @@ class employers extends Admin_Controller {
 
             if ($registration_date != NULL) {
                 $data['registration_date'] = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
+                $data['joined_at'] = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
             } else {
+                $data['joined_at'] = NULL;
                 $data['registration_date'] = NULL;
             }
 
@@ -423,7 +425,9 @@ class employers extends Admin_Controller {
 
                 if($registration_date !=NULL) {
                     $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
+                    $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
                 } else {
+                    $joined_at = NULL;
                     $registration_date = NULL;
                 }
 
@@ -436,6 +440,7 @@ class employers extends Admin_Controller {
                 $insert_data['job_title'] = $job_title;
                 $insert_data['cell_number'] = $cell_number;
                 $insert_data['registration_date'] = $registration_date;
+                $insert_data['joined_at'] = $joined_at;
                 $insert_data['CompanyName'] = $company_name;
                 $insert_data['direct_business_number'] = $direct_business_number;
                 $insert_data['alternative_email'] = $alternative_email;
