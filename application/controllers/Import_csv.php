@@ -459,7 +459,15 @@ class Import_csv extends Public_Controller {
                     $insertArray['verification_key'] = random_key() . '_csvImport';
                     // Check joining date
                     if (isset($v0['joined_at']) && !empty($v0['joined_at']) && $v0['joined_at'] != NULL) {
-                        $insertArray['joined_at'] = formatDateToDB($v0['joined_at']);
+                        //
+                        $formatForDate = 'm/d/Y';
+                        //
+                        $t = explode('/', $v0['joined_at']);
+                        if(strlen(end($t)) == 2) {
+                            $formatForDate = 'm/d/y';
+                        }
+
+                        $insertArray['joined_at'] = formatDateToDB($v0['joined_at'], $formatForDate);
                         $insertArray['registration_date'] = $insertArray['joined_at'] .' 00:00:00';
                     } else{
                         $insertArray['registration_date'] = date("Y-m-d H:i:s", strtotime('now'));
@@ -480,7 +488,14 @@ class Import_csv extends Public_Controller {
                     }
                     // Check dob
                     if (isset($v0['dob']) && !empty($v0['dob']) && $v0['dob'] != NULL) {
-                        $insertArray['dob'] = formatDateToDB($v0['dob']);
+                        //
+                        $formatForDate = 'm/d/Y';
+                        //
+                        $t = explode('/', $v0['dob']);
+                        if(strlen(end($t)) == 2) {
+                            $formatForDate = 'm/d/y';
+                        }
+                        $insertArray['dob'] = formatDateToDB($v0['dob'], $formatForDate);
                     }
                     // Check shift hours
                     if (isset($v0['user_shift_hours']) && !empty($v0['user_shift_hours']) && $v0['user_shift_hours'] != NULL) {
