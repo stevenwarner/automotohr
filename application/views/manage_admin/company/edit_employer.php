@@ -109,7 +109,7 @@
                                                     <label>Start Date</label>
                                                     <div class="hr-fields-wrap">
                                                         <?php 
-                                                        $registration_date = $data['joined_at'] != NULL && $data['joined_at'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d H:i:s', $data['joined_at'])->format('m-d-Y') : ''; 
+                                                        $registration_date = $data['joined_at'] != NULL && $data['joined_at'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d', $data['joined_at'])->format('m-d-Y') : ''; 
                                                         if(empty($registration_date)){
                                                             $registration_date = $data['registration_date'] != NULL && $data['registration_date'] != '0000-00-00 00:00:00' ? DateTime::createFromFormat('Y-m-d H:i:s', $data['registration_date'])->format('m-d-Y') : ''; 
                                                         }
