@@ -336,26 +336,46 @@ class Import_csv extends Public_Controller {
                 foreach ($formpost['employees'] as $k0 => $v0) {
                     // Set default insert array
                     $insertArray = array();
-                    if(sizeof($v0) <=1){
+                    if(count($v0) <=1){
                         continue;
                     }
                     // Clean
-                    $to = $insertArray['email'] = isset($v0['email']) ? trim(strtolower($v0['email'])) : NULL;
-                    // lets check if email already exists
-                    $existed = $this->import_csv_model->CheckIfEmployeeExists($companyId, $insertArray['email'] ? $insertArray['email'] :  $v0['ssn'], $insertArray['email'] ? true : false);
-                    if ($existed != false && sizeof($existed) && !empty($v0['email']) && $v0['email'] != NULL) {
-                        $this->updateUser($existed,$v0);
-                        $existCount++; continue;
-                    }
-                    $emp_no = isset($v0['employee_number']) && !empty($v0['employee_number']) && $v0['employee_number'] != NULL ? $v0['employee_number'] : '';
+                    $insertArray['email'] = isset($v0['email']) ? trim(strtolower($v0['email'])) : NULL;
+                    //
                     $ssn = isset($v0['ssn']) && !empty($v0['ssn']) && $v0['ssn'] != NULL ? $v0['ssn'] : '';
+                    $emp_no = isset($v0['employee_number']) && !empty($v0['employee_number']) && $v0['employee_number'] != NULL ? $v0['employee_number'] : '';
                     $phoneNumber = isset($v0['PhoneNumber']) && $v0['PhoneNumber'] != '' && $v0['PhoneNumber'] != null ? trim(preg_replace('/[^0-9+]/', '', $v0['PhoneNumber'])) : '';
-                    if((empty($v0['email']) || $v0['email'] == NULL) && (!empty($emp_no) || !empty($ssn) || !empty($phoneNumber))){
-                        $existed_other = $this->import_csv_model->CheckIfEmployeeExistsWithOthers($companyId, $emp_no, $ssn, $phoneNumber);
-                        if($existed_other){
-                            $existCount++; continue;
+                    //
+                    $checkByColumn = 'email';
+                    $checkByValue = $insertArray['email'];
+                    // Employee exists will be checked against 
+                    // email, ssn, employee number, and phone number
+                    if(empty($insertArray['email'])){
+                        //
+                        if(!empty($ssn)){
+                            //
+                            $checkByColumn = 'ssn';
+                            $checkByValue = $ssn;
+                        } else if(!empty($emp_no)){
+                            //
+                            $checkByColumn = 'employee_number';
+                            $checkByValue = $emp_no;
+                        } else if(!empty($phoneNumber)){
+                            //
+                            $checkByColumn = 'PhoneNumber';
+                            $checkByValue = $phoneNumber;
                         }
                     }
+                    // lets check if employee already exists
+                    $employeeArray = $this->import_csv_model->GetEmployee($companyId, $checkByColumn, $checkByValue);
+                    // In case of exist update the employee
+                    // only add the misisng information
+                    if (!empty($employeeArray)) {
+                        $this->updateUser($employeeArray,$v0);
+                        $existCount++; 
+                        continue;
+                    }
+                    // Set default access level
                     $insertArray['access_level'] = 'Employee';
                     // Check for access level columns
                     if(isset($v0['access_level']) && ($v0['access_level'] != '' || $v0['access_level'] != null)) {
@@ -370,11 +390,14 @@ class Import_csv extends Public_Controller {
                         }
                     }
                     // Check for job title
-                    if(isset($v0['job_title']) && ($v0['job_title'] != '' || $v0['job_title'] != null)) $insertArray['job_title'] = trim($v0['job_title']);
+                    if(isset($v0['job_title']) && ($v0['job_title'] != '' || $v0['job_title'] != null)) {
+                        $insertArray['job_title'] = trim($v0['job_title']);
+                    }
                     //
                     $insertArray['first_name'] = isset($v0['first_name']) ? trim(ucwords(strtolower($v0['first_name']))) : NULL;
                     //
                     $insertArray['timezone'] = $companyTZ;
+                    //
                     if(isset($v0['timezone'])){
                         $insertArray['timezone'] = preg_replace('/[^a-zA-Z]/', '', $v0['timezone']);
                         if($insertArray['timezone'] == '') $insertArray['timezone'] = $companyTZ;
@@ -434,12 +457,15 @@ class Import_csv extends Public_Controller {
                     $insertArray['CompanyName'] = $companyName;
                     $insertArray['video_type'] = 'no_video';
                     $insertArray['verification_key'] = random_key() . '_csvImport';
-                    $insertArray['registration_date'] = date("Y-m-d H:i:s", strtotime('now'));
-                    //New Fields Added By Adil
                     // Check joining date
                     if (isset($v0['joined_at']) && !empty($v0['joined_at']) && $v0['joined_at'] != NULL) {
-                        $insertArray['joined_at'] = date("Y-m-d H:i:s", strtotime($v0['joined_at']));
+                        $insertArray['joined_at'] = formatDateToDB($v0['joined_at']);
+                        $insertArray['registration_date'] = $insertArray['joined_at'] .' 00:00:00';
+                    } else{
+                        $insertArray['registration_date'] = date("Y-m-d H:i:s", strtotime('now'));
+                        $insertArray['joined_at'] = date("Y-m-d", strtotime('now'));
                     }
+                    //New Fields Added By Adil
                     // Check employee number
                     if (isset($v0['employee_number']) && !empty($v0['employee_number']) && $v0['employee_number'] != NULL) {
                         $insertArray['employee_number'] = trim($v0['employee_number']);
@@ -454,7 +480,7 @@ class Import_csv extends Public_Controller {
                     }
                     // Check dob
                     if (isset($v0['dob']) && !empty($v0['dob']) && $v0['dob'] != NULL) {
-                        $insertArray['dob'] = date("Y-m-d H:i:s", strtotime($v0['dob']));
+                        $insertArray['dob'] = formatDateToDB($v0['dob']);
                     }
                     // Check shift hours
                     if (isset($v0['user_shift_hours']) && !empty($v0['user_shift_hours']) && $v0['user_shift_hours'] != NULL) {
@@ -472,7 +498,6 @@ class Import_csv extends Public_Controller {
                             $insertArray['team_sid'] = $depTeamSids[0]['sid'];
                         }
                     }
-
                     //For Extra Info
                     if(!empty($pre_emp['extra_info']) && $pre_emp['extra_info'] != NULL){ // Exists In DB
                         $extra_info = unserialize($pre_emp['extra_info']);
@@ -514,9 +539,54 @@ class Import_csv extends Public_Controller {
                         $extra_info = serialize($extra_info);
                         $insertArray['extra_info'] = $extra_info;
                     }
+                    // Manage status
+                    if(isset($v0['status']) && !empty($v0['status']) && preg_match('/active/i', $v0['status'])){
+                        $insertArray['active'] = 1;
+                        $insertArray['general_status'] = 'active';
+                    }
+                    // Manage gender
+                    if(isset($v0['gender']) && !empty($v0['gender'])){
+                        $insertArray['gender'] = strtolower($v0['gender']);
+                    }
+                    // Manage position
+                    if(isset($v0['position']) && !empty($v0['position'])){
+                        $insertArray['position'] = trim($v0['position']);
+                    }
+                    // Manage employment type
+                    if(isset($v0['employment_type']) && !empty($v0['employment_type'])){
+                        $insertArray['employee_status'] = preg_match('/full/i', $v0['employment_type']) ? 'fulltime' : 'parttime';
+                    }
                     //New Fields End
                     // Insert employee
                     $employeeId = $this->import_csv_model->InsertNewUser($insertArray);
+                    //
+                    // Manage employee status
+                    if(isset($v0['status']) && !empty($v0['status']) && preg_match('/terminat|rehire/i', $v0['status'])){
+                        //
+                        $statusArray = [];
+                        $statusArray['employee_status'] = 2;
+                        $statusArray['termination_date'] = '';
+                        $statusArray['status_change_date'] = '';
+                        $statusArray['employee_sid '] = $employeeId;
+                        $statusArray['changed_by'] = $employerId;
+                        $statusArray['ip_address'] = getUserIP();
+                        $statusArray['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                        $statusArray['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                        //
+                        if(preg_match('/terminat/i', $v0['status'])){
+                            $statusArray['employee_status'] = 1;
+                            $statusArray['details'] = isset($v0['termination_reason']) ? $v0['termination_reason'] : '';
+                            $statusArray['status_change_date'] = $statusArray['termination_date'] = isset($v0['termination_date']) && !empty($v0['termination_date']) ? formatDateToDB($v0['termination_date']) : NULL;
+                        }
+                        //
+                        if(preg_match('/rehire/i', $v0['status'])){
+                            $statusArray['employee_status'] = 8;
+                            $statusArray['details'] = isset($v0['rehire_reason']) ? $v0['rehire_reason'] : '';
+                            $statusArray['status_change_date'] = $statusArray['termination_date'] = isset($v0['rehire_date']) && !empty($v0['rehire_date']) ? formatDateToDB($v0['rehire_date']) : NULL;
+                        }
+                        //
+                        $this->import_csv_model->AddEmployeeStatus($statusArray);
+                    }
                     //
                     $insertCount++;
                 }
@@ -548,23 +618,22 @@ class Import_csv extends Public_Controller {
             }
         }
         // Check for job title
-        if(isset($v0['job_title']) && $v0['job_title'] != '' && $v0['job_title'] != null) $insertArray['job_title'] = trim($v0['job_title']);
+        if(empty($pre_emp['job_title']) && isset($v0['job_title']) && $v0['job_title'] != '' && $v0['job_title'] != null) $insertArray['job_title'] = trim($v0['job_title']);
         //
-        if(isset($v0['first_name']) && $v0['first_name'] != '' && $v0['first_name'] != null) $insertArray['first_name'] = trim(ucwords(strtolower($v0['first_name'])));
+        if(empty($pre_emp['first_name']) && isset($v0['first_name']) && $v0['first_name'] != '' && $v0['first_name'] != null) $insertArray['first_name'] = trim(ucwords(strtolower($v0['first_name'])));
         //
-        if(isset($v0['timezone']) && $v0['timezone'] != '' && $v0['timezone'] != null){
+        if(empty($pre_emp['timezone']) && isset($v0['timezone']) && $v0['timezone'] != '' && $v0['timezone'] != null){
             $insertArray['timezone'] = preg_replace('/[^a-zA-Z]/', '', $v0['timezone']);
             $insertArray['timezone'] = strtoupper($insertArray['timezone']);
         }
         //
-        if(isset($v0['last_name']) && $v0['last_name'] != '' && $v0['last_name'] != null) $insertArray['last_name'] = trim(ucwords(strtolower($v0['last_name'])));
-        if(isset($v0['PhoneNumber']) && $v0['PhoneNumber'] != '' && $v0['PhoneNumber'] != null) $insertArray['PhoneNumber'] = trim(preg_replace('/[^0-9+]/', '', $v0['PhoneNumber']));
-        if(isset($v0['Location_Address']) && $v0['Location_Address'] != '' && $v0['Location_Address'] != null) $insertArray['Location_Address'] = trim($v0['Location_Address']);
-        if(isset($v0['Location_City']) && $v0['Location_City'] != '' && $v0['Location_City'] != null) $insertArray['Location_City'] = trim($v0['Location_City']);
-        if(isset($v0['Location_ZipCode']) && $v0['Location_ZipCode'] != '' && $v0['Location_ZipCode'] != null) $insertArray['Location_ZipCode'] = trim($v0['Location_ZipCode']);
-
+        if(empty($pre_emp['last_name']) && isset($v0['last_name']) && $v0['last_name'] != '' && $v0['last_name'] != null) $insertArray['last_name'] = trim(ucwords(strtolower($v0['last_name'])));
+        if(empty($pre_emp['PhoneNumber']) && isset($v0['PhoneNumber']) && $v0['PhoneNumber'] != '' && $v0['PhoneNumber'] != null) $insertArray['PhoneNumber'] = trim(preg_replace('/[^0-9+]/', '', $v0['PhoneNumber']));
+        if(empty($pre_emp['Location_Address']) && isset($v0['Location_Address']) && $v0['Location_Address'] != '' && $v0['Location_Address'] != null) $insertArray['Location_Address'] = trim($v0['Location_Address']);
+        if(empty($pre_emp['Location_City']) && isset($v0['Location_City']) && $v0['Location_City'] != '' && $v0['Location_City'] != null) $insertArray['Location_City'] = trim($v0['Location_City']);
+        if(empty($pre_emp['Location_ZipCode']) && isset($v0['Location_ZipCode']) && $v0['Location_ZipCode'] != '' && $v0['Location_ZipCode'] != null) $insertArray['Location_ZipCode'] = trim($v0['Location_ZipCode']);
         // Check for state
-        if (isset($v0['Location_State']) && $v0['Location_State'] != null && $v0['Location_State'] != '') {
+        if (empty($pre_emp['Location_State']) && isset($v0['Location_State']) && $v0['Location_State'] != null && $v0['Location_State'] != '') {
             $stateInfo = $this->import_csv_model->get_state_and_country_id(trim($v0['Location_State']));
             //
             if(sizeof($stateInfo)) {
@@ -573,65 +642,65 @@ class Import_csv extends Public_Controller {
             }
         }
         // Check for country
-        if (isset($v0['Location_Country']) && $v0['Location_Country'] != null && $v0['Location_Country'] != '') {
+        if (empty($pre_emp['Location_Country']) && isset($v0['Location_Country']) && $v0['Location_Country'] != null && $v0['Location_Country'] != '') {
             if(strtolower(trim($v0['Location_Country'])) == 'united states') $insertArray['Location_Country'] = 227;
             else if(strtolower(trim($v0['Location_Country'])) == 'canada') $insertArray['Location_Country'] = 38;
         }
         // Check profile image
-        if (isset($v0['profile_picture']) && !empty($v0['profile_picture']) && $v0['profile_picture'] != NULL) {
+        if (empty($pre_emp['profile_picture']) && isset($v0['profile_picture']) && !empty($v0['profile_picture']) && $v0['profile_picture'] != NULL) {
             $pp = $this->import_csv_model->verify_url_data(trim($v0['profile_picture']));
             if($pp != NULL){
                 $insertArray['profile_picture'] = $pp;
             }
         }
         // Check resume
-        if (isset($v0['resume']) && !empty($v0['resume']) && $v0['resume'] != NULL) {
+        if (empty($pre_emp['resume']) && isset($v0['resume']) && !empty($v0['resume']) && $v0['resume'] != NULL) {
             $resume = $this->import_csv_model->verify_url_data(trim($v0['resume']));
             if($resume != NULL){
                 $insertArray['resume'] = $resume;
             }
         }
         // Check cover letter
-        if (isset($v0['cover_letter']) && !empty($v0['cover_letter']) && $v0['cover_letter'] != NULL) {
+        if (empty($pre_emp['cover_letter']) && isset($v0['cover_letter']) && !empty($v0['cover_letter']) && $v0['cover_letter'] != NULL) {
             $cl = $this->import_csv_model->verify_url_data($v0['cover_letter']);
             if($cl != NULL){
                 $insertArray['cover_letter'] = $cl;
             }
         }
         // LinkedIn profile URL
-        if (isset($v0['linkedin_profile_url']) && !empty($v0['linkedin_profile_url']) && $v0['linkedin_profile_url'] != NULL) {
+        if (empty($pre_emp['linkedin_profile_url']) && isset($v0['linkedin_profile_url']) && !empty($v0['linkedin_profile_url']) && $v0['linkedin_profile_url'] != NULL) {
             $insertArray['linkedin_profile_url'] = trim($v0['linkedin_profile_url']);
         }
         // Check joining date
-        if (isset($v0['joined_at']) && !empty($v0['joined_at']) && $v0['joined_at'] != NULL) {
+        if (empty($pre_emp['joined_at']) && isset($v0['joined_at']) && !empty($v0['joined_at']) && $v0['joined_at'] != NULL) {
             $insertArray['joined_at'] = date("Y-m-d H:i:s", strtotime($v0['joined_at']));
         }
         // Check employee number
-        if (isset($v0['employee_number']) && !empty($v0['employee_number']) && $v0['employee_number'] != NULL) {
+        if (empty($pre_emp['employee_number']) && isset($v0['employee_number']) && !empty($v0['employee_number']) && $v0['employee_number'] != NULL) {
             $insertArray['employee_number'] = trim($v0['employee_number']);
         }
         // Check ssn
-        if (isset($v0['ssn']) && !empty($v0['ssn']) && $v0['ssn'] != NULL) {
+        if (empty($pre_emp['ssn']) && isset($v0['ssn']) && !empty($v0['ssn']) && $v0['ssn'] != NULL) {
             $insertArray['ssn'] = trim($v0['ssn']);
         }
         // Check notified_by
-        if (isset($v0['notified_by']) && !empty(trim($v0['notified_by'])) && $v0['notified_by'] != NULL) {
+        if (empty($pre_emp['notified_by']) && isset($v0['notified_by']) && !empty(trim($v0['notified_by'])) && $v0['notified_by'] != NULL) {
             $insertArray['notified_by'] = trim($v0['notified_by']);
         }
         // Check dob
-        if (isset($v0['dob']) && !empty($v0['dob']) && $v0['dob'] != NULL) {
+        if (empty($pre_emp['dob']) && isset($v0['dob']) && !empty($v0['dob']) && $v0['dob'] != NULL) {
             $insertArray['dob'] = date("Y-m-d H:i:s", strtotime($v0['dob']));
         }
         // Check shift hours
-        if (isset($v0['user_shift_hours']) && !empty($v0['user_shift_hours']) && $v0['user_shift_hours'] != NULL) {
+        if (empty($pre_emp['user_shift_hours']) && isset($v0['user_shift_hours']) && !empty($v0['user_shift_hours']) && $v0['user_shift_hours'] != NULL) {
             $insertArray['user_shift_hours'] = trim($v0['user_shift_hours']);
         }
         // Check shift minutes
-        if (isset($v0['user_shift_minutes']) && !empty($v0['user_shift_minutes']) && $v0['user_shift_minutes'] != NULL) {
+        if (empty($pre_emp['user_shift_minutes']) && isset($v0['user_shift_minutes']) && !empty($v0['user_shift_minutes']) && $v0['user_shift_minutes'] != NULL) {
             $insertArray['user_shift_minutes'] = trim($v0['user_shift_minutes']);
         }
         //Fetch and assign Department and Team ids
-        if (isset($v0['team']) && !empty($v0['team']) && $v0['team'] != NULL) {
+        if (empty($pre_emp['team']) && isset($v0['team']) && !empty($v0['team']) && $v0['team'] != NULL) {
             $depTeamSids = $this->import_csv_model->getDepartmentTeamIds($v0['team']);
             if(sizeof($depTeamSids)){
                 $insertArray['department_sid'] = $depTeamSids[0]['department_sid'];
@@ -642,19 +711,19 @@ class Import_csv extends Public_Controller {
         //For Extra Info
         if(!empty($pre_emp['extra_info']) && $pre_emp['extra_info'] != NULL){ // Exists In DB
             $extra_info = unserialize($pre_emp['extra_info']);
-            if (isset($v0['secondary_email']) && !empty(trim($v0['secondary_email'])) && $v0['secondary_email'] != NULL) {
+            if (empty($pre_emp['secondary_email']) && isset($v0['secondary_email']) && !empty(trim($v0['secondary_email'])) && $v0['secondary_email'] != NULL) {
                 $extra_info['secondary_email'] = $v0['secondary_email'];
             }
-            if (isset($v0['other_email']) && !empty(trim($v0['other_email'])) && $v0['other_email'] != NULL) {
+            if (empty($pre_emp['other_email']) && isset($v0['other_email']) && !empty(trim($v0['other_email'])) && $v0['other_email'] != NULL) {
                 $extra_info['other_email'] = $v0['other_email'];
             }
-            if (isset($v0['secondary_PhoneNumber']) && !empty(trim($v0['secondary_PhoneNumber'])) && $v0['secondary_PhoneNumber'] != NULL) {
+            if (empty($pre_emp['secondary_PhoneNumber']) && isset($v0['secondary_PhoneNumber']) && !empty(trim($v0['secondary_PhoneNumber'])) && $v0['secondary_PhoneNumber'] != NULL) {
                 $extra_info['secondary_PhoneNumber'] = $v0['secondary_PhoneNumber'];
             }
-            if (isset($v0['other_PhoneNumber']) && !empty(trim($v0['other_PhoneNumber'])) && $v0['other_PhoneNumber'] != NULL) {
+            if (empty($pre_emp['other_PhoneNumber']) && isset($v0['other_PhoneNumber']) && !empty(trim($v0['other_PhoneNumber'])) && $v0['other_PhoneNumber'] != NULL) {
                 $extra_info['other_PhoneNumber'] = $v0['other_PhoneNumber'];
             }
-            if (isset($v0['office_location']) && !empty(trim($v0['office_location'])) && $v0['office_location'] != NULL) {
+            if (empty($pre_emp['office_location']) && isset($v0['office_location']) && !empty(trim($v0['office_location'])) && $v0['office_location'] != NULL) {
                 $extra_info['office_location'] = $v0['office_location'];
             }
             $extra_info = serialize($extra_info);
@@ -662,27 +731,43 @@ class Import_csv extends Public_Controller {
 
         }else{ // Not stored in DB, Update with new entries
             $extra_info = array();
-            if (isset($v0['secondary_email']) && !empty(trim($v0['secondary_email'])) && $v0['secondary_email'] != NULL) {
+            if (empty($pre_emp['secondary_email']) && isset($v0['secondary_email']) && !empty(trim($v0['secondary_email'])) && $v0['secondary_email'] != NULL) {
                 $extra_info['secondary_email'] = $v0['secondary_email'];
             }
-            if (isset($v0['other_email']) && !empty(trim($v0['other_email'])) && $v0['other_email'] != NULL) {
+            if (empty($pre_emp['other_email']) && isset($v0['other_email']) && !empty(trim($v0['other_email'])) && $v0['other_email'] != NULL) {
                 $extra_info['other_email'] = $v0['other_email'];
             }
-            if (isset($v0['secondary_PhoneNumber']) && !empty(trim($v0['secondary_PhoneNumber'])) && $v0['secondary_PhoneNumber'] != NULL) {
+            if (empty($pre_emp['secondary_PhoneNumber']) && isset($v0['secondary_PhoneNumber']) && !empty(trim($v0['secondary_PhoneNumber'])) && $v0['secondary_PhoneNumber'] != NULL) {
                 $extra_info['secondary_PhoneNumber'] = $v0['secondary_PhoneNumber'];
             }
-            if (isset($v0['other_PhoneNumber']) && !empty(trim($v0['other_PhoneNumber'])) && $v0['other_PhoneNumber'] != NULL) {
+            if (empty($pre_emp['other_PhoneNumber']) && isset($v0['other_PhoneNumber']) && !empty(trim($v0['other_PhoneNumber'])) && $v0['other_PhoneNumber'] != NULL) {
                 $extra_info['other_PhoneNumber'] = $v0['other_PhoneNumber'];
             }
-            if (isset($v0['office_location']) && !empty(trim($v0['office_location'])) && $v0['office_location'] != NULL) {
+            if (empty($pre_emp['office_location']) && isset($v0['office_location']) && !empty(trim($v0['office_location'])) && $v0['office_location'] != NULL) {
                 $extra_info['office_location'] = $v0['office_location'];
             }
-            if(sizeof($extra_info) > 0){
+            if(sizeof($extra_info)){
                 $extra_info = serialize($extra_info);
                 $insertArray['extra_info'] = $extra_info;
             }
         }
-
+        // Manage status
+        if(empty($pre_emp['status']) && isset($v0['status']) && !empty($v0['status']) && preg_match('/active/i', $v0['status'])){
+            $insertArray['active'] = 1;
+            $insertArray['general_status'] = 'active';
+        }
+        // Manage gender
+        if(empty($pre_emp['gender']) && isset($v0['gender']) && !empty($v0['gender'])){
+            $insertArray['gender'] = strtolower($v0['gender']);
+        }
+        // Manage position
+        if(empty($pre_emp['position']) && isset($v0['position']) && !empty($v0['position'])){
+            $insertArray['position'] = trim($v0['position']);
+        }
+        // Manage employment type
+        if(empty($pre_emp['employee_status']) && isset($v0['employment_type']) && !empty($v0['employment_type'])){
+            $insertArray['employee_status'] = preg_match('/full/i', $v0['employment_type']) ? 'fulltime' : 'parttime';
+        }
         // Update employee
         $this->import_csv_model->UpdateNewUser($pre_emp['sid'], $insertArray);
 

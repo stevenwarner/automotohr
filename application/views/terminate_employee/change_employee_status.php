@@ -32,6 +32,7 @@
                                                     <option value="7">Leave</option>
                                                     <option value="4">Suspended</option>
                                                     <option value="2">Retired</option>
+                                                    <option value="8">Rehired</option>
                                                     <option value="3">Deceased</option>
                                                     <option value="1">Terminated</option>
                                                     <option value="6">Inactive</option>

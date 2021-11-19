@@ -315,4 +315,20 @@ class Import_csv_model extends CI_Model {
         $depTeam = $this->db->get('departments_team_management')->result_array();
         return $depTeam;
     }
+
+    /**
+     * Check if an employee already exists
+     */
+    function GetEmployee($companyId, $column, $value) {
+        return $this->db
+        ->where($column, $value)
+        ->where('parent_sid', $companyId)
+        ->get('users')->row_array();
+    }
+
+    //
+    function AddEmployeeStatus($insertArray){
+        $this->db->insert('terminated_employees', $insertArray);
+        return $this->db->insert_id();
+    }
 }

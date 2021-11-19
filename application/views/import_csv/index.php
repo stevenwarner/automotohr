@@ -1,3 +1,52 @@
+<?php 
+    $importColumnsArray = [];
+    $importColumnsArray[] = 'First Name';
+    $importColumnsArray[] = 'Middle Initial';
+    $importColumnsArray[] = 'Last Name';
+    $importColumnsArray[] = 'Email';
+    $importColumnsArray[] = 'Contact Number';
+    $importColumnsArray[] = 'Street Address';
+    $importColumnsArray[] = 'City';
+    $importColumnsArray[] = 'Zipcode';
+    $importColumnsArray[] = 'State';
+    $importColumnsArray[] = 'Country';
+    $importColumnsArray[] = 'Gender';
+    $importColumnsArray[] = 'Date Of Birth';
+    $importColumnsArray[] = 'Social Secruity Number';
+    $importColumnsArray[] = 'Employee Number';
+    $importColumnsArray[] = 'Profile Picture URL';
+    $importColumnsArray[] = 'Access Level';
+    $importColumnsArray[] = 'Job Title';
+    $importColumnsArray[] = 'Timezone';
+    $importColumnsArray[] = 'Resume URL';
+    $importColumnsArray[] = 'Cover Letter URL';
+    $importColumnsArray[] = 'Secondary Email';
+    $importColumnsArray[] = 'Secondary Phone Number';
+    $importColumnsArray[] = 'Other Email';
+    $importColumnsArray[] = 'Other Phone Number';
+    $importColumnsArray[] = 'Office Location';
+    $importColumnsArray[] = 'Linkdin URL';
+    $importColumnsArray[] = 'Department';
+    $importColumnsArray[] = 'Team';
+    $importColumnsArray[] = 'Joining Date';
+    $importColumnsArray[] = 'Shift Hours';
+    $importColumnsArray[] = 'Shift Minutes';
+    $importColumnsArray[] = 'Notified By';
+    $importColumnsArray[] = 'Status';
+    $importColumnsArray[] = 'Position';
+    $importColumnsArray[] = 'Employment Type';
+    $importColumnsArray[] = 'Rehire Date';
+    $importColumnsArray[] = 'Rehire Reason';
+    $importColumnsArray[] = 'Termination Date';
+    $importColumnsArray[] = 'Termination Reason';
+    //
+    $importValueArray = '';
+    $importValueArray .= 'Jason, K, Snow, email@abc.com, +1234567892, 123 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2222, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, 03/08/2019, Rehired reason goes here, , ,<br/>';
+    $importValueArray .= 'Albert, J, King, email@abc.com, +1234567892, 133 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2223, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, , , , ,<br/>';
+    $importValueArray .= 'Jason, K, Snow, email@abc.com, +1234567892, 123 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2222, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, 03/08/2019, Rehired reason goes here, , ,<br/>';
+    $importValueArray .= 'Nathan, , Quite, email@abc.com, +1234567892, 133 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2223, 12365478, https://yourwebsite.com/images/profile_picture.png, Employee, Technician, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, , , , ,<br/>';
+    $importValueArray .= 'Jack, , Brown, email@abc.com, +1234567892, 133 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2223, 12365478, https://yourwebsite.com/images/profile_picture.png, Employee, Technician, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Terminated, Part-time, , , 05/09/2020, Termination reason goes here.<br/>';
+?>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -17,12 +66,8 @@
                                     <h4>The Provided CSV File must be in Following Format</h4>
                                 </div>
                                 <div class="panel-body"><pre>
-<b>First Name, Last Name, E-Mail, Contact Number, Street Address, City, Zipcode, State, Country, Profile Picture URL, Access Level, Job Title, Resume URL, Cover Letter URL, Timezone,Secondary Email, Secondary Phonenumber, Other Email, Other Phone Number, Office Location, LinkedIn URL, Employee Number, Social Security Number, Date of Birth, Department, Team, Joining Date, Shift Hours, Shift Minutes, Notified By</b><br>
-Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, PST, second@email.com,12345678,other@mail.com,12345678,Location,https://yourwebsite.com/linkedIn,Emp007,ssn123,9/25/1994,My Department, My Team,3/7/2016,8,0,email
-Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Manager, Manager Sales, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, PST, second@email.com,12345678,other@mail.com,12345678,Location,https://yourwebsite.com/linkedIn,Emp007,ssn123,9/25/1994,My Department, My Team,3/7/2016,8,0,email
-Nathan, Quite, nathan@example.com, +1823212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Hiring Manager, Technical Manager, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, PST, second@email.com,12345678,other@mail.com,12345678,Location,https://yourwebsite.com/linkedIn,Emp007,ssn123,9/25/1994,My Department, My Team,3/7/2016,8,0,email
-Allen, Knight, allen@example.com, +1223312129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Employee, Office Assistant, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, PST, second@email.com,12345678,other@mail.com,12345678,Location,https://yourwebsite.com/linkedIn,Emp007,ssn123,9/25/1994,My Department, My Team,3/7/2016,8,0,email
-Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Employee, Team Lead, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, PST, second@email.com,12345678,other@mail.com,12345678,Location,https://yourwebsite.com/linkedIn,Emp007,ssn123,9/25/1994,My Department, My Team,3/7/2016,8,0,email
+<strong><?=implode(', ', $importColumnsArray);?></strong><br>
+<?=$importValueArray;?>
                                 </pre></div>
                             </div>
                         </div>
@@ -54,7 +99,7 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
 <div id="my_loader" class="text-center js-loader">
     <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
         <div class="loader-icon-box">
-            <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
+            <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;" aria-hidden="true"></i>
             <div class="loader-text js-loader-text" style="display:block; margin-top: 35px;">Please wait while we generate a preview...
         </div>
     </div>
@@ -128,6 +173,15 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
         minutesTitles = <?=json_encode(array('shiftminutes','minutes'));?>,
         notifyTitles = <?=json_encode(array('notify','notifyby','notifiedby'));?>,
         profilePictureTitles = <?=json_encode(array('profile', 'profilepicture', 'profilepictureurl'));?>;
+        genderTitles = <?=json_encode(array('gender', 'sex'));?>;
+        statusTitles = <?=json_encode(array('status', 'employeestatus'));?>;
+        positionTitles = <?=json_encode(array('position'));?>;
+        rehireDateTitles = <?=json_encode(array('rehiredate', 'rehireddate'));?>;
+        rehireReasonTitles = <?=json_encode(array('rehirereason', 'rehiredreason'));?>;
+        terminationDateTitles = <?=json_encode(array('terminationdate', 'terminateddate'));?>;
+        terminationReasonTitles = <?=json_encode(array('terminationreason', 'terminatedreason'));?>;
+        employmentTitles = <?=json_encode(array('employmenttype', 'employment', 'employmentstatus'));?>;
+        middlenameTitles = <?=json_encode(array('middlename', 'middleinitial', 'middlenameinitial'));?>;
 
         loader('hide');
         // 
@@ -179,7 +233,6 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             //Check if is it right format
             var format_index = fileData[0].toLowerCase().replace(/[^a-z]/g, '').trim();
             if(!format_index.includes("firstname") && !format_index.includes("first-name") && !format_index.includes("fname") && !format_index.includes("first_name")){
-                console.log(format_index);
                 alertify.alert('Not a valid format');
                 return false;
             }
@@ -200,10 +253,20 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                 record = new Object(),
                 i = 0,
                 len = tmp.length;
+                record['extra2'] = [];
                 if(len > 2){
-                    for(i; i < len; i++) record[indexes[i]] = tmp[i];
-                    if(record.first_name != '' && record.first_name != null)
-                    records.push(record);
+                    //
+                    for(i; i < len; i++) {
+                        if(indexes[i] === undefined){
+                            record['extra2'].push(tmp[i]);
+                        } else{
+                            record[indexes[i]] = tmp[i].trim();
+                        }
+                    }
+                    //
+                    if(record.first_name != '' && record.first_name != null){
+                        records.push(record);
+                    }
                 }
             });
             //
@@ -220,98 +283,125 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             var i, len, array;
             // Reset start and length
             i = 0; len = officeTitles.length; array = officeTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'office_location';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'office_location';
             // Reset start and length
             i = 0; len = firstNameTitles.length; array = firstNameTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'first_name';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'first_name';
             // Reset start and length
             i = 0; len = lastNameTitles.length; array = lastNameTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'last_name';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'last_name';
             // Reset start and length
             i = 0; len = phoneNumberTitles.length; array = phoneNumberTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'PhoneNumber';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'PhoneNumber';
             // Reset start and length
             i = 0; len = emailAddressTitles.length; array = emailAddressTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'email';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'email';
             // Reset start and length
             i = 0; len = addressTitles.length; array = addressTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'Location_Address';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'Location_Address';
             // Reset start and length
             i = 0; len = countryTitles.length; array = countryTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'Location_Country';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'Location_Country';
             // Reset start and length
             i = 0; len = cityTitles.length; array = cityTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'Location_City';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'Location_City';
             // Reset start and length
             i = 0; len = stateTitles.length; array = stateTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'Location_State';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'Location_State';
             // Reset start and length
             i = 0; len = zipCodeTitles.length; array = zipCodeTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'Location_ZipCode';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'Location_ZipCode';
             // Reset start and length
             i = 0; len = jobTitles.length; array = jobTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'job_title';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'job_title';
             // Reset start and length
             i = 0; len = accessLevelTitles.length; array = accessLevelTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'access_level';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'access_level';
             // Reset start and length
             i = 0; len = profilePictureTitles.length; array = profilePictureTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'profile_picture';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'profile_picture';
             // Reset start and length
             i = 0; len = resumeTitles.length; array = resumeTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'resume';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'resume';
             // Reset start and length
             i = 0; len = coverLetterTitles.length; array = coverLetterTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'cover_letter';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'cover_letter';
             // Reset start and length
             i = 0; len = timezoneTitles.length; array = timezoneTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'timezone';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'timezone';
             // New flow
             // Reset start and length
             i = 0; len = secondaryemailaddressTitles.length; array = secondaryemailaddressTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'secondary_email';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'secondary_email';
             // Reset start and length
             i = 0; len = otheremailaddressTitles.length; array = otheremailaddressTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'other_email';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'other_email';
             // Reset start and length
             i = 0; len = secondaryphoneTitles.length; array = secondaryphoneTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'secondary_PhoneNumber';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'secondary_PhoneNumber';
             // Reset start and length
             i = 0; len = otherphoneTitles.length; array = otherphoneTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'other_PhoneNumber';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'other_PhoneNumber';
             // Reset start and length
             i = 0; len = officelocationTitles.length; array = officelocationTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'office_location';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'office_location';
             // Reset start and length
             i = 0; len = linkedinurlTitles.length; array = linkedinurlTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'linkedin_profile_url';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'linkedin_profile_url';
             // Reset start and length
             i = 0; len = employeenumberTitles.length; array = employeenumberTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'employee_number';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'employee_number';
             // Reset start and length
             i = 0; len = socialsecuritynumberTitles.length; array = socialsecuritynumberTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'ssn';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'ssn';
             // Reset start and length
             i = 0; len = dateofbirthTitles.length; array = dateofbirthTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'dob';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'dob';
             // Reset start and length
             i = 0; len = departmentTitles.length; array = departmentTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'department';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'department';
             // Reset start and length
             i = 0; len = teamTitles.length; array = teamTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'team';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'team';
             // Reset start and length
             i = 0; len = joiningdateTitles.length; array = joiningdateTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'joined_at';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'joined_at';
             // Reset start and length
             i = 0; len = hoursTitles.length; array = hoursTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'user_shift_hours';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'user_shift_hours';
             // Reset start and length
             i = 0; len = minutesTitles.length; array = minutesTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'user_shift_minutes';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'user_shift_minutes';
             // Reset start and length
             i = 0; len = notifyTitles.length; array = notifyTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'notified_by';
+            for(i; i < len; i++) if(index == array[i].trim()) return 'notified_by';
+            // Reset start and length
+            i = 0; len = genderTitles.length; array = genderTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'gender';
+            // Reset start and length
+            i = 0; len = statusTitles.length; array = statusTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'status';
+            // Reset start and length
+            i = 0; len = positionTitles.length; array = positionTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'position';
+            // Reset start and length
+            i = 0; len = rehireDateTitles.length; array = rehireDateTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'rehire_date';
+            // Reset start and length
+            i = 0; len = rehireReasonTitles.length; array = rehireReasonTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'rehire_reason';
+            // Reset start and length
+            i = 0; len = terminationDateTitles.length; array = terminationDateTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'termination_date';
+            // Reset start and length
+            i = 0; len = terminationReasonTitles.length; array = terminationReasonTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'termination_reason';
+            // Reset start and length
+            i = 0; len = employmentTitles.length; array = employmentTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'employment_type';
+            // Reset start and length
+            i = 0; len = middlenameTitles.length; array = middlenameTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'middle_name';
             return -1;
         }
 
