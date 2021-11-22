@@ -3003,4 +3003,45 @@ class Companies extends Admin_Controller {
         echo json_encode($res);
         exit(0);
     }
+
+    public function manage_payroll ($company_sid) {
+        //
+        $this->load->helper('common_helper');
+        //
+        $redirect_url = 'manage_admin';
+        $function_name = 'manage_payroll';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $this->data['page_title'] = 'Company Payroll Module';
+        //
+        $this->load->model('Payroll_model', 'pm');
+        $this->data['company_info']=$this->pm->GetGustoCompanyData($company_sid);
+        $this->data['companyPayrollStatus']=$this->pm->GetCompanyPayrollStatus($company_sid);
+        //
+        $company_status = array();
+        $onboarding_link = "";
+        //
+        if (!empty($this->data['company_info']['access_token'])) {
+            //
+            $this->load->helper("payroll_helper");
+            //
+            $company_status = GetCompanyStatus($this->data['company_info']);
+            //
+            $flow_info = CreateCompanyFlowLink($this->data['company_info']);
+            //
+            $onboarding_link = $flow_info['url'];
+        }
+        // echo "<pre>";
+        // echo "zindabad";
+        // print_r(GetCompany($this->data['company_info']));
+        // print_r($company_status);
+        // die();
+        //
+        $this->data['company_status'] = $company_status;
+        $this->data['onboarding_link'] = $onboarding_link;
+        //
+        $this->render('payroll/manage_payroll');
+    }
 }

@@ -390,7 +390,8 @@ class logs extends Admin_Controller
             $this->company_model->update_user_status($sid,$data);
             print_r(json_encode($return_data));
     }
-     public function company_module($sid){
+    
+    public function company_module($sid){
         $this->load->helper('url');
         //
         $this->load->helper('common_helper');
@@ -416,8 +417,9 @@ class logs extends Admin_Controller
             $this->data['company_data']=$companies;
             $this->render('manage_admin/modules/company_module'); 
         }
-     }
-     public function notification_email_log ($email = 'all', $start_date = 'all', $end_date = 'all') {
+    }
+    
+    public function notification_email_log ($email = 'all', $start_date = 'all', $end_date = 'all') {
         $redirect_url = 'manage_admin';
         $function_name = 'notification_email_log';
         $admin_id = $this->ion_auth->user()->row()->id;

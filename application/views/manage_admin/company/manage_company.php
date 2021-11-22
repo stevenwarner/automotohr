@@ -329,7 +329,7 @@
                                                                                         </div>
                                                                                     </li>
                                                                         <?php   } ?>
-<!--                                                                        <li>
+                                                                        <!-- <li>
                                                                             <label>Per job Listing charge</label>
                                                                             <div class="text">De-Active</div>
                                                                         </li>
@@ -466,7 +466,7 @@
                                                     <header class="hr-box-header hr-box-footer"></header>
                                                 </article>
 
-<!--                                                <article class="information-box">
+                                                <!-- <article class="information-box">
                                                     <header class="hr-box-header">Career Site Powered By Logo</header>
                                                     <div class="table-outer">
                                                         <div class="info-row">
@@ -1267,8 +1267,11 @@
                                             <?php if(sizeof($dynamicModules)){
                                                 foreach ($dynamicModules as $k => $v) { ?>
                                                     <article class="col-sm-6 information-box">
-                                                        <header class="hr-box-header">
+                                                        <header class="hr-box-header">   
                                                             <?=$v['module_name'];?>
+                                                            <?php if ($v['module_name'] == "timeoff") { ?>
+                                                                <a href="<?php echo base_url('manage_admin/companies/manage_payroll/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                            <?php } ?> 
                                                         </header>
                                                         <div class="table-outer">
                                                             <div class="info-row">

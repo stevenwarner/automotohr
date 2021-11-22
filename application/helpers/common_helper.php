@@ -551,6 +551,24 @@ if (!function_exists('db_get_state_name_only')) {
     }
 }
 
+if (!function_exists('db_get_state_code_only')) {
+    function db_get_state_code_only($state_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('state_code');
+        $CI->db->where('sid', $state_sid);
+        $CI->db->from('states');
+        $data = $CI->db->get()->result_array();
+
+        if (!empty($data)) {
+            $data = $data[0];
+            return $data['state_code'];
+        } else {
+            return '';
+        }
+    }
+}
+
 if (!function_exists('db_get_country_name')) {
 
     function db_get_country_name($sid, $_this = false, $column = '*')
@@ -13878,7 +13896,7 @@ if(!function_exists('getAPIUrl')){
 
 if(!function_exists('getAPIKey')){
     function getAPIKey(){
-        return $_SESSION['API_TOKENS'];
+        return isset($_SESSION['API_TOKENS']) ? $_SESSION['API_TOKENS'] : 'testing123keyforAdmin';
     }
 }
 

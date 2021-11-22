@@ -1203,7 +1203,9 @@ nav.navigation ul li a {
 
 .csIPLoader div p {
     color: #333;
+    margin-top: 20px;
     text-align: center;
+    font-size: 18px;
 }
 
 .csIPLoader div p i {
@@ -2224,4 +2226,16 @@ ul.csSidebarUL li.active>ul li.active a {
     font-weight: 900;
     background-color: #fff;
     color: #444;
+}
+
+.jsLoaderContent {
+    position: absolute;
+    top: 50% !important;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.jsLoaderContent i {
+    font-size: 55px;
+    color: #fd7a2a;
 }

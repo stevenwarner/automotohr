@@ -77,7 +77,47 @@ $(function PayrollCompanyOnboard() {
      * Saves the ip address
      * @type {null|string}
      */
-     var IPADDRESS;
+    var IPADDRESS;
+
+    /**
+     * Saves referance of function
+     * @type {Array}
+     */
+    var payrollEvents = [AddNewCompany, AddCompanyAddress, AddCompanyTax, AddCompanyBankInfo, AddCompanyEmployees, FinishCompanyOnboarding];
+    var payrollEventsMessages = [
+        "Please wait while we are adding company into gusto.", 
+        "Please wait while we are adding company address.", 
+        "Please wait while we are adding company federal tax.", 
+        "Please wait while we are adding company Bank detail.", 
+        "Please wait while we are adding company Employee on gusto.", 
+        "Please wait we are adding employee one by one."
+    ];
+
+    /**
+     * Saves the Current employee;
+     * @type {null|string}
+     */
+    var CURRENTEMPLOYEE;
+
+    /**
+     * Saves the total selected employee;
+     * @type {null|string}
+     */
+    var SELECTEDEMPLOYEE;
+
+    /**
+     * Saves the Employees Name and Sids
+     * @type {null|Array}
+     */
+    var EMPLOYEELIST;
+
+    /**
+     * Saves referance of function
+     * @type {Null|int}
+     */
+    var CompanyLocationID = 0;
+
+    var selectedEmployees = [];
 
     /**
      * Triggers company onboard process
@@ -643,24 +683,333 @@ $(function PayrollCompanyOnboard() {
         }
         //
         ml(true, modalLoader);
+        $("#jsIPLoaderTextArea").text(payrollEventsMessages[0]);
+        //
+        payrollEvents[0]();
+
+    }
+
+    function AddNewCompany () {
         //
         xhr = $.ajax({
-                method: "post",
-                url: GetURL('get_payroll_page/company_address/' + companyId),
-                data: { employees: GetItem('PayrollEmployees' + companyId) || [] }
+            method: "post",
+            url: GetURL('get_payroll_page/company_address/' + companyId),
+            data: { employees: GetItem('PayrollEmployees' + companyId) || [] }
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            // 
+            if (resp.errors) {
+                // return alertify.alert('Error!', typeof resp.errors !== undefined ? resp.errors.join('<br/>') : resp.errors);
+            }
+
+            if (resp.status) {
+                API_URL = resp.Location_URL;
+                EMPLOYEELIST = resp.employees_list;
+                $("#jsIPLoaderTextArea").text(payrollEventsMessages[1]);
+                payrollEvents[1](resp.address_info);
+            } 
+        })
+        .error();
+    }
+
+    function AddCompanyAddress (address_info) {
+        //
+        var error_flag = 0;
+        //
+        var o = {};
+        o.Street1 = address_info.Location_Address;
+        o.Street2 = address_info.Location_Address_2;
+        o.Country = address_info.Location_Country;
+        o.City = address_info.Location_City;
+        o.State = address_info.Location_State;
+        o.Zipcode =  address_info.Location_ZipCode;
+        o.PhoneNumber = address_info.PhoneNumber;
+        o.MailingAddress =  0;
+        o.FillingAddress = 0;
+        o.CompanyId = companyId;
+        // Validation
+        if (!o.Street1) {
+            error_flag = 1;
+        }
+        if (!o.City) {
+            error_flag = 1;
+        }
+        if (!o.State) {
+            error_flag = 1;
+        }
+        if (!o.Zipcode) {
+            error_flag = 1;
+        }
+        if (!o.PhoneNumber) {
+            error_flag = 1;
+        }
+        if (o.PhoneNumber.length != 10) {
+            error_flag = 1;
+        }
+        //
+        if (error_flag == 1) {
+            payrollEvents[5]();
+        } else {
+            //
+            xhr = $.ajax({
+                method: "POST",
+                url: API_URL,
+                data: o
             })
             .done(function(resp) {
                 //
                 xhr = null;
-                //
-                ml(false, modalLoader);
                 // 
-                if (resp.errors) {
-                    return alertify.alert('Error!', typeof resp.errors !== undefined ? resp.errors.join('<br/>') : resp.errors);
+                if (!resp.status) {
+                    // return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response);
+                    payrollEvents[5]();
                 }
-                CompanyDetailPage();
+                
+                if (resp.status) {
+                    xhr = $.ajax({
+                        method: "GET",
+                        url: GetURL('get_payroll_page/gusto_company_location_id/' + companyId),
+                    })
+                    .done(function(locationresp) {
+                        //
+                        xhr = null;
+                        // 
+                        CompanyLocationID = locationresp.locationID;
+                        //
+                        $("#jsIPLoaderTextArea").text(payrollEventsMessages[4]);
+                        payrollEvents[4]();
+
+                    })
+                    .error(HandleError);    
+                }
+                //
             })
-            .error();
+            .error(HandleError);
+        }
+        
+    }
+
+    function AddCompanyTax () {
+        //
+        xhr = $.ajax({
+            method: "GET",
+            url: GetURL('get_payroll_page/company_fedral_tax_info/' + companyId),
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            API_KEY = resp.API_KEY;
+            API_URL = resp.TAX_URL;
+            //
+            if (!resp.taxInfo) {
+                $("#jsIPLoaderTextArea").text("Please wait while we are adding company Bank Info.");
+                payrollEvents[3]();
+            } else {
+                //
+                var error_flag = 0;
+                //
+                var o = {};
+                o.EIN = resp.taxInfo.ein_number;
+                o.LegalName = resp.taxInfo.legal_name;
+                o.TaxPayerType = resp.taxInfo.tax_payer_type;
+                o.FillingForm = resp.taxInfo.filling_form;
+                o.Scorp = resp.taxInfo.taxable_as_scorp;
+                o.CompanyId = companyId;
+                // Validation
+                
+                if (!o.TaxPayerType) {
+                    error_flag = 1;
+                }
+                if (!o.FillingForm) {
+                    error_flag = 1;
+                }
+                if (!o.LegalName) {
+                    error_flag = 1;
+                }
+                if (o.LegalName.length < 3) {
+                    error_flag = 1;
+                }
+                if (!o.EIN) {
+                    error_flag = 1;
+                }
+                if (o.EIN.length !== 9) {
+                    error_flag = 1;
+                }
+                //
+                if (error_flag == 1) {
+                    $("#jsIPLoaderTextArea").text("Please wait while we are adding company Bank Detail.");
+                    payrollEvents[3]();
+                } else {
+                    //
+                    xhr = $.ajax({
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "Key" : API_KEY },
+                        url: API_URL,
+                        data: JSON.stringify(o)
+                    })
+                    .done(function(resp) {
+                        //
+                        xhr = null;
+                        // 
+                        if (!resp.status) {
+                            return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response);
+                        } 
+                        
+                        $("#jsIPLoaderTextArea").text("Please wait while we are adding company Bank Detail.");
+                        payrollEvents[3]();
+                    })
+                    .error(HandleError);
+                }
+                //
+            }
+        })
+        .error(HandleError);
+    }
+
+    function AddCompanyBankInfo () {
+        //
+        console.log(CompanyLocationID)
+        //
+        xhr = $.ajax({
+            method: "GET",
+            url: GetURL('get_payroll_page/get_company_bank_info/' + companyId),
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            API_KEY = resp.API_KEY;
+            API_URL = resp.BANK_URL;
+            //
+            if (!resp.bankInfo) {
+                if (CompanyLocationID != 0) {
+                    $("#jsIPLoaderTextArea").text("Please wait while we are adding company Employee on gusto.");
+                    payrollEvents[4]();
+                } else {
+                    payrollEvents[5](); 
+                }
+            } else {
+                //
+                var error_flag = 0;
+                //
+                var o = {};
+                o.RoutingNumber = resp.bankInfo.routing_transaction_number;
+                o.AccountNumber = resp.bankInfo.account_number;
+                o.AccountType = resp.bankInfo.account_type;
+                o.CompanyId = companyId;
+                // Validation
+                
+                if (!o.RoutingNumber) {
+                    error_flag = 1;
+                }
+                if (o.RoutingNumber.length !== 9) {
+                    error_flag = 1;
+                }
+                if (!o.AccountNumber) {
+                    error_flag = 1;
+                }
+                if (o.AccountNumber.length !== 9) {
+                    error_flag = 1;
+                }
+                if (!o.AccountType) {
+                    error_flag = 1;
+                }
+                //
+                if (error_flag == 1) {
+                    if (CompanyLocationID != 0) {
+                        $("#jsIPLoaderTextArea").text("Please wait while we are adding company Employee on gusto.");
+                        payrollEvents[4]();
+                    } else {
+                        payrollEvents[5](); 
+                    }
+                } else {
+                    //
+                    xhr = $.ajax({
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "Key" : API_KEY },
+                        url: API_URL,
+                        data: JSON.stringify(o)
+                    })
+                    .done(function(resp) {
+                        //
+                        xhr = null;
+                        // 
+                        if (!resp.status) {
+                            // return alertify.alert('Error!', typeof resp.response === "object" ? resp.response.join('<br/>') : resp.response);
+                        } 
+                        
+                        if (CompanyLocationID != 0) {
+                            $("#jsIPLoaderTextArea").text("Please wait while we are adding company Employee on gusto.");
+                            payrollEvents[4]();
+                        } else {
+                            payrollEvents[5](); 
+                        }
+                    })
+                    .error(HandleError);
+                }
+                //
+            }
+        })
+        .error(HandleError);
+    }
+
+    function AddCompanyEmployees () {
+        $("#jsIPLoaderTextArea").text(payrollEventsMessages[5]);
+        //
+        var preSelected = GetItem('PayrollEmployees' + companyId);
+        //
+        console.log((preSelected.length)-1)
+        //
+        if (preSelected !== null && preSelected.length > 0) {
+            //
+            CURRENTEMPLOYEE = 0;
+            SELECTEDEMPLOYEE = preSelected.length;
+            //
+            moveEmployeeToGusto();
+            //
+            // for (var index in preSelected) {
+            //     //
+            //     $("#jsIPLoaderTextArea").text("Please wait we are adding employee with system Id."+ EMPLOYEELIST[preSelected[index]]);
+            //     //
+                   
+            // }
+        }
+    }
+
+    function moveEmployeeToGusto () {
+        // 
+        var preSelected = GetItem('PayrollEmployees' + companyId);
+        //
+        if (CURRENTEMPLOYEE > (SELECTEDEMPLOYEE-1)) {
+            payrollEvents[5]();
+        }
+        //
+        $("#jsIPLoaderTextArea").text("Please wait we are adding employee "+ EMPLOYEELIST[preSelected[CURRENTEMPLOYEE]]);
+        //
+        
+        //
+        xhr = $.ajax({
+            method: "POST",
+            url: GetURL('get_payroll_page/set_company_employee/' + companyId),
+            data: { employee_id: preSelected[CURRENTEMPLOYEE] }
+        })
+        .done(function(resp) {
+            
+            if (CURRENTEMPLOYEE < (SELECTEDEMPLOYEE-1)) {
+                CURRENTEMPLOYEE++;
+                moveEmployeeToGusto();
+            } else {
+                payrollEvents[5]();
+            }
+        }); 
+    }
+
+    function FinishCompanyOnboarding () {
+        $('#' + modalId).hide();
+        alertify.alert('Success!', 'Company added on gusto successfully.', function(){
+            location.reload();
+        });
     }
 
     /**
@@ -2826,6 +3175,171 @@ $(function PayrollCompanyOnboard() {
         companyId = company_sid;
         StartOnboardProcess();
     });
+
+    //
+
+    $('.jsGetEmployeesList').click(function(event){
+        //
+        var company_sid = $(this).data("company_sid");
+        //
+        companyId = company_sid;
+        //
+        Model({
+            Id: modalId,
+            Title: '<span class="' + modalId + 'Title"></span>',
+            Body: '<div id="' + modalId + 'Body"></div>',
+            Loader: modalLoader,
+            Container: 'container',
+            CancelClass: 'btn-cancel csW'
+        });
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL('get_payroll_page/get_company_all_employees/' + companyId),
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    $('.' + (modalId) + 'Title').html(resp.company_name);
+                    //  
+                    ml(false, modalLoader);
+                    //
+                    $('.jsAddEmployeeOnGusto').click(AddEmployeeOnGusto);
+                    $('.jsDeleteEmployeeFromGusto').click(DeleteEmployeeFromGusto);
+                });
+            })
+            .error();
+    });
+
+    function AddEmployeeOnGusto () {
+        var employee_sid = $(this).data("employee_id");
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "POST",
+            url: GetURL('get_payroll_page/set_company_employee/' + companyId),
+            data: { employee_id: employee_sid }
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            alertify.alert('Success!', 'Employee added on gusto successfully.', function(){
+                location.reload();
+            });
+        }); 
+    }
+
+    function DeleteEmployeeFromGusto () {
+        var employee_sid = $(this).data("employee_id");
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "POST",
+            url: GetURL('get_payroll_page/delete_employee_from_gusto/' + companyId),
+            data: { employee_id: employee_sid }
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            ml(false, modalLoader);
+            //
+            alertify.alert('Success!', 'Employee Deleted from gusto successfully.', function(){
+                location.reload();
+            });
+        })
+        .error();
+    }
+
+    $(document).on('click', '.jsSelectedEmployeesAction', function(event) {console.log("hello")
+        var action_type = $(this).data("action_type");
+
+        if (action_type == "delete") {
+            $('.jsDeleteEmployees:checkbox:checked').map(function(){
+                selectedEmployees.push($(this).val());
+            });
+        } else {
+            $('.jsAddEmployees:checkbox:checked').map(function(){
+                selectedEmployees.push($(this).val());
+            });
+        }
+
+        var SEL = [];
+        $('.jsSelectedEmployeesList:checkbox:checked').map(function(){
+            SEL.push($(this).val());
+        });
+        
+
+        if (selectedEmployees === undefined || selectedEmployees.length == 0) {
+            var message = ""
+            //
+            if (SEL.length == 0) {
+                message = "Please select an employees to add."
+                //
+                if (action_type == "delete") {
+                    message = "Please select an employees to delete."
+                }
+            } else {
+                message = "Employee(s) already add on gusto."
+                //
+                if (action_type == "delete") {
+                    message = "Employee(s) already not on gusto."
+                }
+            }
+            //
+            alertify.alert('Note!', message);
+        } else {
+            ml(true, modalLoader);
+            CURRENTEMPLOYEE = 0;
+            ActionOnEmployees(action_type);
+        }
+    });
+
+    function ActionOnEmployees (type) {
+
+        var employee_id = selectedEmployees[CURRENTEMPLOYEE];
+        //
+        var name = $("#emp_"+employee_id).data("employee_name");
+        var action_url = '';
+        var message = '';
+        //
+        if (type == "delete") {
+            $("#jsIPLoaderTextArea").text("Please wait we are deleting employee "+ name);
+            action_url = GetURL('get_payroll_page/delete_employee_from_gusto/' + companyId);
+            message = 'The employee(s) delete process completed.';
+        } else {
+            $("#jsIPLoaderTextArea").text("Please wait we are adding employee "+ name);
+            action_url = GetURL('get_payroll_page/set_company_employee/' + companyId);
+            message = 'The employee(s) adding process completed.';
+        }    
+        //
+        xhr = $.ajax({
+            method: "POST",
+            url: action_url,
+            data: { employee_id: employee_id }
+        })
+        .done(function(resp) {
+            
+            if (CURRENTEMPLOYEE < ((selectedEmployees.length)-1)) {
+                CURRENTEMPLOYEE++;
+                ActionOnEmployees(type);
+            } else {
+                ml(false, modalLoader);
+                $('#' + modalId).hide();
+                alertify.alert('Success!', message, function(){
+                    location.reload();
+                });
+            }
+        }); 
+    }
 
     //
     // StartOnboardProcess();

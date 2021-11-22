@@ -29,6 +29,8 @@ class Payroll_model extends CI_Model{
         $this->tables['BAD'] = 'bank_account_details'; 
         $this->tables['PCPP'] = 'payroll_company_pay_periods'; 
         $this->tables['PSI'] = 'payroll_signatory_information'; 
+        $this->tables['PSI'] = 'payroll_signatory_information'; 
+        $this->tables['CM'] = 'company_modules'; 
     }    
 
     /**
@@ -512,6 +514,41 @@ class Payroll_model extends CI_Model{
         ->result_array();
     }
 
+    /**
+     * Get company bank account info
+     * @param integer $companyId
+     * @return
+     */
+    function GetCompanyGustoLocationID($companyId){
+        //
+        return $this->db
+        ->select('
+            gusto_location_id
+        ')
+        ->where('company_sid', $companyId)
+        ->get($this->tables['PayrollCompanyLocations'])
+        ->row_array();
+    }
+
+    /**
+     * Get company bank account info
+     * @param integer $companyId
+     * @return
+     */
+    function GetCompanyBankAccountDetail($companyId){
+        //
+        return $this->db
+        ->select('
+            sid,
+            routing_transaction_number,
+            account_number,
+            account_type
+        ')
+        ->where('company_sid', $companyId)
+        ->get($this->tables['BAD'])
+        ->row_array();
+    }
+
      /**
      * Get company bank account info
      * @param integer $companyId
@@ -772,5 +809,67 @@ class Payroll_model extends CI_Model{
         $query = $query->free_result();
         //
         return $taxInfo;
+    }
+
+    //
+    function GetGustoCompanyData($sid){
+        //
+        $query = 
+        $this->db
+        ->select("
+            {$this->tables['U']}.sid,
+            {$this->tables['U']}.CompanyName,
+            {$this->tables['U']}.ssn,
+            {$this->tables['PC']}.gusto_company_uid,
+            {$this->tables['PC']}.access_token,
+            {$this->tables['PC']}.refresh_token,
+            {$this->tables['PC']}.old_access_token,
+            {$this->tables['PC']}.old_refresh_token,
+            {$this->tables['PC']}.is_active,
+            {$this->tables['PC']}.updated_at,
+            {$this->tables['PC']}.created_at
+        ")
+        ->from($this->tables['U'])
+        ->join("{$this->tables['PC']}", "{$this->tables['PC']}.company_sid = {$this->tables['U']}.sid", 'left')
+        ->where("{$this->tables['U']}.sid", $sid)
+        ->get();
+        //
+        $company_info = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $company_info;
+    }
+
+    //
+    function GetCompanyPayrollStatus($sid) {
+        $this->db->select('is_active');
+        $this->db->where('company_sid', $sid);
+        $this->db->where('module_sid', 7);
+        
+        $record_obj = $this->db->get($this->tables['CM']);
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        
+        if (!empty($record_arr)) {
+            return $record_arr['is_active'];
+        } else {
+            return 0;
+        }
+    }
+
+    //
+    function GetCompanyAddressInfo ($company_sid) {
+        $this->db->select('Location_Country, Location_State, Location_City, Location_Address, Location_Address_2, PhoneNumber, Location_ZipCode');
+        $this->db->where('sid', $company_sid);
+        
+        $record_obj = $this->db->get($this->tables['U']);
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
     }
 }

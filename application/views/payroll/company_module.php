@@ -51,7 +51,8 @@
                                                                             <?php echo $company['CompanyName']; ?>
                                                                         </td>
                                                                         <td>
-                                                                            <button 
+                                                                            <a href="<?php echo base_url('manage_admin/companies/manage_payroll/' . $company['sid'] ); ?>" class="btn btn-success">Manage</a>
+                                                                            <!-- <button 
                                                                                 data-status="<?php echo $company['is_active'] ?>" 
                                                                                 company_sid="<?php echo $company['sid'] ?>" 
                                                                                 class="btn js-dynamic-module-btn btn-<?php echo $company['is_active']==0 ? "success" : "danger" ?>"
@@ -75,7 +76,7 @@
                                                                                 <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company['sid'] ?>">
                                                                                     Add Gusto
                                                                                 </button>
-                                                                            <?php } ?>
+                                                                            <?php } ?> -->
                                                                         </td>
                                                                      </tr>
                                                                  <?php } ?>

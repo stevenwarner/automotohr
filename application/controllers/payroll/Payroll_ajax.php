@@ -134,7 +134,7 @@ class Payroll_ajax extends CI_Controller
             //
             $data['primaryAdmin'] = $this->pm->GetPrimaryAdmin($companyId);
         }
-        //
+        // ADD Compamy to Gusto Platform
         if($page === 'company-address'){
             //
             LoadModel('scm', $this);
@@ -160,7 +160,27 @@ class Payroll_ajax extends CI_Controller
             $request['company']['name'] = $companyDetails['CompanyName'];
             $request['company']['ein'] = $companyDetails['ein'];
             //
-            $response = CreatePartnerCompany($request);
+            // $response = CreatePartnerCompany($request); 
+            //
+            $employees_list = array();
+            //
+            if (isset($_POST["employees"]) && !empty($_POST["employees"])) {
+                foreach ($_POST["employees"] as $employeeId) {
+                    $employees_list[$employeeId] = getUserNameBySID($employeeId);
+                }
+            }
+            //
+            // ***test return start***
+            $addressInfo = $this->pm->GetCompanyAddressInfo($companyId);
+            //
+            return SendResponse(200, [
+                'status' => true,
+                'address_info' => $addressInfo, 
+                'employees_list' => $employees_list,
+                'Location_URL' => base_url("get_payroll_page/set_company_location")."/".$companyId
+                // 'Location_URL' => getAPIUrl("locations")
+            ]);
+            // ***test return end***
             //
             if(isset($response['errors'])){
                 //
@@ -169,9 +189,16 @@ class Payroll_ajax extends CI_Controller
                 foreach($response['errors'] as $error){
                     $errors[] = $error[0];
                 }
+                //
+                $addressInfo = $this->pm->GetCompanyAddressInfo($companyId);
                 // Error took place
-                return SendResponse(200, $errors);
-            } else{
+                return SendResponse(200, [
+                    'errors' => $errors,
+                    'address_info' => $addressInfo, 
+                    'employees_list' => $employees_list,
+                    'Location_URL' => base_url("get_payroll_page/set_company_location")."/".$companyId
+                ]);
+            } else {
                 // All okay to go
                 $date = date('Y-m-d H:i:s', strtotime('now'));
                 //
@@ -187,7 +214,15 @@ class Payroll_ajax extends CI_Controller
                 $this->pm->AddCompany($insertArray);
                 $this->pm->UpdateCompany($companyId, ['on_payroll' => 1]);
                 //
-                return SendResponse(200, true);
+                $addressInfo = $this->pm->GetCompanyAddressInfo($companyId);
+                //
+                return SendResponse(200, [
+                    'status' => true,
+                    'address_info' => $addressInfo, 
+                    'employees_list' => $employees_list,
+                    'Location_URL' => base_url("get_payroll_page/set_company_location")."/".$companyId
+                    // 'Location_URL' => getAPIUrl("locations")
+                ]);
             }
         }
         //
@@ -240,14 +275,20 @@ class Payroll_ajax extends CI_Controller
             // Let's onboard the company
             // Make request array
             $request = [];
-            $request['street_1'] = $post['street_1'];
-            $request['street_2'] = $post['street_2'];
-            $request['city'] = $post['city'];
-            $request['zip'] = $post['zip'];
-            $request['state'] = $post['state'];
-            $request['phone_number'] = $post['phone_number'];
-            $request['mailing_address'] = $post['mailing_address'] ? true: false;
-            $request['filing_address'] = $post['filing_address'] ? true: false;
+            $request['street_1'] = $post['Street1'];
+            $request['street_2'] = $post['Street2'];
+            $request['country'] = db_get_country_name($post['Country'])["country_code"];
+            $request['city'] = $post['City'];
+            $request['zip'] = $post['Zipcode'];
+            $request['state'] = db_get_state_code_only($post['State']);
+            $request['phone_number'] = $post['PhoneNumber'];
+            $request['mailing_address'] = $post['MailingAddress'] ? true: false;
+            $request['filing_address'] = $post['FillingAddress'] ? true: false;
+            //
+            // echo "<pre>";
+            // print_r($request);
+            // // test response
+            // return SendResponse(200, ["status" => true]);
             // Check location
             // $locationExists = 
             // TODO check and update data
@@ -256,7 +297,7 @@ class Payroll_ajax extends CI_Controller
             $response = [
                 'company_id' => '7756341741034032',
                 'version' => 'e70c632b227b2276612d4fed2d5bf71a',
-                'id' => '7757727717383309',
+                'id' => '7757727717540047',
                 'street_1' => '425 2nd street',
                 'street_2' => '',
                 'city' => 'San Francisco',
@@ -268,8 +309,6 @@ class Payroll_ajax extends CI_Controller
                 'filing_address' => false,
                 'mailing_address' => true
             ];
-            //
-            _e($response, true);
             //
             if(isset($response['errors'])){
                 //
@@ -283,14 +322,15 @@ class Payroll_ajax extends CI_Controller
                 $insertArray = [];
                 $insertArray['company_sid'] = $companyId;
                 $insertArray['gusto_location_id'] = $response['id'];
-                $insertArray['state'] = $post['state'];
-                $insertArray['city'] = $post['city'];
-                $insertArray['street_1'] = $post['street_1'];
-                $insertArray['street_2'] = $post['street_2'];
-                $insertArray['zip'] = $post['zip'];
-                $insertArray['phone_number'] = $post['phone_number'];
-                $insertArray['mailing_address'] = $post['mailing_address'];
-                $insertArray['filing_address'] = $post['filing_address'];
+                $insertArray['country'] = db_get_country_name($post['Country'])["country_code"];
+                $insertArray['state'] = db_get_state_code_only($post['State']);
+                $insertArray['city'] = $post['City'];
+                $insertArray['street_1'] = $post['Street1'];
+                $insertArray['street_2'] = $post['Street2'];
+                $insertArray['zip'] = $post['Zipcode'];
+                $insertArray['phone_number'] = $post['PhoneNumber'];
+                $insertArray['mailing_address'] = $post['MailingAddress'];
+                $insertArray['filing_address'] = $post['FillingAddress'];
                 $insertArray['last_updated_by'] = 0;
                 $insertArray['version'] = $response['version'];
                 $insertArray['created_at'] = $date;
@@ -298,12 +338,193 @@ class Payroll_ajax extends CI_Controller
                 //
                 $this->pm->AddCompanyLocation($insertArray);
                 //
-                return SendResponse(200, true);
+                return SendResponse(200, [
+                    'status' => true,
+                    'locationID' => $response['id']
+                ]);
             }
-
-            _e($details, true, true);
+        }
+        //
+        if($page === 'gusto-company-location-id'){
             //
-            $data['location'] = $this->pm->GetCompanyLocations($companyId);
+            $locationID = $this->pm->GetCompanyGustoLocationID($companyId);
+            //
+            return SendResponse(200,[
+                'status' => true,
+                'locationID' => $locationID["gusto_location_id"]
+            ]);
+        }
+        //
+        if($page === 'company-fedral-tax-info'){
+            //
+            $taxInfo = $this->pm->GetCompanyFedralTaxInfo($companyId);
+            //
+            return SendResponse(200,[
+                'status' => true,
+                'API_KEY' => getAPIKey(),
+                'TAX_URL' => getAPIUrl("tax"),
+                'taxInfo' => $taxInfo
+            ]);
+        }
+        //
+        if($page === 'get-company-bank-info'){
+            //
+            $bankInfo = $this->pm->GetCompanyBankAccountDetail($companyId);
+            //
+            return SendResponse(200,[
+                'API_KEY' => getAPIKey(),
+                'BANK_URL' => getAPIUrl("bank_account"),
+                'status' => true,
+                'bankinfo' => $bankInfo
+            ]);
+        }
+        //
+        if($page === 'set-company-employee'){
+            //
+            $data['employee_sid'] = $_POST["employee_id"];
+            //
+            $data['states'] = $this->pm->GetStates();
+            //
+            $employee_info = $this->em->GetEmployeeDetails($_POST["employee_id"], [
+                "users.sid",
+                "users.first_name",
+                "users.middle_name",
+                "users.last_name",
+                "users.registration_date",
+                "users.joined_at",
+                "users.ssn",
+                "users.dob",
+                "users.email",
+                "users.Location_Country",
+                "users.Location_State",
+                "users.Location_City",
+                "users.Location_Address",
+                "users.PhoneNumber",
+                "users.Location_ZipCode",
+                "users.Location_Address_2"
+            ]);
+            //
+            $request = [];
+            $request['first_name'] = $employee_info['first_name'];
+            $request['middle_initial'] = !empty($employee_info['middle_name']) ? substr($employee_info['middle_name'], 0, 1) : substr($employee_info['first_name'], 0, 1);
+            $request['last_name'] = $employee_info['last_name'];
+            $request['date_of_birth'] = $employee_info['dob'];
+            $request['email'] = $employee_info['email'];
+            $request['ssn'] = $employee_info['ssn'];
+            //
+            $error_flag = 0;
+            //
+            // Validation
+            if (empty($request['first_name'])) { 
+                $error_flag = 1;
+            }
+            if (empty($request['middle_initial'])) { 
+                $error_flag = 1;
+            }
+            if (empty($request['last_name'])) { 
+                $error_flag = 1;
+            }
+            if (empty($request['email'])) { 
+                $error_flag = 1;
+            }
+            if (empty($request['date_of_birth'])) { 
+                $error_flag = 1;
+            }
+            if (empty($request['ssn'])) {
+                $error_flag = 1;
+            }
+            if (!empty($request['ssn']) && strlen($request['ssn']) != 9) {
+                $error_flag = 1;
+            }
+            //
+            if ($error_flag == 1) {
+                //
+                return SendResponse(200,[
+                    'status' => false,
+                    'employee_info' => "Employee not add due to lack of info"
+                ]);
+            } else {
+                //
+                // Get company details
+                $company_details = $this->pm->GetPayrollCompany($companyId);
+                //
+                $response = AddEmployeeToCompany($request, $company_details);
+                //
+                return SendResponse(200,[
+                    'status' => true,
+                    'employee_info' => $response
+                ]);
+            }
+            
+        }
+        //
+        if($page === 'delete-employee-from-gusto'){
+            //
+            echo $_POST["employee_id"];
+            // Get company details
+            $company_details = $this->pm->GetPayrollCompany($companyId);
+            //
+            $response = DeleteCompanyEmployee($_POST["employee_id"], $company_details);
+            //
+            return SendResponse(200,[
+                'status' => true,
+                'employee_info' => $response
+            ]);
+        }
+        //
+        if($page === 'get-company-all-employees'){
+            $companyEmployees = $this->em->GetCompanyEmployees($companyId, [
+                "users.sid",
+                "users.email"
+
+            ]);
+            //
+            $page = "company-all-employees";
+            //
+            // Get company details
+            $company_details = $this->pm->GetPayrollCompany($companyId);
+            //
+            $payrollEmployees = GetCompanyEmployees($company_details);
+            //
+            $employees_onboard = array();
+            $payrollEmployeesList = array();
+            //
+            foreach ($payrollEmployees as $pekey =>$pe) {
+                $employees_onboard[$pe['email']] = $pe['id'];
+                $payrollEmployeesList[$pekey] = $pe['email'];
+            }
+            //
+            foreach ($companyEmployees as $cekey => $employee) {
+                $companyEmployees[$cekey]["name"] = getUserNameBySID($employee['sid']);
+                //
+                if (in_array(strtolower($employee['email']), $payrollEmployeesList)) {
+                    $companyEmployees[$cekey]["onboard"] = "yes";
+                    $companyEmployees[$cekey]["onboard_id"] = $employees_onboard[strtolower($employee['email'])];
+                } else {
+                    $companyEmployees[$cekey]["onboard"] = "no";
+                }
+            }
+            //
+            $data['companyEmployees'] = $companyEmployees;
+            //
+            $company_name = getCompanyNameBySid($companyId);
+            //
+            return SendResponse(200,[
+                "company_name" => $company_name,
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+            //
+        }
+        //
+        if($page === 'get-company-bonboarding-status'){
+            $details = $this->pm->GetPayrollCompany($companyId);
+            //
+            $company_status = GetCompanyStatus($details);
+            //
+            return SendResponse(200,[
+                'status' => true,
+                'company_status' => $company_status
+            ]);
         }
         //
         if($page === 'fedral-tax-detail'){
@@ -524,7 +745,7 @@ class Payroll_ajax extends CI_Controller
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
         }
-
+        //
         if ($page === "get-company-employee-compensation") {
             //
             $data['employee_sid'] = $_GET["employee_id"];

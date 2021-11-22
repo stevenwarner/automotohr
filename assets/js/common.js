@@ -246,7 +246,7 @@ function Model(options, cb) {
     html += '            </h3>';
     html += '        </div>';
     html += '        <div class="csModalBody">';
-    html += '            <div class="csIPLoader jsIPLoader" data-page="' + (options.Loader) + '"><i class="fa fa-circle-o-notch fa-spin"></i></div>';
+    html += '            <div class="csIPLoader jsIPLoader" data-page="' + (options.Loader) + '"><div class="jsLoaderContent"><i class="fa fa-circle-o-notch fa-spin"></i><p id="jsIPLoaderTextArea"></p></div></div>';
     html += options.Body;
     html += '        </div>';
     html += '        <div class="clearfix"></div>';
