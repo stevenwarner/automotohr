@@ -57,7 +57,7 @@
                                                 </li>
 
                                                 <li>
-                                                    <?php echo form_label('Alternative Email Address', 'alternative_email'); ?>
+                                                    <?php echo form_label('Secondary Email Address', 'alternative_email'); ?>
                                                     <div class="hr-fields-wrap">
 <?php                                                   echo form_input('alternative_email', set_value('alternative_email', $data['alternative_email']), 'class="hr-form-fileds"');
                                                         echo form_error('alternative_email'); ?>

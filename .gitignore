@@ -109,3 +109,9 @@ sitemaps
 # Sonarqube ignore
 .scannerwork
 .scannerwork/*
+
+#
+.well_known
+.manage_portal/well_known
+.manage_ams/well_known
+.manage_affiliate/well_known

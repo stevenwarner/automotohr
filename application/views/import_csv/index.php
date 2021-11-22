@@ -12,7 +12,7 @@
     $importColumnsArray[] = 'Country';
     $importColumnsArray[] = 'Gender';
     $importColumnsArray[] = 'Date Of Birth';
-    $importColumnsArray[] = 'Social Secruity Number';
+    $importColumnsArray[] = 'Social Security Number';
     $importColumnsArray[] = 'Employee Number';
     $importColumnsArray[] = 'Profile Picture URL';
     $importColumnsArray[] = 'Access Level';

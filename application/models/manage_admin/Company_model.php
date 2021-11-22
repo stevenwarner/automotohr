@@ -2187,4 +2187,14 @@ class Company_model extends CI_Model {
     function GetCompanyIndeedDetails($companyId){
         return $this->db->where('company_sid', $companyId)->get('company_indeed_details')->row_array();
     }
+
+
+    function GetEmployeeById($employeeId, $columns = '*'){
+        //
+        return $this->db
+        ->select($columns)
+        ->where('sid', $employeeId)
+        ->get('users')
+        ->row_array();
+    }
 }

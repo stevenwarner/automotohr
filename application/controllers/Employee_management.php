@@ -1240,15 +1240,12 @@ class Employee_management extends Public_Controller {
                 $this->form_validation->set_rules('access_level', 'Access Level', 'trim|xss_clean');
                 $this->form_validation->set_rules('break_hours', 'break_hours', 'trim|xss_clean|min_length[1]|max_length[24]');
                 $this->form_validation->set_rules('break_mins', 'break_mins', 'trim|xss_clean|min_length[1]|max_length[59]');
-                //$this->form_validation->set_rules('CompanyDescription', 'Description', 'trim|xss_clean');
                 //
                 $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
                 //
                 $data['l_employment'] = 0;
                 $data['ssn_required'] = 0;
                 $data['dob_required'] = 0;
-                // $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
-                // $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
                 //
                 if($data['ssn_required'] == 1){
                     //
@@ -1335,7 +1332,6 @@ class Employee_management extends Public_Controller {
                     $data['policies'] = $this->timeoff_model->getEmployeePoliciesByEmployeeId($company_id, $employer_id);
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/employee_management/employee_profile_ats_view');
-                    //$this->load->view('manage_employer/employee_profile_view');
                     $this->load->view('main/footer');
                 } else {
                     $shf_hr = $this->input->post('shift_hours');
@@ -1368,6 +1364,7 @@ class Employee_management extends Public_Controller {
                     $extra_info_arr['office_location'] = $this->input->post('office_location');
                     $extra_info_arr['interests'] = $this->input->post('interests');
                     $extra_info_arr['short_bio'] = $this->input->post('short_bio');
+                    
 
                     $full_emp_app = array();
                    
@@ -1445,7 +1442,6 @@ class Employee_management extends Public_Controller {
                         'employee_status' => $this->input->post('employee-status'),
                         'employee_type' => $this->input->post('employee-type'),
                         'PhoneNumber' => $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber', true) : $this->input->post('PhoneNumber', true),
-                        //'access_level' => $this->input->post('access_level'),
                         'profile_picture' => $pictures,
                         'video_type' => $video_source,
                         'YouTubeVideo' => $video_id,
@@ -1459,8 +1455,14 @@ class Employee_management extends Public_Controller {
                         'break_hours' => $this->input->post('break_hours'),
                         'break_mins' => $this->input->post('break_mins'),
                         'weekly_hours' => $this->input->post('weekly_hours'),
-                        // 'team_sid' => $this->input->post('team')
+                        'gender' => $this->input->post('gender'),
+                        'position' => $this->input->post('position')
                     );
+
+                    //
+                    if(!empty($this->input->post('secondary_email', true))){
+                        $data_to_insert['alternative_email'] = $this->input->post('secondary_email', true);
+                    }
 
                     //
                     if(preg_match(XSYM_PREG, $data_to_insert['ssn'])) unset($data_to_insert);
@@ -1518,13 +1520,6 @@ class Employee_management extends Public_Controller {
                         $maintain_employee_team_history['event_data'] = serialize($event_array);
                         $this->employee_model->manageEmployeeTeamHistory($maintain_employee_team_history);
                     }
-
-                    // $this->employee_model->departmentTeamExists(
-                    //     $data_to_insert['department_sid'],
-                    //     $data_to_insert['team_sid'],
-                    //     $employer_id
-                    // );
-                    
                     //
                     if($DOB != '' && !preg_match(XSYM_PREG, $DOB)) $data_to_insert['dob'] = $DOB;
 
@@ -1533,7 +1528,6 @@ class Employee_management extends Public_Controller {
 
                     if(IS_NOTIFICATION_ENABLED == 1 && $this->input->post('notified_by', true) && $data['phone_sid'] != '') $data_to_insert['notified_by'] = $notified_by;
 
-                    // _e($this->input->post('joining_date', true), true, true);
                     // Check if joining date is set
                     if($this->input->post('joining_date')){
                         $data_to_insert['joined_at'] = DateTime::createFromFormat('m-d-Y', $this->input->post('joining_date', true))->format('Y-m-d');

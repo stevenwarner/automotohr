@@ -65,7 +65,7 @@
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
-                                                            <?php echo form_label('Alternative Email Address', 'alternative_email'); ?>
+                                                            <?php echo form_label('Secondary Email Address', 'alternative_email'); ?>
                                                             <input type="email" value="<?php echo set_value('alternative_email'); ?>" id="alternative_email" name="alternative_email" class="hr-form-fileds" />
                                                             <?php echo form_error('alternative_email'); ?>
                                                         </div>

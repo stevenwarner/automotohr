@@ -323,12 +323,19 @@ class employers extends Admin_Controller {
             $data = array('username' => $this->input->post('username'),
                             'email' => $this->input->post('email'));
 
+            //
+            $employeeData = $this->company_model->GetEmployeeById($sid, 'extra_info');
+            //
+            $extraInfo = unserialize($employeeData['extra_info']);
+            $extraInfo['secondary_email'] = $this->input->post('alternative_email', true);
+
             $data['first_name'] = $this->input->post('first_name');
             $data['last_name'] = $this->input->post('last_name');
             $data['job_title'] = $this->input->post('job_title');
             $data['direct_business_number'] = $this->input->post('direct_business_number');
             $data['cell_number'] = $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('cell_number');
             $data['alternative_email'] = $this->input->post('alternative_email');
+            $data['extra_info'] = serialize($extraInfo);
             $registration_date = $this->input->post('registration_date');
             $data['access_level'] = $this->input->post('security_access_level');
             $data['access_level_plus'] = $this->input->post('access_level_plus');
@@ -374,7 +381,6 @@ class employers extends Admin_Controller {
             } else {
                 redirect('manage_admin/employers/edit_employer/' . $sid, 'refresh');
             }
-            //redirect('manage_admin/companies','refresh');
         }
     }
 
@@ -418,14 +424,13 @@ class employers extends Admin_Controller {
                 $direct_business_number = $this->input->post('direct_business_number');
                 $alternative_email = $this->input->post('alternative_email');
                 $access_level = $this->input->post('security_access_level');
-                $access_level_plus = $this->input->post('access_level_plus');
                 $registration_date = $this->input->post('registration_date');
                 $action = $this->input->post('action');
                 $salt = generateRandomString(48);
 
                 if($registration_date !=NULL) {
-                    $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
+                    $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                 } else {
                     $joined_at = NULL;
                     $registration_date = NULL;
@@ -445,8 +450,8 @@ class employers extends Admin_Controller {
                 $insert_data['direct_business_number'] = $direct_business_number;
                 $insert_data['alternative_email'] = $alternative_email;
                 $insert_data['access_level'] = $access_level;
-                $insert_data['access_level_plus'] = $access_level_plus;
                 $insert_data['salt'] = $salt;
+                $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
                 $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');
@@ -498,8 +503,6 @@ class employers extends Admin_Controller {
     }
 
     function employer_login() {
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
         $redirect_url = 'manage_admin';
         $function_name = 'employerlogin';
