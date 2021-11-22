@@ -3071,4 +3071,23 @@ class Dashboard_model extends CI_Model
         $this->db->insert('license_information', $data);
         return $this->db->insert_id();
     }
+
+
+    function GetJobLastStateByIds($jobIds){
+        //
+        $a = $this->db
+        ->select('deactive_by_name, portal_job_listings_sid')
+        ->where_in('portal_job_listings_sid', $jobIds)
+        ->order_by('sid', 'asc')
+        ->get('portal_job_listings_record');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        $t = [];
+        foreach($b as $v){
+            $t[$v['portal_job_listings_sid']] = $v;
+        }
+        return $t;
+    }
 }

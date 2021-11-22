@@ -744,7 +744,22 @@ class Job_listings extends Public_Controller {
                 }
 
                 $data['enable_advertise']                                       = false;
-
+                //
+                if($status == 'inactive'){
+                    //
+                    if(!empty($job_listings)){
+                        //
+                        $jobIds = array_column($job_listings, 'sid');
+                        //
+                        $jobLastStates = $this->dashboard_model->GetJobLastStateByIds($jobIds);
+                        //
+                        foreach($job_listings as $index => $job){
+                            $job_listings[$index]['deactive_by_name'] = $jobLastStates[$job['sid']]['deactive_by_name'];
+                        }
+                    }
+                }
+                $data['listings_active'] = $job_listings;
+                $data['url_status'] = $status;
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/my_listings');
                 $this->load->view('main/footer');

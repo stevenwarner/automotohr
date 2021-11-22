@@ -1,5 +1,5 @@
 <div class="table-responsive table-outer">
-    <?php if ($listings) { ?>
+    <?php if ($listings) {?>
         <form action="selected_jobs_xml_export.php" method="POST" id="xml_form">
             <table class="table table-bordered">
                 <thead>
@@ -11,6 +11,9 @@
                         <th class="col-xs-2 text-center">Job Views</th>
                         <?php if ($job_approval_module_status == 1) { ?>
                             <th class="col-xs-1">Status</th>
+                        <?php } ?>
+                        <?php if ($url_status == 'inactive') { ?>
+                            <th class="col-xs-1">Deactivation Details</th>
                         <?php } ?>
                         <?php $function_names = array('add_listing', 'add_listing_advertise', 'add_listing_share', 'clone_listing', 'activate_deactivate_job', 'delete_archive_job'); ?>
                         <?php if (check_access_permissions_for_view($security_details, $function_names)) { ?>
@@ -60,6 +63,14 @@
                                     <?php } elseif ($listing["approval_status"] == 'rejected') { ?>
                                         Rejected
                                     <?php } ?>
+                                </td>
+                            <?php } ?>
+                            <?php if ($url_status == 'inactive') { ?>
+                                <td class="text-center">
+                                    <p>
+                                        <strong><?=$listing['deactive_by_name'];?></strong> <br>
+                                        <?=formatDate($listing['deactivation_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME);?>
+                                    </p>
                                 </td>
                             <?php } ?>
                             <?php $function_names = array('add_listing', 'add_listing_advertise', 'add_listing_share', 'clone_listing', 'activate_deactivate_job', 'delete_archive_job'); ?>
