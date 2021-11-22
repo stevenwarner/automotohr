@@ -210,9 +210,12 @@
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>secondary email:</label>
+                                                <?php
+                                                    $secondaryEmail = isset($extra_info["secondary_email"]) && !empty($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : $employer["alternative_email"];
+                                                ?>
                                                 <input
                                                     class="invoice-fields <?php if (form_error('secondary_email') !== "") { ?> error <?php } ?>"
-                                                    value="<?php echo set_value('secondary_email', (isset($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : '')); ?>"
+                                                    value="<?php echo set_value('secondary_email', ($secondaryEmail)); ?>"
                                                     type="email" name="secondary_email">
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">

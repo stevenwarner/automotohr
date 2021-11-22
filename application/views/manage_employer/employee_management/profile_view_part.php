@@ -61,9 +61,10 @@
     </li>
     <li class="col-sm-6">
         <label>Secondary Email:</label>
-        <?php if(isset($extra_info["secondary_email"])) { ?>
-        <p><?php echo $extra_info["secondary_email"]; ?></p>
-        <?php } ?>
+        <?php
+            $secondaryEmail = isset($extra_info["secondary_email"]) && !empty($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : $employer["alternative_email"];
+        ?>
+        <p><?=$secondaryEmail;?></p>
     </li>
     <li class="col-sm-6">
         <label>Secondary Mobile Number:</label>
