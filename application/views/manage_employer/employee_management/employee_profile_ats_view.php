@@ -136,6 +136,12 @@
                                                 </select>
                                                 <?php echo form_error('gender'); ?>
                                             </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                <label>Date of Birth:<?=$dob_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
+                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?=$dob_required == 1 ? 'required' : '';?>
+                                                    name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
+                                                    <?php echo form_error('DOB'); ?>
+                                            </div>
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
                                                 <label>address:</label>
                                                 <input class="invoice-fields"
@@ -245,12 +251,7 @@
                                                     value="<?php echo isset($employer["ssn"]) ? $employer["ssn"] : ''; ?>">
                                                     <?php echo form_error('SSN'); ?>
                                             </div>
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Date of Birth:<?=$dob_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
-                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?=$dob_required == 1 ? 'required' : '';?>
-                                                    name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
-                                                    <?php echo form_error('DOB'); ?>
-                                            </div>
+                                            
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Department:</label>
                                                 <div class="hr-select-dropdown">

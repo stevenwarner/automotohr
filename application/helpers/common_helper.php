@@ -13818,3 +13818,10 @@ if(!function_exists('job_title_uri')){
         return $title;
     }
 }
+
+
+if(!function_exists('GetVal')){
+    function GetVal($input){
+        return !empty($input) ? $input : 'Not Specified';
+    }
+}
