@@ -32,10 +32,6 @@
         <p><?=ucfirst($employer["gender"]); ?></p>
     </li>
     <li class="col-sm-6">
-        <label>Position:</label>
-        <p><?=$employer["position"]; ?></p>
-    </li>
-    <li class="col-sm-6">
         <label>address:</label>
         <p><?=$employer["Location_Address"]; ?></p>
     </li>

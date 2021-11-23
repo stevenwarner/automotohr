@@ -69,7 +69,7 @@
                             <div id="tab1" class="tabs-content">
                                 <div class="universal-form-style-v2 info_view" <?php if ($edit_form) { ?>
                                     style="display: none;" <?php } ?>>
-                                    <?php $this->load->view('manage_employer/employee_management/profile_view_part', ['primary_phone_number_cc' => $primary_phone_number_cc]); ?>
+                                    <?php $this->load->view('manage_employer/employee_management/profile_view_part', ['primary_phone_number_cc' => $primary_phone_number_cc, 'dob' => $dob]); ?>
                                 </div>
                                 <!--Edit part-->
                                 <div <?php if ($edit_form) { ?>style="display: block;"
@@ -135,15 +135,6 @@
                                                     <option <?=$employer["gender"] == 'other' ? 'selected' : '';?> value="other">Other</option>
                                                 </select>
                                                 <?php echo form_error('gender'); ?>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Position:
-                                                </label>
-                                                <input
-                                                    class="invoice-fields <?php if (form_error('position') !== "") { ?> error <?php } ?>"
-                                                    value="<?php echo set_value('position', $employer["position"]); ?>"
-                                                    type="text" name="position">
-                                                <?php echo form_error('position'); ?>
                                             </div>
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
                                                 <label>address:</label>

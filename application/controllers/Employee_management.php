@@ -1455,8 +1455,7 @@ class Employee_management extends Public_Controller {
                         'break_hours' => $this->input->post('break_hours'),
                         'break_mins' => $this->input->post('break_mins'),
                         'weekly_hours' => $this->input->post('weekly_hours'),
-                        'gender' => $this->input->post('gender'),
-                        'position' => $this->input->post('position')
+                        'gender' => $this->input->post('gender')
                     );
 
                     //
