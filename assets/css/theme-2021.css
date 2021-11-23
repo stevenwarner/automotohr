@@ -2239,7 +2239,12 @@ ul.csSidebarUL li.active>ul li.active a {
     transform: translate(-50%, -50%);
     text-align: center;
 }
+
 .jsLoaderContent i {
     font-size: 55px;
     color: #fd7a2a;
+}
+
+.btn-cancel {
+    background-color: #000;
 }

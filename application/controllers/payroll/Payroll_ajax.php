@@ -390,35 +390,31 @@ class Payroll_ajax extends CI_Controller
             $request['ssn'] = $employee_info['ssn'];
             //
             $error_flag = 0;
+            $missing_info = [];
             //
             // Validation
             if (empty($request['first_name'])) { 
                 $error_flag = 1;
-            }
-            if (empty($request['middle_initial'])) { 
-                $error_flag = 1;
+                array_push($missing_info, "First name is missing");
             }
             if (empty($request['last_name'])) { 
                 $error_flag = 1;
+                array_push($missing_info, "Last name is missing");
             }
             if (empty($request['email'])) { 
                 $error_flag = 1;
+                array_push($missing_info, "Email is missing");
             }
             if (empty($request['date_of_birth'])) { 
                 $error_flag = 1;
-            }
-            if (empty($request['ssn'])) {
-                $error_flag = 1;
-            }
-            if (!empty($request['ssn']) && strlen($request['ssn']) != 9) {
-                $error_flag = 1;
+                array_push($missing_info, "Date of birth is missing");
             }
             //
             if ($error_flag == 1) {
                 //
                 return SendResponse(200,[
                     'status' => false,
-                    'employee_info' => "Employee not add due to lack of info"
+                    'errors' => $missing_info
                 ]);
             } else {
                 //
@@ -427,10 +423,26 @@ class Payroll_ajax extends CI_Controller
                 //
                 $response = AddEmployeeToCompany($request, $company_details);
                 //
-                return SendResponse(200,[
-                    'status' => true,
-                    'employee_info' => $response
-                ]);
+                if(isset($response['errors'])){
+                    //
+                    $errors = [];
+                    //
+                    foreach($response['errors'] as $error){
+                        $errors[] = $error[0]['message'];
+                    }
+                    // Error took place
+                    return SendResponse(200, [
+                        'status' => false,
+                        'errors' => $errors
+                    ]);
+                } else {
+                    $this->pm->UpdateEmployee($_POST["employee_id"], ['on_payroll' => 1]);
+                    //
+                    return SendResponse(200,[
+                        'status' => true,
+                        'employee_info' => $response
+                    ]);
+                }    
             }
             
         }
@@ -452,8 +464,11 @@ class Payroll_ajax extends CI_Controller
         if($page === 'get-company-all-employees'){
             $companyEmployees = $this->em->GetCompanyEmployees($companyId, [
                 "users.sid",
-                "users.email"
-
+                "users.first_name",
+                "users.last_name",
+                "users.ssn",
+                "users.dob",
+                "users.email",
             ]);
             //
             $page = "company-all-employees";
@@ -472,7 +487,6 @@ class Payroll_ajax extends CI_Controller
             }
             //
             foreach ($companyEmployees as $cekey => $employee) {
-                $companyEmployees[$cekey]["name"] = getUserNameBySID($employee['sid']);
                 //
                 if (in_array(strtolower($employee['email']), $payrollEmployeesList)) {
                     $companyEmployees[$cekey]["onboard"] = "yes";

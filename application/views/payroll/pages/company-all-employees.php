@@ -30,22 +30,62 @@
                                             <div class="control__indicator header-checkbox"></div>
                                         </label>
                                         </th>
-                                        <th scope="col" class="csBG1 csF16 csB7 csW">Name</th>
+                                        <th scope="col" class="csBG1 csF16 csB7 csW">First Name</th>
+                                        <th scope="col" class="csBG1 csF16 csB7 csW">Last Name</th>
+                                        <th scope="col" class="csBG1 csF16 csB7 csW">Email</th>
+                                        <th scope="col" class="csBG1 csF16 csB7 csW">Date of Birth</th>
                                         <th scope="col" class="csBG1 csF16 csB7 csW">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php if (!empty($companyEmployees)) { ?>
                                         <?php foreach ($companyEmployees as $employee) { ?>
+                                            <?php 
+                                                $missing_flag = 0;
+                                                $missing_info = [];
+                                                //
+                                                if ($employee['first_name'] == null) {
+                                                    $missing_flag = 1;
+                                                    array_push($missing_info, "First name is missing");
+                                                }
+                                                if ($employee['last_name'] == null) {
+                                                    $missing_flag = 1;
+                                                    array_push($missing_info, "Last name is missing");
+                                                }
+                                                if ($employee['email'] == null) {
+                                                    $missing_flag = 1;
+                                                    array_push($missing_info, "Email is missing");
+                                                }
+                                                if ($employee['dob'] == null) {
+                                                    $missing_flag = 1;
+                                                    array_push($missing_info, "Date of birth is missing");
+                                                }
+                                            ?>
                                             <tr>
                                                 <td>
-                                                    <label class="control control--checkbox">
-                                                        <input type="checkbox" class=" jsSelectedEmployeesList <?php echo $employee['onboard'] == "yes" ? "jsDeleteEmployees": "jsAddEmployees"; ?>" id="emp_<?php echo $employee['onboard'] == "yes" ? $employee['onboard_id'] : $employee['sid']; ?>" data-employee_name="<?php echo $employee['name']; ?>" value="<?php echo $employee['onboard'] == "yes" ? $employee['onboard_id'] : $employee['sid']; ?>" />
-                                                        <div class="control__indicator"></div>
-                                                    </label>
+                                                    <?php if ($missing_flag == 1) { ?>
+                                                        <label class="control control--checkbox">
+                                                            <input type="checkbox" disable />
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    <?php } else { ?>
+                                                        <label class="control control--checkbox">
+                                                            <input type="checkbox" class=" jsSelectedEmployeesList <?php echo $employee['onboard'] == "yes" ? "jsDeleteEmployees": "jsAddEmployees"; ?>" id="emp_<?php echo $employee['onboard'] == "yes" ? $employee['onboard_id'] : $employee['sid']; ?>" data-employee_name="<?php echo $employee['first_name'].' '.$employee['last_name']; ?>" value="<?php echo $employee['onboard'] == "yes" ? $employee['onboard_id'] : $employee['sid']; ?>" />
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    <?php } ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $employee['name']; ?>
+                                                    <?php echo $employee['first_name']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $employee['last_name']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $employee['email']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $employee['dob'] != null ? date('M d Y, D', strtotime($employee['dob'])) : '' ?>
                                                 </td>
                                                 <td>
                                                     <?php if ($employee['onboard'] == "yes") { ?>
@@ -54,10 +94,16 @@
                                                             Delete from Gusto
                                                         </button>
                                                     <?php } else { ?>
-                                                        <button class="btn btn-success csF16 csB7 jsAddEmployeeOnGusto pull-right" data-employee_id="<?php echo $employee['sid']; ?>">
-                                                            <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
-                                                            Add to Gusto
-                                                        </button>
+                                                        <?php if ($missing_flag == 0) { ?>
+                                                            <button class="btn btn-success csF16 csB7 jsAddEmployeeOnGusto pull-right" data-employee_id="<?php echo $employee['sid']; ?>">
+                                                                <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
+                                                                Add to Gusto
+                                                            </button>
+                                                        <?php } else { ?> 
+                                                            <?php 
+                                                                echo implode(', <br>', $missing_info)
+                                                            ?> 
+                                                        <?php } ?> 
                                                     <?php } ?> 
                                                 </td>
                                             </tr>
@@ -70,43 +116,8 @@
                                 </tbody>
                             </table>
                         </div>
-                        <!-- <div class="col-sm-8">
-                            <label class="control control--checkbox">
-                                <input type="checkbox" class="jsSelectAllEmployees" /> Select All Employees
-                                <div class="control__indicator"></div>
-                            </label>
-                        </div>
-                        <div class="col-sm-4 pr0">
-                        </div>        -->
                     </div>    
-                </div>    
-                
-                <?php foreach ($companyEmployees as $employee) { ?>
-                    <!-- <div class="row">
-                        <div class="col-sm-12">
-                            <div class="col-sm-8">
-                                <label class="control control--checkbox">
-                                    <input type="checkbox" class=" jsSelectedEmployeesList <?php echo $employee['onboard'] == "yes" ? "jsDeleteEmployees": "jsAddEmployees"; ?>" id="emp_<?php echo $employee['onboard'] == "yes" ? $employee['onboard_id'] : $employee['sid']; ?>" data-employee_name="<?php echo $employee['name']; ?>" value="<?php echo $employee['onboard'] == "yes" ? $employee['onboard_id'] : $employee['sid']; ?>" /> <?php echo $employee['name']; ?>
-                                    <div class="control__indicator"></div>
-                                </label>
-                            </div>
-                            <div class="col-sm-4 pr0">
-                                <?php if ($employee['onboard'] == "yes") { ?>
-                                    <button class="btn btn-danger csF16 csB7 jsDeleteEmployeeFromGusto pull-right" data-employee_id="<?php echo $employee['onboard_id']; ?>">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
-                                        Delete from Gusto
-                                    </button>
-                                <?php } else { ?>
-                                    <button class="btn btn-success csF16 csB7 jsAddEmployeeOnGusto pull-right" data-employee_id="<?php echo $employee['sid']; ?>">
-                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
-                                        Add to Gusto
-                                    </button>
-                                <?php } ?>    
-                            </div>
-                        </div>    
-                    </div>
-                    <br> -->
-                <?php } ?> 
+                </div>
             </div>
         </div>
     </div>

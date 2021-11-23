@@ -120,6 +120,12 @@ $(function PayrollCompanyOnboard() {
     var selectedEmployees = [];
 
     /**
+     * Saves add employee response;
+     * @type {null|Array}
+     */
+     var ADDEMPLOYEELIST = [];
+
+    /**
      * Triggers company onboard process
      */
     $('.jsPayrollCompanyOnboard').click(function(event) {
@@ -3231,9 +3237,15 @@ $(function PayrollCompanyOnboard() {
             //
             xhr = null;
             //
-            alertify.alert('Success!', '<strong>'+name+'</strong> added to Gusto successfully.', function(){
-                location.reload();
-            });
+            if (resp.errors) {
+                ml(false, modalLoader);
+                return alertify.alert('Error!', typeof resp.errors !== undefined ? 'Failed to move this employee.</br>'+resp.errors.join('<br/>') : resp.errors);
+            } else {
+                alertify.alert('Success!', '<strong>'+name+'</strong> added to Gusto successfully.', function(){
+                    ml(false, modalLoader);
+                    $('#' + modalId).hide();
+                });
+            }
         }); 
     }
 
@@ -3257,7 +3269,8 @@ $(function PayrollCompanyOnboard() {
                     ml(false, modalLoader);
                     //
                     alertify.alert('Success!', '<strong>'+name+'</strong> remove from Gusto successfully.', function(){
-                        location.reload();
+                        ml(false, modalLoader);
+                        $('#' + modalId).hide();
                     });
                 })
                 .error();
@@ -3354,16 +3367,44 @@ $(function PayrollCompanyOnboard() {
             data: { employee_id: employee_id }
         })
         .done(function(resp) {
-            
+            if (type != "delete") {
+                if (resp.errors) {
+                    ADDEMPLOYEELIST.push({
+                        'name': name,
+                        'status': false,
+                        'error':  typeof resp.errors !== undefined ? resp.errors.join('<br/>') : resp.errors
+                    });
+                } else {  
+                    ADDEMPLOYEELIST.push({
+                        'name': name,
+                        'status': true
+                    });  
+                }
+            }
+            //
             if (CURRENTEMPLOYEE < ((selectedEmployees.length)-1)) {
                 CURRENTEMPLOYEE++;
                 ActionOnEmployees(type);
             } else {
                 ml(false, modalLoader);
                 $('#' + modalId).hide();
-                alertify.alert('Success!', message, function(){
-                    location.reload();
-                });
+                
+                //
+                if (type == "delete") {
+                    alertify.alert('Success!', message);
+                } else {
+                    var result = '';
+                    response.map(function(v){
+                        if (v.status){
+                            result += v.name + ' moved on Gusto </br>';
+                        } else {
+                            result += v.name + ' not moved on Gusto because <strong>'+v.error+'</strong></br>';
+                        }
+                        
+                    });
+                    alertify.alert('Success!', message+"</br>"+result);
+                }
+               
             }
         }); 
     }

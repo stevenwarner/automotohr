@@ -176,6 +176,16 @@ class Payroll_model extends CI_Model{
     /**
      * 
      */
+    function UpdateEmployee($employeeId, $array){
+        //
+        $this->db
+        ->where('sid', $employeeId)
+        ->update($this->tables['U'], $array);
+    }
+
+    /**
+     * 
+     */
     function UpdateOndordingLevel($companyId, $array){
         //
         $this->db
