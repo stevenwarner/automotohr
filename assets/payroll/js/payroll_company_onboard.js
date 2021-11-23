@@ -3205,7 +3205,7 @@ $(function PayrollCompanyOnboard() {
                 //
                 LoadContent(resp.html, function() {
                     //
-                    $('.' + (modalId) + 'Title').html(resp.company_name);
+                    $('.' + (modalId) + 'Title').html(resp.company_name + ' Employees');
                     //  
                     ml(false, modalLoader);
                     //
@@ -3218,6 +3218,7 @@ $(function PayrollCompanyOnboard() {
 
     function AddEmployeeOnGusto () {
         var employee_sid = $(this).data("employee_id");
+        var name = $("#emp_"+employee_sid).data("employee_name");
         //
         ml(true, modalLoader);
         //
@@ -3230,7 +3231,7 @@ $(function PayrollCompanyOnboard() {
             //
             xhr = null;
             //
-            alertify.alert('Success!', 'Employee added on gusto successfully.', function(){
+            alertify.alert('Success!', '<strong>'+name+'</strong> added to Gusto successfully.', function(){
                 location.reload();
             });
         }); 
@@ -3238,28 +3239,43 @@ $(function PayrollCompanyOnboard() {
 
     function DeleteEmployeeFromGusto () {
         var employee_sid = $(this).data("employee_id");
+        var name = $("#emp_"+employee_sid).data("employee_name");
         //
-        ml(true, modalLoader);
-        //
-        xhr = $.ajax({
-            method: "POST",
-            url: GetURL('get_payroll_page/delete_employee_from_gusto/' + companyId),
-            data: { employee_id: employee_sid }
-        })
-        .done(function(resp) {
-            //
-            xhr = null;
-            //
-            ml(false, modalLoader);
-            //
-            alertify.alert('Success!', 'Employee Deleted from gusto successfully.', function(){
-                location.reload();
+        alertify.confirm("Confirmation", "Are you sure you want to Remove <strong>"+name+"</strong> from Gusto?",
+            function () {
+                ml(true, modalLoader);
+                //
+                xhr = $.ajax({
+                    method: "POST",
+                    url: GetURL('get_payroll_page/delete_employee_from_gusto/' + companyId),
+                    data: { employee_id: employee_sid }
+                })
+                .done(function(resp) {
+                    //
+                    xhr = null;
+                    //
+                    ml(false, modalLoader);
+                    //
+                    alertify.alert('Success!', '<strong>'+name+'</strong> remove from Gusto successfully.', function(){
+                        location.reload();
+                    });
+                })
+                .error();
+            },
+            function () {
             });
-        })
-        .error();
+        //
     }
 
-    $(document).on('click', '.jsSelectedEmployeesAction', function(event) {console.log("hello")
+    $(document).on('click', '.jsSelectAllEmployees', function(event) {
+        if ($('.jsSelectAllEmployees').is(":checked")) {
+            $('.jsSelectedEmployeesList').prop('checked', true); // Checks it
+        } else {
+            $('.jsSelectedEmployeesList').prop('checked', false); // Unchecks it
+        }
+    });
+
+    $(document).on('click', '.jsSelectedEmployeesAction', function(event) {
         var action_type = $(this).data("action_type");
 
         if (action_type == "delete") {
@@ -3297,9 +3313,20 @@ $(function PayrollCompanyOnboard() {
             //
             alertify.alert('Note!', message);
         } else {
-            ml(true, modalLoader);
-            CURRENTEMPLOYEE = 0;
-            ActionOnEmployees(action_type);
+            if (action_type == "delete") {
+                alertify.confirm("Confirmation", "Are you sure you want to remove employee(s) from Gusto?",
+                    function () {
+                        ml(true, modalLoader);
+                        CURRENTEMPLOYEE = 0;
+                        ActionOnEmployees(action_type);
+                    },
+                    function () {
+                    });
+            } else {
+                ml(true, modalLoader);
+                CURRENTEMPLOYEE = 0;
+                ActionOnEmployees(action_type);
+            }
         }
     });
 
@@ -3312,11 +3339,11 @@ $(function PayrollCompanyOnboard() {
         var message = '';
         //
         if (type == "delete") {
-            $("#jsIPLoaderTextArea").text("Please wait we are deleting employee "+ name);
+            $("#jsIPLoaderTextArea").text("Please wait we are removing "+ name + " from Gusto");
             action_url = GetURL('get_payroll_page/delete_employee_from_gusto/' + companyId);
-            message = 'The employee(s) delete process completed.';
+            message = 'The employee(s) removing process completed.';
         } else {
-            $("#jsIPLoaderTextArea").text("Please wait we are adding employee "+ name);
+            $("#jsIPLoaderTextArea").text("Please wait we are adding "+ name + " to Gusto");
             action_url = GetURL('get_payroll_page/set_company_employee/' + companyId);
             message = 'The employee(s) adding process completed.';
         }    
@@ -3340,6 +3367,38 @@ $(function PayrollCompanyOnboard() {
             }
         }); 
     }
+
+    $(document).on('click', '.jsGetAdminUser', function(event) {
+        
+        companyId = $(this).data("company_sid");
+        //
+        Model({
+            Id: modalId,
+            Title: '<span class="' + modalId + 'Title"></span>',
+            Body: '<div id="' + modalId + 'Body"></div>',
+            Loader: modalLoader,
+            Container: 'container',
+            CancelClass: 'btn-cancel csW'
+        });
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "GET",
+            url: GetURL('get_payroll_page/get_payroll_admin/' + companyId)
+        })
+        .done(function(resp) {
+            //
+            xhr = null;
+            //
+            LoadContent(resp.html, function() {
+                //
+                $('.' + (modalId) + 'Title').html(resp.company_name + ' Payroll Admin');
+                //  
+                ml(false, modalLoader);
+            });
+        }); 
+    });
 
     //
     // StartOnboardProcess();

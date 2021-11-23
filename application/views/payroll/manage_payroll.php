@@ -31,17 +31,17 @@
                                             <button class="btn btn-success jsDetails">
                                                 Details
                                             </button>
-                                            <button class="btn btn-success jsSyncWithGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
+                                            <!-- <button class="btn btn-success jsSyncWithGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
                                                 Sync
-                                            </button>
+                                            </button> -->
                                             <a class="btn btn-success" href="<?php echo $onboarding_link; ?>" target="_blank">
                                                 Onboarding Process
                                             </a>
                                             <button class="btn btn-success jsGetEmployeesList" data-company_sid="<?php echo $company_info['sid'] ?>">
-                                                Employees
+                                                Manage Employees
                                             </button>
-                                            <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
-                                                Start Onboarding Process
+                                            <button class="btn btn-success jsGetAdminUser" data-company_sid="<?php echo $company_info['sid'] ?>">
+                                                Show Payroll Admin
                                             </button>
                                         <?php } else { ?>
                                             <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
@@ -64,7 +64,7 @@
                                                 <div class="row">
                                                     <div class="col-xs-12">
                                                         <div class="embed-responsive embed-responsive-16by9">
-                                                            <iframe id="vimeo_player" src="<?php echo $onboarding_link; ?>" frameborder="0"webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>  
+                                                            <iframe src="<?php echo $onboarding_link; ?>" frameborder="0"webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>  
                                                         </div>
                                                     </div>
                                                 </div>
@@ -99,9 +99,9 @@
                                                                             <td>
                                                                                 <?php
                                                                                     if(!empty($status["completed"]) && $status["completed"] == "true") {
-                                                                                        echo "<b>Competed</b>";
+                                                                                        echo '<strong class="text-success">Competed</strong>';
                                                                                     } else {
-                                                                                        echo "<b>Not Competed</b>";
+                                                                                        echo '<strong class="text-danger">Not Competed</strong>';
                                                                                     }
                                                                                 ?>    
                                                                             </td>

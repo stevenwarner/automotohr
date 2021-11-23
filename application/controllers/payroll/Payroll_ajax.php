@@ -160,7 +160,7 @@ class Payroll_ajax extends CI_Controller
             $request['company']['name'] = $companyDetails['CompanyName'];
             $request['company']['ein'] = $companyDetails['ein'];
             //
-            // $response = CreatePartnerCompany($request); 
+            $response = CreatePartnerCompany($request); 
             //
             $employees_list = array();
             //
@@ -169,18 +169,6 @@ class Payroll_ajax extends CI_Controller
                     $employees_list[$employeeId] = getUserNameBySID($employeeId);
                 }
             }
-            //
-            // ***test return start***
-            $addressInfo = $this->pm->GetCompanyAddressInfo($companyId);
-            //
-            return SendResponse(200, [
-                'status' => true,
-                'address_info' => $addressInfo, 
-                'employees_list' => $employees_list,
-                'Location_URL' => base_url("get_payroll_page/set_company_location")."/".$companyId
-                // 'Location_URL' => getAPIUrl("locations")
-            ]);
-            // ***test return end***
             //
             if(isset($response['errors'])){
                 //
@@ -193,10 +181,7 @@ class Payroll_ajax extends CI_Controller
                 $addressInfo = $this->pm->GetCompanyAddressInfo($companyId);
                 // Error took place
                 return SendResponse(200, [
-                    'errors' => $errors,
-                    'address_info' => $addressInfo, 
-                    'employees_list' => $employees_list,
-                    'Location_URL' => base_url("get_payroll_page/set_company_location")."/".$companyId
+                    'errors' => $errors
                 ]);
             } else {
                 // All okay to go
@@ -285,30 +270,22 @@ class Payroll_ajax extends CI_Controller
             $request['mailing_address'] = $post['MailingAddress'] ? true: false;
             $request['filing_address'] = $post['FillingAddress'] ? true: false;
             //
-            // echo "<pre>";
-            // print_r($request);
-            // // test response
-            // return SendResponse(200, ["status" => true]);
-            // Check location
-            // $locationExists = 
-            // TODO check and update data
-            //
-            // $response = AddCompanyLocation($request, $details);
-            $response = [
-                'company_id' => '7756341741034032',
-                'version' => 'e70c632b227b2276612d4fed2d5bf71a',
-                'id' => '7757727717540047',
-                'street_1' => '425 2nd street',
-                'street_2' => '',
-                'city' => 'San Francisco',
-                'state' => 'CA',
-                'zip' => '12345',
-                'country' => 'USA',
-                'active' => '1',
-                'phone_number' => '1234567892',
-                'filing_address' => false,
-                'mailing_address' => true
-            ];
+            $response = AddCompanyLocation($request, $details);
+            // $response = [
+            //     'company_id' => '7756341741034032',
+            //     'version' => 'e70c632b227b2276612d4fed2d5bf71a',
+            //     'id' => '7757727717540047',
+            //     'street_1' => '425 2nd street',
+            //     'street_2' => '',
+            //     'city' => 'San Francisco',
+            //     'state' => 'CA',
+            //     'zip' => '12345',
+            //     'country' => 'USA',
+            //     'active' => '1',
+            //     'phone_number' => '1234567892',
+            //     'filing_address' => false,
+            //     'mailing_address' => true
+            // ];
             //
             if(isset($response['errors'])){
                 //
@@ -1182,6 +1159,19 @@ class Payroll_ajax extends CI_Controller
             return SendResponse(200,[
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
+        }
+        //
+        if($page === 'get-payroll-admin'){
+            //
+            $data['primaryAdmin'] = $this->pm->GetPrimaryAdmin($companyId);
+            //
+            $company_name = getCompanyNameBySid($companyId);
+            //
+            return SendResponse(200,[
+                "company_name" => $company_name,
+                'html' => $this->load->view($this->path.$page, $data, true)
+            ]);
+            //
         }
         
         //
