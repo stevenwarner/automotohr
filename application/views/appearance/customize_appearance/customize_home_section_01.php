@@ -14,7 +14,7 @@
 
                         <div class="universal-form-style-v2">
                             <ul>
-                                <form method="post" id="form_config_section_01">
+                                <form method="post" id="form_config_section_01_test">
                                     <!-- Required Hidden Fields Start -->
                                     <input type="hidden" name="theme_name" id="theme_name" value="<?php echo $theme['theme_name']; ?>"/>
                                     <input type="hidden" name="perform_action" id="perform_action" value="save_config_section_01"/>
@@ -173,7 +173,7 @@
 
 <script>
     function fValidateConfigSection01() {
-        $('#form_config_section_01').validate({
+        $('#form_config_section_01_test').validate({
             rules: {
                 // title_section_01: {
                 //     required: true
@@ -194,8 +194,8 @@
     });
     function fSaveConfigSection01() {
 //        fValidateConfigSection01();
-        if ($('#form_config_section_01').valid()) {
-            $('#form_config_section_01').submit();
+        if ($('#form_config_section_01_test').valid()) {
+            $('#form_config_section_01_test').submit();
         }
     }
 

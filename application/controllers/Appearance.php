@@ -111,6 +111,7 @@ class Appearance extends Public_Controller {
 
     public function customize_appearance($theme_id = 0) {
         header("X-XSS-Protection: 0");
+        _e($_POST, true);
         if ($this->session->userdata('logged_in')) {
             if ($theme_id == 0) { // theme not found - redirect to appreance
                 $this->session->set_flashdata('message', '<b>Error:</b> Theme not found!');
@@ -132,6 +133,8 @@ class Appearance extends Public_Controller {
             if ($job_fair_configuration == 1) {
                 $job_fair_multiple_forms = $this->appearance_model->get_all_job_fair_forms($company_id); //get default form data from main table and custom form data from secondary table
             }
+
+            // _e($_POST, true, true);
 
             $data['job_fair_data'] = array('title'=>'N/A');
             $data['job_fair_multiple_forms'] = $job_fair_multiple_forms;
@@ -232,7 +235,7 @@ class Appearance extends Public_Controller {
                 $this->session->set_flashdata('message', '<b>Success:</b> You have successfully updated the site settings!');
                 redirect('customize_appearance/' . $theme_id, 'refresh');
             }
-
+            
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_config_section_01') {
                 $theme_name = $_POST["theme_name"];
                 $page_name = $_POST["page_name"];

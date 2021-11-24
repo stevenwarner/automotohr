@@ -190,7 +190,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Jobs Title:</label>
+                                                <label>Job Title:</label>
                                                 <input class="invoice-fields"
                                                     value="<?php echo set_value('job_title', $employer["job_title"]); ?>"
                                                     type="text" name="job_title">
