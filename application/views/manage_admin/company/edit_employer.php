@@ -33,7 +33,7 @@
                                                 <li>
                                                     <?php echo form_label('Last Name', 'last_name'); ?>
                                                     <div class="hr-fields-wrap">
-<?php                                                   echo form_input('last_name', set_value('last_name', $data['last_name']), 'class="hr-form-fileds"');
+<?php                                                   echo form_input('last_name', set_value('last_name', $data['last_name'], false), 'class="hr-form-fileds"');
                                                         echo form_error('last_name'); ?>
                                                     </div>
                                                 </li>
