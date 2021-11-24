@@ -563,13 +563,13 @@ class Import_csv extends Public_Controller {
                     if(isset($v0['gender']) && !empty($v0['gender'])){
                         $insertArray['gender'] = strtolower($v0['gender']);
                     }
-                    // Manage position
-                    if(isset($v0['position']) && !empty($v0['position'])){
-                        $insertArray['position'] = trim($v0['position']);
-                    }
                     // Manage employment type
                     if(isset($v0['employment_type']) && !empty($v0['employment_type'])){
                         $insertArray['employee_status'] = preg_match('/full/i', $v0['employment_type']) ? 'fulltime' : 'parttime';
+                    }
+                    //
+                    if(preg_match('/terminat/i', $v0['status'])){
+                        $insertArray['terminated_status'] = 1;
                     }
                     //New Fields End
                     // Insert employee
@@ -775,14 +775,52 @@ class Import_csv extends Public_Controller {
         if(empty($pre_emp['gender']) && isset($v0['gender']) && !empty($v0['gender'])){
             $insertArray['gender'] = strtolower($v0['gender']);
         }
-        // Manage position
-        if(empty($pre_emp['position']) && isset($v0['position']) && !empty($v0['position'])){
-            $insertArray['position'] = trim($v0['position']);
-        }
         // Manage employment type
         if(empty($pre_emp['employee_status']) && isset($v0['employment_type']) && !empty($v0['employment_type'])){
             $insertArray['employee_status'] = preg_match('/full/i', $v0['employment_type']) ? 'fulltime' : 'parttime';
         }
+        //
+        if(isset($v0['status']) && !empty($v0['status']) && preg_match('/terminat/i', $v0['status'])){
+            //
+            if($pre_emp['terminated_status'] == 0){
+                $insertArray['terminated_status'] = 1;
+            }
+        }
+        if(isset($v0['status']) && !empty($v0['status']) && preg_match('/terminat|rehire/i', $v0['status'])){
+            //
+            $statusArray = [];
+            $statusArray['employee_status'] = 2;
+            $statusArray['termination_date'] = '';
+            $statusArray['status_change_date'] = '';
+            $statusArray['employee_sid '] = $pre_emp['sid'];
+            $statusArray['changed_by'] = $this->session->userdata['logged_in']['employer_detail']['sid'];
+            $statusArray['ip_address'] = getUserIP();
+            $statusArray['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+            $statusArray['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            if(preg_match('/terminat/i', $v0['status'])){
+                $statusArray['employee_status'] = 1;
+                $statusArray['details'] = isset($v0['termination_reason']) ? $v0['termination_reason'] : '';
+                $statusArray['status_change_date'] = $statusArray['termination_date'] = isset($v0['termination_date']) && !empty($v0['termination_date']) ? formatDateToDB($v0['termination_date']) : NULL;
+            }
+            //
+            if(preg_match('/rehire/i', $v0['status'])){
+                $statusArray['employee_status'] = 8;
+                $statusArray['details'] = isset($v0['rehire_reason']) ? $v0['rehire_reason'] : '';
+                $statusArray['status_change_date'] = $statusArray['termination_date'] = isset($v0['rehire_date']) && !empty($v0['rehire_date']) ? formatDateToDB($v0['rehire_date']) : NULL;
+            }
+            //
+            if($statusArray['employee_status'] == 1 && $pre_emp['terminated_status'] == 0){
+                $insertArray['terminated_status'] = 1;
+                $this->import_csv_model->AddEmployeeStatus($statusArray);
+            }
+            //
+            if($statusArray['employee_status'] == 8 && $pre_emp['terminated_status'] == 1){
+                $insertArray['terminated_status'] = 0;
+                $this->import_csv_model->AddEmployeeStatus($statusArray);
+            }
+        }
+        
         // Update employee
         $this->import_csv_model->UpdateNewUser($pre_emp['sid'], $insertArray);
 
