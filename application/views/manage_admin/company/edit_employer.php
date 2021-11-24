@@ -25,7 +25,7 @@
                                                 <li>
                                                     <?php echo form_label('First Name', 'first_name'); ?>
                                                     <div class="hr-fields-wrap">
-<?php                                                   echo form_input('first_name', set_value('first_name', $data['first_name']), 'class="hr-form-fileds"');
+<?php                                                   echo form_input('first_name', set_value('first_name', $data['first_name'], false), 'class="hr-form-fileds"');
                                                         echo form_error('first_name'); ?>
                                                     </div>
                                                 </li>
