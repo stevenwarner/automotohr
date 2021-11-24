@@ -171,4 +171,15 @@ class Job_categories_manager_model extends CI_Model {
         return $categories;
     }
 
+    function InsertIndustryToDelete($insertArray){
+        //
+        $this->db->insert('job_category_industries_deleted', $insertArray);
+        return $this->db->insert_id();
+    }
+    
+    function DeleteIndustry($industryId){
+        //
+        $this->db->where('sid', $industryId)
+        ->delete('job_category_industries');
+    }
 }

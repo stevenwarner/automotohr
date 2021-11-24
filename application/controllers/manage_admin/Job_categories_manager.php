@@ -289,5 +289,15 @@ class Job_categories_manager extends Admin_Controller {
         }
     }
 
+    //
+    function delete_industry($industryId){
+        // Fetch the industry
+        $industry = $this->job_categories_manager_model->get_job_category_industry($industryId);
+        $this->job_categories_manager_model->InsertIndustryToDelete($industry);
+        $this->job_categories_manager_model->DeleteIndustry($industryId);
+        //
+        echo 'success';
+    }
+
 
 }

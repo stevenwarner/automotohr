@@ -31,7 +31,7 @@
                                                                     <tr>
                                                                         <th class="col-xs-4">Industry Name</th>
                                                                         <th class="col-xs-6">Description</th>
-                                                                        <th class="col-xs-2 text-center" colspan="2">Actions</th>
+                                                                        <th class="col-xs-2 text-center" colspan="3">Actions</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -45,6 +45,11 @@
                                                                                 </td>
                                                                                 <td class="text-center">
                                                                                     <a class="btn btn-success btn-sm" href="<?php echo base_url('manage_admin/job_categories_manager/assign_categories/' . $industry['sid']); ?>">Assign Categories</a>
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    <a class="btn btn-danger btn-sm jsDeleteIndustry" title="Delete this job category industry" href="javascript:void(0)" data-id="<?=$industry['sid'];?>" data-name="<?php echo ucwords($industry['industry_name']); ?>">
+                                                                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                                                                    </a>
                                                                                 </td>
                                                                             </tr>
                                                                         <?php } ?>
@@ -66,3 +71,43 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(function(){
+        //
+        $('.jsDeleteIndustry').click(function(event){
+            //
+            event.preventDefault();
+            //
+            var industryId = $(this).data('id');
+            var industryName = $(this).data('name');
+            //
+            alertify.confirm(
+                'Do you really want to delete <strong>"'+(industryName)+'"</strong> industry?',
+                function(){
+                    DeleteIndustry(industryId, industryName);
+                }
+            ).setHeader('Confirm!');
+        });
+
+        //
+        function DeleteIndustry(id, name){
+            $('body').append('<style id="jsAlertify">.ajs-ok{display:none}</style>')
+            //
+            var ref = alertify.alert('Please wait while we are deleting "<strong>'+(name)+'</strong>" industry....').set('closable', false);
+            //
+            $.ajax({
+                method: "delete",
+                url: "<?=base_url('manage_admin/job_categories_manager/job_category_industries');?>/"+id,
+            }).done(function(){
+                //
+                $('#jsAlertify').remove();
+                ref.close();
+                //
+                alertify.alert('You have successfully deleted the industry.', function(){
+                    window.location.reload();
+                })
+            });
+        }
+    });
+</script>
