@@ -4,7 +4,7 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">				
+            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">             
                 <?php $this->load->view('main/employer_column_left_view'); ?>
             </div>         
             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
@@ -13,13 +13,34 @@
                     <div class="page-header-area">
                         <span class="page-heading down-arrow"><?php echo $title; ?></span>
                     </div>
-                    <?php   $offline = false;
+                    <?php   
+                        
+                        if (isset($_GET['employee_type']) && $_GET['employee_type'] == 'offline') {
+                            $all = false;
+                            $active = false;
+                            $offline = true;
+                            $terminated = false;
+                            $employee_array = $offline_employees;
+                        } else if (isset($_GET['employee_type']) && $_GET['employee_type'] == 'terminated') {
+                            $all = false;
+                            $active = false;
+                            $offline = false;
+                            $terminated = true;
+                            $employee_array = $terminated_employees;
+                        } else if (isset($_GET['employee_type']) && $_GET['employee_type'] == 'all') {
+                            $all = true;
+                            $active = false;
+                            $offline = false;
+                            $terminated = false;
+                            $employee_array = $all_company_employees;
+                        } else if (isset($_GET['employee_type']) && $_GET['employee_type'] == 'active') {
+                            $all = false;
+                            $active = true;
+                            $offline = false;
+                            $terminated = false;
                             $employee_array = $employees;
-                            
-                            if (isset($_GET['employee_type']) && $_GET['employee_type'] == 'offline') {
-                                $offline = true;
-                                $employee_array = $offline_employees;
-                            }   ?> 
+                        }    
+                    ?> 
                     <div class="applicant-filter">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -31,7 +52,15 @@
                                                 <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
                                                     <div class="hr-select-dropdown">
                                                         <select name="employee_type" class="invoice-fields">
-                                                            <option value="active">All Active Employees</option>
+                                                            <option value="all" <?php if ($all) { echo ' selected="selected"'; } ?>>
+                                                                All Employees
+                                                            </option>
+                                                            <option value="active"  <?php if ($active) { echo ' selected="selected"'; } ?>>
+                                                                All Active Employees
+                                                            </option>
+                                                            <option value="terminated" <?php if ($terminated) { echo ' selected="selected"'; } ?>>
+                                                                Terminated Employees
+                                                            </option> 
                                                             <option value="offline" <?php if ($offline) { echo ' selected="selected"'; } ?>>
                                                                 All Onboarding & De-activated Employees
                                                             </option> 
@@ -173,49 +202,52 @@
                                         </tr> 
                                     </thead>
                                     <tbody>
-                                    <form method="POST" name="ej_form" id="ej_form">
-                                        <?php $sizeof = sizeof($employee_array); ?>
-                                        <?php foreach ($employee_array as $employee) { ?>
-                                            <tr id="manual_row<?php echo $employee['sid']; ?>">
-                                                <td class="text-center">
-                                                    <label class="control control--checkbox">
-                                                        <input name="ej_check[]" type="checkbox" value="<?php echo $employee['sid']; ?>" class="ej_checkbox" <?=$employer_id != $employee['sid'] ? '' : 'disabled="true"';?>>
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </td>
-                                                <td width="30%">
-                                                    <div class="employee-profile-info">
-                                                        <figure>
-                                                    <?php   if(check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
-                                                                <a href="<?php echo ($session['employer_detail']['access_level_plus'] && $employer_id != $employee['sid']) || $session['employer_detail']['pay_plan_flag'] ? base_url('employee_profile') . '/' . $employee['sid'] : 'javascript:;'; ?>" title="<?php echo $employee['first_name'] . ' ' . $employee['last_name']; ?>">
+                                        <form method="POST" name="ej_form" id="ej_form">
+                                            <?php $sizeof = sizeof($employee_array); ?>
+                                            <?php foreach ($employee_array as $employee) { ?>
+                                                <tr id="manual_row<?php echo $employee['sid']; ?>">
+                                                    <td class="text-center">
+                                                        <label class="control control--checkbox">
+                                                            <input name="ej_check[]" type="checkbox" value="<?php echo $employee['sid']; ?>" class="ej_checkbox" <?=$employer_id != $employee['sid'] ? '' : 'disabled="true"';?>>
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    </td>
+                                                    <td width="30%">
+                                                        <div class="employee-profile-info">
+                                                            <figure>
+                                                                <?php if(check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
+                                                                            <a href="<?php echo ($session['employer_detail']['access_level_plus'] && $employer_id != $employee['sid']) || $session['employer_detail']['pay_plan_flag'] ? base_url('employee_profile') . '/' . $employee['sid'] : 'javascript:;'; ?>" title="<?php echo $employee['first_name'] . ' ' . $employee['last_name']; ?>">
+                                                                                <?php if (!empty($employee['profile_picture'])) { ?>
+                                                                                        <img src="<?php echo AWS_S3_BUCKET_URL . $employee['profile_picture']; ?>"> 
+                                                                                <?php } else { ?>
+                                                                                        <img src="<?= base_url() ?>assets/images/img-applicant.jpg">
+                                                                                <?php } ?>
+                                                                            </a>
+                                                                <?php } else { ?>
                                                                     <?php if (!empty($employee['profile_picture'])) { ?>
-                                                                            <img src="<?php echo AWS_S3_BUCKET_URL . $employee['profile_picture']; ?>"> 
+                                                                                <img src="<?php echo AWS_S3_BUCKET_URL . $employee['profile_picture']; ?>"> 
                                                                     <?php } else { ?>
-                                                                            <img src="<?= base_url() ?>assets/images/img-applicant.jpg">
+                                                                                <img src="<?= base_url() ?>assets/images/img-applicant.jpg">
                                                                     <?php } ?>
-                                                                </a>
-                                                    <?php   } else { ?>
-                                                    <?php       if (!empty($employee['profile_picture'])) { ?>
-                                                                    <img src="<?php echo AWS_S3_BUCKET_URL . $employee['profile_picture']; ?>"> 
-                                                    <?php       } else { ?>
-                                                                    <img src="<?= base_url() ?>assets/images/img-applicant.jpg">
-                                                    <?php       } ?>
-                                                    <?php   } ?>
-                                                        </figure>
-                                                        <div class="text">
-                                                            <?php   if (!empty($employee['first_name']) || !empty($employee['last_name'])) {
+                                                                <?php   } ?>
+                                                            </figure>
+                                                            <div class="text">
+                                                                <?php 
+                                                                    if (!empty($employee['first_name']) || !empty($employee['last_name'])) {
                                                                         $name = $employee['first_name'] . ' ' . $employee['last_name'];
                                                                     }
                                                                     if($session['employer_detail']['access_level_plus'] == 1 && !empty($employee['username']))
                                                                     $name .= ' ('.($employee['username']).')';
-                                                                    ?>
-                                                            <?php   if(check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
-                                                                        <a href="<?php echo ($session['employer_detail']['access_level_plus'] && $employer_id != $employee['sid']) || $session['employer_detail']['pay_plan_flag'] ? base_url('employee_profile') . '/' . $employee['sid'] : 'javascript:;'; ?>"><?php echo $name; ?></a>
-                                                            <?php   } else { ?>
-                                                            <?php       echo $name; ?>
-                                                            <?php   } ?>
-                                                            <?php       echo '<br />'.$employee['email']; ?>
-                                                            <br><?php   if($employee['is_executive_admin'] == 1) { 
+                                                                ?>
+                                                                <?php if(check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
+                                                                    <a href="<?php echo ($session['employer_detail']['access_level_plus'] && $employer_id != $employee['sid']) || $session['employer_detail']['pay_plan_flag'] ? base_url('employee_profile') . '/' . $employee['sid'] : 'javascript:;'; ?>"><?php echo $name; ?></a>
+                                                                <?php } else { ?>
+                                                                    <?php echo $name; ?>
+                                                                <?php } ?>
+                                                                    <?php echo '<br />'.$employee['email']; ?>
+                                                                    <br>
+                                                                    <?php
+                                                                        if($employee['is_executive_admin'] == 1) { 
                                                                             echo '[Executive Admin';
                                                                             echo ($employee['access_level_plus'] && $employee['pay_plan_flag']) ? ' Plus / Payroll' : ($employee['access_level_plus'] ? ' Plus' : ($employee['pay_plan_flag'] ? ' Payroll' : ''));
                                                                             echo ']';
@@ -223,116 +255,120 @@
                                                                             echo '['.$employee['access_level'];
                                                                             echo ($employee['access_level_plus'] && $employee['pay_plan_flag']) ? ' Plus / Payroll' : ($employee['access_level_plus'] ? ' Plus' : ($employee['pay_plan_flag'] ? ' Payroll' : ''));
                                                                             echo ']';
-                                                                        } ?>
+                                                                        } 
+                                                                    ?>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td width="25%">
-                                                <?php   if (empty($employee["job_title"])) {
-                                                            echo 'No job designation found!';
-                                                        } else {
-                                                            echo $employee['job_title'];
-                                                        }   ?>
-                                                </td>
-                                                <td class="text-center">
-                                                    <?php if (check_access_permissions_for_view($security_details, 'send_login_email')) { ?>
-                                                        <?php   if(($employee['password'] == '' || is_null($employee['password'])) && ($employee['is_executive_admin'] != 1)) { ?>
-                                                                    <img src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
-                                                        <?php       echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="'.$employee['sid'].'">Send Login Email</a>'; ?>
-                                                        <?php   } else { ?>
-                                                                    <img src="<?= base_url('assets/manage_admin/images/bulb-green.png') ?>">
-                                                        <?php   } ?>
-                                                    <?php   } ?>
-                                                </td>
-                                                <td class="text-center"><?php
-                                                    if(!empty($employee['joined_at']) && $employee['joined_at'] != '0000-00-00 00:00:00'){
-                                                        echo reset_datetime(
-                                                            array(
-                                                                'datetime' => $employee['joined_at'], 
-                                                                '_this' => $this,
-                                                                'from_format' => 'Y-m-d',
-                                                                'format' => 'M d Y, D',
-                                                                'from_timezone' => 'EST',
-                                                                'new_zone' => 'EST'
-                                                            )
-                                                        );
-                                                        // echo formatDate($employee['joined_at'], DB_DATE, DATE);
-                                                    } else if(!empty($employee['registration_date']) && $employee['registration_date'] != '0000-00-00 00:00:00'){
-                                                        echo reset_datetime(
-                                                            array(
-                                                                'datetime' => $employee['registration_date'], 
-                                                                '_this' => $this,
-                                                                'from_format' => 'Y-m-d H:i:s',
-                                                                'format' => 'M d Y, D',
-                                                                'from_timezone' => 'EST',
-                                                                'new_zone' => 'EST'
-                                                            )
-                                                        );
-                                                        // echo formatDate($employee['registration_date'], DB_DATE, DATE);
-                                                    } else {
-                                                        echo 'N/A';
-                                                    }?>
                                                     </td>
-                                                <?php if($employer_id != $employee['sid']){ ?>
-                                                <?php if(
-                                                    check_access_permissions_for_view($security_details, 'employee_send_documents') || 
-                                                    $canAccessDocument
-                                                ) { ?>
-                                                <td class="text-center">
-                                                    <?php if($ems_status == 1) { ?>
-                                                            <a title="Document Management"  data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('hr_documents_management/documents_assignment/employee') . '/' . $employee['sid']; ?>">
-                                                                <i class="fa fa-file"></i>
-                                                            </a>
-                                                            <?php if(checkIfAppIsEnabled('timeoff', FALSE)){ ?>
-                                                            <?php 
-                                                                if(
-                                                                    ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) ||
-                                                                    (in_array($employee['sid'], $teamMemberIds))
-                                                                ) { ?>
-                                                                <a title="Time Off" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('timeoff/create_employee') . '/' . $employee['sid']; ?>">
-                                                                <i class="fa fa-clock-o"></i>
-                                                            </a>
+                                                    <td width="25%">
+                                                        <?php   
+                                                            if (empty($employee["job_title"])) {
+                                                                echo 'No job designation found!';
+                                                            } else {
+                                                                echo $employee['job_title'];
+                                                            }   
+                                                        ?>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <?php if (check_access_permissions_for_view($security_details, 'send_login_email')) { ?>
+                                                            <?php   if(($employee['password'] == '' || is_null($employee['password'])) && ($employee['is_executive_admin'] != 1)) { ?>
+                                                                        <img src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
+                                                            <?php       echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="'.$employee['sid'].'">Send Login Email</a>'; ?>
+                                                            <?php   } else { ?>
+                                                                        <img src="<?= base_url('assets/manage_admin/images/bulb-green.png') ?>">
+                                                            <?php   } ?>
+                                                        <?php   } ?>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <?php
+                                                            if(!empty($employee['joined_at']) && $employee['joined_at'] != '0000-00-00 00:00:00'){
+                                                                echo reset_datetime(
+                                                                    array(
+                                                                        'datetime' => $employee['joined_at'], 
+                                                                        '_this' => $this,
+                                                                        'from_format' => 'Y-m-d',
+                                                                        'format' => 'M d Y, D',
+                                                                        'from_timezone' => 'EST',
+                                                                        'new_zone' => 'EST'
+                                                                    )
+                                                                );
+                                                                // echo formatDate($employee['joined_at'], DB_DATE, DATE);
+                                                            } else if(!empty($employee['registration_date']) && $employee['registration_date'] != '0000-00-00 00:00:00'){
+                                                                echo reset_datetime(
+                                                                    array(
+                                                                        'datetime' => $employee['registration_date'], 
+                                                                        '_this' => $this,
+                                                                        'from_format' => 'Y-m-d H:i:s',
+                                                                        'format' => 'M d Y, D',
+                                                                        'from_timezone' => 'EST',
+                                                                        'new_zone' => 'EST'
+                                                                    )
+                                                                );
+                                                                // echo formatDate($employee['registration_date'], DB_DATE, DATE);
+                                                            } else {
+                                                                echo 'N/A';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                    <?php if($employer_id != $employee['sid']){ ?>
+                                                        <?php if(
+                                                            check_access_permissions_for_view($security_details, 'employee_send_documents') || 
+                                                            $canAccessDocument
+                                                        ) { ?>
+                                                        <td class="text-center">
+                                                            <?php if($ems_status == 1) { ?>
+                                                                    <a title="Document Management"  data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('hr_documents_management/documents_assignment/employee') . '/' . $employee['sid']; ?>">
+                                                                        <i class="fa fa-file"></i>
+                                                                    </a>
+                                                                    <?php if(checkIfAppIsEnabled('timeoff', FALSE)){ ?>
+                                                                        <?php 
+                                                                            if(
+                                                                                ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) ||
+                                                                                (in_array($employee['sid'], $teamMemberIds))
+                                                                            ) { 
+                                                                        ?>
+                                                                                <a title="Time Off" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('timeoff/create_employee') . '/' . $employee['sid']; ?>">
+                                                                                        <i class="fa fa-clock-o"></i>
+                                                                                </a>
+                                                                            <?php } ?>
+                                                                    <?php } ?>
+                                                            <?php } else { ?>
+                                                                    <a title="Send HR Documents" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm"  href="<?php echo base_url('send_offer_letter_documents') . '/' . $employee['sid']; ?>">
+                                                                        <i class="fa fa-file"></i>
+                                                                        <span class="btn-tooltip">HR-Documents</span>
+                                                                    </a>
                                                             <?php } ?>
+                                                            <?php if ($session['employer_detail']['access_level_plus']) { ?>
+                                                                <!-- Employee Quick Profile -->
+                                                                <button class="btn btn-success jsEmployeeQuickProfile" title="Employee Profile Quick View" placement="top" data-id="<?=$employee['sid'];?>">
+                                                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                                                </button>
                                                             <?php } ?>
-                                                    <?php } else { ?>
-                                                            <a title="Send HR Documents" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm"  href="<?php echo base_url('send_offer_letter_documents') . '/' . $employee['sid']; ?>">
-                                                                <i class="fa fa-file"></i>
-                                                                <span class="btn-tooltip">HR-Documents</span>
+                                                        </td>
+                                                    <?php } ?>
+                                                    <td class="text-center">
+                                                        <?php if ($employee['active'] == 1 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?> 
+                                                            <a title="Deactivate" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" onclick="deactivate_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;"><img style="width: 17px; height: 17px;" src="<?= base_url('assets/images/deactivate.png') ?>"></a>
+                                                        <?php } else if ($employee['active'] == 0 && $employee['terminated_status'] == 1 && $employee['archived'] == 0) { ?>  
+                                                            <?php echo "<strong>Terminated Date</strong><br>".formatDateToDB($employee["termination_date"], DB_DATE, DATE); ?>
+                                                        <?php } else if ($employee['active'] == 0 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?>
+                                                            <a title="Archive Employee" data-toggle="tooltip" data-placement="bottom"  class="btn btn-warning btn-sm" onclick="archive_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;">
+                                                                <i class="fa fa-archive"></i>
                                                             </a>
-                                                    <?php } ?>
-                                                    <?php
-                                                        if($session['employer_detail']['access_level_plus']){
-                                                            ?>
-                                                        <!-- Employee Quick Profile -->
-                                                        <button class="btn btn-success jsEmployeeQuickProfile" title="Employee Profile Quick View" placement="top" data-id="<?=$employee['sid'];?>">
-                                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                                        </button>
-                                                            <?php
-                                                        }
-                                                    ?>
-                                                </td>
-                                                <?php } ?>
-                                                <td class="text-center">
-                                                    <?php if ($offline) { ?> 
-                                                        <a title="Archive Employee" data-toggle="tooltip" data-placement="bottom"  class="btn btn-warning btn-sm" onclick="archive_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;">
-                                                            <i class="fa fa-archive"></i>
-                                                        </a>
-                                                    <?php } else { ?>
-                                                        <a title="Deactivate" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" onclick="deactivate_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;"><img style="width: 17px; height: 17px;" src="<?= base_url('assets/images/deactivate.png') ?>"></a>
-                                                    <?php } ?>
-                                                </td>
-                                                <td class="text-center">               
-                                                    <?php if (!empty($employee['applicant_sid'])) { ?>
-                                                        <a class="btn btn-info btn-sm" onclick="revert_applicant(<?php echo $employee['applicant_sid']; ?>, <?php echo $employee['sid']; ?>)" href="javascript:;">
-                                                            <i class="fa fa-undo"></i>
-                                                            <span class="btn-tooltip">Revert</span>
-                                                        </a>
-                                                    <?php } ?>
-                                                </td>
-                                            <?php } else{ echo '<td colspan="'.($sizeof == 1 ? '1' : '3' ).'"></td>'; } ?>
-                                            </tr>
-                                        <?php } ?>
-                                    </form>
+                                                        <?php } ?>  
+                                                    </td>
+                                                    <td class="text-center">               
+                                                        <?php if (!empty($employee['applicant_sid'])) { ?>
+                                                            <a class="btn btn-info btn-sm" onclick="revert_applicant(<?php echo $employee['applicant_sid']; ?>, <?php echo $employee['sid']; ?>)" href="javascript:;">
+                                                                <i class="fa fa-undo"></i>
+                                                                <span class="btn-tooltip">Revert</span>
+                                                            </a>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <?php } else{ echo '<td colspan="'.($sizeof == 1 ? '1' : '3' ).'"></td>'; } ?>
+                                                </tr>
+                                            <?php } ?>
+                                        </form>
                                     </tbody>
                                 </table>
                             <?php } ?> 

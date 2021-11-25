@@ -36,7 +36,7 @@ class Employee_management extends Public_Controller {
             $data['archived'] = 1;
             $data['keyword'] = $keyword;
             $data['employee_type'] = $employee_type;
-//            $data["employees"] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 1);
+            // $data["employees"] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 1);
             $data["employees"] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword, 1);
             $data['title'] = "Archived Employee / Team Members";
 
@@ -134,7 +134,7 @@ class Employee_management extends Public_Controller {
             $data['archived'] = 1;
             $data['keyword'] = $keyword;
             $data['employee_type'] = $employee_type;
-//            $data["employees"] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 1);
+            // $data["employees"] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 1);
             $data["employees"] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 1, $order_by, $order);
             $data['title'] = "Terminated Employee / Team Members";
 
@@ -172,6 +172,11 @@ class Employee_management extends Public_Controller {
 
     public function employee_management() {
         if ($this->session->userdata('logged_in')) {
+            //
+            if(!isset($_GET['employee_type'])){
+                redirect(current_url().'?employee_type=active&keyword=&order_by=&order=');
+            }
+            //
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -200,6 +205,8 @@ class Employee_management extends Public_Controller {
             if (isset($_GET['order'])) {
                 $order = $_GET['order'];
             }
+
+           
 
             $data['archived'] = 0;
             $data['ems_status'] = $ems_status;
@@ -252,6 +259,9 @@ class Employee_management extends Public_Controller {
             }
 
             $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order);
+            $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order);
+            $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order);
+            //
             $data['title'] = 'Employee / Team Members';
 
             if (isset($_POST['deactivate_employees']) && $_POST['deactivate_employees'] == 'true') {
@@ -316,7 +326,7 @@ class Employee_management extends Public_Controller {
 
             if ($this->input->post('employeeType') == 'direct_hiring') {
                 $this->form_validation->set_rules('username', 'Username', 'trim|xss_clean|min_length[5]|required|is_unique[users.username]');
-//                $this->form_validation->set_rules('password', 'Password', 'trim|xss_clean|required');
+                // $this->form_validation->set_rules('password', 'Password', 'trim|xss_clean|required');
             }
 
             $this->form_validation->set_rules('first_name', 'First Name', 'trim|xss_clean|required');
@@ -997,7 +1007,7 @@ class Employee_management extends Public_Controller {
             //echo 'applicant sid: '.$applicant_sid .' - user id: '. $user_sid;
             //exit;
             $data = $this->employee_model->update_applicant_status($applicant_sid);
-//            $data = 'success';
+            // $data = 'success';
             if ($data == 'success') { // custom function to revert employee to applicant
                 //Revert table is maintaining for the record of employees who got reverted
                 $data = $this->employee_model->revert_employee_back_to_applicant($user_sid,$applicant_sid);
@@ -1754,7 +1764,7 @@ class Employee_management extends Public_Controller {
             $data['title'] = 'Login Credentials';
             $data['employer'] = $employer_detail;
             $data['employee'] = $employer_detail;
-//            echo $employer_id.'<pre>'; print_r($data['employer']); exit;
+            // echo $employer_id.'<pre>'; print_r($data['employer']); exit;
             $data['applicant_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($employer_id, 'employee');
 
             if ($data['employer']['is_executive_admin'] == '1') {
@@ -1828,7 +1838,7 @@ class Employee_management extends Public_Controller {
             $data = employee_right_nav($employer_id);
             $registration_date = $employer_detail['registration_date'];
             $data['title'] = 'My Profile';
-//            $data['employer'] = $employer_detail;
+            // $data['employer'] = $employer_detail;
             $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
             $employee_detail = $data['employer'];
             $data_countries = db_get_active_countries();
