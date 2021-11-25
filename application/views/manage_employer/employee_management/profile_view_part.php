@@ -44,12 +44,10 @@
             <p class="dummy-invoice-fields"><?=GetVal(ucfirst($employer["gender"])); ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
-            <label class="csF16">Date of Birth</label>
-            <p class="dummy-invoice-fields"><?php
-                if(!isset($employer["dob"]) || $employer["dob"] == '' || $employer["dob"] == '0000-00-00') echo 'Not Specified';
-                else echo $dob;?>
-            </p>
+            <label class="csF16">Job Title</label>
+            <p class="dummy-invoice-fields"><?=GetVal($employer["job_title"]); ?></p>
         </div>
+        
     </div>
     <!--  -->
     <br>
@@ -99,8 +97,8 @@
     <br>
     <div class="row">
         <div class="col-md-6 col-xs-12">
-            <label class="csF16">Job Title</label>
-            <p class="dummy-invoice-fields"><?=GetVal($employer["job_title"]); ?></p>
+            <label class="csF16">Office Location</label>
+            <p class="dummy-invoice-fields"><?=GetVal($extra_info['office_location']); ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Employment Type</label>
@@ -138,8 +136,11 @@
             <p class="dummy-invoice-fields"><?=GetVal($joiningDate); ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
-            <label class="csF16">Office Location</label>
-            <p class="dummy-invoice-fields"><?=GetVal($extra_info['office_location']); ?></p>
+            <label class="csF16">Date of Birth</label>
+            <p class="dummy-invoice-fields"><?php
+                if(!isset($employer["dob"]) || $employer["dob"] == '' || $employer["dob"] == '0000-00-00') echo 'Not Specified';
+                else echo $dob;?>
+            </p>
         </div>
     </div>
     <!--  -->
@@ -366,7 +367,7 @@
         row += weekWorkableHours > 1 ? " hours." : " hour.";
         
         if (overTime != 0) {
-            row += "Employee's over time is " + overTime;
+            row += " Employee's over time is " + overTime;
             row += overTime > 1 ? " hours." : " hour.";
             row += "</span>";
         }

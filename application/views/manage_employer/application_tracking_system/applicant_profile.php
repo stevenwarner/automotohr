@@ -114,6 +114,7 @@
                                             <p class="dummy-invoice-fields"><?php echo $applicant_info["last_name"] ?></p>
                                         </div>
                                     </div>
+                                    <br>
                                     <div class = "row">   
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Email</label>
@@ -123,13 +124,13 @@
                                             <label class="csF16">Mobile Number</label>
                                             <p class="dummy-invoice-fields"><?=$primary_phone_number_cc;?></p>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <div class = "row">   
                                         <div class="col-md-12 col-xs-12">
                                             <label class="csF16">Address</label>
                                             <p class="dummy-invoice-fields"><?php echo $applicant_info["address"] ?></p>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <div class = "row">     
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">City</label>
@@ -139,7 +140,7 @@
                                             <label class="csF16">Zipcode</label>
                                             <p class="dummy-invoice-fields"><?php echo $applicant_info["zipcode"] ?></p>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <div class = "row">     
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">State</label>
@@ -149,7 +150,7 @@
                                             <label class="csF16">Country</label>
                                             <p class="dummy-invoice-fields"><?php echo $applicant_info["country_name"] ?></p>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <!-- <div class = "row">     
                                         <div class="col-md-12 col-xs-12">
                                             <label class="csF16">Job Fit Category</label>
@@ -179,7 +180,7 @@
                                                 <?php } ?>
                                             </p>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <div class = "row">     
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Other Email</label>
@@ -201,7 +202,7 @@
                                                 <?php } ?>
                                             </p>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <div class = "row">     
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Referred By</label>
@@ -223,7 +224,7 @@
                                                 <?php } ?>
                                             </p>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <div class = "row">      
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Linkedin public Profile URL</label>
@@ -245,7 +246,7 @@
                                                 <?php } ?>
                                             </p>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <div class = "row">      
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Social Security Number</label>
@@ -260,7 +261,7 @@
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Date of Birth</label>
                                             <p class="dummy-invoice-fields">
-                                                <?php echo $dob; ?>
+                                                <?php echo formatDate($dob, 'm-d-Y', DATE); ?>
                                             </p>
                                         </div>
                                         <div class="col-md-12 col-xs-12">
@@ -269,7 +270,7 @@
                                                 <?php echo $applicant_info["notified_by"] ?>
                                             </p>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <?php if (isset($applicant_info["YouTube_Video"]) && $applicant_info["YouTube_Video"] != "") {
                                         if($applicant_info['video_type'] == 'uploaded'){
                                             $fileExt = $applicant_info['YouTube_Video'];
@@ -599,9 +600,6 @@
                                     </ul>
                                 </div>
                                 <!--Edit part Ends-->
-                                <!--<pre>
-                                    <?php //print_r($applicant_jobs); exit;?>
-                                </pre>-->
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <!-- applicant jobs all -->

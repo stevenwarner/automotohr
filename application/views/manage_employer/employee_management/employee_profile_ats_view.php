@@ -141,11 +141,12 @@
                                                 </select>
                                                 <?php echo form_error('gender'); ?>
                                             </div>
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Date of Birth:<?=$dob_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
-                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?=$dob_required == 1 ? 'required' : '';?>
-                                                    name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
-                                                    <?php echo form_error('DOB'); ?>
+                                           <!--  -->
+                                           <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                <label>Job Title:</label>
+                                                <input class="invoice-fields"
+                                                    value="<?php echo set_value('job_title', $employer["job_title"]); ?>"
+                                                    type="text" name="job_title">
                                             </div>
                                         </div>
                                         <div class="row">    
@@ -218,11 +219,13 @@
                                         <div class="row">  
                                             <!--  -->
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Jobs Title:</label>
+                                                <?php $office_location = isset($extra_info["office_location"]) ? $extra_info["office_location"] : ''; ?>
+                                                <label>Office Location:</label>
                                                 <input class="invoice-fields"
-                                                    value="<?php echo set_value('job_title', $employer["job_title"]); ?>"
-                                                    type="text" name="job_title">
+                                                    value="<?php echo set_value('office_location', $office_location); ?>"
+                                                    type="text" name="office_location" id="office_location">
                                             </div>
+                                            
                                             <!--  -->
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                 <label>Employment Type:</label>
@@ -289,13 +292,11 @@
                                                         type="text" name="joining_date" id="joining_date">
                                                 <?php } ?>
                                             </div>
-                                            <!--  -->
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <?php $office_location = isset($extra_info["office_location"]) ? $extra_info["office_location"] : ''; ?>
-                                                <label>Office Location:</label>
-                                                <input class="invoice-fields"
-                                                    value="<?php echo set_value('office_location', $office_location); ?>"
-                                                    type="text" name="office_location" id="office_location">
+                                                <label>Date of Birth:<?=$dob_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
+                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?=$dob_required == 1 ? 'required' : '';?>
+                                                    name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
+                                                    <?php echo form_error('DOB'); ?>
                                             </div>
                                             <!--  -->
                                         </div>
@@ -1413,7 +1414,7 @@ function generateEmployeeWorkLog() {
     row += weekWorkableHours > 1 ? " hours." : " hour.";
     
     if (overTime != 0) {
-        row += "Employee's over time is " + overTime;
+        row += " Employee's over time is " + overTime;
         row += overTime > 1 ? " hours." : " hour.";
         row += "</span>";
     }
