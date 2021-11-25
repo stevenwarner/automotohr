@@ -172,6 +172,11 @@ class Employee_management extends Public_Controller {
 
     public function employee_management() {
         if ($this->session->userdata('logged_in')) {
+            //
+            if(!isset($_GET['employee_type'])){
+                redirect(current_url().'?employee_type=active&keyword=&order_by=&order=');
+            }
+            //
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -200,6 +205,8 @@ class Employee_management extends Public_Controller {
             if (isset($_GET['order'])) {
                 $order = $_GET['order'];
             }
+
+           
 
             $data['archived'] = 0;
             $data['ems_status'] = $ems_status;
