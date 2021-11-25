@@ -33,7 +33,7 @@
                                                         <select name="employee_type" class="invoice-fields">
                                                             <option value="active">All Active Employees</option>
                                                             <option value="offline" <?php if ($offline) { echo ' selected="selected"'; } ?>>
-                                                                All Onbosarding & De-activated Employees
+                                                                All Onboarding & De-activated Employees
                                                             </option> 
                                                         </select>
                                                     </div>
