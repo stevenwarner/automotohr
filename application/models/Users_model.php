@@ -232,6 +232,9 @@ class Users_model extends CI_Model {
         $this->db->from('users');
         $this->db->where('email', $email);
         $this->db->limit(1);
+        $this->db->order_by('sid', 'DESC');
+        $this->db->where('active', 1);
+        $this->db->where('terminated_status', 0);
         $query_result                                                           = $this->db->get();
         
         if ($query_result->num_rows() > 0) {
