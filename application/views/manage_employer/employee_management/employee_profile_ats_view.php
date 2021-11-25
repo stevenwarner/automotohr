@@ -1380,39 +1380,51 @@ $(document).ready(function() {
 $('#js_offdays').select2('val', <?=json_encode($dayoffs);?>);
 
 function generateEmployeeWorkLog() {
-    var shift_start = '<?php echo $shift_start?>';
-    var shift_end = '<?php echo $shift_end?>';
-    var break_hours = '<?php echo $break_hours; ?>';
-    var break_minutes = '<?php echo $break_minutes; ?>';
-    var dayoffs = '<?php echo count(explode(',', $employer["offdays"])); ?>';
+    var shift_start = $(".js-shift-start-time").val();
+    var shift_end = $(".js-shift-end-time").val();
+    var break_hours = $("#br_hours").val();
+    var break_minutes = $("#br_mins").val();
+    var dayoffs = $("#js_offdays").val();
 
     if (break_minutes.toString().length == 1) {
         break_minutes = '0' + break_minutes;
     }
 
     //create date format          
-    var timeStart = new Date("01/01/2007 " + shift_start).getHours();
-    var timeEnd = new Date("01/01/2007 " + shift_end).getHours();
+    var timeStart = new Date("01/01/2021 " + shift_start).getHours();
+    var timeEnd = new Date("01/01/2021 " + shift_end).getHours();
     var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
     var hourDiff = timeEnd - timeStart - breakHoursTotal;
-    var weekTotal = ((hourDiff) * (7 - dayoffs)).toFixed(1);
+    var weekTotal = ((hourDiff) * (7 - dayoffs.length)).toFixed(1);
     var weekAllowedWorkHours = 40;
     var weekWorkableHours = weekTotal < weekAllowedWorkHours ? weekTotal : weekAllowedWorkHours;
     var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
 
     var row = "";
+    row += "<p>";
+
+    if (overTime != 0) {
+        row += "<span class='text-danger'>";
+        row += "Any time over 40 hours a week goes into overtime.</br>";
+    }
+
     row += "The employee's daily workable time is of " + hourDiff + " hours.";
     row += " Employee's weekly workable time is " + weekWorkableHours;
     row += weekWorkableHours > 1 ? " hours." : " hour.";
+    
     if (overTime != 0) {
-        row += " Employee's over time is " + overTime;
+        row += "Employee's over time is " + overTime;
         row += overTime > 1 ? " hours." : " hour.";
+        row += "</span>";
     }
 
-    $("#update_employee_info").text(row);
+    row += "</p>";
+
+    $("#update_employee_info").html(row);
 }
 
 $(".show_employee_working_info").on("change", function() {
+    console.log("event hit")
     generateEmployeeWorkLog();
 });
 
@@ -1630,6 +1642,47 @@ function validate_employers_form() {
         },
         submitHandler: function(form) {
 
+            var shift_start = $(".js-shift-start-time").val();
+            var shift_end = $(".js-shift-end-time").val();
+            var break_hours = $("#br_hours").val();
+            var break_minutes = $("#br_mins").val();
+            var dayoffs = $("#js_offdays").val();
+
+            if (break_minutes.toString().length == 1) {
+                break_minutes = '0' + break_minutes;
+            }
+
+            //create date format          
+            var timeStart = new Date("01/01/2021 " + shift_start).getHours();
+            var timeEnd = new Date("01/01/2021 " + shift_end).getHours();
+            var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
+            var hourDiff = timeEnd - timeStart - breakHoursTotal;
+            var weekTotal = ((hourDiff) * (7 - dayoffs.length)).toFixed(1);
+            var weekAllowedWorkHours = 40;
+            var weekWorkableHours = weekTotal < weekAllowedWorkHours ? weekTotal : weekAllowedWorkHours;
+            var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
+
+            var row = "";
+            row += "<p>";
+
+            if (overTime != 0) {
+                row += "<span class='text-danger'>";
+                row += "Any time over 40 hours a week goes into overtime.</br>";
+            }
+
+            row += "The employee's daily workable time is of " + hourDiff + " hours.";
+            row += " Employee's weekly workable time is " + weekWorkableHours;
+            row += weekWorkableHours > 1 ? " hours." : " hour.";
+            
+            if (overTime != 0) {
+                row += "Employee's over time is " + overTime;
+                row += overTime > 1 ? " hours." : " hour.";
+                row += "</span>";
+            }
+
+            row += "</p>";
+
+
             var breakValidationError = validateBreakTime("validation");
             //
             if (breakValidationError == "yes") {
@@ -1637,54 +1690,77 @@ function validate_employers_form() {
                 return;
             }
 
-            <?php if($is_regex === 1) { ?>
-            // TODO
-            var is_error = false;
+           
+                <?php if($is_regex === 1) { ?>
+                    // TODO
+                    var is_error = false;
 
-            // Check for phone number
-            if (_pn.val() != '' && _pn.val().trim() != '(___) ___-____' && !fpn(_pn.val(), '', true)) {
-                alertify.alert('Invalid mobile number provided.', function() {
-                    return;
-                });
-                is_error = true;
-                return;
-            }
+                    // Check for phone number
+                    if (_pn.val() != '' && _pn.val().trim() != '(___) ___-____' && !fpn(_pn.val(), '', true)) {
+                        alertify.alert('Invalid mobile number provided.', function() {
+                            return;
+                        });
+                        is_error = true;
+                        return;
+                    }
 
-            // Check for secondary number
-            // if(_spn.val() != '' && _spn.val().trim() != '(___) ___-____' && !fpn(_spn.val(), '', true)){
-            //     alertify.alert('Invalid secondary mobile number provided.', function(){ return; });
-            //     is_error = true;
-            //     return;
-            // }
-            // // Check for other number
-            // if(_opn.val() != '' && _opn.val().trim() != '(___) ___-____' && !fpn(_opn.val(), '', true)){
-            //     alertify.alert('Invalid telephone number provided.', function(){ return; });
-            //     is_error = true;
-            //     return;
-            // }
+                    // Check for secondary number
+                    // if(_spn.val() != '' && _spn.val().trim() != '(___) ___-____' && !fpn(_spn.val(), '', true)){
+                    //     alertify.alert('Invalid secondary mobile number provided.', function(){ return; });
+                    //     is_error = true;
+                    //     return;
+                    // }
+                    // // Check for other number
+                    // if(_opn.val() != '' && _opn.val().trim() != '(___) ___-____' && !fpn(_opn.val(), '', true)){
+                    //     alertify.alert('Invalid telephone number provided.', function(){ return; });
+                    //     is_error = true;
+                    //     return;
+                    // }
 
-            if (is_error === false) {
-                // Remove and set phone extension
-                $('#js-phonenumber').remove();
-                // $('#js-secondary-phonenumber').remove();
-                // $('#js-other-phonenumber').remove();
-                // Check the fields
-                // if(_spn.val().trim() == '(___) ___-____') _spn.val('');
-                // else $("#edit_employer").append('<input type="hidden" id="js-secondary-phonenumber" name="txt_secondary_phonenumber" value="+1'+(_spn.val().replace(/\D/g, ''))+'" />');
+                    if (is_error === false) {
+                        // Remove and set phone extension
+                        $('#js-phonenumber').remove();
+                        // $('#js-secondary-phonenumber').remove();
+                        // $('#js-other-phonenumber').remove();
+                        // Check the fields
+                        // if(_spn.val().trim() == '(___) ___-____') _spn.val('');
+                        // else $("#edit_employer").append('<input type="hidden" id="js-secondary-phonenumber" name="txt_secondary_phonenumber" value="+1'+(_spn.val().replace(/\D/g, ''))+'" />');
 
-                // if(_opn.val().trim() == '(___) ___-____') _opn.val('');
-                // else $("#edit_employer").append('<input type="hidden" id="js-other-phonenumber" name="txt_other_phonenumber" value="+1'+(_opn.val().replace(/\D/g, ''))+'" />');
+                        // if(_opn.val().trim() == '(___) ___-____') _opn.val('');
+                        // else $("#edit_employer").append('<input type="hidden" id="js-other-phonenumber" name="txt_other_phonenumber" value="+1'+(_opn.val().replace(/\D/g, ''))+'" />');
 
 
-                if (_pn.val().trim() == '(___) ___-____') _pn.val('');
-                else $("#edit_employer").append(
-                    '<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1' + (_pn
-                        .val().replace(/\D/g, '')) + '" />');
-                form.submit();
-            }
-            <?php } else { ?>
-            form.submit();
-            <?php } ?>
+                        if (_pn.val().trim() == '(___) ___-____') _pn.val('');
+                        else $("#edit_employer").append(
+                            '<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1' + (_pn
+                                .val().replace(/\D/g, '')) + '" />');
+                        if (weekTotal > 40) {
+                            alertify.confirm('Confirmation', row,
+                                function () {
+                                    form.submit();
+                                },
+                                function () {
+                                    return;
+                                });
+                        } else {
+                            form.submit();
+                        }
+                    }
+                <?php } else { ?>
+
+                    if (weekTotal > 40) {
+                        alertify.confirm('Confirmation', row,
+                            function () {
+                                form.submit();
+                            },
+                            function () {
+                                return;
+                            });
+                    } else {
+                        form.submit();
+                    }
+                    
+                <?php } ?>
         }
     });
 }

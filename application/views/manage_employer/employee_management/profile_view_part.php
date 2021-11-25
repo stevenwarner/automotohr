@@ -354,20 +354,31 @@
         var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
 
         var row = "";
+        row += "<p>";
+
+        if (overTime != 0) {
+            row += "<span class='text-danger'>";
+            row += "Any time over 40 hours a week goes into overtime.</br>";
+        }
+
         row += "The employee's daily workable time is of " + hourDiff + " hours.";
         row += " Employee's weekly workable time is " + weekWorkableHours;
         row += weekWorkableHours > 1 ? " hours." : " hour.";
+        
         if (overTime != 0) {
-            row += " Employee's over time is " + overTime;
+            row += "Employee's over time is " + overTime;
             row += overTime > 1 ? " hours." : " hour.";
+            row += "</span>";
         }
+
+        row += "</p>";
 
         var shift_time = hourDiff + (hourDiff > 1 ? " hours" : " hour");
         var break_hour_text = break_hours > 0 ? (break_hours + (break_hours > 1 ? " hours" : " hour")) : 0;
         var break_minute_text = break_minutes > 0 ? (break_minutes + (break_minutes > 1 ? " minutes" : " minute")) : 0;
         var break_timming = (break_hour_text != 0 ? break_hour_text : '') + (break_minute_text != 0 ? ' & '+break_minute_text : '');
 
-        $("#display_employee_shift_detaail").text(row);
+        $("#display_employee_shift_detaail").html(row);
         $("#employee_shift_time").text(shift_start +' - '+ shift_end+' ('+shift_time+')');
         $("#employee_break_timing").text(break_timming);
     });
