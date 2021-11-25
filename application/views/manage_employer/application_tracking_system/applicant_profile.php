@@ -94,139 +94,182 @@
                         <div class="resp-tabs-container hor_1">
                             <div id="tab1" class="tabs-content">
                                 <div class="universal-form-style-v2 info_view" <?php if ($edit_form) { ?> style="display: none;" <?php } ?>>
-                                    <ul>
-                                        <div class="form-title-section">
-                                            <h2>Personal Information</h2>
-                                            <div class="form-btns">
-                                                <input type="submit" value="edit" id="edit_button">
+                                    <div class = "row">
+                                        <div class="col-md-12 col-xs-12">
+                                            <div class="form-title-section">
+                                                <h2>Personal Information</h2>
+                                                <div class="form-btns">
+                                                    <input type="submit" value="edit" id="edit_button">
+                                                </div>
                                             </div>
                                         </div>
-                                        <li class="form-col-50-left">
-                                            <label>first name:</label>
-                                            <p><?php echo $applicant_info["first_name"] ?></p>
-                                        </li>
-                                        <li class="form-col-50-right">
-                                            <label>last name:</label>
-                                            <p><?php echo $applicant_info["last_name"] ?></p>
-                                        </li>
-                                        <li class="form-col-50-left">
-                                            <label>email:</label>
-                                            <p><?php echo $applicant_info["email"] ?></p>
-                                        </li>
-                                        <li class="form-col-50-right">
-                                            <label>mobile number:</label>
-                                            <p><?=$primary_phone_number_cc;?></p>
-                                        </li>
-                                        <li class="form-col-50-left">
-                                            <label>address:</label>
-                                            <p><?php echo $applicant_info["address"] ?></p>
-                                        </li>
-                                        <li class="form-col-50-right">
-                                            <label>city:</label>
-                                            <p><?php echo $applicant_info["city"] ?></p>
-                                        </li>
-                                        <!--<li class="form-col-50-left">
-                                            <label>date applied:</label>
-
-                                            <p><?php /*echo $applicant_info["date_applied"] */?></p>
-                                        </li>-->
-                                        <li class="form-col-50-left">
-                                            <label>zipcode:</label>
-                                            <p> <?php echo $applicant_info["zipcode"] ?></p>
-                                        </li>
-                                        <li class="form-col-50-right">
-                                            <label>state:</label>
-                                            <p><?php echo $applicant_info["state_name"] ?></p>
-                                        </li>
-                                        <li class="form-col-50-left">
-                                            <label>country:</label>
-                                            <p><?php echo $applicant_info["country_name"] ?></p>
-                                        </li>
-                                        <li class="form-col-50-right"></li>
-                                        <li class="form-col-50-left">
-                                            <label>Secondary Email:</label>
-                                            <?php if (isset($extra_info["secondary_email"]) && $extra_info["secondary_email"] != '') { ?>
-                                                <p><?php echo $extra_info["secondary_email"]; ?></p>
-                                            <?php } else { ?>
-                                                <p>Not Specified</p>
-                                            <?php } ?>
-                                        </li>
-                                        <li class="form-col-50-right">
-                                            <label>Secondary Mobile Number:</label>
-                                            <?php if (isset($extra_info["secondary_PhoneNumber"]) && $extra_info["secondary_PhoneNumber"] != '') { ?>
-                                                <p><?=$extra_info["secondary_PhoneNumber"];?></p>
-                                            <?php } else { ?>
-                                                <p>Not Specified</p>
-                                            <?php } ?>
-                                        </li>
-                                        <li class="form-col-50-left">
-                                            <label>Other Email:</label>
-                                            <?php if (isset($extra_info["other_email"]) && $extra_info["other_email"] != '') { ?>
-                                                <p><?php echo $extra_info["other_email"]; ?></p>
-                                            <?php } else { ?>
-                                                <p>Not Specified</p>
-                                            <?php } ?>
-                                        </li>
-                                        <li class="form-col-50-right">
-                                            <label>Telephone Number:</label>
-                                            <?php if (isset($extra_info["other_PhoneNumber"]) && $extra_info["other_PhoneNumber"] != '') { ?>
-                                                <p><?=$extra_info["other_PhoneNumber"];?></p>
-                                            <?php } else { ?>
-                                                <p>Not Specified</p>
-                                            <?php } ?>
-                                        </li>
-                                        <li class="form-col-50-left">
-                                            <label>Referred By:</label>
-                                            <?php if (isset($applicant_info["referred_by_name"]) && $applicant_info["referred_by_name"] != null && $applicant_info["referred_by_name"] != '') { ?>
-                                                <p><?php echo $applicant_info["referred_by_name"]; ?></p>
-                                            <?php } else { ?>
-                                                <p>Not Specified</p>
-                                            <?php } ?>
-                                        </li>
-                                        <li class="form-col-50-right">
-                                            <label>Referrer Email:</label>
-                                            <?php if (isset($applicant_info["referred_by_email"]) && $applicant_info["referred_by_email"] != null && $applicant_info["referred_by_email"] != '') { ?>
-                                                <p><?php echo $applicant_info["referred_by_email"]; ?></p>
-                                            <?php } else { ?>
-                                                <p>Not Specified</p>
-                                            <?php } ?>
-                                        </li>
-                                        <li class="form-col-50-left">
-                                            <label>Linkedin public Profile URL</label>
-                                            <?php if (isset($applicant_info["linkedin_profile_url"]) && $applicant_info["linkedin_profile_url"] != '' ) { ?>
-                                                <p><a href="<?php echo $applicant_info["linkedin_profile_url"]; ?>" target="_blank"> <?php echo $applicant_info["linkedin_profile_url"]; ?></a></p>
-                                            <?php } else { ?>
-                                                <p>Not Specified</p>
-                                            <?php } ?>
-                                        </li>
-                                        <li class="form-col-50-right">
-                                            <label>Employee Number:</label>
-                                            <?php if (isset($applicant_info["employee_number"]) && $applicant_info["employee_number"] != '' ) { ?>
-                                                <p><?php echo $applicant_info["employee_number"]; ?></p>
-                                            <?php } else { ?>
-                                                <p>Not Specified</p>
-                                            <?php } ?>
-                                        </li>
-                                        <li class="form-col-50-left">
-                                            <label>Social Security Number:</label>
-
-                                            <?php if (isset($applicant_info["ssn"]) && $applicant_info["ssn"] != '' ) { ?>
-                                                <p><?php echo $applicant_info["ssn"]; ?></p>
-                                            <?php } else { ?>
-                                                <p>Not Specified</p>
-                                            <?php } ?>
-                                        </li>
-                                        <li class="form-col-50-right">
-                                            <label>Date of Birth:</label>
-                                            <p><?php echo $dob; ?></p>
-                                        </li>
-                                        <?php if(IS_NOTIFICATION_ENABLED == 1 && $phone_sid != ''){ ?>
-                                        <li class="form-col-50-left">
-                                            <label>notified_by</label>
-                                            <p><?php echo $applicant_info["notified_by"] ?></p>
-                                        </li>
-                                        <?php } ?>
-                                    </ul>
+                                    </div>     
+                                    <div class = "row">   
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">First Name</label>
+                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["first_name"] ?></p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Last Name</label>
+                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["last_name"] ?></p>
+                                        </div>
+                                    </div>
+                                    <div class = "row">   
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Email</label>
+                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["email"] ?></p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Mobile Number</label>
+                                            <p class="dummy-invoice-fields"><?=$primary_phone_number_cc;?></p>
+                                        </div>
+                                    </div>
+                                    <div class = "row">   
+                                        <div class="col-md-12 col-xs-12">
+                                            <label class="csF16">Address</label>
+                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["address"] ?></p>
+                                        </div>
+                                    </div>
+                                    <div class = "row">     
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">City</label>
+                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["city"] ?></p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Zipcode</label>
+                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["zipcode"] ?></p>
+                                        </div>
+                                    </div>
+                                    <div class = "row">     
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">State</label>
+                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["state_name"] ?></p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Country</label>
+                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["country_name"] ?></p>
+                                        </div>
+                                    </div>
+                                    <!-- <div class = "row">     
+                                        <div class="col-md-12 col-xs-12">
+                                            <label class="csF16">Job Fit Category</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php //$job_fit_categories = explode(',', $applicant_info['job_fit_category_sid']); ?>
+                                            </p>
+                                        </div>
+                                    </div> -->
+                                    <div class = "row">     
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Secondary Email</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php if (isset($extra_info["secondary_email"]) && $extra_info["secondary_email"] != '') { ?>
+                                                    <?php echo $extra_info["secondary_email"]; ?>
+                                                <?php } else { ?>
+                                                    Not Specified
+                                                <?php } ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Secondary Mobile Number</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php if (isset($extra_info["secondary_PhoneNumber"]) && $extra_info["secondary_PhoneNumber"] != '') { ?>
+                                                    <?=$extra_info["secondary_PhoneNumber"];?>
+                                                <?php } else { ?>
+                                                    Not Specified
+                                                <?php } ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class = "row">     
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Other Email</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php if (isset($extra_info["other_email"]) && $extra_info["other_email"] != '') { ?>
+                                                    <?php echo $extra_info["other_email"]; ?>
+                                                <?php } else { ?>
+                                                    Not Specified
+                                                <?php } ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Telephone Number</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php if (isset($extra_info["other_PhoneNumber"]) && $extra_info["other_PhoneNumber"] != '') { ?>
+                                                    <?=$extra_info["other_PhoneNumber"];?>
+                                                <?php } else { ?>
+                                                    Not Specified
+                                                <?php } ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class = "row">     
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Referred By</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php if (isset($applicant_info["referred_by_name"]) && $applicant_info["referred_by_name"] != null && $applicant_info["referred_by_name"] != '') { ?>
+                                                    <?php echo $applicant_info["referred_by_name"]; ?>
+                                                <?php } else { ?>
+                                                    Not Specified
+                                                <?php } ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Referrer Email</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php if (isset($applicant_info["referred_by_email"]) && $applicant_info["referred_by_email"] != null && $applicant_info["referred_by_email"] != '') { ?>
+                                                    <?php echo $applicant_info["referred_by_email"]; ?>
+                                                <?php } else { ?>
+                                                    Not Specified
+                                                <?php } ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class = "row">      
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Linkedin public Profile URL</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php if (isset($applicant_info["linkedin_profile_url"]) && $applicant_info["linkedin_profile_url"] != '' ) { ?>
+                                                    <a href="<?php echo $applicant_info["linkedin_profile_url"]; ?>" target="_blank"> <?php echo $applicant_info["linkedin_profile_url"]; ?></a>
+                                                <?php } else { ?>
+                                                    Not Specified
+                                                <?php } ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Employee Number</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php if (isset($applicant_info["employee_number"]) && $applicant_info["employee_number"] != '' ) { ?>
+                                                    <?php echo $applicant_info["employee_number"]; ?>
+                                                <?php } else { ?>
+                                                    Not Specified
+                                                <?php } ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class = "row">      
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Social Security Number</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php if (isset($applicant_info["ssn"]) && $applicant_info["ssn"] != '' ) { ?>
+                                                    <?php echo $applicant_info["ssn"]; ?>
+                                                <?php } else { ?>
+                                                    Not Specified
+                                                <?php } ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Date of Birth</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php echo $dob; ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-12 col-xs-12">
+                                            <label class="csF16">Notified By</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php echo $applicant_info["notified_by"] ?>
+                                            </p>
+                                        </div>
+                                    </div>
                                     <?php if (isset($applicant_info["YouTube_Video"]) && $applicant_info["YouTube_Video"] != "") {
                                         if($applicant_info['video_type'] == 'uploaded'){
                                             $fileExt = $applicant_info['YouTube_Video'];

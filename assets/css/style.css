@@ -17840,3 +17840,13 @@ input[type='checkbox'].user_checkbox:checked:after {
 .csTemplateWrap:hover .csPageBoxFooter {
     background: #dd760033 !important;
 }
+
+.dummy-invoice-fields {
+    height: 50px;
+    padding: 12px 10px;
+    font-weight: 600;
+    background-color: #f1f1f1;
+    border: 0;
+    border-radius: 0;
+    font-size: 16px;
+}
