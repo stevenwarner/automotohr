@@ -60,6 +60,24 @@
         return $all_employees;
     }
 
+    function get_all_company_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0,  $order_by = 'sid', $order="DESC") {
+        $keyword = trim($keyword);
+        $this->db->select('users.*, terminated_employees.termination_date');
+        $this->db->where('users.parent_sid', $parent_sid);
+        if ($keyword != null) {
+            $tK = preg_replace('/\s+/', '|', strtolower(trim($keyword)));
+            $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+            // $this->db->where("(first_name LIKE '%" . $keyword . "%' or last_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
+        }
+
+        $this->db->where('users.sid != ' . $sid);
+        $this->db->order_by($order_by, $order);
+        $this->db->join('terminated_employees', 'terminated_employees.employee_sid = users.sid', 'left');
+        $all_employees = $this->db->get('users')->result_array();
+        $all_employees = $this->verify_executive_admin_status($all_employees);
+        return $all_employees;
+    }
+
     function verify_executive_admin_status($all_employees) {
         if(!empty($all_employees)){
             foreach($all_employees as $key => $data){
