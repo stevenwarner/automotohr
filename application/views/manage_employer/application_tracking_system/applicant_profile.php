@@ -261,13 +261,13 @@
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Date of Birth</label>
                                             <p class="dummy-invoice-fields">
-                                                <?php echo formatDate($dob, 'm-d-Y', DATE); ?>
+                                                <?php echo $dob != "Not Specified" ? formatDate($dob, 'm-d-Y', DATE) : $dob; ?>
                                             </p>
                                         </div>
                                         <div class="col-md-12 col-xs-12">
                                             <label class="csF16">Notified By</label>
                                             <p class="dummy-invoice-fields">
-                                                <?php echo $applicant_info["notified_by"] ?>
+                                                <?php echo $applicant_info["notified_by"]; ?>
                                             </p>
                                         </div>
                                     </div><br>

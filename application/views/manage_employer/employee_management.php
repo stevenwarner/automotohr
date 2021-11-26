@@ -13,33 +13,33 @@
                     <div class="page-header-area">
                         <span class="page-heading down-arrow"><?php echo $title; ?></span>
                     </div>
-                    <?php   
-                        
-                        if (isset($_GET['employee_type']) && $_GET['employee_type'] == 'offline') {
+                    <?php  
+                        //
+                        if (isset($employee_type) && $employee_type == 'offline') {
                             $all = false;
                             $active = false;
                             $offline = true;
                             $terminated = false;
                             $employee_array = $offline_employees;
-                        } else if (isset($_GET['employee_type']) && $_GET['employee_type'] == 'terminated') {
+                        } else if (isset($employee_type) && $employee_type == 'terminated') {
                             $all = false;
                             $active = false;
                             $offline = false;
                             $terminated = true;
                             $employee_array = $terminated_employees;
-                        } else if (isset($_GET['employee_type']) && $_GET['employee_type'] == 'all') {
+                        } else if (isset($employee_type) && $employee_type == 'all') {
                             $all = true;
                             $active = false;
                             $offline = false;
                             $terminated = false;
                             $employee_array = $all_company_employees;
-                        } else if (isset($_GET['employee_type']) && $_GET['employee_type'] == 'active') {
+                        } else if (isset($employee_type) && $employee_type == 'active') {
                             $all = false;
                             $active = true;
                             $offline = false;
                             $terminated = false;
                             $employee_array = $employees;
-                        }    
+                        }  
                     ?> 
                     <div class="applicant-filter">
                         <div class="row">
@@ -198,6 +198,9 @@
                                             <th width="25%">Designation</th>
                                             <th>Password</th>                                    
                                             <th class="text-center">Starting Date</th>
+                                            <?php if ($all === true || $terminated === true) { ?>
+                                                <th class="text-center">Terminated Date</th>
+                                            <?php } ?>
                                             <th colspan="3" class="text-center">Actions</th>
                                         </tr> 
                                     </thead>
@@ -310,59 +313,72 @@
                                                             }
                                                         ?>
                                                     </td>
+                                                    <?php if ($all === true || $terminated === true) { ?>
+                                                        <td class="text-center">
+                                                            <?php 
+                                                                if ($employee['active'] == 0 && $employee['terminated_status'] == 1 && $employee['archived'] == 0) { 
+                                                                    echo formatDateToDB($employee["termination_date"], DB_DATE, DATE);
+                                                                } else {
+                                                                    echo "N/A";
+                                                                }
+                                                            ?>
+                                                        </td>
+                                                    <?php } ?>
                                                     <?php if($employer_id != $employee['sid']){ ?>
                                                         <?php if(
                                                             check_access_permissions_for_view($security_details, 'employee_send_documents') || 
                                                             $canAccessDocument
                                                         ) { ?>
                                                         <td class="text-center">
-                                                            <?php if($ems_status == 1) { ?>
-                                                                    <a title="Document Management"  data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('hr_documents_management/documents_assignment/employee') . '/' . $employee['sid']; ?>">
-                                                                        <i class="fa fa-file"></i>
-                                                                    </a>
-                                                                    <?php if(checkIfAppIsEnabled('timeoff', FALSE)){ ?>
-                                                                        <?php 
-                                                                            if(
-                                                                                ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) ||
-                                                                                (in_array($employee['sid'], $teamMemberIds))
-                                                                            ) { 
-                                                                        ?>
-                                                                                <a title="Time Off" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('timeoff/create_employee') . '/' . $employee['sid']; ?>">
-                                                                                        <i class="fa fa-clock-o"></i>
-                                                                                </a>
-                                                                            <?php } ?>
-                                                                    <?php } ?>
-                                                            <?php } else { ?>
-                                                                    <a title="Send HR Documents" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm"  href="<?php echo base_url('send_offer_letter_documents') . '/' . $employee['sid']; ?>">
-                                                                        <i class="fa fa-file"></i>
-                                                                        <span class="btn-tooltip">HR-Documents</span>
-                                                                    </a>
-                                                            <?php } ?>
-                                                            <?php if ($session['employer_detail']['access_level_plus']) { ?>
-                                                                <!-- Employee Quick Profile -->
-                                                                <button class="btn btn-success jsEmployeeQuickProfile" title="Employee Profile Quick View" placement="top" data-id="<?=$employee['sid'];?>">
-                                                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                                                </button>
+                                                            <?php if($employee['terminated_status'] == 0) { ?>
+                                                                <?php if($ems_status == 1) { ?>
+                                                                        <a title="Document Management"  data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('hr_documents_management/documents_assignment/employee') . '/' . $employee['sid']; ?>">
+                                                                            <i class="fa fa-file"></i>
+                                                                        </a>
+                                                                        <?php if(checkIfAppIsEnabled('timeoff', FALSE)){ ?>
+                                                                            <?php 
+                                                                                if(
+                                                                                    ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) ||
+                                                                                    (in_array($employee['sid'], $teamMemberIds))
+                                                                                ) { 
+                                                                            ?>
+                                                                                    <a title="Time Off" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('timeoff/create_employee') . '/' . $employee['sid']; ?>">
+                                                                                            <i class="fa fa-clock-o"></i>
+                                                                                    </a>
+                                                                                <?php } ?>
+                                                                        <?php } ?>
+                                                                <?php } else { ?>
+                                                                        <a title="Send HR Documents" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm"  href="<?php echo base_url('send_offer_letter_documents') . '/' . $employee['sid']; ?>">
+                                                                            <i class="fa fa-file"></i>
+                                                                            <span class="btn-tooltip">HR-Documents</span>
+                                                                        </a>
+                                                                <?php } ?>
+                                                                <?php if ($session['employer_detail']['access_level_plus']) { ?>
+                                                                    <!-- Employee Quick Profile -->
+                                                                    <button class="btn btn-success jsEmployeeQuickProfile" title="Employee Profile Quick View" placement="top" data-id="<?=$employee['sid'];?>">
+                                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                                    </button>
+                                                                <?php } ?>
                                                             <?php } ?>
                                                         </td>
                                                     <?php } ?>
                                                     <td class="text-center">
                                                         <?php if ($employee['active'] == 1 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?> 
                                                             <a title="Deactivate" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" onclick="deactivate_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;"><img style="width: 17px; height: 17px;" src="<?= base_url('assets/images/deactivate.png') ?>"></a>
-                                                        <?php } else if ($employee['active'] == 0 && $employee['terminated_status'] == 1 && $employee['archived'] == 0) { ?>  
-                                                            <?php echo "<strong>Terminated Date</strong><br>".formatDateToDB($employee["termination_date"], DB_DATE, DATE); ?>
                                                         <?php } else if ($employee['active'] == 0 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?>
                                                             <a title="Archive Employee" data-toggle="tooltip" data-placement="bottom"  class="btn btn-warning btn-sm" onclick="archive_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;">
                                                                 <i class="fa fa-archive"></i>
                                                             </a>
                                                         <?php } ?>  
                                                     </td>
-                                                    <td class="text-center">               
-                                                        <?php if (!empty($employee['applicant_sid'])) { ?>
-                                                            <a class="btn btn-info btn-sm" onclick="revert_applicant(<?php echo $employee['applicant_sid']; ?>, <?php echo $employee['sid']; ?>)" href="javascript:;">
-                                                                <i class="fa fa-undo"></i>
-                                                                <span class="btn-tooltip">Revert</span>
-                                                            </a>
+                                                    <td class="text-center">      
+                                                        <?php if($employee['terminated_status'] == 0) { ?>         
+                                                            <?php if (!empty($employee['applicant_sid'])) { ?>
+                                                                <a class="btn btn-info btn-sm" onclick="revert_applicant(<?php echo $employee['applicant_sid']; ?>, <?php echo $employee['sid']; ?>)" href="javascript:;">
+                                                                    <i class="fa fa-undo"></i>
+                                                                    <span class="btn-tooltip">Revert</span>
+                                                                </a>
+                                                            <?php } ?>
                                                         <?php } ?>
                                                     </td>
                                                     <?php } else{ echo '<td colspan="'.($sizeof == 1 ? '1' : '3' ).'"></td>'; } ?>
