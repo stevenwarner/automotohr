@@ -72,16 +72,7 @@
 <!--                        Document Management</a>-->
 <!--                </li>-->
 <!--            --><?php //} ?>
-        <?php } else { ?>
-            <?php if(check_access_permissions_for_view($security_details, 'hr_documents')) { ?>
-                <li>
-                    <a <?php if (base_url(uri_string()) == site_url('hr_documents') || base_url(uri_string()) == site_url('add_hr_document')) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('hr_documents') ?>">
-                        <figure><i class="fa fa-file"></i></figure>
-                        Admin HR Documents</a>
-                </li>
-            <?php } ?>
+       
         <?php } ?>
         <?php //if(check_access_permissions_for_view($security_details, 'documents_management')) { ?>
         <?php //if(false) { ?>

@@ -382,25 +382,6 @@
                                     <!--                                        </div>-->
                                     <!--                                    --><?php //} 
                                                                                 ?>
-                                <?php } else { ?>
-                                    <?php if (check_access_permissions_for_view($security_details, 'hr_documents')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-file-text-o"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('hr_documents') ?>">Admin HR Documents</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <small>Manage HR Documents</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('hr_documents') ?>" class="site-btn">Manage</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
                                 <?php } ?>
                                 <!--8-->
                                 <?php //if(check_access_permissions_for_view($security_details, 'resume_database')) { 
