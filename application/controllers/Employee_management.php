@@ -173,10 +173,6 @@ class Employee_management extends Public_Controller {
     public function employee_management() {
         if ($this->session->userdata('logged_in')) {
             //
-            if(!isset($_GET['employee_type'])){
-                redirect(current_url().'?employee_type=active&keyword=&order_by=&order=');
-            }
-            //
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -192,21 +188,27 @@ class Employee_management extends Public_Controller {
 
             if (isset($_GET['keyword'])) {
                 $keyword = $_GET['keyword'];
+            } else {
+                $keyword = "";
             }
 
             if (isset($_GET['employee_type'])) {
                 $employee_type = $_GET['employee_type'];
+            } else {
+                $employee_type = "all";
             }
 
             if (isset($_GET['order_by'])) {
                 $order_by = $_GET['order_by'];
+            } else {
+                $order_by = "";
             }
 
             if (isset($_GET['order'])) {
                 $order = $_GET['order'];
+            } else {
+                $order = "";
             }
-
-           
 
             $data['archived'] = 0;
             $data['ems_status'] = $ems_status;
@@ -214,6 +216,7 @@ class Employee_management extends Public_Controller {
             $data['employee_type'] = $employee_type;
             $data['order_by'] = $order_by;
             $data['order'] = $order;
+            //
             if(empty($order_by)){
                 $order_by = 'sid';
             }
@@ -295,7 +298,7 @@ class Employee_management extends Public_Controller {
             if($data['session']['employer_detail']['access_level_plus'] != 1 && $data['session']['employer_detail']['pay_plan_flag'] != 1){
                 $data['teamMemberIds'] = $this->timeoff_model->getEmployeeTeamMemberIds($data['session']['employer_detail']['sid']);
             }
-
+            //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/employee_management');
             $this->load->view('main/footer');

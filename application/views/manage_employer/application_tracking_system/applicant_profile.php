@@ -267,7 +267,7 @@
                                         <div class="col-md-12 col-xs-12">
                                             <label class="csF16">Notified By</label>
                                             <p class="dummy-invoice-fields">
-                                                <?php echo $applicant_info["notified_by"] ?>
+                                                <?php echo $applicant_info["notified_by"]; ?>
                                             </p>
                                         </div>
                                     </div><br>
