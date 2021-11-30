@@ -46,7 +46,7 @@
 
     function get_terminated_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0, $orderType = 'users.sid', $order="DESC") {
         $keyword = trim($keyword);
-        $this->db->select('users.*, terminated_employees.termination_date');
+        $this->db->select('users.*, terminated_employees.termination_date, terminated_employees.details as terminated_reason');
         $this->db->where('users.parent_sid', $parent_sid);
         $this->db->where('users.terminated_status', 1);
         if ($keyword != null) {

@@ -199,7 +199,7 @@
                                             <th>Password</th>                                    
                                             <th class="text-center">Starting Date</th>
                                             <?php if ($all === true || $terminated === true) { ?>
-                                                <th class="text-center">Terminated Date</th>
+                                                <th class="text-center">Termination Date</th>
                                             <?php } ?>
                                             <th colspan="3" class="text-center">Actions</th>
                                         </tr> 
@@ -318,6 +318,9 @@
                                                             <?php 
                                                                 if ($employee['active'] == 0 && $employee['terminated_status'] == 1 && $employee['archived'] == 0) { 
                                                                     echo formatDateToDB($employee["termination_date"], DB_DATE, DATE);
+                                                                    if(!empty($employee['terminated_reason'])) {
+                                                                        echo "<br/> Reason: ".$employee['terminated_reason']; 
+                                                                    }
                                                                 } else {
                                                                     echo "N/A";
                                                                 }
