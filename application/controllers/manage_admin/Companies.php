@@ -3033,11 +3033,6 @@ class Companies extends Admin_Controller {
             //
             $onboarding_link = $flow_info['url'];
         }
-        // echo "<pre>";
-        // echo "zindabad";
-        // print_r(GetCompany($this->data['company_info']));
-        // print_r($company_status);
-        // die();
         //
         $this->data['company_status'] = $company_status;
         $this->data['onboarding_link'] = $onboarding_link;

@@ -64,7 +64,7 @@
                                                 <div class="row">
                                                     <div class="col-xs-12">
                                                         <div class="embed-responsive embed-responsive-16by9">
-                                                            <iframe src="<?php echo $onboarding_link; ?>" frameborder="0"webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>  
+                                                            <iframe src="<?php echo $onboarding_link; ?>" frameborder="0"webkitallowfullscreen mozallowfullscreen allowfullscreen title=""></iframe>  
                                                         </div>
                                                     </div>
                                                 </div>
@@ -79,6 +79,13 @@
                                                 <span class="pull-left">
                                                     <h1 class="hr-registered">Company Onboarding Status</h1>
                                                 </span>
+                                                <span class="pull-right">
+                                                    <?php if(!$company_status['onboarding_completed']):?>
+                                                    <span class="btn btn-warning">In-progress</span>
+                                                    <?php else:?>
+                                                    <span class="btn btn-danger">Onboard</span>
+                                                    <?php endif;?>
+                                                </span>
                                             </div>
                                             <div class="hr-innerpadding">
                                                 <div class="row">
@@ -87,8 +94,9 @@
                                                             <table class="table table-bordered table-striped table-hover">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th>Module Name</th>
-                                                                        <th>Status</th>
+                                                                        <th scope="col">Module Name</th>
+                                                                        <th scope="col">Required</th>
+                                                                        <th scope="col">Status</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -96,6 +104,7 @@
                                                                     <?php foreach ($company_status["onboarding_steps"] as $status) { ?>
                                                                         <tr>
                                                                             <td><?php echo $status["title"]; ?></td>
+                                                                            <td><?php echo $status["required"] ? "Yes" : "No"; ?></td>
                                                                             <td>
                                                                                 <?php
                                                                                     if(!empty($status["completed"]) && $status["completed"] == "true") {

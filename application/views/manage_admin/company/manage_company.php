@@ -1269,7 +1269,7 @@
                                                     <article class="col-sm-6 information-box">
                                                         <header class="hr-box-header">   
                                                             <?=$v['module_name'];?>
-                                                            <?php if ($v['module_name'] == "timeoff") { ?>
+                                                            <?php if ($v['module_name'] == "Payroll") { ?>
                                                                 <a href="<?php echo base_url('manage_admin/companies/manage_payroll/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
                                                             <?php } ?> 
                                                         </header>
