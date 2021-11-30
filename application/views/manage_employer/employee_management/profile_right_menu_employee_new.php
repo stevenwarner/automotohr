@@ -190,7 +190,7 @@
                                 <span class="left-addon">
                                     <i aria-hidden="true" class="fa fa-star"></i>
                                 </span>
-                                <h4>Merge Into Employee</h4>
+                                <h4>Merge With An Employee</h4>
                                 <a class="" href="javascript:0;" data-toggle="modal" data-target="#merge_modal">Merge<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
 
                             </li>
@@ -673,25 +673,28 @@
         <div class="modal-content">
             <div class="modal-header modal-header-bg">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="review_modal_title">Merge Employee (<?= $employer['first_name'] . ' ' . $employer['last_name']?>)</h4>
+                <h4 class="modal-title" id="review_modal_title">Merge Employee</h4>
             </div>
             <div id="review_modal_body" class="modal-body">
                 <div class="table-responsive">
                     <div class="container-fluid">
-                        <label>Select Employee to Merge: </label>
+                        <label>Please select an employee to merge with <?= $employer['first_name'] . ' ' . $employer['last_name']?> </label>
                         <select class="invoice-fields" id="employees-list">
                             <option value="">[Select Employee to Merge]</option>
                             <?php $employees = fetchEmployees($this->session->userdata('logged_in')['company_detail']['sid'], $this);
                             foreach($employees as $emp){?>
                                 <?php if ($employer["sid"] != $emp['sid']) { ?>
-                                    <option value="<?= $emp['sid']?>" id="selected_<?= $emp['sid']?>" data-secondary_emp_name="<?php echo $emp['first_name'].' '.$emp['last_name']; ?>"><?= ucwords($emp['first_name'].' '.$emp['last_name'])." (".$emp['email'].")"?></option>
+                                    <option value="<?= $emp['sid']?>" id="selected_<?= $emp['sid']?>" data-secondary_emp_name="<?php echo $emp['first_name'].' '.$emp['last_name']; ?>"><?=getUserNameBySID($emp['sid'])?></option>
                                 <?php } ?>
                             <?php }?>
                         </select>
                         <br>
-                        <p>The current employee is primary employee and the selected employee is secondary employee. So Secondary employee data merge into primary employee data.</p>
                         <br>
-                        <input class="btn btn-success pull-right" type="button" id="merge-employee" value="Merge">
+                        <br>
+                        <br>
+                        <p class="csF14">All the data of the selected employee will be transferred to <?= $employer['first_name']?>'s profile.</p>
+                        <br>
+                        <input class="btn btn-success pull-right" type="button" id="merge-employee" value="Merge Employee">
                         <div class="custom_loader pull-right">
                             <div id="submit-loader" class="loader" style="display: none">
                                 <i style="font-size: 25px; color: #81b431;" aria-hidden="true" class="fa fa-cog fa-spin"></i>
@@ -859,11 +862,11 @@
         var secondary_emp_name = $("#selected_"+secondary_emp).data('secondary_emp_name');
 
         if(secondary_emp == '' || secondary_emp == undefined){
-            alertify.alert('Message','Please Select Employee To Merge!');
+            alertify.alert('Message','Please Select An Employee To Merge With <strong>'+primary_emp_name+'</strong>!');
             return false;
         }
         //
-        alertify.confirm('Confirmation', "Are you sure you want to merger employee <strong>"+secondary_emp_name+"</strong> into <strong>"+primary_emp_name+"</strong>?",
+        alertify.confirm('Confirmation', "Are you sure you want to merge an employee <strong>"+secondary_emp_name+"</strong> into <strong>"+primary_emp_name+"</strong>?",
             function () {
                 $('#submit-loader').show();
                 _this.attr('disabled','disabled');
