@@ -1378,3 +1378,7 @@ $route['create-company-site-map']['get'] = 'Sitemaps/CreateCompanySitemaps';
 
 // Delete job category industry
 $route['manage_admin/job_categories_manager/job_category_industries/(:num)']['delete'] = 'manage_admin/Job_categories_manager/delete_industry/$1';
+
+//
+$route['manage_admin/merge_employees/employees/(:num)']['get'] = 'manage_admin/Merge_employees/employees/$1';
+$route['manage_admin/merge_employees/merge/(:num)']['get'] = 'manage_admin/Merge_employees/merge';
