@@ -594,6 +594,6 @@ define('APPROVER_TIMEOFF_REQUEST', 413); // Send request email
 //
 define('SHIFT_START', '9:00 AM'); // Default Shift Start
 define('SHIFT_END', '6:00 PM'); // Default Shift End
-define('DAY_OFF', 'Sunday'); // Default Day Off
+define('DAY_OFF', ''); // Default Day Off
 define('BREAK_HOURS', '1'); // Default Break Hours
 define('BREAK_MINUTES', '0'); // Default Break Minutes

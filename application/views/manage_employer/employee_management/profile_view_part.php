@@ -338,7 +338,7 @@
         var shift_end = '<?php echo $shift_end?>';
         var break_hours = '<?php echo $break_hours; ?>';
         var break_minutes = '<?php echo $break_minutes; ?>';
-        var dayoffs = '<?php echo count(explode(',', $employer["offdays"])); ?>';
+        var dayoffs = '<?php echo !empty($employer["offdays"]) ? count(explode(',', $employer["offdays"])) : 0; ?>';
 
         if (break_minutes.toString().length == 1) {
             break_minutes = '0' + break_minutes;
@@ -377,7 +377,8 @@
         var shift_time = hourDiff + (hourDiff > 1 ? " hours" : " hour");
         var break_hour_text = break_hours > 0 ? (break_hours + (break_hours > 1 ? " hours" : " hour")) : 0;
         var break_minute_text = break_minutes > 0 ? (break_minutes + (break_minutes > 1 ? " minutes" : " minute")) : 0;
-        var break_timming = (break_hour_text != 0 ? break_hour_text : '') + (break_minute_text != 0 ? ' & '+break_minute_text : '');
+        var break_concat = break_minute_text != 0 ? ' & ' : '';
+        var break_timming = (break_hour_text != 0 ? (break_hour_text + break_concat) : '') + (break_minute_text != 0 ? break_minute_text : '');
 
         $("#display_employee_shift_detaail").html(row);
         $("#employee_shift_time").text(shift_start +' - '+ shift_end+' ('+shift_time+')');

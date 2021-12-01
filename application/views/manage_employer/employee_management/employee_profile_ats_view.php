@@ -1391,12 +1391,14 @@ function generateEmployeeWorkLog() {
         break_minutes = '0' + break_minutes;
     }
 
+    dayoffs = dayoffs != null ? dayoffs.length : 0; 
+
     //create date format          
     var timeStart = new Date("01/01/2021 " + shift_start).getHours();
     var timeEnd = new Date("01/01/2021 " + shift_end).getHours();
     var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
     var hourDiff = timeEnd - timeStart - breakHoursTotal;
-    var weekTotal = ((hourDiff) * (7 - dayoffs.length)).toFixed(1);
+    var weekTotal = ((hourDiff) * (7 - dayoffs)).toFixed(1);
     var weekAllowedWorkHours = 40;
     var weekWorkableHours = weekTotal < weekAllowedWorkHours ? weekTotal : weekAllowedWorkHours;
     var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
@@ -1406,7 +1408,7 @@ function generateEmployeeWorkLog() {
 
     if (overTime != 0) {
         row += "<span class='text-danger'>";
-        row += "Any time over 40 hours a week goes into overtime.</br>";
+        row += "Any time over 40 hours a week goes into overtime.";
     }
 
     row += "The employee's daily workable time is of " + hourDiff + " hours.";
@@ -1425,7 +1427,6 @@ function generateEmployeeWorkLog() {
 }
 
 $(".show_employee_working_info").on("change", function() {
-    console.log("event hit")
     generateEmployeeWorkLog();
 });
 
@@ -1653,12 +1654,14 @@ function validate_employers_form() {
                 break_minutes = '0' + break_minutes;
             }
 
+            dayoffs = dayoffs != null ? dayoffs.length : 0; 
+
             //create date format          
             var timeStart = new Date("01/01/2021 " + shift_start).getHours();
             var timeEnd = new Date("01/01/2021 " + shift_end).getHours();
             var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
             var hourDiff = timeEnd - timeStart - breakHoursTotal;
-            var weekTotal = ((hourDiff) * (7 - dayoffs.length)).toFixed(1);
+            var weekTotal = ((hourDiff) * (7 - dayoffs)).toFixed(1);
             var weekAllowedWorkHours = 40;
             var weekWorkableHours = weekTotal < weekAllowedWorkHours ? weekTotal : weekAllowedWorkHours;
             var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
@@ -1676,7 +1679,7 @@ function validate_employers_form() {
             row += weekWorkableHours > 1 ? " hours." : " hour.";
             
             if (overTime != 0) {
-                row += "Employee's over time is " + overTime;
+                row += " Employee's over time is " + overTime;
                 row += overTime > 1 ? " hours." : " hour.";
                 row += "</span>";
             }
@@ -2597,7 +2600,7 @@ function setCaretPosition(elem, caretPos) {
 .update_employee_info_container {
     height: 28px !important;
     font-size: 18px;
-    padding-top: 26px;
+    padding-top: 0px;
 }
 
 @media screen and (max-width: 768px) {
