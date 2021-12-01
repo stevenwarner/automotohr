@@ -30,30 +30,28 @@ class Merge_company_employee_model extends CI_Model
         $data_to_update = $this->findDifference($primary_employee, $secondary_employee);
         //
         if (!empty($data_to_update)) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $merge_by = $data['session']['employer_detail']['sid'];
-            //
-            $merge_history = array(
-                'primary_employee_sid' => $primary_employee_sid,
-                'secondary_employee_sid' => $secondary_employee_sid,
-                'primary_employee_profile_data' => serialize($primary_employee),
-                'secondary_employee_profile_data' => serialize($secondary_employee),
-                'updated_profile_data' => serialize($data_to_update),
-                'merge_by' => $merge_by,
-                'merge_at' => date('Y-m-d')
-            );
-            //
-            $this->db->insert('employee_merge_history', $merge_history);
-            //
             //Update primary Employee
             $this->db->where('sid', $primary_employee_sid);
             $this->db->update('users', $data_to_update);
-            //
-            //Delete secondary Employee
-            $this->db->where('sid', $secondary_employee_sid);
-            $this->db->delete('users');
         }
         //
+        $data['session'] = $this->session->userdata('logged_in');
+        $merge_by = $data['session']['employer_detail']['sid'];
+        //
+        $merge_history = array(
+            'primary_employee_sid' => $primary_employee_sid,
+            'secondary_employee_sid' => $secondary_employee_sid,
+            'primary_employee_profile_data' => serialize($primary_employee),
+            'secondary_employee_profile_data' => serialize($secondary_employee),
+            'updated_profile_data' => serialize($data_to_update),
+            'merge_by' => $merge_by,
+            'merge_at' => date('Y-m-d H:i:s', strtotime('now'))
+        );
+        //
+        $this->db->insert('employee_merge_history', $merge_history);
+        // Delete secondary Employee
+        $this->db->where('sid', $secondary_employee_sid);
+        $this->db->delete('users');
     }
 
     function update_employee_emergency_contacts($primary_employee_sid, $secondary_employee_sid)

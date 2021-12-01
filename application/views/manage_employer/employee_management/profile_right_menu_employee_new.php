@@ -862,11 +862,11 @@
         var secondary_emp_name = $("#selected_"+secondary_emp).data('secondary_emp_name');
 
         if(secondary_emp == '' || secondary_emp == undefined){
-            alertify.alert('Message','Please Select An Employee To Merge With <strong>'+primary_emp_name+'</strong>!');
+            alertify.alert('Error!','Please select an employee to merge with <strong>'+primary_emp_name+'</strong>.');
             return false;
         }
         //
-        alertify.confirm('Confirmation', "Are you sure you want to merge an employee <strong>"+secondary_emp_name+"</strong> into <strong>"+primary_emp_name+"</strong>?",
+        alertify.confirm('Confirmation', "Are you sure you want to merge <strong>"+secondary_emp_name+"</strong> into <strong>"+primary_emp_name+"</strong>?",
             function () {
                 $('#submit-loader').show();
                 _this.attr('disabled','disabled');
@@ -888,7 +888,7 @@
                             alertify.alert(result.message);
                         }else{
                             $("#merge_modal").hide();
-                            alertify.alert("Success", "Employee <strong>"+secondary_emp_name+"</strong> merge into <strong>"+primary_emp_name+"</strong> successfully.",function(){
+                            alertify.alert("Success", "Employee <strong>"+secondary_emp_name+"</strong> merges into <strong>"+primary_emp_name+"</strong> successfully.",function(){
                                 window.location.href = '<?= base_url("employee_profile").'/'?>'+primary_emp;
                             }); 
                         }
