@@ -2,6 +2,8 @@
     $field_phone = 'PhoneNumber';
     $field_sphone = 'secondary_PhoneNumber';
     $field_ophone = 'other_PhoneNumber';
+    $timeOff = 'disable';
+    
     //
     $is_regex = 0;
     $input_group_start = $input_group_end = '';
@@ -29,6 +31,13 @@
     } else{
         if($dob != '') $dob = DateTime::createFromFormat('m-d-Y', $dob)->format('M d Y, D');
     }
+
+    if (checkIfAppIsEnabled('timeoff')) {
+        $timeOff = 'enable';
+    }
+
+    // echo ($timeOff);
+    // die();
 ?>
 
 <div class="main-content">
@@ -70,7 +79,7 @@
                             <div id="tab1" class="tabs-content">
                                 <div class="universal-form-style-v2 info_view" <?php if ($edit_form) { ?>
                                     style="display: none;" <?php } ?>>
-                                    <?php $this->load->view('manage_employer/employee_management/profile_view_part', ['primary_phone_number_cc' => $primary_phone_number_cc, 'dob' => $dob]); ?>
+                                    <?php $this->load->view('manage_employer/employee_management/profile_view_part', ['primary_phone_number_cc' => $primary_phone_number_cc, 'dob' => $dob, 'timeOff' => $timeOff]); ?>
                                 </div>
                                 <!--Edit part-->
                                 <div <?php if ($edit_form) { ?>style="display: block;"
@@ -382,103 +391,105 @@
                                             </div>
                                             <!--  -->
                                         </div>
-                                        <div class="row">  
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <?php 
-                                                    $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
-                                                    $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
-                                                ?>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <label>Shift start time:</label>
-                                                        <input
-                                                            class="invoice-fields js-shift-start-time show_employee_working_info"
-                                                            readonly="true" value="<?php echo $shift_start; ?>"
-                                                            type="text" name="shift_start_time">
-                                                    </div>
-                                                    <div class="col-sm-6" style="padding-right: 0px;">
-                                                        <label>Shift End time:</label>
-                                                        <input
-                                                            class="invoice-fields js-shift-end-time show_employee_working_info"
-                                                            readonly="true" value="<?php echo $shift_end; ?>"
-                                                            type="text" name="shift_end_time">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Break</label>
-                                                <?php 
-                                                    $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
-                                                    $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
-                                                ?>
-                                                <div class="row">
-                                                    <div class="col-sm-6 shift_div">
-                                                        <div class="input-group">
-                                                            <input min="0" max="23"
-                                                                oninput="this.value = Math.abs(this.value)"
-                                                                id="br_hours" type="number"
-                                                                value="<?php echo  $break_hours; ?>" name="break_hours"
-                                                                class="invoice-fields show_employee_working_info emp_break_info"
-                                                                data-type="hours">
-                                                            <div class="input-group-addon"> Hours </div>
+                                        <?php if($timeOff == 'enable') { ?>
+                                            <div class="row">  
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <?php 
+                                                        $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
+                                                        $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
+                                                    ?>
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <label>Shift start time:</label>
+                                                            <input
+                                                                class="invoice-fields js-shift-start-time show_employee_working_info"
+                                                                readonly="true" value="<?php echo $shift_start; ?>"
+                                                                type="text" name="shift_start_time">
                                                         </div>
-                                                    </div>
-                                                    <div class="col-sm-6 shift_div shift_end">
-                                                        <div class="input-group">
-                                                            <input min="0" max="59"
-                                                                oninput="this.value = Math.abs(this.value)"
-                                                                type="number" value="<?php echo  $break_minutes; ?>"
-                                                                id="br_mins" name="break_mins"
-                                                                class="invoice-fields show_employee_working_info emp_break_info"
-                                                                data-type="minutes">
-                                                            <div class="input-group-addon">Minutes</div>
+                                                        <div class="col-sm-6" style="padding-right: 0px;">
+                                                            <label>Shift End time:</label>
+                                                            <input
+                                                                class="invoice-fields js-shift-end-time show_employee_working_info"
+                                                                readonly="true" value="<?php echo $shift_end; ?>"
+                                                                type="text" name="shift_end_time">
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <!--  -->
-                                        </div>
-                                        <div class="row">  
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Week Days Off:</label>
-                                                <?php $dayoffs = isset($employer['offdays']) && !empty($employer['offdays']) ? explode(',', $employer['offdays']) : [DAY_OFF]; ?>
-                                                <select class="show_employee_working_info" name="offdays[]"
-                                                    id="js_offdays" multiple="true">
-                                                    <option value="Monday"
-                                                        <?php echo in_array("Monday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                        Monday</option>
-                                                    <option value="Tuesday"
-                                                        <?php echo in_array("Tuesday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                        Tuesday</option>
-                                                    <option value="Wednesday"
-                                                        <?php echo in_array("Wednesday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                        Wednesday</option>
-                                                    <option value="Thursday"
-                                                        <?php echo in_array("Thursday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                        Thursday</option>
-                                                    <option value="Friday"
-                                                        <?php echo in_array("Friday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                        Friday</option>
-                                                    <option value="Saturday"
-                                                        <?php echo in_array("Saturday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                        Saturday</option>
-                                                    <option value="Sunday"
-                                                        <?php echo in_array("Sunday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                        Sunday</option>
-                                                </select>
-                                            </div>
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <div class="update_employee_info_container">
-                                                    <strong id="update_employee_info"></strong>
-                                                    <input type="hidden" name="weekly_hours" id="employee_weekly_hours">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Break</label>
+                                                    <?php 
+                                                        $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
+                                                        $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
+                                                    ?>
+                                                    <div class="row">
+                                                        <div class="col-sm-6 shift_div">
+                                                            <div class="input-group">
+                                                                <input min="0" max="23"
+                                                                    oninput="this.value = Math.abs(this.value)"
+                                                                    id="br_hours" type="number"
+                                                                    value="<?php echo  $break_hours; ?>" name="break_hours"
+                                                                    class="invoice-fields show_employee_working_info emp_break_info"
+                                                                    data-type="hours">
+                                                                <div class="input-group-addon"> Hours </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 shift_div shift_end">
+                                                            <div class="input-group">
+                                                                <input min="0" max="59"
+                                                                    oninput="this.value = Math.abs(this.value)"
+                                                                    type="number" value="<?php echo  $break_minutes; ?>"
+                                                                    id="br_mins" name="break_mins"
+                                                                    class="invoice-fields show_employee_working_info emp_break_info"
+                                                                    data-type="minutes">
+                                                                <div class="input-group-addon">Minutes</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                <!--  -->
                                             </div>
-                                            <!--  -->
-                                        </div>
+                                            <div class="row">  
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Week Days Off:</label>
+                                                    <?php $dayoffs = isset($employer['offdays']) && !empty($employer['offdays']) ? explode(',', $employer['offdays']) : [DAY_OFF]; ?>
+                                                    <select class="show_employee_working_info" name="offdays[]"
+                                                        id="js_offdays" multiple="true">
+                                                        <option value="Monday"
+                                                            <?php echo in_array("Monday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                            Monday</option>
+                                                        <option value="Tuesday"
+                                                            <?php echo in_array("Tuesday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                            Tuesday</option>
+                                                        <option value="Wednesday"
+                                                            <?php echo in_array("Wednesday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                            Wednesday</option>
+                                                        <option value="Thursday"
+                                                            <?php echo in_array("Thursday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                            Thursday</option>
+                                                        <option value="Friday"
+                                                            <?php echo in_array("Friday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                            Friday</option>
+                                                        <option value="Saturday"
+                                                            <?php echo in_array("Saturday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                            Saturday</option>
+                                                        <option value="Sunday"
+                                                            <?php echo in_array("Sunday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                            Sunday</option>
+                                                    </select>
+                                                </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <div class="update_employee_info_container">
+                                                        <strong id="update_employee_info"></strong>
+                                                        <input type="hidden" name="weekly_hours" id="employee_weekly_hours">
+                                                    </div>
+                                                </div>
+                                                <!--  -->
+                                            </div>
+                                        <?php } ?>  
                                         <div class="row">
                                             <!--  -->                 
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
@@ -1327,6 +1338,7 @@
 </script>
 <!--file opener modal starts-->
 <script language="JavaScript" type="text/javascript">
+var timeOff = '<?=$timeOff?>';
 $("#teams").select2();
 
 
@@ -1338,97 +1350,104 @@ $('#js_offdays').select2({
     closeOnSelect: false
 });
 
-$(".emp_break_info").on("keyup", function() {
-    var type = $(this).data("type");
-    validateBreakTime(type);
-
-});
-
-function validateBreakTime(type) {
-    //
-    var break_hours = $("#br_hours").val();
-    var break_minutes = $("#br_mins").val();
-    //
-    var shift_start = $(".js-shift-start-time").val();
-    var shift_end = $(".js-shift-end-time").val();
-    //
-    //create date format          
-    var timeStart = new Date("01/01/2007 " + shift_start).getHours();
-    var timeEnd = new Date("01/01/2007 " + shift_end).getHours();
-    //
-    var hourDiff = timeEnd - timeStart;
-
-    var is_error = "no";
-    //  
-    if (type == "minutes" && break_minutes > 59) {
-        is_error = "yes";
-        alertify.alert("Notice", "Break minutes always less than 59 minutes!");
-    } else if (type == "hours" && break_hours > 23) {
-        is_error = "yes";
-        alertify.alert("Notice", "Break hours always less than 23 hours!");
-    } else if (break_hours > hourDiff || (break_hours == hourDiff && break_minutes > 1)) {
-        is_error = "yes";
-        alertify.alert("Notice", "The break time can not be greater than the employees' shift time.!");
-    }
-
-    return is_error;
-}
-
-$(document).ready(function() {
-    generateEmployeeWorkLog();
-});
-
-$('#js_offdays').select2('val', <?=json_encode($dayoffs);?>);
-
-function generateEmployeeWorkLog() {
-    var shift_start = $(".js-shift-start-time").val();
-    var shift_end = $(".js-shift-end-time").val();
-    var break_hours = $("#br_hours").val();
-    var break_minutes = $("#br_mins").val();
-    var dayoffs = $("#js_offdays").val();
-
-    if (break_minutes.toString().length == 1) {
-        break_minutes = '0' + break_minutes;
-    }
-
-    dayoffs = dayoffs != null ? dayoffs.length : 0; 
-
-    //create date format          
-    var timeStart = new Date("01/01/2021 " + shift_start).getHours();
-    var timeEnd = new Date("01/01/2021 " + shift_end).getHours();
-    var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
-    var hourDiff = timeEnd - timeStart - breakHoursTotal;
-    var weekTotal = ((hourDiff) * (7 - dayoffs)).toFixed(1);
-    var weekAllowedWorkHours = 40;
-    var weekWorkableHours = weekTotal < weekAllowedWorkHours ? weekTotal : weekAllowedWorkHours;
-    var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
-
-    var row = "";
-    row += "<p>";
-
-    if (overTime != 0) {
-        row += "<span class='text-danger'>";
-        row += "Any time over 40.00 hours a week goes into overtime.";
-    }
-
-    row += "The employee's daily workable time is of " + hourDiff.toFixed(2) + " hours.";
-    row += " Employee's weekly workable time is " + weekWorkableHours.toFixed(2);
-    row += weekWorkableHours > 1 ? " hours." : " hour.";
     
-    if (overTime != 0) {
-        row += " Employee's over time is " + overTime.toFixed(2);
-        row += overTime > 1 ? " hours." : " hour.";
-        row += "</span>";
+
+
+
+if (timeOff == "enable") {
+    $(".emp_break_info").on("keyup", function() {
+    
+        var type = $(this).data("type");
+        validateBreakTime(type);
+    });
+
+    function validateBreakTime(type) {
+        //
+        var break_hours = $("#br_hours").val();
+        var break_minutes = $("#br_mins").val();
+        //
+        var shift_start = $(".js-shift-start-time").val();
+        var shift_end = $(".js-shift-end-time").val();
+        //
+        //create date format          
+        var timeStart = new Date("01/01/2007 " + shift_start).getHours();
+        var timeEnd = new Date("01/01/2007 " + shift_end).getHours();
+        //
+        var hourDiff = timeEnd - timeStart;
+
+        var is_error = "no";
+        //  
+        if (type == "minutes" && break_minutes > 59) {
+            is_error = "yes";
+            alertify.alert("Notice", "Break minutes always less than 59 minutes!");
+        } else if (type == "hours" && break_hours > 23) {
+            is_error = "yes";
+            alertify.alert("Notice", "Break hours always less than 23 hours!");
+        } else if (break_hours > hourDiff || (break_hours == hourDiff && break_minutes > 1)) {
+            is_error = "yes";
+            alertify.alert("Notice", "The break time can not be greater than the employees' shift time.!");
+        }
+
+        return is_error;
     }
 
-    row += "</p>";
+    $(document).ready(function() {
+        generateEmployeeWorkLog();
+    });
 
-    $("#update_employee_info").html(row);
+    $('#js_offdays').select2('val', <?=json_encode($dayoffs);?>);
+
+    function generateEmployeeWorkLog() {
+        var shift_start = $(".js-shift-start-time").val();
+        var shift_end = $(".js-shift-end-time").val();
+        var break_hours = $("#br_hours").val();
+        var break_minutes = $("#br_mins").val();
+        var dayoffs = $("#js_offdays").val();
+
+        if (break_minutes.toString().length == 1) {
+            break_minutes = '0' + break_minutes;
+        }
+
+        dayoffs = dayoffs != null ? dayoffs.length : 0; 
+
+        //create date format          
+        var timeStart = new Date("01/01/2021 " + shift_start).getHours();
+        var timeEnd = new Date("01/01/2021 " + shift_end).getHours();
+        var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
+        var hourDiff = timeEnd - timeStart - breakHoursTotal;
+        var weekTotal = ((hourDiff) * (7 - dayoffs)).toFixed(1);
+        var weekAllowedWorkHours = 40;
+        var weekWorkableHours = weekTotal < weekAllowedWorkHours ? weekTotal : weekAllowedWorkHours;
+        var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
+
+        var row = "";
+        row += "<p>";
+
+        if (overTime != 0) {
+            row += "<span class='text-danger'>";
+            row += "Any time over 40.00 hours a week goes into overtime.";
+        }
+
+        row += "The employee's daily workable time is of " + hourDiff.toFixed(2) + " hours.";
+        row += " Employee's weekly workable time is " + weekWorkableHours.toFixed(2);
+        row += weekWorkableHours > 1 ? " hours." : " hour.";
+        
+        if (overTime != 0) {
+            row += " Employee's over time is " + overTime.toFixed(2);
+            row += overTime > 1 ? " hours." : " hour.";
+            row += "</span>";
+        }
+
+        row += "</p>";
+
+        $("#update_employee_info").html(row);
+    }
+
+    $(".show_employee_working_info").on("change", function() {
+        generateEmployeeWorkLog();
+    });
 }
 
-$(".show_employee_working_info").on("change", function() {
-    generateEmployeeWorkLog();
-});
 
 <?php if($access_level_plus == 1 && IS_PTO_ENABLED ==1) {?>
 $('.js-shift-start-time').datetimepicker({
@@ -1643,48 +1662,49 @@ function validate_employers_form() {
 
         },
         submitHandler: function(form) {
+            if (timeoff == "enable") {
+                var shift_start = $(".js-shift-start-time").val();
+                var shift_end = $(".js-shift-end-time").val();
+                var break_hours = $("#br_hours").val();
+                var break_minutes = $("#br_mins").val();
+                var dayoffs = $("#js_offdays").val();
 
-            var shift_start = $(".js-shift-start-time").val();
-            var shift_end = $(".js-shift-end-time").val();
-            var break_hours = $("#br_hours").val();
-            var break_minutes = $("#br_mins").val();
-            var dayoffs = $("#js_offdays").val();
+                if (break_minutes.toString().length == 1) {
+                    break_minutes = '0' + break_minutes;
+                }
 
-            if (break_minutes.toString().length == 1) {
-                break_minutes = '0' + break_minutes;
+                dayoffs = dayoffs != null ? dayoffs.length : 0; 
+
+                //create date format          
+                var timeStart = new Date("01/01/2021 " + shift_start).getHours();
+                var timeEnd = new Date("01/01/2021 " + shift_end).getHours();
+                var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
+                var hourDiff = timeEnd - timeStart - breakHoursTotal;
+                var weekTotal = ((hourDiff) * (7 - dayoffs)).toFixed(1);
+                var weekAllowedWorkHours = 40;
+                var weekWorkableHours = weekTotal < weekAllowedWorkHours ? weekTotal : weekAllowedWorkHours;
+                var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
+
+                var row = "";
+                row += "<p>";
+
+                if (overTime != 0) {
+                    row += "<span class='text-danger'>";
+                    row += "Any time over 40.00 hours a week goes into overtime.</br>";
+                }
+
+                row += "The employee's daily workable time is of " + hourDiff.toFixed(2) + " hours.";
+                row += " Employee's weekly workable time is " + weekWorkableHours.toFixed(2);
+                row += weekWorkableHours > 1 ? " hours." : " hour.";
+                
+                if (overTime != 0) {
+                    row += " Employee's over time is " + overTime.toFixed(2);
+                    row += overTime > 1 ? " hours." : " hour.";
+                    row += "</span>";
+                }
+
+                row += "</p>";
             }
-
-            dayoffs = dayoffs != null ? dayoffs.length : 0; 
-
-            //create date format          
-            var timeStart = new Date("01/01/2021 " + shift_start).getHours();
-            var timeEnd = new Date("01/01/2021 " + shift_end).getHours();
-            var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
-            var hourDiff = timeEnd - timeStart - breakHoursTotal;
-            var weekTotal = ((hourDiff) * (7 - dayoffs)).toFixed(1);
-            var weekAllowedWorkHours = 40;
-            var weekWorkableHours = weekTotal < weekAllowedWorkHours ? weekTotal : weekAllowedWorkHours;
-            var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
-
-            var row = "";
-            row += "<p>";
-
-            if (overTime != 0) {
-                row += "<span class='text-danger'>";
-                row += "Any time over 40.00 hours a week goes into overtime.</br>";
-            }
-
-            row += "The employee's daily workable time is of " + hourDiff.toFixed(2) + " hours.";
-            row += " Employee's weekly workable time is " + weekWorkableHours.toFixed(2);
-            row += weekWorkableHours > 1 ? " hours." : " hour.";
-            
-            if (overTime != 0) {
-                row += " Employee's over time is " + overTime.toFixed(2);
-                row += overTime > 1 ? " hours." : " hour.";
-                row += "</span>";
-            }
-
-            row += "</p>";
 
 
             var breakValidationError = validateBreakTime("validation");
@@ -1738,6 +1758,25 @@ function validate_employers_form() {
                         else $("#edit_employer").append(
                             '<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1' + (_pn
                                 .val().replace(/\D/g, '')) + '" />');
+
+                        if (timeoff == "enable") {
+                            if (weekTotal > 40) {
+                                alertify.confirm('Confirmation', row,
+                                    function () {
+                                        form.submit();
+                                    },
+                                    function () {
+                                        return;
+                                    });
+                            } else {
+                                form.submit();
+                            }
+                        } else {
+                            form.submit();
+                        }    
+                    }
+                <?php } else { ?>
+                    if (timeoff == "enable") {
                         if (weekTotal > 40) {
                             alertify.confirm('Confirmation', row,
                                 function () {
@@ -1749,20 +1788,9 @@ function validate_employers_form() {
                         } else {
                             form.submit();
                         }
-                    }
-                <?php } else { ?>
-
-                    if (weekTotal > 40) {
-                        alertify.confirm('Confirmation', row,
-                            function () {
-                                form.submit();
-                            },
-                            function () {
-                                return;
-                            });
                     } else {
                         form.submit();
-                    }
+                    }    
                     
                 <?php } ?>
         }

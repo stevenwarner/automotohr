@@ -208,44 +208,46 @@
     <?php } ?>
     <!--  -->
     <br>
-    <div class="row">
-        <div class="col-md-6 col-xs-12"> 
-            <label class="csF16">Shift Time</label>
-            <?php 
-                $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
-                $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
-            ?>
-            <p class="dummy-invoice-fields" id="employee_shift_time">
-                
-            </p>
-        </div>
-        <div class="col-md-6 col-xs-12"> 
-            <label class="csF16">Break Time</label>
-            <?php 
-                $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
-                $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
-            ?>
-            <p class="dummy-invoice-fields" id="employee_break_timing">
-                
-            </p>
-        </div>
-    </div>    
-    <br>
-    <div class="row">
-        <div class="col-md-6 col-xs-12"> 
-            <label class="csF16">Week Days Off</label>
-            <p class="dummy-invoice-fields">
-                <?php if(isset($employer["offdays"])) { ?>
-                    <?php echo str_replace(",", ", ", $employer["offdays"]); ?>
-                <?php } else { ?>
-                    Not Specified
-                <?php } ?>
-            </p>
-        </div>
-        <div class="col-md-6 col-xs-12" id="display_employee_shift_detaail"> 
-            <!-- Employee shift information come here -->
-        </div>
-    </div> 
+    <?php if($timeOff == 'enable') { ?>
+        <div class="row">
+            <div class="col-md-6 col-xs-12"> 
+                <label class="csF16">Shift Time</label>
+                <?php 
+                    $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
+                    $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
+                ?>
+                <p class="dummy-invoice-fields" id="employee_shift_time">
+                    
+                </p>
+            </div>
+            <div class="col-md-6 col-xs-12"> 
+                <label class="csF16">Break Time</label>
+                <?php 
+                    $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
+                    $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
+                ?>
+                <p class="dummy-invoice-fields" id="employee_break_timing">
+                    
+                </p>
+            </div>
+        </div>    
+        <br>
+        <div class="row">
+            <div class="col-md-6 col-xs-12"> 
+                <label class="csF16">Week Days Off</label>
+                <p class="dummy-invoice-fields">
+                    <?php if(isset($employer["offdays"])) { ?>
+                        <?php echo str_replace(",", ", ", $employer["offdays"]); ?>
+                    <?php } else { ?>
+                        Not Specified
+                    <?php } ?>
+                </p>
+            </div>
+            <div class="col-md-6 col-xs-12" id="display_employee_shift_detaail"> 
+                <!-- Employee shift information come here -->
+            </div>
+        </div> 
+    <?php } ?>    
     <!--  -->
     <br>
     <!--  -->
@@ -332,56 +334,58 @@
     }
 </style>
 
-<script>
-    $( document ).ready(function() {
-        var shift_start = '<?php echo $shift_start?>';
-        var shift_end = '<?php echo $shift_end?>';
-        var break_hours = '<?php echo $break_hours; ?>';
-        var break_minutes = '<?php echo $break_minutes; ?>';
-        var dayoffs = '<?php echo !empty($employer["offdays"]) ? count(explode(',', $employer["offdays"])) : 0; ?>';
+<?php if($timeOff == 'enable') { ?>
+    <script>
+        $( document ).ready(function() {
+            var shift_start = '<?php echo $shift_start?>';
+            var shift_end = '<?php echo $shift_end?>';
+            var break_hours = '<?php echo $break_hours; ?>';
+            var break_minutes = '<?php echo $break_minutes; ?>';
+            var dayoffs = '<?php echo !empty($employer["offdays"]) ? count(explode(',', $employer["offdays"])) : 0; ?>';
 
-        if (break_minutes.toString().length == 1) {
-            break_minutes = '0' + break_minutes;
-        }
+            if (break_minutes.toString().length == 1) {
+                break_minutes = '0' + break_minutes;
+            }
 
-        //create date format          
-        var timeStart = new Date("01/01/2007 " + shift_start).getHours();
-        var timeEnd = new Date("01/01/2007 " + shift_end).getHours();
-        var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
-        var hourDiff = timeEnd - timeStart - breakHoursTotal;
-        var weekTotal = ((hourDiff) * (7 - dayoffs)).toFixed(1);
-        var weekAllowedWorkHours = 40;
-        var weekWorkableHours = weekTotal < weekAllowedWorkHours ? weekTotal : weekAllowedWorkHours;
-        var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
+            //create date format          
+            var timeStart = new Date("01/01/2007 " + shift_start).getHours();
+            var timeEnd = new Date("01/01/2007 " + shift_end).getHours();
+            var breakHoursTotal = (((break_hours * 60) + parseInt(break_minutes)) / 60).toFixed(1);
+            var hourDiff = timeEnd - timeStart - breakHoursTotal;
+            var weekTotal = ((hourDiff) * (7 - dayoffs)).toFixed(1);
+            var weekAllowedWorkHours = 40;
+            var weekWorkableHours = weekTotal < weekAllowedWorkHours ? weekTotal : weekAllowedWorkHours;
+            var overTime = weekTotal > weekAllowedWorkHours ? weekTotal - weekAllowedWorkHours : 0;
 
-        var row = "";
-        row += "<p>";
+            var row = "";
+            row += "<p>";
 
-        if (overTime != 0) {
-            row += "<span class='text-danger'>";
-            row += "Any time over 40.00 hours a week goes into overtime.</br>";
-        }
+            if (overTime != 0) {
+                row += "<span class='text-danger'>";
+                row += "Any time over 40.00 hours a week goes into overtime.</br>";
+            }
 
-        row += "The employee's daily workable time is of " + hourDiff.toFixed(2) + " hours.";
-        row += " Employee's weekly workable time is " + weekWorkableHours.toFixed(2);
-        row += weekWorkableHours > 1 ? " hours." : " hour.";
-        
-        if (overTime != 0) {
-            row += " Employee's over time is " + overTime.toFixed(2);
-            row += overTime > 1 ? " hours." : " hour.";
-            row += "</span>";
-        }
+            row += "The employee's daily workable time is of " + hourDiff.toFixed(2) + " hours.";
+            row += " Employee's weekly workable time is " + weekWorkableHours.toFixed(2);
+            row += weekWorkableHours > 1 ? " hours." : " hour.";
+            
+            if (overTime != 0) {
+                row += " Employee's over time is " + overTime.toFixed(2);
+                row += overTime > 1 ? " hours." : " hour.";
+                row += "</span>";
+            }
 
-        row += "</p>";
+            row += "</p>";
 
-        var shift_time = hourDiff + (hourDiff > 1 ? " hours" : " hour");
-        var break_hour_text = break_hours > 0 ? (break_hours + (break_hours > 1 ? " hours" : " hour")) : 0;
-        var break_minute_text = break_minutes > 0 ? (break_minutes + (break_minutes > 1 ? " minutes" : " minute")) : 0;
-        var break_concat = break_minute_text != 0 ? ' & ' : '';
-        var break_timming = (break_hour_text != 0 ? (break_hour_text + break_concat) : '') + (break_minute_text != 0 ? break_minute_text : '');
+            var shift_time = hourDiff + (hourDiff > 1 ? " hours" : " hour");
+            var break_hour_text = break_hours > 0 ? (break_hours + (break_hours > 1 ? " hours" : " hour")) : 0;
+            var break_minute_text = break_minutes > 0 ? (break_minutes + (break_minutes > 1 ? " minutes" : " minute")) : 0;
+            var break_concat = break_minute_text != 0 ? ' & ' : '';
+            var break_timming = (break_hour_text != 0 ? (break_hour_text + break_concat) : '') + (break_minute_text != 0 ? break_minute_text : '');
 
-        $("#display_employee_shift_detaail").html(row);
-        $("#employee_shift_time").text(shift_start +' - '+ shift_end+' ('+shift_time+')');
-        $("#employee_break_timing").text(break_timming);
-    });
-</script>
+            $("#display_employee_shift_detaail").html(row);
+            $("#employee_shift_time").text(shift_start +' - '+ shift_end+' ('+shift_time+')');
+            $("#employee_break_timing").text(break_timming);
+        });
+    </script>
+<?php } ?>    
