@@ -359,15 +359,15 @@
 
         if (overTime != 0) {
             row += "<span class='text-danger'>";
-            row += "Any time over 40 hours a week goes into overtime.</br>";
+            row += "Any time over 40.00 hours a week goes into overtime.</br>";
         }
 
-        row += "The employee's daily workable time is of " + hourDiff + " hours.";
-        row += " Employee's weekly workable time is " + weekWorkableHours;
+        row += "The employee's daily workable time is of " + hourDiff.toFixed(2) + " hours.";
+        row += " Employee's weekly workable time is " + weekWorkableHours.toFixed(2);
         row += weekWorkableHours > 1 ? " hours." : " hour.";
         
         if (overTime != 0) {
-            row += " Employee's over time is " + overTime;
+            row += " Employee's over time is " + overTime.toFixed(2);
             row += overTime > 1 ? " hours." : " hour.";
             row += "</span>";
         }
