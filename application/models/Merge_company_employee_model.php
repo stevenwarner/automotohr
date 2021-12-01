@@ -466,7 +466,7 @@ class Merge_company_employee_model extends CI_Model
 
     function update_employee_direct_deposit_information($primary_employee_sid, $secondary_employee_sid)
     {
-        $columns = 'company_sid, account_title, routing_transaction_number, account_number, financial_institution_name, account_type, voided_cheque, account_status, account_percentage, is_consent, instructions, user_signature, employee_number, print_name, consent_date, updated_by, is_payroll, is_deleted';
+        $columns = 'company_sid, account_title, routing_transaction_number, account_number, financial_institution_name, account_type, voided_cheque, account_status, account_percentage, is_consent, instructions, user_signature, employee_number, print_name, consent_date, updated_by';
         //
         $this->db->select($columns);
         $this->db->where('users_type', 'employee');
