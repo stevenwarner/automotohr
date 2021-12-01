@@ -1450,8 +1450,6 @@ class Employee_management extends Public_Controller {
                         'Location_City' => $this->input->post('Location_City'),
                         'Location_ZipCode' => $this->input->post('Location_ZipCode'),
                         'Location_Address' => $this->input->post('Location_Address'),
-                        'shift_start_time' => $this->input->post('shift_start_time'),
-                        'shift_end_time' => $this->input->post('shift_end_time'),
                         'employee_status' => $this->input->post('employee-status'),
                         'employee_type' => $this->input->post('employee-type'),
                         'PhoneNumber' => $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber', true) : $this->input->post('PhoneNumber', true),
@@ -1465,12 +1463,19 @@ class Employee_management extends Public_Controller {
                         'ssn' => $this->input->post('SSN'),
                         'employee_number' => $this->input->post('employee_number'),
                         'department_sid' => $this->input->post('department'),
-                        'break_hours' => $this->input->post('break_hours'),
-                        'break_mins' => $this->input->post('break_mins'),
-                        'weekly_hours' => $this->input->post('weekly_hours'),
                         'gender' => $this->input->post('gender')
                     );
-
+                    //
+                    if (checkIfAppIsEnabled('timeoff')) {
+                        $data_to_insert['user_shift_hours'] = $this->input->post('shift_hours');
+                        $data_to_insert['user_shift_minutes'] = $this->input->post('shift_mins');
+                        $data_to_insert['shift_start_time'] = $this->input->post('shift_start_time');
+                        $data_to_insert['shift_end_time'] = $this->input->post('shift_end_time');
+                        $data_to_insert['break_hours'] = $this->input->post('break_hours');
+                        $data_to_insert['break_mins'] = $this->input->post('break_mins');
+                        $data_to_insert['weekly_hours'] = $this->input->post('weekly_hours');
+                        $data_to_insert['offdays'] = isset($_POST['offdays']) ? implode(",", $this->input->post('offdays')) : NULL;
+                    }    
                     //
                     if(!empty($this->input->post('secondary_email', true))){
                         $data_to_insert['alternative_email'] = $this->input->post('secondary_email', true);
@@ -1535,9 +1540,6 @@ class Employee_management extends Public_Controller {
                     //
                     if($DOB != '' && !preg_match(XSYM_PREG, $DOB)) $data_to_insert['dob'] = $DOB;
 
-                    $data_to_insert['user_shift_hours'] = $this->input->post('shift_hours');
-                    $data_to_insert['user_shift_minutes'] = $this->input->post('shift_mins');
-
                     if(IS_NOTIFICATION_ENABLED == 1 && $this->input->post('notified_by', true) && $data['phone_sid'] != '') $data_to_insert['notified_by'] = $notified_by;
 
                     // Check if joining date is set
@@ -1563,10 +1565,6 @@ class Employee_management extends Public_Controller {
                     //
                     if (isset($_POST['SSN']) && !empty($_POST['SSN'])) {
                         $full_emp_app['TextBoxSSN'] = $this->input->post('SSN');
-                    }
-                    //
-                    if (isset($_POST['offdays']) && !empty($_POST['offdays'])) {
-                        $data_to_insert['offdays'] = implode(",", $this->input->post('offdays'));
                     }
                     //
                     $full_emp_app['PhoneNumber'] = $this->input->post('PhoneNumber');
