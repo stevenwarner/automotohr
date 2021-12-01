@@ -1565,9 +1565,7 @@ class Employee_management extends Public_Controller {
                         $full_emp_app['TextBoxSSN'] = $this->input->post('SSN');
                     }
                     //
-                    if (isset($_POST['offdays']) && !empty($_POST['offdays'])) {
-                        $data_to_insert['offdays'] = implode(",", $this->input->post('offdays'));
-                    }
+                    $data_to_insert['offdays'] = isset($_POST['offdays']) ? implode(",", $this->input->post('offdays')) : NULL;
                     //
                     $full_emp_app['PhoneNumber'] = $this->input->post('PhoneNumber');
                     $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
