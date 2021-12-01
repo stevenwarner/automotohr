@@ -186,14 +186,14 @@
                             </li>
                         <?php }?>
                          <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['employer_detail']['access_level_plus'] == 1)){?>
-                            <li>
+                            <!-- <li>
                                 <span class="left-addon">
                                     <i aria-hidden="true" class="fa fa-star"></i>
                                 </span>
                                 <h4>Merge With An Employee</h4>
                                 <a class="" href="javascript:0;" data-toggle="modal" data-target="#merge_modal">Merge<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
 
-                            </li>
+                            </li> -->
                         <?php }?>
                         <!-- <li>
                             <h4>Skills Test</h4>
