@@ -185,6 +185,16 @@
                                 <!-- Light Bulb Code - End -->
                             </li>
                         <?php }?>
+                         <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['employer_detail']['access_level_plus'] == 1)){?>
+                            <li>
+                                <span class="left-addon">
+                                    <i aria-hidden="true" class="fa fa-star"></i>
+                                </span>
+                                <h4>Merge With An Employee</h4>
+                                <a class="" href="javascript:0;" data-toggle="modal" data-target="#merge_modal">Merge<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+
+                            </li>
+                        <?php }?>
                         <!-- <li>
                             <h4>Skills Test</h4>
                             <a href="javascript:;">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
@@ -657,6 +667,49 @@
     </aside>
 </div>
 
+<!-- Employee Merge Modal Start -->
+<div id="merge_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="review_modal_title">Merge Employee</h4>
+            </div>
+            <div id="review_modal_body" class="modal-body">
+                <div class="table-responsive">
+                    <div class="container-fluid">
+                        <label>Please select an employee to merge with <?= $employer['first_name'] . ' ' . $employer['last_name']?> </label>
+                        <select class="invoice-fields" id="employees-list">
+                            <option value="">[Select Employee to Merge]</option>
+                            <?php $employees = fetchEmployees($this->session->userdata('logged_in')['company_detail']['sid'], $this);
+                            foreach($employees as $emp){?>
+                                <?php if ($employer["sid"] != $emp['sid']) { ?>
+                                    <option value="<?= $emp['sid']?>" id="selected_<?= $emp['sid']?>" data-secondary_emp_name="<?php echo $emp['first_name'].' '.$emp['last_name']; ?>"><?=getUserNameBySID($emp['sid'])?></option>
+                                <?php } ?>
+                            <?php }?>
+                        </select>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <p class="csF14">All the data of the selected employee will be transferred to <?= $employer['first_name']?>'s profile.</p>
+                        <br>
+                        <input class="btn btn-success pull-right" type="button" id="merge-employee" value="Merge Employee">
+                        <div class="custom_loader pull-right">
+                            <div id="submit-loader" class="loader" style="display: none">
+                                <i style="font-size: 25px; color: #81b431;" aria-hidden="true" class="fa fa-cog fa-spin"></i>
+                                <span>Please Wait...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="review_modal_footer" class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+<!-- Employee Merge Modal End -->
+
 <div id="resume_modal" class="modal fade file-uploaded-modal" role="dialog">
     <div class="modal-dialog modal-lg" style="min-height: 500px;">
         <!-- Modal content-->
@@ -800,6 +853,56 @@
 <?php } ?>
 
 <script>
+    $(document).on('click','#merge-employee',function(){
+        var _this = $(this);
+        var secondary_emp = $('#employees-list').val();
+        var primary_emp = '<?= $employer['sid']?>';
+        var primary_emp_email = '<?= $employer['email']?>';
+        var primary_emp_name = '<?= $employer['first_name'] . ' ' . $employer['last_name']?>';
+        var secondary_emp_name = $("#selected_"+secondary_emp).data('secondary_emp_name');
+
+        if(secondary_emp == '' || secondary_emp == undefined){
+            alertify.alert('Error!','Please select an employee to merge with <strong>'+primary_emp_name+'</strong>.');
+            return false;
+        }
+        //
+        alertify.confirm('Confirmation', "Are you sure you want to merge <strong>"+secondary_emp_name+"</strong> into <strong>"+primary_emp_name+"</strong>?",
+            function () {
+                $('#submit-loader').show();
+                _this.attr('disabled','disabled');
+                //
+                $.ajax({
+                    type:'POST',
+                    url:'<?= base_url("merge_company_employee")?>',
+                    data:{
+                        secondary_employee: secondary_emp,
+                        primary_applicant: primary_emp,
+                        email: primary_emp_email,
+                        company_sid: '<?= $this->session->userdata('logged_in')['company_detail']['sid']?>'
+                    },
+                    success: function(resp){
+                        $('#submit-loader').hide();
+                        _this.removeAttr('disabled');
+                        var result = JSON.parse(resp);
+                        if(result.status == 'error'){
+                            alertify.alert(result.message);
+                        }else{
+                            $("#merge_modal").hide();
+                            alertify.alert("Success", "Employee <strong>"+secondary_emp_name+"</strong> merges into <strong>"+primary_emp_name+"</strong> successfully.",function(){
+                                window.location.href = '<?= base_url("employee_profile").'/'?>'+primary_emp;
+                            }); 
+                        }
+                    },
+                    error: function(){
+
+                    }
+                });
+            },
+            function () {
+
+            });
+    }); 
+
     $(document).ready(function () {
         $('#trigger-review').click(function(){
             $('#tab5_nav').click();
@@ -958,6 +1061,7 @@
             console.log('iframe preview load successfully')
         } 
     }
+
 //    $(document).on('click','.disable-btn',function(){
 //        alertify.confirm('ComplyNet Status','Are you sure you want to disable complynet status for employee?',function(){
 //                $.ajax({
