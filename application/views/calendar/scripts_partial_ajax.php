@@ -131,7 +131,7 @@
         var body_title = "<strong>"+event.employee_name+"time-off</strong>";
         var body_content = '';
         var img_path = event.img == '' || event.img == null ? 'https://www.automotohr.com/assets/images/img-applicant.jpg' : "<?=AWS_S3_BUCKET_URL;?>"+event.img;
-        var content_date = event.from_date == event.to_date ? moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') : (moment(event.from_date, 'YYY-MM-DD').format('MMM DD YYYY, ddd')+' - '+moment(event.to_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd'));
+        var content_date = event.from_date == event.to_date ? moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') : (moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd')+' - '+moment(event.to_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd'));
         body_content += '<div class="row">';    
         body_content += '   <div class="col-sm-4">';    
         body_content += '       <img src="'+img_path+'" style="max-width: 100%;" />';    
