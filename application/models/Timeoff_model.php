@@ -11087,13 +11087,19 @@ class Timeoff_model extends CI_Model
         if ($week_start > $week_end) {
             // $year = date('Y', strtotime($year . '-01-01 -1 year'));
         }
+        //
+        if ($month == 12) {
+            $endYear = date('Y', strtotime($year . ' +1 year'));
+        } else {
+            $endYear = $year;
+        }
         // check for type
         if ($type == 'day') {
             $startDate = $year . '-' . $month . '-' . $day;
-            $endDate = $year . '-' . $month . '-' . $day;
+            $endDate = $endYear . '-' . $month . '-' . $day;
         } else { // month, week
             $startDate = $year . '-' . $week_start;
-            $endDate   = $year . '-' . $week_end;
+            $endDate   = $endYear . '-' . $week_end;
             if(substr($week_start, 0, 2) == '11' && substr($week_start, 3, 4) == '29'){
                 $startDate = $year.'-'.$week_start;
                 $endDate = date('Y', strtotime(''.($year).'+1 year')).'-'.$week_end;
@@ -11103,6 +11109,7 @@ class Timeoff_model extends CI_Model
                 $endDate   = $year. '-' . $week_end;
             }
         }
+        //
         $r = array();
         //
         $this->db->select("
