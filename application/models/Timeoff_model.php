@@ -11088,18 +11088,25 @@ class Timeoff_model extends CI_Model
             // $year = date('Y', strtotime($year . '-01-01 -1 year'));
         }
         //
-        if ($month == 12) {
-            $endYear = date('Y', strtotime($year . ' +1 year'));
+        if ($month == 12 && $type != "day") {
+            $endYear = addTimeToDate($year."-12-31","1Y", "Y");
         } else {
             $endYear = $year;
         }
+        //
+        if ($month == 1 && $type != "day") {
+            $startYear = subTimeToDate($year."-01-01","1Y", "Y");
+        } else {
+            $startYear = $year;
+        }
         // check for type
         if ($type == 'day') {
-            $startDate = $year . '-' . $month . '-' . $day;
+            $startDate = $startYear . '-' . $month . '-' . $day;
             $endDate = $endYear . '-' . $month . '-' . $day;
         } else { // month, week
-            $startDate = $year . '-' . $week_start;
+            $startDate = $startYear . '-' . $week_start;
             $endDate   = $endYear . '-' . $week_end;
+            //
             if(substr($week_start, 0, 2) == '11' && substr($week_start, 3, 4) == '29'){
                 $startDate = $year.'-'.$week_start;
                 $endDate = date('Y', strtotime(''.($year).'+1 year')).'-'.$week_end;
@@ -11129,8 +11136,13 @@ class Timeoff_model extends CI_Model
             ->order_by('requested_date', 'ASC')
             ->order_by('status', 'DESC');
         //
-        if ($startDate != '' && $startDate != 'all' ) $this->db->where('timeoff_requests.request_from_date >= "' . ($startDate) . '"', null);
-        if ($endDate != '' && $endDate != 'all' ) $this->db->where('timeoff_requests.request_to_date <= "' . ($endDate) . '"', null);
+        if ($startDate == $endDate) {
+            $this->db->or_where("'$startDate' BETWEEN timeoff_requests.request_from_date AND timeoff_requests.request_to_date");
+        } else {
+            if ($startDate != '' && $startDate != 'all' ) $this->db->where('timeoff_requests.request_from_date >= "' . ($startDate) . '"', null);
+            if ($endDate != '' && $endDate != 'all' ) $this->db->where('timeoff_requests.request_to_date <= "' . ($endDate) . '"', null);
+        } 
+        
         $this->db->group_start();
         $this->db->where('timeoff_requests.status', 'approved');
         $this->db->or_where('timeoff_requests.status', 'pending');

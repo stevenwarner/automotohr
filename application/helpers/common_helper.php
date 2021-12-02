@@ -13825,3 +13825,16 @@ if(!function_exists('GetVal')){
         return !empty($input) ? $input : 'Not Specified';
     }
 }
+
+if(!function_exists('subTimeToDate')){
+    function subTimeToDate(
+        $date,
+        $sub,
+        $format = 'Y-m-d',
+        $type = 'P'
+    ){
+        $date = new DateTime($date);
+        $date->sub(new DateInterval("P{$sub}"));
+        return $date->format($format);
+    }
+} 
