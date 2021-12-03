@@ -2,7 +2,9 @@
     <h2>Personal Information</h2>
     <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']){  ?>
     <div class="form-btns">
+        <?php if(!empty($MergeData)): ?>
         <input type="button" value="Merged Employee Information" id="jsSecondaryButton" style="width: 250px;" />
+        <? endif;?>
         <input type="submit" value="edit" id="edit_button"
             <?= $employer['is_executive_admin'] ? 'class="disabled-btn"' : ''; ?>>
     </div>

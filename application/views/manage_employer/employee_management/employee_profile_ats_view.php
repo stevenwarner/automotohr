@@ -760,11 +760,13 @@
                                     </div>
                                     <!--Edit part Ends-->
                                 </div>
+                                <?php if(!empty($MergeData)): ?>
                                 <div id="jsSecondaryEmployeeBox" style="display: none;">
                                     <div class="universal-form-style-v2 info_view">
                                         <?php $this->load->view('manage_employer/employee_management/profile_view_part_secondary', ['primary_phone_number_cc' => $primary_phone_number_cc, 'dob' => $dob, 'timeOff' => $timeOff]); ?>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                             </div>
                             <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']){  ?>
                             <!-- #tab1 -->
