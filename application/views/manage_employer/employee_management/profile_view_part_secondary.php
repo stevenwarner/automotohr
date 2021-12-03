@@ -58,11 +58,11 @@
                 <div class="panel-heading">
                     <h4 class="pt0 pb0"><strong><?=ucwords($me['first_name'].' '.$me['last_name']);?></strong> merged at: <?=formatDateToDB($md['merge_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);?></strong>
                         <span class="pull-right">
-                            <i class="fa fa-plus" aria-hidden="true" data-toggle="collapse" href="#collapseExample<?=$me['id'];?>" role="button" aria-expanded="false" aria-controls="collapseExample<?=$me['id'];?>"></i>
+                            <i class="fa fa-plus" aria-hidden="true" data-toggle="collapse" href="#collapseExample<?=$me['sid'];?>" role="button" aria-expanded="false" aria-controls="collapseExample<?=$me['sid'];?>"></i>
                         </span>
                     </h4>
                 </div>
-                <div class="panel-body collapse" id="collapseExample<?=$me['id'];?>">
+                <div class="panel-body collapse" id="collapseExample<?=$me['sid'];?>">
                     <!--  -->
                     <div class="row">
                         <div class="col-md-4 col-xs-12">
