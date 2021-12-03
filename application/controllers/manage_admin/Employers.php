@@ -698,4 +698,182 @@ class employers extends Admin_Controller {
         //
         return true;
     }
+
+    public function AssignBulkDocuments($sid = NULL) {
+        $redirect_url = 'manage_admin';
+        $function_name = 'AssignBulkDocuments';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $employee_detail = $this->company_model->get_details($sid, 'employer');
+        $company_detail = $this->company_model->get_details($employee_detail[0]['parent_sid'], 'company');
+        // echo "<pre>";
+        // print_r($company_detail);
+        // die();
+        $this->data['creator'] = $employee_detail[0]['created_by'] == null ? [] : $this->company_model->getEmployeeCreator($employee_detail[0]['created_by']);
+        $this->data['active_categories'] = $this->company_model->get_all_documents_category($company_detail[0]['sid']);
+        $this->data['page_title'] = 'Assign Bulk Document';
+        $this->data['companySid'] = $company_detail[0]['sid'];
+        $this->data['companyName'] = $company_detail[0]['CompanyName'];
+        $this->data['employeeName'] = getUserNameBySID($sid);
+        $security_access_levels = $this->company_model->get_security_access_levels();
+        $this->data['security_access_levels'] = $security_access_levels;
+        $this->load->library('form_validation');
+
+        
+
+        if ($this->form_validation->run() === FALSE) {
+            if ($employee_detail) {
+                $this->data['employee_detail'] = $employee_detail[0];
+            } else {
+                $this->session->set_flashdata('message', 'Employer does not exists!');
+                redirect('manage_admin/employers', 'refresh');
+            }
+
+            $this->load->helper('form');
+            $this->render('manage_admin/company/assign_bulk_document');
+        }
+    }
+
+    /**
+     * Get applicants
+     *
+     * accepts GET
+     *
+     * @return JSON
+     *
+     */
+    function upload_assign_document(){
+        // check if ajax request is not set
+        if(!$this->input->is_ajax_request()) redirect('assign_bulk_documents', 'referesh');
+        // set return array
+        $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
+        // check if request method is not GET
+        // user is not signed in
+        if ($this->input->server('REQUEST_METHOD') != 'POST' || !$this->session->userdata('logged_in')) $this->response($return_array);
+        //
+        
+        //
+        $file = $_FILES['file'];
+        $formpost = $this->input->post(NULL, TRUE);
+        if(!sizeof($file)) $this->response( $return_array );
+        if($file['error'] != 0) $this->response( $return_array );
+        //
+		$userId                 = $formpost['employeeId'];
+		$userType               = $formpost['type'];
+        $document_title         = $file['name'];
+        $companyId              = $formpost['companyId'];;
+        $employerId             = 0;
+		$document_description   = '';
+
+        $gen_document_title = substr($document_title, 0, strrpos( $document_title, '.'));
+        $gen_document_title = ucwords((preg_replace('/[^A-Za-z0-9\-]/', ' ', $gen_document_title)));
+       
+		//
+		if($_SERVER['HTTP_HOST'] == 'localhost') $uploaded_document_s3_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
+		else $uploaded_document_s3_name = upload_file_to_aws('file', $companyId, str_replace(' ', '_', $document_title), $employerId, AWS_S3_BUCKET_NAME);
+		// $uploaded_document_s3_name = upload_file_to_aws('file', $companyId, str_replace(' ', '_', $document_title), $employerId, AWS_S3_BUCKET_NAME);
+		//
+		$uploaded_document_original_name = $document_title;
+		//
+		$file_info = pathinfo($uploaded_document_original_name);
+		//
+		$data_to_insert = array();
+		$data_to_insert['status'] = 1;
+		$data_to_insert['user_sid'] = $userId;
+		$data_to_insert['user_type'] = $userType;
+		$data_to_insert['company_sid'] = $companyId;
+		$data_to_insert['assigned_by'] = $employerId;
+		$data_to_insert['document_sid'] = 0;
+        $data_to_insert['user_consent'] = 1;
+        
+        if (isset($_POST['signed_date']) && $_POST['signed_date'] != '') {
+            $data_to_insert['signature_timestamp'] = DateTime::createFromFormat('m/d/Y', $_POST['signed_date'])->format('Y-m-d').' 00:00:00';
+        }
+
+		$data_to_insert['document_type'] = 'uploaded';
+		$data_to_insert['assigned_date'] = date('Y-m-d H:i:s');
+		$data_to_insert['document_title'] = $gen_document_title;
+		$data_to_insert['document_description'] = $document_description;
+		//
+		if (isset($file_info['extension'])) {
+			$data_to_insert['document_extension'] = $file_info['extension'];
+		}
+		//
+		if ($uploaded_document_s3_name != 'error') {
+		    $data_to_insert['uploaded'] = 1;
+		    $data_to_insert['uploaded_file'] = $uploaded_document_s3_name;
+		    $data_to_insert['uploaded_date'] = date('Y-m-d H:i:s');
+		    $data_to_insert['document_s3_name'] = $uploaded_document_s3_name;
+		    $data_to_insert['document_original_name'] = $uploaded_document_original_name;
+		} else {
+			$return_array['Response'] = 'Error';
+			$this->response($return_array);
+		}
+
+        if (isset($_POST['is_offer_letter'])) {
+            $user_info = '';
+
+            $user_info = $this->company_model->get_employee_information($companyId, $userId); 
+
+            $offer_letter_name = $gen_document_title; 
+
+            $data_to_insert['document_title']       = $offer_letter_name;
+            $data_to_insert['document_type']        = 'offer_letter';
+            $data_to_insert['offer_letter_type']    = 'uploaded';
+
+            $already_assigned = $this->company_model->check_employee_offer_letter_exist($companyId, $userType, $userId, 'offer_letter');
+
+            if (!empty($already_assigned)) {
+                foreach ($already_assigned as $key => $previous_offer_letter) {
+                    $previous_assigned_sid = $previous_offer_letter['sid'];
+                    $already_moved = $this->company_model->check_offer_letter_moved($previous_assigned_sid, 'offer_letter');
+
+                    if ($already_moved == 'no') {
+                        $previous_offer_letter['doc_sid'] = $previous_assigned_sid;
+                        unset($previous_offer_letter['sid']);
+                        $this->company_model->insert_documents_assignment_record_history($previous_offer_letter);
+                    }
+                }
+            } 
+
+            $this->company_model->disable_all_previous_letter($companyId, $userType, $userId, 'offer_letter');
+        } else {
+
+            if (!isset($_POST['categories'])) {
+                if (isset($_POST['visible_to_payroll'])) {
+                    $data_to_insert['visible_to_payroll'] = 1;
+                } else {
+                    $data_to_insert['visible_to_payroll'] = 0;
+                }
+            } else if (!in_array(27, $_POST['categories'])) {
+                if (isset($_POST['visible_to_payroll'])) {
+                    $data_to_insert['visible_to_payroll'] = 1;
+                } else {
+                    $data_to_insert['visible_to_payroll'] = 0;
+                }
+            }    
+        }
+
+		//
+        $insert_id = $this->company_model->insertDocumentsAssignmentRecord($data_to_insert);
+        $this->company_model->add_update_categories_2_documents($insert_id,$this->input->post('categories'),"documents_assigned");
+
+        $return_array['Status'] = true;
+		$return_array['Response'] = 'Proceed';
+		$this->response($return_array);
+
+    }
+
+    /**
+     * Send back json
+     *
+     * @param $array Array
+     */
+    private function response($array){
+        header('Content-Type: application/json');
+        echo json_encode($array); exit(0);
+    }
+
 }

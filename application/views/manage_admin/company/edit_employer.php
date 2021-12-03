@@ -234,7 +234,16 @@
                                                         </div>
                                                     </div>
                                                 </li>
-
+                                                <li>
+                                                    <?php echo form_label('', ''); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="col-md-6 col-lg-6 col-xl-6" style="padding-left:0px">
+                                                            <div class="input-group" style="float: left;">
+                                                                <a href="<?php echo base_url('manage_admin/employers/AssignBulkDocuments')."/".$data['sid']; ?>" class="btn btn-success">Add Bulk Document</a>  
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
                                                 <li>
                                                     <input type="hidden" name="sid" value="<?php echo $data['sid']; ?>">
                                                 </li>

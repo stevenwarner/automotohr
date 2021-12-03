@@ -2197,4 +2197,111 @@ class Company_model extends CI_Model {
         ->get('users')
         ->row_array();
     }
+
+    function get_all_documents_category($company_sid, $status=NULL, $sort_order = NULL) {
+        $this->db->select('*');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->or_where('sid', PP_CATEGORY_SID);
+
+        if($status != NULL) {
+            $this->db->where('status', $status);
+        }
+
+        $this->db->order_by('sort_order', 'asc');
+
+        $records_obj = $this->db->get('documents_category_management');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
+    function get_employee_information($company_sid, $employee_sid) {
+        $this->db->select('sid');
+        $this->db->select('first_name');
+        $this->db->select('last_name');
+        $this->db->select('email');
+        $this->db->select('PhoneNumber as phone');
+        $this->db->select('verification_key');
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->where('sid', $employee_sid);
+
+        $record_obj = $this->db->get('users');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+    function check_employee_offer_letter_exist($company_sid, $user_type, $user_sid, $document_type) {
+        $this->db->select('*');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('document_type', $document_type);
+
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+    function check_offer_letter_moved($document_sid, $document_type) {
+        $this->db->select('*');;
+        $this->db->where('doc_sid', $document_sid);
+        $this->db->where('document_type', $document_type);
+
+        $record_obj = $this->db->get('documents_assigned_history');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        
+        if (!empty($record_arr)) {
+            return 'yes';
+        } else {
+            return 'no';
+        }
+    }
+
+    function insert_documents_assignment_record_history($data_to_insert) {
+        $this->db->insert('documents_assigned_history', $data_to_insert);
+    }
+
+    function disable_all_previous_letter ($company_sid, $user_type, $user_sid, $document_type) {
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('document_type', $document_type);
+        $this->db->set('status', 0);
+        $this->db->set('archive', 1);
+        $this->db->update('documents_assigned');
+    }
+
+    function insertDocumentsAssignmentRecord($data_to_insert) {
+        $this->db->insert('documents_assigned', $data_to_insert);
+        return $this->db->insert_id();
+    }
+
+    function add_update_categories_2_documents($document_sid, $categories,$document_type) {
+        $this->db->where('document_sid', $document_sid);
+        $this->db->where('document_type', $document_type);
+        $this->db->delete('documents_2_category');
+        if(is_array($categories)){
+            foreach($categories as $category){
+                $this->db->insert('documents_2_category', ['document_sid' => $document_sid, 'category_sid' => $category,'document_type' => $document_type]);
+            }
+        }
+    }
 }
