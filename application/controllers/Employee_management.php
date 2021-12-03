@@ -1343,6 +1343,8 @@ class Employee_management extends Public_Controller {
                     $this->load->helper('timeoff');
                     //
                     $data['policies'] = $this->timeoff_model->getEmployeePoliciesByEmployeeId($company_id, $employer_id);
+                    // Check if the employees has merges
+                    $data['MergeData'] = $this->employee_model->GetMergedEmployees($employer_id);
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/employee_management/employee_profile_ats_view');
                     $this->load->view('main/footer');

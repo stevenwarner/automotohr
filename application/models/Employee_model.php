@@ -1510,5 +1510,23 @@
         return ['Jobs' => $records ];
     }
 
+    /**
+     * Get all the merged employees data
+     * 
+     * @param number $employeeId
+     * @return
+     */
+    function GetMergedEmployees($employeeId){
+        //
+        return 
+        $this->db->select('
+            secondary_employee_profile_data,
+            merge_at
+        ')
+        ->where('primary_employee_sid', $employeeId)
+        ->order_by('sid', 'ASC')
+        ->get('employee_merge_history')
+        ->result_array();
+    }
 
 }

@@ -77,687 +77,694 @@
                         <?php } ?>
                         <div class="resp-tabs-container hor_1">
                             <div id="tab1" class="tabs-content">
-                                <div class="universal-form-style-v2 info_view" <?php if ($edit_form) { ?>
-                                    style="display: none;" <?php } ?>>
-                                    <?php $this->load->view('manage_employer/employee_management/profile_view_part', ['primary_phone_number_cc' => $primary_phone_number_cc, 'dob' => $dob, 'timeOff' => $timeOff]); ?>
-                                </div>
-                                <!--Edit part-->
-                                <div <?php if ($edit_form) { ?>style="display: block;"
-                                    <?php } else { ?>style="display: none;" <?php } ?>
-                                    class="universal-form-style-v2 info_edit">
-                                    <form id="edit_employer" method="POST" enctype="multipart/form-data">
-                                        <div class="form-title-section">
-                                            <h2>Personal Information</h2>
-                                            <div class="form-btns">
-                                                <input type="submit" value="Save"
-                                                    onclick="return validate_employers_form()">
-                                                <input type="button" value="cancel" class="view_button">
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
-                                                <label>First Name:<span class="staric">*</span></label>
-                                                <input type="text" class="invoice-fields" name="first_name"
-                                                    id="first_name"
-                                                    value="<?php if(isset($employer['first_name'])) { echo $employer['first_name']; } ?>">
-                                                <?php echo form_error('first_name'); ?>
-                                            </div>
-                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
-                                                <label>Middle name / initial:</label>
-                                                <input
-                                                    class="invoice-fields  <?php if (form_error('middle_name') !== "") { ?> error <?php } ?>"
-                                                    value="<?php echo set_value('middle_name', $employer["middle_name"]); ?>"
-                                                    type="text" name="middle_name">
-                                                <?php echo form_error('middle_name'); ?>
-                                            </div>
-                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
-                                                <label>last name:<samp class="red"> * </samp></label>
-                                                <input
-                                                    class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>"
-                                                    value="<?php echo set_value('last_name', $employer["last_name"]); ?>"
-                                                    type="text" name="last_name">
-                                                <?php echo form_error('last_name'); ?>
-                                            </div>
-                                        </div>
-                                        <div class="row">    
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>email:
-                                                </label>
-                                                <input
-                                                    class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>"
-                                                    value="<?php echo set_value('email', $employer["email"]); ?>"
-                                                    type="email" name="email">
-                                                <?php echo form_error('email'); ?>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Mobile number:</label>
-                                                <?=$input_group_start;?>
-                                                <input class="invoice-fields" id="PhoneNumber"
-                                                    value="<?php echo set_value('PhoneNumber', $primary_phone_number); ?>"
-                                                    type="text" name="PhoneNumber">
-                                                <?=$input_group_end;?>
-                                                <?php echo form_error('PhoneNumber'); ?>
-                                            </div>
-                                        </div>
-                                        <div class="row">        
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Gender:
-                                                </label>
-                                                <select class="invoice-fields <?php if (form_error('gender') !== "") { ?> error <?php } ?>" name="gender">
-                                                    <option <?=$employer["gender"] == 'male' ? 'selected' : '';?> value="male">Male</option>
-                                                    <option <?=$employer["gender"] == 'female' ? 'selected' : '';?> value="female">Female</option>
-                                                    <option <?=$employer["gender"] == 'other' ? 'selected' : '';?> value="other">Other</option>
-                                                </select>
-                                                <?php echo form_error('gender'); ?>
-                                            </div>
-                                           <!--  -->
-                                           <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Job Title:</label>
-                                                <input class="invoice-fields"
-                                                    value="<?php echo set_value('job_title', $employer["job_title"]); ?>"
-                                                    type="text" name="job_title">
-                                            </div>
-                                        </div>
-                                        <div class="row">    
-                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
-                                                <label>address:</label>
-                                                <input class="invoice-fields"
-                                                    value="<?php echo set_value('Location_Address', $employer["Location_Address"]); ?>"
-                                                    type="text" name="Location_Address">
-                                                <?php echo form_error('Location_Address'); ?>
-                                            </div>
-                                        </div>
-                                        <div class="row">     
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>city:</label>
-                                                <input class="invoice-fields"
-                                                    value="<?php echo set_value('Location_City', $employer["Location_City"]); ?>"
-                                                    type="text" name="Location_City">
-                                                <?php echo form_error('Location_City'); ?>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>zipcode:</label>
-                                                <input class="invoice-fields"
-                                                    value="<?php echo set_value('Location_ZipCode', $employer["Location_ZipCode"]); ?>"
-                                                    type="text" name="Location_ZipCode">
-                                                <?php echo form_error('Location_ZipCode'); ?>
-                                            </div>
-                                        </div>
-                                        <div class="row"> 
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>state:</label>
-                                                <p style="display: none;" id="state_id">
-                                                    <?php echo $employer['Location_State']; ?></p>
-                                                <div class="hr-select-dropdown">
-                                                    <select class="invoice-fields" name="Location_State" id="state">
-                                                        <option value="">Select State</option>
-                                                        <option value="">Please Select your country</option>
-                                                    </select>
-                                                </div>
-                                            </div>    
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>country:</label>
-                                                <div class="hr-select-dropdown">
-                                                    <select class="invoice-fields" name="Location_Country" id="country"
-                                                        onchange="getStates(this.value, <?php echo $states; ?>)">
-                                                        <option value="">Select Country</option>
-                                                        <?php foreach ($active_countries as $active_country) { ?>
-                                                        <option value="<?= $active_country["sid"]; ?>"
-                                                            <?php if ($employer['Location_Country'] == $active_country["sid"]) { echo 'selected'; } ?>>
-                                                            <?= $active_country["country_name"]; ?>
-                                                        </option>
-                                                        <?php } ?>
-                                                    </select>
+                                <div id="jsPrimaryEmployeeBox">
+                                    <div class="universal-form-style-v2 info_view" <?php if ($edit_form) { ?>
+                                        style="display: none;" <?php } ?>>
+                                        <?php $this->load->view('manage_employer/employee_management/profile_view_part', ['primary_phone_number_cc' => $primary_phone_number_cc, 'dob' => $dob, 'timeOff' => $timeOff]); ?>
+                                    </div>
+                                    <!--Edit part-->
+                                    <div <?php if ($edit_form) { ?>style="display: block;"
+                                        <?php } else { ?>style="display: none;" <?php } ?>
+                                        class="universal-form-style-v2 info_edit">
+                                        <form id="edit_employer" method="POST" enctype="multipart/form-data">
+                                            <div class="form-title-section">
+                                                <h2>Personal Information</h2>
+                                                <div class="form-btns">
+                                                    <input type="submit" value="Save"
+                                                        onclick="return validate_employers_form()">
+                                                    <input type="button" value="cancel" class="view_button">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row"> 
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Social Security Number: <?=$ssn_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
-                                                <input class="invoice-fields" type="text" name="SSN" <?=$ssn_required == 1 ? 'required' : '';?>
-                                                    value="<?php echo isset($employer["ssn"]) ? $employer["ssn"] : ''; ?>">
-                                                    <?php echo form_error('SSN'); ?>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Employee Number:</label>
-                                                <input class="invoice-fields"
-                                                    value="<?php echo set_value('employee_number', $employer["employee_number"]); ?>"
-                                                    type="text" name="employee_number">
-                                            </div>
-                                        </div>
-                                        <div class="row">  
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <?php $office_location = isset($extra_info["office_location"]) ? $extra_info["office_location"] : ''; ?>
-                                                <label>Office Location:</label>
-                                                <input class="invoice-fields"
-                                                    value="<?php echo set_value('office_location', $office_location); ?>"
-                                                    type="text" name="office_location" id="office_location">
-                                            </div>
-                                            
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Employment Type:</label>
-                                                <div class="hr-select-dropdown">
-                                                    <select class="invoice-fields" name="employee-type" id="employee-type">
-                                                        <?php if(!empty($employment_types)) { ?>
-                                                            <?php foreach($employment_types as $key => $employment_type) { ?>
-                                                                <option value="<?= $key ?>"
-                                                                    <?php if(strtolower($employer['employee_type']) == $key){echo 'selected' ;}?>>
-                                                                    <?= $employment_type ?>
-                                                                </option>
-                                                            <?php } ?>
-                                                        <?php }?>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group dn">
-                                                <label>Employment Status:</label>
-                                                <div class="hr-select-dropdown">
-                                                    <select class="invoice-fields" name="employee-status" id="employee-status">
-                                                        <?php foreach($employment_statuses as $key => $employee_status) { ?>
-                                                            <option value="<?= $key ?>"
-                                                                <?php if(strtolower($employer['employee_status']) == $key){echo 'selected' ;}?>>
-                                                                <?= $employee_status ?>
-                                                            </option>
-                                                        <?php } ?>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <!--  -->
-                                        </div>
-                                        <?php if(IS_TIMEZONE_ACTIVE && $show_timezone != '') { ?>
                                             <div class="row">
-                                                <!--  -->
+                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
+                                                    <label>First Name:<span class="staric">*</span></label>
+                                                    <input type="text" class="invoice-fields" name="first_name"
+                                                        id="first_name"
+                                                        value="<?php if(isset($employer['first_name'])) { echo $employer['first_name']; } ?>">
+                                                    <?php echo form_error('first_name'); ?>
+                                                </div>
+                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
+                                                    <label>Middle name / initial:</label>
+                                                    <input
+                                                        class="invoice-fields  <?php if (form_error('middle_name') !== "") { ?> error <?php } ?>"
+                                                        value="<?php echo set_value('middle_name', $employer["middle_name"]); ?>"
+                                                        type="text" name="middle_name">
+                                                    <?php echo form_error('middle_name'); ?>
+                                                </div>
+                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
+                                                    <label>last name:<samp class="red"> * </samp></label>
+                                                    <input
+                                                        class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>"
+                                                        value="<?php echo set_value('last_name', $employer["last_name"]); ?>"
+                                                        type="text" name="last_name">
+                                                    <?php echo form_error('last_name'); ?>
+                                                </div>
+                                            </div>
+                                            <div class="row">    
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>email:
+                                                    </label>
+                                                    <input
+                                                        class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>"
+                                                        value="<?php echo set_value('email', $employer["email"]); ?>"
+                                                        type="email" name="email">
+                                                    <?php echo form_error('email'); ?>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Mobile number:</label>
+                                                    <?=$input_group_start;?>
+                                                    <input class="invoice-fields" id="PhoneNumber"
+                                                        value="<?php echo set_value('PhoneNumber', $primary_phone_number); ?>"
+                                                        type="text" name="PhoneNumber">
+                                                    <?=$input_group_end;?>
+                                                    <?php echo form_error('PhoneNumber'); ?>
+                                                </div>
+                                            </div>
+                                            <div class="row">        
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Gender:
+                                                    </label>
+                                                    <select class="invoice-fields <?php if (form_error('gender') !== "") { ?> error <?php } ?>" name="gender">
+                                                        <option <?=$employer["gender"] == 'male' ? 'selected' : '';?> value="male">Male</option>
+                                                        <option <?=$employer["gender"] == 'female' ? 'selected' : '';?> value="female">Female</option>
+                                                        <option <?=$employer["gender"] == 'other' ? 'selected' : '';?> value="other">Other</option>
+                                                    </select>
+                                                    <?php echo form_error('gender'); ?>
+                                                </div>
+                                            <!--  -->
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Job Title:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('job_title', $employer["job_title"]); ?>"
+                                                        type="text" name="job_title">
+                                                </div>
+                                            </div>
+                                            <div class="row">    
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
-                                                    <!-- Timezone -->
-                                                    <?php if($employer_sid == $employer["sid"] || $access_level_plus == 1) { ?>
-                                                        <?php $timezone = isset($employer["timezone"]) ? $employer["timezone"] : ''; ?>
-                                                        <label>TimeZone:</label>
-                                                        <?=timezone_dropdown(
-                                                                    $timezone,
-                                                                    array(
-                                                                        'class' => 'invoice-fields js-timezone',
-                                                                        'name' => 'timezone',
-                                                                        'id' => 'timezone'
-                                                                    )
-                                                                );?>
-                                                    <?php } ?>
+                                                    <label>address:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('Location_Address', $employer["Location_Address"]); ?>"
+                                                        type="text" name="Location_Address">
+                                                    <?php echo form_error('Location_Address'); ?>
                                                 </div>
-                                                <!--  -->
                                             </div>
-                                        <?php } ?>
-                                        <div class="row">    
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <?php if($access_level_plus == 1) {?>
-                                                    <!-- Joining date -->
-                                                    <?php $joining_date = isset($employer["joined_at"]) && $employer["joined_at"] != '' ? DateTime::createFromFormat('Y-m-d', $employer["joined_at"])->format('m-d-Y') : ''; ?>
-                                                    <?php $registration_date = isset($employer["registration_date"]) && $employer["registration_date"] != '' ? DateTime::createFromFormat('Y-m-d H:i:s', $employer["registration_date"])->format('m-d-Y') : ''; ?>
-                                                    <label>Joining Date:</label>
-                                                    <input class="invoice-fields js-joining-date" readonly="true"
-                                                        value="<?php echo $employer["joined_at"]=='' ? $registration_date : $joining_date ?>"
-                                                        type="text" name="joining_date" id="joining_date">
-                                                <?php } ?>
+                                            <div class="row">     
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>city:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('Location_City', $employer["Location_City"]); ?>"
+                                                        type="text" name="Location_City">
+                                                    <?php echo form_error('Location_City'); ?>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>zipcode:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('Location_ZipCode', $employer["Location_ZipCode"]); ?>"
+                                                        type="text" name="Location_ZipCode">
+                                                    <?php echo form_error('Location_ZipCode'); ?>
+                                                </div>
                                             </div>
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Date of Birth:<?=$dob_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
-                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?=$dob_required == 1 ? 'required' : '';?>
-                                                    name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
-                                                    <?php echo form_error('DOB'); ?>
-                                            </div>
-                                            <!--  -->
-                                        </div>
-                                        <div class="row">
-                                            <!--  -->      
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>secondary email:</label>
-                                                <?php
-                                                    $secondaryEmail = isset($extra_info["secondary_email"]) && !empty($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : $employer["alternative_email"];
-                                                ?>
-                                                <input
-                                                    class="invoice-fields <?php if (form_error('secondary_email') !== "") { ?> error <?php } ?>"
-                                                    value="<?php echo set_value('secondary_email', ($secondaryEmail)); ?>"
-                                                    type="email" name="secondary_email">
-                                            </div>
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>secondary mobile number:</label>
-                                                <input class="invoice-fields" id="secondary_PhoneNumber"
-                                                    value="<?php echo set_value('secondary_PhoneNumber', isset($extra_info["secondary_PhoneNumber"]) ? $extra_info["secondary_PhoneNumber"] : ''); ?>"
-                                                    type="text" name="secondary_PhoneNumber">
-                                            </div>
-                                            <!--  -->
-                                        </div>
-                                        <div class="row">
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>other email:</label>
-                                                <input class="invoice-fields"
-                                                    value="<?php echo set_value('other_email', isset($extra_info["other_email"]) ? $extra_info["other_email"] : ''); ?>"
-                                                    type="email" name="other_email">
-                                            </div>
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Other Phone Number:</label>
-                                                <input class="invoice-fields" id="other_PhoneNumber"
-                                                    value="<?php echo isset($extra_info["other_PhoneNumber"]) ? $extra_info["other_PhoneNumber"] : ''; ?>"
-                                                    type="text" name="other_PhoneNumber">
-                                            </div>
-                                            <!--  -->
-                                        </div>
-                                        <div class="row">     
-                                            <!--  -->
-                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
-                                                <label>Linkedin Public Profile URL:</label>
-                                                <input class="invoice-fields"
-                                                    value="<?php echo set_value('linkedin_profile_url', $employer["linkedin_profile_url"]); ?>"
-                                                    type="text" name="linkedin_profile_url">
-                                            </div>
-                                        </div>
-                                        <div class="row">  
-                                            <!--  -->  
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Department:</label>
-                                                <div class="hr-select-dropdown">
-                                                    <select class="invoice-fields" name="department" id="department" onchange="get_teams(this.value)">
-                                                        <option value="0">Select Department</option>
-                                                        <?php if (!empty($departments)) { ?>
-                                                            <?php foreach ($departments as $department) { ?>
-                                                                <option value="<?php echo $department["sid"]; ?>"
-                                                                    <?php if ($employer['department_sid'] == $department["sid"]) { echo 'selected'; } ?>>
-                                                                    <?php echo $department["name"]; ?>
-                                                                </option>
+                                            <div class="row"> 
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>state:</label>
+                                                    <p style="display: none;" id="state_id">
+                                                        <?php echo $employer['Location_State']; ?></p>
+                                                    <div class="hr-select-dropdown">
+                                                        <select class="invoice-fields" name="Location_State" id="state">
+                                                            <option value="">Select State</option>
+                                                            <option value="">Please Select your country</option>
+                                                        </select>
+                                                    </div>
+                                                </div>    
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>country:</label>
+                                                    <div class="hr-select-dropdown">
+                                                        <select class="invoice-fields" name="Location_Country" id="country"
+                                                            onchange="getStates(this.value, <?php echo $states; ?>)">
+                                                            <option value="">Select Country</option>
+                                                            <?php foreach ($active_countries as $active_country) { ?>
+                                                            <option value="<?= $active_country["sid"]; ?>"
+                                                                <?php if ($employer['Location_Country'] == $active_country["sid"]) { echo 'selected'; } ?>>
+                                                                <?= $active_country["country_name"]; ?>
+                                                            </option>
                                                             <?php } ?>
-                                                        <?php } else { ?>
-                                                            <option value="0">No Department Found</option>
-                                                        <?php } ?>
-                                                    </select>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <!--  -->
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <label>Team:</label>
-                                                <div class="hr-select-dropdown">
-                                                    <p style="display: none;" id="team_sid">
-                                                        <?php echo $employer['team_sid']; ?>
-                                                    </p>
-                                                    <select class="invoice-fields" name="teams[]" id="teams" multiple="true">
-                                                        <option value="">Select Team</option>
-                                                        <option value="">Please Select your Department</option>
-                                                    </select>
+                                            <div class="row"> 
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Social Security Number: <?=$ssn_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
+                                                    <input class="invoice-fields" type="text" name="SSN" <?=$ssn_required == 1 ? 'required' : '';?>
+                                                        value="<?php echo isset($employer["ssn"]) ? $employer["ssn"] : ''; ?>">
+                                                        <?php echo form_error('SSN'); ?>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Employee Number:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('employee_number', $employer["employee_number"]); ?>"
+                                                        type="text" name="employee_number">
                                                 </div>
                                             </div>
-                                            <!--  -->
-                                        </div>
-                                        <?php if($timeOff == 'enable') { ?>
                                             <div class="row">  
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <?php 
-                                                        $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
-                                                        $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
+                                                    <?php $office_location = isset($extra_info["office_location"]) ? $extra_info["office_location"] : ''; ?>
+                                                    <label>Office Location:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('office_location', $office_location); ?>"
+                                                        type="text" name="office_location" id="office_location">
+                                                </div>
+                                                
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Employment Type:</label>
+                                                    <div class="hr-select-dropdown">
+                                                        <select class="invoice-fields" name="employee-type" id="employee-type">
+                                                            <?php if(!empty($employment_types)) { ?>
+                                                                <?php foreach($employment_types as $key => $employment_type) { ?>
+                                                                    <option value="<?= $key ?>"
+                                                                        <?php if(strtolower($employer['employee_type']) == $key){echo 'selected' ;}?>>
+                                                                        <?= $employment_type ?>
+                                                                    </option>
+                                                                <?php } ?>
+                                                            <?php }?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group dn">
+                                                    <label>Employment Status:</label>
+                                                    <div class="hr-select-dropdown">
+                                                        <select class="invoice-fields" name="employee-status" id="employee-status">
+                                                            <?php foreach($employment_statuses as $key => $employee_status) { ?>
+                                                                <option value="<?= $key ?>"
+                                                                    <?php if(strtolower($employer['employee_status']) == $key){echo 'selected' ;}?>>
+                                                                    <?= $employee_status ?>
+                                                                </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!--  -->
+                                            </div>
+                                            <?php if(IS_TIMEZONE_ACTIVE && $show_timezone != '') { ?>
+                                                <div class="row">
+                                                    <!--  -->
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
+                                                        <!-- Timezone -->
+                                                        <?php if($employer_sid == $employer["sid"] || $access_level_plus == 1) { ?>
+                                                            <?php $timezone = isset($employer["timezone"]) ? $employer["timezone"] : ''; ?>
+                                                            <label>TimeZone:</label>
+                                                            <?=timezone_dropdown(
+                                                                        $timezone,
+                                                                        array(
+                                                                            'class' => 'invoice-fields js-timezone',
+                                                                            'name' => 'timezone',
+                                                                            'id' => 'timezone'
+                                                                        )
+                                                                    );?>
+                                                        <?php } ?>
+                                                    </div>
+                                                    <!--  -->
+                                                </div>
+                                            <?php } ?>
+                                            <div class="row">    
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <?php if($access_level_plus == 1) {?>
+                                                        <!-- Joining date -->
+                                                        <?php $joining_date = isset($employer["joined_at"]) && $employer["joined_at"] != '' ? DateTime::createFromFormat('Y-m-d', $employer["joined_at"])->format('m-d-Y') : ''; ?>
+                                                        <?php $registration_date = isset($employer["registration_date"]) && $employer["registration_date"] != '' ? DateTime::createFromFormat('Y-m-d H:i:s', $employer["registration_date"])->format('m-d-Y') : ''; ?>
+                                                        <label>Joining Date:</label>
+                                                        <input class="invoice-fields js-joining-date" readonly="true"
+                                                            value="<?php echo $employer["joined_at"]=='' ? $registration_date : $joining_date ?>"
+                                                            type="text" name="joining_date" id="joining_date">
+                                                    <?php } ?>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Date of Birth:<?=$dob_required == 1 ? ' <samp class="red"> * </samp>' : '';?></label>
+                                                    <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?=$dob_required == 1 ? 'required' : '';?>
+                                                        name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
+                                                        <?php echo form_error('DOB'); ?>
+                                                </div>
+                                                <!--  -->
+                                            </div>
+                                            <div class="row">
+                                                <!--  -->      
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>secondary email:</label>
+                                                    <?php
+                                                        $secondaryEmail = isset($extra_info["secondary_email"]) && !empty($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : $employer["alternative_email"];
                                                     ?>
-                                                    <div class="row">
-                                                        <div class="col-sm-6">
-                                                            <label>Shift start time:</label>
-                                                            <input
-                                                                class="invoice-fields js-shift-start-time show_employee_working_info"
-                                                                readonly="true" value="<?php echo $shift_start; ?>"
-                                                                type="text" name="shift_start_time">
-                                                        </div>
-                                                        <div class="col-sm-6" style="padding-right: 0px;">
-                                                            <label>Shift End time:</label>
-                                                            <input
-                                                                class="invoice-fields js-shift-end-time show_employee_working_info"
-                                                                readonly="true" value="<?php echo $shift_end; ?>"
-                                                                type="text" name="shift_end_time">
-                                                        </div>
+                                                    <input
+                                                        class="invoice-fields <?php if (form_error('secondary_email') !== "") { ?> error <?php } ?>"
+                                                        value="<?php echo set_value('secondary_email', ($secondaryEmail)); ?>"
+                                                        type="email" name="secondary_email">
+                                                </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>secondary mobile number:</label>
+                                                    <input class="invoice-fields" id="secondary_PhoneNumber"
+                                                        value="<?php echo set_value('secondary_PhoneNumber', isset($extra_info["secondary_PhoneNumber"]) ? $extra_info["secondary_PhoneNumber"] : ''); ?>"
+                                                        type="text" name="secondary_PhoneNumber">
+                                                </div>
+                                                <!--  -->
+                                            </div>
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>other email:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('other_email', isset($extra_info["other_email"]) ? $extra_info["other_email"] : ''); ?>"
+                                                        type="email" name="other_email">
+                                                </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Other Phone Number:</label>
+                                                    <input class="invoice-fields" id="other_PhoneNumber"
+                                                        value="<?php echo isset($extra_info["other_PhoneNumber"]) ? $extra_info["other_PhoneNumber"] : ''; ?>"
+                                                        type="text" name="other_PhoneNumber">
+                                                </div>
+                                                <!--  -->
+                                            </div>
+                                            <div class="row">     
+                                                <!--  -->
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
+                                                    <label>Linkedin Public Profile URL:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('linkedin_profile_url', $employer["linkedin_profile_url"]); ?>"
+                                                        type="text" name="linkedin_profile_url">
+                                                </div>
+                                            </div>
+                                            <div class="row">  
+                                                <!--  -->  
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Department:</label>
+                                                    <div class="hr-select-dropdown">
+                                                        <select class="invoice-fields" name="department" id="department" onchange="get_teams(this.value)">
+                                                            <option value="0">Select Department</option>
+                                                            <?php if (!empty($departments)) { ?>
+                                                                <?php foreach ($departments as $department) { ?>
+                                                                    <option value="<?php echo $department["sid"]; ?>"
+                                                                        <?php if ($employer['department_sid'] == $department["sid"]) { echo 'selected'; } ?>>
+                                                                        <?php echo $department["name"]; ?>
+                                                                    </option>
+                                                                <?php } ?>
+                                                            <?php } else { ?>
+                                                                <option value="0">No Department Found</option>
+                                                            <?php } ?>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Break</label>
-                                                    <?php 
-                                                        $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
-                                                        $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
-                                                    ?>
+                                                    <label>Team:</label>
+                                                    <div class="hr-select-dropdown">
+                                                        <p style="display: none;" id="team_sid">
+                                                            <?php echo $employer['team_sid']; ?>
+                                                        </p>
+                                                        <select class="invoice-fields" name="teams[]" id="teams" multiple="true">
+                                                            <option value="">Select Team</option>
+                                                            <option value="">Please Select your Department</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!--  -->
+                                            </div>
+                                            <?php if($timeOff == 'enable') { ?>
+                                                <div class="row">  
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <?php 
+                                                            $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
+                                                            $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
+                                                        ?>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <label>Shift start time:</label>
+                                                                <input
+                                                                    class="invoice-fields js-shift-start-time show_employee_working_info"
+                                                                    readonly="true" value="<?php echo $shift_start; ?>"
+                                                                    type="text" name="shift_start_time">
+                                                            </div>
+                                                            <div class="col-sm-6" style="padding-right: 0px;">
+                                                                <label>Shift End time:</label>
+                                                                <input
+                                                                    class="invoice-fields js-shift-end-time show_employee_working_info"
+                                                                    readonly="true" value="<?php echo $shift_end; ?>"
+                                                                    type="text" name="shift_end_time">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Break</label>
+                                                        <?php 
+                                                            $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
+                                                            $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
+                                                        ?>
+                                                        <div class="row">
+                                                            <div class="col-sm-6 shift_div">
+                                                                <div class="input-group">
+                                                                    <input min="0" max="23"
+                                                                        oninput="this.value = Math.abs(this.value)"
+                                                                        id="br_hours" type="number"
+                                                                        value="<?php echo  $break_hours; ?>" name="break_hours"
+                                                                        class="invoice-fields show_employee_working_info emp_break_info"
+                                                                        data-type="hours">
+                                                                    <div class="input-group-addon"> Hours </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 shift_div shift_end">
+                                                                <div class="input-group">
+                                                                    <input min="0" max="59"
+                                                                        oninput="this.value = Math.abs(this.value)"
+                                                                        type="number" value="<?php echo  $break_minutes; ?>"
+                                                                        id="br_mins" name="break_mins"
+                                                                        class="invoice-fields show_employee_working_info emp_break_info"
+                                                                        data-type="minutes">
+                                                                    <div class="input-group-addon">Minutes</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--  -->
+                                                </div>
+                                                <div class="row">  
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Week Days Off:</label>
+                                                        <?php $dayoffs = isset($employer['offdays']) && !empty($employer['offdays']) ? explode(',', $employer['offdays']) : [DAY_OFF]; ?>
+                                                        <select class="show_employee_working_info" name="offdays[]"
+                                                            id="js_offdays" multiple="true">
+                                                            <option value="Monday"
+                                                                <?php echo in_array("Monday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                                Monday</option>
+                                                            <option value="Tuesday"
+                                                                <?php echo in_array("Tuesday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                                Tuesday</option>
+                                                            <option value="Wednesday"
+                                                                <?php echo in_array("Wednesday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                                Wednesday</option>
+                                                            <option value="Thursday"
+                                                                <?php echo in_array("Thursday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                                Thursday</option>
+                                                            <option value="Friday"
+                                                                <?php echo in_array("Friday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                                Friday</option>
+                                                            <option value="Saturday"
+                                                                <?php echo in_array("Saturday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                                Saturday</option>
+                                                            <option value="Sunday"
+                                                                <?php echo in_array("Sunday", $dayoffs) ? 'selected="true"' : ''; ?>>
+                                                                Sunday</option>
+                                                        </select>
+                                                    </div>
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <div class="update_employee_info_container">
+                                                            <strong id="update_employee_info"></strong>
+                                                            <input type="hidden" name="weekly_hours" id="employee_weekly_hours">
+                                                        </div>
+                                                    </div>
+                                                    <!--  -->
+                                                </div>
+                                            <?php } ?>  
+                                            <div class="row">
+                                                <!--  -->                 
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
+                                                    <label>Profile picture:</label>
+                                                    <div class="upload-file invoice-fields">
+                                                        <span class="selected-file" id="name_pictures">No file
+                                                            selected</span>
+                                                        <input type="file" name="pictures" id="pictures"
+                                                            onchange="check_file_all('pictures')">
+                                                        <a href="javascript:;">Choose File</a>
+                                                    </div>
+                                                    <!--  -->
+                                                </div>
+                                                <!--  --> 
+                                            </div>
+                                            <div class="row">
+                                                <!--  --> 
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group dn">
+                                                    <label>Shift</label>
                                                     <div class="row">
-                                                        <div class="col-sm-6 shift_div">
+                                                        <div class="col-sm-6 shift_div" style="padding-left: 0px;">
                                                             <div class="input-group">
                                                                 <input min="0" max="23"
                                                                     oninput="this.value = Math.abs(this.value)"
-                                                                    id="br_hours" type="number"
-                                                                    value="<?php echo  $break_hours; ?>" name="break_hours"
-                                                                    class="invoice-fields show_employee_working_info emp_break_info"
-                                                                    data-type="hours">
+                                                                    id="sh_hours" type="number"
+                                                                    value="<?php echo  $employer["user_shift_hours"] ?>"
+                                                                    name="shift_hours" class="invoice-fields">
                                                                 <div class="input-group-addon"> Hours </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-6 shift_div shift_end">
+                                                        <div class="col-sm-6 shift_div shift_end"
+                                                            style="padding-right: 0px;">
                                                             <div class="input-group">
                                                                 <input min="0" max="59"
                                                                     oninput="this.value = Math.abs(this.value)"
-                                                                    type="number" value="<?php echo  $break_minutes; ?>"
-                                                                    id="br_mins" name="break_mins"
-                                                                    class="invoice-fields show_employee_working_info emp_break_info"
-                                                                    data-type="minutes">
+                                                                    type="number"
+                                                                    value="<?php echo  $employer["user_shift_minutes"] ?>"
+                                                                    id="sh_mins" name="shift_mins" class="invoice-fields">
                                                                 <div class="input-group-addon">Minutes</div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!--  -->
-                                            </div>
-                                            <div class="row">  
-                                                <!--  -->
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Week Days Off:</label>
-                                                    <?php $dayoffs = isset($employer['offdays']) && !empty($employer['offdays']) ? explode(',', $employer['offdays']) : [DAY_OFF]; ?>
-                                                    <select class="show_employee_working_info" name="offdays[]"
-                                                        id="js_offdays" multiple="true">
-                                                        <option value="Monday"
-                                                            <?php echo in_array("Monday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                            Monday</option>
-                                                        <option value="Tuesday"
-                                                            <?php echo in_array("Tuesday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                            Tuesday</option>
-                                                        <option value="Wednesday"
-                                                            <?php echo in_array("Wednesday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                            Wednesday</option>
-                                                        <option value="Thursday"
-                                                            <?php echo in_array("Thursday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                            Thursday</option>
-                                                        <option value="Friday"
-                                                            <?php echo in_array("Friday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                            Friday</option>
-                                                        <option value="Saturday"
-                                                            <?php echo in_array("Saturday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                            Saturday</option>
-                                                        <option value="Sunday"
-                                                            <?php echo in_array("Sunday", $dayoffs) ? 'selected="true"' : ''; ?>>
-                                                            Sunday</option>
-                                                    </select>
-                                                </div>
-                                                <!--  -->
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <div class="update_employee_info_container">
-                                                        <strong id="update_employee_info"></strong>
-                                                        <input type="hidden" name="weekly_hours" id="employee_weekly_hours">
+                                                <!--  --> 
+                                                <?php if(IS_NOTIFICATION_ENABLED == 1 && $phone_sid != '') { ?>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Notified By:</label>
+                                                        <div class="hr-select-dropdown">
+                                                            <select class="invoice-fields" name="notified_by[]" id="notified_by"
+                                                                multiple="true">
+                                                                <option value="email"
+                                                                    <?php if(in_array('email', explode(',', $employer['notified_by']))){echo 'selected' ;}?>>
+                                                                    Email</option>
+                                                                <option value="sms"
+                                                                    <?php if(in_array('sms', explode(',', $employer['notified_by']))){echo 'selected' ;}?>>
+                                                                    SMS</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <!--  -->
+                                                <?php } ?>
+                                                <!--  --> 
                                             </div>
-                                        <?php } ?>  
-                                        <div class="row">
-                                            <!--  -->                 
-                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
-                                                <label>Profile picture:</label>
-                                                <div class="upload-file invoice-fields">
-                                                    <span class="selected-file" id="name_pictures">No file
-                                                        selected</span>
-                                                    <input type="file" name="pictures" id="pictures"
-                                                        onchange="check_file_all('pictures')">
-                                                    <a href="javascript:;">Choose File</a>
-                                                </div>
-                                                <!--  -->
-                                            </div>
-                                            <!--  --> 
-                                        </div>
-                                        <div class="row">
-                                            <!--  --> 
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group dn">
-                                                <label>Shift</label>
+                                            <?php if(checkIfAppIsEnabled('timeoff')){ ?>
                                                 <div class="row">
-                                                    <div class="col-sm-6 shift_div" style="padding-left: 0px;">
-                                                        <div class="input-group">
-                                                            <input min="0" max="23"
-                                                                oninput="this.value = Math.abs(this.value)"
-                                                                id="sh_hours" type="number"
-                                                                value="<?php echo  $employer["user_shift_hours"] ?>"
-                                                                name="shift_hours" class="invoice-fields">
-                                                            <div class="input-group-addon"> Hours </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6 shift_div shift_end"
-                                                        style="padding-right: 0px;">
-                                                        <div class="input-group">
-                                                            <input min="0" max="59"
-                                                                oninput="this.value = Math.abs(this.value)"
-                                                                type="number"
-                                                                value="<?php echo  $employer["user_shift_minutes"] ?>"
-                                                                id="sh_mins" name="shift_mins" class="invoice-fields">
-                                                            <div class="input-group-addon">Minutes</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!--  --> 
-                                            <?php if(IS_NOTIFICATION_ENABLED == 1 && $phone_sid != '') { ?>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Notified By:</label>
-                                                    <div class="hr-select-dropdown">
-                                                        <select class="invoice-fields" name="notified_by[]" id="notified_by"
-                                                            multiple="true">
-                                                            <option value="email"
-                                                                <?php if(in_array('email', explode(',', $employer['notified_by']))){echo 'selected' ;}?>>
-                                                                Email</option>
-                                                            <option value="sms"
-                                                                <?php if(in_array('sms', explode(',', $employer['notified_by']))){echo 'selected' ;}?>>
-                                                                SMS</option>
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
+                                                        <!-- Time off policies -->
+                                                        <label>
+                                                            Policies:
+                                                        </label>
+                                                        <select name="policies[]" id="js-policies" multiple="true">
+                                                            <?php 
+                                                            if(!empty($policies)){
+                                                                foreach($policies as $key => $policy){
+                                                        ?>
+                                                            <option <?php if($policy['Implements']) echo 'selected="true"'; ?>
+                                                                value="<?=$policy['PolicyId'];?>">
+                                                                <?php
+                                                                echo $policy['Title'], ' (', $policy['RemainingTime'], ') [',ucwords($policy['EmployementStatus']), ']';
+                                                            ?>
+                                                            </option>
+                                                            <?php   }
+                                                            }
+                                                            ?>
                                                         </select>
+                                                        <div class="clearfix"></div>
                                                     </div>
                                                 </div>
-                                            <?php } ?>
-                                            <!--  --> 
-                                        </div>
-                                        <?php if(checkIfAppIsEnabled('timeoff')){ ?>
-                                            <div class="row">
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
-                                                    <!-- Time off policies -->
-                                                    <label>
-                                                        Policies:
-                                                    </label>
-                                                    <select name="policies[]" id="js-policies" multiple="true">
-                                                        <?php 
-                                                        if(!empty($policies)){
-                                                            foreach($policies as $key => $policy){
-                                                    ?>
-                                                        <option <?php if($policy['Implements']) echo 'selected="true"'; ?>
-                                                            value="<?=$policy['PolicyId'];?>">
-                                                            <?php
-                                                            echo $policy['Title'], ' (', $policy['RemainingTime'], ') [',ucwords($policy['EmployementStatus']), ']';
-                                                        ?>
-                                                        </option>
-                                                        <?php   }
-                                                        }
-                                                        ?>
-                                                    </select>
-                                                    <div class="clearfix"></div>
+                                            <?php } ?>    
+                                            <div class="row">    
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 auto-height form-group">
+                                                    <?php $interests = isset($extra_info["interests"]) ? $extra_info["interests"] : ''; ?>
+                                                    <label>Interests:</label>
+                                                    <textarea id="interests" name="interests"
+                                                        class="invoice-fields auto-height"
+                                                        rows="6"><?php echo set_value('interests', $interests); ?></textarea>
                                                 </div>
                                             </div>
-                                        <?php } ?>    
-                                        <div class="row">    
-                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 auto-height form-group">
-                                                <?php $interests = isset($extra_info["interests"]) ? $extra_info["interests"] : ''; ?>
-                                                <label>Interests:</label>
-                                                <textarea id="interests" name="interests"
-                                                    class="invoice-fields auto-height"
-                                                    rows="6"><?php echo set_value('interests', $interests); ?></textarea>
+                                            <div class="row">    
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 auto-height form-group">
+                                                    <?php $short_bio = isset($extra_info["short_bio"]) ? $extra_info["short_bio"] : ''; ?>
+                                                    <label>Short Bio:</label>
+                                                    <textarea id="short_bio" id="short_bio" name="short_bio"
+                                                        class="invoice-fields auto-height"
+                                                        rows="6"><?php echo set_value('short_bio', $short_bio); ?></textarea>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="row">    
-                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 auto-height form-group">
-                                                <?php $short_bio = isset($extra_info["short_bio"]) ? $extra_info["short_bio"] : ''; ?>
-                                                <label>Short Bio:</label>
-                                                <textarea id="short_bio" id="short_bio" name="short_bio"
-                                                    class="invoice-fields auto-height"
-                                                    rows="6"><?php echo set_value('short_bio', $short_bio); ?></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="row">    
-                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 auto-height form-group">
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                <label for="YouTubeVideo">Select Video:</label>
-                                                            </div>
-                                                            <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9">
-                                                                <div class="row">
-                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                        <label
-                                                                            class="control control--radio"><?php echo NO_VIDEO; ?>
-                                                                            <input type="radio" name="video_source"
-                                                                                class="video_source" value="no_video"
-                                                                                checked="">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                        <label
-                                                                            class="control control--radio"><?php echo YOUTUBE_VIDEO; ?>
-                                                                            <input type="radio" name="video_source"
-                                                                                class="video_source" value="youtube"
-                                                                                <?php echo !empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'youtube' ? 'checked="checked"':''; ?>>
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                        <label
-                                                                            class="control control--radio"><?php echo VIMEO_VIDEO; ?>
-                                                                            <input type="radio" name="video_source"
-                                                                                class="video_source" value="vimeo"
-                                                                                <?php echo !empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'vimeo' ? 'checked="checked"':''; ?>>
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                        <label
-                                                                            class="control control--radio"><?php echo UPLOAD_VIDEO; ?>
-                                                                            <input type="radio" name="video_source"
-                                                                                class="video_source" value="uploaded"
-                                                                                <?php echo !empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'uploaded' ? 'checked="checked"':''; ?>>
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
+                                            <div class="row">    
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 auto-height form-group">
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                    <label for="YouTubeVideo">Select Video:</label>
+                                                                </div>
+                                                                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                            <label
+                                                                                class="control control--radio"><?php echo NO_VIDEO; ?>
+                                                                                <input type="radio" name="video_source"
+                                                                                    class="video_source" value="no_video"
+                                                                                    checked="">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                            <label
+                                                                                class="control control--radio"><?php echo YOUTUBE_VIDEO; ?>
+                                                                                <input type="radio" name="video_source"
+                                                                                    class="video_source" value="youtube"
+                                                                                    <?php echo !empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'youtube' ? 'checked="checked"':''; ?>>
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                            <label
+                                                                                class="control control--radio"><?php echo VIMEO_VIDEO; ?>
+                                                                                <input type="radio" name="video_source"
+                                                                                    class="video_source" value="vimeo"
+                                                                                    <?php echo !empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'vimeo' ? 'checked="checked"':''; ?>>
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                            <label
+                                                                                class="control control--radio"><?php echo UPLOAD_VIDEO; ?>
+                                                                                <input type="radio" name="video_source"
+                                                                                    class="video_source" value="uploaded"
+                                                                                    <?php echo !empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'uploaded' ? 'checked="checked"':''; ?>>
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight"
-                                                    id="youtube_vimeo_input">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-xs-12">
-                                                                <?php
-                                                                    if (!empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'youtube') {
-                                                                        $video_link = 'https://www.youtube.com/watch?v='.$employer['YouTubeVideo'];
-                                                                    } else if (!empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'vimeo') {
-                                                                        $video_link = 'https://vimeo.com/'.$employer['YouTubeVideo'];
-                                                                    } else {
-                                                                        $video_link = '';
-                                                                    }
-                                                                ?>
-                                                                <label for="YouTube_Video" id="label_youtube">Youtube
-                                                                    Video:</label>
-                                                                <label for="Vimeo_Video" id="label_vimeo"
-                                                                    style="display: none">Vimeo Video:</label>
-                                                                <input type="text" name="yt_vm_video_url"
-                                                                    value="<?php echo $video_link; ?>"
-                                                                    class="invoice-fields" id="yt_vm_video_url">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight"
-                                                    id="upload_input" style="display: none">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-xs-12">
-                                                                <label for="YouTubeVideo">Upload Video:</label>
-                                                                <div class="upload-file invoice-fields">
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight"
+                                                        id="youtube_vimeo_input">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-xs-12">
                                                                     <?php
-                                                                        if (!empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'uploaded') {
-                                                                    ?>
-                                                                    <input type="hidden" id="pre_upload_video_url"
-                                                                        name="pre_upload_video_url"
-                                                                        value="<?php echo $employer['YouTubeVideo']; ?>">
-                                                                    <?php
+                                                                        if (!empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'youtube') {
+                                                                            $video_link = 'https://www.youtube.com/watch?v='.$employer['YouTubeVideo'];
+                                                                        } else if (!empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'vimeo') {
+                                                                            $video_link = 'https://vimeo.com/'.$employer['YouTubeVideo'];
                                                                         } else {
-                                                                    ?>
-                                                                    <input type="hidden" id="pre_upload_video_url"
-                                                                        name="pre_upload_video_url" value="">
-                                                                    <?php
+                                                                            $video_link = '';
                                                                         }
                                                                     ?>
-                                                                    <span class="selected-file"
-                                                                        id="name_upload_video">No video selected</span>
-                                                                    <input name="upload_video" id="upload_video"
-                                                                        onchange="upload_video_checker('upload_video')"
-                                                                        type="file">
-                                                                    <a href="javascript:;">Choose Video</a>
+                                                                    <label for="YouTube_Video" id="label_youtube">Youtube
+                                                                        Video:</label>
+                                                                    <label for="Vimeo_Video" id="label_vimeo"
+                                                                        style="display: none">Vimeo Video:</label>
+                                                                    <input type="text" name="yt_vm_video_url"
+                                                                        value="<?php echo $video_link; ?>"
+                                                                        class="invoice-fields" id="yt_vm_video_url">
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <?php if(!empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL) {
-                                                    if($employer['video_type'] == 'uploaded'){
-                                                        $fileExt = $employer['YouTubeVideo'];
-                                                        $fileExt = strtolower(pathinfo($fileExt, PATHINFO_EXTENSION));
-                                                    }?>
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <div
-                                                        class="<?= !empty($fileExt) && $fileExt != 'mp3' ? 'well well-sm' : '';?>">
-                                                        <div class="embed-responsive embed-responsive-16by9">
-                                                            <?php if($employer['video_type'] == 'youtube') { ?>
-                                                            <iframe class="embed-responsive-item"
-                                                                src="https://www.youtube.com/embed/<?php echo $employer['YouTubeVideo']; ?>"
-                                                                frameborder="0" webkitallowfullscreen mozallowfullscreen
-                                                                allowfullscreen></iframe>
-                                                            <?php } elseif($employer['video_type'] == 'vimeo') { ?>
-                                                            <iframe class="embed-responsive-item"
-                                                                src="https://player.vimeo.com/video/<?php echo $employer['YouTubeVideo']; ?>"
-                                                                frameborder="0" webkitallowfullscreen mozallowfullscreen
-                                                                allowfullscreen></iframe>
-                                                            <?php } else {
-                                                                if ($fileExt == 'mp3') {?>
-                                                            <audio controls>
-                                                                <source
-                                                                    src="<?php echo base_url() . 'assets/uploaded_videos/' . $employer['YouTubeVideo']; ?>"
-                                                                    type='audio/mp3'>
-                                                            </audio>
-                                                            <?php } else { ?>
-                                                            <video controls>
-                                                                <source
-                                                                    src="<?php echo base_url() . 'assets/uploaded_videos/' . $employer['YouTubeVideo']; ?>"
-                                                                    type='video/mp4'>
-                                                            </video>
-                                                            <?php }
-                                                            } ?>
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight"
+                                                        id="upload_input" style="display: none">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-xs-12">
+                                                                    <label for="YouTubeVideo">Upload Video:</label>
+                                                                    <div class="upload-file invoice-fields">
+                                                                        <?php
+                                                                            if (!empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL && $employer['video_type'] == 'uploaded') {
+                                                                        ?>
+                                                                        <input type="hidden" id="pre_upload_video_url"
+                                                                            name="pre_upload_video_url"
+                                                                            value="<?php echo $employer['YouTubeVideo']; ?>">
+                                                                        <?php
+                                                                            } else {
+                                                                        ?>
+                                                                        <input type="hidden" id="pre_upload_video_url"
+                                                                            name="pre_upload_video_url" value="">
+                                                                        <?php
+                                                                            }
+                                                                        ?>
+                                                                        <span class="selected-file"
+                                                                            id="name_upload_video">No video selected</span>
+                                                                        <input name="upload_video" id="upload_video"
+                                                                            onchange="upload_video_checker('upload_video')"
+                                                                            type="file">
+                                                                        <a href="javascript:;">Choose Video</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <?php if(!empty($employer['YouTubeVideo']) && $employer['YouTubeVideo'] != NULL) {
+                                                        if($employer['video_type'] == 'uploaded'){
+                                                            $fileExt = $employer['YouTubeVideo'];
+                                                            $fileExt = strtolower(pathinfo($fileExt, PATHINFO_EXTENSION));
+                                                        }?>
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                        <div
+                                                            class="<?= !empty($fileExt) && $fileExt != 'mp3' ? 'well well-sm' : '';?>">
+                                                            <div class="embed-responsive embed-responsive-16by9">
+                                                                <?php if($employer['video_type'] == 'youtube') { ?>
+                                                                <iframe class="embed-responsive-item"
+                                                                    src="https://www.youtube.com/embed/<?php echo $employer['YouTubeVideo']; ?>"
+                                                                    frameborder="0" webkitallowfullscreen mozallowfullscreen
+                                                                    allowfullscreen></iframe>
+                                                                <?php } elseif($employer['video_type'] == 'vimeo') { ?>
+                                                                <iframe class="embed-responsive-item"
+                                                                    src="https://player.vimeo.com/video/<?php echo $employer['YouTubeVideo']; ?>"
+                                                                    frameborder="0" webkitallowfullscreen mozallowfullscreen
+                                                                    allowfullscreen></iframe>
+                                                                <?php } else {
+                                                                    if ($fileExt == 'mp3') {?>
+                                                                <audio controls>
+                                                                    <source
+                                                                        src="<?php echo base_url() . 'assets/uploaded_videos/' . $employer['YouTubeVideo']; ?>"
+                                                                        type='audio/mp3'>
+                                                                </audio>
+                                                                <?php } else { ?>
+                                                                <video controls>
+                                                                    <source
+                                                                        src="<?php echo base_url() . 'assets/uploaded_videos/' . $employer['YouTubeVideo']; ?>"
+                                                                        type='video/mp4'>
+                                                                </video>
+                                                                <?php }
+                                                                } ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php } ?>
                                                 </div>
-                                                <?php } ?>
-                                            </div>
-                                            <div class="form-title-section">
-                                                <div class="form-btns">
-                                                    <input type="hidden" name="old_profile_picture"
-                                                        value="<?php echo $employer['profile_picture']; ?>">
-                                                    <input type="hidden" name="id"
-                                                        value="<?php echo $employer['sid']; ?>">
-                                                    <input type="submit" value="Save" id="add_edit_submit"
-                                                        onclick="return validate_employers_form()">
-                                                    <input type="button" value="cancel" class="view_button">
+                                                <div class="form-title-section">
+                                                    <div class="form-btns">
+                                                        <input type="hidden" name="old_profile_picture"
+                                                            value="<?php echo $employer['profile_picture']; ?>">
+                                                        <input type="hidden" name="id"
+                                                            value="<?php echo $employer['sid']; ?>">
+                                                        <input type="submit" value="Save" id="add_edit_submit"
+                                                            onclick="return validate_employers_form()">
+                                                        <input type="button" value="cancel" class="view_button">
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
+                                    <!--Edit part Ends-->
                                 </div>
-                                <!--Edit part Ends-->
+                                <div id="jsSecondaryEmployeeBox" style="display: none;">
+                                    <div class="universal-form-style-v2 info_view">
+                                        <?php $this->load->view('manage_employer/employee_management/profile_view_part_secondary', ['primary_phone_number_cc' => $primary_phone_number_cc, 'dob' => $dob, 'timeOff' => $timeOff]); ?>
+                                    </div>
+                                </div>
                             </div>
                             <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']){  ?>
                             <!-- #tab1 -->
