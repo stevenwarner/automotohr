@@ -462,24 +462,24 @@
         function uploadAndAssignFiles(){
             fileLength = fileArray.length;
             var formpost = new FormData();
-            // console.log(fileArray);
-            // console.log(rowArray);
-            // alert(fileIndex);
+            // 
             formpost.append('file', fileArray[fileIndex]);
+            //
             $.each(megaOBJ, function(i, v){
                 formpost.append(i, v);
             });
-            // console.log(formpost);
-
-            var categories = $(".categories:eq( "+fileIndex+" )").val();
+            //
+            var current_row_id = $(".row_id:eq( "+fileIndex+" )").data("id");
+            var categories = $("#reset_category_"+current_row_id).val();
             var signed_date = $(".signed_date:eq( "+fileIndex+")").val();
             formpost.append("signed_date", signed_date);
-
-            if(categories != null)
-            for(i=0;i<categories.length;i++)
-                formpost.append("categories[]", categories[i]);
-
-
+            //
+            if(categories != null) {
+                for(ci=0;ci<categories.length;ci++) {
+                    formpost.append("categories[]", categories[ci]);
+                } 
+            }
+            //
             if ($(".ej_checkbox:eq( "+fileIndex+" )").is(":checked"))
             {
                 formpost.append("is_offer_letter", "yes");
