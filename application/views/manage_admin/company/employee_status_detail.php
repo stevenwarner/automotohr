@@ -15,7 +15,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"> 
-                                    <div class="heading-title page-title">
+                                    <div class="heading-title page-title employee_info_section">
                                         <h1 class="page-title">Company Name : <?php echo $companyName; ?></h1>
                                         <br>
                                         <h1 class="page-title">Employee Name : <?php echo $employeeName; ?></h1>
@@ -229,6 +229,10 @@
 <style>
     .status_btn {
         margin: 10px 0px;
+    }
+
+    .employee_info_section {
+        margin: 8px 0px;
     }
 </style>
 

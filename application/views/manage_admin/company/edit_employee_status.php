@@ -15,7 +15,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"> 
-                                    <div class="heading-title page-title">
+                                    <div class="heading-title page-title employee_info_section">
                                         <h1 class="page-title">Company Name : <?php echo $companyName; ?></h1>
                                         <br>
                                         <h1 class="page-title">Employee Name : <?php echo $employeeName; ?></h1>
@@ -102,37 +102,39 @@
                                                 </li>
                                                 <li class="">
                                                 <label>Documents :</label>
-                                                <?php if(sizeof($status_documents)>0) {
-                                                    foreach ($status_documents as $file) { ?>
-                                                        <div class="form-control full-width"
-                                                             style="height: auto; float: left;margin: 5px 0 0 0;">
-                                                            <div class="pull-left">
-                                                                <span class="uploaded-file-name"><a href="<?= base_url('hr_documents_management/download_upload_document/'.$file['file_code']); ?>" target="_blank"><?php echo $file['file_name']?></a></span>
+                                                <?php if(sizeof($status_documents)>0) { ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <?php foreach ($status_documents as $file) { ?>
+                                                            <div class="form-control full-width"
+                                                                 style="height: auto; float: left;margin: 5px 0 0 0;">
+                                                                <div class="pull-left">
+                                                                    <span class="uploaded-file-name"><a href="<?= base_url('hr_documents_management/download_upload_document/'.$file['file_code']); ?>" target="_blank"><?php echo $file['file_name']?></a></span>
+                                                                </div>
+                                                                <div class="pull-right">
+                                                                    <a  data-toggle="tooltip"
+                                                                        data-placement="top"
+                                                                        class="btn btn-primary btn-sm"
+                                                                        href="javascript:;"
+                                                                        onclick="display_document(this);"
+                                                                        document_title="<?php echo $file['file_name']; ?>"
+                                                                        document_url="<?php echo AWS_S3_BUCKET_URL . $file['file_code']; ?>"
+                                                                        print_url="<?php echo $file['file_code']; ?>"
+                                                                        document_ext="<?php echo $file['file_type']; ?>">
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </a>
+                                                                    <a href="javascript:;" title="Delete File" class="btn btn-danger delete-record" data-attr="<?= $file['sid']?>"> <i class="fa fa-times"></i></a>
+                                                                </div>
                                                             </div>
-                                                            <div class="pull-right">
-                                                                <a  data-toggle="tooltip"
-                                                                    data-placement="top"
-                                                                    class="btn btn-primary btn-sm"
-                                                                    href="javascript:;"
-                                                                    onclick="display_document(this);"
-                                                                    document_title="<?php echo $file['file_name']; ?>"
-                                                                    document_url="<?php echo AWS_S3_BUCKET_URL . $file['file_code']; ?>"
-                                                                    print_url="<?php echo $file['file_code']; ?>"
-                                                                    document_ext="<?php echo $file['file_type']; ?>">
-                                                                    <i class="fa fa-eye"></i>
-                                                                </a>
-                                                                <a href="javascript:;" title="Delete File" class="btn btn-danger delete-record" data-attr="<?= $file['sid']?>"> <i class="fa fa-times"></i></a>
-                                                            </div>
-                                                        </div>
-                                                    <?php }
-                                                } else { ?>
+                                                        <?php } ?>
+                                                    </div>    
+                                                <?php } else { ?>
                                                     <div class="form-control full-width"
                                                          style="height: auto; float: left">
                                                         <div class="pull-left">
                                                             <span class="uploaded-file-name">No documents founds</span>
                                                         </div>
                                                     </div>
-                                                <?php }?>
+                                                <?php } ?>
                                             </li>
                                                 <li>
                                                     <label>Upload Related Document:</label>
@@ -187,6 +189,12 @@
         </div>
     </div>
 </div>
+
+<style type="text/css">
+    .employee_info_section {
+        margin: 8px 0px;
+    }
+</style>
 
 <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>

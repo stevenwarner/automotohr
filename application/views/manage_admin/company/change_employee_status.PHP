@@ -15,7 +15,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"> 
-                                    <div class="heading-title page-title">
+                                    <div class="heading-title page-title employee_info_section">
                                         <h1 class="page-title">Company Name : <?php echo $companyName; ?></h1>
                                         <br>
                                         <h1 class="page-title">Employee Name : <?php echo $employeeName; ?></h1>
@@ -153,6 +153,13 @@
         </div>
     </div>
 </div>
+
+<style type="text/css">
+    .employee_info_section {
+        margin: 8px 0px;
+    }
+</style>
+
 <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script type="text/javascript">

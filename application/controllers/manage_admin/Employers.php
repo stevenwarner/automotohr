@@ -887,7 +887,7 @@ class employers extends Admin_Controller {
         $this->data['employer_sid'] = 0;
         $this->data['employeeSid'] = $sid;
         $this->data['security_details'] = $security_details;
-        $this->data['page_title'] = 'Employee Status Detail';
+        $this->data['page_title'] = 'Employee Status';
         $this->data['companySid'] = $company_detail[0]['sid'];
         $this->data['employeeName'] = getUserNameBySID($sid);
         $this->data['companyName'] = $company_detail[0]['CompanyName'];
