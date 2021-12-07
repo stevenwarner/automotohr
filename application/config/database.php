@@ -91,7 +91,7 @@ $db['ahr'] = array(
 	'char_set' => 'utf8',
 	'dbcollat' => 'utf8_general_ci',
 	'swap_pre' => '',
-	'encrypt' => FALSE,
+	//'encrypt' => ['ssl_ca' => APPPATH.'../../rds_key.pem', 'ssl_verify' => TRUE],
 	'compress' => FALSE,
 	'stricton' => $creds->AHR->DB->Strict,
 	'failover' => array(
