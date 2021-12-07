@@ -52,6 +52,8 @@
                                                                     echo 'Inactive';
                                                                 } else if ($employee_status == 7) {
                                                                     echo 'Leave';
+                                                                } else if ($employee_status == 8) {
+                                                                    echo 'Rehired';
                                                                 } else {
                                                                     echo 'N/A';
                                                                 }

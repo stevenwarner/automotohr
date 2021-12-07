@@ -237,9 +237,10 @@
                                                 <li>
                                                     <?php echo form_label('', ''); ?>
                                                     <div class="hr-fields-wrap">
-                                                        <div class="col-md-6 col-lg-6 col-xl-6" style="padding-left:0px">
+                                                        <div class="col-md-12 col-lg-12 col-xl-12" style="padding-left:0px">
                                                             <div class="input-group" style="float: left;">
-                                                                <a href="<?php echo base_url('manage_admin/employers/AssignBulkDocuments')."/".$data['sid']; ?>" class="btn btn-success">Add Bulk Document</a>  
+                                                                <a href="<?php echo base_url('manage_admin/employers/AssignBulkDocuments')."/".$data['sid']; ?>" class="btn btn-success">Add Bulk Documents</a> 
+                                                                <a href="<?php echo base_url('manage_admin/employers/EmployeeStatusDetail')."/".$data['sid']; ?>" class="btn btn-warning change_status">Change Employee Status</a>  
                                                             </div>
                                                         </div>
                                                     </div>
@@ -430,6 +431,7 @@
    .select2-container-multi .select2-choices .select2-search-choice,
    .select2-container-multi .select2-choices .select2-search-field{ width: auto; }
    .select2-container-multi{ padding: 0 !important; }
+   .change_status{margin-left: 10px;}
 </style>
 
 <script>

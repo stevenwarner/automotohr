@@ -708,9 +708,7 @@ class employers extends Admin_Controller {
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         $employee_detail = $this->company_model->get_details($sid, 'employer');
         $company_detail = $this->company_model->get_details($employee_detail[0]['parent_sid'], 'company');
-        // echo "<pre>";
-        // print_r($company_detail);
-        // die();
+        // 
         $this->data['creator'] = $employee_detail[0]['created_by'] == null ? [] : $this->company_model->getEmployeeCreator($employee_detail[0]['created_by']);
         $this->data['active_categories'] = $this->company_model->get_all_documents_category($company_detail[0]['sid']);
         $this->data['page_title'] = 'Assign Bulk Document';
@@ -737,9 +735,9 @@ class employers extends Admin_Controller {
     }
 
     /**
-     * Get applicants
+     * Assign document to employee
      *
-     * accepts GET
+     * accepts POST
      *
      * @return JSON
      *
@@ -864,6 +862,256 @@ class employers extends Admin_Controller {
 		$return_array['Response'] = 'Proceed';
 		$this->response($return_array);
 
+    }
+
+    public function employee_status_detail($sid = NULL) {
+        $redirect_url = 'manage_admin';
+        $function_name = 'employee_status';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        //
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $employee_detail = $this->company_model->get_details($sid, 'employer');
+        $company_detail = $this->company_model->get_details($employee_detail[0]['parent_sid'], 'company');
+        //
+        $this->load->library('form_validation');
+        //
+        $employee_status_records = $this->company_model->get_employee_status_detail($sid);
+        //
+        foreach ($employee_status_records as $key => $record) {
+            $record_sid = $record['sid'];
+            $attach_documents = $this->company_model->get_terminated_employees_documents($sid, $record_sid);
+            $employee_status_records[$key]['attach_documents'] = $attach_documents;
+        }
+        //
+        $this->data['employer_sid'] = 0;
+        $this->data['employeeSid'] = $sid;
+        $this->data['security_details'] = $security_details;
+        $this->data['page_title'] = 'Employee Status';
+        $this->data['companySid'] = $company_detail[0]['sid'];
+        $this->data['employeeName'] = getUserNameBySID($sid);
+        $this->data['companyName'] = $company_detail[0]['CompanyName'];
+        $this->data['employee_status_records'] = $employee_status_records;
+        //
+        if ($this->form_validation->run() === FALSE) {
+            if ($employee_detail) {
+                $this->data['employee_detail'] = $employee_detail[0];
+            } else {
+                $this->session->set_flashdata('message', 'Employer does not exists!');
+                redirect('manage_admin/employers', 'refresh');
+            }
+
+            $this->load->helper('form');
+            $this->render('manage_admin/company/employee_status_detail');
+        }
+    }
+
+    public function change_employee_status($sid = NULL) {
+        $redirect_url = 'manage_admin';
+        $function_name = 'employee_status';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        //
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $employee_detail = $this->company_model->get_details($sid, 'employer');
+        $company_detail = $this->company_model->get_details($employee_detail[0]['parent_sid'], 'company');
+        //
+        $this->data['page_title'] = 'Change Employee Status';
+        $this->data['companySid'] = $company_detail[0]['sid'];
+        $this->data['companyName'] = $company_detail[0]['CompanyName'];
+        $this->data['employeeName'] = getUserNameBySID($sid);
+        $this->data['employeeSid'] = $sid;
+        $this->data['security_details'] = $security_details;
+        //
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('status', 'Status', 'trim|xss_clean|required');
+        $this->form_validation->set_rules('termination_details', 'Termination Details', 'trim|xss_clean|required');
+        //
+        if ($this->form_validation->run() === FALSE) {
+            if ($employee_detail) {
+                $this->data['employee_detail'] = $employee_detail[0];
+            } else {
+                $this->session->set_flashdata('message', 'Employer does not exists!');
+                redirect('manage_admin/employers', 'refresh');
+            }
+
+            $this->load->helper('form');
+            $this->render('manage_admin/company/change_employee_status');
+        } else {
+            $status = $this->input->post('status');
+            $termination_reason = $this->input->post('terminated_reason');
+            $termination_date = $this->input->post('termination_date');
+            $status_change_date = $this->input->post('status_change_date');
+            $termination_details = $this->input->post('termination_details');
+            $involuntary = isset($_POST['involuntary']) ? $_POST['involuntary'] : 0;
+            $rehire = isset($_POST['rehire']) ? $_POST['rehire'] : 0;
+            $system_access = isset($_POST['system_access']) ? $_POST['system_access'] : 0;
+
+            $data_to_insert = array();
+            $data_to_insert['employee_status'] = $status;
+            $data_to_insert['termination_reason'] = empty($termination_reason) ? 0 : $termination_reason;
+            if ($status == 1) {
+                $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y'); //date('Y-m-d', strtotime($termination_date));
+            }
+            
+            $data_to_insert['involuntary_termination'] = $involuntary;
+            $data_to_insert['do_not_hire'] = $rehire;
+            $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y');// date('Y-m-d', strtotime($status_change_date));
+            $data_to_insert['details'] = htmlentities($termination_details);
+            $data_to_insert['employee_sid'] = $sid;
+            $data_to_insert['changed_by'] = 0;
+            $data_to_insert['ip_address'] = getUserIP();
+            $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+            $data_to_update = array();
+
+            if ($status == 1) {
+                if($system_access == 1){
+                    $data_to_update['active'] = 0;
+                }elseif(date('m-d-Y') >= $termination_date){
+                    $data_to_update['active'] = 0;
+                }
+                $data_to_update['terminated_status'] = 1;
+                $data_to_update['general_status'] = 'terminated';
+            } else {
+                if ($status == 5) {
+                    $data_to_update['active'] = 1;
+                    $data_to_update['general_status'] = 'active';
+                } else if ($status == 6) {
+                    $data_to_update['active'] = 0;
+                    $data_to_update['general_status'] = 'inactive';
+                }else if ($status == 7) {
+                    $data_to_update['general_status'] = 'leave';
+                }else if ($status == 4) {
+                    $data_to_update['general_status'] = 'suspended';
+                }else if ($status == 3) {
+                    $data_to_update['general_status'] = 'deceased';
+                    $data_to_update['active'] = 0;
+                }else if ($status == 2) {
+                    $data_to_update['general_status'] = 'retired';
+                    $data_to_update['active'] = 0;
+                }else if ($status == 8) {
+                    $data_to_update['general_status'] = 'rehired';
+                    $data_to_update['active'] = 0;
+                }
+                $data_to_update['terminated_status'] = 0;
+            }
+
+            $this->company_model->terminate_user($sid, $data_to_insert);
+            $this->company_model->change_terminate_user_status($sid, $data_to_update);
+            $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
+            redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
+        }
+    }
+
+    public function edit_employee_status($sid, $status_id) {
+        $redirect_url = 'manage_admin';
+        $function_name = 'employee_status';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        //
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $employee_detail = $this->company_model->get_details($sid, 'employer');
+        $company_detail = $this->company_model->get_details($employee_detail[0]['parent_sid'], 'company');
+        //
+        $status_data = $this->company_model->get_status_by_id($status_id);
+        $status_documents = $this->company_model->get_status_documents($status_id);
+        //
+        $this->data['security_details'] = $security_details;
+        $this->data['page_title'] = 'Edit Employee Status';
+        $this->data['companySid'] = $company_detail[0]['sid'];
+        $this->data['companyName'] = $company_detail[0]['CompanyName'];
+        $this->data['employeeName'] = getUserNameBySID($sid);
+        $this->data['employeeSid'] = $sid;
+        $this->data['status_id'] = $status_id;
+        $this->data['status_data'] = $status_data;
+        $this->data['employee_detail'] = $employee_detail[0];
+        $this->data['status_documents'] = $status_documents;
+        //
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('status', 'Status', 'trim|xss_clean|required');
+        $this->form_validation->set_rules('termination_details', 'Termination Details', 'trim|xss_clean|required');
+        //
+        if ($this->form_validation->run() === FALSE) {
+            if ($employee_detail) {
+                $this->data['employee_detail'] = $employee_detail[0];
+            } else {
+                $this->session->set_flashdata('message', 'Employer does not exists!');
+                redirect('manage_admin/employers', 'refresh');
+            }
+
+            $this->load->helper('form');
+            $this->render('manage_admin/company/edit_employee_status');
+        } else {
+            $status = $this->input->post('status');
+            $termination_reason = $this->input->post('terminated_reason');
+            $termination_date = $this->input->post('termination_date');
+            $status_change_date = $this->input->post('status_change_date');
+            $termination_details = $this->input->post('termination_details');
+            $involuntary = isset($_POST['involuntary']) ? $_POST['involuntary'] : 0;
+            $rehire = isset($_POST['rehire']) ? $_POST['rehire'] : 0;
+            $system_access = isset($_POST['system_access']) ? $_POST['system_access'] : 0;
+
+            $data_to_insert = array();
+            $data_to_insert['employee_status'] = $status;
+            $data_to_insert['termination_reason'] = empty($termination_reason) ? 0 : $termination_reason;
+
+            if ($status == 1) {
+                $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y');// date('Y-m-d', strtotime($termination_date));
+            }else{
+                $data_to_insert['termination_date'] = NULL;
+            }
+
+            $data_to_insert['involuntary_termination'] = $involuntary;
+            $data_to_insert['do_not_hire'] = $rehire;
+            $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y');// date('Y-m-d', strtotime($status_change_date));
+            $data_to_insert['details'] = htmlentities($termination_details);
+            $data_to_insert['employee_sid'] = $sid;
+            $data_to_insert['changed_by'] = 0;
+            $data_to_insert['ip_address'] = getUserIP();
+            $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+            $data_to_update = array();
+
+            if ($status == 1) {
+                if($system_access == 1){
+                    $data_to_update['active'] = 0;
+                }elseif(date('m-d-Y') >= $termination_date){
+                    $data_to_update['active'] = 0;
+                }else{
+                    $data_to_update['active'] = 1;
+                }
+                $data_to_update['terminated_status'] = 1;
+                $data_to_update['general_status'] = 'terminated';
+            } else {
+                if ($status == 5) {
+                    $data_to_update['active'] = 1;
+                    $data_to_update['general_status'] = 'active';
+                } else if ($status == 6) {
+                    $data_to_update['active'] = 0;
+                    $data_to_update['general_status'] = 'inactive';
+                }else if ($status == 7) {
+                    $data_to_update['general_status'] = 'leave';
+                }else if ($status == 4) {
+                    $data_to_update['general_status'] = 'suspended';
+                }else if ($status == 3) {
+                    $data_to_update['general_status'] = 'deceased';
+                    $data_to_update['active'] = 0;
+                }else if ($status == 2) {
+                    $data_to_update['general_status'] = 'retired';
+                    $data_to_update['active'] = 0;
+                }else if ($status == 8) {
+                    $data_to_update['general_status'] = 'rehired';
+                    $data_to_update['active'] = 0;
+                }
+                $data_to_update['terminated_status'] = 0;
+            }
+            //
+            $this->company_model->update_terminate_user($status_id, $data_to_insert);
+            if($this->company_model->check_for_main_status_update($sid, $status_id)){
+                $this->company_model->change_terminate_user_status($sid, $data_to_update);
+            }
+            $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
+            redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
+        }
     }
 
     /**

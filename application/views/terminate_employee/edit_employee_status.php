@@ -32,6 +32,7 @@
                                                     <option value="7" <?= $status_data['employee_status'] == 7 ? 'selected="selected"': '';?>>Leave</option>
                                                     <option value="4" <?= $status_data['employee_status'] == 4 ? 'selected="selected"': '';?>>Suspended</option>
                                                     <option value="2" <?= $status_data['employee_status'] == 2 ? 'selected="selected"': '';?>>Retired</option>
+                                                    <option value="8" <?= $status_data['employee_status'] == 8 ? 'selected="selected"': '';?>>Rehired</option>
                                                     <option value="3" <?= $status_data['employee_status'] == 3 ? 'selected="selected"': '';?>>Deceased</option>
                                                     <option value="1" <?= $status_data['employee_status'] == 1 ? 'selected="selected"': '';?>>Terminated</option>
                                                     <option value="6" <?= $status_data['employee_status'] == 6 ? 'selected="selected"': '';?>>Inactive</option>
