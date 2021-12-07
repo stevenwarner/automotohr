@@ -154,6 +154,9 @@ class Terminate_employee extends Public_Controller {
                     }else if ($status == 2) {
                         $data_to_update['general_status'] = 'retired';
                         $data_to_update['active'] = 0;
+                    }else if ($status == 8) {
+                        $data_to_update['general_status'] = 'rehired';
+                        $data_to_update['active'] = 0;
                     }
                     $data_to_update['terminated_status'] = 0;
                 }
@@ -272,12 +275,12 @@ class Terminate_employee extends Public_Controller {
                     }else if ($status == 2) {
                         $data_to_update['general_status'] = 'retired';
                         $data_to_update['active'] = 0;
+                    }else if ($status == 8) {
+                        $data_to_update['general_status'] = 'rehired';
+                        $data_to_update['active'] = 0;
                     }
                     $data_to_update['terminated_status'] = 0;
                 }
-//                echo '<pre>';
-//                print_r($_POST);
-//                die();
 
                 $this->terminate_employee_model->update_terminate_user($status_id, $data_to_insert);
                 if($this->terminate_employee_model->check_for_main_status_update($sid, $status_id)){

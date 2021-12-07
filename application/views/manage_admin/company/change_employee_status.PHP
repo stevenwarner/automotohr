@@ -109,7 +109,19 @@
                                                             <a href="javascript:;">Choose File</a>
                                                         </div>
                                                         <div id="file-upload-div" class="file-upload-box"></div>
-                                                        <div class="attached-files" id="uploaded-files" style="display: none;"></div>
+                                                        <div class="attached-files" id="uploaded-files" style="display: none;">
+                                                            <table class="table table-bordered table-stripped table-hover">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>File Name</th>
+                                                                        <th>Status</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="uploaded-files-row">
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                         <div class="video-link" style="font-style: italic;"><b>Note.</b> Upload Multiple Documents One After Other </div>
                                                         <div class="custom_loader">
                                                             <div id="loader" class="loader" style="display: none">
@@ -193,7 +205,7 @@
                 }
             },
             submitHandler: function (form) {
-                console.log("post the form");
+                
                 var instances = $.trim(CKEDITOR.instances.termination_details.getData());
                 var errorFlag = true;
                 if (instances.length === 0) {
@@ -205,11 +217,11 @@
                     $('#termination_date').val('');
                 } else {
                     if($('#terminated_reason').val() == '' || $('#terminated_reason').val() == undefined){
-                        alertify.alert('Termination Reason is required');
+                        alertify.alert('Note','Termination Reason is required');
                         errorFlag = false;
                     }
                     if($('#termination_date').val() == ''){
-                        alertify.alert('Termination Date is required');
+                        alertify.alert('Note','Termination Date is required');
                         errorFlag = false;
                     }
                     return errorFlag;
@@ -226,7 +238,7 @@
             var ext = fileName.split('.').pop();
             if (ext != "PDF" && ext != "pdf" && ext != "docx" && ext != "xlsx") {
                 $("#" + val).val(null);
-                alertify.error("Please select a valid document format.");
+                alertify.alert("Error","Please select a valid document format.");
                 $('#name_' + val).html('<p class="red">Only (PDF, Word, Excel) files are allowed!</p>');
                 return false;
             } else {
@@ -310,10 +322,11 @@
                 $('#name_docs').html("No file selected");
 
                 if (data != "error") {
-                    $('#uploaded-files').append('<li class="form-col-100 invoice-fields"> <div id="uploaded-files-name"><b>Name:</b> ' + file_data['name'] + '</div> <span class="pull-right"><b>Status:</b> Uploaded</span> </li>');
-                    alertify.success('New document has been uploaded');
+                    var row = "<tr><td>"+file_data['name']+"</td><td>Uploaded</td></tr>";
+                    $('#uploaded-files-row').append(row);
+                    alertify.alert("success",'New document has been uploaded');
                 } else {
-                    alert('Doc error');
+                    alertify.alert('Error','Doc error');
                 }
             },
             error: function () {

@@ -36,6 +36,7 @@
                                                         <option value="7" <?= $status_data['employee_status'] == 7 ? 'selected="selected"': '';?>>Leave</option>
                                                         <option value="4" <?= $status_data['employee_status'] == 4 ? 'selected="selected"': '';?>>Suspended</option>
                                                         <option value="2" <?= $status_data['employee_status'] == 2 ? 'selected="selected"': '';?>>Retired</option>
+                                                        <option value="8" <?= $status_data['employee_status'] == 8 ? 'selected="selected"': '';?>>Rehired</option>
                                                         <option value="3" <?= $status_data['employee_status'] == 3 ? 'selected="selected"': '';?>>Deceased</option>
                                                         <option value="1" <?= $status_data['employee_status'] == 1 ? 'selected="selected"': '';?>>Terminated</option>
                                                         <option value="6" <?= $status_data['employee_status'] == 6 ? 'selected="selected"': '';?>>Inactive</option>
@@ -142,7 +143,19 @@
                                                             <a href="javascript:;">Choose File</a>
                                                         </div>
                                                         <div id="file-upload-div" class="file-upload-box"></div>
-                                                        <div class="attached-files" id="uploaded-files" style="display: none;"></div>
+                                                        <div class="attached-files" id="uploaded-files" style="display: none;">
+                                                            <table class="table table-bordered table-stripped table-hover">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>File Name</th>
+                                                                        <th>Status</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="uploaded-files-row">
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                         <div class="video-link" style="font-style: italic;"><b>Note.</b> Upload Multiple Documents One After Other </div>
                                                         <div class="custom_loader">
                                                             <div id="loader" class="loader" style="display: none">
@@ -170,24 +183,6 @@
                         </div>      
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--  document Preview Model -->
-<div id="document_modal" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header modal-header-bg">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="document_modal_title">Modal title</h4>
-            </div>
-            <div id="document_modal_body" class="modal-body">
-                ...
-            </div>
-            <div id="document_modal_footer" class="modal-footer">
-
             </div>
         </div>
     </div>
@@ -280,7 +275,7 @@
             var ext = fileName.split('.').pop();
             if (ext != "PDF" && ext != "pdf" && ext != "docx" && ext != "xlsx") {
                 $("#" + val).val(null);
-                alertify.error("Please select a valid document format.");
+                alertify.alert("Error","Please select a valid document format.");
                 $('#name_' + val).html('<p class="red">Only (PDF, Word, Excel) files are allowed!</p>');
                 return false;
             } else {
@@ -346,7 +341,7 @@
                         perform_action: 'delete_file'
                     },
                     success: function(data){
-                        alertify.success('File Deleted Successfully');
+                        alertify.alert('Success','File Deleted Successfully');
                         window.location.href = window.location.href;
                     },
                     error: function(){
@@ -354,7 +349,7 @@
                 });
             },
             function () {
-                alertify.error('Canceled');
+                alertify.alert('Note','Document delete process canceled');
             });
     });
 
@@ -388,10 +383,11 @@
                 $('#name_docs').html("No file selected");
 
                 if (data != "error") {
-                    $('#uploaded-files').append('<li class="form-col-100 invoice-fields"> <div id="uploaded-files-name"><b>Name:</b> ' + file_data['name'] + '</div> <span class="pull-right"><b>Status:</b> Uploaded</span> </li>');
-                    alertify.success('New document has been uploaded');
+                    var row = "<tr><td>"+file_data['name']+"</td><td>Uploaded</td></tr>";
+                    $('#uploaded-files-row').append(row);
+                    alertify.alert('Success','New document has been uploaded');
                 } else {
-                    alert('Doc error');
+                    alertify.alert('Error','Doc error');
                 }
             },
             error: function () {
@@ -463,8 +459,8 @@
         $('#document_modal_footer').html(footer_content);
         $('#document_modal_footer').append(footer_print_btn);
         $('#document_modal_title').html(document_title);
-        $('#document_modal').modal("toggle");
-        $('#document_modal').on("shown.bs.modal", function () {
+        $('#file_preview_modal').modal("toggle");
+        $('#file_preview_modal').on("shown.bs.modal", function () {
 
             if (iframe_url != '') {
                 $('#preview_iframe').attr('src', iframe_url);

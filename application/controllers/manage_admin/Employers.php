@@ -989,6 +989,9 @@ class employers extends Admin_Controller {
                 }else if ($status == 2) {
                     $data_to_update['general_status'] = 'retired';
                     $data_to_update['active'] = 0;
+                }else if ($status == 8) {
+                    $data_to_update['general_status'] = 'rehired';
+                    $data_to_update['active'] = 0;
                 }
                 $data_to_update['terminated_status'] = 0;
             }
@@ -1094,6 +1097,9 @@ class employers extends Admin_Controller {
                     $data_to_update['active'] = 0;
                 }else if ($status == 2) {
                     $data_to_update['general_status'] = 'retired';
+                    $data_to_update['active'] = 0;
+                }else if ($status == 8) {
+                    $data_to_update['general_status'] = 'rehired';
                     $data_to_update['active'] = 0;
                 }
                 $data_to_update['terminated_status'] = 0;

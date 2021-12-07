@@ -63,6 +63,8 @@
                                                                                 echo 'Inactive';
                                                                             } else if ($employee_status == 7) {
                                                                                 echo 'Leave';
+                                                                            } else if ($employee_status == 8) {
+                                                                                echo 'Rehired';
                                                                             } else {
                                                                                 echo 'N/A';
                                                                             }
@@ -92,7 +94,7 @@
                                                                     <?php       
                                                                         if (isset($record['termination_date']) && !empty($record['termination_date'])) {
                                                                             $termination_date = $record['termination_date'];
-                                                                            echo reset_datetime(array('datetime' => $termination_date, '_this' => $this));
+                                                                            echo formatDateToDB($termination_date, DB_DATE, DATE);
                                                                         } else {
                                                                             echo 'N/A';
                                                                         } 
@@ -126,7 +128,7 @@
                                                                     <?php       
                                                                         if (isset($record['status_change_date']) && !empty($record['status_change_date'])) {
                                                                             $status_change_date = $record['status_change_date'];
-                                                                            echo reset_datetime(array('datetime' => $status_change_date, '_this' => $this));
+                                                                            echo formatDateToDB($status_change_date, DB_DATE, DATE);
                                                                         } 
                                                                     ?>
                                                                 </td>
@@ -229,3 +231,78 @@
         margin: 10px 0px;
     }
 </style>
+
+<script type="text/javascript">
+    function display_document(source) {
+        var iframe_url = '';
+        var modal_content = '';
+        var footer_content = '';
+        var document_title = $(source).attr('document_title');
+        var document_url = $(source).attr('document_url');
+        var file_extension = $(source).attr('document_ext');
+        var print_url = $(source).attr('print_url');
+        var document_url_segment = print_url.split('.')[0];
+        var unique_sid = '';
+        var document_sid = '';
+
+        if (document_url != '') {
+            switch (file_extension.toLowerCase()) {
+                case 'pdf':
+                    iframe_url = document_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    footer_print_btn = '<a target="_blank" href="https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_url_segment + '.pdf" class="btn btn-success">Print</a>';
+                    break;
+                case 'doc':
+                    iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + document_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    footer_print_btn = '<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_url_segment + '%2Edoc&wdAccPdf=0" class="btn btn-success">Print</a>';
+                    break;
+                case 'docx':
+                    iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + document_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    footer_print_btn = '<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_url_segment + '%2Edocx&wdAccPdf=0" class="btn btn-success">Print</a>';
+                    break;
+                case 'xls':
+                    iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + document_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    footer_print_btn = '<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_url_segment + '%2Exls" class="btn btn-success">Print</a>';
+                    break;
+                case 'xlsx':
+                    //using office docs
+                    iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + document_url;
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    footer_print_btn = '<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_url_segment + '%2Exlsx" class="btn btn-success">Print</a>';
+                    break;
+                case 'jpg':
+                case 'jpe':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                    modal_content = '<img src="' + document_url + '" style="width:100%; height:500px;" />';
+                    footer_print_btn = '<a target="_blank" href="<?php echo base_url('onboarding/print_applicant_upload_img/') ?>' + document_file_name + '" class="btn btn-success">Print</a>';
+                    break;
+                default :
+                    //using google docs
+                    iframe_url = 'https://docs.google.com/gview?url=' + document_url + '&embedded=true';
+                    modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    break;
+            }
+            footer_content = '<a target="_blank" class="btn btn-success" href="<?php echo base_url('Hr_documents_management/download_upload_document') ?>' + '/' + print_url + '">Download</a>';
+        } else {
+            modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
+            footer_content = '';
+        }
+
+        $('#document_modal_body').html(modal_content);
+        $('#document_modal_footer').html(footer_content);
+        $('#document_modal_footer').append(footer_print_btn);
+        $('#document_modal_title').html(document_title);
+        $('#file_preview_modal').modal("toggle");
+        $('#file_preview_modal').on("shown.bs.modal", function () {
+            
+            if (iframe_url != '') {
+                $('#preview_iframe').attr('src', iframe_url);
+            }
+        });
+    }
+</script>
