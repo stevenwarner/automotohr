@@ -13,6 +13,7 @@
                                     <div class="heading-title page-title">
                                         <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
                                     </div>
+                                    
                                     <div class="edit-email-template">
                                         <?php if(count($creator)) { ?>
                                         <p>Employee created by : <strong><?=remakeEmployeeName($creator, true).' ['.( $creator['email'] ).'] ('.( $creator['active'] == 1 ? 'Active' : 'InActive' ).')';?></strong></p>
@@ -20,30 +21,52 @@
                                         <?php } ?>
                                         <p>Fields marked with an asterisk (<span class="hr-required">*</span>) are mandatory</p>
                                         <div class="edit-template-from-main" >
-<?php                                       echo form_open_multipart('', array('class' => 'form-horizontal js-form')); ?>
+                                            <?php echo form_open_multipart('', array('class' => 'form-horizontal js-form')); ?>
                                             <ul>
+                                                <li>
+                                                    <label for="employee_profile_picture">Employee Profile Picture:</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="avatar">
+                                                            <span class="image_holder">
+                                                                <?php if(isset($data["profile_picture"]) && !empty($data["profile_picture"])) { ?>
+                                                                <img src="<?php echo AWS_S3_BUCKET_URL . $data['profile_picture']; ?>" class="table-image">
+
+                                                                <?php } else { ?>
+                                                                <img src="<?= base_url() ?>assets/images/img-applicant.jpg" class="table-image">
+                                                                <?php } ?>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+
                                                 <li>
                                                     <?php echo form_label('First Name', 'first_name'); ?>
                                                     <div class="hr-fields-wrap">
-<?php                                                   echo form_input('first_name', set_value('first_name', $data['first_name'], false), 'class="hr-form-fileds"');
-                                                        echo form_error('first_name'); ?>
+                                                        <?php                                                   
+                                                            echo form_input('first_name', set_value('first_name', $data['first_name'], false), 'class="hr-form-fileds"');
+                                                            echo form_error('first_name'); 
+                                                        ?>
                                                     </div>
                                                 </li>
                                                 
                                                 <li>
                                                     <?php echo form_label('Last Name', 'last_name'); ?>
                                                     <div class="hr-fields-wrap">
-<?php                                                   echo form_input('last_name', set_value('last_name', $data['last_name'], false), 'class="hr-form-fileds"');
-                                                        echo form_error('last_name'); ?>
+                                                        <?php                                                   
+                                                            echo form_input('last_name', set_value('last_name', $data['last_name'], false), 'class="hr-form-fileds"');
+                                                            echo form_error('last_name'); 
+                                                        ?>
                                                     </div>
                                                 </li>
                                                 
                                                 <li>
                                                     <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?>
                                                     <div class="hr-fields-wrap">
-                                                    <p>Username should consist of a minimum of 5 characters.</p>
-<?php                                                   echo form_input('username', set_value('username', $data['username']), 'class="hr-form-fileds"'); 
-                                                        echo form_error('username'); ?>
+                                                        <p>Username should consist of a minimum of 5 characters.</p>
+                                                        <?php                                                   
+                                                            echo form_input('username', set_value('username', $data['username']), 'class="hr-form-fileds"'); 
+                                                            echo form_error('username'); 
+                                                        ?>
                                                     </div>
                                                 </li>
                                                                                                 
@@ -51,32 +74,40 @@
                                                     <?php echo form_label('email', 'E-Mail Address'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <button class="btn btn-xs btn-success jsToLowerCase" style="margin-bottom: 5px;" title="Convert the email address to lower case" placement="top">To Lower Case</button>
-<?php                                                   echo form_input('email', set_value('email', $data['email']), 'class="hr-form-fileds"');
-                                                        echo form_error('email'); ?>
+                                                        <?php 
+                                                            echo form_input('email', set_value('email', $data['email']), 'class="hr-form-fileds"');
+                                                            echo form_error('email'); 
+                                                        ?>
                                                     </div>
                                                 </li>
 
                                                 <li>
                                                     <?php echo form_label('Secondary Email Address', 'alternative_email'); ?>
                                                     <div class="hr-fields-wrap">
-<?php                                                   echo form_input('alternative_email', set_value('alternative_email', $data['alternative_email']), 'class="hr-form-fileds"');
-                                                        echo form_error('alternative_email'); ?>
+                                                        <?php 
+                                                            echo form_input('alternative_email', set_value('alternative_email', $data['alternative_email']), 'class="hr-form-fileds"');
+                                                            echo form_error('alternative_email'); 
+                                                        ?>
                                                     </div>
                                                 </li>
 
                                                 <li>
                                                     <?php echo form_label('Job Title', 'job_title'); ?>
                                                     <div class="hr-fields-wrap">
-<?php                                                   echo form_input('job_title', set_value('job_title', $data['job_title']), 'class="hr-form-fileds"');
-                                                        echo form_error('job_title'); ?>
+                                                        <?php                                                   
+                                                            echo form_input('job_title', set_value('job_title', $data['job_title']), 'class="hr-form-fileds"');
+                                                            echo form_error('job_title'); 
+                                                        ?>
                                                     </div>
                                                 </li>
 
                                                 <li>
                                                     <?php echo form_label('Direct Business Number', 'direct_business_number'); ?>
                                                     <div class="hr-fields-wrap">
-<?php                                                   echo form_input('direct_business_number', set_value('direct_business_number', $data['direct_business_number']), 'class="hr-form-fileds"');
-                                                        echo form_error('direct_business_number'); ?>
+                                                        <?php                                                   
+                                                            echo form_input('direct_business_number', set_value('direct_business_number', $data['direct_business_number']), 'class="hr-form-fileds"');
+                                                            echo form_error('direct_business_number'); 
+                                                        ?>
                                                     </div>
                                                 </li>
 
@@ -84,11 +115,12 @@
                                                     <?php echo form_label('Cell Number', 'cell_number'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="input-group">
-                                                          <div class="input-group-addon">
-                                                              <span class="input-group-text">+1</span>
-                                                          </div>
-<?php                                                   echo form_input('cell_number', set_value('cell_number', phonenumber_format($data['cell_number'], true)), 'class="hr-form-fileds js-phone" id="PhoneNumber"');?>
-                                                          </div>
+                                                            <div class="input-group-addon">
+                                                                <span class="input-group-text">+1</span>
+                                                            </div>
+                                                            <?php                                                   
+                                                                echo form_input('cell_number', set_value('cell_number', phonenumber_format($data['cell_number'], true)), 'class="hr-form-fileds js-phone" id="PhoneNumber"');?>
+                                                        </div>
                                                         <?php echo form_error('cell_number'); ?>
                                                     </div>
                                                 </li>
@@ -432,6 +464,30 @@
    .select2-container-multi .select2-choices .select2-search-field{ width: auto; }
    .select2-container-multi{ padding: 0 !important; }
    .change_status{margin-left: 10px;}
+   .avatar {
+        margin-top: 8px !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .avatar span.image_holder {
+        position: relative;
+        margin-right: 20px;
+        width: 120px;
+        height: 120px;
+        display: block;
+        overflow: hidden;
+    }
+
+    .avatar span.image_holder img {
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin-right: 0;
+        height: 100%;
+    }
 </style>
 
 <script>
