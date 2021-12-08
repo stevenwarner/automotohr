@@ -1473,7 +1473,12 @@
                 <div class="panel-body">
                     <!-- Category No Action Required Document Start -->
                     <?php if (!empty($categories_no_action_documents)) { ?>
-                        <h2 class="tab-title">No Action Required Document Detail</h2>
+                        <h2 class="tab-title">No Action Required Document Detail
+                        <span class="pull-right">
+                            <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/noActionRequired');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
+                        </span>
+                        <hr /> 
+                    </h2>
                         <?php foreach ($categories_no_action_documents as $category_document) { ?>
                             <?php if ($category_document['category_sid'] != 27) { ?>
                                 <?php if (isset($category_document['documents'])) { ?>

@@ -132,6 +132,8 @@
             } else if(has['occupational_license'] != "null"){
                 //
                 exportGDocument('occupational_license');
+            } else {
+                nextDocument();
             }
 
             //

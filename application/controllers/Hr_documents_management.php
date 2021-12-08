@@ -10368,7 +10368,14 @@ class Hr_documents_management extends Public_Controller {
                     $data['company_detail']['sid'],
                     $id
                 );
+            } else if ($documentType == 'noActionRequired') {
+                 $documents = $this->hr_documents_management_model->getUserNoActionDocuments(
+                    $data['company_detail']['sid'],
+                    $id,
+                    "applicant"
+                );
             }
+            //
             $data['userInfo'] = $this->hr_documents_management_model->get_applicant_information(
                 $data['company_detail']['sid'], 
                 $id
@@ -10381,7 +10388,15 @@ class Hr_documents_management extends Public_Controller {
                     $data['company_detail']['sid'],
                     $id
                 );
+            } else if ($documentType == 'noActionRequired') {
+                $documents = $this->hr_documents_management_model->getUserNoActionDocuments(
+                    $data['company_detail']['sid'],
+                    $id,
+                    "employee"
+                );
+                
             }
+            //
             $data['userInfo'] = $this->hr_documents_management_model->get_employee_information(
                 $data['company_detail']['sid'], 
                 $id

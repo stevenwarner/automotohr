@@ -4262,6 +4262,51 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     //
+    function getUserNoActionDocuments($cId, $id, $type){
+        //
+        $r = [
+            'Assigned' => [],
+            'W4' => [],
+            'W9' => [],
+            'I9' => [],
+            'direct_deposit' => '',
+            'dependents' => '',
+            'emergency_contacts' => '',
+            'drivers_license' => '',
+            'occupational_license' => ''
+        ];
+        //
+        $t = [];
+        //
+        $this->db
+        ->select('*')
+        ->where('user_sid', $id)
+        ->where('user_type', $type)
+        ->where('company_sid', $cId)
+        ->where('archive', 0)
+        ->where('acknowledgment_required', NULL)
+        ->where('download_required', NULL)
+        ->where('signature_required', NULL)
+        ->where('status', 1)
+        ->order_by('sid', 'DESC');
+        //
+        if(!empty($dIds)){
+            $this->db->where_in('sid', explode(':', $dIds));
+        }
+        //
+        $a = $this->db->get('documents_assigned');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        if(count($b)){ 
+            $r['Assigned'] = $b;
+        }
+        //
+        return $r;
+    }
+
+    //
     function getEmployeeI9Form($cId, $id, &$data){
         //
         $a = $this->db
