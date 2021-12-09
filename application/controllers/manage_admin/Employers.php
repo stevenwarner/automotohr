@@ -1127,7 +1127,7 @@ class employers extends Admin_Controller {
         $employee_detail = $this->company_model->get_details($sid, 'employer');
         $company_detail = $this->company_model->get_details($employee_detail[0]['parent_sid'], 'company');
         $company_sid = $company_detail[0]['sid'];
-        $data['company_sid'] = $company_sid;
+        $this->data['company_sid'] = $company_sid;
         $pp_flag = 1;
         $user_sid = $sid;
         $user_type = "employee";
