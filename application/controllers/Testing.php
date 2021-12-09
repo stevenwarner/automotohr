@@ -11,6 +11,31 @@ class Testing extends CI_Controller
 
     }
 
+    function getDataTest(){
+        $a = $this
+            ->db
+            ->select('sid, stage, is_disabled, is_ems_module')
+            ->where('module_slug', 'employers')
+            ->limit(1)
+            ->get('modules');
+        //
+        $b = $a->row_array();
+        if (isset($b))
+        {
+            echo 'value => '.$b['stage'];
+            echo 'value => '.$b['is_disabled'];
+            echo 'value => '.$b['is_ems_module'];
+        }
+        $a->free_result();
+
+        echo "<pre>";
+        print_r($b);
+        echo "------------<br>";
+        print_r($a);
+        echo "============<br>";
+        die();
+    }
+
     function text($id)
     {
         //

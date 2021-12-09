@@ -304,22 +304,14 @@ switch (ENVIRONMENT)
  * And away we go...
  */
 
-if($_SERVER['HTTP_HOST'] == 'www.automotohr.com' || $_SERVER['HTTP_HOST'] == 'automotohr.com'){
-	error_reporting(0);
-	ini_set('display_errors', 0);
-} else{
-	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
-}
-
-error_reporting(0);
-ini_set('display_errors', 0);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 //
 if(!function_exists('getCreds')){
 	function getCreds($index = false){
 		//
-		$file = APPPATH.'../../creds.json';
+		$file = APPPATH.'../creds.json';
 		if($_SERVER['HTTP_HOST'] == 'staging.automotohr.com'){
 			$file = APPPATH.'../../../creds-staging.json';
 		}
