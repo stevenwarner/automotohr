@@ -9,6 +9,7 @@ class employers extends Admin_Controller {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('manage_admin/company_model');
+        $this->load->model('hr_documents_management_model');
         $this->load->library("pagination");
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
@@ -1112,6 +1113,357 @@ class employers extends Admin_Controller {
             $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
             redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
         }
+    }
+
+    public function employee_documents($sid) {
+        $redirect_url = 'manage_admin';
+        $function_name = 'AssignBulkDocuments';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        // Param2: Redirect URL, Param3: Function Name
+        check_access_permissions($security_details, $redirect_url, $function_name); 
+        //
+        $employee_detail = $this->company_model->get_details($sid, 'employer');
+        $company_detail = $this->company_model->get_details($employee_detail[0]['parent_sid'], 'company');
+        $company_sid = $company_detail[0]['sid'];
+        $pp_flag = 1;
+        $user_sid = $sid;
+        $user_type = "employee";
+        //
+        // $active_groups = array();
+        $in_active_groups = array();
+        $group_ids = array();
+        $group_docs = array();
+        $document_ids = array();
+        // 
+        $documents = $this->company_model->get_all_assign_documents($company_sid, $sid);
+        //
+        $this->data['page_title'] = 'Assigned Documents';
+        $this->data['companySid'] = $company_sid;
+        $this->data['companyName'] = $company_detail[0]['CompanyName'];
+        $this->data['employeeName'] = getUserNameBySID($sid);
+        $this->data['documents'] = $documents;
+        //
+        $categories = $this->hr_documents_management_model->get_all_documents_category($company_sid);
+        //
+        $active_categories = [];
+        //
+        if (!empty($categories)) {
+            foreach ($categories as $key => $category) {
+                $document_status = $this->hr_documents_management_model->is_document_assign_2_category($category['sid']);
+                $categories[$key]['document_status'] = $document_status;
+                $category_status = $category['status'];
+                $category_sid = $category['sid'];
+                $category_ids[] = $category_sid;
+                $category_documents = $this->hr_documents_management_model->get_all_documents_in_category($category_sid, 0);
+
+                if ($category_status) {
+                    $active_categories[] = array('sid' => $category_sid,
+                        'name' => $category['name'],
+                        'sort_order' => $category['sort_order'],
+                        'description' => $category['description'],
+                        'created_date' => $category['created_date'],
+                        'documents_count' => count($category_documents),
+                        'documents' => $category_documents);
+                } else {
+                    $in_active_categories[] = array('sid' => $category_sid,
+                        'name' => $category['name'],
+                        'sort_order' => $category['sort_order'],
+                        'description' => $category['description'],
+                        'created_date' => $category['created_date'],
+                        'documents_count' => count($category_documents),
+                        'documents' => $category_documents);
+                }
+            }
+        }
+
+        // 
+        $this->data['active_categories'] = $active_categories;
+        //
+        $i9_form = $this->hr_documents_management_model->fetch_form('i9', $user_type, $user_sid);
+        $w9_form = $this->hr_documents_management_model->fetch_form('w9', $user_type, $user_sid);
+        $w4_form = $this->hr_documents_management_model->fetch_form('w4', $user_type, $user_sid);
+
+        $this->data['i9_form'] = $i9_form;
+        $this->data['w9_form'] = $w9_form;
+        $this->data['w4_form'] = $w4_form;
+
+        $EEVDocument = array();
+        // _e($w4_form, true, true);
+        if (!empty($w4_form) && $w4_form['user_consent'] == 1) {
+            $EEVDocument['w4']['title'] = "W4 Fillable";
+            $EEVDocument['w4']['assign_date'] = $w4_form['sent_date'];
+            $EEVDocument['w4']['sign_date'] = $w4_form['signature_timestamp'];
+            $EEVDocument['w4']['url'] = base_url("form_w4/download_w4_form_2020/employee")."/".$user_sid;
+        }
+        //
+        $this->data['EEVDocument'] = $EEVDocument;
+
+        $assigned_sids                          = array();
+        $no_action_required_sids                = array();
+        $completed_sids                         = array();
+        $completed_documents                    = array();
+        $signed_documents                       = array();
+        $signed_document_sids                   = array();
+        $completed_document_sids                = array();
+        $no_action_required_documents           = array();
+        $no_action_required_payroll_documents   = array();
+        $payroll_documents_sids                 = array();
+        $completed_offer_letter                 = array();
+        $completed_payroll_documents            = array();
+        $user_completed_payroll_documents       = array();
+
+
+       
+        $assigned_documents = $documents;
+        // _e($assigned_documents, true, true);
+        $assigned_offer_letters = $this->hr_documents_management_model->get_assigned_offers($company_sid, $user_type, $user_sid);   
+
+        // echo "<pre>";
+        // print_r($active_documents);
+        // die();
+
+        foreach ($assigned_documents as $key => $assigned_document) {
+            $is_magic_tag_exist = 0;
+            $is_document_completed = 0;
+            $is_document_authorized = 0;
+            $authorized_sign_status = 0;
+
+            if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
+                $document_body = $assigned_document['document_description'];
+                $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+
+                if (str_replace($magic_codes, '', $document_body) != $document_body) {
+                    $is_magic_tag_exist = 1;
+                }
+
+                if (str_replace('{{authorized_signature}}', '', $document_body) != $document_body) {
+
+                    $assign_on = date("Y-m-d", strtotime($assigned_document['assigned_date']));
+                    $compare_date = date("Y-m-d", strtotime('2020-03-04'));
+
+                    // if (!empty($assigned_document['form_input_data'] || $assign_on >= $compare_date )) {
+                    if ($assign_on >= $compare_date || !empty($assigned_document['form_input_data'])) {
+                        $is_document_authorized = 1;
+                    }
+
+                    // if ($assigned_document['user_consent'] == 1 && !empty($assigned_document['authorized_signature'])) {
+                    if (!empty($assigned_document['authorized_signature'])) {
+                        $authorized_sign_status = 1;
+                    } else {
+                        $authorized_sign_status = 0;
+                    }
+                }
+            }
+
+            $assigned_documents[$key]['is_document_authorized'] = $assigned_document['is_document_authorized'] = $is_document_authorized;
+            $assigned_documents[$key]['authorized_sign_status'] = $assigned_document['authorized_sign_status'] = $authorized_sign_status;
+
+            if ($assigned_document['document_sid'] == 0) {
+                $doc_visible_check = $this->hr_documents_management_model->get_manual_doc_visible_payroll_check($assigned_document['sid']);
+                $assigned_document['visible_to_payroll'] = $doc_visible_check;  
+            }
+
+            $payroll_sids = $this->hr_documents_management_model->get_payroll_documents_sids();
+            $documents_management_sids = $payroll_sids['documents_management_sids'];
+            $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
+
+            if (in_array($assigned_document['document_sid'],$documents_management_sids)) {
+                $assigned_document['pay_roll_catgory'] = 1; 
+            } else if (in_array($assigned_document['sid'],$documents_assigned_sids)) {
+                $assigned_document['pay_roll_catgory'] = 1; 
+            } else {
+                $assigned_document['pay_roll_catgory'] = 0; 
+            }
+
+            if ($assigned_document['document_type'] != 'offer_letter') {
+                if ($assigned_document['status'] == 1) {
+                    if ($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) { 
+
+                        if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                            if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
+                            if ($is_magic_tag_exist == 1) {
+                                if ($assigned_document['uploaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
+                            } else if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                            if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                            if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['acknowledgment_required'] == 1) {
+                            if ($assigned_document['acknowledged'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['download_required'] == 1) {
+                            if ($assigned_document['downloaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['signature_required'] == 1) {
+                            if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($is_magic_tag_exist == 1) {
+                            if ($assigned_document['user_consent'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        }
+                        
+                        if ($is_document_completed > 0) { 
+                            if ($assigned_document['pay_roll_catgory'] == 0) {
+
+                                $signed_document_sids[] = $assigned_document['document_sid'];
+                                $signed_documents[] = $assigned_document;
+                                unset($assigned_documents[$key]);
+                            } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                                $signed_document_sids[] = $assigned_document['document_sid'];
+                                $completed_payroll_documents[] = $assigned_document; 
+                                unset($assigned_documents[$key]);
+                            }
+                            
+                        } else {
+                            if ($assigned_document['pay_roll_catgory'] == 1) {
+                                $uncompleted_payroll_documents[] = $assigned_document; 
+                                unset($assigned_documents[$key]);
+                            }
+
+                            $assigned_sids[] = $assigned_document['document_sid'];   
+                        }
+           
+                    } else {
+
+                        if ($assigned_document['pay_roll_catgory'] == 0) { 
+                            $assigned_sids[] = $assigned_document['document_sid'];
+                            $no_action_required_sids[] = $assigned_document['document_sid'];
+                            $no_action_required_documents[] = $assigned_document;
+                            unset($assigned_documents[$key]);
+                        } else if ($assigned_document['pay_roll_catgory'] == 1) {
+                            if ($assigned_document['user_consent'] == 1 && $assigned_document['document_sid'] == 0) {
+                                $no_action_required_payroll_documents[] = $assigned_document; 
+                                unset($assigned_documents[$key]);
+                            } 
+                        }
+                    }
+                } else {
+                    $revoked_sids[] = $assigned_document['document_sid'];
+                }
+            }
+        }
+
+        $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_sid, $user_type, $user_sid);
+
+        if (!empty($current_assigned_offer_letter)) {
+            if ($current_assigned_offer_letter[0]['user_consent'] == 1) {
+                $completed_offer_letter = $current_assigned_offer_letter;
+            }
+        }
+
+        // Check for authorize tag
+        if(sizeof($completed_offer_letter)){
+            //
+            $completed_offer_letter[0]['is_document_authorized'] = 0;
+            $completed_offer_letter[0]['authorized_sign_status'] = 0;
+            //
+            if (str_replace('{{authorized_signature}}', '', $completed_offer_letter[0]['document_description']) != $completed_offer_letter[0]['document_description']) {
+                $assign_on = date("Y-m-d", strtotime($completed_offer_letter[0]['assigned_date']));
+                $compare_date = date("Y-m-d", strtotime('2020-03-04'));
+
+                if ($assign_on >= $compare_date || !empty($completed_offer_letter[0]['form_input_data'])) {
+                    $completed_offer_letter[0]['is_document_authorized'] = 1;
+                }
+
+                if (!empty($completed_offer_letter[0]['authorized_signature'])) {
+                    $completed_offer_letter[0]['authorized_sign_status'] = 1;
+                }
+            }
+        }
+
+        $this->data['CompletedGeneralDocuments'] = $this->hr_documents_management_model->getGeneralDocuments(
+            $user_sid,
+            'employee',
+            $company_sid,
+            'completed'
+        );
+
+        $this->data['w4_form_uploaded'] = $this->hr_documents_management_model->get_form_uploaded($user_sid, 'w4');
+        $this->data['w9_form_uploaded'] = $this->hr_documents_management_model->get_form_uploaded($user_sid, 'w9');
+        $this->data['i9_form_uploaded'] = $this->hr_documents_management_model->get_form_uploaded($user_sid, 'i9');
+
+
+        $categorized_docs = $this->hr_documents_management_model->categrize_documents($company_sid, $signed_documents, $no_action_required_documents, 1);
+
+        $this->data['categories_no_action_documents'] = $categorized_docs['categories_no_action_documents'];
+        $this->data['categories_documents_completed'] =  $categorized_docs['categories_documents_completed'];
+        $this->data['no_action_document_categories'] =  $categorized_docs['no_action_document_categories'];
+
+        // 
+
+        $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+        $this->data['eeo_form_info'] = $eeo_form_info;
+
+
+        $this->data['pp_flag']                                = 1;
+        $this->data['completed_sids']                         = $completed_sids; // completed Documemts Ids
+        $this->data['signed_document_sids']                   = $signed_document_sids; // signed Documemts Ids
+        $this->data['signed_documents']                       = $signed_documents; // signed Documemts
+        $this->data['completed_document_sids']                = $completed_document_sids; // completed Documemts Ids
+        $this->data['completed_documents']                    = $completed_documents; // completed Documemts
+        $this->data['no_action_required_documents']           = $no_action_required_documents; // no action required documents
+        $this->data['no_action_required_payroll_documents']   = $no_action_required_payroll_documents; 
+        $this->data['assigned_sids']                          = $assigned_sids;
+        $this->data['user_type']                              = $user_type;
+        $this->data['user_sid']                               = $user_sid;
+
+        // $this->data['assigned_documents']             = $assigned_documents; // not completed Documemts
+        $this->data['completed_offer_letter']         = $completed_offer_letter;
+        $this->data['completed_payroll_documents']    = $completed_payroll_documents;
+        $this->data['payroll_documents_sids']         = $payroll_documents_sids;
+
+
+        // _e($this->data, true, true);
+        
+        if ($employee_detail) {
+            $this->data['employee_detail'] = $employee_detail[0];
+        } else {
+            $this->session->set_flashdata('message', 'Employer does not exists!');
+            redirect('manage_admin/employers', 'refresh');
+        }
+
+        $this->render('manage_admin/company/employee_documents');
     }
 
     /**

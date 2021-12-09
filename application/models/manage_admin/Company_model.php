@@ -2220,6 +2220,23 @@ class Company_model extends CI_Model {
         }
     }
 
+    function get_all_assign_documents($company_sid, $employee_sid) {
+        $this->db->select('*');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('user_type ', "employee");
+        $this->db->where('user_sid ', $employee_sid);
+
+        $records_obj = $this->db->get('documents_assigned');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
     function get_employee_information($company_sid, $employee_sid) {
         $this->db->select('sid');
         $this->db->select('first_name');
