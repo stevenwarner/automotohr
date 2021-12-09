@@ -11725,4 +11725,70 @@ class Hr_documents_management extends Public_Controller {
         }
     }
 
+
+     /**
+     * Download all documents for applicant(s) and employee(s)
+     *
+     * $type           String employee|applicant
+     * $id             Int
+     * $documentType   String completed|not_completed
+     * token           String token
+     */
+    function download_public($type, $id, $documentType, $token = null, $company_sid){
+        //
+        $documents = [];
+        // 
+        if($type == 'applicant'){
+            // Get employee documents
+            if($documentType == 'completed'){
+                $documents = $this->hr_documents_management_model->getApplicantCompletedDocuments(
+                    $company_sid,
+                    $id
+                );
+            } else if ($documentType == 'noActionRequired') {
+                 $documents = $this->hr_documents_management_model->getUserNoActionDocuments(
+                    $company_sid,
+                    $id,
+                    "applicant"
+                );
+            }
+            //
+            $data['userInfo'] = $this->hr_documents_management_model->get_applicant_information(
+                $company_sid, 
+                $id
+            );
+        }
+        else if($type == 'employee'){ // For Employees
+            // Get employee documents
+            if($documentType == 'completed'){
+                $documents = $this->hr_documents_management_model->getEmployeeCompletedDocuments(
+                    $company_sid,
+                    $id
+                );
+            } else if ($documentType == 'noActionRequired') {
+                $documents = $this->hr_documents_management_model->getUserNoActionDocuments(
+                    $company_sid,
+                    $id,
+                    "employee"
+                );
+                
+            }
+            //
+            $data['userInfo'] = $this->hr_documents_management_model->get_employee_information(
+                $company_sid, 
+                $id
+            );
+        }
+        else exit(0);
+        //
+        $data['documents'] = $documents;
+        //
+        $data['user_sid'] = $id;
+        $data['user_type'] = $type;
+        $data['company_sid'] = $company_sid;
+        $data['token'] = $token == null ? time() : $token;
+        //
+        $this->load->view('download_bulk_documents', $data);
+    }
+
 }

@@ -312,9 +312,6 @@ if($_SERVER['HTTP_HOST'] == 'www.automotohr.com' || $_SERVER['HTTP_HOST'] == 'au
 	ini_set('display_errors', 1);
 }
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 //
 if(!function_exists('getCreds')){
 	function getCreds($index = false){

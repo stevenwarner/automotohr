@@ -139,7 +139,7 @@
             //
             function checkI9(s) {
 
-                if (has['I9'] == "null") {
+                if (has['I9'] == "null" || has['I9'] == false) {
                     checkW9('Adding W9 form to export');
                     return;
                 }
@@ -158,7 +158,7 @@
 
             //
             function checkW9(s) {
-                if (has['W9'] == "null") {
+                if (has['W9'] == "null" || has['W9'] == false) {
                     checkW4('Adding W4 form to export');
                     return;
                 }
@@ -176,7 +176,7 @@
 
             //
             function checkW4(s) {
-                if (has['W4'] == "null") {
+                if (has['W4'] == "null" || has['W4'] == false) {
                     exportGDocument('direct_deposit');
                     return;
                 }

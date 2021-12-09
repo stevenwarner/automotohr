@@ -1210,6 +1210,7 @@ $route['setup_default_config/(:any)'] = 'setup_default_configuration_of_company/
 
 // Download documents
 $route['download/(:any)/(:num)/(:any)'] = 'hr_documents_management/download/$1/$2/$3';
+$route['download/(:any)/(:num)/(:any)/(:any)/(:num)'] = 'hr_documents_management/download_public/$1/$2/$3/$4/$5';
 $route['export_documents/(:any)'] = 'hr_documents_management/export_documents/$1';
 $route['export_documents/(:any)/(:any)'] = 'hr_documents_management/export_documents/$1/$2';
 $route['hr_documents_management/getSubmittedDocument/(:num)/(:any)/(:any)'] = 'hr_documents_management/getSubmittedDocument/$1/$2/$3';

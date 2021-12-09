@@ -38,7 +38,7 @@
                                     <div class="panel panel-default" style="position: relative;">
                                         <div class="panel-heading">Completed Documents
                                             <span class="pull-right">
-                                                <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/completed');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
+                                                <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/completed/null/'.($company_sid).'');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
                                             </span>
                                         </div>
                                         <div class="panel-body" style="min-height: 200px;">
@@ -412,7 +412,7 @@
                                     <div class="panel panel-default" style="position: relative;">
                                         <div class="panel-heading">No Action Required Documents
                                             <span class="pull-right">
-                                                <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/noActionRequired');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
+                                                <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/noActionRequired/null/'.($company_sid).'');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
                                             </span>
                                         </div>
                                         <div class="panel-body" style="min-height: 200px;">
