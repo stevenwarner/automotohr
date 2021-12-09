@@ -68,7 +68,6 @@
                                                                                         <tr>
                                                                                             <th class="col-lg-8">Document Name</th>
                                                                                             <th class="col-lg-2 text-right">Actions</th>
-                                                                                            <th class="col-lg-2 text-center">&nbsp;</th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
@@ -148,7 +147,6 @@
                                                                             <tr>
                                                                                 <th class="col-lg-8">Document Name</th>
                                                                                 <th class="col-lg-2 text-right">Actions</th>
-                                                                                <th class="col-lg-2 text-center">&nbsp;</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -216,7 +214,6 @@
                                                                             <tr>
                                                                                 <th class="col-lg-8">Document Name</th>
                                                                                 <th class="col-lg-2 text-right">Actions</th>
-                                                                                <th class="col-lg-2 text-center">&nbsp;</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -312,7 +309,6 @@
                                                                             <tr>
                                                                                 <th class="col-lg-8">Document Name</th>
                                                                                 <th class="col-lg-2 text-right">Actions</th>
-                                                                                <th class="col-lg-2 text-center">&nbsp;</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -373,7 +369,6 @@
                                                                             <tr>
                                                                                 <th class="col-lg-8">Document Name</th>
                                                                                 <th class="col-lg-2 text-right">Actions</th>
-                                                                                <th class="col-lg-2 text-center">&nbsp;</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -548,7 +543,6 @@
                                                                             <tr>
                                                                                 <th class="col-lg-8">Document Name</th>
                                                                                 <th class="col-lg-2 text-right">Actions</th>
-                                                                                <th class="col-lg-2 text-center">&nbsp;</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
