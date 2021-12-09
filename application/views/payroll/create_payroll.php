@@ -29,19 +29,24 @@
     <!--  -->
     <div class="container-fluid">
         <div class="row">
-            <!-- Side Bar -->
-            <?php $this->load->view('employee_info_sidebar_ems'); ?>
             <!-- Main Content Area -->
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <!-- Main Content Area -->
                 <div class="row">
-                    <div class="col-sm-12">
-                        <h1 class="csF18 csB9">
+                    <div class="col-sm-4">
+                        <h1 class="m0 p0 csB7">
                             Run Payroll
                         </h1>
-                        <hr>
+                    </div>
+                    <div class="col-sm-8 text-right">
+                        <p class="csF16 csB7 mb0">Pay Period</p>
+                        <span class="csFC2">
+                            <?=formatDateToDB($Payroll['pay_period']['start_date'], DB_DATE, DATE);?> - 
+                            <?=formatDateToDB($Payroll['pay_period']['end_date'], DB_DATE, DATE);?>
+                        </span>
                     </div>
                 </div>
+                <hr />
                 <!-- Steps -->
                 <div class="row">
                     <div class="col-sm-3">

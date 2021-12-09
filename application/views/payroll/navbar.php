@@ -3,10 +3,10 @@
     $navpills = [];
     // Dashboard
     $navpills[] = [
-        'title' => 'Run Payroll',
-        'url' => '/payroll/create',
+        'title' => 'Run payroll',
+        'url' => '/run',
         'slug' => '',
-        'icon' => 'calendar',
+        'icon' => 'bank',
         'segment' => 'payroll'
     ];
     // // Company

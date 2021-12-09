@@ -804,6 +804,25 @@
                                     </div>
                                 <?php } ?>
 
+                                <?php if (checkIfAppIsEnabled('payroll') && isPayrollOrPlus()) { ?>
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure><i class="fa fa-money" aria-hidden="true"></i></figure>
+                                                <h2 class="post-title">
+                                                    <a href="<?=base_url('payroll/run');?>">Payroll</a>
+                                                </h2>
+                                                <div class="count-box" style="font-size: 12px">
+                                                    <small style="font-size: 12px"></small>
+                                                </div>
+                                                <div class="button-panel">
+                                                    <a href="<?=base_url('payroll/run');?>" class="site-btn">Run A Payroll</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+
                                 <!-- Account Activity -->
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box activity-box-wrp">

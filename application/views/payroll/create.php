@@ -14,77 +14,24 @@
                 <!-- Main Content Area -->
                 <div class="row">
                     <div class="col-sm-12">
-                        <h1 class="csF18 csB9">
+                        <h1 class="m0 p0 csB7">
                             Run Payroll
-                            <span class="pull-right">
-                                <a href="<?=current_url().'/onetime';?>" class="btn btn-orange csF16 csB7">
-                                    <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
-                                    Run A One-time Payroll
-                                </a>
-                            </span>
                         </h1>
-                        <hr>
+                        <hr />
                     </div>
                     <div class="clearfix"></div>
                 </div>
+                <?php if(!empty($period) && !empty($payroll)) : ?>
                 <!--  -->
                 <div class="row">
-                    <div class="col-sm-4">
-                        <p class="csF16 csB9">
-                            Time to run a few payrolls
-                        </p>
-                        <p class="csF16">
-                            Please let your team know if they’ll be paid later than expected.
-                        </p>
+                    <div class="col-sm-12 text-center">
+                        <p style="font-size: 70px;" class="mb0"><i class="fa fa-money" aria-hidden="true"></i></p>
+                        <p class="csF26 csB7">Regular Payroll (<?=formatDateToDB($period['start_date'], DB_DATE, DATE);?> - <?=formatDateToDB($period['end_date'], DB_DATE, DATE);?>)</p>
+                        <p class="csF18">Please run payroll by <strong><?=GUSTO_PAYROLL_TIME;?></strong> on <strong><?=formatDateToDB($period['payroll']['payroll_deadline'], DB_DATE, DATE);?></strong> to pay your employees for their hard work. They’ll receive their funds on <strong><?=formatDateToDB($payroll['check_date'], DB_DATE, DATE);?></strong>. If you miss this deadline, your employees’ direct deposit will be delayed.</p>
+                        <a href="<?=base_url('payroll/run/'.($payroll['payroll_id']).'');?>" class="btn btn-orange">Run Regular Payroll</a>
                     </div>
                 </div>
-                <div class="row">
-                    <br>
-                    <!--  -->
-                    <div class="col-sm-4">
-                        <label class="csF16 csB7">
-                            Regular Payroll
-                        </label>
-                    </div>
-                </div>
-                    <div class="row">
-                        <!--  -->
-                        <div class="col-sm-4">
-                            <select id="jsPayrollSelect">
-                                <option value="0">[Select Payroll]</option>
-                                <?php 
-                                    if(!empty($UnProcessedPayrolls)):
-                                        foreach($UnProcessedPayrolls as $payroll):
-                                ?>
-                                    <option value="<?=$payroll['payroll_uuid'];?>" data-version="<?=$payroll['version'];?>"><?=formatDateToDB(
-                                        $payroll['pay_period']['start_date'],
-                                        DB_DATE,
-                                        DATE
-                                    ).' - '.formatDateToDB(
-                                        $payroll['pay_period']['end_date'],
-                                        DB_DATE,
-                                        DATE
-                                    );?></option>
-                                <?php 
-                                        endforeach;
-                                    endif;
-                                ?>
-                                
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <br>
-                        <!--  -->
-                        <div class="col-sm-4">
-                            <span class="pull-right">
-                                <button class="btn btn-orange jsPayrollSubmit">
-                                    <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp; Run Payroll
-                                </button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

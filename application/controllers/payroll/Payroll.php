@@ -153,7 +153,42 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function Create($payrolId = false, $version = false){
+    function Run(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Create';
+        $this->data['load_view'] = 0;
+        $this->data['hide_employer_section'] = 1;
+
+        // Get the company pay periods
+        $response = $this->PayPeriods($this->data['companyId']);
+        // let's get the last unprocessed payroll
+        // Remove the processed records
+        $periods = array_filter($response['Response'], function($period){
+            if(!$period['payroll']['processed']) {
+                return 1;
+            }
+        });
+        // Set current payroll
+        $this->data['period'] = array_values($periods)[0];
+        // Get the single payroll
+        $this->data['payroll'] = $this->GetUnProcessedPayrolls(
+            $this->data['companyId'], 
+            $this->data['period']['start_date'], 
+            $this->data['period']['end_date']
+        )['Response'][0];
+        // Get Gusto Company Details
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/create')
+        ->view('main/footer');
+    }
+
+    /**
+     * Run the current payroll
+     */
+    function RunSingle($payrolId, $version = false){
         //
         $this->checkLogin($this->data);
         //
@@ -252,7 +287,7 @@ class Payroll extends CI_Controller
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
-        ->view('payroll/'.($payrolId ? 'create_payroll' : 'create').'')
+        ->view('payroll/create_payroll')
         ->view('main/footer');
     }
     
@@ -1100,7 +1135,7 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    private function GetUnProcessedPayrolls($companyId){
+    private function GetUnProcessedPayrolls($companyId, $startDate, $endDate){
         //
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
@@ -1109,7 +1144,7 @@ class Payroll extends CI_Controller
         ]);
         
         //
-        $query = '?processed=false';
+        $query = '?processed=false&start_date='.($startDate).'&end_date='.($endDate).'';
         //
         $response = GetUnProcessedPayrolls($query, $company);
         //
@@ -1262,6 +1297,8 @@ class Payroll extends CI_Controller
             ];
         }
     }
+    
+   
 
     /**
      * 
@@ -1306,6 +1343,38 @@ class Payroll extends CI_Controller
         return $response;
     }
 
+
+    // As of 12/09/2021
+    //
+    private function PayPeriods($companyId){
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        $response = PayPeriods($company, date('Y-m-t', strtotime('-2 month')));
+        //
+        if(isset($response['errors'])){
+            //
+            $errors = [];
+            //
+            foreach($response['errors'] as $error){
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else{
+            //
+            return[
+                'Status' => true,
+                'Response' => $response
+            ];
+        }
+    }
 
 
     //

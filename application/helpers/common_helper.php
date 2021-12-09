@@ -13925,3 +13925,32 @@ if(!function_exists('SendResponse')){
         echo json_encode($data);
     }
 }
+
+
+if(!function_exists('isPayrollOrPlus')){
+    /**
+     * Check payroll module permission
+     * Only payroll and plus is allowed to 
+     * manage payroll module. The function was
+     * created on 12/09/2021
+     * 
+     * @return
+     */
+    function isPayrollOrPlus(){
+        // Get instance
+        $CI = &get_instance();
+        // Get the session
+        $ses = $CI->session->userdata('logged_in');
+        // Check if the logged in user
+        // is a plus or payroll
+        if(
+            $ses['employer_detail']['access_level_plus'] == 1 ||
+            $ses['employer_detail']['pay_plan_flag'] == 1 ||
+            strtolower($ses['employer_detail']['access_level']) == 'payroll'
+        ){
+            return true;
+        }
+        // Don't have permission
+        return false;
+    }
+}

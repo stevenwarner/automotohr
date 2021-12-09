@@ -75,30 +75,14 @@ if(!empty($Payroll['employee_compensations'])):
                     Update your employee's here, reimbursements, and additional settings below.
                 </p>
                 <p class="csF16">
-                    To pay your employees with direct deposit on <span class="csFC2"><?=formatDateToDB($Payroll['check_date'], DB_DATE, DATE);?></span>, you'll need to run payroll by <span class="csFC2">04:00pm PST on <?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></span>. If you miss this deadline. your employees' direct deposit will be delayed.
+                    To pay your employees with direct deposit on <span class="csFC2"><?=formatDateToDB($Payroll['check_date'], DB_DATE, DATE);?></span>, you'll need to run payroll by <span class="csFC2"><?=GUSTO_PAYROLL_TIME;?></span> on <span class="csFC2"><?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></span>. If you miss this deadline. your employees' direct deposit will be delayed.
                 </p>
             </div>
         </div>
          <!-- Info -->
-        <div class="row">
+        <div class="row dn">
             <div class="col-sm-12">
-                <span class="pull-left">
-                    <p class="csF16"><b>Payroll Period:</b> 
-                        <span class="csFC2">
-                            <?=formatDateToDB($Payroll['pay_period']['start_date'], DB_DATE, DATE);?> - 
-                            <?=formatDateToDB($Payroll['pay_period']['end_date'], DB_DATE, DATE);?>
-                        </span>
-                    </p>
-                </span>
                 <span class="pull-right">
-                    <div class="btn-group" role="group" aria-label="...">
-                        <button type="button" class="btn btn-default csF16 csB7 jsLayoutChange" data-target="box" title="Box view" placement="top">
-                            <i class="fa fa-square-o csF16" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" class="btn btn-default csF16 csB7 jsLayoutChange active" data-target="list" title="List view" placement="top">
-                            <i class="fa fa-bars csF16" aria-hidden="true"></i>
-                        </button>
-                    </div>
                     <button class="btn btn-orange">
                         <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;Upload CSV
                     </button>
@@ -132,12 +116,13 @@ if(!empty($Payroll['employee_compensations'])):
                             <caption></caption>
                             <thead>
                                 <tr>
-                                    <th scope="col" class="csF16 csB7 csBG4 csW">Employee</th>
-                                    <th scope="col" class="csF16 csB7 csBG4 csW text-right">Regular Hours (RH)</th>
-                                    <th scope="col" class="csF16 csB7 csBG4 csW text-right">Additional Earnings</th>
-                                    <th scope="col" class="csF16 csB7 csBG4 csW text-right csCP">Reimbursement&nbsp;<i class="fa fa-info-circle" aria-hidden="true" title="Add multiple one-time reimbursements." placement="top"></i></th>
-                                    <th scope="col" class="csF16 csB7 csBG4 csW text-right csCP">Pay By&nbsp;<i class="fa fa-info-circle" aria-hidden="true" title="Payment type; how the employee is going to be paid." placement="top"></i></th>
-                                    <th scope="col" class="csF16 csB7 csBG4 csW text-right">Gross Pay (GP)</th>
+                                    <th scope="col" class=""><p class="csF16 mb0 csW text-left vam">Employee</p></th>
+                                    <th scope="col" class=""><p class="csF16 mb0 csW text-right vam">Regular Hours (RH)</p></th>
+                                    <th scope="col" class=""><p class="csF16 mb0 csW text-right vam">Additional Earnings</p></th>
+                                    <th scope="col" class=" csCP"><p class="csF16 mb0 csW text-right vam">Reimbursement&nbsp;<i class="fa fa-info-circle" aria-hidden="true" title="Add multiple one-time reimbursements." placement="top"></i></p></th>
+                                    <th scope="col" class=" csCP"><p class="csF16 mb0 csW text-right vam">Pay By&nbsp;<i class="fa fa-info-circle" aria-hidden="true" title="Payment type; how the employee is going to be paid." placement="top"></i></p></th>
+                                    <th scope="col" class=""><p class="csF16 mb0 csW text-right vam">Gross Pay (GP)</p></th>
+                                    <th scope="col" class=""><p class="csF16 mb0 csW text-right vam">Actions</p></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -793,36 +778,13 @@ if(!empty($Payroll['employee_compensations'])):
         // 
         function MakeView(){
             //
-            var html = '',
-            trs = '';
-            //
-            html += '<div class="row">';
+            var trs = '';
             //
             $.each(payrollOBJ, function(i, v){
                 //
-                html += GetSingleView(v);
-                //
                 trs += GetSingleRow(v);
             });
-            //
-            html += '</div>';
-            // Add Buttons
-            html +='<!--  -->';
-            html +='<div class="csPB">';
-            html +='    <span class="pull-right">';
-            html +='        <button class="btn btn-orange jsPayrollSaveBTN">';
-            html +='            <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save';
-            html +='        </button>';
-            html +='        <button class="btn btn-orange jsPayrollSaveBTN" data-type="next">';
-            html +='            <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp;Save & Next';
-            html +='        </button>';
-            html +='        <button class="btn btn-black jsPayrollCancelBTN" data-mendatory="true">';
-            html +='            <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel';
-            html +='        </button>';
-            html +='    </span>';
-            html +='</div>';
-            //
-            $('.jsPayrollContainer').html(html);
+           
             //
             $('.jsPayrollContainer2 tbody').html(trs);
             //
@@ -1152,6 +1114,7 @@ if(!empty($Payroll['employee_compensations'])):
             tr +='    <td class="vam">';
             tr +='        <strong>'+(payrollEmployee.lastName+', '+payrollEmployee.firstName)+'</strong><br/>';
             tr +='        <p class="ma10">'+(numberFormat(payrollEmployee.rate)+' /'+(payrollEmployee.rateUnit.toLowerCase()))+'</p>';
+            tr +='        <a class="ma10 csFC2" href="javascript:void(0)"><i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Edit Personal Note</a>';
             tr +='    </td>';
             tr +='    <td class="vam text-right">';
             tr +='        <!-- Hours Row -->';
@@ -1301,6 +1264,23 @@ if(!empty($Payroll['employee_compensations'])):
             tr +='                </strong>';
             tr +='            </div>';
             tr +='        </div>';
+            tr +='    </td>';
+            tr +='    <td class="vam text-right">';
+            tr +='                <div class="dropdown ml10">';
+            tr +='                    <button';
+            tr +='                      class="btn btn-default dropdown-toggle"';
+            tr +='                      type="button"';
+            tr +='                      id="dd_'+(payrollEmployee.employeeId)+'"';
+            tr +='                      data-toggle="dropdown"';
+            tr +='                      aria-haspopup="true"';
+            tr +='                      aria-expanded="false">';
+            tr +='                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>';
+            tr +='                    </button>';
+            tr +='                    <ul class="dropdown-menu pull-right" aria-labelledby="dd_'+(payrollEmployee.employeeId)+'">';
+            tr +='                        <li><a href="javascript:void(0)" class="jsEditDeductions">Edit deductions</a></li>';
+            tr +='                        <li><a href="javascript:void(0)" class="jsSkipPayroll">Skip payroll</a></li>';
+            tr +='                    </ul>';
+            tr +='                </div>';
             tr +='    </td>';
             tr +='</tr>';
 
@@ -1526,7 +1506,7 @@ if(!empty($Payroll['employee_compensations'])):
 <?php else: ?>
     <p class="alert alert-info text-center csF16 csB7">
         No employees qualify for the selected payroll <br><br>
-        <a href="<?=base_url('payroll/create');?>" class="btn btn-orange">Go To Payrolls</a>
+        <a href="<?=base_url('payroll/run');?>" class="btn btn-orange">Go To Payrolls</a>
     </p>
 <?php
     endif;
