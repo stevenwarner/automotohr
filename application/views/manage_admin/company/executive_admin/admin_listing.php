@@ -192,7 +192,7 @@
 
         my_request.done(function (response) {
             if(response == 'session_created'){
-                window.open('<?php echo STORE_PROTOCOL_SSL.$_SERVER['HTTP_HOST'].str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']).'executive_admin/dashboard'; ?>');
+                window.open(window.location.protocol+'//<?php echo $_SERVER['HTTP_HOST'].str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']).'executive_admin/dashboard'; ?>');
             } else {
                 alertify.error('Something Went Wrong!');
             }
