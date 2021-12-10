@@ -10465,7 +10465,7 @@ class Hr_documents_management extends Public_Controller {
                 );
             } else if(isset($post['data']['content'])){
                 // Generated document
-                $pathWithFile = $dir.$post['data']['title'].'.pdf';
+                $pathWithFile = $dir.time().'_'.$post['data']['title'].'.pdf';
                 $f = fopen($pathWithFile, 'w');
                 fwrite($f, base64_decode(str_replace('data:application/pdf;base64,', '', $post['data']['content']), true));
                 fclose($f);
@@ -10473,7 +10473,7 @@ class Hr_documents_management extends Public_Controller {
                 // For Generated documents
                 downloadFileFromAWS(
                     getFileName(
-                        $dir.$post['data']['orig_filename'],
+                        $dir.time().'_'.$post['data']['orig_filename'],
                         AWS_S3_BUCKET_URL.$post['data']['s3_filename']
                     ), 
                     AWS_S3_BUCKET_URL.$post['data']['s3_filename']
@@ -10481,7 +10481,7 @@ class Hr_documents_management extends Public_Controller {
             }
         } else{
             // Verification documents
-            $pathWithFile = $dir.$post['type'].'.pdf';
+            $pathWithFile = $dir.time().'_'.$post['type'].'.pdf';
             $f = fopen($pathWithFile, 'w');
             fwrite($f, base64_decode(str_replace('data:application/pdf;base64,', '', $post['data']), true));
             fclose($f);
