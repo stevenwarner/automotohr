@@ -28,17 +28,29 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"> 
-                                    <div class="heading-title page-title">
+                                    <div class="heading-title page-title employee_info_section">
                                         <h1 class="page-title">Company Name : <?php echo $companyName; ?></h1>
                                         <br>
                                         <h1 class="page-title">Employee Name : <?php echo $employeeName; ?></h1>
                                     </div> 
                                 </div> 
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 all_download_btn">
+
+                                    <?php if ($downloadDocumentData && count($downloadDocumentData) && $downloadDocumentData['user_type'] == $user_type && $downloadDocumentData['download_type'] == 'single_download' && file_exists(APPPATH.'../temp_files/employee_export/'.$downloadDocumentData['folder_name'])) { ?>
+                                        <div class="alert alert-success">
+                                            Last export was generated at <?=DateTime::createFromFormat('Y-m-d H:i:s', $downloadDocumentData['created_at'])->format('m/d/Y H:i');?>. 
+                                            <a class="btn btn-success float-right" href="<?=base_url('hr_documents_management/generate_zip/'.($downloadDocumentData['folder_name']).'');?>">Download
+                                            </a>
+                                        </div>
+                                    <?php } ?> 
+                                    
+                                    <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/AllCompletedDocument/0/'.($company_sid).'');?>" target="_blank" class="btn btn-success float-right">Download All Document(s)</a>
+                                </div>    
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="panel panel-default" style="position: relative;">
                                         <div class="panel-heading">Completed Documents
                                             <span class="pull-right">
-                                                <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/completed/null/'.($company_sid).'');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
+                                                <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/completed/0/'.($company_sid).'');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
                                             </span>
                                         </div>
                                         <div class="panel-body" style="min-height: 200px;">
@@ -293,7 +305,7 @@
                                                         <div class="panel panel-default hr-documents-tab-content">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
-                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed_payroll_documents">
+                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_EEVDocument_documents">
                                                                         <span class="glyphicon glyphicon-plus"></span>
                                                                         <?php echo 'Employment Eligibility Verification Document'; ?>
                                                                         <div class="pull-right total-records"><b>&nbsp;Total: <?php echo count($EEVDocument); ?></b></div>
@@ -302,7 +314,7 @@
                                                                 </h4>
                                                             </div>
 
-                                                            <div id="collapse_completed_payroll_documents" class="panel-collapse collapse">
+                                                            <div id="collapse_EEVDocument_documents" class="panel-collapse collapse">
                                                                 <div class="table-responsive full-width">
                                                                     <table class="table table-plane">
                                                                         <thead>
@@ -353,7 +365,7 @@
                                                         <div class="panel panel-default hr-documents-tab-content">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
-                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed_payroll_documents">
+                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_general_documents">
                                                                         <span class="glyphicon glyphicon-plus"></span>
                                                                         <?php echo 'General Document(s)'; ?>
                                                                         <div class="pull-right total-records"><b>&nbsp;Total: <?php echo count($CompletedGeneralDocuments); ?></b></div>
@@ -362,7 +374,7 @@
                                                                 </h4>
                                                             </div>
 
-                                                            <div id="collapse_completed_payroll_documents" class="panel-collapse collapse">
+                                                            <div id="collapse_general_documents" class="panel-collapse collapse">
                                                                 <div class="table-responsive full-width">
                                                                     <table class="table table-plane">
                                                                         <thead>
@@ -379,8 +391,8 @@
                                                                                             <?php
                                                                                                 echo $document['document_type'];
 
-                                                                                                if (isset($document['assigned_at']) && $document['assign_date'] != '0000-00-00 00:00:00') {
-                                                                                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assign_date'],'format' => 'M d Y, D', '_this' => $this));
+                                                                                                if (isset($document['assigned_at']) && $document['assigned_at'] != '0000-00-00 00:00:00') {
+                                                                                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_at'],'format' => 'M d Y, D', '_this' => $this));
                                                                                                 }
 
                                                                                                 if (isset($document['sign_date']) && $document['sign_date'] != '0000-00-00 00:00:00') {
@@ -412,7 +424,7 @@
                                     <div class="panel panel-default" style="position: relative;">
                                         <div class="panel-heading">No Action Required Documents
                                             <span class="pull-right">
-                                                <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/noActionRequired/null/'.($company_sid).'');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
+                                                <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/noActionRequired/0/'.($company_sid).'');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
                                             </span>
                                         </div>
                                         <div class="panel-body" style="min-height: 200px;">
@@ -606,3 +618,13 @@
         </div>
     </div>
 </div>
+
+<style>
+    .all_download_btn {
+        margin: 10px 0px;
+    }
+
+    .employee_info_section {
+        margin: 8px 0px;
+    }
+</style>

@@ -1454,6 +1454,8 @@ class employers extends Admin_Controller {
         $this->data['completed_payroll_documents']    = $completed_payroll_documents;
         $this->data['payroll_documents_sids']         = $payroll_documents_sids;
 
+        $this->data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name($company_sid, $user_sid, $user_type, 'single_download');
+
 
         // _e($this->data, true, true);
         

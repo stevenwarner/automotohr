@@ -10349,48 +10349,52 @@ class Hr_documents_management extends Public_Controller {
      * $documentType   String completed|not_completed
      * token           String token
      */
-    function download($type, $id, $documentType, $token = null){
-        // When their is no session
-        if (!$this->session->userdata('logged_in')) exit(0);
+    function download($type, $id, $documentType, $token = null, $company_sid = 0){
         //
-        $data = $this->session->userdata('logged_in');
-        //
-        $session = $this->session->userdata('logged_in');
-        //
-        $company_sid = $session['company_detail']['sid'];
+        if ($company_sid == 0) {
+            // When their is no session
+            if (!$this->session->userdata('logged_in')) exit(0);
+            //
+            $data = $this->session->userdata('logged_in');
+            //
+            $session = $this->session->userdata('logged_in');
+            //
+            $company_sid = $session['company_detail']['sid'];
+        } 
+        
         //
         $documents = [];
         // 
         if($type == 'applicant'){
             // Get employee documents
-            if($documentType == 'completed'){
+            if($documentType == 'completed' || $documentType == 'AllCompletedDocument'){
                 $documents = $this->hr_documents_management_model->getApplicantCompletedDocuments(
-                    $data['company_detail']['sid'],
+                    $company_sid,
                     $id
                 );
             } else if ($documentType == 'noActionRequired') {
                  $documents = $this->hr_documents_management_model->getUserNoActionDocuments(
-                    $data['company_detail']['sid'],
+                    $company_sid,
                     $id,
                     "applicant"
                 );
             }
             //
             $data['userInfo'] = $this->hr_documents_management_model->get_applicant_information(
-                $data['company_detail']['sid'], 
+                $company_sid, 
                 $id
             );
         }
         else if($type == 'employee'){ // For Employees
             // Get employee documents
-            if($documentType == 'completed'){
+            if($documentType == 'completed' || $documentType == 'AllCompletedDocument'){
                 $documents = $this->hr_documents_management_model->getEmployeeCompletedDocuments(
-                    $data['company_detail']['sid'],
+                    $company_sid,
                     $id
                 );
             } else if ($documentType == 'noActionRequired') {
                 $documents = $this->hr_documents_management_model->getUserNoActionDocuments(
-                    $data['company_detail']['sid'],
+                    $company_sid,
                     $id,
                     "employee"
                 );
@@ -10398,7 +10402,7 @@ class Hr_documents_management extends Public_Controller {
             }
             //
             $data['userInfo'] = $this->hr_documents_management_model->get_employee_information(
-                $data['company_detail']['sid'], 
+                $company_sid, 
                 $id
             );
         }
@@ -10409,7 +10413,7 @@ class Hr_documents_management extends Public_Controller {
         $data['user_sid'] = $id;
         $data['user_type'] = $type;
         $data['company_sid'] = $company_sid;
-        $data['token'] = $token == null ? time() : $token;
+        $data['token'] = $token == null || $token == 0 ? time() : $token;
         //
         $this->load->view('download_bulk_documents', $data);
     }
