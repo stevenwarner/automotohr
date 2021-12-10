@@ -10450,7 +10450,7 @@ class Hr_documents_management extends Public_Controller {
             // Download Hybrid Document
             if(isset($post['data']['content'], $post['data']['file'])){
                 // Generated document
-                $pathWithFile = $dir.$post['data']['title'].'1.pdf';
+                $pathWithFile = $dir.time().'_'.$post['data']['title'].'1.pdf';
                 $f = fopen($pathWithFile, 'w');
                 fwrite($f, base64_decode(str_replace('data:application/pdf;base64,', '', $post['data']['content']), true));
                 fclose($f);
