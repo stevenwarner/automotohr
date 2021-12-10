@@ -2089,6 +2089,10 @@ class Employee_management extends Public_Controller {
                     'dob' => $DOB
                 );
 
+                if(!empty($this->input->post('secondary_email', true))){
+                    $data['alternative_email'] = $this->input->post('secondary_email', true);
+                }
+
                 if(IS_TIMEZONE_ACTIVE){
                     $data['timezone'] = $this->input->post('timezone', true);
                 }
