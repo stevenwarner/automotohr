@@ -328,9 +328,6 @@ if(!function_exists('AddCompanyBankAccountToPayroll')){
 }
 
 //
-
-
-//
 if(!function_exists('GetSinglePayroll')){
     function GetSinglePayroll($query, $company, $step){
         //
@@ -621,32 +618,15 @@ if(!function_exists('SubmitPayrollById')){
     }
 }
 
-if(!function_exists('CreateCompanyFlowLink')){
-    function CreateCompanyFlowLink($company){
-        //
-        $request = array();
-        //
-        $request['flow_type'] = "company_onboarding";
-        $request['entity_type'] = "Company";
-        $request['entity_uuid'] = $company['gusto_company_uid'];
-        //
-        return MakeCall(
-            PayrollURL('GetCompanyFlows', $company['gusto_company_uid']),[
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => json_encode($request),
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: Bearer '.($company['access_token']).'',
-                    'Content-Type: application/json'
-                )
-            ] 
-        );
-    }
-}
+
+
+
+
+// As of 12/09/2021
 
 if(!function_exists('GetCompanyStatus')){
     function GetCompanyStatus($company){
         //
-        
         $response =  MakeCall(
             PayrollURL('GetCompanyStatus', $company['gusto_company_uid']),[
                 CURLOPT_CUSTOMREQUEST => 'GET',
@@ -671,7 +651,7 @@ if(!function_exists('GetCompanyStatus')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                Payrolls($company);
+                return GetCompanyStatus($company);
             } else {
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -682,13 +662,76 @@ if(!function_exists('GetCompanyStatus')){
     }
 }
 
-// As of 12/09/2021
+if(!function_exists('CreateCompanyFlowLink')){
+    function CreateCompanyFlowLink($company, $force = false){
+        //
+        $url = PayrollURL('GetCompanyFlows', $company['gusto_company_uid']);
+        //
+        if(!$force){
+            //
+            $response = CacheHolder($url);
+            //
+            if($response){
+                return $response;
+            }
+        }
+        //
+        $request = array();
+        //
+        $request['flow_type'] = "company_onboarding";
+        $request['entity_type'] = "Company";
+        $request['entity_uuid'] = $company['gusto_company_uid'];
+        //
+        $response =  MakeCall(
+            $url, [
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if (isset($response['errors']['auth'])) { 
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return CreateCompanyFlowLink($company, $force = false);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else { 
+            //
+            return $response;
+        }
+    }
+}
 
 if(!function_exists('PayPeriods')){
     function PayPeriods($company, $startDate, $force = false){
         //
+        $url = PayrollURL('PayPeriods', $company['gusto_company_uid'], $startDate);
+        //
+        if(!$force){
+            $tr = CacheHolder($url);
+            if($tr){
+                return $tr;
+            }
+        }
+        //
         $response =  MakeCall(
-            PayrollURL('PayPeriods', $company['gusto_company_uid'], $startDate), [
+            $url, [
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer '.($company['access_token']).'',
@@ -712,12 +755,12 @@ if(!function_exists('PayPeriods')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                PayPeriods($company, $startDate, $force);
+                return PayPeriods($company, $startDate, $force);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
         } else{
-            //
+            CacheHolder($url, $response);
             return $response;
         }
     }
@@ -728,9 +771,11 @@ if(!function_exists('GetUnProcessedPayrolls')){
         //
         $url = PayrollURL('GetUnProcessedPayrolls', $company['gusto_company_uid'], $query);
         //
-        $tr = CacheHolder($url);
-        if($tr){
-            return $tr;
+        if(!$force){
+            $tr = CacheHolder($url);
+            if($tr){
+                return $tr;
+            }
         }
         //
         $response =  MakeCall(
@@ -758,7 +803,7 @@ if(!function_exists('GetUnProcessedPayrolls')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                GetUnProcessedPayrolls($query, $company, $force);
+                return GetUnProcessedPayrolls($query, $company, $force);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }

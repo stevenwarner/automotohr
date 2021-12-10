@@ -197,93 +197,66 @@ class Payroll extends CI_Controller
         $this->data['hide_employer_section'] = 1;
         //
         $this->data['step'] = $this->input->get('step', true) ? $this->input->get('step', true) : '1';
-        //
-        if(!$payrolId){
-            //
-            $this->data['UnProcessedPayrolls'] = [];
-            //
-            $response = $this->GetUnProcessedPayrolls($this->data['companyId']);
-            //
-            if($response['Status']){
-                //
-                $this->data['UnProcessedPayrolls'] = $response['Response'];
-                //
-                $payrolls = [];
-                //
-                if(!empty($this->data['UnProcessedPayrolls'])){
-                    foreach($this->data['UnProcessedPayrolls'] as $payroll){
-                        if(!empty($payroll['payroll_uuid'])){
-                            $payrolls[$payroll['payroll_uuid']] = $payroll;
-                            //
-                            unset(
-                                $payrolls[$payroll['payroll_uuid']]['employee_compensations']
-                            );
-                        }
-                    }
-                }
-                //
-                $this->data['UnProcessedPayrolls'] = $payrolls;
-            }
-        }else{
-            if($this->data['step'] == 3){
-                // Calulate Payroll
-                $this->CalculatePayroll($this->data['companyId'], $payrolId);
-                usleep(200);
-            }
-            //
-            $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'], $this->data['step'])['Response'];
-            //
-            $this->pm->CheckAndInsertPayroll(
-                $this->data['companyId'],
-                $this->data['employerId'],
-                $payrolId,
-                $this->data['Payroll']
-            );
-            //
-            $this->data['PayrollEmployees'] = $this->GetCompanyEmployees($this->data['companyId'])['Response'];
-            //
-            if(!empty($this->data['Payroll'])){
-                foreach($this->data['Payroll']['employee_compensations'] as $index => $payroll){
-                    //
-                    $this->data['Payroll']['employee_compensations'][$index]['employee_id'] = number_format($payroll['employee_id'], 0, '', '');
-                    //
-                    $fixed_compensations = [];
-                    $hourly_compensations = [];
-                    $paid_time_off = [];
-                    //
-                    if(!empty($payroll['fixed_compensations'])){
-                        foreach($payroll['fixed_compensations'] as $v){
-                            //
-                            if(stringToSlug($v['name']) == 'reimbursement'){
-                                $fixed_compensations[stringToSlug($v['name'])][] = $v;
-                            } else{
-                                $fixed_compensations[stringToSlug($v['name'])] = $v;
-                            }
-                        }
-                    }
-                    //
-                    if(!empty($payroll['hourly_compensations'])){
-                        foreach($payroll['hourly_compensations'] as $v){
-                            $hourly_compensations[stringToSlug($v['name'])] = $v;
-                        }
-                    }
-                    //
-                    if(!empty($payroll['paid_time_off'])){
-                        foreach($payroll['paid_time_off'] as $v){
-                            $paid_time_off[stringToSlug($v['name'])] = $v;
-                        }
-                    }
-                    //
-                    $this->data['Payroll']['employee_compensations'][$index]['fixed_compensations'] = $fixed_compensations;
-                    $this->data['Payroll']['employee_compensations'][$index]['hourly_compensations'] = $hourly_compensations;
-                    $this->data['Payroll']['employee_compensations'][$index]['paid_time_off'] = $paid_time_off;
-                    $this->data['Payroll']['employee_compensations'][$index]['job_id'] = $this->data['PayrollEmployees'][$payroll['employee_id']]['jobs'][0]['compensations'][0]['job_id'];
-                }
-            }
-            //
-            $this->data['payrollId'] = $payrolId;
-            $this->data['payrollVersion'] = $version;
+       
+        if($this->data['step'] == 3){
+            // Calulate Payroll
+            $this->CalculatePayroll($this->data['companyId'], $payrolId);
+            usleep(200);
         }
+        //
+        $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'], $this->data['step'])['Response'];
+        //
+        $this->pm->CheckAndInsertPayroll(
+            $this->data['companyId'],
+            $this->data['employerId'],
+            $payrolId,
+            $this->data['Payroll']
+        );
+        //
+        $this->data['PayrollEmployees'] = $this->GetCompanyEmployees($this->data['companyId'])['Response'];
+        //
+        if(!empty($this->data['Payroll'])){
+            foreach($this->data['Payroll']['employee_compensations'] as $index => $payroll){
+                //
+                $this->data['Payroll']['employee_compensations'][$index]['employee_id'] = number_format($payroll['employee_id'], 0, '', '');
+                //
+                $fixed_compensations = [];
+                $hourly_compensations = [];
+                $paid_time_off = [];
+                //
+                if(!empty($payroll['fixed_compensations'])){
+                    foreach($payroll['fixed_compensations'] as $v){
+                        //
+                        if(stringToSlug($v['name']) == 'reimbursement'){
+                            $fixed_compensations[stringToSlug($v['name'])][] = $v;
+                        } else{
+                            $fixed_compensations[stringToSlug($v['name'])] = $v;
+                        }
+                    }
+                }
+                //
+                if(!empty($payroll['hourly_compensations'])){
+                    foreach($payroll['hourly_compensations'] as $v){
+                        $hourly_compensations[stringToSlug($v['name'])] = $v;
+                    }
+                }
+                //
+                if(!empty($payroll['paid_time_off'])){
+                    foreach($payroll['paid_time_off'] as $v){
+                        $paid_time_off[stringToSlug($v['name'])] = $v;
+                    }
+                }
+                //
+                $this->data['Payroll']['employee_compensations'][$index]['fixed_compensations'] = $fixed_compensations;
+                $this->data['Payroll']['employee_compensations'][$index]['hourly_compensations'] = $hourly_compensations;
+                $this->data['Payroll']['employee_compensations'][$index]['paid_time_off'] = $paid_time_off;
+                $this->data['Payroll']['employee_compensations'][$index]['job_id'] = $this->data['PayrollEmployees'][$payroll['employee_id']]['jobs'][0]['compensations'][0]['job_id'];
+            }
+        }
+        //
+        $this->data['payrollId'] = $payrolId;
+        $this->data['payrollVersion'] = $version;
+        
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
