@@ -70,7 +70,7 @@
                                     <?php foreach ($assigned_documents as $document) { ?>
                                         <?php if ($document['archive'] != 1) { ?>
                                             <?php if ($document['status'] != 0) { ?>
-                                                <?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
+                                                <?php $pdBtn = getPDBTN($document, 'btn-info btn-block'); ?>
                                                 <tr>
                                                     <td class="">
                                                         <?php
@@ -85,12 +85,12 @@
                                                         ?>
                                                         <div class="hidden-lg hidden-md hidden-sm">
                                                             <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                           <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                           <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                         </div>
                                                     </td>
                                                     <td class="text-center hidden-xs">
                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                        <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                        <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                     </td>
                                                 </tr>
                                             <?php } ?>
@@ -105,7 +105,7 @@
                         </table>
                     </div>
                     <?php if(sizeof($uncompleted_offer_letter)){ ?>
-                        <?php $pdBtn = getPDBTN($uncompleted_offer_letter, 'btn-info'); ?>
+                        <?php $pdBtn = getPDBTN($uncompleted_offer_letter, 'btn-info btn-block'); ?>
                         <div class="row">
                             <div class="col-xs-12">
                                 <br />
@@ -131,7 +131,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <?php if (!empty($uncompleted_offer_letter)) { ?>
-                                                        <?php $pdBtn = getPDBTN($uncompleted_offer_letter, 'btn-info'); ?> 
+                                                        <?php $pdBtn = getPDBTN($uncompleted_offer_letter, 'btn-info btn-block'); ?> 
                                                         <?php //foreach ($uncompleted_offer_letter as $document) { ?>
                                                         <?php $ncd++; ?>
                                                         <tr>
@@ -155,12 +155,12 @@
                                                                                 }
                                                                             ?>
                                                                             <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                            <a href="<?php echo $document_offer_letter_base . '/' . $uncompleted_offer_letter['sid']; ?>" class="btn btn-info cs_mobile_btn"><?php echo $btn_name; ?></a>
+                                                                            <a href="<?php echo $document_offer_letter_base . '/' . $uncompleted_offer_letter['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                                         </div>
                                                                     <?php } else { ?>
                                                                         <div class="">
                                                                             <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                            <a href="<?php echo $document_d_base . '/' . $uncompleted_offer_letter['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                            <a href="<?php echo $document_d_base . '/' . $uncompleted_offer_letter['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                         </div>
                                                                     <?php } ?>
                                                                </div>
@@ -175,12 +175,12 @@
                                                                             }
                                                                         ?>
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                                        <a  href="<?php echo $document_offer_letter_base . '/' . $uncompleted_offer_letter['sid']; ?>" class="btn btn-info "><?php echo $btn_name; ?></a>
+                                                                        <a  href="<?php echo $document_offer_letter_base . '/' . $uncompleted_offer_letter['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                                     </td>
                                                                 <?php } else { ?>
                                                                     <td class=" hidden-xs text-center">
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                                        <a  href="<?php echo $document_d_base . '/' . $uncompleted_offer_letter['sid']; ?>" class="btn btn-info ">View Sign</a>
+                                                                        <a  href="<?php echo $document_d_base . '/' . $uncompleted_offer_letter['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                     </td>
                                                                 <?php } ?>
                                                         </tr>
@@ -226,7 +226,7 @@
                                                 <tbody>
                                                     <?php if (!empty($uncompleted_payroll_documents)) { ?>
                                                         <?php foreach ($uncompleted_payroll_documents as $document) { ?>
-                                                            <?php $pdBtn = getPDBTN($document, 'btn-info'); ?> 
+                                                            <?php $pdBtn = getPDBTN($document, 'btn-info btn-block'); ?> 
                                                         <?php $ncd++; ?>
                                                         <tr>
                                                             <td class="">
@@ -249,12 +249,12 @@
                                                                                 }
                                                                             ?>
                                                                             <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                            <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn"><?php echo $btn_name; ?></a>
+                                                                            <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                                         </div>
                                                                     <?php } else { ?>
                                                                         <div class="">
                                                                             <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                            <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                            <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                         </div>
                                                                     <?php } ?>
                                                                </div>
@@ -269,12 +269,12 @@
                                                                             }
                                                                         ?>
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                                        <a  href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info "><?php echo $btn_name; ?></a>
+                                                                        <a  href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                                     </td>
                                                                 <?php } else { ?>
                                                                     <td class=" hidden-xs text-center">
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                                        <a  href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info ">View Sign</a>
+                                                                        <a  href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                     </td>
                                                                 <?php } ?>
                                                         </tr>
@@ -334,11 +334,11 @@
                                                     }
                                                     ?>
                                                    <div class="hidden-sm hidden-lg text-center hidden-md">
-                                                       <a  href="<?php echo $w4_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                       <a  href="<?php echo $w4_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                    </div>
                                                 </td>
                                                 <td class="col-lg-2 hidden-xs text-center">
-                                                    <a href="<?php echo $w4_url; ?>" class="btn btn-info">View Sign</a>
+                                                    <a href="<?php echo $w4_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                 </td>
                                             </tr>
                                         <?php }?>
@@ -354,11 +354,11 @@
                                                     }
                                                     ?>
                                                     <div class="hidden-sm hidden-lg hidden-md">
-                                                       <a href="<?php echo $w9_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                       <a href="<?php echo $w9_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                    </div>
                                                 </td>
                                                 <td class="col-lg-2 hidden-xs text-center">
-                                                    <a href="<?php echo $w9_url; ?>" class="btn btn-info">View Sign</a>
+                                                    <a href="<?php echo $w9_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                 </td>
                                             </tr>
                                         <?php }?>
@@ -373,11 +373,11 @@
                                                     }
                                                     ?>
                                                     <div class="hidden-sm hidden-lg hidden-md">
-                                                       <a href="<?php echo $i9_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                       <a href="<?php echo $i9_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                    </div>
                                                 </td>
                                                 <td class="col-lg-2 hidden-xs text-center">
-                                                    <a href="<?php echo $i9_url; ?>" class="btn btn-info">View Sign</a>
+                                                    <a href="<?php echo $i9_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                 </td>
                                             </tr>
                                         <?php }?>
@@ -419,8 +419,8 @@
                                         <tbody>
                                             <?php foreach($NotCompletedGeneralDocuments as $v) { 
                                                 $docURL = base_url('general_info/'.( $v['document_type'] ).'');
-                                                $printBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info">Print</a>';
-                                                $downloadBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info">Download</a>';
+                                                $printBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info btn-block btn-orange">Print</a>';
+                                                $downloadBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info btn-block btn-black">Download</a>';
                                             ?>
                                             <tr>
                                                 <td class="">
@@ -429,13 +429,13 @@
                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $v['updated_at'], '_this' => $this));
                                                     ?>
                                                     <div class="hidden-sm hidden-lg hidden-md">
-                                                       <a href="<?php echo $docURL; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                       <a href="<?php echo $docURL; ?>" class="btn btn-info btn-block">View Sign</a>
                                                    </div>
                                                 </td>
                                                 <td class="hidden-xs text-center">
                                                     <?=$printBTN;?>
                                                     <?=$downloadBTN;?>
-                                                    <a href="<?php echo $docURL; ?>" class="btn btn-info">View Sign</a>
+                                                    <a href="<?php echo $docURL; ?>" class="btn btn-info btn-block">View Sign</a>
                                                 </td>
                                             </tr>
                                             <?php } ?>
@@ -467,7 +467,7 @@
                                     <?php if (!empty($assigned_offer_letters) ) { ?>
                                         <?php $assigned_offer_letters = array_reverse($assigned_offer_letters);  ?>
                                         <?php foreach ($assigned_offer_letters as $document) { ?>
-                                            <?php $pdBtn = getPDBTN($document, 'btn-info'); ?> 
+                                            <?php $pdBtn = getPDBTN($document, 'btn-info btn-block'); ?> 
                                             <tr>
                                                 <td class="col-sm-12 col-xs-12">
                                                     <?php
@@ -489,12 +489,12 @@
                                                                         }
                                                                     ?>
                                                                     <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                               <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn"><?php echo $btn_name; ?></a>
+                                                               <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                              </div>
                                                          <?php } else { ?>
                                                           <div class="">
                                                           <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                              <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                              <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                           </div>
                                                        <?php } ?>
                                                     </div>
@@ -509,12 +509,12 @@
                                                             }
                                                         ?>
                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                        <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info"><?php echo $btn_name; ?></a>
+                                                        <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                     </td>
                                                 <?php } else { ?>
                                                     <td class="hidden-xs text-center">
                                                     <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                        <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                        <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                     </td>
                                                 <?php } ?>
                                             </tr>
@@ -570,7 +570,7 @@
                                                             <tbody>
                                                                 <?php if (count($category_document['documents']) > 0) { ?>
                                                                     <?php foreach ($category_document['documents'] as $document) { ?>
-                                                                        <?php $pdBtn = getPDBTN($document, 'btn-info'); ?> 
+                                                                        <?php $pdBtn = getPDBTN($document, 'btn-info btn-block'); ?> 
                                                                         <tr>
                                                                             <td class="">
                                                                                 <?php
@@ -585,13 +585,13 @@
                                                                                 ?>
                                                                                 <div  class="hidden-sm hidden-lg hidden-md">
                                                                                     <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                                    <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                                    <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                                 </div>
                                                                             </td>
                                                                             </td>
                                                                             <td class=" text-center hidden-xs">
                                                                                 <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                                                <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                                <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                             </td>
                                                                         </tr>
                                                                     <?php } ?>
@@ -649,11 +649,11 @@
                                                             ?>
                                                            
                                                             <div class="hidden-sm hidden-lg hidden-md">
-                                                                <a href="<?php echo $w4_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                <a href="<?php echo $w4_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                             </div>
                                                         </td>
                                                         <td class="col-lg-2 hidden-xs text-center">
-                                                            <a href="<?php echo $w4_url; ?>" class="btn btn-info">View Sign</a>
+                                                            <a href="<?php echo $w4_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                         </td>
                                                     </tr>
                                                 <?php }?>
@@ -669,11 +669,11 @@
                                                             }
                                                             ?>
                                                             <div class="hidden-lg hidden-md hidden-sm">
-                                                                <a href="<?php echo $w9_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                <a href="<?php echo $w9_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                             </div>
                                                         </td>
                                                         <td class="col-lg-2 text-center hidden-xs">
-                                                            <a href="<?php echo $w9_url; ?>" class="btn btn-info">View Sign</a>
+                                                            <a href="<?php echo $w9_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                         </td>
                                                     </tr>
                                                 <?php }?>
@@ -689,11 +689,11 @@
                                                             }
                                                             ?>
                                                              <div class="hidden-lg hidden-md hidden-sm">
-                                                                <a href="<?php echo $i9_url; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                <a href="<?php echo $i9_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                             </div>
                                                         </td>
                                                         <td class="col-lg-2 hidden-xs text-center">
-                                                            <a href="<?php echo $i9_url; ?>" class="btn btn-info ">View Sign</a>
+                                                            <a href="<?php echo $i9_url; ?>" class="btn btn-info btn-block">View Sign</a>
                                                         </td>
                                                     </tr>
                                                 <?php }?>
@@ -711,7 +711,7 @@
                     } ?>
 
                     <?php if (!empty($completed_offer_letter)) { ?>
-                        <?php $pdBtn = getPDBTN($completed_offer_letter, 'btn-info'); ?> 
+                        <?php $pdBtn = getPDBTN($completed_offer_letter, 'btn-info btn-block'); ?> 
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="panel panel-default hr-documents-tab-content">
@@ -732,13 +732,11 @@
                                                     <tr>
                                                         <th class="col-lg-8 hidden-xs">Document Name</th>
                                                         <th class="col-xs-12 hidden-md hidden-lg hidden-sm">Document</th>
-                                                        <th class="col-lg-4 text-right ">Actions</th>
-                                                        <th class="col-xs-12 text-center">&nbsp;</th>
-                                                    </tr>
+                                                        <th class="col-lg-4 text-right ">Actions</th>                                                    </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td class="">
+                                                        <td class="col-lg-8">
                                                             <?php
                                                                 echo $completed_offer_letter['document_title']. '&nbsp;';
 
@@ -755,10 +753,10 @@
                                                                     }
                                                                 ?>
                                                                 <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                <a href="<?php echo $document_offer_letter_base . '/' . $completed_offer_letter['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                <a href="<?php echo $document_offer_letter_base . '/' . $completed_offer_letter['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                             </div>
                                                         </td>
-                                                        <td class="text-center hidden-xs">
+                                                        <td class="col-lg-4 text-center hidden-xs">
                                                             <?php
                                                                 if ($completed_offer_letter['user_consent'] == 1) {
                                                                     $btn_name = 'View Offer Letter';
@@ -767,7 +765,7 @@
                                                                 }
                                                             ?>
                                                             <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                            <a href="<?php echo $document_offer_letter_base . '/' . $completed_offer_letter['sid']; ?>" class="btn btn-info"><?php echo $btn_name; ?></a>
+                                                            <a href="<?php echo $document_offer_letter_base . '/' . $completed_offer_letter['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -806,7 +804,7 @@
                                                 <tbody>
                                                     <?php if (!empty($completed_payroll_documents)) { ?>
                                                         <?php foreach ($completed_payroll_documents as $document) { ?>
-                                                            <?php $pdBtn = getPDBTN($document, 'btn-info'); ?> 
+                                                            <?php $pdBtn = getPDBTN($document, 'btn-info btn-block'); ?> 
                                                         <?php $ncd++; ?>
                                                         <tr>
                                                             <td class="">
@@ -829,12 +827,12 @@
                                                                                 }
                                                                             ?>
                                                                             <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                            <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn"><?php echo $btn_name; ?></a>
+                                                                            <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                                         </div>
                                                                     <?php } else { ?>
                                                                         <div class="">
                                                                         <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                            <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                            <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                         </div>
                                                                     <?php } ?>
                                                                </div>
@@ -849,12 +847,12 @@
                                                                             }
                                                                         ?>
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                                        <a  href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info "><?php echo $btn_name; ?></a>
+                                                                        <a  href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                                     </td>
                                                                 <?php } else { ?>
                                                                     <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                     <td class="hidden-xs text-center">
-                                                                        <a  href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info ">View Sign</a>
+                                                                        <a  href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                     </td>
                                                                 <?php } ?>
                                                         </tr>
@@ -904,8 +902,8 @@
                                         <tbody>
                                             <?php foreach($CompletedGeneralDocuments as $v) { 
                                                 $docURL = base_url('general_info/'.( $v['document_type'] ).'');
-                                                $printBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info">Print</a>';
-                                                $downloadBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info">Download</a>';
+                                                $printBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info btn-block btn-orange">Print</a>';
+                                                $downloadBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info btn-block btn-black">Download</a>';
                                             ?>
                                             <tr>
                                                 <td class="">
@@ -916,13 +914,13 @@
                                                     <div class="hidden-sm hidden-lg hidden-md">
                                                         <?=$printBTN;?>
                                                         <?=$downloadBTN;?>
-                                                       <a href="<?php echo $docURL; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                       <a href="<?php echo $docURL; ?>" class="btn btn-info btn-block">View Sign</a>
                                                    </div>
                                                 </td>
                                                 <td class="col-lg-4 hidden-xs text-center">
                                                     <?=$printBTN;?>
                                                     <?=$downloadBTN;?>
-                                                    <a href="<?php echo $docURL; ?>" class="btn btn-info">View Sign</a>
+                                                    <a href="<?php echo $docURL; ?>" class="btn btn-info btn-block">View Sign</a>
                                                 </td>
                                             </tr>
                                             <?php } ?>
@@ -987,7 +985,7 @@
                                                                         ?>
                                                                         <?php if ($document['archive'] != 1 && $document['manual_document_type'] != 'offer_letter') { ?>
                                                                             <?php if ($document['status'] != 0) { ?>
-                                                                                <?php $pdBtn = getPDBTN($document, 'btn-info'); ?> 
+                                                                                <?php $pdBtn = getPDBTN($document, 'btn-info btn-block'); ?> 
                                                                                 <tr>
                                                                                     <td class="">
                                                                                         <?php
@@ -1009,12 +1007,12 @@
                                                                                         ?>
                                                                                         <div class="hidden-lg hidden-md hidden-sm">
                                                                                         <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                                            <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                                            <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                                         </div>
                                                                                     </td>
                                                                                     <td class="text-center hidden-xs">
                                                                                     <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                                                        <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                                        <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                                     </td>
                                                                                 </tr>
                                                                             <?php } ?>
@@ -1071,7 +1069,7 @@
                                                 <tbody>
                                                     <?php if (!empty($no_action_required_payroll_documents)) { ?>
                                                         <?php foreach ($no_action_required_payroll_documents as $document) { ?>
-                                                            <?php $pdBtn = getPDBTN($document, 'btn-info'); ?> 
+                                                            <?php $pdBtn = getPDBTN($document, 'btn-info btn-block'); ?> 
                                                         <?php $ncd++; ?>
                                                         <tr>
                                                             <td class="col-lg-10">
@@ -1094,12 +1092,12 @@
                                                                                 }
                                                                             ?>
                                                                             <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                            <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn"><?php echo $btn_name; ?></a>
+                                                                            <a href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                                         </div>
                                                                     <?php } else { ?>
                                                                         <div class="">
                                                                         <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                            <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info cs_mobile_btn">View Sign</a>
+                                                                            <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                         </div>
                                                                     <?php } ?>
                                                                </div>
@@ -1114,12 +1112,12 @@
                                                                             }
                                                                         ?>
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                                        <a  href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info "><?php echo $btn_name; ?></a>
+                                                                        <a  href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block"><?php echo $btn_name; ?></a>
                                                                     </td>
                                                                 <?php } else { ?>
                                                                     <td class=" hidden-xs text-center">
                                                                     <?=$pdBtn['pw'].$pdBtn['dw'];?>
-                                                                        <a  href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info ">View Sign</a>
+                                                                        <a  href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info btn-block">View Sign</a>
                                                                     </td>
                                                                 <?php } ?>
                                                         </tr>
@@ -1147,7 +1145,7 @@
     </div>
 </div>
 <style>
-    .cs_mobile_btn{
+    .btn-block{
         width:100%;margin-top:10px;
     }
     @media (max-width: 576px) { 

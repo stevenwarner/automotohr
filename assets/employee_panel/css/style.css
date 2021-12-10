@@ -2840,3 +2840,11 @@ input[type='checkbox'].user_checkbox:checked:after {
 	content: '\2714';
 	color: #fff;
 }
+
+.btn-orange{
+    background-color: #fd7a2a !important;
+}
+
+.btn-black{
+    background-color: #000000 !important;
+}
