@@ -10458,7 +10458,7 @@ class Hr_documents_management extends Public_Controller {
                 // For Generated documents
                 downloadFileFromAWS(
                     getFileName(
-                        $dir.$post['data']['title'].'2.pdf',
+                        $dir.time().'_'.$post['data']['title'].'2.pdf',
                         AWS_S3_BUCKET_URL.$post['data']['file']
                     ), 
                     AWS_S3_BUCKET_URL.$post['data']['file']
