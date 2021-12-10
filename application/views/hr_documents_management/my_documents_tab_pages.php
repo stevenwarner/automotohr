@@ -419,7 +419,7 @@
                                         <tbody>
                                             <?php foreach($NotCompletedGeneralDocuments as $v) { 
                                                 $docURL = base_url('general_info/'.( $v['document_type'] ).'');
-                                                $printBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info btn-orange">Print</a>';
+                                                $printBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info btn-orange">Print</a>&nbsp;&nbsp;';
                                                 $downloadBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info btn-black">Download</a>';
                                             ?>
                                             <tr>
@@ -902,7 +902,7 @@
                                         <tbody>
                                             <?php foreach($CompletedGeneralDocuments as $v) { 
                                                 $docURL = base_url('general_info/'.( $v['document_type'] ).'');
-                                                $printBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info btn-orange">Print</a>';
+                                                $printBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info btn-orange">Print</a>&nbsp;&nbsp;';
                                                 $downloadBTN = '<a href="'.( base_url('hr_documents_management/gpd/print/'.( $v['document_type'] ).'/'.( $user_type ).'/'.( $user_sid ).'') ).'" target="_blank" class="btn btn-info btn-black">Download</a>';
                                             ?>
                                             <tr>
