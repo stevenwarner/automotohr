@@ -11994,8 +11994,8 @@ if(!function_exists('')){
         }
 //_e($document, true);
         //
-        $r['pw'] = '<a href="'.($printURL).'" class="btn '.($cls).' btn-orange" target="_blank">Print</a>';
-        $r['pm'] = '<a href="'.($printURL).'" class="btn '.($cls).' btn-orange"  target="_blank">Print</a>';
+        $r['pw'] = '<a href="'.($printURL).'" class="btn '.($cls).' btn-orange" style="margin-right: 5px" target="_blank">Print</a>';
+        $r['pm'] = '<a href="'.($printURL).'" class="btn '.($cls).' btn-orange"  style="margin-right: 5px" target="_blank">Print</a>';
         //
         $r['dw'] = '<a href="'.($downloadURL).'" class="btn '.($cls).' btn-black" target="_blank">Download</a>';
         $r['dm'] = '<a href="'.($downloadURL).'" class="btn '.($cls).' btn-black"  target="_blank">Download</a>';
