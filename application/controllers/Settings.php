@@ -1895,14 +1895,16 @@ class Settings extends Public_Controller
                 //
                 $doSend = false;
                 //
-                if(array_key_exists('document_sent_on', $userData)){
-                    //
-                    $doSend = false;
-                    //
-                    if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
-                        $doSend = true;
+                if (!empty($userData)){
+                    if(array_key_exists('document_sent_on', $userData)){
                         //
-                        $this->hr_documents_management_model->update_employee($sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
+                        $doSend = false;
+                        //
+                        if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                            $doSend = true;
+                            //
+                            $this->hr_documents_management_model->update_employee($sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
+                        }
                     }
                 }
 

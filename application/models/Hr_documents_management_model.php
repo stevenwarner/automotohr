@@ -1981,7 +1981,7 @@ class Hr_documents_management_model extends CI_Model {
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
 
-        if (count($record_arr) > 0) {
+        if (!empty($record_arr)) {
             return $record_arr;
         } else {
             return 0;
@@ -2066,7 +2066,7 @@ class Hr_documents_management_model extends CI_Model {
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
 
-        if (count($record_arr) > 0) {
+        if (!empty($record_arr)) {
             return $record_arr;
         } else {
             return 0;
@@ -2237,7 +2237,7 @@ class Hr_documents_management_model extends CI_Model {
         $record_obj->free_result();
 
         //
-        if(count($record_arr)){
+        if(!empty($record_arr)){
             if($record_arr['archive'] == 1){
                 //
                 $d = $record_arr;
@@ -2864,7 +2864,7 @@ class Hr_documents_management_model extends CI_Model {
                 }
             }
         }
-        if(count($completed_documents) > 0){
+        if(!empty($completed_documents)){
             $cat_index = count($categories);
             $categories_documents_completed[$cat_index]['name'] = "Uncategorized Documents";
             $categories_documents_completed[$cat_index]['category_sid'] = 0;
@@ -2895,7 +2895,7 @@ class Hr_documents_management_model extends CI_Model {
                 }
             }
         }
-        if(count($no_action_required_documents)>0){
+        if(!empty($no_action_required_documents)){
             $cat_index = count($categories);
             $categories_no_action_documents[$cat_index]['name'] = "Uncategorized Documents";
             $categories_no_action_documents[$cat_index]['category_sid'] = 0;
@@ -3651,7 +3651,7 @@ class Hr_documents_management_model extends CI_Model {
 
     function getTeams( $companySid, $departments ){
         //
-        if(!$departments || !count($departments)) return [];
+        if(!$departments || empty($departments)) return [];
         //
         $a = $this->db
         ->select('sid, name')
@@ -3714,7 +3714,7 @@ class Hr_documents_management_model extends CI_Model {
         //
         $dIds = [];
         //
-        if($b && count($b)) {
+        if($b && !empty($b)) {
             //
             foreach($b as $d) {
                 $dIds[] = $d['sid'];
@@ -3739,8 +3739,8 @@ class Hr_documents_management_model extends CI_Model {
             }
         }
         //
-        $r['Departments'] = count($r['Departments']) ? array_unique($r['Departments'], SORT_STRING) : $r['Departments'];
-        $r['Teams'] = count($r['Teams']) ? array_unique($r['Teams'], SORT_STRING) : $r['Teams'];
+        $r['Departments'] = !empty($r['Departments']) ? array_unique($r['Departments'], SORT_STRING) : $r['Departments'];
+        $r['Teams'] = !empty($r['Teams']) ? array_unique($r['Teams'], SORT_STRING) : $r['Teams'];
         //
         return $r;
     }
@@ -4246,7 +4246,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->result_array();
         $a = $a->free_result();
         //
-        if(count($b)){ 
+        if(!empty($b)){
             isDocumentCompleted($b);
             $r['Assigned'] = $b;
         }
@@ -4299,7 +4299,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->result_array();
         $a = $a->free_result();
         //
-        if(count($b)){ 
+        if(!empty($b)){
             $r['Assigned'] = $b;
         }
         //
@@ -4321,7 +4321,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if(count($b)) $data['I9'] = $b;
+        if(!empty($b)) $data['I9'] = $b;
     }
 
     //
@@ -4339,7 +4339,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if(count($b)) $data['W9'] = $b;
+        if(!empty($b)) $data['W9'] = $b;
     }
 
     //
@@ -4357,7 +4357,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if(count($b)) $data['W4'] = $b;
+        if(!empty($b)) $data['W4'] = $b;
     }
    
     //
@@ -4381,7 +4381,7 @@ class Hr_documents_management_model extends CI_Model {
         $od['emergency_contacts'] = '';
         $od['occupational_license'] = '';
         //
-        if(count($b)) {
+        if(!empty($b)) {
             foreach($b as $v) {
                 //
                 if(!$withTemplate){
@@ -4423,7 +4423,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->result_array();
         $a = $a->free_result();
         //
-        if(count($b)){ 
+        if(!empty($b)){
             isDocumentCompleted($b);
             $r['Assigned'] = $b;
         }
@@ -4451,7 +4451,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if(count($b)) $data['I9'] = $b;
+        if(!empty($b)) $data['I9'] = $b;
     }
 
     //
@@ -4469,7 +4469,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if(count($b)) $data['W9'] = $b;
+        if(!empty($b)) $data['W9'] = $b;
     }
 
     //
@@ -4487,7 +4487,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if(count($b)) $data['W4'] = $b;
+        if(!empty($b)) $data['W4'] = $b;
     }
 
     //
@@ -4503,7 +4503,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->row_array();
         //
-        if(!count($b)) return false;
+        if(empty($b)) return false;
         //
         $a = $this->db
         ->select('first_name, last_name, email')
@@ -4513,7 +4513,7 @@ class Hr_documents_management_model extends CI_Model {
         $c = $a->row_array();
         $a = $a->free_result();
         //
-        if(!count($c)) return false;
+        if(empty($c)) return false;
         //
         $b['user'] = $c;
         //
@@ -4551,7 +4551,7 @@ class Hr_documents_management_model extends CI_Model {
         //
         $b = $a->row_array();
         $a = $a->free_result();
-        if(!count($b)) return false;
+        if(empty($b)) return false;
         //
         $a = $this->db
         ->select('first_name, last_name, email')
@@ -4561,7 +4561,7 @@ class Hr_documents_management_model extends CI_Model {
         $c = $a->row_array();
         $a = $a->free_result();
         //
-        if(!count($c)) return false;
+        if(empty($c)) return false;
         //
         $b['user'] = $c;
         //
@@ -4851,7 +4851,7 @@ class Hr_documents_management_model extends CI_Model {
             'not_completed'
         );
         //
-        if(!count($documents)) return;
+        if(empty($documents)) return;
         //
         foreach($documents as $document){
             $assigned_on = date('M d Y, D h:i:s', strtotime($document['assigned_at']));
@@ -4912,7 +4912,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->result_array();
         $a = $a->free_result();
         //
-        if(!count($b)) return $b;
+        if(empty($b)) return $b;
         //
         $c = [];
         //
@@ -4983,9 +4983,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if(
-          !count($b)  
-        ){
+        if(empty($b)){
             $ins = [
                 'company_sid' => $companySid,
                 'user_sid' => $userSid,
@@ -5215,7 +5213,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if(!count($b)) return '';
+        if(empty($b)) return '';
         //
         $companySid = $b['company_sid'];
         //
@@ -5228,7 +5226,7 @@ class Hr_documents_management_model extends CI_Model {
                 //
                 $data = $this->dependents_model->get_dependant_info($userType, $userSid);
                 //
-                if(count($data)){
+                if(!empty($data)){
                     $data_countries = db_get_active_countries();
                     //
                     $d = [];
@@ -5258,7 +5256,7 @@ class Hr_documents_management_model extends CI_Model {
                 //
                 $data = $this->emergency_contacts_model->get_emergency_contacts($userType, $userSid);
                 //
-                if(count($data)){
+                if(!empty($data)){
                     $data_countries = db_get_active_countries();
                     //
                     $d = [];
@@ -5288,7 +5286,7 @@ class Hr_documents_management_model extends CI_Model {
                 //
                 $data = $this->dashboard_model->get_license_info($userSid, $userType, 'drivers');
                 //
-                if(count($data)){
+                if(!empty($data)){
                     //
                     $template = $this->load->view('hr_documents_management/templates/drivers_license', ['data' => $data], true);
                 }
@@ -5300,7 +5298,7 @@ class Hr_documents_management_model extends CI_Model {
                 //
                 $data = $this->dashboard_model->get_license_info($userSid, $userType, 'occupational');
                 //
-                if(count($data)){
+                if(!empty($data)){
                     //
                     $template = $this->load->view('hr_documents_management/templates/occupational_license', ['data' => $data], true);
                 }
@@ -5349,7 +5347,7 @@ class Hr_documents_management_model extends CI_Model {
         $od['emergency_contacts'] = '';
         $od['occupational_license'] = '';
         //
-        if(count($b)) {
+        if(!empty($b)) {
             foreach($b as $v) {
                 //
                 if(!$withTemplate){
@@ -5413,7 +5411,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->result_array();
         $a = $a->free_result();
         //
-        if(!count($b)) return $b;
+        if(empty($b)) return $b;
         //
         return array_column($b, 'category_sid');
     }
@@ -5485,7 +5483,7 @@ class Hr_documents_management_model extends CI_Model {
         $a = $a->free_result();
         //
         $r = [];	
-        if(count($b)){	
+        if(!empty($b)){
             foreach($b as $v){	
                 if(!isset($r[$v['sid']])){	
                     //	
@@ -5520,7 +5518,7 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->result_array();
         $a = $a->free_result();
         // /
-        if(!$b || !count($b)) return $b;
+        if(!$b || empty($b)) return $b;
         //
         foreach($b as $document){
             // Save a copy in history
@@ -5629,7 +5627,7 @@ class Hr_documents_management_model extends CI_Model {
         //
         $c = ['assigned' => 0, 'completed' => 0];
         //
-        if(count($b)){
+        if(!empty($b)){
             $d = [];
             foreach($b as $k => $v) {
                 if(!empty($v['assigned_date']) && DateTime::createFromFormat('Y-m-d H:i:s', $v['assigned_date'])->format('Y-m-d') == date('Y-m-d', strtotime('now'))){
@@ -5684,7 +5682,7 @@ class Hr_documents_management_model extends CI_Model {
         //
         $r = [];
         //
-        if(count($b)){
+        if(!empty($b)){
             foreach($b as $k => $v) {
                 $r[] = [
                     'EmployeeName' => remakeEmployeeName($v),

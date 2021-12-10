@@ -11,6 +11,28 @@ class Testing extends CI_Controller
 
     }
 
+    function testMcrypt()
+    {
+        //$key should have been previously generated in a cryptographically safe way, like openssl_random_pseudo_bytes
+        $plaintext = "message to be encrypted 123 If you want to go encryption/decryption";
+        $cipher = "aes-256-gcm";
+        $key = '#&$sdfdadasdsaderfvrfgbty78hnmuik263uifs5634d9ec9tc8n3n845394395342mc54x205c4935c7 0234';
+
+        $ivlen = openssl_cipher_iv_length($cipher);
+        $iv = openssl_random_pseudo_bytes($ivlen);
+        $ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv, $tag);
+        //store $cipher, $iv, and $tag for decryption later
+        $original_plaintext = openssl_decrypt($ciphertext, $cipher, $key, $options=0, $iv, $tag);
+        echo 'Original Text = '.$original_plaintext."<br>";
+        echo 'Encrypted Text = '.$ciphertext."<br>";
+
+
+        /*$text = 'If you want to go encryption/decryption';
+        $encoded = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $text, MCRYPT_MODE_CBC, md5(md5($key)) ));
+
+        echo $encoded;*/
+    }
+
     function getDataTest(){
         $a = $this
             ->db

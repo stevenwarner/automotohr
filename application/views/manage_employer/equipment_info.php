@@ -68,7 +68,7 @@
                                                             <?php if(!empty($equipment_info)) { ?>
                                                                 <?php foreach($equipment_info as $equipment) {
                                                                     $unserialized = @unserialize($equipment['equipment_details']);
-                                                                    $default_type = sizeof($unserialized) > 0 ? $unserialized['equipment_type'] : ''; ?>
+                                                                    $default_type = !empty($unserialized) ? $unserialized['equipment_type'] : ''; ?>
                                                                     <tr>
                                                                         <td> <?php echo $equipment['brand_name']; ?> </td>
                                                                         <td> <?php echo !empty($equipment['equipment_type']) ? $equipment['equipment_type'] : 'N/A' ; ?> </td>
