@@ -890,14 +890,28 @@ class Calendar_model extends CI_Model
         // Set companys check
         $this->db->where('companys_sid', $company_id);
         if($week_start > $week_end){
-            $year = date('Y', strtotime($year.'-01-01 -1 year'));
+            //$year = date('Y', strtotime($year.'-01-01 -1 year'));
         }
         // check for type
-        if($type == 'day')
+        if ($month == 12 && $type != "day") {
+            $endYear = addTimeToDate($year."-12-31","1Y", "Y");
+        } else {
+            $endYear = $year;
+        }
+        //
+        if ($month == 1 && $type != "day") {
+            $startYear = subTimeToDate($year."-01-01","1Y", "Y");
+        } else {
+            $startYear = $year;
+        }
+        //
+        if($type == 'day') {
             $this->db->where('date = ', ($year.'-'.$month.'-'.$day));
+        }
         else{ // month, week
-            $from_date = $year.'-'.$week_start;
-            $to_date   = $year.'-'.$week_end;
+            $from_date = $startYear.'-'.$week_start;
+            $to_date   = $endYear.'-'.$week_end;
+            //
             if(substr($week_start, 0, 2) == '12'){ $to_date   = date('Y', strtotime('+1 year')).'-'.$week_end;}
             $this->db->where('date between "'.$from_date.'" and "'.$to_date.'"', null);
         }
