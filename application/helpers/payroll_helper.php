@@ -566,7 +566,7 @@ if(!function_exists('CancelPayrollById')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                CancelPayrollById($company);
+                return CancelPayrollById($company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -721,6 +721,7 @@ if(!function_exists('CreateCompanyFlowLink')){
 if(!function_exists('PayPeriods')){
     function PayPeriods($company, $startDate, $force = false){
         //
+
         $url = PayrollURL('PayPeriods', $company['gusto_company_uid'], $startDate);
         //
         if(!$force){
@@ -976,7 +977,7 @@ if(!function_exists('CacheHolder')){
         $_this =&get_instance();
         //
         if($_this->session->userdata($url) && !$force){
-            return $_this->session->userdata($url);
+            // return $_this->session->userdata($url);
         }
         if(!empty($data)){
             $_this->session->set_userdata($url, $data);

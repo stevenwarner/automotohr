@@ -27,7 +27,7 @@
                     <div class="col-sm-12 text-center">
                         <p style="font-size: 70px;" class="mb0"><i class="fa fa-money" aria-hidden="true"></i></p>
                         <p class="csF26 csB7">Regular Payroll (<?=formatDateToDB($period['start_date'], DB_DATE, DATE);?> - <?=formatDateToDB($period['end_date'], DB_DATE, DATE);?>)</p>
-                        <p class="csF18">Please run payroll by <strong><?=GUSTO_PAYROLL_TIME;?></strong> on <strong><?=formatDateToDB($period['payroll']['payroll_deadline'], DB_DATE, DATE);?></strong> to pay your employees for their hard work. They’ll receive their funds on <strong><?=formatDateToDB($payroll['check_date'], DB_DATE, DATE);?></strong>. If you miss this deadline, your employees’ direct deposit will be delayed.</p>
+                        <p class="csF18">Please run payroll by <strong><?=GUSTO_PAYROLL_TIME;?></strong> on <strong><?=formatDateToDB($payroll['payroll_deadline'], DB_DATE, DATE);?></strong> to pay your employees for their hard work. They’ll receive their funds on <strong><?=formatDateToDB($payroll['check_date'], DB_DATE, DATE);?></strong>. If you miss this deadline, your employees’ direct deposit will be delayed.</p>
                         <a href="<?=base_url('payroll/run/'.($payroll['payroll_id']).'');?>" class="btn btn-orange">Run Regular Payroll</a>
                     </div>
                 </div>

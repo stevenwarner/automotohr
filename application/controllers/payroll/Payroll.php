@@ -178,6 +178,7 @@ class Payroll extends CI_Controller
             $this->data['period']['start_date'], 
             $this->data['period']['end_date']
         )['Response'][0];
+        _e($this->data['payroll']['version'], true);
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
@@ -255,8 +256,7 @@ class Payroll extends CI_Controller
         }
         //
         $this->data['payrollId'] = $payrolId;
-        $this->data['payrollVersion'] = $version;
-        
+        $this->data['payrollVersion'] = $this->data['Payroll']['version'];
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
@@ -973,7 +973,7 @@ class Payroll extends CI_Controller
         $request['version'] = $post['payrollVersion'];
         $request['employee_compensations'] = $employeeArray;
         //
-        // $response = UpdatePayrollById($request, $company);
+        $response = UpdatePayrollById($request, $company);
         //
         if(isset($response['errors'])){
             //
