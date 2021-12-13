@@ -843,7 +843,9 @@ class Application_tracking_system extends Public_Controller {
                 $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
                 $user_data['dob'] = $DOB;
             }
+            //
             $notified_by=$this->input->post('notified_by');
+            //
             if(!empty($notified_by)){
                 $user_data['notified_by'] =$notified_by;
             }else{

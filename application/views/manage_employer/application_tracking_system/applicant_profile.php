@@ -261,7 +261,14 @@
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Date of Birth</label>
                                             <p class="dummy-invoice-fields">
-                                                <?php echo !empty($dob) && $dob != 'Not Specified' ? formatDate($dob, 'm-d-Y', DATE) : ''; ?>
+                                                <?php 
+                                                    if(strpos($dob, XSYM) !== false){
+                                                        echo $dob;
+                                                    } else{
+                                                        echo !empty($dob) && $dob != 'Not Specified' ? formatDate($dob, 'm-d-Y', DATE) : ''; 
+                                                    }
+                                                
+                                                ?>
                                             </p>
                                         </div>
                                         <div class="col-md-12 col-xs-12">

@@ -140,9 +140,20 @@
         </div>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Date of Birth</label>
-            <p class="dummy-invoice-fields"><?php
-                if(!isset($employer["dob"]) || $employer["dob"] == '' || $employer["dob"] == '0000-00-00') echo 'Not Specified';
-                else echo $dob;?>
+            <p class="dummy-invoice-fields">
+                <?php
+                    if(strpos($dob, XSYM) !== false){
+                        echo $dob;
+                    } else{
+                        if(!isset($employer["dob"]) || $employer["dob"] == '' || $employer["dob"] == '0000-00-00') {
+                            echo 'Not Specified';
+                        }
+                        else {
+                            echo $dob;
+                        }
+                    }
+                
+                ?>
             </p>
         </div>
     </div>
