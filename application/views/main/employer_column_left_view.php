@@ -265,12 +265,14 @@
 <!--                <figure><i class="fa fa-tasks"></i></figure>Report An Incident-->
 <!--            </a>-->
 <!--        </li>-->
-        <li>
-           <a<?php if (strpos(base_url(uri_string()), site_url('govt_user/')) !== false) { echo 'class="active"'; } ?>
-                href="<?php echo base_url("govt_user"); ?>">
-                <figure><i class="fa fa-user"></i></figure>Government Agent Credentials
-            </a>
-        </li>
+        <?php if(check_access_permissions_for_view($security_details, 'govt_user')) { ?>
+            <li>
+               <a<?php if (strpos(base_url(uri_string()), site_url('govt_user/')) !== false) { echo 'class="active"'; } ?>
+                    href="<?php echo base_url("govt_user"); ?>">
+                    <figure><i class="fa fa-user"></i></figure>Government Agent Credentials
+                </a>
+            </li>
+        <?php  } ?>
 
     </ul>
 </div>
