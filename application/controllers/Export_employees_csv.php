@@ -125,7 +125,7 @@ class Export_employees_csv extends Public_Controller
                                 $export_data[$i]['status'] = 'Archived Employee';
                             }
                             $header = '';
-                            if (($access_level_plus || $pay_plan_flag == 1) && sizeof($checked_boxes) != 0) {
+                            if (($access_level_plus || $pay_plan_flag == 1) && !empty($checked_boxes)  && !empty($checked_boxes[0])) {
                                 foreach ($checked_boxes as $key => $value) {
                                     $header .= $value . ',';
                                     $export_data[$i][$value] = $employee[$value];

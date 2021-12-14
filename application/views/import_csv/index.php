@@ -1,6 +1,7 @@
 <?php 
     $importColumnsArray = [];
     $importColumnsArray[] = 'First Name';
+    $importColumnsArray[] = 'Nick Name';
     $importColumnsArray[] = 'Middle Initial';
     $importColumnsArray[] = 'Last Name';
     $importColumnsArray[] = 'Email';
@@ -41,11 +42,11 @@
     $importColumnsArray[] = 'Termination Reason';
     //
     $importValueArray = '';
-    $importValueArray .= 'Jason, K, Snow, email@abc.com, +1234567892, 123 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2222, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, 03/08/2019, Rehired reason goes here, , ,<br/>';
-    $importValueArray .= 'Albert, J, King, email@abc.com, +1234567892, 133 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2223, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, , , , ,<br/>';
-    $importValueArray .= 'Jason, K, Snow, email@abc.com, +1234567892, 123 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2222, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, 03/08/2019, Rehired reason goes here, , ,<br/>';
-    $importValueArray .= 'Nathan, , Quite, email@abc.com, +1234567892, 133 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2223, 12365478, https://yourwebsite.com/images/profile_picture.png, Employee, Technician, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, , , , ,<br/>';
-    $importValueArray .= 'Jack, , Brown, email@abc.com, +1234567892, 133 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2223, 12365478, https://yourwebsite.com/images/profile_picture.png, Employee, Technician, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Terminated, Part-time, , , 05/09/2020, Termination reason goes here.<br/>';
+    $importValueArray .= 'Jason, josi, K, Snow, email@abc.com, +1234567892, 123 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2222, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, 03/08/2019, Rehired reason goes here, , ,<br/>';
+    $importValueArray .= 'Albert, king, J, King, email@abc.com, +1234567892, 133 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2223, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, , , , ,<br/>';
+    $importValueArray .= 'Jason, , K, Snow, email@abc.com, +1234567892, 123 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2222, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, 03/08/2019, Rehired reason goes here, , ,<br/>';
+    $importValueArray .= 'Nathan, Natu, , Quite, email@abc.com, +1234567892, 133 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2223, 12365478, https://yourwebsite.com/images/profile_picture.png, Employee, Technician, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, , , , ,<br/>';
+    $importValueArray .= 'Jack, Joki, , Brown, email@abc.com, +1234567892, 133 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2223, 12365478, https://yourwebsite.com/images/profile_picture.png, Employee, Technician, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Terminated, Part-time, , , 05/09/2020, Termination reason goes here.<br/>';
 ?>
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -182,6 +183,7 @@
         terminationReasonTitles = <?=json_encode(array('terminationreason', 'terminatedreason'));?>;
         employmentTitles = <?=json_encode(array('employmenttype', 'employment', 'employmentstatus'));?>;
         middlenameTitles = <?=json_encode(array('middlename', 'middleinitial', 'middlenameinitial'));?>;
+        nicknameTitles = <?=json_encode(array('nick_name', 'nickname'));?>;
 
         loader('hide');
         // 
@@ -402,6 +404,8 @@
             // Reset start and length
             i = 0; len = middlenameTitles.length; array = middlenameTitles;
             for(i; i < len; i++) if(index == array[i].trim()) return 'middle_name';
+            i = 0; len = nicknameTitles.length; array = nicknameTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'nick_name';
             return -1;
         }
 

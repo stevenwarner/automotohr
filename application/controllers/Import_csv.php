@@ -407,6 +407,7 @@ class Import_csv extends Public_Controller {
                         unserialize($insertArray['timezone']);
                     }
                     //
+                    $insertArray['nick_name']  = isset($v0['nick_name'])  ? trim(ucwords(strtolower($v0['nick_name'])))  : NULL;
                     $insertArray['last_name']  = isset($v0['last_name'])  ? trim(ucwords(strtolower($v0['last_name'])))  : NULL;
                     $insertArray['PhoneNumber'] = isset($v0['PhoneNumber']) && $v0['PhoneNumber'] != '' && $v0['PhoneNumber'] != null ? trim(preg_replace('/[^0-9+]/', '', $v0['PhoneNumber'])) : '';
                     $insertArray['Location_Address'] = isset($v0['Location_Address']) ? trim($v0['Location_Address']) : '';
