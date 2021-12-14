@@ -20,7 +20,9 @@ if(!empty($Payroll['employee_compensations'])):
             'reimbursements' => [],
             'rate' => $emp['jobs'][0]['rate'],
             'rateUnit' => $emp['jobs'][0]['payment_unit'],
-            'rateByHour' => 0.00
+            'rateByHour' => 0.00,
+            'excluded' => $payrollEmployee['excluded'],
+            'paymentMethod' => $payrollEmployee['payment_method']
         ];
         //
         $tmp['rateByHour'] = number_format((float)ResetRate($tmp['rate'], $tmp['rateUnit']), 2);
@@ -116,17 +118,14 @@ if(!empty($Payroll['employee_compensations'])):
                             <caption></caption>
                             <thead>
                                 <tr>
-                                    <th scope="col" class=""><p class="csF16 mb0 csW text-left vam">Employee</p></th>
-                                    <th scope="col" class=""><p class="csF16 mb0 csW text-right vam">Regular Hours (RH)</p></th>
-                                    <th scope="col" class=""><p class="csF16 mb0 csW text-right vam">Additional Earnings</p></th>
-                                    <th scope="col" class=" csCP"><p class="csF16 mb0 csW text-right vam">Reimbursement&nbsp;<i class="fa fa-info-circle" aria-hidden="true" title="Add multiple one-time reimbursements." placement="top"></i></p></th>
-                                    <th scope="col" class=" csCP"><p class="csF16 mb0 csW text-right vam">Pay By&nbsp;<i class="fa fa-info-circle" aria-hidden="true" title="Payment type; how the employee is going to be paid." placement="top"></i></p></th>
-                                    <th scope="col" class=""><p class="csF16 mb0 csW text-right vam">Gross Pay (GP)</p></th>
-                                    <th scope="col" class=""><p class="csF16 mb0 csW text-right vam">Actions</p></th>
+                                    <th scope="col" class="col-md-3"><p class="csF16 mb0 csW text-left vam">Employee</p></th>
+                                    <th scope="col" class="col-md-2"><p class="csF16 mb0 csW text-right vam">Regular Hours (RH)</p></th>
+                                    <th scope="col" class="col-md-2"><p class="csF16 mb0 csW text-right vam">Additional Earnings</p></th>
+                                    <th scope="col" class="col-md-2"><p class="csF16 mb0 csW text-right vam">Gross Pay (GP)</p></th>
+                                    <th scope="col" class="col-md-1"><p class="csF16 mb0 csW text-right vam">Actions</p></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
@@ -517,6 +516,16 @@ if(!empty($Payroll['employee_compensations'])):
          * Click
          */
         $(document).on('keyup', '.jsPayrollReimbursementRowAmount', CalculateReimbursment);
+
+        /**
+         * Skip or Add payroll
+         */
+        $(document).on('click', '.jsPayrollExcludeToggle', ToggleExclude);
+        
+        /**
+         * Payment type
+         */
+        $(document).on('change', '.jsPayrollPaymentType', UpdatePaymentType);
 
         /**
          * Reimbursement Row Add
@@ -1113,175 +1122,184 @@ if(!empty($Payroll['employee_compensations'])):
             tr +='<tr class="jsPayrollRowId" data-id="'+(payrollEmployee.employeeId)+'">';
             tr +='    <td class="vam">';
             tr +='        <strong>'+(payrollEmployee.lastName+', '+payrollEmployee.firstName)+'</strong><br/>';
-            tr +='        <p class="ma10">'+(numberFormat(payrollEmployee.rate)+' /'+(payrollEmployee.rateUnit.toLowerCase()))+'</p>';
+            tr +='        <p class="ma10">$'+(numberFormat(payrollEmployee.rate)+' /'+(payrollEmployee.rateUnit.toLowerCase()))+'</p>';
             tr +='        <a class="ma10 csFC2" href="javascript:void(0)"><i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Edit Personal Note</a>';
             tr +='    </td>';
-            tr +='    <td class="vam text-right">';
-            tr +='        <!-- Hours Row -->';
-            tr +='        <div class="row">';
-            tr +='            <div class="col-sm-12 jsRHText jsToggleRow" data-key="RH">';
-            tr +='                <span class="csFC2 csB7 csCP">';
-            tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditRHValue">0.00</span>&nbsp;(RH)';
-            tr +='                </span>';
-            tr +='            </div>';
-            tr +='            <div class="col-sm-12 jsRHData dn">';
-            tr +='                <div class="input-group">';
-            tr +='                    <div class="input-group-addon" title="Regular Hours" placement="true">RH</div>';
-            tr +='                    <input type="text" class="form-control jsPayrollRHInput" placeholder="40.00"/>';
-            tr +='                    <div class="input-group-addon csBG1 csCP csW jsPayrollRHSaveBTN" title="Save" placement="true"><i class="fa fa-check" aria-hidden="true"></i></div>';
-            tr +='                    <div class="input-group-addon csBG3 csCP csW jsToggleRow" data-key="RH" title="Cancel" placement="true"><i class="fa fa-times" aria-hidden="true"></i></div>';
-            tr +='                </div>';
-            tr +='                <p class="csF14 text-left ma10">The employee worked hours.</p>';
-            tr +='            </div>';
-            tr +='        </div>';
-            if(payrollEmployee.hourlyCompensations['overtime'] !== undefined){
-            tr +='        <!-- Overtime Row -->';
-            tr +='        <div class="row ma10">';
-            tr +='            <div class="col-sm-12 jsOTText jsToggleRow" data-key="OT">';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditOTE">';
-            tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditOTValue">0.00</span>&nbsp;(OT)';
-            tr +='                </span>';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditOTP">';
-            tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Overtime</span>&nbsp;(OT)';
-            tr +='                </span>';
-            tr +='            </div>';
-            tr +='            <div class="col-sm-12 jsOTData dn">';
-            tr +='                <div class="input-group">';
-            tr +='                    <div class="input-group-addon" title="Overtime" placement="true">OT</div>';
-            tr +='                    <input type="text" class="form-control jsPayrollOTInput" placeholder="0.00"/>';
-            tr +='                    <div class="input-group-addon csBG1 csCP csW jsPayrollOTSaveBTN" title="Save" placement="true"><i class="fa fa-check" aria-hidden="true"></i></div>';
-            tr +='                    <div class="input-group-addon csBG3 csCP csW jsToggleRow" data-key="OT" title="Cancel" placement="true"><i class="fa fa-times" aria-hidden="true"></i></div>';
-            tr +='                </div>';
-            tr +='                <p class="csF14 text-left ma10">The amount multiplied by the base rate to calculate total compensation per hour worked which is '+((payrollEmployee.hourlyCompensations['overtime']['compensation_multiplier'] || '0').toFixed(2))+'.</p>';
-            tr +='            </div>';
-            tr +='        </div>';
+            if(payrollEmployee.excluded){
+                tr +='    <td class="vam text-right" colspan="4">';
+                tr +='        <div class="row">';
+                tr +='            <div class="col-sm-12 jsToggleRow" data-key="EP">';
+                tr +='                <span class="csFC2 csB7 csCP">';
+                tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span class="jsPayrollExcludeToggle">Enter Payment</span>';
+                tr +='                </span>';
+                tr +='            </div>';
+                tr +='        </div>';
+                tr +='    </td>';
+            } else{
+
+                tr +='    <td class="vam text-right">';
+                tr +='        <!-- Hours Row -->';
+                tr +='        <div class="row">';
+                tr +='            <div class="col-sm-12 jsRHText jsToggleRow" data-key="RH">';
+                tr +='                <span class="csFC2 csB7 csCP">';
+                tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditRHValue">0.00</span>&nbsp;(RH)';
+                tr +='                </span>';
+                tr +='            </div>';
+                tr +='            <div class="col-sm-12 jsRHData dn">';
+                tr +='                <div class="input-group">';
+                tr +='                    <div class="input-group-addon" title="Regular Hours" placement="true">RH</div>';
+                tr +='                    <input type="text" class="form-control jsPayrollRHInput" placeholder="40.00"/>';
+                tr +='                    <div class="input-group-addon csBG1 csCP csW jsPayrollRHSaveBTN" title="Save" placement="true"><i class="fa fa-check" aria-hidden="true"></i></div>';
+                tr +='                    <div class="input-group-addon csBG3 csCP csW jsToggleRow" data-key="RH" title="Cancel" placement="true"><i class="fa fa-times" aria-hidden="true"></i></div>';
+                tr +='                </div>';
+                tr +='                <p class="csF14 text-left ma10">The employee worked hours.</p>';
+                tr +='            </div>';
+                tr +='        </div>';
+                if(payrollEmployee.hourlyCompensations['overtime'] !== undefined){
+                tr +='        <!-- Overtime Row -->';
+                tr +='        <div class="row ma10">';
+                tr +='            <div class="col-sm-12 jsOTText jsToggleRow" data-key="OT">';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditOTE">';
+                tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditOTValue">0.00</span>&nbsp;(OT)';
+                tr +='                </span>';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditOTP">';
+                tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Overtime</span>&nbsp;(OT)';
+                tr +='                </span>';
+                tr +='            </div>';
+                tr +='            <div class="col-sm-12 jsOTData dn">';
+                tr +='                <div class="input-group">';
+                tr +='                    <div class="input-group-addon" title="Overtime" placement="true">OT</div>';
+                tr +='                    <input type="text" class="form-control jsPayrollOTInput" placeholder="0.00"/>';
+                tr +='                    <div class="input-group-addon csBG1 csCP csW jsPayrollOTSaveBTN" title="Save" placement="true"><i class="fa fa-check" aria-hidden="true"></i></div>';
+                tr +='                    <div class="input-group-addon csBG3 csCP csW jsToggleRow" data-key="OT" title="Cancel" placement="true"><i class="fa fa-times" aria-hidden="true"></i></div>';
+                tr +='                </div>';
+                tr +='                <p class="csF14 text-left ma10">The amount multiplied by the base rate to calculate total compensation per hour worked which is '+((payrollEmployee.hourlyCompensations['overtime']['compensation_multiplier'] || '0').toFixed(2))+'.</p>';
+                tr +='            </div>';
+                tr +='        </div>';
+                }
+                if(payrollEmployee.hourlyCompensations['double-overtime'] !== undefined){
+                tr +='        <!-- Double Overtime Row -->';
+                tr +='        <div class="row ma10">';
+                tr +='            <div class="col-sm-12 jsDOTText jsToggleRow" data-key="DOT">';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditDOTE">';
+                tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditDOTValue">0.00</span>&nbsp;(DOT)';
+                tr +='                </span>';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditDOTP">';
+                tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Double Overtime</span>&nbsp;(DOT)';
+                tr +='                </span>';
+                tr +='            </div>';
+                tr +='            <div class="col-sm-12 jsDOTData dn">';
+                tr +='                <div class="input-group">';
+                tr +='                    <div class="input-group-addon" title="Double Overtime" placement="true">DOT</div>';
+                tr +='                    <input type="text" class="form-control jsPayrollDOTInput" placeholder="0.00"/>';
+                tr +='                    <div class="input-group-addon csBG1 csCP csW jsPayrollDOTSaveBTN" title="Save" placement="true"><i class="fa fa-check" aria-hidden="true"></i></div>';
+                tr +='                    <div class="input-group-addon csBG3 csCP csW jsToggleRow" data-key="DOT" title="Cancel" placement="true"><i class="fa fa-times" aria-hidden="true"></i></div>';
+                tr +='                </div>';
+                tr +='                <p class="csF14 text-left ma10">The amount multiplied by the base rate to calculate total compensation per hour worked which is '+((payrollEmployee.hourlyCompensations['double-overtime']['compensation_multiplier'] || '0').toFixed(2))+'.</p>';
+                tr +='            </div>';
+                tr +='        </div>';
+                }
+                tr +='    </td>';
+                tr +='    <td class="vam text-right">';
+                tr +='        <!-- Bonus -->';
+                tr +='        <div class="row ma10">';
+                tr +='            <div class="col-sm-12 jsBText jsToggleRow" data-key="B">';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditBE">';
+                tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditBValue">0.00</span>&nbsp;(B)';
+                tr +='                </span>';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditBP">';
+                tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Bonus</span>&nbsp;(B)';
+                tr +='                </span>';
+                tr +='            </div>';
+                tr +='            <div class="col-sm-12 jsBData dn">';
+                tr +='                <div class="input-group">';
+                tr +='                    <div class="input-group-addon" title="Bonus" placement="true">$</div>';
+                tr +='                    <input type="text" class="form-control jsPayrollBInput" placeholder="0.00"/>';
+                tr +='                    <div class="input-group-addon csBG1 csCP csW jsPayrollBSaveBTN" title="Save" placement="true"><i class="fa fa-check" aria-hidden="true"></i></div>';
+                tr +='                    <div class="input-group-addon csBG3 csCP csW jsToggleRow" data-key="B" title="Cancel" placement="true"><i class="fa fa-times" aria-hidden="true"></i></div>';
+                tr +='                </div>';
+                tr +='                <p class="csF14 text-left ma10">The bonus amount for the employee.</p>';
+                tr +='            </div>';
+                tr +='        </div>';
+                tr +='        <!-- Cash Tips -->';
+                tr +='        <div class="row ma10">';
+                tr +='            <div class="col-sm-12 jsCTText jsToggleRow" data-key="CT">';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditCTE">';
+                tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditCTValue">0.00</span>&nbsp;(CT)';
+                tr +='                </span>';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditCTP">';
+                tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Cash Deposit</span>&nbsp;(CT)';
+                tr +='                </span>';
+                tr +='            </div>';
+                tr +='            <div class="col-sm-12 jsCTData dn">';
+                tr +='                <div class="input-group">';
+                tr +='                    <div class="input-group-addon" title="Cash Tips" placement="true">$</div>';
+                tr +='                    <input type="text" class="form-control jsPayrollCTInput" placeholder="0.00"/>';
+                tr +='                    <div class="input-group-addon csBG1 csCP csW jsPayrollCTSaveBTN" title="Save" placement="true"><i class="fa fa-check" aria-hidden="true"></i></div>';
+                tr +='                    <div class="input-group-addon csBG3 csCP csW jsToggleRow" data-key="CT" title="Cancel" placement="true"><i class="fa fa-times" aria-hidden="true"></i></div>';
+                tr +='                </div>';
+                tr +='                <p class="csF14 text-left ma10">The cash tips for the employee.</p>';
+                tr +='            </div>';
+                tr +='        </div>';
+                tr +='        <!-- Other Earnings -->';
+                tr +='        <div class="row ma10">';
+                tr +='            <div class="col-sm-12">';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditOEE jsPayrollRowEditOE">';
+                tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditOEValue">0.00</span>&nbsp;(OE)';
+                tr +='                </span>';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditOEP">';
+                tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Other Earnings</span>&nbsp;(OE)';
+                tr +='                </span>';
+                tr +='            </div>';
+                tr +='        </div>';
+                tr +='    </td>';
+                tr +='    <td class="vam text-right">';
+                tr +='        <!-- Gross Pay -->';
+                tr +='        <div class="row ma10">';
+                tr +='            <div class="col-sm-12">';
+                tr +='                <strong class="csFC4 jsPayrollRowEditGPValue">';
+                tr +='                    $0.00';
+                tr +='                </strong>';
+                tr +='            </div>';
+                tr +='        </div>';
+                tr +='        <!-- Reimbursements -->';
+                tr +='        <div class="row ma10">';
+                tr +='            <div class="col-sm-12">';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditRE">';
+                tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditRValue">0.00</span>';
+                tr +='                </span>';
+                tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditRP jsPayrollRowEditR">';
+                tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Reimbursement</span>';
+                tr +='                </span>';
+                tr +='            </div>';
+                tr +='        </div>';
+                tr +='        <!-- Pay type -->';
+                tr +='        <div class="row ma10">';
+                tr +='            <div class="col-sm-12">';
+                tr +='                <strong class="csFC4">';
+                tr +='                   <select class="jsPayrollPaymentType"><option '+(payrollEmployee.paymentMethod != 'Check' ? 'selected' : '')+' value="Direct Deposit">Direct Deposit</option><option '+(payrollEmployee.paymentMethod == 'Check' ? 'selected' : '')+' value="Check">Check</option></select>';
+                tr +='                </strong>';
+                tr +='            </div>';
+                tr +='        </div>';
+                tr +='    </td>';
+                tr +='    <td class="vam text-right">';
+                tr +='       <div class="dropdown ml10">';
+                tr +='           <button';
+                tr +='             class="btn btn-default dropdown-toggle"';
+                tr +='             type="button"';
+                tr +='             id="dd_'+(payrollEmployee.employeeId)+'"';
+                tr +='             data-toggle="dropdown"';
+                tr +='             aria-haspopup="true"';
+                tr +='             aria-expanded="false">';
+                tr +='                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>';
+                tr +='           </button>';
+                tr +='           <ul class="dropdown-menu pull-right" aria-labelledby="dd_'+(payrollEmployee.employeeId)+'">';
+                tr +='               <li><a href="javascript:void(0)" class="jsEditDeductions">Edit deductions</a></li>';
+                tr +='               <li><a href="javascript:void(0)" class="jsPayrollExcludeToggle">Skip payroll</a></li>';
+                tr +='           </ul>';
+                tr +='       </div>';
+                tr +='    </td>';
             }
-            if(payrollEmployee.hourlyCompensations['double-overtime'] !== undefined){
-            tr +='        <!-- Double Overtime Row -->';
-            tr +='        <div class="row ma10">';
-            tr +='            <div class="col-sm-12 jsDOTText jsToggleRow" data-key="DOT">';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditDOTE">';
-            tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditDOTValue">0.00</span>&nbsp;(DOT)';
-            tr +='                </span>';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditDOTP">';
-            tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Double Overtime</span>&nbsp;(DOT)';
-            tr +='                </span>';
-            tr +='            </div>';
-            tr +='            <div class="col-sm-12 jsDOTData dn">';
-            tr +='                <div class="input-group">';
-            tr +='                    <div class="input-group-addon" title="Double Overtime" placement="true">DOT</div>';
-            tr +='                    <input type="text" class="form-control jsPayrollDOTInput" placeholder="0.00"/>';
-            tr +='                    <div class="input-group-addon csBG1 csCP csW jsPayrollDOTSaveBTN" title="Save" placement="true"><i class="fa fa-check" aria-hidden="true"></i></div>';
-            tr +='                    <div class="input-group-addon csBG3 csCP csW jsToggleRow" data-key="DOT" title="Cancel" placement="true"><i class="fa fa-times" aria-hidden="true"></i></div>';
-            tr +='                </div>';
-            tr +='                <p class="csF14 text-left ma10">The amount multiplied by the base rate to calculate total compensation per hour worked which is '+((payrollEmployee.hourlyCompensations['double-overtime']['compensation_multiplier'] || '0').toFixed(2))+'.</p>';
-            tr +='            </div>';
-            tr +='        </div>';
-            }
-            tr +='    </td>';
-            tr +='    <td class="vam text-right">';
-            tr +='        <!-- Bonus -->';
-            tr +='        <div class="row ma10">';
-            tr +='            <div class="col-sm-12 jsBText jsToggleRow" data-key="B">';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditBE">';
-            tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditBValue">0.00</span>&nbsp;(B)';
-            tr +='                </span>';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditBP">';
-            tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Bonus</span>&nbsp;(B)';
-            tr +='                </span>';
-            tr +='            </div>';
-            tr +='            <div class="col-sm-12 jsBData dn">';
-            tr +='                <div class="input-group">';
-            tr +='                    <div class="input-group-addon" title="Bonus" placement="true">$</div>';
-            tr +='                    <input type="text" class="form-control jsPayrollBInput" placeholder="0.00"/>';
-            tr +='                    <div class="input-group-addon csBG1 csCP csW jsPayrollBSaveBTN" title="Save" placement="true"><i class="fa fa-check" aria-hidden="true"></i></div>';
-            tr +='                    <div class="input-group-addon csBG3 csCP csW jsToggleRow" data-key="B" title="Cancel" placement="true"><i class="fa fa-times" aria-hidden="true"></i></div>';
-            tr +='                </div>';
-            tr +='                <p class="csF14 text-left ma10">The bonus amount for the employee.</p>';
-            tr +='            </div>';
-            tr +='        </div>';
-            tr +='        <!-- Cash Tips -->';
-            tr +='        <div class="row ma10">';
-            tr +='            <div class="col-sm-12 jsCTText jsToggleRow" data-key="CT">';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditCTE">';
-            tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditCTValue">0.00</span>&nbsp;(CT)';
-            tr +='                </span>';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditCTP">';
-            tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Cash Deposit</span>&nbsp;(CT)';
-            tr +='                </span>';
-            tr +='            </div>';
-            tr +='            <div class="col-sm-12 jsCTData dn">';
-            tr +='                <div class="input-group">';
-            tr +='                    <div class="input-group-addon" title="Cash Tips" placement="true">$</div>';
-            tr +='                    <input type="text" class="form-control jsPayrollCTInput" placeholder="0.00"/>';
-            tr +='                    <div class="input-group-addon csBG1 csCP csW jsPayrollCTSaveBTN" title="Save" placement="true"><i class="fa fa-check" aria-hidden="true"></i></div>';
-            tr +='                    <div class="input-group-addon csBG3 csCP csW jsToggleRow" data-key="CT" title="Cancel" placement="true"><i class="fa fa-times" aria-hidden="true"></i></div>';
-            tr +='                </div>';
-            tr +='                <p class="csF14 text-left ma10">The cash tips for the employee.</p>';
-            tr +='            </div>';
-            tr +='        </div>';
-            tr +='        <!-- Other Earnings -->';
-            tr +='        <div class="row ma10">';
-            tr +='            <div class="col-sm-12">';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditOEE jsPayrollRowEditOE">';
-            tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditOEValue">0.00</span>&nbsp;(OE)';
-            tr +='                </span>';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditOEP">';
-            tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Other Earnings</span>&nbsp;(OE)';
-            tr +='                </span>';
-            tr +='            </div>';
-            tr +='        </div>';
-            tr +='    </td>';
-            tr +='    <td class="vam text-right">';
-            tr +='        <!-- Reimbursements -->';
-            tr +='        <div class="row ma10">';
-            tr +='            <div class="col-sm-12">';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditRE">';
-            tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditRValue">0.00</span>';
-            tr +='                </span>';
-            tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditRP jsPayrollRowEditR ">';
-            tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Reimbursement</span>';
-            tr +='                </span>';
-            tr +='            </div>';
-            tr +='        </div>';
-            tr +='    </td>';
-            tr +='    <td class="vam text-right">';
-            tr +='        <!-- Pay type -->';
-            tr +='        <div class="row ma10">';
-            tr +='            <div class="col-sm-12">';
-            tr +='                <strong class="csFC4">';
-            tr +='                    Direct Deposit';
-            tr +='                </strong>';
-            tr +='            </div>';
-            tr +='        </div>';
-            tr +='    </td>';
-            tr +='    <td class="vam text-right">';
-            tr +='        <!-- Gross Pay -->';
-            tr +='        <div class="row ma10">';
-            tr +='            <div class="col-sm-12">';
-            tr +='                <strong class="csFC4 jsPayrollRowEditGPValue">';
-            tr +='                    $0.00';
-            tr +='                </strong>';
-            tr +='            </div>';
-            tr +='        </div>';
-            tr +='    </td>';
-            tr +='    <td class="vam text-right">';
-            tr +='                <div class="dropdown ml10">';
-            tr +='                    <button';
-            tr +='                      class="btn btn-default dropdown-toggle"';
-            tr +='                      type="button"';
-            tr +='                      id="dd_'+(payrollEmployee.employeeId)+'"';
-            tr +='                      data-toggle="dropdown"';
-            tr +='                      aria-haspopup="true"';
-            tr +='                      aria-expanded="false">';
-            tr +='                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>';
-            tr +='                    </button>';
-            tr +='                    <ul class="dropdown-menu pull-right" aria-labelledby="dd_'+(payrollEmployee.employeeId)+'">';
-            tr +='                        <li><a href="javascript:void(0)" class="jsEditDeductions">Edit deductions</a></li>';
-            tr +='                        <li><a href="javascript:void(0)" class="jsSkipPayroll">Skip payroll</a></li>';
-            tr +='                    </ul>';
-            tr +='                </div>';
-            tr +='    </td>';
             tr +='</tr>';
 
             //
@@ -1304,6 +1322,34 @@ if(!empty($Payroll['employee_compensations'])):
             //
             $('.jsPayrollReimbursementTotalAmount').text('$'+(numberFormat(total.toFixed(2))));
 
+        }
+
+        //
+        function ToggleExclude(){
+            //
+            const employeeId = $(this).closest('.jsPayrollRowId').data('id');
+            //
+            ml(true, 'jsPayrollEditLoader'+employeeId)
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            payrollOBJ[employeeId]['excluded'] = !payrollOBJ[employeeId]['excluded'];
+            //
+            MakeView();
+        }
+        
+        //
+        function UpdatePaymentType(){
+            //
+            const employeeId = $(this).closest('.jsPayrollRowId').data('id');
+            //
+            ml(true, 'jsPayrollEditLoader'+employeeId)
+            //
+            const boxREF = $(this).closest('.jsPayrollRowId');
+            //
+            payrollOBJ[employeeId]['paymentMethod'] = payrollOBJ[employeeId]['paymentMethod'] == 'Direct Deposit' ? 'Check' : 'Direct Deposit';
+            //
+            MakeView();
         }
 
         //
@@ -1398,10 +1444,10 @@ if(!empty($Payroll['employee_compensations'])):
             payrollEmployee.paycheckTips = payrollEmployee.fixedCompensations['paycheck-tips'] !== undefined ? parseFloat(payrollEmployee.fixedCompensations['paycheck-tips']['amount']) : 0.00;
 
             // Let's set the regular hours
-            boxREF.find('.jsPayrollRowEditRHValue').text('$'+(payrollEmployee.regularHours * payrollEmployee.rateByHour).toFixed(2));
+            boxREF.find('.jsPayrollRowEditRHValue').text(payrollEmployee.regularHours.toFixed(2));
             boxREF.find('.jsPayrollRHInput').val(payrollEmployee.regularHours.toFixed(2));
             // Let's set the overtime
-            boxREF.find('.jsPayrollRowEditOTValue').text("$"+ (payrollEmployee.overtime * payrollEmployee.rateByHour * payrollEmployee.overtimeMultiplier).toFixed(2));
+            boxREF.find('.jsPayrollRowEditOTValue').text(payrollEmployee.overtime.toFixed(2));
             boxREF.find('.jsPayrollOTInput').val(payrollEmployee.overtime.toFixed(2));
             //
             if(parseInt(payrollEmployee.overtime) != 0){
@@ -1413,7 +1459,7 @@ if(!empty($Payroll['employee_compensations'])):
             }
 
             // Let's set the double overtime
-            boxREF.find('.jsPayrollRowEditDOTValue').text("$"+ (payrollEmployee.doubleOvertime * payrollEmployee.rateByHour * payrollEmployee.doubleOvertimeMultiplier).toFixed(2));
+            boxREF.find('.jsPayrollRowEditDOTValue').text(payrollEmployee.doubleOvertime.toFixed(2));
             boxREF.find('.jsPayrollDOTInput').val(payrollEmployee.doubleOvertime.toFixed(2));
             //
             if(parseInt(payrollEmployee.doubleOvertime) != 0){
@@ -1465,7 +1511,7 @@ if(!empty($Payroll['employee_compensations'])):
             }
 
             // Let's set the reimbursements
-            boxREF.find('.jsPayrollRowEditRValue').text("$"+ payrollEmployee.reimbursement.toFixed(2));
+            boxREF.find('.jsPayrollRowEditRValue').text("$"+ payrollEmployee.reimbursement.toFixed(2)+' (R)');
             boxREF.find('.jsPayrollRInput').val(payrollEmployee.reimbursement.toFixed(2));
             //
             if(parseInt(payrollEmployee.reimbursement) != 0){

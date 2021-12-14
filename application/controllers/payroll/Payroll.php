@@ -178,7 +178,6 @@ class Payroll extends CI_Controller
             $this->data['period']['start_date'], 
             $this->data['period']['end_date']
         )['Response'][0];
-        _e($this->data['payroll']['version'], true);
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
@@ -206,6 +205,7 @@ class Payroll extends CI_Controller
         }
         //
         $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'], $this->data['step'])['Response'];
+        _e( $this->data['Payroll'], true, true);
         //
         $this->pm->CheckAndInsertPayroll(
             $this->data['companyId'],
@@ -224,6 +224,10 @@ class Payroll extends CI_Controller
                 $fixed_compensations = [];
                 $hourly_compensations = [];
                 $paid_time_off = [];
+                //
+                if(!isset($payroll['payment_method'])){
+                    $this->data['Payroll']['employee_compensations'][$index]['payment_method'] = 'Direct Deposit';
+                }
                 //
                 if(!empty($payroll['fixed_compensations'])){
                     foreach($payroll['fixed_compensations'] as $v){
@@ -937,6 +941,10 @@ class Payroll extends CI_Controller
             // Temporary Array
             $ta = [];
             $ta['employee_id'] = $payroll['employeeId'];
+            $ta['excluded'] = $payroll['excluded'];
+            if(isset($payroll['paymentMethod'])){
+                $ta['payment_method'] = $payroll['paymentMethod'];
+            }
             $ta['fixed_compensations'] = array_values($payroll['fixedCompensations']);
             $ta['hourly_compensations'] = array_values($payroll['hourlyCompensations']);
             $ta['paid_time_off'] = isset($payroll['paidTimeOff']) ? array_values($payroll['paidTimeOff']) : [];

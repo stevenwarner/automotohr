@@ -6,6 +6,10 @@ if(!empty($Payroll['employee_compensations'])):
     //
     foreach($Payroll['employee_compensations'] as $payrollEmployee):
         //
+        if($payrollEmployee['excluded']){
+            continue;
+        }
+        //
         $emp = $PayrollEmployees[$payrollEmployee['employee_id']];
         //
         $tmp = [
@@ -19,7 +23,8 @@ if(!empty($Payroll['employee_compensations'])):
             'reimbursements' => [],
             'rate' => $emp['jobs'][0]['rate'],
             'rateUnit' => $emp['jobs'][0]['payment_unit'],
-            'rateByHour' => 0.00
+            'rateByHour' => 0.00,
+            'excluded' => false
         ];
         //
         $tmp['rateByHour'] = number_format((float)ResetRate($tmp['rate'], $tmp['rateUnit']), 2);
@@ -63,8 +68,6 @@ if(!empty($Payroll['employee_compensations'])):
         }
         //
         $payrollOBJ[$payrollEmployee['employee_id']] = $tmp;
-        // echo "<pre>";
-        // print_r($tmp);
     endforeach;
 endif;
 ?>
@@ -116,9 +119,9 @@ endif;
                     <caption></caption>
                     <thead>
                         <tr>
-                            <th scope="col" class="csF16 csB7 csBG4 csW">Employee</th>
-                            <th scope="col" class="csF16 csB7 csBG4 csW text-right">Paid Time Off Hours (PTO)</th>
-                            <th scope="col" class="csF16 csB7 csBG4 csW text-right">Additional Time Off</th>
+                            <th scope="col" class="col-sm-4 csF16 csB7 csBG4 csW">Employee</th>
+                            <th scope="col" class="col-sm-2 csF16 csB7 csBG4 csW text-right">Paid Time Off (PTO)</th>
+                            <th scope="col" class="col-sm-2 csF16 csB7 csBG4 csW text-right">Total Time Off</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -135,7 +138,7 @@ endif;
                                     </div>
                                 </td>
                                 <td class="vam text-right">
-                                    <strong class="csFC4 csF16"><span id="row_id_<?php echo $key; ?>"><?php echo $obj["paid_time_off_amount"]; ?></span> $</strong>
+                                    <strong class="csFC4 csF16"><span id="row_id_<?php echo $key; ?>">$<?php echo $obj["paid_time_off_amount"]; ?></span> </strong>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -146,9 +149,6 @@ endif;
                     <div class="col-sm-12 text-right">
                         <!--  -->
                         <div class="csPB">
-                            <button class="btn btn-orange jsPayrollSaveBTN" data-type="save_only">
-                                <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Save
-                            </button>
                             <button class="btn btn-orange jsPayrollSaveBTN" data-type="next">
                                 <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp;Save & Next
                             </button>
@@ -184,7 +184,9 @@ endif;
             }
         ).done(function(resp){
             //
-            console.log(resp);
+            window.location.href = window.location.href.replace('step=2', 'step=3')
+
+            //
             ml(false, 'main_loader');
         });
     };
@@ -195,11 +197,11 @@ endif;
 
         if (amount != '' && !/^[0-9.]+$/.test(amount)) {
             alertify.alert("Note", "Only number are accepted");
-        } else if (amount == '0') {
-            alertify.alert("Note", "Please enter value greater than 0.");
+        } else if (amount < '0') {
+            alertify.alert("Note", "Please enter value greater than or equals to 0.");
         } else {
             //
-            $("#row_id_"+row_id).text(amount);
+            $("#row_id_"+row_id).text('$'+amount);
 
             $.each(payrollOBJ, function(i, v){
                 //
