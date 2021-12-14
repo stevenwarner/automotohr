@@ -104,7 +104,7 @@
                                                     <?php echo form_error('first_name'); ?>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
-                                                    <label>Nick Name:<span class="staric">*</span></label>
+                                                    <label>Nick Name:</label>
                                                     <input type="text" class="invoice-fields" name="nick_name"
                                                         id="nick_name"
                                                         value="<?php if(isset($employer['nick_name'])) { echo $employer['nick_name']; } ?>">

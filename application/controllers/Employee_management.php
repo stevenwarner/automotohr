@@ -1562,8 +1562,8 @@ class Employee_management extends Public_Controller {
                         $full_emp_app['TextBoxDOB'] = $this->input->post('DOB');
                     }
                     //
-                    if (isset($_POST['nick_name']) && !empty($_POST['nick_name'])) {
-                        $data_to_insert['nick_name'] = $this->input->post('nick_name');
+                    if (isset($_POST['nick_name'])) {
+                        $data_to_insert['nick_name'] = $this->input->post('nick_name', true);
                     }
                     //
                     if (isset($_POST['middle_name']) && !empty($_POST['middle_name'])) {

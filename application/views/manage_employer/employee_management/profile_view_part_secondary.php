@@ -65,15 +65,19 @@
                 <div class="panel-body collapse" id="collapseExample<?=$me['sid'];?>">
                     <!--  -->
                     <div class="row">
-                        <div class="col-md-4 col-xs-12">
+                        <div class="col-md-3 col-xs-12">
                             <label class="csF16">First Name</label>
                             <p class="dummy-invoice-fields"><?=GetVal($me["first_name"]); ?></p>
                         </div>
-                        <div class="col-md-4 col-xs-12">
+                        <div class="col-md-3 col-xs-12">
+                            <label class="csF16">Nick Name</label>
+                            <p class="dummy-invoice-fields"><?=isset($me["nick_name"]) ? GetVal($me["nick_name"]) : 'Not Specified'; ?></p>
+                        </div>
+                        <div class="col-md-3 col-xs-12">
                             <label class="csF16">Middle Name / Initial</label>
                             <p class="dummy-invoice-fields"><?=GetVal($me["middle_name"]); ?></p>
                         </div>
-                        <div class="col-md-4 col-xs-12">
+                        <div class="col-md-3 col-xs-12">
                             <label class="csF16">Last Name</label>
                             <p class="dummy-invoice-fields"><?=GetVal($me["last_name"]); ?></p>
                         </div>
