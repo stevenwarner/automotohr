@@ -150,6 +150,11 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                     <label class="control control--checkbox">Video Url<input type="checkbox" name="video_url" class="check_it" value="video_type"><div class="control__indicator"></div></label>
                                                 </div>
                                             </div>
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Nick Name<input type="checkbox" name="nick_name" class="check_it" value="nick_name"><div class="control__indicator"></div></label>
+                                                </div>
+                                            </div>
                                       </div>
                                    </div>
                                </div>

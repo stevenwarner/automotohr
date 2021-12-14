@@ -96,14 +96,21 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
                                                     <label>First Name:<span class="staric">*</span></label>
                                                     <input type="text" class="invoice-fields" name="first_name"
                                                         id="first_name"
                                                         value="<?php if(isset($employer['first_name'])) { echo $employer['first_name']; } ?>">
                                                     <?php echo form_error('first_name'); ?>
                                                 </div>
-                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
+                                                    <label>Nick Name:<span class="staric">*</span></label>
+                                                    <input type="text" class="invoice-fields" name="nick_name"
+                                                        id="nick_name"
+                                                        value="<?php if(isset($employer['nick_name'])) { echo $employer['nick_name']; } ?>">
+                                                    <?php echo form_error('nick_name'); ?>
+                                                </div>
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
                                                     <label>Middle name / initial:</label>
                                                     <input
                                                         class="invoice-fields  <?php if (form_error('middle_name') !== "") { ?> error <?php } ?>"
@@ -111,7 +118,7 @@
                                                         type="text" name="middle_name">
                                                     <?php echo form_error('middle_name'); ?>
                                                 </div>
-                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 form-group">
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
                                                     <label>last name:<samp class="red"> * </samp></label>
                                                     <input
                                                         class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>"

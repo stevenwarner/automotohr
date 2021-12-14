@@ -10705,7 +10705,12 @@ class Timeoff_model extends CI_Model
             //
             $durationInHours = $durationInMinutes / 60;
             //
-            $balance['RemainingTime'] = get_array_from_minutes($t['RemainingTime'], $durationInHours, $slug)['text'];
+            if (!empty($slug)) {
+                $balance['RemainingTime'] = get_array_from_minutes($t['RemainingTime'], $durationInHours, $slug)['text'];
+            } else {
+                $balance['RemainingTime'] = '';
+            }
+            
             $balance['EmployementStatus'] = $t['EmployementStatus'];
             $balance['IsUnlimited'] = $t['IsUnlimited'];
             $balance['EmployeeJoinedAt'] = $t['EmployeeJoinedAt'];

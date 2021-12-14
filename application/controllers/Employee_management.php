@@ -1342,7 +1342,9 @@ class Employee_management extends Public_Controller {
                     $this->load->model('timeoff_model');
                     $this->load->helper('timeoff');
                     //
-                    $data['policies'] = $this->timeoff_model->getEmployeePoliciesByEmployeeId($company_id, $employer_id);
+                    if (checkIfAppIsEnabled('timeoff')) { 
+                        $data['policies'] = $this->timeoff_model->getEmployeePoliciesByEmployeeId($company_id, $employer_id);
+                    }
                     // Check if the employees has merges
                     $data['MergeData'] = $this->employee_model->GetMergedEmployees($employer_id);
                     $this->load->view('main/header', $data);
@@ -1560,6 +1562,10 @@ class Employee_management extends Public_Controller {
                         $full_emp_app['TextBoxDOB'] = $this->input->post('DOB');
                     }
                     //
+                    if (isset($_POST['nick_name']) && !empty($_POST['nick_name'])) {
+                        $data_to_insert['nick_name'] = $this->input->post('nick_name');
+                    }
+                    //
                     if (isset($_POST['middle_name']) && !empty($_POST['middle_name'])) {
                         $full_emp_app['TextBoxNameMiddle'] = $this->input->post('middle_name');
                         $data_to_insert['middle_name'] = $this->input->post('middle_name');
@@ -1575,12 +1581,14 @@ class Employee_management extends Public_Controller {
                     $data_to_insert['full_employment_application'] = serialize($full_emp_app);
                     $this->dashboard_model->update_user($sid, $data_to_insert);
                     // Handle timeoff policies
-                    $this->load->model('timeoff_model');
-                    $this->timeoff_model->updateEmployeePolicies(
-                        $company_id,
-                        $employer_id,
-                        $this->input->post('policies')
-                    );
+                    if (isset($_POST['policies']) && !empty($_POST['policies'])) {
+                        $this->load->model('timeoff_model');
+                        $this->timeoff_model->updateEmployeePolicies(
+                            $company_id,
+                            $employer_id,
+                            $this->input->post('policies')
+                        );
+                    }    
                     //
                     $this->session->set_flashdata('message', '<b>Success:</b> Employee / Team Member Profile is updated successfully');
                     redirect("employee_profile/" . $sid, "location");
