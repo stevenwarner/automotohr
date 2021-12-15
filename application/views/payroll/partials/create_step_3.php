@@ -43,9 +43,9 @@
         <!-- Info -->
         <div class="row dn">
             <div class="col-sm-12">
-                <button class="btn btn-black">
+                <a class="btn btn-black" href="<?=base_url("payroll/run");?>">
                     Back To Dashboard
-                </button>
+                </a>
                 <button class="btn btn-orange">
                     Full Summary
                 </button>
