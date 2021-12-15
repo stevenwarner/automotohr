@@ -17,10 +17,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-    <!--                <pre>-->
-                    <!--                    --><?php //print_r($user_info);  ?>
-                    <!--                    --><?php //echo validation_errors(); ?>
-                    <!--                </pre>-->
+                    <!-- <pre>-->
+                    <!--  --><?php //print_r($user_info);  ?>
+                    <!--  --><?php //echo validation_errors(); ?>
+                    <!-- </pre>-->
 
                     <?php $signed_flag = ($request_details['status'] == 'signed' ? true : false ); ?>
 
@@ -123,7 +123,7 @@
                                                         Your email address is required and is used for purposes directly related to the application process and/or legally required notifications. Your email address will not be shared or used for any other purpose.
                                                     </li>
                                                 </div>
-                                                    <div class="bg-color">
+                                                <div class="bg-color">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100 autoheight">
                                                             <?php 
@@ -139,26 +139,26 @@
                                                             ?>
                                                             <label class="autoheight">Have you ever been employed with our company or our Affiliate companies?<?=$affiliate ? ' <span class="staric">*</span>' : '';?></label>
                                                             <div class="hr-radio-btns">
-                                                                <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> class="check_value" id="is_already_employed_yes" value="Yes" name="is_already_employed" type="radio" <?php echo $disabled_check; ?>>
+                                                                <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> class="check_value validate_affiliate_company" id="is_already_employed_yes" value="Yes" name="is_already_employed" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="is_already_employed_yes">Yes</label>
                                                             </div>
                                                             <div class="hr-radio-btns">
-                                                                <input <?php echo set_radio($key, 'No', $no_selected); ?> class="check_value" id="is_already_employed_no" value="No" name="is_already_employed" type="radio" <?php echo $disabled_check; ?>>
+                                                                <input <?php echo set_radio($key, 'No', $no_selected); ?> class="check_value validate_affiliate_company" id="is_already_employed_no" value="No" name="is_already_employed" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="is_already_employed_no">No</label>
                                                             </div>
-                                                  <?php echo form_error('is_already_employed'); ?>
+                                                            <?php echo form_error('is_already_employed'); ?>
                                                         </li>
                                                         <li class="form-col-100 autoheight">
-<?php $key = 'previous_company_name'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-                                                            <small class="autoheight">If yes, position held/what company or Affiliate company?<?=$affiliate ? ' <span class="staric">*</span>' : '';?></small>
+                                                            <?php $key = 'previous_company_name'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <small class="autoheight">If yes, position held/what company or Affiliate company?<?=$affiliate ? ' <span class="staric yacr">*</span>' : '';?></small>
                                                             <div class="comment-area">
-                                                                <textarea <?php echo $readonly_check; ?> name="previous_company_name" id="previous_company_name" maxlength="512" onkeyup="check_length('previous_company_name')" class="form-col-100 invoice-fields"><?php echo set_value($key, $def_value); ?></textarea>
+                                                                <textarea <?php echo $readonly_check; ?> name="previous_company_name" id="previous_company_name" maxlength="512" onkeyup="check_length('previous_company_name')" class="form-col-100 invoice-fields" data-msg="This field is required."><?php echo set_value($key, $def_value); ?></textarea>
                                                                 <div id="show_specific_error" style="color:red"></div>
                                                                 <span id="license_guilty_details_remaining">512 Characters Left</span>
                                                                 <p style="display: none;" id="previous_company_name_length">512</p>
                                                             </div>
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                 </div>
@@ -233,64 +233,64 @@
                                                                 <?php } ?>
                                                         <?php } ?>
                                                         </select>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
                                                 <!--<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <li class="form-col-100 autoheight">
-                                                <?php /* $key = 'CheckBoxAddressInternationalCurrent'; */ ?>
-                                                <?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
-<?php /* $def_checked = ( $def_value == 1 ? true : false ); */ ?>
+                                                        <?php /* $key = 'CheckBoxAddressInternationalCurrent'; */ ?>
+                                                        <?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
+                                                        <?php /* $def_checked = ( $def_value == 1 ? true : false ); */ ?>
                                                         <div class="checkbox-field">
                                                             <input <?php /* echo set_checkbox($key, 1, $def_checked); */ ?> id="CheckBoxAddressInternationalCurrent" name="CheckBoxAddressInternationalCurrent" value="1" type="checkbox" <?php /* echo $disabled_check; */ ?>>
                                                             <label for="CheckBoxAddressInternationalCurrent">Non USA Address</label>
                                                         </div>
-<?php /* echo form_error('CheckBoxAddressInternationalCurrent'); */ ?>
+                                                        <?php /* echo form_error('CheckBoxAddressInternationalCurrent'); */ ?>
                                                     </li>
                                                 </div>-->
                                                 <div class="bg-color">
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li>
                                                             <?php $key = 'TextBoxAddressStreetFormer1'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Former Residence</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressStreetFormer1" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                         <li>
                                                             <?php $key = 'TextBoxAddressLenghtFormer1'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>How Long?</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressLenghtFormer1" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                         <li>
                                                             <?php $key = 'TextBoxAddressCityFormer1'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>City</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressCityFormer1" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
 
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                         <li>
                                                             <?php $key = 'TextBoxAddressZIPFormer1'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Zip Code</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressZIPFormer1" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                         <li>
                                                             <?php $key = 'DropDownListAddressCountryFormer1'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $country_id = $def_value ?>
+                                                            <?php $country_id = $def_value ?>
                                                             <label>Country:</label>
                                                             <select class="invoice-fields" id="country_former1" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_former1')">
                                                                 <option value="">Please Select</option>
@@ -299,7 +299,7 @@
                                                                     <option <?php echo set_select($key, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
                                                             <?php } ?>
                                                             </select>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
 
@@ -307,7 +307,7 @@
                                                         <li>
                                                             <?php $key = 'DropDownListAddressStateFormer1'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $state_id = $def_value ?>
+                                                            <?php $state_id = $def_value ?>
                                                             <label>State:</label>
                                                             <select class="invoice-fields" name="<?php echo $key; ?>" id="state_former1">
                                                                 <?php if (empty($country_id)) { ?>
@@ -320,64 +320,64 @@
                                                                 <?php } ?>
                                                             <?php } ?>
                                                             </select>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                     <!--<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100 autoheight">
-                                                    <?php /* $key = 'CheckBoxAddressInternationalFormer1'; */ ?>
-<?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
-<?php /* $def_checked = ( $def_value == 1 ? true : false ); */ ?>
+                                                            <?php /* $key = 'CheckBoxAddressInternationalFormer1'; */ ?>
+                                                            <?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
+                                                            <?php /* $def_checked = ( $def_value == 1 ? true : false ); */ ?>
                                                             <div class="checkbox-field">
                                                                 <input <?php /* echo set_checkbox($key, 1, $def_checked); */ ?> id="CheckBoxAddressInternationalFormer1" value="1" name="CheckBoxAddressInternationalFormer1" type="checkbox" <?php /* echo $disabled_check; */ ?>>
                                                                 <label for="CheckBoxAddressInternationalFormer1">Non USA Address</label>
-<?php /* echo form_error('CheckBoxAddressInternationalFormer1'); */ ?>
+                                                                <?php /* echo form_error('CheckBoxAddressInternationalFormer1'); */ ?>
                                                             </div>
                                                         </li>
                                                     </div>-->
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <li>
-<?php $key = 'TextBoxAddressStreetFormer2'; ?>
+                                                        <?php $key = 'TextBoxAddressStreetFormer2'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Former Residence</label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressStreetFormer2" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
-<?php $key = 'TextBoxAddressLenghtFormer2'; ?>
+                                                        <?php $key = 'TextBoxAddressLenghtFormer2'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>How Long?</label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressLenghtFormer2" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
-<?php $key = 'TextBoxAddressCityFormer2'; ?>
+                                                        <?php $key = 'TextBoxAddressCityFormer2'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>City</label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressCityFormer2" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
 
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
-<?php $key = 'TextBoxAddressZIPFormer2'; ?>
+                                                        <?php $key = 'TextBoxAddressZIPFormer2'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Zip Code</label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressZIPFormer2" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'DropDownListAddressCountryFormer2'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $country_id = $def_value ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $country_id = $def_value ?>
                                                         <label>Country:</label>
                                                         <select class="invoice-fields" id="country_former2" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_former2')">
                                                             <option value="">Please Select</option>
@@ -386,14 +386,14 @@
                                                                 <option <?php echo set_select($key, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
                                                         <?php } ?>
                                                         </select>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
 
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'DropDownListAddressStateFormer2'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <?php $state_id = $def_value ?>
                                                         <label>State:</label>
                                                         <select class="invoice-fields" name="<?php echo $key; ?>" id="state_former2">
@@ -404,21 +404,21 @@
                                                                     ?>
                                                                     <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
                                                                     <option <?php echo set_select($key, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
+                                                                <?php } ?>
                                                             <?php } ?>
-<?php } ?>
                                                         </select>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
                                                 <!--<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <li class="form-col-100 autoheight">
-<?php /* $key = 'CheckBoxAddressInternationalFormer2'; */ ?>
-<?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
-                                                <?php /* $def_checked = ( $def_value == 1 ? true : false ); */ ?>
+                                                        <?php /* $key = 'CheckBoxAddressInternationalFormer2'; */ ?>
+                                                        <?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
+                                                        <?php /* $def_checked = ( $def_value == 1 ? true : false ); */ ?>
                                                         <div class="checkbox-field">
                                                             <input <?php /* echo $readonly_check; */ ?> <?php /* echo set_checkbox($key, 1, $def_checked); */ ?> id="CheckBoxAddressInternationalFormer2" value="1" name="CheckBoxAddressInternationalFormer2" type="checkbox" <?php /* echo $disabled_check; */ ?>>
                                                             <label for="CheckBoxAddressInternationalFormer2">Non USA Address</label>
-<?php /* echo form_error('CheckBoxAddressInternationalFormer2'); */ ?>
+                                                        <?php /* echo form_error('CheckBoxAddressInternationalFormer2'); */ ?>
                                                         </div>
                                                     </li>
                                                 </div>-->
@@ -428,7 +428,7 @@
                                                         <?php $def_value = (isset($user_info[$key]) ? ($user_info[$key]) : (isset($extra_info['other_email']) ? $extra_info['other_email'] : '') ); ?>
                                                         <label>Other Mailing Address</label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressStreetFormer3" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
@@ -437,7 +437,7 @@
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : $user_info['Location_City'] ); ?>
                                                         <label>City</label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressCityFormer3" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
 
@@ -447,14 +447,14 @@
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Zip Code</label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressZIPFormer3" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
 
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
-<?php $key = 'DropDownListAddressCountryFormer3'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $key = 'DropDownListAddressCountryFormer3'; ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <?php $country_id = $def_value ?>
                                                         <label>Country:</label>
                                                         <select class="invoice-fields" id="country_former3" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_former3')">
@@ -462,15 +462,15 @@
                                                             <?php foreach ($active_countries as $active_country) { ?>
                                                             <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
                                                                 <option <?php echo set_select($key, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
-<?php } ?>
+                                                            <?php } ?>
                                                         </select>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
 
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
-<?php $key = 'DropDownListAddressStateFormer3'; ?>
+                                                            <?php $key = 'DropDownListAddressStateFormer3'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <?php $state_id = $def_value ?>
                                                         <label>State:</label>
@@ -482,17 +482,17 @@
                                                                     ?>
                                                                 <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
                                                                     <option <?php echo set_select($key, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
-    <?php } ?>
-<?php } ?>
+                                                            <?php } ?>
+                                                        <?php } ?>
                                                         </select>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
 
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'PhoneNumber'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : $user_info['PhoneNumber'] ); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : $user_info['PhoneNumber'] ); ?>
                                                         <label>Primary Telephone <span class="staric">*</span></label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="PhoneNumber" value="<?php echo set_value($key, $def_value); ?>" type="text">
                                                         <?php echo form_error($key); ?>
@@ -501,7 +501,7 @@
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'TextBoxTelephoneMobile'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Mobile Telephone </label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxTelephoneMobile" value="<?php echo set_value($key, $def_value); ?>" type="text">
                                                         <?php echo form_error($key); ?>
@@ -510,10 +510,10 @@
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'TextBoxTelephoneOther'; ?>
-<?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? ($user_info[$key]) : (isset($extra_info['other_PhoneNumber']) ? $extra_info['other_PhoneNumber'] : '') ); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? ($user_info[$key]) : (isset($extra_info['other_PhoneNumber']) ? $extra_info['other_PhoneNumber'] : '') ); ?>
                                                         <label>Other Telephone </label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxTelephoneOther" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
                                                 <div class="bg-color">
@@ -525,10 +525,10 @@
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
                                                             <?php $key = 'RadioButtonListPostionTime'; ?>
-<?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? $user_info[$key] : $user_info['employee_type'] ); ?>
-<?php $full_time_selected = ($def_value == 'full_time' || $def_value == 'fulltime' || $def_value == 'full-time') ? true : false ; ?>
-<?php $part_time_selected = ($def_value == 'part_time' || $def_value == 'parttime' || $def_value == 'part-time') ? true : false ; ?>
-<?php $full_or_part_time_selected = ($def_value == 'full_or_parttime' ? true : false ); ?>
+                                                            <?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? $user_info[$key] : $user_info['employee_type'] ); ?>
+                                                            <?php $full_time_selected = ($def_value == 'full_time' || $def_value == 'fulltime' || $def_value == 'full-time') ? true : false ; ?>
+                                                            <?php $part_time_selected = ($def_value == 'part_time' || $def_value == 'parttime' || $def_value == 'part-time') ? true : false ; ?>
+                                                            <?php $full_or_part_time_selected = ($def_value == 'full_or_parttime' ? true : false ); ?>
 
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'full_time', $full_time_selected); ?> id="RadioButtonListPostionTime_0" value="full_time" name="RadioButtonListPostionTime" type="radio" <?php echo $disabled_check; ?>>
@@ -548,17 +548,17 @@
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100 autoheight">
                                                             <?php $key = 'TextBoxPositionDesired'; ?>
-<?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? ($user_info[$key]) : (isset($user_info['job_title']) ? $user_info['job_title'] : '') ); ?>
+                                                            <?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? ($user_info[$key]) : (isset($user_info['job_title']) ? $user_info['job_title'] : '') ); ?>
                                                             <label class="autoheight">If you want to apply for more than one position, please list them in this field.</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxPositionDesired" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error('TextBoxPositionDesired'); ?>
+                                                            <?php echo form_error('TextBoxPositionDesired'); ?>
                                                         </li>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'TextBoxWorkBeginDate'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>What date can you begin work?</label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields startdate" readonly="" name="TextBoxWorkBeginDate" value="<?php echo set_value($key, $def_value); ?>" id="dp1474003792803" type="text">
                                                         <?php echo form_error($key); ?>
@@ -567,10 +567,10 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'TextBoxWorkCompensation'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Expected compensation</label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxWorkCompensation" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -580,10 +580,10 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <li class="form-col-100 autoheight">
-<?php $key = 'RadioButtonListWorkTransportation'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
-<?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                        <?php $key = 'RadioButtonListWorkTransportation'; ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
+                                                        <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
                                                         <div class="hr-radio-btns">
                                                             <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListWorkTransportation_0" name="RadioButtonListWorkTransportation" type="radio" <?php echo $disabled_check; ?>>
                                                             <label for="RadioButtonListWorkTransportation_0">Yes</label>
@@ -592,7 +592,7 @@
                                                             <input <?php echo set_radio($key, 'No', $no_selected); ?> value="No" id="RadioButtonListWorkTransportation_1" name="RadioButtonListWorkTransportation" type="radio" <?php echo $disabled_check; ?>>
                                                             <label for="RadioButtonListWorkTransportation_1">No</label>
                                                         </div>
-<?php echo form_error('RadioButtonListWorkTransportation'); ?>
+                                                        <?php echo form_error('RadioButtonListWorkTransportation'); ?>
                                                     </li>
                                                 </div>
                                                 <div class="bg-color-v2">
@@ -603,16 +603,16 @@
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
-<?php $key = 'RadioButtonListWorkOver18'; ?>
-<?php 
-    if(isset($user_info[$key])){
-        if($user_info[$key] == 'Yes') $yes_selected = true;
-        else $no_selected = true;
-    } else{
-        if($above18 >= 18) $yes_selected = true;
-        else $no_selected = true;
-    }
-?>
+                                                            <?php $key = 'RadioButtonListWorkOver18'; ?>
+                                                            <?php 
+                                                                if(isset($user_info[$key])){
+                                                                    if($user_info[$key] == 'Yes') $yes_selected = true;
+                                                                    else $no_selected = true;
+                                                                } else{
+                                                                    if($above18 >= 18) $yes_selected = true;
+                                                                    else $no_selected = true;
+                                                                }
+                                                            ?>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListWorkOver18_0" name="RadioButtonListWorkOver18" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListWorkOver18_0">Yes</label>
@@ -621,7 +621,7 @@
                                                                 <input <?php echo set_radio($key, 'No', $no_selected); ?> value="No" id="RadioButtonListWorkOver18_1" name="RadioButtonListWorkOver18" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListWorkOver18_1">No</label>
                                                             </div>
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                 </div>
@@ -632,10 +632,10 @@
                                                 </div>
                                                 <div class="col-lg-2 col-md-2 col-xs-12 col-sm-3">
                                                     <li class="form-col-100 autoheight">
-<?php $key = 'RadioButtonListAliases'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
-<?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                        <?php $key = 'RadioButtonListAliases'; ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
+                                                        <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
                                                         <div class="hr-radio-btns">
                                                             <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListAliases_0" name="RadioButtonListAliases" type="radio" <?php echo $disabled_check; ?>>
                                                             <label for="RadioButtonListAliases_0">Yes</label>
@@ -649,23 +649,23 @@
                                                 </div>
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <div class="comment-area">
-<?php $key = 'nickname_or_othername_details'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $key = 'nickname_or_othername_details'; ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <small>If yes, please explain and indicate name(s):</small>
                                                         <textarea <?php echo $readonly_check; ?> name="nickname_or_othername_details" id="nickname_or_othername_details" class="form-col-100 invoice-fields" maxlength="512" onkeyup="check_length('nickname_or_othername_details')"><?php echo set_value($key, $def_value); ?></textarea>
                                                         <span id="nickname_or_othername_details_remaining">512 Characters Left</span>
                                                         <p style="display: none;" id="nickname_or_othername_details_length">512</p>
                                                         <p>When answering the following questions, do not include minor traffic infractions, ANY convictions for which the record has been sealed and/or expunged, and/or eradicated, any conviction for which probation has been successfully completed or otherwise discharged with the case having been judicially dismissed, any information regarding referrals to and/or participation in any pre-trial or post-trial diversion programs (California applicants only, do not include infractions involving marijuana offenses that occurred over two years ago). A conviction record will not necessarily be a bar to employment. Factors such as age, time of the offense, seriousness and nature of the violation, and rehabilitation will be taken into account.</p>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </div>
                                                 </div>
                                                 <!--<div class="bg-color">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100 autoheight">
-<?php /* $key = 'RadioButtonListCriminalWrongDoing'; */ ?>
-<?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
-<?php /* $yes_selected = ( $def_value == 'Yes' ? true : false ); */ ?>
-<?php /* $no_selected = ( $def_value == 'No' ? true : false ); */ ?>
+                                                            <?php /* $key = 'RadioButtonListCriminalWrongDoing'; */ ?>
+                                                            <?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
+                                                            <?php /* $yes_selected = ( $def_value == 'Yes' ? true : false ); */ ?>
+                                                            <?php /* $no_selected = ( $def_value == 'No' ? true : false ); */ ?>
                                                             <label class="autoheight">Have you ever plead Guilty, No Contest, or been Convicted of a Misdemeanor and/or Felony?</label>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php /* echo set_radio($key, 'Yes', $yes_selected); */ ?> value="Yes" id="RadioButtonListCriminalWrongDoing_0" name="RadioButtonListCriminalWrongDoing" type="radio" <?php /* echo $disabled_check; */ ?>>
@@ -675,16 +675,16 @@
                                                                 <input <?php /* echo set_radio($key, 'No', $no_selected); */ ?> value="No" id="RadioButtonListCriminalWrongDoing_1" name="RadioButtonListCriminalWrongDoing" type="radio" <?php /* echo $disabled_check; */ ?>>
                                                                 <label for="RadioButtonListCriminalWrongDoing_1">No</label>
                                                             </div>
-<?php /* echo form_error('RadioButtonListCriminalWrongDoing'); */ ?>
+                                                            <?php /* echo form_error('RadioButtonListCriminalWrongDoing'); */ ?>
                                                         </li>
                                                     </div>
                                                 </div>-->
                                                 <!--<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <li class="form-col-100 autoheight">
-<?php /* $key = 'RadioButtonListCriminalBail'; */ ?>
-<?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
-<?php /* $yes_selected = ( $def_value == 'Yes' ? true : false ); */ ?>
-<?php /* $no_selected = ( $def_value == 'No' ? true : false ); */ ?>
+                                                        <?php /* $key = 'RadioButtonListCriminalBail'; */ ?>
+                                                        <?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
+                                                        <?php /* $yes_selected = ( $def_value == 'Yes' ? true : false ); */ ?>
+                                                        <?php /* $no_selected = ( $def_value == 'No' ? true : false ); */ ?>
                                                         <label class="autoheight">Have you been arrested for any matter for which you are now out on bail or have been released on your own recognizance pending trial?</label>
                                                         <div class="hr-radio-btns">
                                                             <input <?php /* echo set_radio($key, 'Yes', $yes_selected); */ ?> value="Yes" id="RadioButtonListCriminalBail_0" name="RadioButtonListCriminalBail" type="radio" <?php /* echo $disabled_check; */ ?>>
@@ -694,37 +694,43 @@
                                                             <input <?php /* echo set_radio($key, 'No', $no_selected); */ ?> value="No" id="RadioButtonListCriminalBail_1" name="RadioButtonListCriminalBail" type="radio" <?php /* echo $disabled_check; */ ?>>
                                                             <label for="RadioButtonListCriminalBail_1">No</label>
                                                         </div>
-<?php /* echo form_error('RadioButtonListCriminalBail'); */ ?>
+                                                        <?php /* echo form_error('RadioButtonListCriminalBail'); */ ?>
                                                     </li>
                                                 </div>-->
                                                 <!--<div class="bg-color">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100 autoheight">
-<?php /* $key = 'arrested_pending_trail_details'; */ ?>
-<?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
+                                                            <?php /* $key = 'arrested_pending_trail_details'; */ ?>
+                                                            <?php /* $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); */ ?>
                                                             <label class="autoheight">If yes to either of the above questions, provide dates and details for each, including the case number and court where your case is/was handled:</label>
                                                             <div class="comment-area">
                                                                 <textarea <?php /* echo $readonly_check; */ ?> name="arrested_pending_trail_details" id="arrested_pending_trail_details" maxlength="512" onkeyup="check_length('arrested_pending_trail_details')" class="form-col-100 invoice-fields"><?php /* echo set_value($key, $def_value); */ ?></textarea>
                                                                 <span id="arrested_pending_trail_details_remaining">512 Characters Left</span>
                                                                 <p style="display: none;" id="arrested_pending_trail_details_length">512</p>
                                                             </div>
-<?php /* echo form_error($key); */ ?>
+                                                            <?php /* echo form_error($key); */ ?>
                                                         </li>
                                                     </div>
                                                 </div>-->
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <li class="form-col-100 autoheight">
-<?php $key = 'RadioButtonListDriversLicenseQuestion'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes'  || sizeof($drivers_license_details) ? true : false ); ?>
-<?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                        <?php $key = 'RadioButtonListDriversLicenseQuestion'; ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $yes_selected = ( $def_value == 'Yes'  || sizeof($drivers_license_details) ? true : false ); ?>
+                                                        <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                        <?php 
+                                                            $enabled_check = "";
+                                                            if (empty($def_value)) {
+                                                                $enabled_check = "checked='checked'";
+                                                            }
+                                                        ?>
                                                         <label class="autoheight">Driver's License: A valid driver's license may be a requirement for the position for which you have applied. If so, do you currently have a valid driver's license?<?=$d_license ? '<span class="staric">*</span>' : '';?></label>
                                                         <div class="hr-radio-btns">
-                                                            <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> id="RadioButtonListDriversLicenseQuestion_0" value="Yes" name="RadioButtonListDriversLicenseQuestion" type="radio" <?php echo $disabled_check; ?>>
+                                                            <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> class="validate_driving_license" id="RadioButtonListDriversLicenseQuestion_0" value="Yes" name="RadioButtonListDriversLicenseQuestion" type="radio" <?php echo $disabled_check; ?>>
                                                             <label for="RadioButtonListDriversLicenseQuestion_0">Yes</label>
                                                         </div>
                                                         <div class="hr-radio-btns">
-                                                            <input <?php echo set_radio($key, 'No', $no_selected); ?> id="RadioButtonListDriversLicenseQuestion_1" value="No" name="RadioButtonListDriversLicenseQuestion" type="radio" <?php echo $disabled_check; ?>>
+                                                            <input <?php echo set_radio($key, 'No', $no_selected); ?> class="validate_driving_license" id="RadioButtonListDriversLicenseQuestion_1" value="No" name="RadioButtonListDriversLicenseQuestion" type="radio" <?php echo $enabled_check; ?>>
                                                             <label for="RadioButtonListDriversLicenseQuestion_1">No</label>
                                                         </div>
                                                         <?php echo form_error('RadioButtonListDriversLicenseQuestion'); ?>
@@ -733,47 +739,47 @@
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'TextBoxDriversLicenseNumber'; ?>
-<?php $def_value = (isset($user_info[$key]) ? ($user_info[$key]) : (isset($drivers_license_details['license_number']) ? $drivers_license_details['license_number'] : '') ); ?>
-                                                        <label>Driver's license number:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
-                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxDriversLicenseNumber" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? ($user_info[$key]) : (isset($drivers_license_details['license_number']) ? $drivers_license_details['license_number'] : '') ); ?>
+                                                        <label>Driver's license number:<?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
+                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxDriversLicenseNumber" id="TextBoxDriversLicenseNumber" value="<?php echo set_value($key, $def_value); ?>" type="text" data-msg="This field is required.">
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
 
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'TextBoxDriversLicenseExpiration'; ?>
-<?php $def_value = (isset($user_info[$key]) ? ($user_info[$key]) : (isset($drivers_license_details['license_expiration_date']) ? $drivers_license_details['license_expiration_date'] : '') ); ?>
-                                                        <label>Expiration date:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
-                                                        <input readonly <?php echo $readonly_check; ?> name="TextBoxDriversLicenseExpiration" class="invoice-fields startdate" value="<?php echo set_value($key, $def_value); ?>" id="dp1474003792804" type="text">
-<?php echo form_error($key); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? ($user_info[$key]) : (isset($drivers_license_details['license_expiration_date']) ? $drivers_license_details['license_expiration_date'] : '') ); ?>
+                                                        <label>Expiration date:<?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
+                                                        <input readonly <?php echo $readonly_check; ?> name="TextBoxDriversLicenseExpiration" class="invoice-fields startdate" value="<?php echo set_value($key, $def_value); ?>" id="TextBoxDriversLicenseExpiration" type="text" data-msg="This field is required.">
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
 
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
-<?php $key = 'DropDownListDriversCountry'; ?>
-                                                            <?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? ($user_info[$key]) : (sizeof($drivers_license_details) ? ($LC) : 0) ); ?>
-                                                            <?php $country_id = $def_value ?>
-                                                        <label>Country:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
-                                                        <select class="invoice-fields" id="country_dl" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_dl')">
+                                                        <?php $key = 'DropDownListDriversCountry'; ?>
+                                                        <?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? ($user_info[$key]) : (sizeof($drivers_license_details) ? ($LC) : 0) ); ?>
+                                                        <?php $country_id = $def_value ?>
+                                                        <label>Country:<?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
+                                                        <select class="invoice-fields" id="country_dl" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_dl')" data-msg="This field is required.">
                                                             <option value="">Please Select</option>
                                                         <?php foreach ($active_countries as $active_country) { ?>
                                                             <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
                                                                 <option <?php echo set_select($key, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
-<?php } ?>
+                                                        <?php } ?>
                                                         </select>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
 
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                     <li>
-                                                            <?php $key = 'DropDownListDriversState'; ?>
-                                                            <?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? $user_info[$key] : $LS ); ?>
-                                                            <?php $state_id = $def_value ?>
-                                                        <label>State:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
-                                                        <select class="invoice-fields" name="<?php echo $key; ?>" id="state_dl">
+                                                        <?php $key = 'DropDownListDriversState'; ?>
+                                                        <?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? $user_info[$key] : $LS ); ?>
+                                                        <?php $state_id = $def_value ?>
+                                                        <label>State:<?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
+                                                        <select class="invoice-fields" name="<?php echo $key; ?>" id="state_dl" data-msg="This field is required.">
                                                             <?php if (empty($country_id)) { ?>
                                                                 <option value="">Select State</option> <?php
                                                             } else {
@@ -781,21 +787,21 @@
                                                                     ?>
                                                                 <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
                                                                     <option <?php echo set_select($key, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
-    <?php } ?>
-<?php } ?>
+                                                                <?php } ?>
+                                                            <?php } ?>
                                                         </select>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
 
                                                 <div class="bg-color">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100 autoheight">
-<?php $key = 'RadioButtonListDriversLicenseTraffic'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
-<?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
-                                                            <label class="autoheight">Within the last 5 years, have you ever plead Guilty, No Contest, or been Convicted of any traffic violation(s)?</label>
+                                                            <?php $key = 'RadioButtonListDriversLicenseTraffic'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
+                                                            <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <label class="autoheight">Within the last 5 years, have you ever plead Guilty, No Contest, or been Convicted of any traffic violation(s)? <?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> id="RadioButtonListDriversLicenseTraffic" value="Yes" name="RadioButtonListDriversLicenseTraffic" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListDriversLicenseTraffic">Yes</label>
@@ -804,18 +810,18 @@
                                                                 <input <?php echo set_radio($key, 'No', $no_selected); ?> id="RadioButtonListDriversLicenseTraffic_1" value="No" name="RadioButtonListDriversLicenseTraffic" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListDriversLicenseTraffic_1">No</label>
                                                             </div>
-<?php echo form_error('RadioButtonListDriversLicenseTraffic'); ?>
+                                                            <?php echo form_error('RadioButtonListDriversLicenseTraffic'); ?>
                                                         </li>
                                                         <li class="form-col-100 autoheight">
-<?php $key = 'license_guilty_details'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $key = 'license_guilty_details'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <small class="autoheight">If yes , provide dates and details for each violation, including the case number and court where your case is/was handled:</small>
                                                             <div class="comment-area">
-                                                                <textarea <?php echo $readonly_check; ?> name="license_guilty_details" id="license_guilty_details" maxlength="512" onkeyup="check_length('license_guilty_details')" class="form-col-100 invoice-fields"><?php echo set_value($key, $def_value); ?></textarea>
+                                                                <textarea <?php echo $readonly_check; ?> name="license_guilty_details" id="license_guilty_details" maxlength="512" onkeyup="check_length('license_guilty_details')" class="form-col-100 invoice-fields" data-msg="This field is required."><?php echo set_value($key, $def_value); ?></textarea>
                                                                 <span id="license_guilty_details_remaining">512 Characters Left</span>
                                                                 <p style="display: none;" id="license_guilty_details_length">512</p>
                                                             </div>
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                 </div>
@@ -823,11 +829,11 @@
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100">
                                                         <?php $key = 'TextBoxEducationHighSchoolName'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Education - High School</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEducationHighSchoolName" value="<?php echo set_value($key, $def_value); ?>" type="text">
                                                         </li>
-<?php echo form_error($key); ?>
+                                                        <?php echo form_error($key); ?>
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
@@ -836,10 +842,10 @@
                                                     </div>
                                                     <div class="col-lg-9 col-md-9 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
-<?php $key = 'RadioButtonListEducationHighSchoolGraduated'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
-<?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php $key = 'RadioButtonListEducationHighSchoolGraduated'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
+                                                            <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListEducationHighSchoolGraduated_0" name="RadioButtonListEducationHighSchoolGraduated" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListEducationHighSchoolGraduated_0">Yes</label>
@@ -854,11 +860,11 @@
                                                     <div class="form-col-100">
                                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                             <li>
-<?php $key = 'TextBoxEducationHighSchoolCity'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                                <?php $key = 'TextBoxEducationHighSchoolCity'; ?>
+                                                                <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>City</label>
                                                                 <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEducationHighSchoolCity" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                                <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
 
@@ -871,10 +877,10 @@
                                                                 <label>Country:</label>
                                                                 <select class="invoice-fields" id="country_ehs" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_ehs')">
                                                                     <option value="">Please Select</option>
-                                                                <?php foreach ($active_countries as $active_country) { ?>
-    <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
+                                                                    <?php foreach ($active_countries as $active_country) { ?>
+                                                                    <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
                                                                         <option <?php echo set_select($key, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
-<?php } ?>
+                                                                    <?php } ?>
                                                                 </select>
                                                                 <?php echo form_error($key); ?>
                                                             </li>
@@ -892,10 +898,10 @@
                                                                     } else {
                                                                         foreach ($active_states[$country_id] as $active_state) {
                                                                             ?>
-        <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
+                                                                            <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
                                                                             <option <?php echo set_select($key, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
-    <?php } ?>
-<?php } ?>
+                                                                        <?php } ?>
+                                                                    <?php } ?>
                                                                 </select>
                                                                 <?php echo form_error($key); ?>
                                                             </li>
@@ -911,8 +917,8 @@
                                                                     <option vlaue="">Please Select</option>
                                                                 <?php foreach ($months as $month) { ?>
                                                                     <?php $def_selected = false; ?>
-    <?php $cur_value = $month; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                    <?php $cur_value = $month; ?>
+                                                                    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                         <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
                                                                 <?php } ?>
                                                                 </select>
@@ -926,14 +932,14 @@
                                                                 <label></label>
                                                                 <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEducationHighSchoolDateAttendedYearBegin">
                                                                     <option value="">Please Select</option>
-                                                                <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
-                                                                    <?php $def_selected = false; ?>
-    <?php $cur_value = $count; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
-                                                                        <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
-<?php } ?>
+                                                                    <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
+                                                                        <?php $def_selected = false; ?>
+                                                                        <?php $cur_value = $count; ?>
+                                                                        <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                            <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
+                                                                    <?php } ?>
                                                                 </select>
-<?php echo form_error($key); ?>
+                                                                <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
                                                         <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
@@ -946,12 +952,12 @@
                                                                 <label></label>
                                                                 <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEducationHighSchoolDateAttendedMonthEnd">
                                                                     <option vlaue="">Please Select</option>
-                                                                <?php foreach ($months as $month) { ?>
-                                                                    <?php $def_selected = false; ?>
-    <?php $cur_value = $month; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
-                                                                        <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
-                                                                <?php } ?>
+                                                                    <?php foreach ($months as $month) { ?>
+                                                                        <?php $def_selected = false; ?>
+                                                                        <?php $cur_value = $month; ?>
+                                                                        <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                            <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
+                                                                    <?php } ?>
                                                                 </select>
                                                                 <?php echo form_error($key); ?>
                                                             </li>
@@ -965,12 +971,12 @@
                                                                     <option value="">Please Select</option>
                                                                 <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
                                                                     <?php $def_selected = false; ?>
-    <?php $cur_value = $count; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                    <?php $cur_value = $count; ?>
+                                                                    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                         <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
-<?php } ?>
+                                                                    <?php } ?>
                                                                 </select>
-<?php echo form_error($key); ?>
+                                                                <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
                                                     </div>
@@ -979,11 +985,11 @@
                                                     <div class="education-level-block">
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                             <li class="form-col-100">
-<?php $key = 'TextBoxEducationCollegeName'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                                <?php $key = 'TextBoxEducationCollegeName'; ?>
+                                                                <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>College/University</label>
                                                                 <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEducationCollegeName" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                                <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
                                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
@@ -993,10 +999,10 @@
                                                         </div>
                                                         <div class="col-lg-9 col-md-9 col-xs-12 col-sm-6">
                                                             <li class="form-col-100 autoheight">
-<?php $key = 'RadioButtonListEducationCollegeGraduated'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
-<?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                                <?php $key = 'RadioButtonListEducationCollegeGraduated'; ?>
+                                                                <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                                <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
+                                                                <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
                                                                 <div class="hr-radio-btns">
                                                                     <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListEducationCollegeGraduated_0" name="RadioButtonListEducationCollegeGraduated" type="radio" <?php echo $disabled_check; ?>>
                                                                     <label for="RadioButtonListEducationCollegeGraduated_0">Yes</label>
@@ -1011,8 +1017,8 @@
                                                         <div class="form-col-100">
                                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                                 <li>
-<?php $key = 'TextBoxEducationCollegeCity'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                                    <?php $key = 'TextBoxEducationCollegeCity'; ?>
+                                                                    <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                     <label>City</label>
                                                                     <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEducationCollegeCity" value="<?php echo set_value($key, $def_value); ?>" type="text">
                                                                     <?php echo form_error($key); ?>
@@ -1027,10 +1033,10 @@
                                                                     <label>Country:</label>
                                                                     <select class="invoice-fields" id="country_ecc" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_ecc')">
                                                                         <option value="">Please Select</option>
-<?php foreach ($active_countries as $active_country) { ?>
-    <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
+                                                                        <?php foreach ($active_countries as $active_country) { ?>
+                                                                            <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
                                                                             <option <?php echo set_select($key, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
-<?php } ?>
+                                                                        <?php } ?>
                                                                     </select>
                                                                     <?php echo form_error($key); ?>
                                                                 </li>
@@ -1048,10 +1054,10 @@
                                                                     } else {
                                                                         foreach ($active_states[$country_id] as $active_state) {
                                                                                 ?>
-        <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
+                                                                                <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
                                                                                 <option <?php echo set_select($key, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
-    <?php } ?>
-<?php } ?>
+                                                                        <?php } ?>
+                                                                    <?php } ?>
                                                                     </select>
                                                                     <?php echo form_error($key); ?>
                                                                 </li>
@@ -1061,19 +1067,19 @@
                                                         <div class="form-col-100">
                                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                                 <li>
-                                                                        <?php $key = 'DropDownListEducationCollegeDateAttendedMonthBegin'; ?>
-                                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                                    <?php $key = 'DropDownListEducationCollegeDateAttendedMonthBegin'; ?>
+                                                                    <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                     <label>Dates of Attendance</label>
                                                                     <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEducationCollegeDateAttendedMonthBegin">
                                                                         <option vlaue="">Please Select</option>
-                                                                    <?php foreach ($months as $month) { ?>
-    <?php $def_selected = false; ?>
-    <?php $cur_value = $month; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
-                                                                            <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
-                                                                    <?php } ?>
+                                                                        <?php foreach ($months as $month) { ?>
+                                                                            <?php $def_selected = false; ?>
+                                                                            <?php $cur_value = $month; ?>
+                                                                            <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                                <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
+                                                                        <?php } ?>
                                                                     </select>
-<?php echo form_error($key); ?>
+                                                                    <?php echo form_error($key); ?>
                                                                 </li>
                                                             </div>
                                                             <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6">
@@ -1083,12 +1089,12 @@
                                                                     <label></label>
                                                                     <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEducationCollegeDateAttendedYearBegin">
                                                                         <option value="">Please Select</option>
-                                                                    <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
-    <?php $def_selected = false; ?>
-    <?php $cur_value = $count; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                        <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
+                                                                            <?php $def_selected = false; ?>
+                                                                            <?php $cur_value = $count; ?>
+                                                                            <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                             <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
-<?php } ?>
+                                                                        <?php } ?>
                                                                     </select>
                                                                     <?php echo form_error('DropDownListEducationCollegeDateAttendedYearBegin'); ?>
                                                                 </li>
@@ -1103,14 +1109,14 @@
                                                                     <label></label>
                                                                     <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEducationCollegeDateAttendedMonthEnd">
                                                                         <option vlaue="">Please Select</option>
-                                                                    <?php foreach ($months as $month) { ?>
-    <?php $def_selected = false; ?>
-    <?php $cur_value = $month; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                        <?php foreach ($months as $month) { ?>
+                                                                            <?php $def_selected = false; ?>
+                                                                            <?php $cur_value = $month; ?>
+                                                                            <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                             <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
-                                                                    <?php } ?>
+                                                                        <?php } ?>
                                                                     </select>
-<?php echo form_error('DropDownListEducationCollegeDateAttendedMonthEnd'); ?>
+                                                                    <?php echo form_error('DropDownListEducationCollegeDateAttendedMonthEnd'); ?>
                                                                 </li>
                                                             </div>
                                                             <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6">
@@ -1120,12 +1126,12 @@
                                                                     <label></label>
                                                                     <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEducationCollegeDateAttendedYearEnd">
                                                                         <option value="">Please Select</option>
-                                                                    <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
-    <?php $def_selected = false; ?>
-    <?php $cur_value = $count; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                        <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
+                                                                            <?php $def_selected = false; ?>
+                                                                            <?php $cur_value = $count; ?>
+                                                                            <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                             <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
-<?php } ?>
+                                                                        <?php } ?>
                                                                     </select>
                                                                     <?php echo form_error('DropDownListEducationCollegeDateAttendedYearEnd'); ?>
                                                                 </li>
@@ -1134,20 +1140,20 @@
                                                         <div class="form-col-100">
                                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                                 <li>
-<?php $key = 'TextBoxEducationCollegeMajor'; ?>
+                                                                    <?php $key = 'TextBoxEducationCollegeMajor'; ?>
                                                                     <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                     <label>Major</label>
                                                                     <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEducationCollegeMajor" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                                    <?php echo form_error($key); ?>
                                                                 </li>
                                                             </div>
                                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                                 <li>
-<?php $key = 'TextBoxEducationCollegeDegree'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                                    <?php $key = 'TextBoxEducationCollegeDegree'; ?>
+                                                                    <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                     <label>Degree Earned</label>
                                                                     <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEducationCollegeDegree" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                                    <?php echo form_error($key); ?>
                                                                 </li>
                                                             </div>
                                                         </div>
@@ -1156,11 +1162,11 @@
                                                 <div class="education-level-block">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100">
-<?php $key = 'TextBoxEducationOtherName'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $key = 'TextBoxEducationOtherName'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Other School</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEducationOtherName" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                                    <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
@@ -1170,10 +1176,10 @@
                                                     </div>
                                                     <div class="col-lg-9 col-md-9 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
-<?php $key = 'RadioButtonListEducationOtherGraduated'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
-<?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php $key = 'RadioButtonListEducationOtherGraduated'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
+                                                            <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListEducationOtherGraduated_0" name="RadioButtonListEducationOtherGraduated" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListEducationOtherGraduated_0">Yes</label>
@@ -1188,8 +1194,8 @@
                                                     <div class="form-col-100">
                                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                             <li>
-<?php $key = 'TextBoxEducationOtherCity'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                                <?php $key = 'TextBoxEducationOtherCity'; ?>
+                                                                <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>City</label>
                                                                 <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEducationOtherCity" value="<?php echo set_value($key, $def_value); ?>" type="text">
                                                                 <?php echo form_error($key); ?>
@@ -1204,10 +1210,10 @@
                                                                 <label>Country:</label>
                                                                 <select class="invoice-fields" id="country_eo" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_eo')">
                                                                     <option value="">Please Select</option>
-<?php foreach ($active_countries as $active_country) { ?>
-    <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
+                                                                    <?php foreach ($active_countries as $active_country) { ?>
+                                                                        <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
                                                                         <option <?php echo set_select($key, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
-                                                                <?php } ?>
+                                                                    <?php } ?>
                                                                 </select>
                                                                 <?php echo form_error($key); ?>
                                                             </li>
@@ -1225,16 +1231,14 @@
                                                                 } else {
                                                                     foreach ($active_states[$country_id] as $active_state) {
                                                                         ?>
-        <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
-                                                                            <option <?php echo set_select($key, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
-    <?php } ?>
-<?php } ?>
+                                                                        <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
+                                                                        <option <?php echo set_select($key, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
+                                                                    <?php } ?>
+                                                                <?php } ?>
                                                                 </select>
                                                                 <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
-
-
                                                     </div>
                                                     <div class="form-col-100">
                                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
@@ -1244,14 +1248,14 @@
                                                                 <label>Dates of Attendance</label>
                                                                 <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEducationOtherDateAttendedMonthBegin">
                                                                     <option vlaue="">Please Select</option>
-<?php foreach ($months as $month) { ?>
-    <?php $def_selected = false; ?>
-    <?php $cur_value = $month; ?>
-                                                                    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                    <?php foreach ($months as $month) { ?>
+                                                                        <?php $def_selected = false; ?>
+                                                                        <?php $cur_value = $month; ?>
+                                                                        <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                         <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
-                                                                <?php } ?>
+                                                                    <?php } ?>
                                                                 </select>
-<?php echo form_error($key); ?>
+                                                                <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
                                                         <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6">
@@ -1261,12 +1265,12 @@
                                                                 <label></label>
                                                                 <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEducationOtherDateAttendedYearBegin">
                                                                     <option value="">Please Select</option>
-<?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
-    <?php $def_selected = false; ?>
-    <?php $cur_value = $count; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                    <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
+                                                                        <?php $def_selected = false; ?>
+                                                                        <?php $cur_value = $count; ?>
+                                                                        <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                         <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
-<?php } ?>
+                                                                    <?php } ?>
                                                                 </select>
                                                                 <?php echo form_error($key); ?>
                                                             </li>
@@ -1281,14 +1285,14 @@
                                                                 <label></label>
                                                                 <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEducationOtherDateAttendedMonthEnd">
                                                                     <option vlaue="">Please Select</option>
-<?php foreach ($months as $month) { ?>
-    <?php $def_selected = false; ?>
-    <?php $cur_value = $month; ?>
-                                                                    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
-                                                                        <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
-                                                                <?php } ?>
+                                                                        <?php foreach ($months as $month) { ?>
+                                                                            <?php $def_selected = false; ?>
+                                                                            <?php $cur_value = $month; ?>
+                                                                            <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                            <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
+                                                                        <?php } ?>
                                                                 </select>
-<?php echo form_error($key); ?>
+                                                                <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
                                                         <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6">
@@ -1298,12 +1302,12 @@
                                                                 <label></label>
                                                                 <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEducationOtherDateAttendedYearEnd">
                                                                     <option value="">Please Select</option>
-<?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
-    <?php $def_selected = false; ?>
-    <?php $cur_value = $count; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                    <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
+                                                                        <?php $def_selected = false; ?>
+                                                                        <?php $cur_value = $count; ?>
+                                                                        <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                         <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
-                                                                <?php } ?>
+                                                                    <?php } ?>
                                                                 </select>
                                                                 <?php echo form_error($key); ?>
                                                             </li>
@@ -2638,6 +2642,41 @@
         </div>
     </div>
     <script>
+        $(document).ready(function () {
+            if("<?=$eight_plus?>" == 1){
+                var IAEvalue = $('input[name="is_already_employed"]:checked').val();
+
+                if (IAEvalue == "Yes") {
+                    $("#previous_company_name").prop('required',true);
+                    $(".yacr").show();
+                } else {
+                    $("#previous_company_name").prop('required',false);
+                    $(".yacr").hide();
+                }
+            }
+
+            if("<?=$d_license?>" == 1){
+                var DLvalue = $('input[name="RadioButtonListDriversLicenseQuestion"]:checked').val();
+                console.log(DLvalue)
+                if (DLvalue == "Yes") {
+                    $("#TextBoxDriversLicenseNumber").prop('required',true);
+                    $("#TextBoxDriversLicenseExpiration").prop('required',true);
+                    $("#country_dl").prop('required',true);
+                    $("#state_dl").prop('required',true);
+                    $("#license_guilty_details").prop('required',true);
+                    $(".dllr").show();
+                } else {
+                    console.log("here")
+                    $("#TextBoxDriversLicenseNumber").prop('required',false);
+                     $("#TextBoxDriversLicenseExpiration").prop('required',false);
+                    $("#country_dl").prop('required',false);
+                    $("#state_dl").prop('required',false);
+                    $("#license_guilty_details").prop('required',false);
+                    $(".dllr").hide();
+                }
+            }    
+        })
+        //
         function getStates(val, states, select_id) {
             var html = '';
             if (val == '') {
@@ -2652,175 +2691,207 @@
                 }
                 $('#' + select_id).html(html);
                 $('#' + select_id).trigger('change');
+            }    
+        }
+        //
+        var rules = {
+            first_name: {
+                required: true,
+                pattern: /^[a-zA-Z0-9\ '-]+$/
+            },
+            last_name: {
+                required: true,
+                pattern: /^[a-zA-Z0-9\ '-]+$/
+            },
+            TextBoxNameMiddle: {
+                pattern: /^[a-zA-Z0-9\ '-]+$/
+            },
+            TextBoxSSN: {
+                required: true
+            },
+            TextBoxDOB: {
+                required: true
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            TextBoxAddressEmailConfirm: {
+                required: true,
+                equalTo: '[name="email"]'
+            },
+            Location_Address:{
+                required: true
+            },
+            Location_City: {
+                required: true
+            },
+            Location_ZipCode: {
+                required: true
+            },
+            PhoneNumber: {
+                required: true
+            },
+            CheckBoxAgreement1786: {
+                required: true
+            },
+            CheckBoxAgree: {
+                required: true
+            },
+            signature: {
+                required: true,
+                pattern: /[a-zA-Z0-9]/
+            },
+            signature_date: {
+                required: true
+            },
+            CheckBoxTerms: {
+                required: true
             }
+        };
+        //
+        var messages = {
+            first_name: {
+                required: 'First Name is required',
+                pattern: 'invalid first name'
+            },
+            last_name: {
+                required: 'Last Name is required',
+                pattern: 'invalid last name'
+            },
+            TextBoxNameMiddle: {
+                pattern: 'invalid middle name'
+            },
+            email: {
+                required: 'E-Mail address is required',
+                email: 'Invalid E-Mail address'
+            },
+            TextBoxAddressEmailConfirm: {
+                equalTo: 'Confirm E-mail does not match E-mail'
+            },
+            TextBoxSSN: {
+                required: 'Social Security Number is required'
+            },
+            TextBoxDOB: {
+                required: 'Date of Birth is required'
+            },
+            Location_City: {
+                required: 'City is required'
+            },
+            Location_Address: {
+                required: 'Current Address is required'
+            },
+            Location_ZipCode: {
+                required: 'ZipCode is required'
+            },
+            PhoneNumber: {
+                required: 'Primary Telephone No is required'
+            },
+            CheckBoxAgreement1786: {
+                required: 'Please Read and check'
+            },
+            CheckBoxAgree: {
+                required: 'Please Read and acknowledge'
+            },
+            signature: {
+                required: 'Please Sign The Document'
+            },
+            signature_date: {
+                required: 'Signature Date is Required'
+            },
+            CheckBoxTerms: {
+                required: 'Please read our Terms of Acceptance'
+            }
+        };
+        //
+        if("<?=$eight_plus?>" == 1){
+            rules['RadioButtonListWorkOver18'] = { required: true };
+            messages['RadioButtonListWorkOver18'] = { required: "This field is required." };
+        }
+        
+        //
+        // if("<?=$affiliate?>" == 1){
+        //     rules['previous_company_name'] = { required: true };
+        //     messages['previous_company_name'] = { required: "This field is required." };
+        // }
+        if("<?=$affiliate?>" == 1){
+            $(".validate_affiliate_company").on("change", function(){
+                var value = $('input[name="is_already_employed"]:checked').val();
+
+                if (value == "Yes") {
+                    $("#previous_company_name").prop('required',true);
+                    $(".yacr").show();
+                } else {
+                    $("#previous_company_name").prop('required',false);
+                    $(".yacr").hide();
+                }
+                
+            });
+        }
+        
+        //
+        if("<?=$d_license?>" == 1){
+            $(".validate_driving_license").on("change", function(){
+                var DLvalue = $('input[name="RadioButtonListDriversLicenseQuestion"]:checked').val();
+                if (DLvalue == "Yes") {
+                    $("#TextBoxDriversLicenseNumber").prop('required',true);
+                    $("#TextBoxDriversLicenseExpiration").prop('required',true);
+                    $("#country_dl").prop('required',true);
+                    $("#state_dl").prop('required',true);
+                    $("#license_guilty_details").prop('required',true);
+                    $(".dllr").show();
+                } else {
+                    $("#TextBoxDriversLicenseNumber").prop('required',false);
+                     $("#TextBoxDriversLicenseExpiration").prop('required',false);
+                    $("#country_dl").prop('required',false);
+                    $("#state_dl").prop('required',false);
+                    $("#license_guilty_details").prop('required',false);
+                    $(".dllr").hide();
+                }
+            });   
+            // rules['TextBoxDriversLicenseNumber'] = { required: true };
+            // rules['TextBoxDriversLicenseExpiration'] = { required: true };
+            // rules['DropDownListDriversCountry'] = { required: true };
+            // rules['DropDownListDriversState'] = { required: true };
+            // rules['license_guilty_details'] = { required: true };
+            // messages['TextBoxDriversLicenseNumber'] = { required: "This field is required." };
+            // messages['TextBoxDriversLicenseExpiration'] = { required: "This field is required." };
+            // messages['DropDownListDriversCountry'] = { required: "This field is required." };
+            // messages['DropDownListDriversState'] = { required: "This field is required." };
+            // messages['license_guilty_details'] = { required: "This field is required." };
+        }
+        
+        //
+        if("<?=$l_employment?>" == 1){
+            rules['TextBoxEmploymentEmployerName1'] = { required: true };
+            rules['TextBoxEmploymentEmployerPosition1'] = { required: true };
+            rules['TextBoxEmploymentEmployerAddress1'] = { required: true };
+            rules['DropDownListEmploymentEmployerCountry1'] = { required: true };
+            rules['DropDownListEmploymentEmployerState1'] = { required: true };
+            rules['TextBoxEmploymentEmployerCity1'] = { required: true };
+            rules['TextBoxEmploymentEmployerPhoneNumber1'] = { required: true };
+            rules['DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1'] = { required: true };
+            rules['DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'] = { required: true };
+            rules['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'] = { required: true };
+            rules['DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'] = { required: true };
+            rules['TextBoxEmploymentEmployerSupervisor1'] = { required: true };
+            rules['TextBoxEmploymentEmployerReasonLeave1'] = { required: true };
+            messages['TextBoxEmploymentEmployerName1'] = { required: "This field is required." };
+            messages['TextBoxEmploymentEmployerPosition1'] = { required: "This field is required." };
+            messages['TextBoxEmploymentEmployerAddress1'] = { required: "This field is required." };
+            messages['DropDownListEmploymentEmployerCountry1'] = { required: "This field is required." };
+            messages['DropDownListEmploymentEmployerState1'] = { required: "This field is required." };
+            messages['TextBoxEmploymentEmployerCity1'] = { required: "This field is required." };
+            messages['TextBoxEmploymentEmployerPhoneNumber1'] = { required: "This field is required." };
+            messages['DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1'] = { required: "This field is required." };
+            messages['DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'] = { required: "This field is required." };
+            messages['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'] = { required: "This field is required." };
+            messages['DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'] = { required: "This field is required." };
+            messages['TextBoxEmploymentEmployerSupervisor1'] = { required: "This field is required." };
+            messages['TextBoxEmploymentEmployerReasonLeave1'] = { required: "This field is required." };
         }
 
-        var rules = {
-                    first_name: {
-                        required: true,
-                        pattern: /^[a-zA-Z0-9\ '-]+$/
-                    },
-                    last_name: {
-                        required: true,
-                        pattern: /^[a-zA-Z0-9\ '-]+$/
-                    },
-                    TextBoxNameMiddle: {
-                        pattern: /^[a-zA-Z0-9\ '-]+$/
-                    },
-                    TextBoxSSN: {
-                        required: true
-                    },
-                    TextBoxDOB: {
-                        required: true
-                    },
-                    email: {
-                        required: true,
-                        email: true
-                    },
-                    TextBoxAddressEmailConfirm: {
-                        required: true,
-                        equalTo: '[name="email"]'
-                    },
-                    Location_Address:{
-                        required: true
-                    },
-                    Location_City: {
-                        required: true
-                    },
-                    Location_ZipCode: {
-                        required: true
-                    },
-                    PhoneNumber: {
-                        required: true
-                    },
-                    CheckBoxAgreement1786: {
-                        required: true
-                    },
-                    CheckBoxAgree: {
-                        required: true
-                    },
-                    signature: {
-                        required: true,
-                        pattern: /[a-zA-Z0-9]/
-                    },
-                    signature_date: {
-                        required: true
-                    },
-                    CheckBoxTerms: {
-                        required: true
-                    }
-                };
-        var messages = {
-                    first_name: {
-                        required: 'First Name is required',
-                        pattern: 'invalid first name'
-                    },
-                    last_name: {
-                        required: 'Last Name is required',
-                        pattern: 'invalid last name'
-                    },
-                    TextBoxNameMiddle: {
-                        pattern: 'invalid middle name'
-                    },
-                    email: {
-                        required: 'E-Mail address is required',
-                        email: 'Invalid E-Mail address'
-                    },
-                    TextBoxAddressEmailConfirm: {
-                        equalTo: 'Confirm E-mail does not match E-mail'
-                    },
-                    TextBoxSSN: {
-                        required: 'Social Security Number is required'
-                    },
-                    TextBoxDOB: {
-                        required: 'Date of Birth is required'
-                    },
-                    Location_City: {
-                        required: 'City is required'
-                    },
-                    Location_Address: {
-                        required: 'Current Address is required'
-                    },
-                    Location_ZipCode: {
-                        required: 'ZipCode is required'
-                    },
-                    PhoneNumber: {
-                        required: 'Primary Telephone No is required'
-                    },
-                    CheckBoxAgreement1786: {
-                        required: 'Please Read and check'
-                    },
-                    CheckBoxAgree: {
-                        required: 'Please Read and acknowledge'
-                    },
-                    signature: {
-                        required: 'Please Sign The Document'
-                    },
-                    signature_date: {
-                        required: 'Signature Date is Required'
-                    },
-                    CheckBoxTerms: {
-                        required: 'Please read our Terms of Acceptance'
-                    }
-                };
-
-                //
-    if("<?=$eight_plus?>" == 1){
-        rules['RadioButtonListWorkOver18'] = { required: true };
-        messages['RadioButtonListWorkOver18'] = { required: "This field is required." };
-    }
-    
-    //
-    if("<?=$affiliate?>" == 1){
-        rules['previous_company_name'] = { required: true };
-        messages['previous_company_name'] = { required: "This field is required." };
-    }
-    
-    //
-    if("<?=$d_license?>" == 1){
-        rules['TextBoxDriversLicenseNumber'] = { required: true };
-        rules['TextBoxDriversLicenseExpiration'] = { required: true };
-        rules['DropDownListDriversCountry'] = { required: true };
-        rules['DropDownListDriversState'] = { required: true };
-        rules['license_guilty_details'] = { required: true };
-        messages['TextBoxDriversLicenseNumber'] = { required: "This field is required." };
-        messages['TextBoxDriversLicenseExpiration'] = { required: "This field is required." };
-        messages['DropDownListDriversCountry'] = { required: "This field is required." };
-        messages['DropDownListDriversState'] = { required: "This field is required." };
-        messages['license_guilty_details'] = { required: "This field is required." };
-    }
-    
-    //
-    if("<?=$l_employment?>" == 1){
-        rules['TextBoxEmploymentEmployerName1'] = { required: true };
-        rules['TextBoxEmploymentEmployerPosition1'] = { required: true };
-        rules['TextBoxEmploymentEmployerAddress1'] = { required: true };
-        rules['DropDownListEmploymentEmployerCountry1'] = { required: true };
-        rules['DropDownListEmploymentEmployerState1'] = { required: true };
-        rules['TextBoxEmploymentEmployerCity1'] = { required: true };
-        rules['TextBoxEmploymentEmployerPhoneNumber1'] = { required: true };
-        rules['DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1'] = { required: true };
-        rules['DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'] = { required: true };
-        rules['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'] = { required: true };
-        rules['DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'] = { required: true };
-        rules['TextBoxEmploymentEmployerSupervisor1'] = { required: true };
-        rules['TextBoxEmploymentEmployerReasonLeave1'] = { required: true };
-        messages['TextBoxEmploymentEmployerName1'] = { required: "This field is required." };
-        messages['TextBoxEmploymentEmployerPosition1'] = { required: "This field is required." };
-        messages['TextBoxEmploymentEmployerAddress1'] = { required: "This field is required." };
-        messages['DropDownListEmploymentEmployerCountry1'] = { required: "This field is required." };
-        messages['DropDownListEmploymentEmployerState1'] = { required: "This field is required." };
-        messages['TextBoxEmploymentEmployerCity1'] = { required: "This field is required." };
-        messages['TextBoxEmploymentEmployerPhoneNumber1'] = { required: "This field is required." };
-        messages['DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1'] = { required: "This field is required." };
-        messages['DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'] = { required: "This field is required." };
-        messages['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'] = { required: "This field is required." };
-        messages['DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'] = { required: "This field is required." };
-        messages['TextBoxEmploymentEmployerSupervisor1'] = { required: "This field is required." };
-        messages['TextBoxEmploymentEmployerReasonLeave1'] = { required: "This field is required." };
-    }
-
-        function validate_form() {
+        function validate_form() { 
             $("#fullemploymentapplication").validate({
                 ignore: ":hidden:not(select)",
                 rules: rules,
@@ -2834,8 +2905,7 @@
                         {
                            form.submit();
                         }else{
-                          
-                             $("#show_specific_error").text("kindly provide previous company or affiliate company name");
+                            $("#show_specific_error").text("kindly provide previous company or affiliate company name");
                         }
                     }else{
                         form.submit();
