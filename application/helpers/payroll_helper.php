@@ -977,7 +977,7 @@ if(!function_exists('CacheHolder')){
         $_this =&get_instance();
         //
         if($_this->session->userdata($url) && !$force){
-            // return $_this->session->userdata($url);
+             //return $_this->session->userdata($url);
         }
         if(!empty($data)){
             $_this->session->set_userdata($url, $data);

@@ -163,21 +163,17 @@ class Payroll extends CI_Controller
 
         // Get the company pay periods
         $response = $this->PayPeriods($this->data['companyId']);
-        // let's get the last unprocessed payroll
-        // Remove the processed records
-        $periods = array_filter($response['Response'], function($period){
-            if(!$period['payroll']['processed']) {
-                return 1;
-            }
-        });
-        // Set current payroll
-        $this->data['period'] = array_values($periods)[0];
-        // Get the single payroll
-        $this->data['payroll'] = $this->GetUnProcessedPayrolls(
-            $this->data['companyId'], 
-            $this->data['period']['start_date'], 
-            $this->data['period']['end_date']
-        )['Response'][0];
+        // let's reverse the pay periods
+        $this->data['period'] = array_reverse($response['Response'])[0];
+        //
+        if(!$this->data['period']['processed']){
+            // Get the single payroll
+            $this->data['payroll'] = $this->GetUnProcessedPayrolls(
+                $this->data['companyId'], 
+                $this->data['period']['start_date'], 
+                $this->data['period']['end_date']
+            )['Response'][0];
+        }
         // Get Gusto Company Details
         $this->load
         ->view('main/header', $this->data)
@@ -205,7 +201,11 @@ class Payroll extends CI_Controller
         }
         //
         $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'], $this->data['step'])['Response'];
-        _e( $this->data['Payroll'], true, true);
+        //
+        if($this->data['processed'] && $this->data['step'] <= 3){
+            return redirect(base_url('payroll/run'));
+        }
+       
         //
         $this->pm->CheckAndInsertPayroll(
             $this->data['companyId'],
@@ -218,6 +218,11 @@ class Payroll extends CI_Controller
         //
         if(!empty($this->data['Payroll'])){
             foreach($this->data['Payroll']['employee_compensations'] as $index => $payroll){
+
+                if($payroll['excluded'] == 1 && $this->data['step'] >= 3){
+                    unset($this->data['Payroll']['employee_compensations'][$index]);
+                    continue;
+                }
                 //
                 $this->data['Payroll']['employee_compensations'][$index]['employee_id'] = number_format($payroll['employee_id'], 0, '', '');
                 //

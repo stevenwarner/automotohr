@@ -23,7 +23,7 @@
                     Employee Pay Date
                 </p>
                 <p class="csF18 csB7">
-                    Friday, September 17, 2021 by 5pm
+                    <?=formatDateToDB($Payroll['check_date'], DB_DATE, DATE);?>
                 </p>
             </div>
             <div class="col-sm-6 text-left">
@@ -95,25 +95,25 @@
             event.preventDefault();
             //
             alertify.confirm(
-                'You may cancel the July 31 - August 13 payroll now and run it again later. Just note that your employees will be paid late if you don’t run it by 4:00pm PDT on September 13, 2021.<br><strong>Don’t want to lose all your data?</strong><br>Rest assured—we’ll save all the info you entered for this payroll, in case you need to re-run it.', 
+                'You may cancel <strong><?=formatDateToDB($Payroll['pay_period']['start_date'], DB_DATE, DATE);?> - <?=formatDateToDB($Payroll['pay_period']['end_date'], DB_DATE, DATE);?></strong> payroll now and run it again later. Just note that your employees will be paid late if you don’t run it by <strong><?=GUSTO_PAYROLL_TIME;?></strong> on <strong><?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></strong>.<br><br><strong>Don’t want to lose all your data?</strong><br>Rest assured—we’ll save all the info you entered for this payroll, in case you need to re-run it.', 
                 function(){
                     CancelPayroll();
                 }
-            );
+            ).setHeader('Cancel Payroll Confirmation');
         });
         
         //
         function CancelPayroll(){
             //
-            ml(true, 'main_loader', 'Please wait, while we are cancelling the payroll.');
+            ml(true, 'main_loader', 'Please wait, while we cancel the payroll.');
             //
             $.post(
                 "<?=base_url("cancel_payroll");?>", {
                     payrollId:"<?=$payrollId;?>"
                 }
             ).done(function(resp){
-                alertify.alert("Success!", "Payroll has been cancelled.", function(){
-                    window.location.href = window.location.origin + '/payroll/create';
+                alertify.alert("Success!", "Payroll canceled.", function(){
+                    window.location.href = window.location.origin + '/payroll/run';
                 });
             });
         }

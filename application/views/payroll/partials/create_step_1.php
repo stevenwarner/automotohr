@@ -733,7 +733,7 @@ if(!empty($Payroll['employee_compensations'])):
                 alertify.confirm(
                     "Any unsaved changes will be lost. Do you wish to continue?",
                     function(){
-                        window.location = window.location.origin +'/payroll/create';
+                        window.location = window.location.origin +'/payroll/run';
                     }
                 );
             }

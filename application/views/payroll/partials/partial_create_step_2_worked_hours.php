@@ -98,11 +98,6 @@
                                     </th>
                                     <th scope="col" class="vam ban csBG2 text-right">
                                         <h1 class="csF18 csB7 mt0 mb0 csW">
-                                            Emergency Leave 
-                                        </h1>
-                                    </th>
-                                    <th scope="col" class="vam ban csBG2 text-right">
-                                        <h1 class="csF18 csB7 mt0 mb0 csW">
                                             Total Hours
                                         </h1>
                                     </th>
@@ -114,7 +109,13 @@
                                         //
                                         $emp = $PayrollEmployees[$row['employee_id']];
                                         //
-                                        $totalHours = 0;
+                                        $regularWorkedHours = !empty($row['hourly_compensations']) ? $row['hourly_compensations']['regular-hours']['hours'] : WORK_WEEK_HOURS;
+                                        //
+                                        $overtimeHours = !empty($row['hourly_compensations']) && isset($row['hourly_compensations']['overtime']) ? $row['hourly_compensations']['overtime']['hours'] : 0.00;
+                                        //
+                                        $doubleOvertimeHours = !empty($row['hourly_compensations']) && isset($row['hourly_compensations']['double-overtime']) ? $row['hourly_compensations']['double-overtime']['hours'] : 0.00;
+                                        //
+                                        $totalHours = number_format(($regularWorkedHours + $overtimeHours + $doubleOvertimeHours), 2);
                                     ?>
                                     <tr>
                                        <td class="vam ban">
@@ -129,63 +130,24 @@
                                        </td> 
                                        <td class="vam ban text-right">
                                            <h6 class="csF16">
-                                               <?=number_format(
-                                                    (!empty($row['hourly_compensations']) ? $row['hourly_compensations']['regular-hours']['hours'] : WORK_WEEK_HOURS), 2
-                                                );?>
+                                               <?=number_format($regularWorkedHours, 2);?>
                                            </h6>
                                        </td> 
                                        <td class="vam ban text-right">
                                            <h6 class="csF16">
-                                               <?php 
-                                                    if(!empty($row['hourly_compensations'])){
-                                                        echo number_format(
-                                                            $row['hourly_compensations']['overtime']['hours'] , 2
-                                                        );
-                                                    } else{
-                                                        echo "0.00";
-                                                    }
-                                               ?>
+                                               <?=number_format($overtimeHours , 2); ?>
+                                            </h6>
+                                        </td> 
+                                        <td class="vam ban text-right">
+                                            <h6 class="csF16">
+                                               <?=number_format($doubleOvertimeHours , 2); ?>
                                            </h6>
                                        </td> 
                                        <td class="vam ban text-right">
                                            <h6 class="csF16">
-                                               <?php 
-                                                    if(!empty($row['hourly_compensations'])){
-                                                        echo number_format(
-                                                            $row['hourly_compensations']['double-overtime']['hours'], 2
-                                                        );
-                                                    } else{
-                                                        echo "0.00";
-                                                    }
-                                               ?>
+                                               <?=0.0;?>
                                            </h6>
-                                       </td> 
-                                       <td class="vam ban text-right">
-                                           <h6 class="csF16">
-                                               <?php 
-                                                    if(!empty($row['hourly_compensations'])){
-                                                        echo number_format(
-                                                            $row['hourly_compensations']['double-overtime']['hours'], 2
-                                                        );
-                                                    } else{
-                                                        echo "0.00";
-                                                    }
-                                               ?>
-                                           </h6>
-                                       </td> 
-                                       <td class="vam ban text-right">
-                                           <h6 class="csF16">
-                                               <?php 
-                                                    if(!empty($row['hourly_compensations'])){
-                                                        echo number_format(
-                                                            $row['hourly_compensations']['double-overtime']['hours'], 2
-                                                        );
-                                                    } else{
-                                                        echo "0.00";
-                                                    }
-                                               ?>
-                                           </h6>
-                                       </td> 
+                                       </td>
                                        <td class="vam ban text-right">
                                            <h6 class="csF16">
                                                <?=number_format($totalHours, 2);?>
@@ -242,6 +204,14 @@
                                         $emp = $PayrollEmployees[$row['employee_id']];
                                         //
                                         $rateByHour = number_format((float)ResetRate($emp['jobs'][0]['rate'], $emp['jobs'][0]['payment_unit']), 2);
+                                        //
+                                        $regularWorkedAmount =  (!empty($row['hourly_compensations']) ? $row['hourly_compensations']['regular-hours']['hours'] : WORK_WEEK_HOURS) * $rateByHour;
+                                        //
+                                        $overtimeAmount = !empty($row['hourly_compensations']) ? $row['hourly_compensations']['overtime']['hours'] * $rateByHour *  $row['hourly_compensations']['overtime']['compensation_multiplier'] : 0;
+                                        //
+                                        $doubleOvertimeAmount = !empty($row['hourly_compensations']) ? $row['hourly_compensations']['double-overtime']['hours'] * $rateByHour *  $row['hourly_compensations']['double-overtime']['compensation_multiplier'] : 0;
+                                        //
+                                        $totalAmount = number_format(($regularWorkedAmount + $overtimeAmount + $doubleOvertimeAmount), 2);
                                     ?>
                                     <tr>
                                        <td class="vam ban">
@@ -256,40 +226,22 @@
                                        </td> 
                                        <td class="vam ban text-right">
                                            <h6 class="csF16">
-                                               $<?=number_format(
-                                                    (!empty($row['hourly_compensations']) ? $row['hourly_compensations']['regular-hours']['hours'] : WORK_WEEK_HOURS) * $rateByHour, 2
-                                                );?>
+                                               $<?=number_format($regularWorkedAmount, 2);?>
+                                            </h6>
+                                        </td> 
+                                        <td class="vam ban text-right">
+                                            <h6 class="csF16">
+                                               $<?=number_format($overtimeAmount, 2);?>
+                                            </h6>
+                                        </td> 
+                                        <td class="vam ban text-right">
+                                            <h6 class="csF16">
+                                               $<?=number_format($doubleOvertimeAmount, 2);?>
                                            </h6>
                                        </td> 
                                        <td class="vam ban text-right">
                                            <h6 class="csF16">
-                                               $<?php 
-                                                    if(!empty($row['hourly_compensations'])){
-                                                        echo number_format(
-                                                            $row['hourly_compensations']['overtime']['hours'] *  $row['hourly_compensations']['overtime']['compensation_multiplier'] * $rateByHour, 2
-                                                        );
-                                                    } else{
-                                                        echo "0.00";
-                                                    }
-                                               ?>
-                                           </h6>
-                                       </td> 
-                                       <td class="vam ban text-right">
-                                           <h6 class="csF16">
-                                               $<?php 
-                                                    if(!empty($row['hourly_compensations'])){
-                                                        echo number_format(
-                                                            $row['hourly_compensations']['double-overtime']['hours'] *  $row['hourly_compensations']['double-overtime']['compensation_multiplier'] * $rateByHour, 2
-                                                        );
-                                                    } else{
-                                                        echo "0.00";
-                                                    }
-                                               ?>
-                                           </h6>
-                                       </td> 
-                                       <td class="vam ban text-right">
-                                           <h6 class="csF16">
-                                               $<?=number_format($row['gross_pay'], 2);?>
+                                               $<?=$totalAmount;?>
                                            </h6>
                                        </td> 
                                     </tr>
