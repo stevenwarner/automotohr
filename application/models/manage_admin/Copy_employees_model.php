@@ -142,6 +142,7 @@ class Copy_employees_model extends CI_Model {
         $this->db->select('sid');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('email', $email);
+        $this->db->where('is_executive_admin', 0);
         $this->db->from('users');
         $ids = $this->db->count_all_results();
         
