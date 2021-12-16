@@ -315,7 +315,7 @@
         $.each(records, function(key, value) {
             
             total_records_fetch++; 
-            employee_name = value.first_name+" "+value.last_name;
+            employee_name = RemakeEmployeeName(value);
             var active = '';
             var deactive = '';
             var terminated = '';
@@ -464,5 +464,18 @@
     // Select single input: checkbox
     function selectSingleInput(){
         $(this).find('input[name="employees_ids[]"]').prop('checked', !$(this).find('input[name="employees_ids[]"]').prop('checked'));
+    }
+
+    function RemakeEmployeeName(emp){
+        var row = '';
+        //
+        row += emp['first_name'];
+        row += ' '+emp['last_name'];
+        row += ' ('+emp['access_level'];
+        row +=   emp['access_level_plus'] ||  emp['pay_plan_flag'] ? ' Plus' : ''; 
+        row += ' )';
+        row += emp['job_title'] ? ' ['+emp['job_title']+']' : '';
+        //
+        return row;
     }
 </script>

@@ -69,8 +69,9 @@ class Copy_employees_model extends CI_Model {
 
     function get_company_employee ($sid, $type, $page, $limit) {
         $start = $page == 1 ? 0 : ($page * $limit) - $limit;
-        $this->db->select('sid, email, first_name, last_name, active, terminated_status');
+        $this->db->select('sid, email, first_name, last_name, active, job_title, access_level, access_level_plus, pay_plan_flag, terminated_status');
         $this->db->where('parent_sid', $sid);
+        $this->db->where('is_executive_admin', 0);
 
         if ($type == 2) {
             $this->db->where('active', 1);
@@ -97,6 +98,7 @@ class Copy_employees_model extends CI_Model {
     function get_employee_count ($sid, $type) {
         $this->db->select('sid');
         $this->db->where('parent_sid', $sid);
+        $this->db->where('is_executive_admin', 0);
 
         if ($type == 2) {
             $this->db->where('active', 1);
