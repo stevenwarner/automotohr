@@ -4135,7 +4135,9 @@
     });
 
     $('.manage_authorized_signature').on('click', function () {
-        var document_auth_sid = $(this).attr('data-auth-signature');
+        var document_auth_sid = $(this).attr('data-auth-sid');
+        var auth_signature = $(this).attr('data-auth-signature');
+
         $('#authorized_document_sid').val(document_auth_sid);
 
         var default_signature = $('#default_e_signature').attr('src');
@@ -4151,6 +4153,13 @@
         $('#save_authorized_e_signature_button').show();
 
         $('#authorized_e_Signature_Modal').modal('show');
+
+        if (auth_signature != '' || auth_signature != undefined) {
+            $("#defaultAuthorizedDocument").show();
+            $("#selected_auth_e_signature").attr('src', auth_signature);
+        } else {
+            $("#defaultAuthorizedDocument").hide();
+        }
     }); 
 
     $("#is_offer_letter").on('click', function () {

@@ -201,7 +201,7 @@
                                                                 >Manage Category</a>
                                                                 <?php if ($document['is_document_authorized'] == 1) { ?> 
                                                                     <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                    <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-signature="<?php echo $document['sid']; ?>">
+                                                                    <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
                                                                         <?php if ($document['authorized_sign_status'] == 0) { ?>
                                                                             Employer Section - Not Completed
                                                                         <?php } else if ($document['authorized_sign_status'] == 1) { ?>
@@ -765,7 +765,7 @@
                                                                                     </button>
                                                                                     <?php if ($document['is_document_authorized'] == 1) { ?> 
                                                                                         <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                                        <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-signature="<?php echo $document['sid']; ?>">
+                                                                                        <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
                                                                                             <?php if ($document['authorized_sign_status'] == 0) { ?>
                                                                                                 Employer Section - Not Completed
                                                                                             <?php } else if ($document['authorized_sign_status'] == 1) { ?>
@@ -884,7 +884,7 @@
 
                                                                                     <?php if ($document['is_document_authorized'] == 1) { ?> 
                                                                                         <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                                        <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-signature="<?php echo $document['sid']; ?>">
+                                                                                        <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
                                                                                             <?php if ($document['authorized_sign_status'] == 0) { ?>
                                                                                                 Employer Section - Not Completed
                                                                                             <?php } else if ($document['authorized_sign_status'] == 1) { ?>
@@ -1040,7 +1040,7 @@
                                                                         </button>
                                                                         <?php if ($document['is_document_authorized'] == 1) { ?> 
                                                                             <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                            <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-signature="<?php echo $document['sid']; ?>">
+                                                                            <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
                                                                                 <?php if ($document['authorized_sign_status'] == 0) { ?>
                                                                                     Employer Section - Not Completed
                                                                                 <?php } else if ($document['authorized_sign_status'] == 1) { ?>
@@ -1111,7 +1111,7 @@
                                                                             </button>
                                                                         <?php if ($document['is_document_authorized'] == 1) { ?> 
                                                                             <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                            <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-signature="<?php echo $document['sid']; ?>">
+                                                                            <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
                                                                                 <?php if ($document['authorized_sign_status'] == 0) { ?>
                                                                                     Employer Section - Not Completed
                                                                                 <?php } else if ($document['authorized_sign_status'] == 1) { ?>
@@ -1420,7 +1420,7 @@
                                                                             </button>
                                                                             <?php if ($document['is_document_authorized'] == 1) { ?> 
                                                                                 <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                                <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-signature="<?php echo $document['sid']; ?>">
+                                                                                <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
                                                                                     <?php if ($document['authorized_sign_status'] == 0) { ?>
                                                                                         Employer Section - Not Completed
                                                                                     <?php } else if ($document['authorized_sign_status'] == 1) { ?>
@@ -1640,7 +1640,7 @@
                                                                                 <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/'.($user_type).'/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                                 <?php if ($document['is_document_authorized'] == 1) { ?> 
                                                                                     <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                                    <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-signature="<?php echo $document['sid']; ?>">
+                                                                                    <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
                                                                                         <?php if ($document['authorized_sign_status'] == 0) { ?>
                                                                                             Employer Section - Not Completed
                                                                                         <?php } else if ($document['authorized_sign_status'] == 1) { ?>

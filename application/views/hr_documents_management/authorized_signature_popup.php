@@ -89,14 +89,17 @@
                                                 <th class="col-xs-4">Signed By</th>
                                                 <td class="col-xs-8" id="document_assign_date"></td>
                                             </tr>
-                                            <?php if (!empty($current_user_signature)) { ?>
-                                                <tr>
-                                                    <th class="col-xs-4">Default Signature</th>
-                                                    <td class="col-xs-8">
-                                                        <img id="selected_auth_e_signature" style="max-height: <?php echo SIGNATURE_MAX_HEIGHT; ?>" src="<?php echo $current_user_signature; ?>" />
-                                                    </td>
-                                                </tr>
-                                            <?php } ?>
+                                            <?php 
+                                                $default_signature = 'default';
+                                                $default_signature_section = 'style="display: none"';
+                                            ?>    
+                                            <tr id="defaultAuthorizedDocument" <?php echo $default_signature_section; ?>>
+                                                <th class="col-xs-4">Default Signature</th>
+                                                <td class="col-xs-8">
+                                                    <img id="selected_auth_e_signature" style="max-height: <?php echo SIGNATURE_MAX_HEIGHT; ?>" src="<?php echo $default_signature; ?>" />
+                                                </td>
+                                            </tr>
+                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -294,6 +297,9 @@
 <script src="<?php echo base_url('assets/crop/fabric.js'); ?>"></script>
 <script src="<?php echo base_url('assets/crop/darkroom.js'); ?>"></script>
 <script type="text/javascript">
+    $("document").ready(function () {
+        console.log("love")
+    });
 
     $( "#authorized_e_Signature_Modal" ).on('shown.bs.modal', function(){
         var assign_doc_sid = $("#authorized_document_sid").val();
@@ -365,6 +371,7 @@
         $('#edit_authorized_e_signature_button').hide();
         $('#save_authorized_e_signature_button').hide();
         $('#replace_authorized_e_signature_button').show();
+        $('#replace_authorized_e_signature_button').prop('disabled', true);
         $('#back_to_main').show();
 
         $('#draw_signature_section').hide();
@@ -511,23 +518,8 @@
                 'Are you Sure?',
                 'Are you sure you want to use above authorized signature?',
                 function () {
-                    setTimeout(function(){
-                        $('#default_authorized_signature_section').show();
-                        $('#type_signature_section').show();
-                        $('#authorized_tergit').show();
-                        $('#active_authorized_signature_typed').prop("checked", true);
-                        $('#draw_signature_section').hide(); 
-                        $('#edit_authorized_signature_section').hide();
-
-                        $('#edit_authorized_e_signature_button').show();
-                        $('#save_authorized_e_signature_button').show();
-                        $('#replace_authorized_e_signature_button').hide();
-                        $('#back_to_main').hide();
-                    
-                        var new_signature = $('#drawn_authorized_signature').val();
-                        $("#selected_auth_e_signature").attr("src",new_signature);
-                    }, 3000);
-                    
+                    $("#my_loader").show();
+                    print_E_signature();
                 },
                 function () {
                     
@@ -535,6 +527,32 @@
         }
         
     });
+
+    function print_E_signature () {
+        var new_signature = $('#drawn_authorized_signature').val();
+        console.log(new_signature)
+
+        if (!new_signature) {
+            return setTimeout(print_E_signature, 1000)
+        }
+
+        $('#default_authorized_signature_section').show();
+        $('#type_signature_section').show();
+        $('#authorized_tergit').show();
+        $('#active_authorized_signature_typed').prop("checked", true);
+        $('#draw_signature_section').hide(); 
+        $('#edit_authorized_signature_section').hide();
+
+        $('#edit_authorized_e_signature_button').show();
+        $('#save_authorized_e_signature_button').show();
+        $('#replace_authorized_e_signature_button').hide();
+        $('#back_to_main').hide();
+
+        $("#defaultAuthorizedDocument").show();
+        $("#selected_auth_e_signature").attr("src",new_signature);
+        $("#my_loader").hide();
+        
+    }
 
     $('#save_authorized_e_signature_button').on('click', function () {
 
@@ -708,6 +726,7 @@
     var inputBox = document.getElementById('authorized_e_signature');
     inputBox.onkeyup = function(){
         document.getElementById('authorized_tergit').innerHTML = inputBox.value; 
+        $('#replace_authorized_e_signature_button').prop('disabled', true);
     }
 
     //  This function convert p tag into canves and and then convert 
@@ -715,6 +734,11 @@
     $("#authorized_e_signature").on("change paste mouseleave", function() {
         html2canvas(document.querySelector("#authorized_tergit")).then(canvas => {
             $("#drawn_authorized_signature").val(canvas.toDataURL());
+            var current_sign = $("#authorized_e_signature").val();
+
+            if(current_sign != '' || current_sign != undefined) {
+                $('#replace_authorized_e_signature_button').prop('disabled', false);
+            } 
         }); 
     });
 
