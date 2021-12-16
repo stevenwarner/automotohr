@@ -3600,7 +3600,7 @@ class Hr_documents_management_model extends CI_Model {
         if (!empty($record_arr)) {
             return $record_arr[0]['signature_bas64_image'];
         } else {
-            return array();
+            return '';
         }
     }
 
