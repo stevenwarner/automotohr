@@ -111,7 +111,7 @@
                                                     <td><?php echo $user_company['company_website']; ?></td>
                                                     <td class="text-center">
                                                         <div class="btn-msg-actions display-block">
-                                                            <a class="btn btn-success btn-sm" href="javascript:;" id="<?php echo $user_company['company_sid']; ?>" onclick="return companyLogin(this.id,<?php echo $user_company['logged_in_sid']; ?>);">Login</a>
+                                                            <a class="btn btn-success btn-sm" style="background-color:#0000ff !important;" href="javascript:;" id="<?php echo $user_company['company_sid']; ?>" onclick="return companyLogin(this.id,<?php echo $user_company['logged_in_sid']; ?>);">Login</a>
                                                             <a class="btn btn-success btn-sm" href="<?php echo base_url() . 'dashboard/manage_admin_companies/' . $user_company['company_sid']; ?>">Manage</a>
                                                             <a class="btn btn-success btn-sm" href="<?php echo base_url() . 'dashboard/reports/' . $user_company['company_sid']; ?>">Reports</a>
                                                             <a class="btn btn-success btn-sm" href="<?php echo base_url('private_messages') . '/' . $user_company['company_sid']; ?>">Messages</a>
