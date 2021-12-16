@@ -472,7 +472,7 @@
         row += emp['first_name'];
         row += ' '+emp['last_name'];
         row += ' ('+emp['access_level'];
-        row +=   emp['access_level_plus'] ||  emp['pay_plan_flag'] ? ' Plus' : ''; 
+        row +=   emp['access_level_plus'] == 1 ||  emp['pay_plan_flag'] == 1 ? ' Plus' : ''; 
         row += ' )';
         row += emp['job_title'] ? ' ['+emp['job_title']+']' : '';
         //
