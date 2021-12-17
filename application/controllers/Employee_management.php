@@ -1838,6 +1838,11 @@ class Employee_management extends Public_Controller {
     public function my_profile() {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
+            //
+            if ($data['session']['employer_detail']['is_executive_admin'] == 1) {
+                  redirect('dashboard', 'location');
+            }
+            //
             $company_detail = $data['session']['company_detail'];
             $employer_detail = $data['session']['employer_detail'];
             $security_sid = $employer_detail['sid'];

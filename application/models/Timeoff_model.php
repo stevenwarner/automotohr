@@ -7127,6 +7127,7 @@ class Timeoff_model extends CI_Model
             ->from('users')
             ->where('parent_sid', $companySid)
             ->where('active', 1)
+            ->where('is_executive_admin', 0)
             ->where('terminated_status', 0)
             ->order_by('first_name', 'ASC');
         if(!empty($ids)) $this->db->where_in('sid', $ids);
