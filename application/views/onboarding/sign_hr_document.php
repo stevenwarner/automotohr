@@ -33,16 +33,24 @@
                                     <div class="col-xs-12" id="required_fields_div">
                                         <?php if($document['document_type'] == 'hybrid_document' || $document['offer_letter_type'] == 'hybrid_document') { ?>
                                             <div class="img-thumbnail text-center" style="width: 100%; max-height: 82em;">
-                                                <?php   $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
-                                                $document_file = pathinfo($document_filename);
-                                                $dcoument_extension = strtolower($document['document_extension']);
+                                                <?php  
 
-                                                if (in_array($dcoument_extension, ['pdf', 'csv'])) {
+                                                $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
+                                                $document_file = pathinfo($document_filename);
+                                                $document_extension = strtolower($document['document_extension']);
+
+                                                //
+                                                $t = explode('.', $document_filename);
+                                                $de = $t[sizeof($t) - 1];
+                                                //
+                                                if($de != $document_extension) $document_extension = $de;
+
+                                                if (in_array($document_extension, ['pdf', 'csv'])) {
                                                     $allowed_mime_types = ''; ?>
                                                     <iframe src="<?php echo  'https://docs.google.com/gview?url='.AWS_S3_BUCKET_URL.$document_filename.'&embedded=true'; ?>" class="uploaded-file-preview js-hybrid-preview"  style="width:100%; height:80em;" frameborder="0"></iframe>
-                                                <?php } else if (in_array($dcoument_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) { ?>
+                                                <?php } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) { ?>
                                                     <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $document_filename; ?>"/>
-                                                <?php } else if (in_array($dcoument_extension, ['doc', 'docx', 'xls', 'xlsx'])) { ?>
+                                                <?php } else if (in_array($document_extension, ['doc', 'docx', 'xls', 'xlsx'])) { ?>
                                                     <iframe src="<?php echo 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $document_filename); ?>" class="uploaded-file-preview js-hybrid-preview"
                                                             style="width:100%; height:80em;" frameborder="0"></iframe>
                                                 <?php } else { ?>
@@ -64,16 +72,23 @@
                                             <?php } ?>
                                         <?php } else if($document['document_type'] == 'uploaded' || $document['offer_letter_type'] == 'uploaded') { ?>
                                             <div class="img-thumbnail text-center" style="width: 100%; max-height: 82em;">
-                                                <?php   $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
+                                                <?php   
+                                                $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
                                                 $document_file = pathinfo($document_filename);
-                                                $dcoument_extension = strtolower($document['document_extension']);
+                                                $document_extension = strtolower($document['document_extension']);
 
-                                                if (in_array($dcoument_extension, ['pdf', 'csv'])) {
+                                                //
+                                                $t = explode('.', $document_filename);
+                                                $de = $t[sizeof($t) - 1];
+                                                //
+                                                if($de != $document_extension) $document_extension = $de;
+
+                                                if (in_array($document_extension, ['pdf', 'csv'])) {
                                                     $allowed_mime_types = ''; ?>
                                                     <iframe src="<?php echo  'https://docs.google.com/gview?url='.AWS_S3_BUCKET_URL.$document_filename.'&embedded=true'; ?>" class="uploaded-file-preview"  style="width:100%; height:80em;" frameborder="0"></iframe>
-                                                <?php } else if (in_array($dcoument_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) { ?>
+                                                <?php } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) { ?>
                                                     <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $document_filename; ?>"/>
-                                                <?php } else if (in_array($dcoument_extension, ['doc', 'docx', 'xls', 'xlsx'])) { ?>
+                                                <?php } else if (in_array($document_extension, ['doc', 'docx', 'xls', 'xlsx'])) { ?>
                                                     <iframe src="<?php echo 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $document_filename); ?>" class="uploaded-file-preview"
                                                             style="width:100%; height:80em;" frameborder="0"></iframe>
                                                 <?php } ?>

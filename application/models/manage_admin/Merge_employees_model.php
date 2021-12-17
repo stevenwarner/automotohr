@@ -29,6 +29,7 @@ class Merge_employees_model extends CI_Model {
         //
         return
         $this->db->select(getUserFields(), 'timezone')
+        ->where('is_executive_admin', 0)
         ->where('parent_sid', $companyId)
         ->order_by('first_name', 'ASC')
         ->get('users')

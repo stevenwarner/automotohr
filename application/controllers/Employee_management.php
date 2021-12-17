@@ -2187,6 +2187,7 @@ class Employee_management extends Public_Controller {
         $company_id = $data['session']['company_detail']['sid'];
         $this->db->where('email', $str);
         $this->db->where('email <>', '');
+        $this->db->where('is_executive_admin', 0);
         $this->db->where('parent_sid', $company_id);
         $userInfo = $this->db->get('users')->result_array();
         $return = FALSE;
