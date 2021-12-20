@@ -342,6 +342,35 @@ class employers extends Admin_Controller {
             $data['access_level_plus'] = $this->input->post('access_level_plus');
             $data['complynet_status'] = $this->input->post('complynet_status');
 
+            //
+            if(!empty($this->input->post('nick_name', true))){
+                $data['nick_name'] = $this->input->post('nick_name', true);
+            }
+            //
+            if(!empty($this->input->post('middle_name', true))){
+                $data['middle_name'] = $this->input->post('middle_name', true);
+            }
+            //
+            if(!empty($this->input->post('hourly_rate', true))){
+                $data['hourly_rate'] = $this->input->post('hourly_rate', true);
+            }
+            //
+            if(!empty($this->input->post('hourly_technician', true))){
+                $data['hourly_technician'] = $this->input->post('hourly_technician', true);
+            }
+            //
+            if(!empty($this->input->post('flat_rate_technician', true))){
+                $data['flat_rate_technician'] = $this->input->post('flat_rate_technician', true);
+            }
+            //
+            if(!empty($this->input->post('semi_monthly_salary', true))){
+                $data['semi_monthly_salary'] = $this->input->post('semi_monthly_salary', true);
+            }
+            //
+            if(!empty($this->input->post('semi_monthly_draw', true))){
+                $data['semi_monthly_draw'] = $this->input->post('semi_monthly_draw', true);
+            }
+
             if(IS_PTO_ENABLED == 1){
                 $data['user_shift_hours'] = $this->input->post('shift_hours', true);
                 $data['user_shift_minutes'] = $this->input->post('shift_mins', true);

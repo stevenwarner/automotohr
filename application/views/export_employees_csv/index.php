@@ -155,6 +155,32 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                     <label class="control control--checkbox">Nick Name<input type="checkbox" name="nick_name" class="check_it" value="nick_name"><div class="control__indicator"></div></label>
                                                 </div>
                                             </div>
+                                            <!--  -->
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Hourly Rate<input type="checkbox" name="hourly_rate" class="check_it" value="hourly_rate"><div class="control__indicator"></div></label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Hourly Technician<input type="checkbox" name="hourly_technician" class="check_it" value="hourly_technician"><div class="control__indicator"></div></label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Flat Rate Technician<input type="checkbox" name="flat_rate_technician" class="check_it" value="flat_rate_technician"><div class="control__indicator"></div></label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Semi Monthly Salary<input type="checkbox" name="semi_monthly_salary" class="check_it" value="semi_monthly_salary"><div class="control__indicator"></div></label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Semi Monthly Draw<input type="checkbox" name="semi_monthly_draw" class="check_it" value="semi_monthly_draw"><div class="control__indicator"></div></label>
+                                                </div>
+                                            </div>
                                       </div>
                                    </div>
                                </div>

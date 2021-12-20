@@ -48,6 +48,26 @@
                                                         ?>
                                                     </div>
                                                 </li>
+
+                                                <li>
+                                                    <?php echo form_label('Nick Name', 'nick_name'); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <?php                                                   
+                                                            echo form_input('nick_name', set_value('nick_name', $data['nick_name'], false), 'class="hr-form-fileds"');
+                                                            echo form_error('nick_name'); 
+                                                        ?>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <?php echo form_label('Middle Name / Initial', 'middle_name'); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <?php                                                   
+                                                            echo form_input('middle_name', set_value('middle_name', $data['middle_name'], false), 'class="hr-form-fileds"');
+                                                            echo form_error('middle_name'); 
+                                                        ?>
+                                                    </div>
+                                                </li>
                                                 
                                                 <li>
                                                     <?php echo form_label('Last Name', 'last_name'); ?>
@@ -240,6 +260,57 @@
                                                         </div>
                                                     </div>
                                                 </li>
+
+                                                <li>
+                                                    <?php echo form_label('Hourly Rate', 'hourly_rate'); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="number" class="hr-form-fileds" name="hourly_rate" value="<?php echo $data['hourly_rate']; ?>">
+                                                        <?php
+                                                            echo form_error('hourly_rate'); 
+                                                        ?>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <?php echo form_label('Hourly Technician', 'hourly_technician'); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="number" class="hr-form-fileds" name="hourly_technician" value="<?php echo $data['hourly_technician']; ?>">
+                                                        <?php  
+                                                            echo form_error('hourly_technician'); 
+                                                        ?>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <?php echo form_label('Flat Rate Technician', 'flat_rate_technician'); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="number" class="hr-form-fileds" name="flat_rate_technician" value="<?php echo $data['flat_rate_technician']; ?>">
+                                                        <?php
+                                                            echo form_error('flat_rate_technician'); 
+                                                        ?>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <?php echo form_label('Semi Monthly Salary', 'semi_monthly_salary'); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="number" class="hr-form-fileds" name="semi_monthly_salary" value="<?php echo $data['semi_monthly_salary']; ?>">
+                                                        <?php
+                                                            echo form_error('semi_monthly_salary'); 
+                                                        ?>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <?php echo form_label('Semi Monthly Draw', 'semi_monthly_draw'); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="number" class="hr-form-fileds" name="semi_monthly_draw" value="<?php echo $data['semi_monthly_draw']; ?>">
+                                                        <?php
+                                                            echo form_error('semi_monthly_draw'); 
+                                                        ?>
+                                                    </div>
+                                                </li>
+
                                                 <?php } ?>
                                                 <?php if(IS_NOTIFICATION_ENABLED == 1) {?>
                                                 <li>
