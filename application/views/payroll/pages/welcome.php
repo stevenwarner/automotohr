@@ -13,7 +13,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <p class="csF16">
-                    <strong>Partner</strong> is partnering directly with Gusto to help ease your pain! Simply click on th button below to start your payroll journey with the safety of our trusted partner.
+                    <strong><?=STORE_NAME;?></strong> is partnering directly with Gusto to help ease your payroll pain! Simply click on the button below to start your payroll journey with the safety of our trusted partner.
                 </p>
             </div>
         </div>

@@ -12,7 +12,7 @@
                                     <div class="heading-title page-title">
                                         <h1 class="page-title"><i class="fa fa-envelope-o" aria-hidden="true"></i><?php echo $company_info['CompanyName']; ?> - Payroll</h1>
                                         <span class="pull-right">
-                                            <button class="btn btn-success" onclick="window.location.href='<?php echo base_url('manage_admin/companies/manage_company').'/'.$company_info['sid'];; ?>' ">Back</button>
+                                            <button class="btn btn-success" onclick="window.location.href='<?php echo base_url('manage_admin/companies/manage_company').'/'.$company_info['sid']; ?>' ">Back</button>
                                         </span>
                                     </div>
                                     <div class="row">
@@ -24,16 +24,15 @@
                                         >
                                             <?php echo $companyPayrollStatus==0 ? "Activate" : "Deactivate" ?>
                                         </button>
+                                        <?php if(!$companyPayrollStatus): ?>
                                         <button class="btn btn-success jsSetSSN">
                                             Update EIN Number
                                         </button>
+                                        <?php endif; ?>
                                         <?php if($company_info['access_token']) { ?>
                                             <button class="btn btn-success jsDetails">
                                                 Details
                                             </button>
-                                            <!-- <button class="btn btn-success jsSyncWithGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
-                                                Sync
-                                            </button> -->
                                             <a class="btn btn-success" href="<?php echo $onboarding_link; ?>" target="_blank">
                                                 Onboarding Process
                                             </a>

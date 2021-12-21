@@ -9,11 +9,18 @@
                 </h1>
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <h1 class="csF16">
+                    The person who will manage and run the payroll for this store.
+                </h1>
+            </div>
+        </div>
         <!-- Body -->
         <div class="row">
             <div class="col-sm-12">
                 <p class="csF16">
-                    Fields marked with asterisk (<span class="csRequired"></span>) are mendatory.
+                    Fields marked with asterisk (<span class="csRequired"></span>) are mandatory.
                 </p>
             </div>
         </div>

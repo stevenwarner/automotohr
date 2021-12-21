@@ -1228,7 +1228,7 @@ if(!empty($Payroll['employee_compensations'])):
                 tr +='                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;<span class="jsPayrollRowEditCTValue">0.00</span>&nbsp;(CT)';
                 tr +='                </span>';
                 tr +='                <span class="csFC2 csB7 csCP jsPayrollRowEditCTP">';
-                tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Cash Deposit</span>&nbsp;(CT)';
+                tr +='                    <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;<span>Cash Tips</span>&nbsp;(CT)';
                 tr +='                </span>';
                 tr +='            </div>';
                 tr +='            <div class="col-sm-12 jsCTData dn">';

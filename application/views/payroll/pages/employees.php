@@ -1,19 +1,11 @@
 <!--  -->
 <div class="container-fluid">
     <div class="csPageWrap">
-        <!-- Heading -->
-        <div class="row">
-            <div class="col-sm-12">
-                <h1 class="csF18 csB7">
-                    Welcome to Payroll
-                </h1>
-            </div>
-        </div>
         <!-- Body -->
         <div class="row">
             <div class="col-sm-12">
                 <p class="csF16">
-                    Which of the existing users do you want to run payroll for?
+                    Welcome to Payroll. Which of your existing users do you want to run payroll for?
                 </p>
             </div>
         </div>
@@ -21,7 +13,7 @@
         <div class="row">
             <?php 
             if(!empty($employees)):
-                foreach($employees as $employee): 
+                foreach($employees as $employee):
                 ?>
                 <div class="col-md-4 col-xs-12">
                     <label class="control control--checkbox csF16">

@@ -11,7 +11,7 @@
                     Review and submit
                 </h1>
                 <p class="csF16">
-                    Here’s a quick summary to review—we’ll debit funds after you submit payroll. We saved your progress so you can submit this later. Or, download a full summary now. To pay your team on the pay date below, submit payroll by <span class="csFC2"><?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></span> at 4pm PDT.
+                    Here’s a quick summary to review—we’ll debit funds after you submit payroll. We saved your progress so you can submit this later. Or, download a full summary now. To pay your team on the pay date below, submit payroll by <span class="csFC2"><?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></span> at <span class="csFC2"><?=GUSTO_PAYROLL_TIME;?></span>.
                 </p>
             </div>
         </div>
@@ -74,7 +74,7 @@
                 <div class="row">
                     <div class="col-sm-12 text-left">
                         <a href="<?=current_url();?>?step=1" class="btn btn-black">
-                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Back
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Go to Dashboard
                         </a>
                         <button class="btn btn-orange jsSubmitPayroll">
                             <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Submit Payroll

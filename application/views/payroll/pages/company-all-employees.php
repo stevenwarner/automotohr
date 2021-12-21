@@ -3,17 +3,26 @@
         <div class="row">
             <!-- Main Content -->
             <div class="col-md-12 col-sm-12">
-                <!-- Actino Button -->
+                <!-- Action Button -->
                 <div class="row mb12">
                     <div class="col-md-12 col-xs-12">
                         <button class="btn btn-danger csF16 csB7 jsSelectedEmployeesAction pull-right" data-action_type="delete">
                             <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
-                            Delete Employees
+                            Delete Selected Employees From Payroll
                         </button>
                         <button class="btn btn-success csF16 csB7 jsSelectedEmployeesAction pull-right mr10" data-action_type="add">
                             <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
-                            Add Employees
+                            Add Selected Employees To Payroll
                         </button>
+                    </div>
+                </div>
+                <!-- Notes -->
+                <div class="row mb12">
+                    <div class="col-md-12 col-xs-12">
+                        <div class="alert alert-info">
+                            <strong>Note</strong>
+                            <p>Employee can't be deleted once it's payroll onboard process is complete.</p>
+                        </div>
                     </div>
                 </div>
                 <!-- Body -->
@@ -91,13 +100,13 @@
                                                     <?php if ($employee['onboard'] == "yes") { ?>
                                                         <button class="btn btn-danger csF16 csB7 jsDeleteEmployeeFromGusto pull-right" data-employee_id="<?php echo $employee['onboard_id']; ?>">
                                                             <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
-                                                            Delete from Gusto
+                                                            Delete employee from payroll
                                                         </button>
-                                                    <?php } else { ?>
-                                                        <?php if ($missing_flag == 0) { ?>
-                                                            <button class="btn btn-success csF16 csB7 jsAddEmployeeOnGusto pull-right" data-employee_id="<?php echo $employee['sid']; ?>">
+                                                        <?php } else { ?>
+                                                            <?php if ($missing_flag == 0) { ?>
+                                                                <button class="btn btn-success csF16 csB7 jsAddEmployeeOnGusto pull-right" data-employee_id="<?php echo $employee['sid']; ?>">
                                                                 <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;
-                                                                Add to Gusto
+                                                                Add employee from payroll
                                                             </button>
                                                         <?php } else { ?> 
                                                             <?php 
@@ -110,7 +119,7 @@
                                         <?php } ?>    
                                     <?php } else { ?> 
                                         <tr>
-                                            <td>No Employee Found</td>
+                                            <td>No Employees Found</td>
                                         </tr>
                                     <?php } ?>        
                                 </tbody>
