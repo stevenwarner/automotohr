@@ -130,6 +130,7 @@
     display: block;
     padding: 10px;
     color: #444444;
+    font-weight: 600;
     border-bottom: 2px solid #ffffff;
 }
 
@@ -2248,3 +2249,29 @@ ul.csSidebarUL li.active>ul li.active a {
 .btn-cancel {
     background-color: #000;
 }
+
+
+/* As of 22-12-2021 */
+
+.cs-separator {
+    float: left;
+    width: 100%;
+    background-color: #eee;
+    height: 1px;
+    margin: 5px 0;
+}
+
+.cs-separator::after {
+    clear: both;
+}
+
+
+/* nav.navigation ul li a,
+nav.navigation ul li ul {
+    background-color: #fd7a2a;
+}
+
+nav.navigation ul li a:hover {
+    background-color: #ffffff;
+    color: #fd7a2a;
+} */

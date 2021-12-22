@@ -511,5 +511,8 @@ $(document).ready(loadTitles);
 
 </style>
 
-<script src="<?=base_url("assets/js/common.js");?>"></script>
-<script src="<?=base_url('assets/payroll/js/payroll_company_onboard.js');?>?v=<?=time();?>"></script>
+
+<script src="<?=base_url(_m('assets/js/common'));?>"></script>
+<script src="<?=base_url(_m('assets/payroll/js/payroll_company_onboard'));?>"></script>
+<!-- Dynamic Scripts -->
+<?php if(isset($PageScripts)) { echo GetScripts($PageScripts); }?>

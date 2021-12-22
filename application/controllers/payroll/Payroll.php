@@ -41,21 +41,6 @@ class Payroll extends CI_Controller
         $this->version = 'v='.(MINIFIED ? '1.0' : time());
     }
 
-
-    function CompanyTax(){
-        //
-        CheckLogin($this->data);
-        //
-        $this->data['title'] = 'Company - Tax';
-        $this->data['load_view'] = 0;
-        $this->data['Assets'] = ['<script src="'.(base_url('assets/payroll/tax'.(MINIFIED).'.js?v='.($this->version).'')).'" type="text/javascript"></script>'];
-        //
-        $this->load
-        ->view($this->pages['header'], $this->data)
-        ->view('payroll/company_tax')
-        ->view($this->pages['footer']);
-    }
-
     /**
      * 
      */
@@ -75,19 +60,15 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function EmployeeList(){
+    function EmployeeList($type = 'normal'){
         //
         $this->checkLogin($this->data);
         //
         $this->data['title'] = 'Payroll | Employees Listing';
         $this->data['load_view'] = 0;
-        // Load Employee Model
-        $this->load->model($this->models['sem'], 'sem');
         //
-        $this->data['Employees'] = $this->sem->GetCompanyEmployees(
-            $this->data['companyId'],
-            true
-        );
+        $this->data['SelectedTab'] = $type;
+        $this->data['PageScripts'] = ['payroll/js/employee'];
         //
         $this->load
         ->view('main/header', $this->data)

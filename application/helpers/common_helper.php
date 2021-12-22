@@ -13909,11 +13909,13 @@ if(!function_exists('SendResponse')){
     function SendResponse($status, $data = '', $type = 'application/json'){
         //
         if($status == 401){
-            return header("HTTP/1.0 401 Unauthorized");
+            header("HTTP/1.0 401 Unauthorized");
+            exit(0);
         }
         //
         if($status == 400){
-            return header("HTTP/1.0 400 Bad Request");
+            header("HTTP/1.0 400 Bad Request");
+            exit(0);
         }
         //
         if($type == 'html'){
@@ -13923,6 +13925,7 @@ if(!function_exists('SendResponse')){
         header("HTTP/1.0 200 OK");
         header("Content-type: {$type}");
         echo json_encode($data);
+        exit(0);
     }
 }
 
@@ -13952,5 +13955,24 @@ if(!function_exists('isPayrollOrPlus')){
         }
         // Don't have permission
         return false;
+    }
+}
+
+if(!function_exists('_m')){
+    /**
+     * Add environment check to the assets
+     * and add tags for version
+     * 
+     * @param string $string
+     * assets/js/script
+     * assets/css/style
+     * @param string $type
+     * js|css
+     * @param string $version
+     * 1.0.0
+     * @return
+     */
+    function _m($string, $type = 'js', $version = '1.0.0'){
+        return $string.( ENVIRONMENT === 'production' ? '.min' : '' ).'.'.$type.'?v='.(ENVIRONMENT === 'production' ? $version : time());
     }
 }

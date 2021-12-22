@@ -1007,10 +1007,12 @@ if ($class != 'dashboard' &&
         window.company.Name = "<?=$session['company_detail']['CompanyName']?>";
         window.company.Ein = "<?=$session['company_detail']['ssn']?>";
     </script>
-    <script src="<?=base_url('assets/js/common.js?v1.0.1');?>"></script>
-    <script src="<?=base_url('assets/portal/app.js');?>?v=1.0.2"></script>
-    <script src="<?=base_url('assets/payroll/js/payroll_company_onboard.js');?>?v=<?=time();?>"></script>
-        </body>
+    <script src="<?=base_url(_m('assets/js/common'));?>"></script>
+    <script src="<?=base_url(_m('assets/portal/app'));?>"></script>
+    <script src="<?=base_url(_m('assets/payroll/js/payroll_company_onboard'));?>"></script>
+    <!-- Dynamic Scripts -->
+    <?php if(isset($PageScripts)) { echo GetScripts($PageScripts); }?>
+</body>
 </html>
     <?php } else { ?>
         <?php $this->load->view('onboarding/on_boarding_footer'); ?>

@@ -1385,13 +1385,24 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
 
 
 
-//Payrol Routes
+/**
+ * Payroll routes
+ */
+// Employee listing
+$route["payroll/employees"]['get'] = "payroll/Payroll/EmployeeList/normal";
+$route["payroll/employees/payroll"]['get'] = "payroll/Payroll/EmployeeList/payroll";
+$route["payroll/employees/normal"]['get'] = "payroll/Payroll/EmployeeList/normal";
+
+
 $route['company_tax']['get'] = 'payroll/Payroll/CompanyTax';
 $route['payroll/run']['get'] = 'payroll/Payroll/Run';
 $route['payroll/run/(:any)/(:any)']['get'] = 'payroll/Payroll/RunSingle/$1/$2';
 $route['payroll/run/(:any)']['get'] = 'payroll/Payroll/RunSingle/$1';
 
 // AJAX Get
+$route['payroll/employees/(:num)']['get'] = 'payroll/Payroll_ajax/GetEmployees/$1';
+
+
 $route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';
 $route['payroll/submit']['post'] = 'payroll/Payroll/SubmitPayroll';
 $route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';

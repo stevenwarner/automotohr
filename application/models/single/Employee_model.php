@@ -39,8 +39,11 @@ class Employee_model extends CI_Model{
      */
     function GetCompanyEmployees(
         $companyId, 
-        $columns = '*'
+        $columns = '*',
+        $whereArray = []
     ){
+        //
+        $whereArray = !empty($whereArray) ? $whereArray : ["{$this->U}.active" => 1, "{$this->U}.terminated_status" => 0];
         //
         $redo = false;
         //
@@ -74,8 +77,7 @@ class Employee_model extends CI_Model{
         ->select($columns)
         ->join("{$this->U} as company", "{$this->U}.parent_sid = company.sid", 'inner')
         ->where("{$this->U}.parent_sid", $companyId)
-        ->where("{$this->U}.active", 1)
-        ->where("{$this->U}.terminated_status", 0)
+        ->where($whereArray)
         ->order_by("{$this->U}.first_name", 'asc')
         ->get($this->U);
         //
@@ -83,7 +85,7 @@ class Employee_model extends CI_Model{
         //
         $query = $query->free_result();
         //
-        if($redo){
+        if($redo && !empty($records)){
             //
             $newRecords = [];
             //

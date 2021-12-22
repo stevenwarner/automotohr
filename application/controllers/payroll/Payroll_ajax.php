@@ -17,13 +17,19 @@ class Payroll_ajax extends CI_Controller
         if(!$this->input->is_ajax_request()){
             return SendResponse(401);
         }
+        //
+        if($this->input->method(false) === 'post' && empty($this->input->post())){
+            return SendResponse(400);
+        }
         // Call the model
         $this->load->model("Payroll_model", "pm");
-        $this->load->model('single/Employee_model', 'em');
+        $this->load->model('single/Employee_model', 'sem');
         // Call helper
         $this->load->helper("payroll_helper");
         //
         $this->path = 'payroll/pages/';
+        //
+        $this->session = $this->session->userdata('logged_in');
     }
 
     /**
@@ -1215,5 +1221,23 @@ class Payroll_ajax extends CI_Controller
         $this->pm->InsertAdmin($post);
         //
         return SendResponse(200, true);
+    }
+
+    /**
+     * 
+     */
+    function GetEmployees($onPayroll = 0){
+        //
+        $data = $this->sem->GetCompanyEmployees(
+            $this->session['company_detail']['sid'],
+            true,
+            [
+                'users.active' => 1,
+                'users.terminated_status' => 0,
+                'users.on_payroll' => $onPayroll
+            ]
+        );
+        //
+        SendResponse(!empty($data) ? $data : []);
     }
 }

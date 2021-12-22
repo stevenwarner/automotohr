@@ -7,38 +7,15 @@
         'url' => '/run',
         'slug' => '',
         'icon' => 'bank',
-        'segment' => 'payroll'
+        'segment' => 'run'
     ];
-    // // Company
-    // $navpills['company'] =  [
-    //     'title' => 'Company',
-    //     'icon' => 'users',
-    //     'submenu' => []
-    // ];
-    // // Company Locations
-    // $navpills['company']['submenu'][] = [
-    //     'title' => 'Locations',
-    //     'url' => '/locations',
-    //     'slug' => 'locations',
-    //     'icon' => 'map',
-    //     'segment' => 'locations'
-    // ];
-
-    // // Employee
-    // $navpills['employee'] =  [
-    //     'title' => 'Employee',
-    //     'icon' => 'users',
-    //     'submenu' => []
-    // ];
-    // // Employee Locations
-    // $navpills['employee']['submenu'][] = [
-    //     'title' => 'Listings',
-    //     'url' => '/locations',
-    //     'slug' => 'locations',
-    //     'icon' => 'map',
-    //     'segment' => 'locations'
-    // ];
-
+    $navpills[] = [
+        'title' => 'Employees',
+        'url' => '/employees/payroll',
+        'slug' => '',
+        'icon' => 'users',
+        'segment' => 'employees'
+    ];
 
     //
     $lis = '';
