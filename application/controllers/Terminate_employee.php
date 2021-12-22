@@ -156,6 +156,7 @@ class Terminate_employee extends Public_Controller {
                         $data_to_update['active'] = 0;
                     }else if ($status == 8) {
                         $data_to_update['general_status'] = 'rehired';
+                        $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
                         $data_to_update['active'] = 0;
                     }
                     $data_to_update['terminated_status'] = 0;

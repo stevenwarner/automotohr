@@ -1484,7 +1484,6 @@ class Employee_management extends Public_Controller {
                     if(!empty($this->input->post('secondary_email', true))){
                         $data_to_insert['alternative_email'] = $this->input->post('secondary_email', true);
                     }
-
                     //
                     if(preg_match(XSYM_PREG, $data_to_insert['ssn'])) unset($data_to_insert);
 
@@ -1550,7 +1549,21 @@ class Employee_management extends Public_Controller {
                     if($this->input->post('joining_date')){
                         $data_to_insert['joined_at'] = DateTime::createFromFormat('m-d-Y', $this->input->post('joining_date', true))->format('Y-m-d');
                     }
-
+                    //
+                    // Added on: 21-12-2021
+                    if(!empty($this->input->post('rehireDate', true))){
+                        $rehireDate = DateTime::createFromFormat('m-d-Y', $this->input->post('rehireDate', true))->format('Y-m-d');
+                        //
+                        $this->employee_model->updateEmployeeRehireDate(
+                            $rehireDate,
+                            $sid,
+                            $security_sid
+                        );
+                        //
+                        $data_to_insert['rehire_date'] = $rehireDate;
+                        $data_to_insert['general_status'] = 'rehired';
+                        $data_to_insert['active'] = 0;
+                    }
                     // Added on: 25-06-2019
                     if(IS_TIMEZONE_ACTIVE){
                         $new_timezone = $this->input->post('timezone', true);

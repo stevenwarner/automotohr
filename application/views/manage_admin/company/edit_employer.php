@@ -21,7 +21,7 @@
                                         <?php } ?>
                                         <p>Fields marked with an asterisk (<span class="hr-required">*</span>) are mandatory</p>
                                         <div class="edit-template-from-main" >
-                                            <?php echo form_open_multipart('', array('class' => 'form-horizontal js-form')); ?>
+                                            <?php echo form_open_multipart('', array('class' => 'form-horizontal', 'id' => 'js-update-employee-form')); ?>
                                             <ul>
                                                 <li>
                                                     <label for="employee_profile_picture">Employee Profile Picture:</label>
@@ -138,7 +138,7 @@
                                                 </li>
 
                                                 <li>
-                                                    <label>Start Date</label>
+                                                    <label>Joining Date</label>
                                                     <div class="hr-fields-wrap">
                                                         <?php 
                                                         $registration_date = $data['joined_at'] != NULL && $data['joined_at'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d', $data['joined_at'])->format('m-d-Y') : ''; 
@@ -148,6 +148,17 @@
                                                         ?>
                                                         <input class="invoice-fields datepicker" id="registration_date" name="registration_date" value="<?php echo set_value('registration_date', $registration_date); ?>" />
                                                         <?php echo form_error('direct_business_number'); ?>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <label>Rehire Date</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <?php
+                                                            $rehireDate = $data['rehire_date'] != NULL && $data['rehire_date'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d', $data['rehire_date'])->format('m-d-Y') : '';
+                                                        ?>
+                                                        <input class="invoice-fields datepicker" id="js-rehire-date" name="rehire_date" value="<?php echo set_value('rehire_date', $rehireDate); ?>" />
+                                                        <?php echo form_error('rehire_date'); ?>
                                                     </div>
                                                 </li>
 
@@ -284,8 +295,8 @@
                                             </ul>
                                             <div class="row" style="float: right;">
                                                 <div class="col-xs-12">
-                                                    <input type="submit" name="submit" value="Apply" class="btn btn-success">
-                                                    <input type="submit" name="submit" value="Save" class="btn btn-success">
+                                                    <input type="button"  value="Apply" class="btn btn-success js-update-employee">
+                                                    <input type="button"  value="Save" class="btn btn-success js-update-employee">
                                                     <a href="<?php echo base_url('manage_admin/employers'); ?>" class="btn black-btn">Cancel</a>
                                                 </div>
                                             </div>
@@ -303,7 +314,8 @@
 </div>
 
 <script type="text/javascript">
- 
+    var old_rehire_date = '<?php echo $rehireDate; ?>';
+    // 
     $(document).ready(function () {
         $('.datepicker').datepicker({
             changeYear: true,
@@ -349,7 +361,7 @@
 </script>
 <script>
 
-    $('.js-form').submit(function(event) {
+    $('.js-update-employee').on("click", function(event) {
         
         // Check for phone number
         if($('#PhoneNumber').val() != '' && $('#PhoneNumber').val().trim() != '(___) ___-____' && !fpn($('#PhoneNumber').val(), '', true)){
@@ -381,6 +393,32 @@
             alertify.alert(errorMSG);
             event.preventDefault();
             return;
+        }
+
+        //
+           
+        var new_rehire_date = $('#js-rehire-date').val();
+        //
+        if (new_rehire_date != old_rehire_date) {
+            var message = '';
+            //
+            if (old_rehire_date == '' || old_rehire_date == undefined) {
+                var status = '"<strong>Rehired</strong>"';
+                message = "By adding rehire date the employee's '<strong>Employee Status</strong>' will be changed to " + status + ".<br><br>Do you wish to continue?";
+            } else {
+                message = 'Are you sure you want to change the rehire date';
+            }
+            //
+           
+            alertify.confirm('Confirmation', message,
+                function () {
+                    $('#js-update-employee-form').submit();
+                },
+                function () {
+                    
+                });
+        } else {
+            $('#js-update-employee-form').submit();
         }
     });
 

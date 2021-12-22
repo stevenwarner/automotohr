@@ -196,8 +196,9 @@
                                             </th>
                                             <th width="30%">Employees</th>
                                             <th width="25%">Designation</th>
-                                            <th>Password</th>                                    
+                                            <th>Password</th>                            
                                             <th class="text-center">Starting Date</th>
+                                            <th class="text-center">Rehire Date</th>
                                             <?php if ($all === true || $terminated === true) { ?>
                                                 <th class="text-center">Termination Date</th>
                                             <?php } ?>
@@ -311,6 +312,11 @@
                                                             } else {
                                                                 echo 'N/A';
                                                             }
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                            echo $employee['rehire_date'] != NULL && $employee['rehire_date'] != '0000-00-00' ? date_with_time($employee['rehire_date']) : 'N/A';
                                                         ?>
                                                     </td>
                                                     <?php if ($all === true || $terminated === true) { ?>

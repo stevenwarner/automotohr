@@ -7122,7 +7122,8 @@ class Timeoff_model extends CI_Model
             access_level_plus,
             pay_plan_flag,
             joined_at,
-            registration_date
+            registration_date,
+            rehire_date
         ')
             ->from('users')
             ->where('parent_sid', $companySid)
@@ -8709,6 +8710,7 @@ class Timeoff_model extends CI_Model
             '.( getUserFields() ).'
             joined_at,
             registration_date,
+            rehire_date,
             employee_status,
             employee_type
         ')
@@ -8748,12 +8750,15 @@ class Timeoff_model extends CI_Model
                     'RemainingTime' => 0
                 ];
             } else {
+                //
+                $JoinedDate = get_employee_latest_joined_date($v['registration_date'], $v['joined_at'], $v['rehire_date']);
+                //
                 // Fetch employee policies
                 $r['Balances'][] = 
                 $this->getBalanceOfEmployee(
                     $v['userId'],
                     $v['employee_status'],
-                    empty($v['joined_at']) ? $v['registration_date'] : $v['joined_at'],
+                    $JoinedDate,
                     (($v['user_shift_hours'] * 60) + $v['user_shift_minutes']),
                     $settings['slug'],
                     $policies,
@@ -8786,6 +8791,7 @@ class Timeoff_model extends CI_Model
             '.( getUserFields() ).'
             joined_at,
             registration_date,
+            rehire_date,
             user_shift_hours,
             user_shift_minutes,
             employee_status,
@@ -8809,10 +8815,12 @@ class Timeoff_model extends CI_Model
         //
         $r = [];
         //
+        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        //
         $employeeId = $employee['userId'];
         $employementStatus = $employee['employee_status'];
         $employementType = $employee['employee_type'];
-        $employeeJoiningDate = !empty($employee['joined_at']) ? $employee['joined_at'] : $employee['registration_date'];
+        $employeeJoiningDate = $JoinedDate;
         $durationInMinutes = (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']);
         $slug = $settings['slug'];
         //
@@ -8904,6 +8912,7 @@ class Timeoff_model extends CI_Model
             '.( getUserFields() ).'
             joined_at,
             registration_date,
+            rehire_date,
             user_shift_hours,
             user_shift_minutes,
             employee_status,
@@ -8927,10 +8936,12 @@ class Timeoff_model extends CI_Model
         //
         $r = [];
         //
+        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        //
         $employeeId = $employee['userId'];
         $employementStatus = $employee['employee_status'];
         $employementType = $employee['employee_type'];
-        $employeeJoiningDate = !empty($employee['joined_at']) ? $employee['joined_at'] : $employee['registration_date'];
+        $employeeJoiningDate = $JoinedDate;
         $durationInMinutes = (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']);
         $slug = $settings['slug'];
         //
@@ -9485,6 +9496,7 @@ class Timeoff_model extends CI_Model
             '.( getUserFields() ).'
             joined_at,
             registration_date,
+            rehire_date,
             user_shift_hours,
             user_shift_minutes,
             employee_status,
@@ -9507,10 +9519,12 @@ class Timeoff_model extends CI_Model
         //
         $r = [];
         //
+        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        //
         $employeeId = $employee['userId'];
         $employementStatus = $employee['employee_status'];
         $employementType = $employee['employee_type'];
-        $employeeJoiningDate = !empty($employee['joined_at']) ? $employee['joined_at'] : $employee['registration_date'];
+        $employeeJoiningDate = $JoinedDate;
         $durationInMinutes = (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']);
         $slug = $settings['slug'];
         //
@@ -10133,6 +10147,7 @@ class Timeoff_model extends CI_Model
         $this->db->select('
             joined_at,
             registration_date,
+            rehire_date,
             user_shift_hours,
             user_shift_minutes,
             employee_status,
@@ -10155,10 +10170,13 @@ class Timeoff_model extends CI_Model
         $balances = $this->getBalances($companyId);
         // Fetch employee policies
         $balance = 
+        //
+        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        //
         $this->getBalanceOfEmployee(
             $employeeId,
             $employee['employee_status'],
-            empty($employee['joined_at']) ? $employee['registration_date'] : $employee['joined_at'],
+            $JoinedDate,
             (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']),
             $settings['slug'],
             $policies,
@@ -10646,6 +10664,7 @@ class Timeoff_model extends CI_Model
             '.( getUserFields() ).'
             joined_at,
             registration_date,
+            rehire_date,
             user_shift_hours,
             user_shift_minutes,
             employee_status,
@@ -10669,10 +10688,12 @@ class Timeoff_model extends CI_Model
         //
         $r = [];
         //
+        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        //
         $employeeId = $employee['userId'];
         $employementStatus = $employee['employee_status'];
         $employementType = $employee['employee_type'];
-        $employeeJoiningDate = !empty($employee['joined_at']) ? $employee['joined_at'] : $employee['registration_date'];
+        $employeeJoiningDate = $JoinedDate;
         $durationInMinutes = (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']);
         $slug = $settings['slug'];
         //
@@ -11473,6 +11494,7 @@ class Timeoff_model extends CI_Model
             '.( getUserFields() ).'
             joined_at,
             registration_date,
+            rehire_date,
             employee_status,
             employee_type
         ')
@@ -11494,10 +11516,12 @@ class Timeoff_model extends CI_Model
         //
         $r = [];
         //
+        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        //
         $employeeId = $employee['userId'];
         $employementStatus = $employee['employee_status'];
         $employementType = $employee['employee_type'];
-        $employeeJoiningDate = !empty($employee['joined_at']) ? $employee['joined_at'] : $employee['registration_date'];
+        $employeeJoiningDate = $JoinedDate;
         $durationInMinutes = (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']);
         $slug = $settings['slug'];
         //
@@ -11998,7 +12022,8 @@ class Timeoff_model extends CI_Model
             employee_type,
             employee_number,
             joined_at,
-            registration_date
+            registration_date,
+            rehire_date
         ');
 
         // echo '<pre>';

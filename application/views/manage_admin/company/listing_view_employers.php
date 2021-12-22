@@ -130,6 +130,16 @@
                                                                         <?php echo ucwords($value['first_name'] . ' ' . $value['last_name']); ?>
                                                                         <br />
                                                                         <b>Start Date: </b><?php echo date_with_time($value['registration_date']); ?>
+                                                                        <br>
+                                                                        <b>rehire Date: </b><?php
+                                                                            $rehireDate = get_rehire_date($value["sid"]);
+                                                                            //
+                                                                            if (!empty($rehireDate)) {
+                                                                                echo date_with_time($rehireDate);
+                                                                            } else {
+                                                                                echo "N/A";
+                                                                            }
+                                                                        ?>
                                                                     </td>
                                                                     <td><?php echo ucwords($value['company_name']); ?>
                                                                     <?php   if($value['password'] == '' || is_null($value['password'])) { ?>
@@ -139,7 +149,7 @@
                                                                     <?php   } ?>
                                                                     </td>
                                                                     <?php   if(check_access_permissions_for_view($security_details, 'edit_employers')){ ?>
-                                                                                <td><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'], '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
+                                                                                <td><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'],  '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
                                                                     <?php   } ?>
                                                                                 
                                                                     <?php   if(check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')){ ?>

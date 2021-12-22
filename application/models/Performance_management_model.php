@@ -45,7 +45,9 @@ class Performance_management_model extends CI_Model{
             {$this->U}.PhoneNumber,
             {$this->U}.job_title,
             {$this->U}.dob,
-            IF({$this->U}.joined_at = null, {$this->U}.registration_date, {$this->U}.joined_at) as joined_at,
+            {$this->U}.registration_date,
+            {$this->U}.joined_at,
+            {$this->U}.rehire_date,
             {$this->U}.profile_picture,
             {$this->U}.employee_type,
             {$this->U}.access_level,
@@ -70,6 +72,9 @@ class Performance_management_model extends CI_Model{
             $r = [];
             //
             foreach($b as $v){
+                //
+                $JoinedDate = get_employee_latest_joined_date($v['registration_date'], $v['joined_at'], $v['rehire_date']);
+                //
                 $t = [
                     'Id' => $v['sid'],
                     'Name' => ucwords($v['first_name'].' '.$v['last_name']),
@@ -81,7 +86,7 @@ class Performance_management_model extends CI_Model{
                     'JobTitle' => ucwords(strtolower($v['job_title'])),
                     'Phone' => $v['PhoneNumber'],
                     'DOB' => empty($v['dob']) || $v['dob'] == '0000-00-00' ? '' : DateTime::createfromformat($this->DbDateFormatWithoutTime, $v['dob'])->format($this->DbDateFormatWithoutTime),
-                    'JoinedDate' => empty($v['joined_at']) ? '' : DateTime::createfromformat($this->DbDateFormat, $v['joined_at'])->format($this->DbDateFormatWithoutTime)
+                    'JoinedDate' => $JoinedDate
                 ];
 
                 //

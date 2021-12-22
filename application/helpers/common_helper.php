@@ -13838,3 +13838,46 @@ if(!function_exists('subTimeToDate')){
         return $date->format($format);
     }
 } 
+
+if (!function_exists('get_rehire_date')) {
+
+    function get_rehire_date($id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('status_change_date');
+        $CI->db->where('employee_status', 8);
+        $CI->db->where('employee_sid', $id);
+        $CI->db->order_by('sid', 'DESC');
+        $data = $CI->db->get('terminated_employees')->row_array();
+
+        $date = "";
+
+        if (!empty($data)) {
+            $date = $data['status_change_date'];
+        }
+
+        return $date;
+    }
+}
+
+if (!function_exists('get_employee_latest_joined_date')) {
+
+    function get_employee_latest_joined_date($registration_date, $joining_date, $rehire_date, $format_to_site = false)
+    {
+        $registration_date = trim($registration_date);
+        $joining_date = trim($joining_date);
+        $rehire_date = trim($rehire_date);
+        //
+        $return_date = '';
+        //
+        if (!empty($rehire_date) && $rehire_date != "0000-00-00") {
+            $return_date = $rehire_date;
+        } else if (!empty($joining_date) && $joining_date != "0000-00-00") {
+            $return_date = $joining_date;
+        } else if (!empty($registration_date) && $registration_date != "0000-00-00 00:00:00") { 
+            $return_date = DateTime::createFromFormat('Y-m-d H:i:s', $registration_date)->format('Y-m-d');
+        }
+
+        return $format_to_site == true && !empty($return_date) ? date_with_time($return_date) : $return_date;
+    }
+}
