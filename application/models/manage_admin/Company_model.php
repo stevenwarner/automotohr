@@ -177,11 +177,14 @@ class Company_model extends CI_Model {
         $this->db->select('table_one.sid');
         $this->db->select('table_one.first_name');
         $this->db->select('table_one.last_name');
+        $this->db->select('table_one.middle_name');
+        $this->db->select('table_one.nick_name');
         $this->db->select('table_one.username');
         $this->db->select('table_one.password');
         $this->db->select('table_one.email');
         $this->db->select('table_one.job_title');
         $this->db->select('table_one.registration_date');
+        $this->db->select('table_one.rehire_date');
         $this->db->select('table_one.access_level');
         $this->db->select('table_one.access_level_plus');
         $this->db->select('table_one.pay_plan_flag');
@@ -235,6 +238,7 @@ class Company_model extends CI_Model {
 
                 $this->db->group_end();
             }
+            $this->db->or_like('table_one.nick_name', $contact_name);
         }
 
         $this->db->join('users as table_two', 'table_one.parent_sid = table_two.sid', 'left');
