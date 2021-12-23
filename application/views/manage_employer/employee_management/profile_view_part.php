@@ -5,8 +5,8 @@
         <?php if(!empty($MergeData)): ?>
         <input type="button" value="Merged Employee Information" id="jsSecondaryButton" style="width: 250px;" />
         <? endif;?>
-        <input type="submit" value="edit" id="edit_button"
-            <?= $employer['is_executive_admin'] ? 'class="disabled-btn"' : ''; ?>>
+        <input type="submit" value="edit" id=" <?= $employer['is_executive_admin'] ? '' : 'edit_button'; ?>"
+            <?= $employer['is_executive_admin'] ? 'class="disabled-btn" disabled' : ''; ?>>
     </div>
     <?php } ?>
 </div>

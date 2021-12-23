@@ -55,6 +55,7 @@ class Performance_management_model extends CI_Model{
         ")
         ->where("{$this->U}.parent_sid", $CompanyId)
         ->where("{$this->U}.active", 1)
+        ->where("{$this->U}.is_executive_admin", 0)
         ->where("{$this->U}.terminated_status", 0)
         ->order_by("{$this->U}.first_name", "ASC")
         ->get($this->U);

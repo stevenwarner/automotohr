@@ -322,6 +322,7 @@ class Import_csv_model extends CI_Model {
     function GetEmployee($companyId, $column, $value) {
         return $this->db
         ->where($column, $value)
+        ->where('is_executive_admin', 0)
         ->where('parent_sid', $companyId)
         ->get('users')->row_array();
     }

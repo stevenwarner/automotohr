@@ -108,9 +108,11 @@
                                     <?php if ($employerData['is_executive_admin'] == 1) { ?>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                             <span>You have Full Access</span>
-                                            <div class="button-panel">
-                                                <a class="site-btn auto-width" href="<?php echo base_url('my_profile') ?>">View your Profile</a>
-                                            </div>
+                                            <?php if($employee['is_executive_admin'] == 0) { ?>  
+                                                <div class="button-panel">
+                                                    <a class="site-btn auto-width" href="<?php echo base_url('my_profile') ?>">View your Profile</a>
+                                                </div>
+                                            <?php } ?>
                                         </div>
                                     <?php } else { ?>
                                         <?php if (check_access_permissions_for_view($security_details, 'my_profile')) { ?>
