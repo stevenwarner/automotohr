@@ -226,7 +226,7 @@
                                                             ?>
                                                             <label class="autoheight">Have you ever been employed with our company or our Affiliate companies?<?=$affiliate ?  ' <span class="staric">*</span>' : ''; ?></label>
                                                             <div class="hr-radio-btns">
-                                                                <input type="radio" id="is_already_employed_yes" class="check_value" value="Yes" name="is_already_employed"
+                                                                <input type="radio" id="is_already_employed_yes" class="check_value validate_affiliate_company" value="Yes" name="is_already_employed"
                                                                 <?php
                                                                     echo set_radio($key, 'Yes', $yes_selected);
                                                                 // if (isset($formpost['is_already_employed']) && $formpost['is_already_employed'] == 'Yes') {
@@ -236,7 +236,7 @@
                                                                 <label for="is_already_employed_yes">Yes</label>
                                                             </div>
                                                             <div class="hr-radio-btns">
-                                                                <input type="radio" id="is_already_employed_no" class="check_value" value="No" name="is_already_employed"
+                                                                <input type="radio" id="is_already_employed_no" class="check_value validate_affiliate_company" value="No" name="is_already_employed"
                                                                 <?php
                                                                     echo set_radio($key, 'No', $no_selected);
                                                                 // if (isset($formpost['is_already_employed']) && $formpost['is_already_employed'] == 'No') {
@@ -247,7 +247,7 @@
                                                             </div>
                                                         </li>
                                                         <li class="form-col-100 autoheight">
-                                                            <small class="autoheight">If yes, position held/what company or Affiliate company?</small>
+                                                            <small class="autoheight">If yes, position held/what company or Affiliate company?<?=$affiliate ? ' <span class="staric yacr">*</span>' : '';?></small>
                                                             <div class="comment-area">
                                                                 <textarea name="previous_company_name" id="previous_company_name" maxlength="512" onkeyup="check_length('previous_company_name')" class="form-col-100 invoice-fields"><?php
                                                                     if (isset($formpost['previous_company_name'])) {
@@ -915,9 +915,17 @@
                                                 -->
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <li class="form-col-100 autoheight">
+                                                        <?php 
+                                                            $key = 'RadioButtonListDriversLicenseQuestion';
+                                                            $def_value = (isset($formpost[$key]) ? $formpost[$key] : '' );
+                                                            $enabled_check = "";
+                                                            if (empty($def_value)) {
+                                                                $enabled_check = "checked='checked'";
+                                                            }
+                                                        ?>
                                                         <label class="autoheight">Driver's License: A valid driver's license may be a requirement for the position for which you have applied. If so, do you currently have a valid driver's license?<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
                                                         <div class="hr-radio-btns">
-                                                            <input type="radio" id="RadioButtonListDriversLicenseQuestion_0" value="Yes" name="RadioButtonListDriversLicenseQuestion"
+                                                            <input type="radio" id="RadioButtonListDriversLicenseQuestion_0" value="Yes" name="RadioButtonListDriversLicenseQuestion" class="validate_driving_license"
                                                             <?php
                                                             if ((isset($formpost['RadioButtonListDriversLicenseQuestion']) && $formpost['RadioButtonListDriversLicenseQuestion'] == 'Yes') || sizeof($drivers_license_details)) {
                                                                 echo " checked";
@@ -926,10 +934,12 @@
                                                             <label for="RadioButtonListDriversLicenseQuestion_0">Yes</label>
                                                         </div>
                                                         <div class="hr-radio-btns">
-                                                            <input type="radio" id="RadioButtonListDriversLicenseQuestion_1" value="No" name="RadioButtonListDriversLicenseQuestion"
+                                                            <input type="radio" id="RadioButtonListDriversLicenseQuestion_1" value="No" name="RadioButtonListDriversLicenseQuestion" class="validate_driving_license"
                                                             <?php
                                                             if (isset($formpost['RadioButtonListDriversLicenseQuestion']) && $formpost['RadioButtonListDriversLicenseQuestion'] == 'No') {
                                                                 echo " checked";
+                                                            } else {
+                                                                echo $enabled_check;
                                                             }
                                                             ?>>
                                                             <label for="RadioButtonListDriversLicenseQuestion_1">No</label>
@@ -938,7 +948,7 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <li>
-                                                        <label>Driver's license number:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
+                                                        <label>Driver's license number:<?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
                                                         <input type="text"  class="invoice-fields" name="TextBoxDriversLicenseNumber" id="TextBoxDriversLicenseNumber" value="<?php
                                                         if (isset($formpost['TextBoxDriversLicenseNumber']) && !empty($formpost['TextBoxDriversLicenseNumber']) && $formpost['TextBoxDriversLicenseNumber'] != NULL) {
                                                             echo $formpost['TextBoxDriversLicenseNumber'];
@@ -951,7 +961,7 @@
 
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <li>
-                                                        <label>Expiration date:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
+                                                        <label>Expiration date:<?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
                                                         <input type="text" id="TextBoxDriversLicenseExpiration"  name="TextBoxDriversLicenseExpiration" class="invoice-fields startdate" value="<?php
                                                         if (isset($formpost['TextBoxDriversLicenseExpiration']) && !empty($formpost['TextBoxDriversLicenseExpiration']) && $formpost['TextBoxDriversLicenseExpiration'] != NULL) {
                                                             echo $formpost['TextBoxDriversLicenseExpiration'];
@@ -965,7 +975,7 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 DropDownListDriversCountry">
                                                     <li>
                                                         <?php $country_id = (isset($formpost['DropDownListDriversCountry']) && !empty($formpost['DropDownListDriversCountry']) ? ($formpost['DropDownListDriversCountry']) : (sizeof($drivers_license_details) ? ($LC) : 0)); ?>
-                                                        <label>Country:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
+                                                        <label>Country:<?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
                                                         <div class="hr-select-dropdown">
                                                             <select  class="invoice-fields" id="DropDownListDriversCountry" name="DropDownListDriversCountry" onchange="getStates(this.value, <?php echo $states; ?>, 'DropDownListDriversState')">
                                                                 <option value="">Please Select</option>
@@ -982,7 +992,7 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 DropDownListDriversState">
                                                     <li>
 <?php $state_id = isset($formpost['DropDownListDriversState']) && !empty($formpost['DropDownListDriversState']) ? $formpost['DropDownListDriversState'] : $LS; ?>
-                                                        <label>State:<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
+                                                        <label>State:<?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
                                                         <div class="hr-select-dropdown">
                                                             <select  class="invoice-fields" name="DropDownListDriversState" id="DropDownListDriversState">
                                                                 <?php if (empty($country_id)) { ?>
@@ -1005,7 +1015,7 @@
                                                 <div class="bg-color">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100 autoheight">
-                                                            <label class="autoheight">Within the last 5 years, have you ever plead Guilty, No Contest, or been Convicted of any traffic violation(s)?<?=$d_license ? ' <span class="staric">*</span>' : '';?></label>
+                                                            <label class="autoheight">Within the last 5 years, have you ever plead Guilty, No Contest, or been Convicted of any traffic violation(s)?<?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
                                                             <div class="hr-radio-btns">
                                                                 <input type="radio" id="RadioButtonListDriversLicenseTraffic" value="Yes" name="RadioButtonListDriversLicenseTraffic" 
                                                                 <?php
@@ -1026,7 +1036,7 @@
                                                             </div>
                                                         </li>
                                                         <li class="form-col-100 autoheight">
-                                                            <small class="autoheight">If yes , provide dates and details for each violation, including the case number and court where your case is/was handled:</small>
+                                                            <small class="autoheight">If yes, provide dates and details for each violation, including the case number and court where your case is/was handled:</small>
                                                             <div class="comment-area">
                                                                 <textarea name="license_guilty_details" id="license_guilty_details" maxlength="512" onkeyup="check_length('license_guilty_details')" class="form-col-100 invoice-fields"><?php
                                                                     if (isset($formpost['license_guilty_details'])) {
@@ -1034,7 +1044,7 @@
                                                                     }
                                                                     ?></textarea>
                                                                 <span id="license_guilty_details_remaining">512 Characters Left</span>
-<?php echo form_error('license_guilty_details'); ?>
+<?php echo form_error('license_guilty_details_violation'); ?>
                                                                 <p style="display: none;" id="license_guilty_details_length">512</p>
                                                             </div>
                                                         </li>
@@ -3609,6 +3619,39 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
                 $(this).attr('autocomplete', 'off');
             });
 
+            if("<?=$eight_plus?>" == 1){
+                var IAEvalue = $('input[name="is_already_employed"]:checked').val();
+
+                if (IAEvalue == "Yes") {
+                    $("#previous_company_name").prop('required',true);
+                    $(".yacr").show();
+                } else {
+                    $("#previous_company_name").prop('required',false);
+                    $(".yacr").hide();
+                }
+            }
+
+            if("<?=$d_license?>" == 1){
+                var DLvalue = $('input[name="RadioButtonListDriversLicenseQuestion"]:checked').val();
+                console.log(DLvalue)
+                if (DLvalue == "Yes") {
+                    $("#TextBoxDriversLicenseNumber").prop('required',true);
+                    $("#TextBoxDriversLicenseExpiration").prop('required',true);
+                    $("#DropDownListDriversCountry").prop('required',true);
+                    $("#DropDownListDriversState").prop('required',true);
+                    $("#license_guilty_details").prop('required',true);
+                    $(".dllr").show();
+                } else {
+                    console.log("here")
+                    $("#TextBoxDriversLicenseNumber").prop('required',false);
+                     $("#TextBoxDriversLicenseExpiration").prop('required',false);
+                    $("#DropDownListDriversCountry").prop('required',false);
+                    $("#DropDownListDriversState").prop('required',false);
+                    $("#license_guilty_details").prop('required',false);
+                    $(".dllr").hide();
+                }
+            } 
+
         });
 
         function getStates(val, states, select_id) {
@@ -3745,24 +3788,63 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
     }
     
     //
-    if("<?=$affiliate?>" == 1){
-        rules['previous_company_name'] = { required: true };
-        messages['previous_company_name'] = { required: "This field is required." };
-    }
-    
-    //
-    if("<?=$d_license?>" == 1){
-        rules['TextBoxDriversLicenseNumber'] = { required: true };
-        rules['TextBoxDriversLicenseExpiration'] = { required: true };
-        rules['DropDownListDriversCountry'] = { required: true };
-        rules['DropDownListDriversState'] = { required: true };
-        rules['license_guilty_details'] = { required: true };
-        messages['TextBoxDriversLicenseNumber'] = { required: "This field is required." };
-        messages['TextBoxDriversLicenseExpiration'] = { required: "This field is required." };
-        messages['DropDownListDriversCountry'] = { required: "This field is required." };
-        messages['DropDownListDriversState'] = { required: "This field is required." };
-        messages['license_guilty_details'] = { required: "This field is required." };
-    }
+    // if("<?=$affiliate?>" == 1){
+        //     rules['previous_company_name'] = { required: true };
+        //     messages['previous_company_name'] = { required: "This field is required." };
+        // }
+        if("<?=$affiliate?>" == 1){
+            $(".validate_affiliate_company").on("change", function(){
+                var value = $('input[name="is_already_employed"]:checked').val();
+
+                if (value == "Yes") {
+                    $("#previous_company_name").prop('required',true);
+                    $(".yacr").show();
+                } else {
+                    $("#previous_company_name").prop('required',false);
+                    $(".yacr").hide();
+                }
+                
+            });
+        }
+        
+        //
+        if("<?=$d_license?>" == 1){
+            $(".validate_driving_license").on("change", function(){
+                var DLvalue = $('input[name="RadioButtonListDriversLicenseQuestion"]:checked').val();
+                if (DLvalue == "Yes") {
+                    $("#TextBoxDriversLicenseNumber").prop('required',true);
+                    $("#TextBoxDriversLicenseExpiration").prop('required',true);
+                    $("#DropDownListDriversCountry").prop('required',true);
+                    $("#DropDownListDriversState").prop('required',true);
+                    $(".dllr").show();
+                } else {
+                    $("#TextBoxDriversLicenseNumber").prop('required',false);
+                     $("#TextBoxDriversLicenseExpiration").prop('required',false);
+                    $("#DropDownListDriversCountry").prop('required',false);
+                    $("#DropDownListDriversState").prop('required',false);
+                    $(".dllr").hide();
+                }
+            });   
+            
+            $('[name="RadioButtonListDriversLicenseTraffic"]').on("change", function(){
+                var DLvalue = $('input[name="RadioButtonListDriversLicenseTraffic"]:checked').val();
+                if (DLvalue == "Yes") {
+                    $("#license_guilty_details").prop('required',true);
+                } else {
+                    $("#license_guilty_details").prop('required',false);
+                }
+            });   
+            // rules['TextBoxDriversLicenseNumber'] = { required: true };
+            // rules['TextBoxDriversLicenseExpiration'] = { required: true };
+            // rules['DropDownListDriversCountry'] = { required: true };
+            // rules['DropDownListDriversState'] = { required: true };
+            // rules['license_guilty_details'] = { required: true };
+            // messages['TextBoxDriversLicenseNumber'] = { required: "This field is required." };
+            // messages['TextBoxDriversLicenseExpiration'] = { required: "This field is required." };
+            // messages['DropDownListDriversCountry'] = { required: "This field is required." };
+            // messages['DropDownListDriversState'] = { required: "This field is required." };
+            // messages['license_guilty_details'] = { required: "This field is required." };
+        }
     
     //
     if("<?=$l_employment?>" == 1){
@@ -3846,7 +3928,6 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
 
             var text_length = user_text.length + addition;
             var text_left = text_allowed - text_length;
-            console.log(user_text + ' = ' + text_length + " LEFT: " + text_left);
             $('#' + id + '_remaining').html(text_left + ' Characters Left');
         }
 
