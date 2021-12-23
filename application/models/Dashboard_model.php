@@ -637,6 +637,7 @@ class Dashboard_model extends CI_Model
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('email', $email);
         $this->db->where('email <>', '');
+        $this->db->where('is_executive_admin', 0);
         $results = $this->db->get('users')->result_array();
 
         if (sizeof($results) > 0) {
