@@ -107,7 +107,7 @@ class manual_candidate_model extends CI_Model {
         ->where('company_sid', $company_sid)
         ->where('resume <>', '')
         ->where('resume <>', NULL)
-        ->order_by('last_update','DESC');
+        ->order_by('sid','DESC');
         
         $record_obj = $this->db->get('portal_applicant_jobs_list');
         $record_arr = $record_obj->row_array();
