@@ -1,14 +1,27 @@
 <style type="text/css">
     
     .dash-box {
-        height: 238px !important;
+        height: 100%  !important;
     }
 
     .notification_Info {
         color: #000;
         font-style: italic;
     }
-</style>
+    .dash-box-main .dash-box
+    {
+        padding-bottom: 60px !important;
+    }
+    .dash-box-main
+    {
+        margin-bottom: 30px;
+    }
+    .dashboard-widget-box .button-panel
+    {
+        margin-top: 0 !important;
+    }
+</style>    
+
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -28,7 +41,7 @@
                             <div class="dashboard-conetnt-wrp">
                                 <div class="box-wrapper">
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 dash-box-main col-md-6 col-xs-12 col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
@@ -50,7 +63,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 dash-box-main col-md-6 col-xs-12 col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
@@ -72,7 +85,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-6  col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
@@ -94,7 +107,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
@@ -116,7 +129,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
@@ -138,7 +151,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
@@ -160,7 +173,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
@@ -182,7 +195,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
@@ -204,7 +217,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
@@ -226,7 +239,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
@@ -258,3 +271,9 @@
         </div>
     </div>
 </div>
+
+<script src="<?=base_url('assets/js/matchHeight.js');?>" ></script>
+
+<script type="text/javascript">
+    jQuery('.dash-box-main').matchHeight();    
+</script>
