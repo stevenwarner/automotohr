@@ -15,6 +15,15 @@
                                     <?php echo $title; ?>
                                 </span>
                             </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="pull-left">
+                                        <h4>
+                                            <?php echo FULL_EMPLOYMENT; ?>
+                                        </h4>
+                                    </div>    
+                                </div>    
+                            </div> 
                             <div class="btn-wrp">
                                 <div class="row">
                                     <div class="col-lg-8 col-md-8 col-xs-12 col-sm-8">

@@ -611,3 +611,14 @@ define('GUSTO_CLIENT_REDIRECT_URL', 'https://www.automotohr.com/gusto/callback')
 
 define('GUSTO_ACCESS_TOKEN', 'M-KCth2RQHAobcsz7Cc_Qf3fThssgHdAP7ClGC3LUDI');
 define('GUSTO_REFRESH_TOKEN', '7hY3IKva0XM__HIh3BYHVLJmKmunHuRltvvMmOVmJlw');
+
+define('BILLING_AND_INVOICE', 'The selected contacts will be notified by email when an invoice is genenerated.');
+define('NEW_APPLICANT', 'The selected contacts will be notified by email when an applicant applies.');
+define('VIDEO_INTERVIEW', 'The selected contacts will be notified by email when a video interview is created.');
+define('APPROVAL_RIGHTS', 'The selected contacts will be notified by email when a job is accepted/rejected.');
+define('FULL_EMPLOYMENT', 'The selected contacts will be notified by email when a Full Employment Application is completed.');
+define('EXPIRATION_MANAGER', 'The selected contacts will be notified by email when any employee license is expired in 30 days.');
+define('ONBOARDING_REQUEST', 'The selected contacts will be notified by email when an applicant sends to onboarding.');
+define('OFFER_LETTER', 'The selected contacts will be notified by email when an employee/applicant assigns an offer letter.');
+define('DOCUMENT_ASSIGN', 'The selected contacts will be notified by email when an employee/applicant assigns a document.');
+define('GENERAL_DOCUMENT', 'The selected contacts will be notified by email when an employee/applicant assigns a general information document.');
