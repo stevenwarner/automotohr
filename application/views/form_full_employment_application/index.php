@@ -813,7 +813,7 @@
                                                             <?php echo form_error('RadioButtonListDriversLicenseTraffic'); ?>
                                                         </li>
                                                         <li class="form-col-100 autoheight">
-                                                            <?php $key = 'license_guilty_details'; ?>
+                                                            <?php $key = 'license_guilty_details_violation'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <small class="autoheight">If yes , provide dates and details for each violation, including the case number and court where your case is/was handled:</small>
                                                             <div class="comment-area">
@@ -2838,17 +2838,24 @@
                     $("#TextBoxDriversLicenseExpiration").prop('required',true);
                     $("#country_dl").prop('required',true);
                     $("#state_dl").prop('required',true);
-                    $("#license_guilty_details").prop('required',true);
                     $(".dllr").show();
                 } else {
                     $("#TextBoxDriversLicenseNumber").prop('required',false);
                      $("#TextBoxDriversLicenseExpiration").prop('required',false);
                     $("#country_dl").prop('required',false);
                     $("#state_dl").prop('required',false);
-                    $("#license_guilty_details").prop('required',false);
                     $(".dllr").hide();
                 }
-            });   
+            });  
+            
+            $('[name="RadioButtonListDriversLicenseTraffic"]').on("change", function(){
+                var DLvalue = $('input[name="RadioButtonListDriversLicenseTraffic"]:checked').val();
+                if (DLvalue == "Yes") {
+                    $("#license_guilty_details").prop('required',true);
+                } else {
+                    $("#license_guilty_details").prop('required',false);
+                }
+            });  
             // rules['TextBoxDriversLicenseNumber'] = { required: true };
             // rules['TextBoxDriversLicenseExpiration'] = { required: true };
             // rules['DropDownListDriversCountry'] = { required: true };

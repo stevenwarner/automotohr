@@ -1036,7 +1036,7 @@
                                                             </div>
                                                         </li>
                                                         <li class="form-col-100 autoheight">
-                                                            <small class="autoheight">If yes , provide dates and details for each violation, including the case number and court where your case is/was handled:</small>
+                                                            <small class="autoheight">If yes, provide dates and details for each violation, including the case number and court where your case is/was handled:</small>
                                                             <div class="comment-area">
                                                                 <textarea name="license_guilty_details" id="license_guilty_details" maxlength="512" onkeyup="check_length('license_guilty_details')" class="form-col-100 invoice-fields"><?php
                                                                     if (isset($formpost['license_guilty_details'])) {
@@ -1044,7 +1044,7 @@
                                                                     }
                                                                     ?></textarea>
                                                                 <span id="license_guilty_details_remaining">512 Characters Left</span>
-<?php echo form_error('license_guilty_details'); ?>
+<?php echo form_error('license_guilty_details_violation'); ?>
                                                                 <p style="display: none;" id="license_guilty_details_length">512</p>
                                                             </div>
                                                         </li>
@@ -3816,15 +3816,22 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
                     $("#TextBoxDriversLicenseExpiration").prop('required',true);
                     $("#DropDownListDriversCountry").prop('required',true);
                     $("#DropDownListDriversState").prop('required',true);
-                    $("#license_guilty_details").prop('required',true);
                     $(".dllr").show();
                 } else {
                     $("#TextBoxDriversLicenseNumber").prop('required',false);
                      $("#TextBoxDriversLicenseExpiration").prop('required',false);
                     $("#DropDownListDriversCountry").prop('required',false);
                     $("#DropDownListDriversState").prop('required',false);
-                    $("#license_guilty_details").prop('required',false);
                     $(".dllr").hide();
+                }
+            });   
+            
+            $('[name="RadioButtonListDriversLicenseTraffic"]').on("change", function(){
+                var DLvalue = $('input[name="RadioButtonListDriversLicenseTraffic"]:checked').val();
+                if (DLvalue == "Yes") {
+                    $("#license_guilty_details").prop('required',true);
+                } else {
+                    $("#license_guilty_details").prop('required',false);
                 }
             });   
             // rules['TextBoxDriversLicenseNumber'] = { required: true };
@@ -3921,7 +3928,6 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
 
             var text_length = user_text.length + addition;
             var text_left = text_allowed - text_length;
-            console.log(user_text + ' = ' + text_length + " LEFT: " + text_left);
             $('#' + id + '_remaining').html(text_left + ' Characters Left');
         }
 
