@@ -142,15 +142,6 @@
                                                                         ?>
                                                                         <br />
                                                                         <b>Start Date: </b><?php echo date_with_time($value['registration_date']); ?>
-                                                                        <br />
-                                                                        <b>Rehire Date: </b>
-                                                                        <?php 
-                                                                            if(!empty($value['rehire_date'])) {
-                                                                                echo date_with_time($value['rehire_date']); 
-                                                                            } else {
-                                                                                echo "N/A";
-                                                                            }
-                                                                        ?>
                                                                     </td>
                                                                     <td><?php echo ucwords($value['company_name']); ?>
                                                                     <?php   if($value['password'] == '' || is_null($value['password'])) { ?>
