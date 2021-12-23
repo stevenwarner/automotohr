@@ -125,9 +125,21 @@
                                                                         <br />
                                                                         <b>System Date: </b><?php echo date_with_time($value['system_user_date']); ?>
                                                                     </td>
-<!--                                                                    <td>--><?php //echo ucwords($value['access_level']); ?><!--</td>-->
+                                                                    <!--<td>--><?php //echo ucwords($value['access_level']); ?><!--</td>-->
                                                                     <td>
-                                                                        <?php echo ucwords($value['first_name'] . ' ' . $value['last_name']); ?>
+                                                                        <?php 
+                                                                            $middle_initial = !empty($value['middle_name']) ? ' '.$value['middle_name'] : '';
+                                                                            echo ucwords($value['first_name'] . $middle_initial . ' ' . $value['last_name']); 
+                                                                        ?>
+                                                                        <br />
+                                                                        <b>Nick Name: </b>
+                                                                        <?php 
+                                                                            if(!empty($value['nick_name'])) {
+                                                                                echo $value['nick_name']; 
+                                                                            } else {
+                                                                                echo "N/A";
+                                                                            } 
+                                                                        ?>
                                                                         <br />
                                                                         <b>Start Date: </b><?php echo date_with_time($value['registration_date']); ?>
                                                                     </td>
