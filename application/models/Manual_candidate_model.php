@@ -100,4 +100,35 @@ class manual_candidate_model extends CI_Model {
             return 0;
         }
     }
+
+    function get_applicant_resume ($applicant_sid, $company_sid) {
+        $this->db->select('resume')
+        ->where('portal_job_applications_sid', $applicant_sid)
+        ->where('company_sid', $company_sid)
+        ->where('resume <>', '')
+        ->where('resume <>', NULL)
+        ->order_by('last_update','DESC');
+        
+        $record_obj = $this->db->get('portal_applicant_jobs_list');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        if (!empty($record_arr)) {
+            return $record_arr['resume'];
+        } else {
+            $this->db->select('resume')
+            ->where('sid', $applicant_sid)
+            ->where('employer_sid ', $company_sid)
+            ->where('resume <>', '')
+            ->where('resume <>', NULL);
+            
+            $record_obj = $this->db->get('portal_job_applications');
+            $record_arr = $record_obj->row_array();
+            $record_obj->free_result();
+            if (!empty($record_arr)) {
+                return $record_arr['resume'];
+            } else {
+                return array();
+            }
+        }
+    }
 }

@@ -244,6 +244,8 @@ class Manual_candidate extends Public_Controller
         $selected_candidates = $this->input->post('selected_candidates');
         $status = get_default_status_sid_and_text($company_sid);
         foreach($selected_candidates as $candidate => $job){
+            $resume = $this->manual_candidate_model->get_applicant_resume($candidate, $company_sid);
+            //
             $insert_data = array();
             $insert_data['portal_job_applications_sid'] = $candidate;
             $insert_data['company_sid'] = $company_sid;
@@ -255,6 +257,7 @@ class Manual_candidate extends Public_Controller
             $insert_data['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
             $insert_data['applicant_type'] = 'Manual Candidate';
             $insert_data['applicant_source'] = 'Manually Assigned By '.$name;
+            $insert_data['resume'] = $resume;
 
             $this->manual_candidate_model->add_applicant_job_details($insert_data);
         }
