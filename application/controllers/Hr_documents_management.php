@@ -10498,7 +10498,7 @@ class Hr_documents_management extends Public_Controller {
         //
         $id = urldecode($id);
         //
-        ini_set('memory_limit', '512M');
+        ini_set('memory_limit', '1024M');
         //
         if(preg_match('/.zip/', $token)){
             //
@@ -10542,6 +10542,8 @@ class Hr_documents_management extends Public_Controller {
             //
             $this->hr_documents_management_model->save_documents_download_history($data_to_insert); 
             $dt = ROOTPATH.'temp_files/employee_export/'.$fnn;
+            //
+            unlink($dt);
             //
             shell_exec( "cd $dir; zip -r $dt *" );
             //
