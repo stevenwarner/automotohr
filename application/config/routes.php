@@ -1400,7 +1400,7 @@ $route['payroll/run/(:any)/(:any)']['get'] = 'payroll/Payroll/RunSingle/$1/$2';
 $route['payroll/run/(:any)']['get'] = 'payroll/Payroll/RunSingle/$1';
 
 // AJAX Get
-$route['payroll/employees/(:num)']['get'] = 'payroll/Payroll_ajax/GetEmployees/$1';
+$route['payroll/employees']['get'] = 'payroll/Payroll_ajax/GetEmployees';
 
 
 $route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';

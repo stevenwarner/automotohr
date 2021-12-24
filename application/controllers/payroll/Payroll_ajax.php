@@ -30,6 +30,10 @@ class Payroll_ajax extends CI_Controller
         $this->path = 'payroll/pages/';
         //
         $this->session = $this->session->userdata('logged_in');
+        //
+        if(!$this->session){
+            return SendResponse(401);
+        }
     }
 
     /**
@@ -1226,18 +1230,40 @@ class Payroll_ajax extends CI_Controller
     /**
      * 
      */
-    function GetEmployees($onPayroll = 0){
+    function GetEmployees(){
+        //
+        $onPayroll = (int)$this->input->get('on_payroll', true);
         //
         $data = $this->sem->GetCompanyEmployees(
             $this->session['company_detail']['sid'],
             true,
             [
                 'users.active' => 1,
-                'users.terminated_status' => 0,
-                'users.on_payroll' => $onPayroll
+                'users.terminated_status' => 0
             ]
         );
         //
-        SendResponse(!empty($data) ? $data : []);
+        $responseArray = [
+            'list' => [],
+            'payroll_employees_count' => 0,
+            'normal_employees_count' => 0
+        ];
+        //
+        if(!empty($data)){
+            // 
+            foreach($data as $employee){
+                //
+                $responseArray[$onPayroll && $employee['on_payroll'] ? 'payroll_employees_count' : 'normal_employees_count']++;
+                //
+                if($onPayroll && $employee['on_payroll']){
+                    $responseArray['list'][] = $employee;
+                } 
+                if(!$onPayroll && !$employee['on_payroll']){
+                    $responseArray['list'][] = $employee;
+                }
+            }
+        }
+        //
+        SendResponse(200, $responseArray);
     }
 }

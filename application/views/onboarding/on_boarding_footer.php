@@ -513,6 +513,7 @@ $(document).ready(loadTitles);
 
 
 <script src="<?=base_url(_m('assets/js/common'));?>"></script>
+<script src="<?=base_url(_m('assets/js/uri'));?>"></script>
 <script src="<?=base_url(_m('assets/payroll/js/payroll_company_onboard'));?>"></script>
 <!-- Dynamic Scripts -->
 <?php if(isset($PageScripts)) { echo GetScripts($PageScripts); }?>

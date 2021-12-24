@@ -111,15 +111,6 @@ $(document).on('click', '.jsLayoutChange', function(event) {
 });
 
 /**
- * Get the base url for the current page
- * @param {string} to 
- * @returns
- */
-function baseURL(to) {
-    //
-    return window.location.origin + '/' + (to === undefined ? '' : to);
-}
-/**
  * Modal page
  * 
  * @param   {Object}   options 

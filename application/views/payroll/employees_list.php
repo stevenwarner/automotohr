@@ -46,14 +46,14 @@
             <!--  -->
             <?=GetTabHeader(
                 [[
-                    'Text' => 'Payroll Employees (<span class="jsEmployeeCount">0</span>)',
+                    'Text' => 'Payroll Employees <span class="jsEmployeeCountPayroll">(0)</span>',
                     'Slug' => 'payroll',
                     'Link' => base_url("payroll/employees/payroll")
                 ], 
                 [
-                    'Text' => 'Employees',
+                    'Text' => 'Employees <span class="jsEmployeeCountNormal">(0)</span>',
                     'Slug' => 'normal',
-                    'Link' => base_url("payroll/employees")
+                    'Link' => base_url("payroll/employees/normal")
                 ]],
                 $SelectedTab
             );?>
@@ -71,13 +71,13 @@
                                     <p class="csF14 csW m0">Employee</p>
                                 </th>
                                 <th scope="col" class="vam text-right">
-                                    <p class="csF14 csW m0">Check list <i class="fa fa-info-circle csCP" data-title="Note" data-content="Please follow the checklist in order to complete the onboard." aria-hidden="true"></i></p>
+                                    <p class="csF14 csW m0">Joined Date <i class="fa fa-info-circle csCP" data-title="Note" data-content="Please follow the checklist in order to complete the onboard." aria-hidden="true"></i></p>
                                 </th>
                                 <th scope="col" class="vam text-right">
-                                    <p class="csF14 csW m0">On Payroll <i class="fa fa-info-circle csCP" data-title="Note" data-content="Please follow the checklist in order to complete the onboard." aria-hidden="true"></i></p>
+                                    <p class="csF14 csW m0">Onboard Date <i class="fa fa-info-circle csCP" data-title="Note" data-content="Please follow the checklist in order to complete the onboard." aria-hidden="true"></i></p>
                                 </th>
                                 <th scope="col" class="vam text-right">
-                                    <p class="csF14 csW m0">Onboard Complete <i class="fa fa-info-circle csCP" data-title="Note" data-content="Please follow the checklist in order to complete the onboard." aria-hidden="true"></i></p>
+                                    <p class="csF14 csW m0">Onboard Status <i class="fa fa-info-circle csCP" data-title="Note" data-content="Please follow the checklist in order to complete the onboard." aria-hidden="true"></i></p>
                                 </th>
                                 <th scope="col" class="vam text-right">
                                     <p class="csF14 csW m0">Actions</p>
