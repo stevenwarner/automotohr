@@ -415,4 +415,20 @@ class Export_csv_model extends CI_Model {
             return array();
         }
     }
+
+    function get_status_info($employee_sid, $status){
+        $this->db->select('termination_reason , termination_date');
+        $this->db->where('employee_status',$status);
+        $this->db->where('employee_sid ',$employee_sid);
+        $this->db->order_by('sid', 'DESC');
+        $record_obj = $this->db->get('terminated_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
 }
