@@ -46,7 +46,7 @@
     
     $slugs['applicable_date_label'] = 'Applicable date for policy to take affect (Label)';
     $slugs['applicable_date_msg_label'] = 'Applicable date for policy to take affect (Label)';
-    $slugs['employee_joining_date_label'] = 'Employee Start Date (Label)';
+    $slugs['employee_joining_date_label'] = 'Employee Joining Date (Label)';
     $slugs['pick_a_date_label'] = 'Pick a Date (Label)';
     
     $slugs['reset_date_label'] = 'Reset Date (Label)';

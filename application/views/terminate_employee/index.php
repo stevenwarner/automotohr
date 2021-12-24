@@ -111,7 +111,15 @@
                                                             } ?>
                                                         </td>
                                                         <td class="text-center" style="vertical-align: middle;">
-                                                            <a class="btn btn-success btn-sm <?= $employer_sid != $record['changed_by'] ? 'disabled':''?>" href="<?= $employer_sid == $record['changed_by'] ? base_url('edit_status').'/'. $employer['sid'].'/'. $record['sid'] : 'javascript:void(0);'?>" <?= $employer_sid != $record['changed_by'] ? 'disabled': ''?>><i class="fa fa-edit"></i></a>
+                                                            <?php if($employer_sid == $record['changed_by'] || $record['changed_by'] == 0) { ?>
+                                                                <a class="btn btn-success btn-sm" href="<?php echo base_url('edit_status').'/'. $employer['sid'].'/'. $record['sid']; ?>">
+                                                                    <i class="fa fa-edit"></i>
+                                                                </a>
+                                                            <?php } else { ?>
+                                                                <a class="btn btn-success btn-sm" href="javascript:void(0);" disabled>
+                                                                    <i class="fa fa-edit"></i>
+                                                                </a>
+                                                            <?php } ?>
                                                         </td>
                                                     </tr>
                                                     <tr <?= $i++%2 == 0 ? 'style="background-color: #f9f9f9 !important;"' : '';?>>

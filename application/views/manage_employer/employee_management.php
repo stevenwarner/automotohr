@@ -197,7 +197,7 @@
                                             <th width="30%">Employees</th>
                                             <th width="25%">Designation</th>
                                             <th>Password</th>                            
-                                            <th class="text-center">Starting Date</th>
+                                            <th class="text-center">Joining Date</th>
                                             <th class="text-center">Rehire Date</th>
                                             <?php if ($all === true || $terminated === true) { ?>
                                                 <th class="text-center">Termination Date</th>
@@ -284,39 +284,25 @@
                                                         <?php   } ?>
                                                     </td>
                                                     <td class="text-center">
-                                                        <?php
-                                                            if(!empty($employee['joined_at']) && $employee['joined_at'] != '0000-00-00 00:00:00'){
-                                                                echo reset_datetime(
-                                                                    array(
-                                                                        'datetime' => $employee['joined_at'], 
-                                                                        '_this' => $this,
-                                                                        'from_format' => 'Y-m-d',
-                                                                        'format' => 'M d Y, D',
-                                                                        'from_timezone' => 'EST',
-                                                                        'new_zone' => 'EST'
-                                                                    )
-                                                                );
-                                                                // echo formatDate($employee['joined_at'], DB_DATE, DATE);
-                                                            } else if(!empty($employee['registration_date']) && $employee['registration_date'] != '0000-00-00 00:00:00'){
-                                                                echo reset_datetime(
-                                                                    array(
-                                                                        'datetime' => $employee['registration_date'], 
-                                                                        '_this' => $this,
-                                                                        'from_format' => 'Y-m-d H:i:s',
-                                                                        'format' => 'M d Y, D',
-                                                                        'from_timezone' => 'EST',
-                                                                        'new_zone' => 'EST'
-                                                                    )
-                                                                );
-                                                                // echo formatDate($employee['registration_date'], DB_DATE, DATE);
+                                                        <?php 
+                                                            $joiningDate = get_employee_latest_joined_date($employee["registration_date"],$employee["joined_at"],"",true);
+                                                            //
+                                                            if (!empty($joiningDate)) {
+                                                                echo $joiningDate;
                                                             } else {
-                                                                echo 'N/A';
+                                                                echo "N/A";
                                                             }
-                                                        ?>
+                                                        ?> 
                                                     </td>
                                                     <td>
                                                         <?php
-                                                            echo $employee['rehire_date'] != NULL && $employee['rehire_date'] != '0000-00-00' ? date_with_time($employee['rehire_date']) : 'N/A';
+                                                            $rehireDate = get_employee_latest_joined_date("","",$employee["rehire_date"],true);
+                                                            //
+                                                            if (!empty($rehireDate)) {
+                                                                echo $rehireDate;
+                                                            } else {
+                                                                echo "N/A";
+                                                            }
                                                         ?>
                                                     </td>
                                                     <?php if ($all === true || $terminated === true) { ?>

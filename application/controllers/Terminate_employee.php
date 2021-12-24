@@ -195,10 +195,13 @@ class Terminate_employee extends Public_Controller {
                 $this->session->set_flashdata('message', '<b>Error:</b> Record Not Found!');
                 redirect('employee_status/'.$sid);
             }
-            if($status_data[0]['changed_by'] != $employer_sid){
-                $this->session->set_flashdata('message', '<b>Error:</b> Un-Authorized!');
-                redirect('employee_status/'.$sid);
-            }
+
+            if($status_data[0]['changed_by'] != 0){
+                if($status_data[0]['changed_by'] != $employer_sid){
+                    $this->session->set_flashdata('message', '<b>Error:</b> Un-Authorized!');
+                    redirect('employee_status/'.$sid);
+                }
+            }    
 
             $status_documents = $this->terminate_employee_model->get_status_documents($status_id);
             $data['id'] = $sid;

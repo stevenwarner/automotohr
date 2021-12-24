@@ -598,7 +598,7 @@ class Import_csv extends Public_Controller {
                         if(preg_match('/rehire/i', $v0['status'])){
                             $statusArray['employee_status'] = 8;
                             $statusArray['details'] = isset($v0['rehire_reason']) ? $v0['rehire_reason'] : '';
-                            $statusArray['status_change_date'] = $statusArray['termination_date'] = isset($v0['rehire_date']) && !empty($v0['rehire_date']) ? formatDateToDB($v0['rehire_date']) : NULL;
+                            $statusArray['status_change_date'] = isset($v0['rehire_date']) && !empty($v0['rehire_date']) ? formatDateToDB($v0['rehire_date']) : NULL;
 
 
                             $this->import_csv_model->UpdateRehireDateInUsers(formatDateToDB($v0['rehire_date']), $employeeId);
@@ -812,7 +812,7 @@ class Import_csv extends Public_Controller {
             if(preg_match('/rehire/i', $v0['status'])){
                 $statusArray['employee_status'] = 8;
                 $statusArray['details'] = isset($v0['rehire_reason']) ? $v0['rehire_reason'] : '';
-                $statusArray['status_change_date'] = $statusArray['termination_date'] = isset($v0['rehire_date']) && !empty($v0['rehire_date']) ? formatDateToDB($v0['rehire_date']) : NULL;
+                $statusArray['status_change_date'] = isset($v0['rehire_date']) && !empty($v0['rehire_date']) ? formatDateToDB($v0['rehire_date']) : NULL;
                 //
                 $this->import_csv_model->UpdateRehireDateInUsers(formatDateToDB($v0['rehire_date']), $pre_emp['sid']);
             }

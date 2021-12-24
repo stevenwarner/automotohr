@@ -510,22 +510,17 @@
     }
 
     .avatar span.image_holder {
-        position: relative;
-        margin-right: 20px;
-        width: 120px;
-        height: 120px;
-        display: block;
-        overflow: hidden;
+        float: left;
+        width: 130px;
+        height: 130px;
+        border: 4px solid #fff;
     }
 
     .avatar span.image_holder img {
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        margin-right: 0;
+        border-radius: 8px;
         height: 100%;
+        width: 100%;
+
     }
 </style>
 

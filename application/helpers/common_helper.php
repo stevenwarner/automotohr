@@ -13839,27 +13839,6 @@ if(!function_exists('subTimeToDate')){
     }
 } 
 
-if (!function_exists('get_rehire_date')) {
-
-    function get_rehire_date($id)
-    {
-        $CI = &get_instance();
-        $CI->db->select('status_change_date');
-        $CI->db->where('employee_status', 8);
-        $CI->db->where('employee_sid', $id);
-        $CI->db->order_by('sid', 'DESC');
-        $data = $CI->db->get('terminated_employees')->row_array();
-
-        $date = "";
-
-        if (!empty($data)) {
-            $date = $data['status_change_date'];
-        }
-
-        return $date;
-    }
-}
-
 if (!function_exists('get_employee_latest_joined_date')) {
 
     function get_employee_latest_joined_date($registration_date, $joining_date, $rehire_date, $format_to_site = false)

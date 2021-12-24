@@ -35,7 +35,7 @@ class employers extends Admin_Controller {
         $status = $status == null ? 2 : $status;
         $employers_count = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, true, $company, $contact_name);
         $employers = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, false, $company, $contact_name);
-
+        // echo "<pre>"; print_r($employers); die();
         $config = array();
         $config['base_url'] = base_url('manage_admin/employers/' . rawurlencode($keyword) . '/' . $status . '/' . rawurlencode($company) . '/' . rawurlencode($contact_name) . '/');
         $config['per_page'] = $records_per_page;

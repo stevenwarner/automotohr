@@ -102,9 +102,9 @@
                                                                         <div class="employee-profile-info">
                                                                             <figure>
                                                                                 <?php if (!empty($value['profile_picture'])) { ?>
-                                                                                    <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $value['profile_picture']; ?>">
+                                                                                    <img class="profile-img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $value['profile_picture']; ?>">
                                                                                 <?php } else { ?>
-                                                                                    <img class="img-responsive" src="<?= base_url() ?>assets/images/img-applicant.jpg">
+                                                                                    <img class="profile-img-responsive" src="<?= base_url() ?>assets/images/img-applicant.jpg">
                                                                                 <?php } ?>
                                                                             </figure>
                                                                         </div>
@@ -129,13 +129,21 @@
                                                                     <td>
                                                                         <?php echo ucwords($value['first_name'] . ' ' . $value['last_name']); ?>
                                                                         <br />
-                                                                        <b>Start Date: </b><?php echo date_with_time($value['registration_date']); ?>
+                                                                        <b>Joining Date: </b><?php 
+                                                                            $joiningDate = get_employee_latest_joined_date($value["registration_date"],$value["joined_at"],"",true);
+                                                                            //
+                                                                            if (!empty($joiningDate)) {
+                                                                                echo $joiningDate;
+                                                                            } else {
+                                                                                echo "N/A";
+                                                                            }
+                                                                        ?>    
                                                                         <br>
-                                                                        <b>rehire Date: </b><?php
-                                                                            $rehireDate = get_rehire_date($value["sid"]);
+                                                                        <b>Rehire Date: </b><?php
+                                                                            $rehireDate = get_employee_latest_joined_date("","",$value["rehire_date"],true);
                                                                             //
                                                                             if (!empty($rehireDate)) {
-                                                                                echo date_with_time($rehireDate);
+                                                                                echo $rehireDate;
                                                                             } else {
                                                                                 echo "N/A";
                                                                             }

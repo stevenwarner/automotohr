@@ -971,7 +971,8 @@
             return [];
         }
         //
-        $JoinedDate = get_employee_latest_joined_date($v['registration_date'], $v['joined_at'], $v['rehire_date']);
+        $JoinedDate = get_employee_latest_joined_date($v['registration_date'], $v['joined_at'], '', true);
+        $rehiredDate = get_employee_latest_joined_date('', '', $v['rehire_date'], true);
         //
         $a = [
             'Id' => $v['sid'],
@@ -984,7 +985,8 @@
             'JobTitle' => ucwords(strtolower($v['job_title'])),
             'Phone' => $v['PhoneNumber'],
             'DOB' => empty($v['dob']) || $v['dob'] == '0000-00-00' ? '' : DateTime::createfromformat('Y-m-d', $v['dob'])->format('Y-m-d'),
-            'JoinedDate' => $JoinedDate
+            'JoinedDate' => $JoinedDate,
+            'RehiredDate' => $rehiredDate
         ];
         //
         $a = array_merge(
