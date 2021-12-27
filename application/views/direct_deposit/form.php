@@ -140,10 +140,34 @@
                                 <span id="acc_no_<?php echo $i; ?>" class="error_text_color"></span>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <p><strong>Deposit Type: <span class="cs-required">*</span></strong></p>
+                            </div>
+                            <div class="col-sm-10">
+                                <div class="hr-select-dropdown">
+                                    <select id="deposit_type_<?php echo $i; ?>" name="deposit_type_<?php echo $i; ?>" class="form-control js-deposit_type" data-id="<?php echo $i; ?>">
+                                        <option value="0">Please select deposit type</option>
+                                        <option value="percentage" <?php echo isset($account['deposit_type']) && $account['deposit_type'] == 'percentage' ? 'selected' : ''; ?>>Percentage</option>
+                                        <option value="amount" <?php echo isset($account['deposit_type']) && $account['deposit_type'] == 'amount' ? 'selected' : ''; ?>>Amount</option>
+                                    </select>
+                                </div>
+                                <span id="EDT_<?php echo $i; ?>" class="error_text_color"></span>
+                            </div>
+                        </div>
                         
                         <div class="row">
                             <div class="col-sm-5">
-                                <p><strong>Percentage or dollar amount to be deposited to this account: <span class="cs-required">*</span></strong></p>
+                                <?php 
+                                    $DTL = "Percentage or dollar amount to be deposited to this account:";
+                                    if (isset($account['deposit_type']) && $account['deposit_type'] == 'percentage') {
+                                        $DTL = "Percentage value to be deposited to this account:";
+                                    } else if (isset($account['deposit_type']) && $account['deposit_type'] == 'amount') {
+                                        $DTL = "Dollar amount to be deposited to this account:";
+                                    }
+                                ?>
+                                <p><strong><span id="DTT_<?php echo $i; ?>"><?php echo $DTL; ?></span> <span class="cs-required">*</span></strong></p>
                             </div>
                             <div class="col-sm-7">
                                 <input type="text"  class="form-control js-account-percentage validate_error" value="<?=$account['account_percentage'];?>" error_key="acc_per_<?php echo $i; ?>" />
@@ -315,7 +339,16 @@
 <script>
 
 $(function(){
-
+    $('.js-deposit_type').change(function(e){
+        var id = $(this).data('id');
+        if ($(this).val() == "percentage") {
+            $("#DTT_"+id).text("Percentage value to be deposited to this account:");
+        } else if ($(this).val() == "amount") {
+            $("#DTT_"+id).text("Dollar amount to be deposited to this account:");
+        } else if ($(this).val() == 0) {
+            $("#DTT_"+id).text("Percentage or dollar amount to be deposited to this account:");
+        }
+    });
     //
     var filo = {};
     //
@@ -408,6 +441,7 @@ $(function(){
             var financial_institution_name = $(this).find('.js-financial-institution-name').val();
             var account_routing_no = $(this).find('.js-account-routing-number').val();
             var account_number = $(this).find('.js-account-number').val();
+            var deposit_type = $(this).find('.js-deposit_type').val();
             var account_percentage = $(this).find('.js-account-percentage').val();
             var account_cheque = $(`#jsVoidedCheck${el+1}`).mFileUploader('get');
             var old_account_cheque = $(this).find('.js-account-voided-cheque').val();
@@ -421,6 +455,9 @@ $(function(){
                     $('#acc_brn_0').text('Please Provide ABA number');
                     $('#acc_no_0').text('Please Provide Account Number');
                     $('#acc_per_0').text('Please Provide Percentage');
+                    if (deposit_type == 0) {
+                        $('#EDT_0').text('Please select deposit type');
+                    }    
                     // $('#acc_pic_0').text('Please Provide Voided Check Image');
                     alertify.alert('Please Provide Account 1 Detail').set({title:"WARNING !"});
                     record_error = 1
@@ -434,6 +471,7 @@ $(function(){
                 var pre_flag = 0;
                 var pic_flag = 0;
                 var fin_flag = 0;
+                var dt_flag = 0;
 
                 if (account_title == '') {
                     tit_flag = 1;
@@ -477,6 +515,13 @@ $(function(){
                     $('#acc_per_'+el).text('');
                 }
 
+                if (deposit_type == 0) {
+                    dt_flag = 1;
+                    $('#EDT_'+el).text('Please select deposit type');
+                } else {
+                    $('#EDT_'+el).text('');
+                }
+
                 // if (account_cheque == undefined && old_account_cheque == '') {
                 //     pic_flag = 1;
                 //     $('#acc_pic_'+el).text('Please Provide Voided Check Image');
@@ -484,7 +529,7 @@ $(function(){
                 //     $('#acc_pic_'+el).text('');
                 // }
 
-                if (tit_flag == 0 && typ_flag == 0 && ac_brn_flag == 0 && ac_no_flag == 0 && pre_flag == 0 && pic_flag == 0 && fin_flag == 0) {
+                if (tit_flag == 0 && typ_flag == 0 && ac_brn_flag == 0 && ac_no_flag == 0 && pre_flag == 0 && pic_flag == 0 && fin_flag == 0 && dt_flag == 0) {
                     let obj = {}; 
 
                     obj.accountTitle = account_title;
@@ -492,6 +537,7 @@ $(function(){
                     obj.financial_institution_name = financial_institution_name;
                     obj.accountRoutingNumber = account_routing_no;
                     obj.accountNumber = account_number;
+                    obj.depositType = deposit_type;
                     obj.accountPercentage = account_percentage;
                     if (account_type != undefined) {
                         obj.accountVoidedCheque = account_cheque;
@@ -578,6 +624,7 @@ $(function(){
                     new_form_data.append('financial_institution_name', v.financial_institution_name);
                     new_form_data.append('routing_transaction_number', v.accountRoutingNumber);
                     new_form_data.append('account_number', v.accountNumber);
+                    new_form_data.append('deposit_type', v.depositType);
                     new_form_data.append('account_percentage', v.accountPercentage);
 
                     if (v.accountVoidedCheque != undefined) {
