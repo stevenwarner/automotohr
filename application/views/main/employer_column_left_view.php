@@ -178,6 +178,7 @@
         <?php  } ?>
         <!--17-->
 
+        
         <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && check_access_permissions_for_view($security_details, 'ems_portal')) { ?>
             <li>
                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_ems')) !== false) { echo 'class="active"'; } ?>
@@ -185,6 +186,7 @@
                     <figure><i class="fa fa-file-text-o"></i></figure>Employee Management System
                 </a>
             </li>
+        <?php  } ?>       
 <!--            --><?php //$data['session'] = $this->session->userdata('logged_in'); ?>
 <!--            --><?php //$company_sid = $data["session"]["company_detail"]["sid"]; ?>
             <!--            --><?php //if(in_array($company_sid, explode(',', TEST_COMPANIES))) { ?>
@@ -196,7 +198,7 @@
 <!--                </a>-->
 <!--            </li>-->
             <!--            --><?php // } ?>
-        <?php  } ?>
+        
         <li>
            <a <?php echo $this->uri->segment(1) == 'authorized_document' || $this->uri->segment(1) == 'view_assigned_authorized_document' ? 'class="active"' : ''; ?>
                 href="<?php echo base_url("authorized_document"); ?>">

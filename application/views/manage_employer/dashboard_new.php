@@ -561,7 +561,7 @@
                                 <?php $data['session'] = $this->session->userdata('logged_in'); ?>
                                 <?php $company_sid = $data["session"]["company_detail"]["sid"]; ?>
 
-                                <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
+                                <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status'] && check_access_permissions_for_view($security_details, 'ems_portal')) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
