@@ -20,6 +20,11 @@
     {
         margin-top: 0 !important;
     }
+
+    ul li {
+        list-style: none;
+        font-weight: 700;
+    }
 </style>    
 
 <div class="main-content">
@@ -254,6 +259,14 @@
                                                                 <?php echo GENERAL_DOCUMENT; ?>
                                                             </strong>
                                                         </p>
+                                                        <small>General Information Documents includes:</small>
+                                                        <ul>
+                                                            <li>Driver license</li>
+                                                            <li>Occupational license</li>
+                                                            <li>Dependent Details</li>
+                                                            <li>Emergency Contacts</li>
+                                                            <li>Direct Deposit Information</li>
+                                                        </ul>
                                                     </div>
                                                     <div class="button-panel">
                                                         <a class="site-btn" href="<?php echo base_url('notification_emails/general_information'); ?>">View</a>
