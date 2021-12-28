@@ -1,5 +1,7 @@
 $(function PayrollEmployees() {
     //
+    var employeeId = 0;
+    //
     var xhr = null;
     //
     var tab = getSegment(2);
@@ -15,6 +17,15 @@ $(function PayrollEmployees() {
         $(this).toggleClass('btn-orange');
         $(this).toggleClass('btn-black');
         $('.jsFilterBox').toggle();
+    });
+    //
+    $(document).on('click', '.jsPayrollAddProcess', function(event) {
+        //
+        event.preventDefault();
+        //
+        employeeId = $(this).closest('.jsPayrollEmployeeRow').data('id');
+        //
+        return AddToPayroll();
     });
     //
     function GetEmployees(onPayroll) {
@@ -63,7 +74,7 @@ $(function PayrollEmployees() {
         //
         resp.list.map(function(emp) {
             //
-            rows += '<tr data-id="' + (emp.sid) + '">';
+            rows += '<tr class="jsPayrollEmployeeRow" data-id="' + (emp.sid) + '">';
             rows += '    <td class="vam">';
             rows += '        <div class="csF14">';
             rows += '            <strong>' + (emp.name) + '</strong><br>';
@@ -90,7 +101,7 @@ $(function PayrollEmployees() {
                 rows += '        <button class="btn btn-orange csF14"><i class="fa csF16 fa-edit" aria-hidden="true"></i> Edit</button>';
                 rows += '        <button class="btn btn-danger csF14"><i class="fa csF16 fa-times-circle" aria-hidden="true"></i> Delete</button>';
             } else {
-                rows += '        <button class="btn btn-orange csF14"><i class="fa csF16 fa-plus-circle" aria-hidden="true"></i> Add To Payroll</button>';
+                rows += '        <button class="btn btn-orange csF14 jsPayrollAddProcess"><i class="fa csF16 fa-plus-circle" aria-hidden="true"></i> Add To Payroll</button>';
             }
             rows += '    </td>';
             rows += '</tr>';
@@ -99,6 +110,21 @@ $(function PayrollEmployees() {
         $('#jsPayrollEmployeesDataHolder').html(rows);
         //
         ml(false, 'payroll_employees');
+    }
+    //
+    function AddToPayroll() {
+        GetPage('employee_profile', function(page_data) {
+
+        })
+    }
+    //
+    function GetPage(page_slug) {
+        //
+        $.get(baseURI + 'get_payroll_page/' + page_slug)
+            .done(function(resp) {
+                console.log(resp)
+            })
+            .error(HandleError);
     }
     //
     GetEmployees(tab == 'payroll' ? 1 : 0)
