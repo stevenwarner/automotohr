@@ -259,14 +259,11 @@
                                                                 <?php echo GENERAL_DOCUMENT; ?>
                                                             </strong>
                                                         </p>
-                                                        <small>General Information Documents includes:</small>
-                                                        <ul>
-                                                            <li>Driver license</li>
-                                                            <li>Occupational license</li>
-                                                            <li>Dependent Details</li>
-                                                            <li>Emergency Contacts</li>
-                                                            <li>Direct Deposit Information</li>
-                                                        </ul>
+                                                        <p>
+                                                            <strong class="notification_Info">
+                                                                Driver's/Occupational license, dependent details, emergency contacts, direct deposit information.
+                                                            </strong>
+                                                        </p>
                                                     </div>
                                                     <div class="button-panel">
                                                         <a class="site-btn" href="<?php echo base_url('notification_emails/general_information'); ?>">View</a>
