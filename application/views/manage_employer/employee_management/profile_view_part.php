@@ -207,10 +207,11 @@
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Department</label>
-            <p class="dummy-invoice-fields"><?=GetVal($department_name); ?></p>
+            <p class="dummy-invoice-fields"><?= isset($department_name) && !empty($department_name) ? GetVal($department_name) : ''; ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Teams</label>
+            <?php $team_name = isset($team_name) && !empty($team_name) ? $team_name : ''; ?>
             <p class="dummy-invoice-fields"><?=GetVal(!empty($team_names) ? $team_names : $team_name); ?></p>
         </div>
     </div>
@@ -225,6 +226,45 @@
     </div>
     <?php } ?>
     <!--  -->
+    <br>
+    <div class="row">
+        <div class="col-md-6 col-xs-12"> 
+            <label class="csF16">Hourly Rate</label>
+            <p class="dummy-invoice-fields">
+                <?=GetVal($employer['hourly_rate']); ?>
+            </p>
+        </div>
+        <div class="col-md-6 col-xs-12"> 
+            <label class="csF16">Hourly Technician</label>
+            <p class="dummy-invoice-fields">
+                <?=GetVal($employer['hourly_technician']); ?>
+            </p>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6 col-xs-12"> 
+            <label class="csF16">Flat Rate Technician</label>
+            <p class="dummy-invoice-fields">
+                <?=GetVal($employer['flat_rate_technician']); ?>
+            </p>
+        </div>
+        <div class="col-md-6 col-xs-12"> 
+            <label class="csF16">Semi Monthly Salary</label>
+            <p class="dummy-invoice-fields">
+                <?=GetVal($employer['semi_monthly_salary']); ?>
+            </p>
+        </div>
+    </div> 
+    <br>
+    <div class="row">
+        <div class="col-md-6 col-xs-12"> 
+            <label class="csF16">Semi Monthly Draw</label>
+            <p class="dummy-invoice-fields">
+                <?=GetVal($employer['semi_monthly_draw']); ?>
+            </p>
+        </div>
+    </div> 
     <br>
     <?php if($timeOff == 'enable') { ?>
         <div class="row">

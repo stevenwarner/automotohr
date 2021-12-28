@@ -1484,7 +1484,26 @@ class Employee_management extends Public_Controller {
                     if(!empty($this->input->post('secondary_email', true))){
                         $data_to_insert['alternative_email'] = $this->input->post('secondary_email', true);
                     }
-
+                    //
+                    if(!empty($this->input->post('hourly_rate', true))){
+                        $data_to_insert['hourly_rate'] = $this->input->post('hourly_rate', true);
+                    }
+                    //
+                    if(!empty($this->input->post('hourly_technician', true))){
+                        $data_to_insert['hourly_technician'] = $this->input->post('hourly_technician', true);
+                    }
+                    //
+                    if(!empty($this->input->post('flat_rate_technician', true))){
+                        $data_to_insert['flat_rate_technician'] = $this->input->post('flat_rate_technician', true);
+                    }
+                    //
+                    if(!empty($this->input->post('semi_monthly_salary', true))){
+                        $data_to_insert['semi_monthly_salary'] = $this->input->post('semi_monthly_salary', true);
+                    }
+                    //
+                    if(!empty($this->input->post('semi_monthly_draw', true))){
+                        $data_to_insert['semi_monthly_draw'] = $this->input->post('semi_monthly_draw', true);
+                    }
                     //
                     if(preg_match(XSYM_PREG, $data_to_insert['ssn'])) unset($data_to_insert);
 

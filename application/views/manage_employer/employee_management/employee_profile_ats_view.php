@@ -399,6 +399,50 @@
                                                 </div>
                                                 <!--  -->
                                             </div>
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Hourly Rate:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('hourly_rate', isset($employer["hourly_rate"]) ? $employer["hourly_rate"] : ''); ?>"
+                                                        type="number" name="hourly_rate">
+                                                </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Hourly Technician:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo isset($employer["hourly_technician"]) ? $employer["hourly_technician"] : ''; ?>"
+                                                        type="number" name="hourly_technician">
+                                                </div>
+                                                <!--  -->
+                                            </div>
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Flat Rate Technician:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('flat_rate_technician', isset($employer["flat_rate_technician"]) ? $employer["flat_rate_technician"] : ''); ?>"
+                                                        type="number" name="flat_rate_technician">
+                                                </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Semi Monthly Salary:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo isset($employer["semi_monthly_salary"]) ? $employer["semi_monthly_salary"] : ''; ?>"
+                                                        type="number" name="semi_monthly_salary">
+                                                </div>
+                                                <!--  -->
+                                            </div>
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Semi Monthly Draw:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('semi_monthly_draw', isset($employer["semi_monthly_draw"]) ? $employer["semi_monthly_draw"] : ''); ?>"
+                                                        type="number" name="semi_monthly_draw">
+                                                </div>
+                                                <!--  -->
+                                            </div>
                                             <?php if($timeOff == 'enable') { ?>
                                                 <div class="row">  
                                                     <!--  -->
