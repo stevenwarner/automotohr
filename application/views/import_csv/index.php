@@ -26,7 +26,7 @@
     $importColumnsArray[] = 'Other Email';
     $importColumnsArray[] = 'Other Phone Number';
     $importColumnsArray[] = 'Office Location';
-    $importColumnsArray[] = 'Linkdin URL';
+    $importColumnsArray[] = 'Linkedin URL';
     $importColumnsArray[] = 'Department';
     $importColumnsArray[] = 'Team';
     $importColumnsArray[] = 'Joining Date';
