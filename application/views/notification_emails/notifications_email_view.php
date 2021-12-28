@@ -15,6 +15,17 @@
                                     <?php echo $title; ?>
                                 </span>
                             </div>
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="pull-left">
+                                        <h4>
+                                            <?php echo $helping_info; ?>
+                                        </h4>
+                                    </div>    
+                                </div>    
+                            </div> 
+
                             <div class="btn-wrp">
                                 <div class="row">
                                     <div class="col-lg-8 col-md-8 col-xs-12 col-sm-8">
@@ -54,6 +65,7 @@
                                     </div>
                                 </div>
                             </div>
+                                
                             <div class="table-responsive table-outer">
                                 <table class="table table-bordered table-stripped table-hover">
                                     <thead>

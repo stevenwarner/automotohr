@@ -355,6 +355,7 @@ class Notification_emails extends Public_Controller {
             $company_sid                                                        = $data["session"]["company_detail"]["sid"];
             $data['company_sid']                                                = $company_sid;
             $data['title']                                                      = "Billing and Invoice Email Notifications";
+            $data['helping_info']                                               = BILLING_AND_INVOICE;
             $notifications_type                                                 = 'billing_invoice';
             $data['notification_type']                                          = $notifications_type;
             $data['sub_title']                                                  = "Add New Billing & Invoice Notification";
@@ -495,6 +496,7 @@ class Notification_emails extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $notifications_type = 'new_applicant';
             $data['title'] = "New Applicant Email Notifications";
+            $data['helping_info'] = NEW_APPLICANT;
             $data['notification_type'] = $notifications_type;
             $data['sub_title'] = "Add New Applicant Email Notification";
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
@@ -637,6 +639,7 @@ class Notification_emails extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $notifications_type = 'video_interview';
             $data['title'] = "New Video Interview System Notifications";
+            $data['helping_info'] = VIDEO_INTERVIEW;
             $data['notification_type'] = $notifications_type;
             $data['sub_title'] = "Add Video Interview System Notification";
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
@@ -881,6 +884,7 @@ class Notification_emails extends Public_Controller {
             $data['company_sid']                                                = $company_sid;
             $notifications_type                                                 = 'approval_management';
             $data['title']                                                      = 'Approval Management Email Notifications';
+            $data['helping_info']                                               = APPROVAL_RIGHTS;
             $data['notification_type']                                          = $notifications_type;
             $data['sub_title']                                                  = 'Add New Approval Email Notification';
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
