@@ -2421,8 +2421,10 @@ if (!function_exists('check_user_status')) {
         $CI->db->select('sid, parent_sid');
         $CI->db->from('users');
         $CI->db->where('sid', $user_sid);
-        $CI->db->where('active', 1);
-        $CI->db->where('terminated_status', 0);
+        if(!$CI->session->userdata('user_id')){
+            $CI->db->where('active', 1);
+            $CI->db->where('terminated_status', 0);
+        }
         $CI->db->limit(1);
         $emp_query = $CI->db->get();
 
