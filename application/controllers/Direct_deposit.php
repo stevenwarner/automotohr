@@ -302,6 +302,7 @@ class Direct_deposit extends Public_Controller
             $account_type               = $_POST['account_type'];
             $routing_transaction_number = $_POST['routing_transaction_number'];
             $account_number             = $_POST['account_number'];
+            $deposit_type               = $_POST['deposit_type'];
             $account_percentage         = $_POST['account_percentage'];
             $drawn_signature            = $_POST['drawn_signature'];
             $employee_number            = $_POST['employee_number'];
@@ -345,6 +346,7 @@ class Direct_deposit extends Public_Controller
                     $data_to_update['voided_cheque'] = $cheque_img;
                 }
 
+                $data_to_update['deposit_type'] = $deposit_type;
                 $data_to_update['account_percentage'] = $account_percentage;
                 $data_to_update['user_signature'] = $drawn_signature;   
                 $data_to_update['employee_number'] = $employee_number;
@@ -366,6 +368,7 @@ class Direct_deposit extends Public_Controller
                 $data_to_insert['financial_institution_name'] = $financial_institution_name;
                 $data_to_insert['account_type'] = $account_type;
                 $data_to_insert['voided_cheque'] = $cheque_img;
+                $data_to_insert['deposit_type'] = $deposit_type;
                 $data_to_insert['account_percentage'] = $account_percentage;
                 $data_to_insert['user_signature'] = $drawn_signature;
                 $data_to_insert['employee_number'] = $employee_number;
