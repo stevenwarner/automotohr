@@ -36,6 +36,9 @@ class Setup_default_config_model extends CI_Model {
     }
 
     function get_company_all_categories($company_sid) {
+        //
+        addDefaultCategoriesIntoCompany($company_sid);
+        //
         $this->db->select('sid, name');
         $this->db->where('company_sid', $company_sid);
         $records_obj = $this->db->get('documents_category_management');

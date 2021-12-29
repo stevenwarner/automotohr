@@ -7377,6 +7377,9 @@ class Hr_documents_management extends Public_Controller {
                         $data_to_update['status'] = $category_status;
                         $data_to_update['sort_order'] = $category_sort_order;
                         $data_to_update['ip_address'] = $ip_address;
+                        $data_to_update['updated_by_sid'] = $employer_sid;
+                        $data_to_update['updated_date']  = date('Y-m-d');
+                        //
                         $new_history_data = $category;
                         $new_history_data['category_sid'] = $category_sid;
                         $new_history_data['updated_by_sid'] = $category_status;

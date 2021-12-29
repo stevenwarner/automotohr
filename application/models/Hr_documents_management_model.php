@@ -2667,8 +2667,14 @@ class Hr_documents_management_model extends CI_Model {
         $records_obj->free_result();
         return $records_arr;
     }
+
+
+    // start interaction with table "documents_category_management"
     
     function get_all_documents_category($company_sid, $status=NULL, $sort_order = NULL) {
+        //
+        addDefaultCategoriesIntoCompany($company_sid);
+        //
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->or_where('sid', PP_CATEGORY_SID);
@@ -2695,6 +2701,130 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+    function get_all_documents_active_categories($company_sid){
+        //
+        addDefaultCategoriesIntoCompany($company_sid);
+        //
+        $this->db->select('*');
+        $this->db->group_start();
+        $this->db->where('documents_category_management.company_sid', $company_sid);
+        $this->db->or_where('documents_2_category.category_sid', PP_CATEGORY_SID);
+        $this->db->group_end();
+        $this->db->where('documents_category_management.status', 1);
+        $this->db->join('documents_2_category','documents_2_category.category_sid = documents_category_management.sid','left');
+
+        $record_obj = $this->db->get('documents_category_management');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        return $record_arr;
+    }
+
+    function categories_count($company_sid){
+        //
+        addDefaultCategoriesIntoCompany($company_sid);
+        //
+        $this->db->select('COUNT(sid) as count')
+        ->where('company_sid', $company_sid);
+        $record_obj = $this->db->get('documents_category_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        if (!empty($record_arr)) {
+            return $record_arr['count']+1;
+        } else {
+            return array();
+        }
+    }
+
+    function checkCategoryName($categorySid, $companySid){
+        //
+        addDefaultCategoriesIntoCompany($companySid);
+        //
+        $this->db
+        ->where_in('company_sid', [$companySid])
+        ->where('name', $this->input->post('name', true))
+        ->from('documents_category_management')
+        ->limit(1);
+
+        if($categorySid != null) $this->db->where("sid <> $categorySid", null);
+
+        return $this->db->count_all_results() ? false : true;
+    }
+
+    //
+    function getAllCategories(
+        $companySid, 
+        $status = NULL, 
+        $sort_order = NULL
+    ) {
+        //
+        addDefaultCategoriesIntoCompany($companySid);
+        //
+        $this->db->select('sid, name')
+        ->where('company_sid', $companySid)
+        ->or_where('sid', PP_CATEGORY_SID)
+        ->order_by('sort_order', 'asc');
+        //
+        if($status != NULL) $this->db->where('status', $status);
+        //
+        $a = $this->db->get('documents_category_management');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+     //
+    function getAllCompanyCategories(
+        $companySid
+    ){
+        //
+        addDefaultCategoriesIntoCompany($companySid);
+        //
+        $a =  
+        $this->db
+        ->select('sid, name')
+        ->where('company_sid', $companySid)
+        ->where('status', 1)
+        ->order_by('sort_order', 'ASC')
+        ->get('documents_category_management');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+    function get_document_category($sid) {
+        $this->db->select('*');
+        $this->db->where('sid', $sid);
+        $record_obj = $this->db->get('documents_category_management');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+    function update_document_category($sid, $data_to_update){
+        $this->db->where('sid',$sid);
+        $this->db->update('documents_category_management', $data_to_update);
+    }
+
+    function insert_category_record($data_to_insert) {
+        $this->db->insert('documents_category_management', $data_to_insert);
+        return $this->db->insert_id();
+    }
+
+    // end interaction with table "documents_category_management"
+
+    function insert_category_history($data_to_insert) {
+        $this->db->insert('documents_category_management_history', $data_to_insert);
+    }
+
     function is_document_assign_2_category($category_sid) {
         $this->db->select('*');
         $this->db->where('category_sid', $category_sid);
@@ -2708,6 +2838,7 @@ class Hr_documents_management_model extends CI_Model {
             return 0;
         }
     }
+
     function get_all_documents_category_assigned($company_sid, $user_type, $user_sid) {
         $this->db->select('category_sid');
         $this->db->where('company_sid', $company_sid);
@@ -2727,47 +2858,6 @@ class Hr_documents_management_model extends CI_Model {
         } else {
             return array();
         }
-    }
-    function get_document_category($sid) {
-        $this->db->select('*');
-        $this->db->where('sid', $sid);
-        $record_obj = $this->db->get('documents_category_management');
-        $record_arr = $record_obj->result_array();
-        $record_obj->free_result();
-
-        if (!empty($record_arr)) {
-            return $record_arr[0];
-        } else {
-            return array();
-        }
-    }
-    function get_all_documents_active_categories($company_sid){
-        $this->db->select('*');
-        $this->db->group_start();
-        $this->db->where('documents_category_management.company_sid', $company_sid);
-        $this->db->or_where('documents_2_category.category_sid', PP_CATEGORY_SID);
-        $this->db->group_end();
-        $this->db->where('documents_category_management.status', 1);
-        $this->db->join('documents_2_category','documents_2_category.category_sid = documents_category_management.sid','left');
-
-        $record_obj = $this->db->get('documents_category_management');
-        $record_arr = $record_obj->result_array();
-        $record_obj->free_result();
-        return $record_arr;
-    }
-
-    function insert_category_history($data_to_insert) {
-        $this->db->insert('documents_category_management_history', $data_to_insert);
-    }
-
-    function update_document_category($sid, $data_to_update){
-        $this->db->where('sid',$sid);
-        $this->db->update('documents_category_management', $data_to_update);
-    }
-
-    function insert_category_record($data_to_insert) {
-        $this->db->insert('documents_category_management', $data_to_insert);
-        return $this->db->insert_id();
     }
 
     function get_all_document_2_category($category_sid) {
@@ -2976,19 +3066,6 @@ class Hr_documents_management_model extends CI_Model {
 
     }
 
-    function categories_count($company_sid){
-        $this->db->select('COUNT(sid) as count')
-        ->where('company_sid', $company_sid);
-        $record_obj = $this->db->get('documents_category_management');
-        $record_arr = $record_obj->row_array();
-        $record_obj->free_result();
-        if (!empty($record_arr)) {
-            return $record_arr['count']+1;
-        } else {
-            return array();
-        }
-
-    }
     function array_sort_by_column(&$arr, $col, $dir = SORT_DESC) {
         $sort_col = array();
         foreach ($arr as $key=> $row) {
@@ -2996,18 +3073,6 @@ class Hr_documents_management_model extends CI_Model {
         }
 
         array_multisort($sort_col, $dir, $arr);
-    }
-
-    function checkCategoryName($categorySid, $companySid){
-        $this->db
-        ->where_in('company_sid', [$companySid,0])
-        ->where('name', $this->input->post('name', true))
-        ->from('documents_category_management')
-        ->limit(1);
-
-        if($categorySid != null) $this->db->where("sid <> $categorySid", null);
-
-        return $this->db->count_all_results() ? false : true;
     }
 
     function change_document_status($sid, $data_to_update) {
@@ -4005,27 +4070,6 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->result_array();
         $a->free_result();
 
-        return $b;
-    }
-
-    //
-    function getAllCategories(
-        $companySid, 
-        $status = NULL, 
-        $sort_order = NULL
-    ) {
-        $this->db->select('sid, name')
-        ->where('company_sid', $companySid)
-        ->or_where('sid', PP_CATEGORY_SID)
-        ->order_by('sort_order', 'asc');
-        //
-        if($status != NULL) $this->db->where('status', $status);
-        //
-        $a = $this->db->get('documents_category_management');
-        //
-        $b = $a->result_array();
-        $a->free_result();
-        //
         return $b;
     }
 
@@ -5373,26 +5417,6 @@ class Hr_documents_management_model extends CI_Model {
         $sid
     ){
         $this->db->where('sid', $sid)->update('documents_assigned_general', ['link_creation_time' => $time]);
-    }
-
-
-    //
-    function getAllCompanyCategories(
-        $companySid
-    ){
-        //
-        $a =  
-        $this->db
-        ->select('sid, name')
-        ->where('company_sid', $companySid)
-        ->where('status', 1)
-        ->order_by('sort_order', 'ASC')
-        ->get('documents_category_management');
-        //
-        $b = $a->result_array();
-        $a = $a->free_result();
-        //
-        return $b;
     }
     
     

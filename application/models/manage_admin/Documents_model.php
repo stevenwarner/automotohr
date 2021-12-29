@@ -13,7 +13,7 @@ class Documents_model extends CI_Model
         $companies = array();
         if ($company_sid == 0) {
             $this->db->select('sid, CompanyName, active');
-//            $this->db->where('active', 1);
+            // $this->db->where('active', 1);
             $this->db->where('parent_sid', 0);
             $this->db->where('career_page_type', 'standard_career_site');
             if(!empty($company_name) && $company_name != 'all'){
@@ -630,4 +630,58 @@ class Documents_model extends CI_Model
         $this->db->where('sid', $record_sid);
         $this->db->delete('form_document_company_contact_details');
     }
+
+    function get_all_default_categories () {
+        $this->db->select('sid, name, status, sort_order, created_date');
+        $this->db->where('company_sid', 0);
+        $this->db->where('created_by_sid', 0);
+        $records_obj = $this->db->get('documents_category_management');
+
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        
+        if(!empty($records_arr)){
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
+
+    function check_unique_with_name($company_sid, $name, $sid = null){
+        $this->db->where('company_sid',$company_sid);
+        $this->db->where('name',$name);
+        //
+        if ($sid != null) {
+            $this->db->where('sid <>', $sid);
+        }
+        //
+        $result = $this->db->get('documents_category_management')->num_rows();
+        //
+        return $result;
+    }
+
+    function add_category($data){
+        $this->db->insert('documents_category_management',$data);
+        return $this->db->insert_id();
+    }
+
+    function get_category($sid){
+        $this->db->select('sid, name, status, sort_order, description');
+        $this->db->where('sid', $sid);
+        $category = $this->db->get('documents_category_management')->row_array();
+        //
+        if(!empty($category)){
+            return $category;
+        } else {
+            return array();
+        }
+    }
+
+    function update_category($sid, $data){
+        $this->db->where('sid', $sid);
+        $category = $this->db->update('documents_category_management', $data);
+        return $category;
+    }
+    
 }

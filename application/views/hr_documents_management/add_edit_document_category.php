@@ -25,16 +25,23 @@
                                         <form id="form_new_document_category" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                             <input type="hidden" name="perform_action" value="<?php echo $perform_action; ?>" />
                                             <input type="hidden" name="ip_address" value="<?php echo getUserIP(); ?>" />
+                                            <?php 
+                                                $is_default = "";
+                                                //
+                                                if ($category['default_category_sid'] != 0) {
+                                                    $is_default = "readonly";
+                                                }
+                                            ?>
 
                                             <div class="form-group autoheight">
                                                 <label for="name">Name<span class="staric">*</span></label>
-                                                <input type="text" name="name" class="form-control" value="<?php echo isset($category['name']) ? $category['name'] : ''; ?>">
+                                                <input type="text" name="name" class="form-control" value="<?php echo isset($category['name']) ? $category['name'] : ''; ?>" <?php echo $is_default; ?>>
                                                 <?php echo form_error('name'); ?>
                                             </div>
                                             <div class="form-group autoheight">
                                                 <?php $description = isset($category['description']) ? html_entity_decode($category['description']) : ''; ?>
                                                 <label for="description">Description</label>
-                                                <textarea name="description" cols="40" rows="10" class="form-control ckeditor" style="visibility: hidden; display: none;"><?php echo $description; ?></textarea>
+                                                <textarea name="description" cols="40" rows="10" class="form-control ckeditor" style="visibility: hidden; display: none;" <?php echo $is_default; ?>><?php echo $description; ?></textarea>
                                                 <?php echo form_error('description'); ?>
                                             </div>  
                                             <div class="form-group autoheight">
@@ -59,7 +66,7 @@
                                             </div>
                                             <div class="form-group autoheight">
                                                 <label>Sort Order</label>
-                                                <input type="number" name="sort_order" class="form-control" value="<?php echo isset($category['sort_order']) ? $category['sort_order'] : $categories_count; ?>">
+                                                <input type="number" name="sort_order" class="form-control" value="<?php echo isset($category['sort_order']) ? $category['sort_order'] : $categories_count; ?>" <?php echo $is_default; ?>>
                                             </div>
                                             <div class="form-group autoheight">
                                                 <div class="row">
