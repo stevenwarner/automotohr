@@ -1,4 +1,7 @@
 <?php $load_view = isset($load_view) ? $load_view : false; ?>
+<?php 
+    $API_TOKENS = $this->session->userdata('API_TOKENS');
+?>
 <?php if (!$load_view) { ?>
     <!doctype html>
     <html>
@@ -1918,3 +1921,28 @@
                     <?php } else { ?>
                         <?php $this->load->view('onboarding/on_boarding_header'); ?>
                     <?php } ?>
+                    <?php print_r($data['session']); ?>
+                    <script type="text/javascript">
+                        console.log("here"+"<?php print_r($data['session']); ?>")
+
+                        window.addEventListener('error', function (e) {
+                            // console.log(e)
+                            console.log(e.filename)
+                            console.log(e.message)
+                            console.log(e.lineno)
+                            console.log(e.error)
+                        })
+
+                        window.onerror = function(message, source, lineno, colno, error) {
+                          if (error) message = error.stack;
+                         
+                          console.log("++++++*******++++++")
+                          console.log(message)
+                          console.log(source)
+                          console.log(lineno)
+                          console.log(colno)
+                          console.log(error)
+                          console.log(navigator.userAgent)
+                          console.log("++++++*******++++++")
+                        }
+                    </script>
