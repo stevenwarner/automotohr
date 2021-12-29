@@ -14,8 +14,8 @@
                                         <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
                                     </div>
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                            <a id="search_btn" href="<?php echo base_url('manage_admin/default_categories/add')?>" class="btn btn-success"><i class="fa fa-plus-square"> </i> Add New Default Category</a>
+                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right">
+                                            <a id="search_btn" href="<?php echo base_url('manage_admin/default_categories/add')?>" class="btn btn-success"><i class="fa fa-plus-square"> </i> Add a New Default Category</a>
                                         </div>
                                     </div>
                                     <div class="hr-box">

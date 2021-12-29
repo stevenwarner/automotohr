@@ -562,7 +562,7 @@ class Documents extends Admin_Controller {
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
 
-        $this->data['page_title'] = "Documents Default Categories";
+        $this->data['page_title'] = "Document Default Categories";
 
         $default_categories = $this->documents_model->get_all_default_categories();
         $this->data['default_categories'] = $default_categories;
@@ -579,7 +579,8 @@ class Documents extends Admin_Controller {
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
 
-        $this->data['page_title'] = "Add Default Category";
+        $this->data['page_title'] = "Add a Default Category";
+        $this->data['page_sub_title'] = "Add a New Category";
         //
         $config = array(
             array(
@@ -627,7 +628,8 @@ class Documents extends Admin_Controller {
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         //
-        $this->data['page_title'] = "Edit Default Category";
+        $this->data['page_title'] = "Edit a Default Category";
+        $this->data['page_sub_title'] = "Edit Category";
         //
         $default_category = $this->documents_model->get_category($sid);
         //

@@ -1209,7 +1209,7 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                                 } ?> href="<?php echo site_url('manage_admin/documents_library'); ?>">Document Center Management</a>
                                 <a <?php if(strpos(base_url(uri_string()), site_url('manage_admin/default_categories')) !== false ) {
                                     echo 'class="active"';
-                                } ?> href="<?php echo site_url('manage_admin/default_categories'); ?>">Documents Default Categories</a>
+                                } ?> href="<?php echo site_url('manage_admin/default_categories'); ?>">Document Default Categories</a>
                             </div>
                         <?php } ?>
                     </div>

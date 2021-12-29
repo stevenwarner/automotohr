@@ -12,18 +12,17 @@
                                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                     <div class="heading-title">
                                         <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
+                                        <a id="back_btn" href="<?php echo base_url('manage_admin/default_categories')?>" class="btn black-btn float-right">
+                                            <i class="fa fa-arrow-left"></i> Go Back
+                                        </a>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                            <a id="back_btn" href="<?php echo base_url('manage_admin/default_categories')?>" class="btn btn-success"><i class="fa fa-arrow-left"> </i> Go Back</a>
-                                        </div>
-                                    </div>
+                                    
                                     <div class="add-new-company">
                                         <form action="" method="POST" id="add_cat">
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <div class="heading-title page-title">
-                                                        <h1 class="page-title">Add New Category</h1>
+                                                        <h1 class="page-title"><?php echo $page_sub_title; ?></h1>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
