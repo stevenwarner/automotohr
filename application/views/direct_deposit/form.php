@@ -38,7 +38,7 @@
 
         <div class="row" style="margin-bottom: 10px;">
             <div class="col-sm-2">
-                <p><strong>Instructions </strong> <i class="fa fa-info-circle jsPop" title="Note" data-content='Employee can set a note/instruction for the employer. For instance, "I will add the voided check next week." '></i></p>
+                <p><strong>Instructions </strong> <i class="fa fa-info-circle jsPop" aria-hidden="true" title="Note" data-content='Employee can set a note/instruction for the employer. For instance, "I will add the voided check next week." '></i></p>
             </div>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="instructions" value="<?php echo $instruction; ?>" />
@@ -73,11 +73,11 @@
                 ];
         ?>
             <div class="panel panel-default">
-                <div class="panel-heading"  data-toggle="collapse" aria-expanded="false" data-target="#account_detail_<?=$i+1;?>">
+                <div class="panel-heading" style="cursor: pointer;" data-toggle="collapse" aria-expanded="<?= $i == 0 ? "true" : "false" ;?>" data-target="#account_detail_<?=$i+1;?>">
                     <span class="glyphicon glyphicon-plus pull-right font_plus_sign"></span>
-                    <strong>Account Detail <?=$i+1;?></strong>
+                    <h4 style="color:#cc1100"><strong>Account Detail <?=$i+1;?> <?= $i == 0 ? '<span class="cs-required">*</span>' : "";?></strong></h4>
                 </div>
-                <div id="account_detail_<?=$i+1;?>" class="panel-body signature-variations collapse">
+                <div id="account_detail_<?=$i+1;?>" class="panel-body signature-variations  <?= $i == 0 ? "" : "collapse" ;?>">
                     <div class="js-dd-row">
                         <div class="row">
                             <div class="col-sm-2">
@@ -148,9 +148,8 @@
                             <div class="col-sm-10">
                                 <div class="hr-select-dropdown">
                                     <select id="deposit_type_<?php echo $i; ?>" name="deposit_type_<?php echo $i; ?>" class="form-control js-deposit_type" data-id="<?php echo $i; ?>">
-                                        <option value="0">Please select deposit type</option>
                                         <option value="percentage" <?php echo isset($account['deposit_type']) && $account['deposit_type'] == 'percentage' ? 'selected' : ''; ?>>Percentage</option>
-                                        <option value="amount" <?php echo isset($account['deposit_type']) && $account['deposit_type'] == 'amount' ? 'selected' : ''; ?>>Amount</option>
+                                        <option value="amount" <?php echo isset($account['deposit_type']) && $account['deposit_type'] != 'percentage' ? 'selected' : ''; ?>>Amount</option>
                                     </select>
                                 </div>
                                 <span id="EDT_<?php echo $i; ?>" class="error_text_color"></span>
@@ -160,17 +159,21 @@
                         <div class="row">
                             <div class="col-sm-5">
                                 <?php 
-                                    $DTL = "Percentage or dollar amount to be deposited to this account:";
                                     if (isset($account['deposit_type']) && $account['deposit_type'] == 'percentage') {
                                         $DTL = "Percentage value to be deposited to this account:";
-                                    } else if (isset($account['deposit_type']) && $account['deposit_type'] == 'amount') {
+                                        $ADDON = '%';
+                                    } else {
                                         $DTL = "Dollar amount to be deposited to this account:";
+                                        $ADDON = '$';
                                     }
                                 ?>
                                 <p><strong><span id="DTT_<?php echo $i; ?>"><?php echo $DTL; ?></span> <span class="cs-required">*</span></strong></p>
                             </div>
                             <div class="col-sm-7">
-                                <input type="text"  class="form-control js-account-percentage validate_error" value="<?=$account['account_percentage'];?>" error_key="acc_per_<?php echo $i; ?>" />
+                                <div class="input-group">
+                                    <div class="input-group-addon js-account-percentage-addon"><?=$ADDON;?></div>
+                                    <input type="text"  class="form-control js-account-percentage validate_error" value="<?=$account['account_percentage'];?>" error_key="acc_per_<?php echo $i; ?>" />
+                                </div>
                                 <span id="acc_per_<?php echo $i; ?>" class="error_text_color"></span>
                             </div>
                         </div>
@@ -343,10 +346,13 @@ $(function(){
         var id = $(this).data('id');
         if ($(this).val() == "percentage") {
             $("#DTT_"+id).text("Percentage value to be deposited to this account:");
+            $('.js-account-percentage-addon').text('%')
         } else if ($(this).val() == "amount") {
             $("#DTT_"+id).text("Dollar amount to be deposited to this account:");
+            $('.js-account-percentage-addon').text('$')
         } else if ($(this).val() == 0) {
             $("#DTT_"+id).text("Percentage or dollar amount to be deposited to this account:");
+            $('.js-account-percentage-addon').text('$')
         }
     });
     //
