@@ -13768,7 +13768,8 @@ if(!function_exists('LoginToAPI')){
             }
         }
         //
-        if(isset($_SESSION['logged_in']) && !isset($_SESSION['API_TOKENS'])){
+        // if(isset($_SESSION['logged_in']) && !isset($_SESSION['API_TOKENS'])){
+        if(isset($_SESSION['logged_in']) && (!isset($_SESSION['API_TOKENS']) || empty($_SESSION['API_TOKENS']))){
             //
             $API_TOKEN_CODE = $CI->encrypt->encode('apitoken'.$_SESSION['logged_in']['employer_detail']['sid']);
             //
@@ -13840,3 +13841,9 @@ if(!function_exists('subTimeToDate')){
         return $date->format($format);
     }
 } 
+
+if(!function_exists('GetErrorUrl')){
+    function GetErrorUrl(){
+        return getCreds('AHR')->API_SERVER_URL.'report_error';
+    }
+}
