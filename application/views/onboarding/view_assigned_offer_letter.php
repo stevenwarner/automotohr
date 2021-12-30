@@ -241,9 +241,9 @@
 			            <?php } else { ?>
 	                        <div id="print_offer_letter" class="hr-box text-center" style="background: #fff; padding: 20px;">
                                 <?php if ($is_assign == 0) { ?>
-    	                         	<h1 class="section-ttile">An offer letter / pay plan has not been assigned to this person!</h1>
+    	                         	<h1 class="section-ttile">An Offer Letter / Pay Plan has not been assigned to this person!</h1>
                                 <?php } else if ($is_assign == 1) { ?>
-                                    <h1 class="section-ttile">An offer letter / pay plan being not signed by this person!</h1>
+                                    <h1 class="section-ttile">An Offer Letter / Pay Plan, has not been signed by this person!</h1>
                                 <?php } ?>    
 	                        </div>        	
 			            <?php } ?>    
