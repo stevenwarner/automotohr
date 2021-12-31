@@ -291,11 +291,11 @@
                                                                             } else{ ?>
                                                                                 <a class="btn btn-success" data-form-type="i9" href="<?php echo $user_type == 'applicant' ? base_url('form_i9/applicant') . '/' . $applicant_info['sid'] . "/" . $job_list_sid : base_url('form_i9/employee') . '/' . $employer['sid']; ?>">View Doc</a>
                                                                             <?php } ?>
-                                                                            <?php if($i9_form['user_consent']){ ?>
+                                                                            <?php //if($i9_form['user_consent']){ ?>
                                                                                 <?php if($user_type == 'employee'){ ?>
-                                                                                <a class="btn btn-success" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$i9_form['sid']."/i9_assigned" ?>">Manage Docs</a>
+                                                                                <a class="btn btn-success" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$i9_form['sid']."/i9_assigned" ?>">Upload Supporting Docs</a>
                                                                                 <?php } ?>
-                                                                            <?php } ?>
+                                                                            <?php //} ?>
                                                                             <?php if($i9_form['user_consent'] == 1 && (empty($i9_form['s3_filename']) || $i9_form['s3_filename'] == NULL)){
                                                                                 if($i9_form['employer_flag']){ ?>
                                                                                     <a class="btn btn-success i9_edit_employer_section" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Completed</a>
@@ -2446,7 +2446,7 @@
             </div>
             <div id="uploaded_document_modal_body" class="modal-body">
                 <form id="form_upload_eev_document" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                    <div class="row">
+                    <div class="row" style="display:none;">
                         <div class="col-xs-12">
                             <label>Browse Document <span class="staric">*</span></label>
                             <div class="upload-file invoice-fields">
@@ -5448,7 +5448,8 @@
                     modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
                     break;
                 default : //using google docs
-                    iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
+                    // iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
+                    iframe_url = document_preview_url;
                     footer_print_url = 'https://docs.google.com/gview?url=' + document_preview_url;
                     modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
                     break;
