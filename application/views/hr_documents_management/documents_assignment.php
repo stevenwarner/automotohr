@@ -120,7 +120,7 @@
                                                                             <?php if($user_type == 'employee'){ ?>
                                                                             <button class="btn btn-success"
                                                                                             onclick="preview_eev_document_model(this);"
-                                                                                             data-document-type="w4"
+                                                                                             data-document-type="w4"  data-purpose="upload"
                                                                                             >Upload</button>
                                                                             <?php } ?>
                                                                     <?php }
@@ -133,7 +133,7 @@
                                                                             <?php if($user_type == 'employee'){ ?>
                                                                             <button class="btn btn-success"
                                                                                     onclick="preview_eev_document_model(this);"
-                                                                                     data-document-type="w4"
+                                                                                     data-document-type="w4"  data-purpose="upload"
                                                                                     >Upload</button>
                                                                             <?php }
                                                                         } ?>
@@ -202,7 +202,7 @@
                                                                             <?php if($user_type == 'employee'){ ?>
                                                                             <button class="btn btn-success"
                                                                                             onclick="preview_eev_document_model(this);"
-                                                                                             data-document-type="w9"
+                                                                                             data-document-type="w9"  data-purpose="upload"
                                                                                             >Upload</button>
                                                                             <?php } ?>
                                                                         <?php }
@@ -227,7 +227,7 @@
                                                                                 <?php if($user_type == 'employee'){ ?>
                                                                                 <button class="btn btn-success"
                                                                                             onclick="preview_eev_document_model(this);"
-                                                                                             data-document-type="w9"
+                                                                                             data-document-type="w9"  data-purpose="upload"
                                                                                             >Upload</button>
                                                                                 <?php } ?>
                                                                             <?php } ?>
@@ -315,7 +315,7 @@
                                                                             <?php if($user_type == 'employee'){ ?>
                                                                             <button class="btn btn-success"
                                                                                             onclick="preview_eev_document_model(this);"
-                                                                                             data-document-type="i9"
+                                                                                             data-document-type="i9" data-purpose="upload"
                                                                                             >Upload</button>
                                                                             <?php } ?>
                                                                         <?php }
@@ -336,7 +336,7 @@
                                                                                 <?php if($user_type == 'employee'){ ?>
                                                                                 <button class="btn btn-success"
                                                                                             onclick="preview_eev_document_model(this);"
-                                                                                             data-document-type="i9"
+                                                                                             data-document-type="i9"  data-purpose="upload"
                                                                                             >Upload</button>
                                                                                 <?php } ?>
 
@@ -2446,7 +2446,7 @@
             </div>
             <div id="uploaded_document_modal_body" class="modal-body">
                 <form id="form_upload_eev_document" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                    <div class="row" style="display:none;">
+                    <div class="row" id="UploadVarificationSignDoc" style="display:none;">
                         <div class="col-xs-12">
                             <label>Browse Document <span class="staric">*</span></label>
                             <div class="upload-file invoice-fields">
@@ -5410,6 +5410,15 @@
 
     function preview_eev_document_model(source) {
         var yoy_here='';
+        var purpose = $(source).attr('data-purpose');
+        //
+        console.log(purpose)
+        if (purpose != undefined && purpose == "upload") {
+            $("#UploadVarificationSignDoc").show();
+        } else {
+            $("#UploadVarificationSignDoc").hide();
+        }
+        //
         var document_file_name = $(source).attr('data-file-name');
         $("#data-document-type").val($(source).attr('data-document-type'));
         $("#eev_sid").val($(source).attr('data-document-sid'));
