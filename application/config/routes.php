@@ -810,6 +810,10 @@ $route['manage_admin/documents/regenerate_company_contacts_document/(:any)'] = '
 $route['manage_admin/documents/(:any)/(:any)'] = 'manage_admin/documents/index/$1/$2';
 $route['manage_admin/documents'] = 'manage_admin/documents';
 $route['manage_admin/documents/check_signed_forms'] = 'manage_admin/documents/check_signed_forms';
+$route['manage_admin/default_categories'] = 'manage_admin/documents/default_categories_listing';
+$route['manage_admin/default_categories/add'] = 'manage_admin/documents/add_default_category';
+$route['manage_admin/default_categories/edit/(:num)'] = 'manage_admin/documents/edit_default_category/$1';
+$route['manage_admin/default_categories/change_status/(:num)'] = 'manage_admin/documents/change_status/$1';
 //Marketing Agency Documents
 $route['manage_admin/marketing_agency_documents/assign_w9_form/(:any)'] = 'manage_admin/marketing_agency_documents/assign_w9_form/$1';
 $route['manage_admin/marketing_agency_documents/send/(:any)'] = 'manage_admin/marketing_agency_documents/send/$1';

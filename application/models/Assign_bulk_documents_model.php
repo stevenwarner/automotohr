@@ -7,6 +7,9 @@ class Assign_bulk_documents_model extends CI_Model {
     function index(){ exit(0); }
 
     function get_all_documents_category($company_sid, $status=NULL, $sort_order = NULL) {
+        //
+        addDefaultCategoriesIntoCompany($company_sid);
+        //
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->or_where('sid', PP_CATEGORY_SID);

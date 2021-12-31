@@ -241,6 +241,8 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
     $incident_reporting_menu = true;
 } else if ($this->uri->segment(2) == 'safety_data_sheet'){
     $safety_data_sheet_menu = true;
+} else if ($this->uri->segment(2) == 'default_categories'){
+    $documents_library_menu = true;
 } else if ($this->uri->segment(2) == 'documents_library'){
     $documents_library_menu = true;
 } else if (
@@ -1194,7 +1196,7 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                 </div>
             </li>
             <?php } ?>
-            <?php $functions_names = array('document_library','view_details','add_new_menu','edit_sub_menu','view_sub_heading','add_new_heading'); ?>
+            <?php $functions_names = array('document_library','view_details','add_new_menu','edit_sub_menu','view_sub_heading','add_new_heading', 'add_default_category', 'edit_default_category', 'default_categories_listing'); ?>
             <?php if (check_access_permissions_for_view($security_details, $functions_names)) { ?>
                 <li>
                     <a class="hr-closed-menu <?php if ($documents_library_menu) { echo 'hr-opened-menu'; } ?>" href="javascript:;">Document Center</a>
@@ -1205,6 +1207,9 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                                 <a <?php if(strpos(base_url(uri_string()), site_url('manage_admin/documents_library')) !== false ) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo site_url('manage_admin/documents_library'); ?>">Document Center Management</a>
+                                <a <?php if(strpos(base_url(uri_string()), site_url('manage_admin/default_categories')) !== false ) {
+                                    echo 'class="active"';
+                                } ?> href="<?php echo site_url('manage_admin/default_categories'); ?>">Document Default Categories</a>
                             </div>
                         <?php } ?>
                     </div>

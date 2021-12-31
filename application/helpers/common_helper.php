@@ -13847,3 +13847,92 @@ if(!function_exists('GetErrorUrl')){
         return getCreds('AHR')->API_SERVER_URL.'report_error';
     }
 }
+
+if(!function_exists('addDefaultCategoriesIntoCompany')){
+    function addDefaultCategoriesIntoCompany(
+        $company_sid
+    ){
+        if (empty($company_sid)) { return; }
+        //
+        $CI = &get_instance();
+        //
+        $CI->db->select('*');
+        $CI->db->where('company_sid', 0);
+        //
+        $default_categories = $CI->db->get('documents_category_management')->result_array(); 
+        //
+        if (empty($default_categories)) {return;}
+        //
+        // Only execute below code if system have default categories
+        //
+        $CI->db->select('sid, name, status, created_by_sid, updated_by_sid');
+        $CI->db->where('company_sid', $company_sid);
+        //
+        $company_categories = $CI->db->get('documents_category_management')->result_array();
+        //
+        if (empty($company_categories)) {
+            // Only execute if company have no categories
+            foreach ($default_categories as $category) {
+                if ($category['status'] == 1) {
+                    $data_to_insert = array();
+                    $data_to_insert['company_sid']  = $company_sid;
+                    $data_to_insert['name'] = $category['name'];
+                    $data_to_insert['status']  = $category['status'];
+                    $data_to_insert['description']  = $category['description'];
+                    $data_to_insert['sort_order']  = $category['sort_order'];
+                    $data_to_insert['created_by_sid']  = 0;
+                    $data_to_insert['created_date'] = date('Y-m-d H:i:s');
+                    $data_to_insert['default_category_sid'] = $category['sid'];
+                    //
+                    $CI->db->insert('documents_category_management', $data_to_insert);
+                }
+            }
+        } else {
+            // Only execute if company already have categories
+            $process_catogeries = array();
+            foreach ($default_categories as $default_category) {
+                //
+                $DCName = strtolower(str_replace(" ", "_", $default_category['name']));
+                $already_exist = array_column($company_categories, "name");
+                //
+                if (!in_array($default_category['name'], $already_exist)) {
+                    
+                    if ($default_category['status'] == 1) {
+                        $data_to_insert = array();
+                        $data_to_insert['company_sid']  = $company_sid;
+                        $data_to_insert['name'] = $default_category['name'];
+                        $data_to_insert['status']  = $default_category['status'];
+                        $data_to_insert['description']  = $default_category['description'];
+                        $data_to_insert['sort_order']  = $default_category['sort_order'];
+                        $data_to_insert['created_by_sid']  = 0;
+                        $data_to_insert['created_date'] = date('Y-m-d H:i:s');
+                        $data_to_insert['default_category_sid'] = $default_category['sid'];
+                        //
+                        $CI->db->insert('documents_category_management', $data_to_insert);
+                    }
+                } else {
+                    //
+                    foreach ($company_categories as $company_category) {
+                        //
+                        $CCName = strtolower(str_replace(" ", "_", $company_category['name']));
+                        //
+                        if ($DCName == $CCName && $company_category['created_by_sid'] == 0 && $company_category['updated_by_sid'] == 0) {
+                            if ($default_category['status'] != $company_category['status']) {
+                                $data_to_update = array();
+                                $data_to_update['status']  = $default_category['status'];
+                                $data_to_update['updated_by_sid']  = 0;
+                                $data_to_update['updated_date']  = date('Y-m-d');
+                                //
+                                $CI->db->where('sid', $company_category['sid']);
+                                $CI->db->update('documents_category_management', $data_to_update);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+            
+        
+
+    }
+} 
