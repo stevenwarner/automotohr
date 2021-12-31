@@ -2221,7 +2221,6 @@ $('.js-joining-date').datepicker({
     dateFormat: 'mm-dd-yy',
     changeMonth: true,
     changeYear: true,
-    maxDate: new Date(),
     yearRange: "<?php echo JOINING_DATE_LIMIT; ?>",
 }).val();
 
