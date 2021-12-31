@@ -143,7 +143,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function(){
-        $('.eventdate').datepicker({dateFormat: 'mm-dd-yy', yearRange: "1960:+0"}).val();
+        $('.eventdate').datepicker({dateFormat: 'mm-dd-yy', yearRange: "1960:+5"}).val();
     });
     
     

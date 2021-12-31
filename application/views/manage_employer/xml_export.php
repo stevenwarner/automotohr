@@ -207,7 +207,7 @@
 
         $('#start_date').Zebra_DatePicker({
             format: 'm-d-Y',
-            yearRange: "1960:+0",
+            yearRange: "1960:+5",
             pair: $('#end_date')
         });
 

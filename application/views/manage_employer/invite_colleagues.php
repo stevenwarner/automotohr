@@ -342,6 +342,6 @@
             dateFormat: 'mm-dd-yy',
             changeMonth: true,
             changeYear: true,
-            yearRange: "1960:+0"
+            yearRange: "1960:+5"
         }).val();
 </script>
