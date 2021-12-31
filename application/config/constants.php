@@ -518,7 +518,7 @@ define('FMLA_RIGHTS', 'To be eligible an employee must have worked for an employ
 define('TIMEOFFYEARLYCOMPANY', '58,5635');
 //
 define('ASSIGNEDOCIMPL', TRUE);
-define('DOB_LIMIT', '-100:+0');
+define('DOB_LIMIT', '-100:+1');
 define('JOINING_DATE_LIMIT', '1960:+5');
 define('STARTING_DATE_LIMIT', '1960:+5');
 define('DATE', 'M d Y, D');
