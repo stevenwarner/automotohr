@@ -228,7 +228,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <p><b>TIP:</b> To be accurate, submit a 2020 Form W-4 for all other jobs. If you (or your spouse) have self-employment income, including as an independent contractor, use the estimator.</p>
+                                        <p><b>TIP:</b> To be accurate, submit a <?php echo W4_YEAR; ?> Form W-4 for all other jobs. If you (or your spouse) have self-employment income, including as an independent contractor, use the estimator.</p>
                                         <p><b>Complete Steps 3–4(b) on Form W-4 for only ONE of these jobs. </b>Leave those steps blank for the other jobs. (Your withholding will be most accurate if you complete Steps 3–4(b) on the Form W-4 for the highest paying job.)</p>
                                     </div>
                                 </div>

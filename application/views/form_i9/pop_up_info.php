@@ -168,7 +168,7 @@
 </div>
 <div class="modal-text hidden" id="section_3_today_date">
     <h1>Today's Date (mm/dd/yyyy)</h1>
-    <p>After completing Section 1, enter the date you signed Form I-9 in this field. If you used a form obtained from the USICS website, you must print the form to enter the date in this field. Do not backdate this field. Enter the date as a 2-digit month, 2-digit day and 4-digit year (mm/dd/yyyy). For example, enter January 8, 2018 as 01/08/2018.</p>
+    <p>After completing Section 1, enter the date you signed Form I-9 in this field. If you used a form obtained from the USICS website, you must print the form to enter the date in this field. Do not backdate this field. Enter the date as a 2-digit month, 2-digit day and 4-digit year (mm/dd/yyyy). For example, enter January 8, <?php echo date("Y"); ?> as 01/08/<?php echo date("Y"); ?>.</p>
     <p>A preparer or translator who assists the employee in completing Section 1 may enter the date the employee signed or made a mark to sign Section 1 in this field. </p>
     <p>Parents or legal guardians assisting minors (individuals under age 18) and parents, legal guardians or representatives of a nonprofit organization, association or rehabilitation program assisting certain employees with disabilities must enter the date they completed Section 1 for the employee.</p>
 </div>
@@ -216,7 +216,7 @@
 </div>
 <div class="modal-text hidden" id="section_41_today_date">
     <h1>Today's Date (mm/dd/yyyy)</h1>
-    <p>The person who signs the Preparer and/or Translator Certification must enter the date he or she signs the certification in this field. Do not backdate this field. If you used a form obtained from the USCIS website, you must print the form to enter the date in this field. Enter the date as a 2-digit month, 2-digit day, and 4-digit year (mm/dd/yyyy). For example, enter January 8, 2014 as 01/08/2014.</p>
+    <p>The person who signs the Preparer and/or Translator Certification must enter the date he or she signs the certification in this field. Do not backdate this field. If you used a form obtained from the USCIS website, you must print the form to enter the date in this field. Enter the date as a 2-digit month, 2-digit day, and 4-digit year (mm/dd/yyyy). For example, enter January 8, <?php echo date("Y"); ?> as 01/08/<?php echo date("Y"); ?>.</p>
 </div>
 <div class="modal-text hidden" id="section_41_last_name">
     <h1>Last Name (Family Name)</h1>
@@ -410,7 +410,7 @@
 <div class="modal-text hidden" id="section_6_today_date">
     <h1>Today's Date (mm/dd/yyyy)</h1>
     <p>The person who signs Section 2 must enter the date he or she signed Section 2 in this field. Do not backdate this field. If you used a form obtained from the USCIS website, you must print the form to write the date in this field.</p>
-    <p>On the printed form, the person who signs Section 2 must enter the date he or she signed Section 2 in this field. Enter the date as a 2-digit month, 2-digit day and 4-digit year (mm/dd/yyyy). For example, enter January 8, 2014 as 01/08/2014.</p>
+    <p>On the printed form, the person who signs Section 2 must enter the date he or she signed Section 2 in this field. Enter the date as a 2-digit month, 2-digit day and 4-digit year (mm/dd/yyyy). For example, enter January 8, <?php echo date("Y"); ?> as 01/08/<?php echo date("Y"); ?>.</p>
 </div>
 <div class="modal-text hidden" id="section_6_title">
     <h1>Title of Employer or Authorized Representative</h1>
@@ -532,7 +532,7 @@
 <div class="modal-text hidden" id="section_8_today_date">
     <h1>Today's Date (mm/dd/yyyy)</h1>
     <p>The person who completes Section 3 must enter the date Section 3 was completed and signed in this field. Do not backdate this field. If you used a form obtained from the USCIS website, you must print Section 3 of the form to enter the date in this field.</p>
-    <p>Enter the date as a 2-digit month, 2-digit day, and 4-digit year (mm/dd/yyyy). For example, enter January 8, 2014 as 01/08/2014.</p>
+    <p>Enter the date as a 2-digit month, 2-digit day, and 4-digit year (mm/dd/yyyy). For example, enter January 8, <?php echo date("Y"); ?> as 01/08/<?php echo date("Y"); ?>.</p>
 </div>
 <div class="modal-text hidden" id="section_8_authorized">
     <h1>Name of Employer or Authorized Representative</h1>

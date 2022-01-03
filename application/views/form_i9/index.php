@@ -22,7 +22,7 @@
                             <!-- start upload -->
                             <div class="row" style="padding: 13px 1px; display: none;">
                                 <div class="col-xs-12">
-                                    <label>Upload I9 Form</label>
+                                    <label>Upload I9 Form d</label>
                                     <input style="display: none;" type="file" name="document" id="uploar_i9_form">
                                     <button type="button" id="btn_eev_document" class="btn btn-success pull-right" style="display: none; margin:10px 0px;">Upload I9</button>
                                 </div>

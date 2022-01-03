@@ -1,7 +1,7 @@
 <?php
     $company_name = ucwords($session['company_detail']['CompanyName']);
     $db_preparer_serialized_data = sizeof($pre_form) > 0 && $pre_form['section1_preparer_or_translator'] != null ? unserialize($pre_form['section1_preparer_or_translator']) : array();
-    $prepared_section = $db_preparer_serialized_data['section1_preparer_or_translator'] ;
+    $prepared_section = isset($db_preparer_serialized_data['section1_preparer_or_translator']) && !empty($db_preparer_serialized_data['section1_preparer_or_translator']) ? $db_preparer_serialized_data['section1_preparer_or_translator'] : '';
 ?>
 <div class="main">
     <div class="container">
@@ -32,7 +32,7 @@
                     <?php } else {?>
                     <div class="row mb-2">
                         <div class="col-lg-3 pull-right">
-                            <a target="_blank" href="<?php echo base_url('form_i9/print_i9_form'); ?>"
+                            <a target="_blank" href="<?php echo base_url('form_i9/print_i9_form/'. $pre_form['user_type'] . '/' . $pre_form['user_sid']); ?>"
                                 class="btn btn-block blue-button">
                                 Print I9 Form
                             </a>

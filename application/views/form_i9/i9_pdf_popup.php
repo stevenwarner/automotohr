@@ -32,7 +32,7 @@
                     </div>
                     <div class="right-header">
                         <h3>USCIS <br> Form I-9</h3>
-                        <p>OMB No. 1615-0047<br>Expires 08/31/2019</p>
+                        <p>OMB No. 1615-0047<br>Expires <?php echo I9_EXPIRES; ?></p>
                     </div>
                 </article>
                 <p><strong>START HERE:</strong> Read instructions carefully before completing this form. The instructions must be available, either in paper or electronically, during completion of this form. Employers are liable for errors in the completion of this form.</p>
@@ -284,7 +284,7 @@
                     </div>
                     <div class="right-header">
                         <h3>USCIS <br> Form I-9</h3>
-                        <p>OMB No. 1615-0047<br>Expires 08/31/2019</p>
+                        <p>OMB No. 1615-0047<br>Expires <?php echo I9_EXPIRES; ?></p>
                     </div>
                 </article>
                 <div class="bg-gray gray-box">
@@ -565,7 +565,7 @@
                     </div>
                     <div class="right-header">
                         <h3>USCIS <br> Form I-9</h3>
-                        <p>OMB No. 1615-0047<br>Expires 08/31/2019</p>
+                        <p>OMB No. 1615-0047<br>Expires <?php echo I9_EXPIRES; ?></p>
                     </div>
                 </article>
                 <table class="i9-table">
