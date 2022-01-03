@@ -397,7 +397,7 @@
                                             <div class="control__indicator"></div>
                                         </label>
                                     </div>
-                                    <div class="preparer-number-div">
+                                    <!-- <div class="preparer-number-div">
                                         <div class="col-lg-12">
                                             <div class="form-group autoheight">
                                                 <div class="select">
@@ -419,7 +419,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="col-lg-12 preparer-number-div">
                                         <p class="full-width">(Fields below must be completed and signed when preparers
                                             and/or translators assist an employee in completing Section 1.)</p>
@@ -1001,7 +1001,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="hr-box">
+                            <!-- <div class="hr-box">
                                 <div class="hr-box-header">
                                     <strong>Employee Name from Section 1:</strong>
                                 </div>
@@ -1039,7 +1039,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="hr-box">
                                 <div class="hr-box-header">
                                     <strong>Section 3. Reverification and Rehires</strong>

@@ -204,12 +204,12 @@
                             <input disabled type="checkbox" id="preparer_tranlator" name="" <?php echo $section1_preparer_or_translator['section1_preparer_or_translator'] == 'used' ? 'checked' : '' ?>>
                             <label for="preparer_tranlator">A preparer(s) and/or translator(s) assisted the employee in completing Section 1.</label>
                         </div>
-                        <div class="element-box">
+                        <!-- <div class="element-box">
                             How many?
                             <div class="inline-value-box">
                                 <span class="value-box" id=""><?php echo $section1_preparer_or_translator['section1_preparer_or_translator'] == 'used' ? $section1_preparer_or_translator['number-of-preparer'] : '' ?></span>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <strong>(Fields below must be completed and signed when preparers and/or translators assist an employee in completing Section 1.)</strong>
                 </div>
@@ -548,7 +548,7 @@
                         <p>OMB No. 1615-0047<br>Expires <?php echo I9_EXPIRES; ?></p>
                     </div>
                 </article>
-                <table class="i9-table">
+                <!-- <table class="i9-table">
                     <tbody>
                     <tr>
                         <td style="width: 20%">
@@ -568,7 +568,7 @@
                         </td>
                     </tr>
                     </tbody>
-                </table>
+                </table> -->
                 <table class="i9-table">
                     <thead>
                     <tr class="bg-gray">
