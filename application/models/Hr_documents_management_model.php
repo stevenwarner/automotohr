@@ -3669,6 +3669,21 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+    function isSupportingDocumentExist ($documents_sid, $user_sid, $type) {
+        $this->db->where('eev_documents_sid', $documents_sid);
+        $this->db->where('employee_sid', $user_sid);
+        $this->db->where('form_type', $type);
+        $this->db->from('eev_required_documents');
+        $rows = $this->db->count_all_results();
+
+        if ($rows > 0) {
+            return "btn-success";
+        } else {
+            return "blue-button";
+        }
+    }
+
+
     function deactivate_assign_authorized_documents ($company_sid, $document_sid) {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('document_assigned_sid', $document_sid);

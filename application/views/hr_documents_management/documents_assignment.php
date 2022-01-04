@@ -59,13 +59,13 @@
                                                         <tr>
                                                             <td class="col-lg-2">
                                                                 W4 Fillable <?php echo !empty($w4_form) && !$w4_form['status'] && !isset($w4_form_uploaded) ? '<b>(revoked)</b>': '' ;?>
-                                                                <?php if(!empty($w4_form) && $w4_form['status']) {
-                                                                    if($w4_form['user_consent']) { ?>
+                                                                <?php if(!empty($w4_form) && $w4_form['status']) { ?>
+                                                                    <?php if($w4_form['user_consent']) { ?>
                                                                         <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>" alt="" />
                                                                     <?php } else { ?>
                                                                         <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>" alt="" />
-                                                                    <?php }
-                                                                }?>
+                                                                    <?php } ?>
+                                                                <?php } ?>
                                                             </td>
                                                             <td class="col-lg-1 text-center">
                                                                 <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
@@ -101,16 +101,14 @@
                                                                                     data-document-title="<?php echo $w4_form['uploaded_file']; ?>">
                                                                                     View Uploaded Doc
                                                                                 </a>
-                                                                                <a class="btn btn-success" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$w4_form['sid']."/w4_assigned" ?>">Manage Docs</a>
-                                                                            <?php }else{?>
+                                                                            <?php } else { ?>
                                                                                 <a class="btn btn-success" data-toggle="modal" data-target="#w4_modal" href="javascript:void(0);">View Doc</a>
                                                                                 <?php if($w4_form['user_consent']){ ?>
-                                                                                    <a class="btn btn-success" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$w4_form['sid']."/w4_assigned" ?>">Manage Docs</a>
-                                                                                <?php if($w4_employer_section == 1){ ?>
-                                                                                    <a class="btn <?php echo !empty($popup_emp_name) && $popup_emp_name != NULL ? 'btn-success' : 'blue-button' ?> edit_employer_section" href="javascript:;" data-form-type="w4_edit_btn"><?php echo !empty($popup_emp_name) && $popup_emp_name != NULL ? 'Employer Section - Completed' : 'Employer Section - Not Completed' ?></a>
-                                                                                <?php }
-                                                                                }
-                                                                            }?>
+                                                                                    <?php if($w4_employer_section == 1){ ?>
+                                                                                        <a class="btn <?php echo !empty($popup_emp_name) && $popup_emp_name != NULL ? 'btn-success' : 'blue-button' ?> edit_employer_section" href="javascript:;" data-form-type="w4_edit_btn"><?php echo !empty($popup_emp_name) && $popup_emp_name != NULL ? 'Employer Section - Completed' : 'Employer Section - Not Completed' ?></a>
+                                                                                    <?php } ?>
+                                                                                <?php } ?>
+                                                                            <?php } ?>
 
                                                                         <?php } else { ?>
                                                                             <form id="form_assign_w4" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
@@ -118,14 +116,15 @@
                                                                             </form>
                                                                             <button onclick="func_assign_w4();" class="btn btn-warning">Re-Assign</button>
                                                                             <?php if($user_type == 'employee'){ ?>
-                                                                            <button class="btn btn-success"
-                                                                                            onclick="preview_eev_document_model(this);"
-                                                                                             data-document-type="w4"  data-purpose="upload"
-                                                                                            >Upload</button>
+                                                                                <button class="btn btn-success"
+                                                                                    onclick="preview_eev_document_model(this);"
+                                                                                    data-document-type="w4"  data-purpose="upload"
+                                                                                    >Upload</button>
                                                                             <?php } ?>
-                                                                    <?php }
-                                                                    echo '<button class="btn btn-success jsManageW4" title="Manage W4">Manage W4</button>';
-                                                                        }else { ?>
+                                                                        <?php } ?>
+                                                                        <?php echo '<button class="btn btn-success jsManageW4" title="Manage W4">Manage W4</button>'; ?>
+                                                                        <a class="btn <?php echo $w4_SD; ?>" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$w4_form['sid']."/w4_assigned" ?>">Upload Supporting Docs</a>
+                                                                    <?php } else { ?>
                                                                             <form id="form_assign_w4" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                                                                 <input type="hidden" id="perform_action" name="perform_action" value="assign_w4"/>
                                                                             </form>
@@ -135,21 +134,21 @@
                                                                                     onclick="preview_eev_document_model(this);"
                                                                                      data-document-type="w4"  data-purpose="upload"
                                                                                     >Upload</button>
-                                                                            <?php }
-                                                                        } ?>
+                                                                            <?php } ?>
+                                                                    <?php } ?>
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>
                                                         <tr>
                                                             <td class="col-lg-2">
                                                                 W9 Fillable <?php echo !empty($w9_form) && !$w9_form['status'] && !isset($w9_form_uploaded) ? '<b>(revoked)</b>':'' ;?>
-                                                                <?php if(!empty($w9_form) && $w9_form['status']) {
-                                                                    if($w9_form['user_consent']) { ?>
+                                                                <?php if(!empty($w9_form) && $w9_form['status']) { ?>
+                                                                    <?php if($w9_form['user_consent']) { ?>
                                                                         <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>" alt="">
                                                                     <?php } else { ?>
                                                                         <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>" alt="">
-                                                                    <?php }
-                                                                } ?>
+                                                                    <?php } ?>
+                                                                <?php } ?>
                                                             </td>
                                                             <td class="col-lg-1 text-center">
                                                                 <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
@@ -160,7 +159,7 @@
                                                                     <div class="text-center">
                                                                         <?=reset_datetime(array( 'datetime' => $w9_form['sent_date'], '_this' => $this));?>
                                                                     </div>
-                                                                    <?php } else { ?>
+                                                                <?php } else { ?>
                                                                     <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                 <?php } ?>
                                                             </td>
@@ -188,49 +187,48 @@
                                                                         <?php }else { ?>
                                                                             <a class="btn btn-success" data-toggle="modal" data-target="#w9_modal" href="javascript:void(0);">View Doc</a>
                                                                         <?php } ?>
-                                                                            <?php if($w9_form['user_consent']){ ?>
-                                                                                <?php if($user_type == 'employee'){ ?>
-                                                                            <a class="btn btn-success" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$w9_form['sid']."/w9_assigned" ?>">Manage Docs</a>
-                                                                                <?php } ?>
-                                                                            <?php } ?>
+                                                                            
 
-                                                                        <?php } else{?>
+                                                                        <?php } else { ?>
                                                                             <form id="form_assign_w9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                                                                 <input type="hidden" id="perform_action" name="perform_action" value="assign_w9"/>
                                                                             </form>
                                                                             <button onclick="func_assign_w9();" class="btn btn-warning">Re-Assign</button>
                                                                             <?php if($user_type == 'employee'){ ?>
-                                                                            <button class="btn btn-success"
-                                                                                            onclick="preview_eev_document_model(this);"
-                                                                                             data-document-type="w9"  data-purpose="upload"
-                                                                                            >Upload</button>
-                                                                            <?php } ?>
-                                                                        <?php }
-                                                                            echo '<button class="btn btn-success jsManageW9" title="Manage W9">Manage W9</button>';
-                                                                    }else { ?>
-                                                                            <?php if(!empty($w9_form['uploaded_file']) && $user_type == 'employee'){ ?>
                                                                                 <button class="btn btn-success"
                                                                                     onclick="preview_eev_document_model(this);"
-                                                                                    data-document-sid="<?= $w9_form['sid'] ?>"
-                                                                                    data-document-type="w9"
-                                                                                    data-file-name="<?= $w9_form['uploaded_file'] ?>"
-                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $w9_form['uploaded_file']; ?>"
-                                                                                    data-download-url="<?= base_url()."hr_documents_management/download_upload_document/". $w9_form['uploaded_file']; ?>"
-                                                                                    >View/Update</button>
-                                                                            <a class="btn btn-success" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$w9_form['sid'] ?>">Manage Docs</a>
-
-                                                                            <?php }else{ ?>
-                                                                                <form id="form_assign_w9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="assign_w9"/>
-                                                                                </form>
-                                                                                <button onclick="func_assign_w9();" class="btn btn-success">Assign</button>
-                                                                                <?php if($user_type == 'employee'){ ?>
-                                                                                <button class="btn btn-success"
-                                                                                            onclick="preview_eev_document_model(this);"
-                                                                                             data-document-type="w9"  data-purpose="upload"
-                                                                                            >Upload</button>
-                                                                                <?php } ?>
+                                                                                    data-document-type="w9"  data-purpose="upload"
+                                                                                    >Upload</button>
                                                                             <?php } ?>
+                                                                        <?php } ?>
+                                                                        <?php echo '<button class="btn btn-success jsManageW9" title="Manage W9">Manage W9</button>'; ?>
+                                                                        <?php if($user_type == 'employee'){ ?>
+                                                                            <a class="btn <?php echo $w9_SD; ?>" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$w9_form['sid']."/w9_assigned" ?>">Upload Supporting Docs</a>
+                                                                        <?php } ?>
+                                                                    <?php } else { ?>
+                                                                        <?php if(!empty($w9_form['uploaded_file']) && $user_type == 'employee'){ ?>
+                                                                            <button class="btn btn-success"
+                                                                                onclick="preview_eev_document_model(this);"
+                                                                                data-document-sid="<?= $w9_form['sid'] ?>"
+                                                                                data-document-type="w9"
+                                                                                data-file-name="<?= $w9_form['uploaded_file'] ?>"
+                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $w9_form['uploaded_file']; ?>"
+                                                                                data-download-url="<?= base_url()."hr_documents_management/download_upload_document/". $w9_form['uploaded_file']; ?>"
+                                                                                >View/Update</button>
+                                                                            <a class="btn <?php echo $w9_SD; ?>" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$w9_form['sid'] ?>">Upload Supporting Docs</a>
+
+                                                                        <?php }else{ ?>
+                                                                            <form id="form_assign_w9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                <input type="hidden" id="perform_action" name="perform_action" value="assign_w9"/>
+                                                                            </form>
+                                                                            <button onclick="func_assign_w9();" class="btn btn-success">Assign</button>
+                                                                            <?php if($user_type == 'employee'){ ?>
+                                                                            <button class="btn btn-success"
+                                                                                        onclick="preview_eev_document_model(this);"
+                                                                                         data-document-type="w9"  data-purpose="upload"
+                                                                                        >Upload</button>
+                                                                            <?php } ?>
+                                                                        <?php } ?>
                                                                     <?php } ?>
                                                                 </td>
                                                             <?php } ?>
@@ -238,8 +236,8 @@
                                                         <tr>
                                                             <td class="col-lg-2">
                                                                 I9 Fillable <?php echo sizeof($i9_form) > 0 && !$i9_form['status'] ? '<b>(revoked)</b>':'' ;?>
-                                                                <?php if(sizeof($i9_form) > 0  && $i9_form['status']) {
-                                                                    if($i9_form['user_consent']) { ?>
+                                                                <?php if(sizeof($i9_form) > 0  && $i9_form['status']) { ?>
+                                                                    <?php if($i9_form['user_consent']) { ?>
                                                                         <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                                                     <?php } else { ?>
                                                                         <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
@@ -255,9 +253,9 @@
                                                                     <div class="text-center">
                                                                     <?=reset_datetime(array( 'datetime' => $i9_form['sent_date'], '_this' => $this));?>
                                                                     </div>
-                                                                    <?php } else { ?>
-                                                                        <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
-                                                                    <?php } ?>
+                                                                <?php } else { ?>
+                                                                    <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
+                                                                <?php } ?>
                                                             </td>
                                                             <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_fillable')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_fillable')) || $pp_flag == 1 ){ ?>
                                                                 <td class="col-lg-6 text-center">
@@ -291,11 +289,7 @@
                                                                             } else{ ?>
                                                                                 <a class="btn btn-success" data-form-type="i9" href="<?php echo $user_type == 'applicant' ? base_url('form_i9/applicant') . '/' . $applicant_info['sid'] . "/" . $job_list_sid : base_url('form_i9/employee') . '/' . $employer['sid']; ?>">View Doc</a>
                                                                             <?php } ?>
-                                                                            <?php //if($i9_form['user_consent']){ ?>
-                                                                                <?php if($user_type == 'employee'){ ?>
-                                                                                <a class="btn btn-success" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$i9_form['sid']."/i9_assigned" ?>">Upload Supporting Docs</a>
-                                                                                <?php } ?>
-                                                                            <?php //} ?>
+                                                                            
                                                                             <?php if($i9_form['user_consent'] == 1 && (empty($i9_form['s3_filename']) || $i9_form['s3_filename'] == NULL)){
                                                                                 if($i9_form['employer_flag']){ ?>
                                                                                     <a class="btn btn-success i9_edit_employer_section" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Completed</a>
@@ -305,8 +299,10 @@
                                                                             } ?>
 
                                                                             <button class="btn btn-success jsManageI9" title="Manage I9">Manage I9</button>
-
-                                                                        <?php }else{ ?>
+                                                                            <?php if($user_type == 'employee'){ ?>
+                                                                                <a class="btn <?php echo $i9_SD; ?>" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$i9_form['sid']."/i9_assigned" ?>">Upload Supporting Docs</a>
+                                                                            <?php } ?>
+                                                                        <?php } else { ?>
 
                                                                             <form id="form_assign_i9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                                                                 <input type="hidden" id="perform_action" name="perform_action" value="assign_i9"/>
@@ -314,36 +310,36 @@
                                                                             <button onclick="func_assign_i9();" class="btn btn-warning">Re-Assign</button>
                                                                             <?php if($user_type == 'employee'){ ?>
                                                                             <button class="btn btn-success"
-                                                                                            onclick="preview_eev_document_model(this);"
-                                                                                             data-document-type="i9" data-purpose="upload"
-                                                                                            >Upload</button>
+                                                                                onclick="preview_eev_document_model(this);"
+                                                                                data-document-type="i9" data-purpose="upload"
+                                                                                >Upload</button>
                                                                             <?php } ?>
-                                                                        <?php }
-                                                                    }else { ?>
-                                                                            <?php if(!empty($i9_form['s3_filename']) && $user_type == 'employee'){ ?>
+                                                                        <?php } ?>
+                                                                    <?php } else { ?>
+                                                                        <?php if(!empty($i9_form['s3_filename']) && $user_type == 'employee'){ ?>
+                                                                            <button class="btn btn-success"
+                                                                                onclick="preview_eev_document_model(this);"
+                                                                                data-document-sid="<?= $i9_form['sid'] ?>"
+                                                                                data-document-type="i9"
+                                                                                data-file-name="<?= $i9_form['s3_filename'] ?>"
+                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $i9_form['s3_filename']; ?>"
+                                                                                data-download-url="<?= base_url()."hr_documents_management/download_upload_document/". $i9_form['s3_filename']; ?>"
+                                                                                >View/Update</button>    
+                                                                            <a class="btn <?php echo $i9_SD; ?>" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$i9_form['sid'] ?>">Upload Supporting Docs</a>
+
+                                                                        <?php }else{ ?>
+                                                                            <button onclick="func_assign_i9();" class="btn btn-success">Assign</button>
+                                                                            <?php if($user_type == 'employee'){ ?>
                                                                                 <button class="btn btn-success"
                                                                                     onclick="preview_eev_document_model(this);"
-                                                                                    data-document-sid="<?= $i9_form['sid'] ?>"
-                                                                                    data-document-type="i9"
-                                                                                    data-file-name="<?= $i9_form['s3_filename'] ?>"
-                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $i9_form['s3_filename']; ?>"
-                                                                                    data-download-url="<?= base_url()."hr_documents_management/download_upload_document/". $i9_form['s3_filename']; ?>"
-                                                                                    >View/Update</button>
-                                                                            <a class="btn btn-success" href="<?= base_url()."hr_documents_management/required_documents/employee/".$user_sid."/".$i9_form['sid'] ?>">Manage Docs</a>
-
-                                                                            <?php }else{ ?>
-                                                                                <button onclick="func_assign_i9();" class="btn btn-success">Assign</button>
-                                                                                <?php if($user_type == 'employee'){ ?>
-                                                                                <button class="btn btn-success"
-                                                                                            onclick="preview_eev_document_model(this);"
-                                                                                             data-document-type="i9"  data-purpose="upload"
-                                                                                            >Upload</button>
-                                                                                <?php } ?>
+                                                                                    data-document-type="i9"  data-purpose="upload"
+                                                                                    >Upload</button>
+                                                                            <?php } ?>
 
                                                                             <form id="form_assign_i9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                                                                 <input type="hidden" id="perform_action" name="perform_action" value="assign_i9"/>
                                                                             </form>
-                                                                            <?php } ?>
+                                                                        <?php } ?>
                                                                     <?php } ?>
                                                                 </td>
                                                             <?php } ?>

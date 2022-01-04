@@ -3582,7 +3582,11 @@ class Hr_documents_management extends Public_Controller {
             $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
             $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
 
-            // _e($data['assigned_documents'], true, true);
+            $data['i9_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['i9_form']['sid'], $user_sid, "i9_assigned");
+            $data['w9_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['w9_form']['sid'], $user_sid, "w9_assigned");
+            $data['w4_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['w4_form']['sid'], $user_sid, "w4_assigned");
+
+            // _e($data, true, true);
             // ob_flush();
             // ob_start();
             ini_set('memory_limit', -1);
@@ -7106,6 +7110,13 @@ class Hr_documents_management extends Public_Controller {
                 }
 
                 $data['form_type'] = $form_type;
+                if ($form_type == "w4_assigned") {
+                    $data['FormName'] = "W4";
+                } else if ($form_type == "w9_assigned") {
+                    $data['FormName'] = "W9";
+                } else if ($form_type == "i9_assigned") {
+                    $data['FormName'] = "I9";
+                }
                 $this->load->view('main/header', $data);
                 $this->load->view('hr_documents_management/required_documents_management');
                 $this->load->view('main/footer');

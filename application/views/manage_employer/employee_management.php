@@ -241,10 +241,12 @@
                                                                     if (!empty($employee['first_name']) || !empty($employee['last_name'])) {
                                                                         $name = $employee['first_name'] . $middle_initial . ' ' . $employee['last_name'];
                                                                     }
-                                                                    if($session['employer_detail']['access_level_plus'] == 1 && !empty($employee['username']))
-                                                                    //
-                                                                    $nick_name = !empty($employee['nick_name']) ? '['.$employee['nick_name'].']' : '';    
-                                                                    $name .= ' ('.($employee['username']).')'.$nick_name ;
+                                                                    if($session['employer_detail']['access_level_plus'] == 1 && !empty($employee['username'])){
+                                                                        //
+                                                                        $nick_name = !empty($employee['nick_name']) ? '['.$employee['nick_name'].']' : '';    
+                                                                        $name .= ' ('.($employee['username']).')'.$nick_name ;
+                                                                    }
+                                                                    
                                                                 ?>
                                                                 <?php if(check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
                                                                     <a href="<?php echo ($session['employer_detail']['access_level_plus'] && $employer_id != $employee['sid']) || $session['employer_detail']['pay_plan_flag'] ? base_url('employee_profile') . '/' . $employee['sid'] : 'javascript:;'; ?>"><?php echo $name; ?></a>

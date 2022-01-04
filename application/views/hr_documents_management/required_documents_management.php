@@ -30,6 +30,19 @@
                                         <?= strtoupper(str_replace("_assigned","",$form_type)) ." Fillable" ?>
                                     <?php } ?>
                                 </h2>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                        <div class="well">
+                                            <div class="help-block">
+                                                <h3><strong>Upload Supporting Documents: </strong></h3>
+                                                <h4>To upload supporting documents for <?php echo $FormName; ?>, you can select or drag-n-drop the document. Please, follow the below instructions. </h4>
+                                                <h4>1- Select the document you want to upload.</h4>
+                                                <h4>2- Click the upload button to add the document.</h4>
+                                                <h4 class="allow_formate">The allowed formats are; <strong class="allow_formate_color">PDF, DOC, DOCX, PNG,JPG, JPEG</strong></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <hr>
                                 <form id="form_upload_eev_document" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                     <div class="row">
@@ -309,6 +322,14 @@
 
     #drop_box_file{
         display: none;
+    }
+
+    .allow_formate {
+        font-style: italic;
+    }
+
+    .allow_formate_color {
+        color: #ea0000;
     }
 </style>
 <script>
