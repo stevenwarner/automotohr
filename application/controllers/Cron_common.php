@@ -19,6 +19,19 @@ class Cron_common extends CI_Controller{
     }
 
     //
+    public function log_records(){
+        // get data from
+        $table_name = 'log_records';
+        $record = $this->common_model->check_table_record_exist($table_name);
+        if ($record){
+            $data = $this->common_model->get_records_from_log($record->last_id);
+        }else{
+            $data = $this->common_model->get_records_from_log();
+        }
+        _e($data, true, true);
+    }
+
+    //
     function auto_email_reminder($verificationToken){
         //
         if($this->verifyToken != $verificationToken){

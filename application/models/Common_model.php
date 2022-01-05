@@ -90,4 +90,27 @@ class Common_model extends CI_Model {
             'last_notification_sent_at' => date('Y-m-d', strtotime('now'))
         ]);
     }
+
+    //
+    function check_table_record_exist($table){
+        //
+        $record = $this->db
+            ->select('last_id')
+            ->get($table)
+            ->row();
+        //
+        return $record;
+    }
+
+    //
+    function get_records_from_log($sid = null){
+        //
+        $record = $this->db
+            ->get('query_logs')
+            ->where('sid >', $sid)
+            ->last_query();
+        _e($record, true, true);
+        //
+        return $record;
+    }
 }
