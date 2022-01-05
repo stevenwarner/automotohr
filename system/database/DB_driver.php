@@ -813,6 +813,8 @@ abstract class CI_DB_driver {
         $this->log_array['query_type'] = $query_type;
         $this->log_array['query_string'] = addslashes($sql);
         $this->log_array['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+
+        _e($this->log_array, true);
 		// make query for log entry
 		$query = 'INSERT INTO '.$this->table.' ('.implode(', ', array_keys($this->log_array)).') VALUES ("'.implode('","',array_values($this->log_array)).'")';
 		// call the query function
