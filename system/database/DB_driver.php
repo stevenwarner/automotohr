@@ -817,7 +817,6 @@ abstract class CI_DB_driver {
 		$query = 'INSERT INTO '.$this->table.' ('.implode(', ', array_keys($this->log_array)).') VALUES ("'.implode('","',array_values($this->log_array)).'")';
 		// call the query function
 		$this->query($query, true, NULL, false);
-
 	}
 
 	// --------------------------------------------------------------------
