@@ -265,6 +265,10 @@ class Employee_management extends Public_Controller {
             $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order);
             $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order);
             //
+            $data['executive_admins'] = $this->employee_model->get_all_executive_admins($company_id, $employer_id, $keyword,0 , $order_by, $order);
+            $data['employees'] = array_merge($data['employees'], $data['executive_admins']);
+            $data['all_company_employees'] = array_merge($data['all_company_employees'], $data['executive_admins']);
+            //
             $data['title'] = 'Employee / Team Members';
 
             if (isset($_POST['deactivate_employees']) && $_POST['deactivate_employees'] == 'true') {

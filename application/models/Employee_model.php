@@ -11,7 +11,7 @@
         $this->db->where('active', '1');
         $this->db->where('terminated_status', 0);
         $this->db->where('archived', $archive);
-        //$this->db->where('is_executive_admin', 0);
+        $this->db->where('is_executive_admin', 0);
         if ($keyword != null) {
             $tK = preg_replace('/\s+/', '|', strtolower(trim($keyword)));
             $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
@@ -31,7 +31,7 @@
         $this->db->where('parent_sid', $parent_sid);
         $this->db->where('active', '0');
         $this->db->where('terminated_status', 0);
-        //$this->db->where('is_executive_admin', 0);
+        $this->db->where('is_executive_admin', 0);
         $this->db->where('archived', $archive);
         if ($keyword != null) {
             $this->db->where("(lower(concat(first_name,'',last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($keyword)))."%' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
@@ -49,6 +49,7 @@
         $this->db->select('users.*, terminated_employees.termination_date, terminated_employees.details as terminated_reason');
         $this->db->where('users.parent_sid', $parent_sid);
         $this->db->where('users.terminated_status', 1);
+        $this->db->where('users.is_executive_admin', 0);
         if ($keyword != null) {
             $this->db->where("(lower(concat(first_name,'',last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($keyword)))."%' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
         }
@@ -71,6 +72,25 @@
         }
 
         $this->db->where('users.sid != ' . $sid);
+        $this->db->where('users.is_executive_admin', 0);
+        $this->db->order_by($order_by, $order);
+        $this->db->join('terminated_employees', 'terminated_employees.employee_sid = users.sid', 'left');
+        $all_employees = $this->db->get('users')->result_array();
+        $all_employees = $this->verify_executive_admin_status($all_employees);
+        return $all_employees;
+    }
+
+    function get_all_executive_admins($parent_sid, $sid, $keyword = null, $archive = 0,  $order_by = 'sid', $order="DESC") {
+        $keyword = trim($keyword);
+        $this->db->select('users.*, terminated_employees.termination_date');
+        $this->db->where('users.parent_sid', $parent_sid);
+        if ($keyword != null) {
+            $tK = preg_replace('/\s+/', '|', strtolower(trim($keyword)));
+            $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+        }
+
+        $this->db->where('users.sid != ' . $sid);
+        $this->db->where('users.is_executive_admin', 1);
         $this->db->order_by($order_by, $order);
         $this->db->join('terminated_employees', 'terminated_employees.employee_sid = users.sid', 'left');
         $all_employees = $this->db->get('users')->result_array();

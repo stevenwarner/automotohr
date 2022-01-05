@@ -161,7 +161,7 @@
                                         <?php if ($session['employer_detail']['access_level_plus']) { ?>
                                             <a class="btn btn-success jsEmployeeQuickProfile" title="Quick View of Employee Profile" placement="top">
                                                 <i class="fa fa-users" aria-hidden="true"></i>
-                                                Employee Profie
+                                                Employee Profile
                                             </a>
                                         <?php  } ?>
                                         </div>
@@ -251,7 +251,13 @@
                                                                     
                                                                 ?>
                                                                 <?php if(check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
-                                                                    <a href="<?php echo ($session['employer_detail']['access_level_plus'] && $employer_id != $employee['sid']) || $session['employer_detail']['pay_plan_flag'] ? base_url('employee_profile') . '/' . $employee['sid'] : 'javascript:;'; ?>"><?php echo $name; ?></a>
+                                                                    <a href="<?php 
+                                                                        if($employee['is_executive_admin'] == 0 && ($session['employer_detail']['access_level_plus'] && $employer_id != $employee['sid']) || $session['employer_detail']['pay_plan_flag']){
+                                                                            echo base_url('employee_profile') . '/' . $employee['sid']; 
+                                                                        } else{
+                                                                            echo "javascript:void(0);";
+                                                                        }
+                                                                        ?>"><?php echo $name; ?></a>
                                                                 <?php } else { ?>
                                                                     <?php echo $name; ?>
                                                                 <?php } ?>
@@ -370,7 +376,7 @@
                                                                         </a>
                                                                     <?php } ?>
                                                                 <?php } ?>
-                                                                <?php if ($session['employer_detail']['access_level_plus']) { ?>
+                                                                <?php if ($session['employer_detail']['access_level_plus'] && $employee['is_executive_admin'] == 0) { ?>
                                                                     <!-- Employee Quick Profile -->
                                                                     <button class="btn btn-success jsEmployeeQuickProfile" title="Employee Profile Quick View" placement="top" data-id="<?=$employee['sid'];?>">
                                                                         <i class="fa fa-eye" aria-hidden="true"></i>
