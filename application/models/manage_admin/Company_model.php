@@ -1079,12 +1079,12 @@ class Company_model extends CI_Model {
             $record_obj = $this->db->get('executive_user_companies');
             $record_arr = $record_obj->result_array();
             $record_obj->free_result();
-
             if (!empty($record_arr)) {
                 $data_to_update = array(
                     'first_name' => $data['first_name'],
                     'last_name' => $data['last_name'],
                     'email' => $data['email'],
+                    'active' => $data['active'],
                     'timezone' => $data['timezone'],
                     'PhoneNumber' => $data['direct_business_number'],
                     'job_title' => $data['job_title']);
