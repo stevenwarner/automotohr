@@ -593,7 +593,7 @@ abstract class CI_DB_driver {
 	 * @param	bool	$return_object = NULL
 	 * @return	mixed
 	 */
-	public function query($sql, $binds = FALSE, $return_object = NULL)
+	public function query($sql, $binds = FALSE, $return_object = NULL, $save_log = true)
 	{
 		if ($sql === '')
 		{
@@ -616,6 +616,33 @@ abstract class CI_DB_driver {
 		{
 			$sql = $this->compile_binds($sql, $binds);
 		}
+
+        // save log
+        if ($save_log){
+            $table = 'query_logs';
+            // check query type
+            if (preg_match("/select /i", $sql)){
+                $query_type = 'SELECT';
+            }elseif (preg_match("/insert /i", $sql) || preg_match("/replace/i", $sql)){
+                $query_type = 'INSERT';
+            }elseif (preg_match("/update /i", $sql)){
+                $query_type = 'UPDATE';
+            }
+            // log array
+            $log_array = [
+                'query_type' => $query_type,
+                'ip' => getUserIP(),
+                'query_string' => $sql,
+                'result' => 1,
+                'error' => 'some error',
+                'created_at' => date('Y-m-d H:i:s'),
+            ];
+            // make query for log entry
+            $query = 'INSERT INTO '.$table.' ('.implode(', ', array_keys($log_array)).') VALUES ("'.implode('","',array_values($log_array)).'")';
+            // call the query function
+            $this->query($query, true, NULL, false);
+
+        }
 
 		// Is query caching enabled? If the query is a "read type"
 		// we will load the caching class and return the previously
