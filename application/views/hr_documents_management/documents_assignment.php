@@ -287,6 +287,13 @@
                                                                                     View hand signed I9
                                                                                 </a>
                                                                                 <?php }else { ?>
+                                                                                    <?php if($i9_form['user_consent'] == 1 && (empty($i9_form['s3_filename']) || $i9_form['s3_filename'] == NULL)){
+                                                                                        if($i9_form['employer_flag']){ ?>
+                                                                                            <a class="btn btn-success i9_edit_employer_section" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Completed</a>
+                                                                                        <?php } else{ ?>
+                                                                                            <a class="btn blue-button i9_edit_employer_section" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Not Completed</a>
+                                                                                        <?php }
+                                                                                    } ?>
                                                                                     <a class="btn btn-success"
                                                                                        data-toggle="modal"
                                                                                        data-target="#i9_modal"
