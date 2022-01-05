@@ -595,8 +595,24 @@ abstract class CI_DB_driver {
 	 */
 	public function query($sql, $binds = FALSE, $return_object = NULL, $save_log = true)
 	{
+		// save log
+		if ($save_log){
+			// log array
+			$log_array = [
+				'error' => NULL,
+				'from_cache' => 0,
+				'start_time' => 0,
+				'end_time' => 0,
+				'result' => 1
+			];
+		}
+
 		if ($sql === '')
 		{
+			if($save_log){
+				$log_array['error'] = 'Empty query';
+				$this->SaveQuery($sql);
+			}
 			log_message('error', 'Invalid query: '.$sql);
 			return ($this->db_debug) ? $this->display_error('db_invalid_query') : FALSE;
 		}
@@ -617,33 +633,6 @@ abstract class CI_DB_driver {
 			$sql = $this->compile_binds($sql, $binds);
 		}
 
-        // save log
-        if ($save_log){
-            $table = 'query_logs';
-            // check query type
-            if (preg_match("/select /i", $sql)){
-                $query_type = 'SELECT';
-            }elseif (preg_match("/insert /i", $sql) || preg_match("/replace/i", $sql)){
-                $query_type = 'INSERT';
-            }elseif (preg_match("/update /i", $sql)){
-                $query_type = 'UPDATE';
-            }
-            // log array
-            $log_array = [
-                'query_type' => $query_type,
-                'ip' => getUserIP(),
-                'query_string' => $sql,
-                'result' => 1,
-                'error' => 'some error',
-                'created_at' => date('Y-m-d H:i:s'),
-            ];
-            // make query for log entry
-            $query = 'INSERT INTO '.$table.' ('.implode(', ', array_keys($log_array)).') VALUES ("'.implode('","',array_values($log_array)).'")';
-            // call the query function
-            $this->query($query, true, NULL, false);
-
-        }
-
 		// Is query caching enabled? If the query is a "read type"
 		// we will load the caching class and return the previously
 		// cached query if it exists
@@ -652,6 +641,9 @@ abstract class CI_DB_driver {
 			$this->load_rdriver();
 			if (FALSE !== ($cache = $this->CACHE->read($sql)))
 			{
+				// 
+				if($save_log) { $log_array['from_cache'] = 1; $this->SaveLogQuery($sql, $log_array);}
+				//
 				return $cache;
 			}
 		}
@@ -681,6 +673,8 @@ abstract class CI_DB_driver {
 
 			// Grab the error now, as we might run some additional queries before displaying the error
 			$error = $this->error();
+			// 
+			if($save_log) { $log_array['error'] = $error['message']; $this->SaveLogQuery($sql, $log_array);}
 
 			// Log errors
 			log_message('error', 'Query error: '.$error['message'].' - Invalid query: '.$sql);
@@ -710,6 +704,12 @@ abstract class CI_DB_driver {
 		// Stop and aggregate the query time results
 		$time_end = microtime(TRUE);
 		$this->benchmark += $time_end - $time_start;
+
+		if($save_log){
+			$log_array['start_time'] = $time_start;
+			$log_array['end_time'] = $time_end;
+			$log_array['benchmark'] = $this->benchmark;
+		}
 
 		if ($this->save_queries === TRUE)
 		{
@@ -750,6 +750,9 @@ abstract class CI_DB_driver {
 			$CR->result_array	= $RES->result_array();
 			$CR->num_rows		= $RES->num_rows();
 
+			// 
+			if($save_log) { $this->SaveLogQuery($sql, $log_array);}
+
 			// Reset these since cached objects can not utilize resource IDs.
 			$CR->conn_id		= NULL;
 			$CR->result_id		= NULL;
@@ -758,6 +761,24 @@ abstract class CI_DB_driver {
 		}
 
 		return $RES;
+	}
+
+	private function SaveLogQuery($sql, $log_array){
+		//
+		$table = 'query_logs';
+		// check query type
+		if (preg_match("/select /i", $sql)){
+			$query_type = 'SELECT';
+		}elseif (preg_match("/insert /i", $sql) || preg_match("/replace/i", $sql)){
+			$query_type = 'INSERT';
+		}elseif (preg_match("/update /i", $sql)){
+			$query_type = 'UPDATE';
+		}
+		// make query for log entry
+		$query = 'INSERT INTO '.$table.' ('.implode(', ', array_keys($log_array)).') VALUES ("'.implode('","',array_values($log_array)).'")';
+		// call the query function
+		$this->query($query, true, NULL, false);
+
 	}
 
 	// --------------------------------------------------------------------
