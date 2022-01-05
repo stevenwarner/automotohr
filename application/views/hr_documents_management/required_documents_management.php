@@ -38,7 +38,7 @@
                                                 <h4>To upload supporting documents for <?php echo $FormName; ?>, you can select or drag-n-drop the document. Please, follow the below instructions. </h4>
                                                 <h4>1- Select the document you want to upload.</h4>
                                                 <h4>2- Click the upload button to add the document.</h4>
-                                                <h4 class="allow_formate">The allowed formats are; <strong class="allow_formate_color">PDF, DOC, DOCX, PNG,JPG, JPEG</strong></h4>
+                                                <h4 class="allow_formate">The allowed formats are; <strong class="allow_formate_color">PDF, DOC, DOCX, PNG, JPG, JPEG</strong></h4>
                                             </div>
                                         </div>
                                     </div>

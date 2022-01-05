@@ -3054,55 +3054,7 @@ class Hr_documents_management extends Public_Controller {
             }
 
             $data['assigned_groups'] = $assigned_groups;
-            // $categories_assign = $this->hr_documents_management_model->get_all_documents_category_assigned($company_sid, $user_type, $user_sid);
-            // $assigned_categories = array();
-            // if (!empty($categories_assign)) {
-            //     foreach ($categories_assign as $value) {
-            //         array_push($assigned_categories, $value['category_sid']);
-            //         $system_document = $this->hr_documents_management_model->get_document_category($value['category_sid']);
-            //         if ($system_document['w4'] == 1) {
-            //             $is_w4_assign = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
-            //             if (empty($is_w4_assign)) {
-            //                 $w4_data_to_insert = array();
-            //                 $w4_data_to_insert['employer_sid'] = $user_sid;
-            //                 $w4_data_to_insert['company_sid'] = $company_sid;
-            //                 $w4_data_to_insert['user_type'] = $user_type;
-            //                 $w4_data_to_insert['sent_status'] = 1;
-            //                 $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-            //                 $w4_data_to_insert['status'] = 1;
-            //                 $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
-            //             }
-            //         }
-            //         if ($system_document['w9'] == 1) {
-            //             $is_w9_assign = $this->hr_documents_management_model->check_w9_form_exist($user_type, $user_sid);
-            //             if (empty($is_w9_assign)) {
-            //                 $w9_data_to_insert = array();
-            //                 $w9_data_to_insert['user_sid'] = $user_sid;
-            //                 $w9_data_to_insert['company_sid'] = $company_sid;
-            //                 $w9_data_to_insert['user_type'] = $user_type;
-            //                 $w9_data_to_insert['sent_status'] = 1;
-            //                 $w9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-            //                 $w9_data_to_insert['status'] = 1;
-            //                 $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
-            //             }
-            //         }
-            //         if ($system_document['i9'] == 1) {
-            //             $is_i9_assign = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
-            //             if (empty($is_i9_assign)) {
-            //                 $i9_data_to_insert = array();
-            //                 $i9_data_to_insert['user_sid'] = $user_sid;
-            //                 $i9_data_to_insert['user_type'] = $user_type;
-            //                 $i9_data_to_insert['company_sid'] = $company_sid;
-            //                 $i9_data_to_insert['sent_status'] = 1;
-            //                 $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-            //                 $i9_data_to_insert['status'] = 1;
-            //                 $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
-            //             }
-            //         }
-            //     }
-            // }
-
-            // $data['assigned_categories'] = $assigned_categories;
+           
             $data['left_navigation'] = $left_navigation;
             $i9_form = $this->hr_documents_management_model->fetch_form('i9', $user_type, $user_sid);
             $w9_form = $this->hr_documents_management_model->fetch_form('w9', $user_type, $user_sid);
@@ -3581,14 +3533,11 @@ class Hr_documents_management extends Public_Controller {
             // Get departments & teams
             $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
             $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
+            //
+            $data['i9_SD'] = empty($data['i9_form']) ? 0: $this->hr_documents_management_model->isSupportingDocumentExist($data['i9_form']['sid'], $user_sid, "i9_assigned");
+            $data['w9_SD'] = empty($data['w9_form']) ? 0 : $this->hr_documents_management_model->isSupportingDocumentExist($data['w9_form']['sid'], $user_sid, "w9_assigned");
+            $data['w4_SD'] = empty($data['w4_form']) ? 0 : $this->hr_documents_management_model->isSupportingDocumentExist($data['w4_form']['sid'], $user_sid, "w4_assigned");
 
-            $data['i9_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['i9_form']['sid'], $user_sid, "i9_assigned");
-            $data['w9_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['w9_form']['sid'], $user_sid, "w9_assigned");
-            $data['w4_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['w4_form']['sid'], $user_sid, "w4_assigned");
-
-            // _e($data, true, true);
-            // ob_flush();
-            // ob_start();
             ini_set('memory_limit', -1);
             // Set eeoc form status
             $data['EeocFormStatus'] = $data['session']['portal_detail']['eeo_form_status'];
@@ -3597,15 +3546,6 @@ class Hr_documents_management extends Public_Controller {
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');
-            // 
-            // loadCachedFile(
-            //     'documents_assignment', 
-            //     $data['session'], 
-            //     true, [
-            //         'time' => strtotime('+5 minutes')
-            //     ]
-            // );
-
         } else {
             redirect('login', 'refresh');
         }

@@ -2524,6 +2524,7 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->where('employee_sid', $employee_sid);
         $this->db->where('eev_documents_sid', $eev_documents_sid);
         $this->db->where('form_type', $form_type);
+        $this->db->order_by('sid', 'DESC');
         $records_obj = $this->db->get('eev_required_documents');
         $record = $records_obj->result_array();
 
@@ -3674,13 +3675,7 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->where('employee_sid', $user_sid);
         $this->db->where('form_type', $type);
         $this->db->from('eev_required_documents');
-        $rows = $this->db->count_all_results();
-
-        if ($rows > 0) {
-            return "btn-success";
-        } else {
-            return "blue-button";
-        }
+        return $this->db->count_all_results();
     }
 
 
