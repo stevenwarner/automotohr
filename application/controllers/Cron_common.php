@@ -28,7 +28,9 @@ class Cron_common extends CI_Controller{
         }else{
             $data = $this->common_model->get_records_from_log();
         }
-        _e($data, true, true);
+        // here goes the logic or file creation
+        // if success than update the record in log_records
+        _e($data->result_array(), true, true);
     }
 
     //

@@ -105,12 +105,11 @@ class Common_model extends CI_Model {
     //
     function get_records_from_log($sid = null){
         //
-        $record = $this->db
-            ->get('query_logs')
-            ->where('sid >', $sid)
-            ->last_query();
-        _e($record, true, true);
-        //
-        return $record;
+        $this->db->select('*');
+        $this->db->from('query_logs');
+        if ($sid){
+            $this->db->where('sid >', $sid);
+        }
+        return $this->db->get();
     }
 }
