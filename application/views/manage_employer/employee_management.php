@@ -210,10 +210,12 @@
                                             <?php foreach ($employee_array as $employee) { ?>
                                                 <tr id="manual_row<?php echo $employee['sid']; ?>">
                                                     <td class="text-center">
+                                                        <?php if($employee['is_executive_admin'] == 0) { ?> 
                                                         <label class="control control--checkbox">
                                                             <input name="ej_check[]" type="checkbox" value="<?php echo $employee['sid']; ?>" class="<?= $employee['is_executive_admin'] == 0 ? 'ej_checkbox' : ''; ?>" <?=$employer_id != $employee['sid'] ? '' : 'disabled="true"';?>>
                                                             <div class="control__indicator"></div>
                                                         </label>
+                                                        <?php } ?>
                                                     </td>
                                                     <td width="30%">
                                                         <div class="employee-profile-info">
