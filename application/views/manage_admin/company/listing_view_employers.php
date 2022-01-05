@@ -82,11 +82,8 @@
                                                             <th class="text-center">ID</th>
                                                             <th>Username</th>
                                                             <th>Email</th>
-<!--                                                            <th>Access Level</th>-->
                                                             <th>Contact Name</th>
                                                             <th>Company Name</th>
-                                                            <!--<th>Registration Date</th>-->
-                                                            <!--<th><a>Status</a></th>-->
                                                             <?php $function_names = array('show_employer_multiple_actions', 'employerLogin', 'edit_employers'); ?>
                                                             <?php if(check_access_permissions_for_view($security_details, 'edit_employers')){ ?>
                                                                 <th class="last-col" width="1%" colspan="4">Actions</th>
@@ -101,11 +98,7 @@
                                                                     <td class="text-center">
                                                                         <div class="employee-profile-info">
                                                                             <figure>
-                                                                                <?php if (!empty($value['profile_picture'])) { ?>
-                                                                                    <img class="profile-img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $value['profile_picture']; ?>">
-                                                                                <?php } else { ?>
-                                                                                    <img class="profile-img-responsive" src="<?= base_url() ?>assets/images/img-applicant.jpg">
-                                                                                <?php } ?>
+                                                                                <img class="profile-img-responsive" src="<?=getImageURL( $value['profile_picture']);?>" alt="Employee" />
                                                                             </figure>
                                                                         </div>
                                                                         <b><?php echo $value['sid']; ?></b>

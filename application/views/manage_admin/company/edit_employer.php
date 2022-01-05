@@ -28,12 +28,7 @@
                                                     <div class="hr-fields-wrap">
                                                         <div class="avatar">
                                                             <span class="image_holder">
-                                                                <?php if(isset($data["profile_picture"]) && !empty($data["profile_picture"])) { ?>
-                                                                <img src="<?php echo AWS_S3_BUCKET_URL . $data['profile_picture']; ?>" class="table-image">
-
-                                                                <?php } else { ?>
-                                                                <img src="<?= base_url() ?>assets/images/img-applicant.jpg" class="table-image">
-                                                                <?php } ?>
+                                                                <img src="<?=getImageURL($data["profile_picture"]);?>" class="table-image" alt="" />
                                                             </span>
                                                         </div>
                                                     </div>
@@ -146,7 +141,7 @@
                                                             $registration_date = $data['registration_date'] != NULL && $data['registration_date'] != '0000-00-00 00:00:00' ? DateTime::createFromFormat('Y-m-d H:i:s', $data['registration_date'])->format('m-d-Y') : ''; 
                                                         }
                                                         ?>
-                                                        <input class="invoice-fields datepicker" id="registration_date" name="registration_date" value="<?php echo set_value('registration_date', $registration_date); ?>" />
+                                                        <input class="invoice-fields datepicker" id="registration_date" readonly name="registration_date" value="<?php echo set_value('registration_date', $registration_date); ?>" />
                                                         <?php echo form_error('direct_business_number'); ?>
                                                     </div>
                                                 </li>
@@ -157,7 +152,7 @@
                                                         <?php
                                                             $rehireDate = $data['rehire_date'] != NULL && $data['rehire_date'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d', $data['rehire_date'])->format('m-d-Y') : '';
                                                         ?>
-                                                        <input class="invoice-fields datepicker" id="js-rehire-date" name="rehire_date" value="<?php echo set_value('rehire_date', $rehireDate); ?>" />
+                                                        <input class="invoice-fields datepicker" id="js-rehire-date" readonly name="rehire_date" value="<?php echo set_value('rehire_date', $rehireDate); ?>" />
                                                         <?php echo form_error('rehire_date'); ?>
                                                     </div>
                                                 </li>
