@@ -1,7 +1,5 @@
 $(function PayrollEmployees() {
     //
-    var employeeId = 0;
-    //
     var xhr = null;
     //
     var tab = getSegment(2);
@@ -17,15 +15,6 @@ $(function PayrollEmployees() {
         $(this).toggleClass('btn-orange');
         $(this).toggleClass('btn-black');
         $('.jsFilterBox').toggle();
-    });
-    //
-    $(document).on('click', '.jsPayrollAddProcess', function(event) {
-        //
-        event.preventDefault();
-        //
-        employeeId = $(this).closest('.jsPayrollEmployeeRow').data('id');
-        //
-        return AddToPayroll();
     });
     //
     function GetEmployees(onPayroll) {
@@ -110,21 +99,6 @@ $(function PayrollEmployees() {
         $('#jsPayrollEmployeesDataHolder').html(rows);
         //
         ml(false, 'payroll_employees');
-    }
-    //
-    function AddToPayroll() {
-        GetPage('employee_profile', function(page_data) {
-
-        })
-    }
-    //
-    function GetPage(page_slug) {
-        //
-        $.get(baseURI + 'get_payroll_page/' + page_slug)
-            .done(function(resp) {
-                console.log(resp)
-            })
-            .error(HandleError);
     }
     //
     GetEmployees(tab == 'payroll' ? 1 : 0)

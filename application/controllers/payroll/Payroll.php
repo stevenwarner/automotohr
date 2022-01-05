@@ -68,7 +68,7 @@ class Payroll extends CI_Controller
         $this->data['load_view'] = 0;
         //
         $this->data['SelectedTab'] = $type;
-        $this->data['PageScripts'] = ['payroll/js/employee'];
+        $this->data['PageScripts'] = ['payroll/js/employee', 'payroll/js/employee_onboard'];
         //
         $this->load
         ->view('main/header', $this->data)

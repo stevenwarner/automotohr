@@ -82,7 +82,7 @@ $(function PayrollCompanyOnboard() {
      * Saves referance of function
      * @type {Array}
      */
-    var payrollEvents = [AddNewCompany, AddCompanyAddress, AddCompanyTax, AddCompanyBankInfo, AddCompanyEmployees, FinishCompanyOnboarding];
+    var payrollEvents = [AddCompanyEmployees, FinishCompanyOnboarding];
     var payrollEventsMessages = [
         "Please wait while we set up the payroll.",
         "Please wait while we are adding company address.",
@@ -3435,6 +3435,19 @@ $(function PayrollCompanyOnboard() {
                     ml(false, modalLoader);
                 });
             });
+    });
+
+    //
+    $(document).on('click', '.jsPayrollAddProcess', function(event) {
+        //
+        event.preventDefault();
+        //
+        CURRENTEMPLOYEE = employeeID = $(this).closest('.jsPayrollEmployeeRow').data('id');
+        //
+        SaveItem('PayrollEmployees' + companyId, [employeeID]);
+        // selectedEmployees.push(employeeID);
+        //
+        AddCompanyEmployees();
     });
 
 });

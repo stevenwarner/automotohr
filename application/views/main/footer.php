@@ -1010,7 +1010,6 @@ if ($class != 'dashboard' &&
     <script type="text/javascript" src="<?=base_url(_m('assets/js/uri'));?>"></script>
     <script type="text/javascript" src="<?=base_url(_m('assets/js/common'));?>"></script>
     <script type="text/javascript" src="<?=base_url(_m('assets/portal/app'));?>"></script>
-    <script type="text/javascript" src="<?=base_url(_m('assets/payroll/js/payroll_company_onboard'));?>"></script>
     <!-- Dynamic Scripts -->
     <?php if(isset($PageScripts)) { echo GetScripts($PageScripts); }?>
 </body>
