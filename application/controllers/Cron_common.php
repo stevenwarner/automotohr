@@ -19,128 +19,6 @@ class Cron_common extends CI_Controller{
     }
 
     //
-    public function log_records($verificationToken){
-        //
-        // if($verificationToken != $this->verifyToken){
-        //     echo "All done!";
-        //     exit(0);
-        // }
-        // get data from
-        $record = $this->common_model->check_table_record_exist('log_records');
-        $data = $this->common_model->get_records_from_log($record ? $record->last_id : NULL);
-        //
-        if (!$data){
-            die("All done!!");
-        }
-        // initialize the default arrays
-        $total_insert_queries = 0;
-        $total_update_queries = 0;
-        $total_select_queries = 0;
-        $total_delete_queries = 0;
-        $indexed_date = '';
-        $history = [];
-        $final_array = [];
-        $detailed_log = [];
-        $last_id = 0;
-        //
-        // loop through the data
-        foreach ($data as $item) {
-            // set current date format
-            $current_iteration_date = date('Y-m-d', strtotime($item['created_at']));
-            // check if index of date exist
-            if ($indexed_date !== $current_iteration_date){
-                // check the type if INSERT
-                if ($item['query_type'] == 'INSERT'){
-                    $history[$current_iteration_date]['insert_queries'] = 1;
-                    $total_insert_queries++;
-                }
-                // check the type if INSERT
-                if ($item['query_type'] == 'SELECT'){
-                    $history[$current_iteration_date]['select_queries'] = 1;
-                    $total_select_queries++;
-                }
-                // check the type if UPDATE
-                if ($item['query_type'] == 'UPDATE'){
-                    $history[$current_iteration_date]['update_queries'] = 1;
-                    $total_update_queries++;
-                }
-                // check the type if DELETE
-                if ($item['query_type'] == 'DELETE'){
-                    $history[$current_iteration_date]['delete_queries'] = 1;
-                    $total_delete_queries++;
-                }
-            }else{
-                // check the type if INSERT
-                if ($item['query_type'] == 'INSERT'){
-                    $history[$current_iteration_date]['insert_queries']++;
-                    $total_insert_queries++;
-                }
-                // check the type if UPDATE
-                if ($item['query_type'] == 'UPDATE'){
-                    $history[$current_iteration_date]['update_queries']++;
-                    $total_update_queries++;
-                }
-                // check the type if INSERT
-                if ($item['query_type'] == 'SELECT'){
-                    $history[$current_iteration_date]['select_queries']++;
-                    $total_select_queries++;
-                }
-                // check the type if DELETE
-                if ($item['query_type'] == 'DELETE'){
-                    $history[$current_iteration_date]['delete_queries']++;
-                    $total_delete_queries++;
-                }
-            }
-
-            // complete log of the query_logs table
-            $detailed_log[$current_iteration_date][] = [
-                'reference_id' => $item['sid'],
-                'query_type' => $item['query_type'],
-                'ip' => $item['ip'],
-                'query_string' => $item['query_string'],
-                'result' => $item['result'],
-                'login_user_id' => $item['login_user_id'],
-                'error' => $item['error'],
-                'from_cache' => $item['from_cache'],
-                'start_time' => $item['start_time'],
-                'end_time' => $item['end_time'],
-                'benchmark' => $item['benchmark'],
-                'created_at' => $item['created_at'],
-            ];
-            $indexed_date = $current_iteration_date;
-
-            // update the last_id
-            $last_id = $item['sid'];
-        }
-        // push all data to final array
-        $final_array['total_queries'] = $total_insert_queries+$total_update_queries+$total_delete_queries+$total_select_queries;
-        $final_array['insert_queries'] = $total_insert_queries;
-        $final_array['update_queries'] = $total_update_queries;
-        $final_array['delete_queries'] = $total_delete_queries;
-        $final_array['select_queries'] = $total_select_queries;
-        $final_array['history'] = $history;
-
-        $this->common_model->update_last_id($last_id);
-        // // update the last id in log_records table
-        // // open file to write
-        // $file = fopen('query_count_logs.json', 'a+');
-        // // write data in file
-        // fwrite($file, json_encode($final_array));
-        // // close file after saving data
-        // fclose($file);
-        _e($final_array, true, true);
-
-        // open file to write detailed logs
-        // $file = fopen('detailed_query_logs.json', 'a+');
-        // // write data in file
-        // fwrite($file, json_encode($detailed_log));
-        // // close file after saving data
-        // fclose($file);
-
-        _e($final_array, true, true);
-    }
-
-    //
     function auto_email_reminder($verificationToken){
         //
         if($this->verifyToken != $verificationToken){
@@ -558,6 +436,92 @@ class Cron_common extends CI_Controller{
                 ];
             }
         }
+    }
+
+    //
+    public function log_records($verificationToken){
+        //
+        if($verificationToken != $this->verifyToken){
+            echo "All done!";
+            exit(0);
+        }
+        // get data from
+        $record = $this->common_model->check_table_record_exist('log_records');
+        $data = $this->common_model->get_records_from_log($record ? $record->last_id : NULL);
+        //
+        if (!$data){
+            die("All done!!");
+        }
+        $countFile = APPPATH.'../../db-count-log.json';
+        $dataFile = APPPATH.'../../db-data-log.json';
+        //
+        $countFileData = json_decode(GetFileContent($countFile, json_encode([
+            'total_queries' => 0,
+            'total_insert_queries' => 0,
+            'total_update_queries' => 0,
+            'total_delete_queries' => 0,
+            'total_select_queries' => 0,
+            'history' => []
+        ])), true);
+        //
+        $dataFileData = json_decode(GetFileContent($dataFile, json_encode([])), true);
+        //
+        // initialize the default arrays
+        $last_id = 0;
+        //
+        $date = date('Y-m-d', strtotime('now'));
+        // loop through the data
+        foreach ($data as $item) {
+            //
+            $countFileData['total_queries']++;
+            //
+            $countFileData['total_'.(strtolower($item['query_type'])).'_queries']++;
+            //
+            if(!isset($countFileData['history'][$date])){
+                $countFileData['history'][$date]['insert_queries'] = 0;
+                $countFileData['history'][$date]['update_queries'] = 0;
+                $countFileData['history'][$date]['delete_queries'] = 0;
+                $countFileData['history'][$date]['select_queries'] = 0;
+            }
+            //
+            $countFileData['history'][$date][(strtolower($item['query_type'])).'_queries']++;
+
+            // complete log of the query_logs table
+            $dataFileData[] = [
+                'reference_id' => $item['sid'],
+                'query_type' => $item['query_type'],
+                'ip' => $item['ip'],
+                'query_string' => $item['query_string'],
+                'result' => $item['result'],
+                'login_user_id' => $item['login_user_id'],
+                'error' => $item['error'],
+                'from_cache' => $item['from_cache'],
+                'start_time' => $item['start_time'],
+                'end_time' => $item['end_time'],
+                'benchmark' => $item['benchmark'],
+                'created_at' => $item['created_at']
+            ];
+
+            // update the last_id
+            $last_id = $item['sid'];
+        }
+        //
+        $this->common_model->update_last_id($last_id);
+        // // update the last id in log_records table
+        // // open file to write
+        $file = fopen($countFile, 'w');
+        // write data in file
+        fwrite($file, json_encode($countFileData));
+        // close file after saving data
+        fclose($file);
+        // open file to write detailed logs
+        $file = fopen($dataFile, 'w');
+        // write data in file
+        fwrite($file, json_encode($dataFileData));
+        // close file after saving data
+        fclose($file);
+        //
+        die('All Done!');
     }
 
 }

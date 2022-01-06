@@ -1396,3 +1396,8 @@ $route['manage_admin/merge_employees/merge/(:num)']['get'] = 'manage_admin/Merge
 //
 $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
 $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
+
+/**
+ * CRON Routes
+ */
+$route['logdb/(:any)']['cli'] = 'Cron_common/log_records/$1';
