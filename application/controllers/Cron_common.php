@@ -150,7 +150,7 @@ class Cron_common extends CI_Controller{
         // update the last id in log_records table
         //$this->common_model->update_last_id($last_id);
          // open file to write
-         $file = fopen($count_logs_file_name, 'a+');
+         $file = fopen($count_logs_file_name, 'w');
          // write data in file
          fwrite($file, json_encode($count_logs_file_data));
          // close file after saving data
