@@ -314,6 +314,11 @@ switch (ENVIRONMENT)
 			//
 			$file = APPPATH.'../../../creds.json';
 			//
+			if(ENVIRONMENT === 'testing'){
+				//
+				$file = APPPATH.'../../../../creds.json';
+			}
+			//
 			$h = fopen($file, 'r');
 			//
 			$data = json_decode(fread($h, filesize($file)));
