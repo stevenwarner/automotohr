@@ -30,6 +30,7 @@ class Dashboard extends Public_Controller {
     }
 
     public function index() {
+        $t = $b;
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $employer_detail                                                    = $data['session']['employer_detail'];

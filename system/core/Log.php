@@ -212,7 +212,7 @@ class CI_Log {
 			$date = date($this->_date_fmt);
 		}
 
-		$message .= $level.' - '.$date.' --> '.$msg."\n";
+		$message .= $level.' - '.getUserIP().' - '.$date.' --> '.$msg."\n";
 
 		flock($fp, LOCK_EX);
 
