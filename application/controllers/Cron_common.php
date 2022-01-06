@@ -19,7 +19,7 @@ class Cron_common extends CI_Controller{
     }
 
     //
-    public function log_records($verificationToken){
+    public function log_records(){
         //
         // if($verificationToken != $this->verifyToken){
         //     echo "All done!";
@@ -29,14 +29,52 @@ class Cron_common extends CI_Controller{
         $record = $this->common_model->check_table_record_exist('log_records');
         $data = $this->common_model->get_records_from_log($record ? $record->last_id : NULL);
         //
+        $detailed_logs_file_name = 'detailed_query_logs.json';
+        $count_logs_file_name = 'query_count_logs.json';
         if (!$data){
             die("All done!!");
         }
+        //
+        /*if (file_exists($detailed_logs_file_name) && filesize($detailed_logs_file_name)){
+            // open file
+            $file = fopen($detailed_logs_file_name, 'r');
+            // read data from file
+            $existing_data =  fread($file, filesize($detailed_logs_file_name));
+            $detailed_logs_file_data = json_decode($existing_data, true);
+        }else{
+            $detailed_logs_file_data = [];
+            // if file type is right and update
+            $file = fopen($detailed_logs_file_name, 'w');
+            // write data in file
+            fwrite($file, json_encode($detailed_logs_file_data));
+            // close file after saving data
+            fclose($file);
+        }*/
+        //
+        if (file_exists($count_logs_file_name) && filesize($count_logs_file_name)){
+            // open file
+            $file = fopen($count_logs_file_name, 'r');
+            // read data from file
+            $existing_count_data =  fread($file, filesize($count_logs_file_name));
+            $count_logs_file_data = json_decode($existing_count_data, true);
+        }else{
+            $count_logs_file_data = [
+                'total_queries' => 0,
+                'insert_queries' => 0,
+                'update_queries' => 0,
+                'delete_queries' => 0,
+                'select_queries' => 0,
+                'history' => '{}'
+            ];
+            // if file type is right and update
+            $file = fopen($count_logs_file_name, 'w');
+            // write data in file
+            fwrite($file, json_encode($count_logs_file_data));
+            // close file after saving data
+            fclose($file);
+        }
+
         // initialize the default arrays
-        $total_insert_queries = 0;
-        $total_update_queries = 0;
-        $total_select_queries = 0;
-        $total_delete_queries = 0;
         $indexed_date = '';
         $history = [];
         $final_array = [];
@@ -52,92 +90,81 @@ class Cron_common extends CI_Controller{
                 // check the type if INSERT
                 if ($item['query_type'] == 'INSERT'){
                     $history[$current_iteration_date]['insert_queries'] = 1;
-                    $total_insert_queries++;
+                    $count_logs_file_data['insert_queries']++;
                 }
-                // check the type if INSERT
+                // check the type if SELECT
                 if ($item['query_type'] == 'SELECT'){
                     $history[$current_iteration_date]['select_queries'] = 1;
-                    $total_select_queries++;
+                    $count_logs_file_data['select_queries']++;
                 }
                 // check the type if UPDATE
                 if ($item['query_type'] == 'UPDATE'){
                     $history[$current_iteration_date]['update_queries'] = 1;
-                    $total_update_queries++;
+                    $count_logs_file_data['update_queries']++;
                 }
                 // check the type if DELETE
                 if ($item['query_type'] == 'DELETE'){
                     $history[$current_iteration_date]['delete_queries'] = 1;
-                    $total_delete_queries++;
+                    $count_logs_file_data['delete_queries']++;
                 }
             }else{
                 // check the type if INSERT
                 if ($item['query_type'] == 'INSERT'){
                     $history[$current_iteration_date]['insert_queries']++;
-                    $total_insert_queries++;
+                    $count_logs_file_data['insert_queries']++;
+                }
+                // check the type if SELECT
+                if ($item['query_type'] == 'SELECT'){
+                    $history[$current_iteration_date]['select_queries']++;
+                    $count_logs_file_data['select_queries']++;
                 }
                 // check the type if UPDATE
                 if ($item['query_type'] == 'UPDATE'){
                     $history[$current_iteration_date]['update_queries']++;
-                    $total_update_queries++;
-                }
-                // check the type if INSERT
-                if ($item['query_type'] == 'SELECT'){
-                    $history[$current_iteration_date]['select_queries']++;
-                    $total_select_queries++;
+                    $count_logs_file_data['update_queries']++;
                 }
                 // check the type if DELETE
                 if ($item['query_type'] == 'DELETE'){
                     $history[$current_iteration_date]['delete_queries']++;
-                    $total_delete_queries++;
+                    $count_logs_file_data['delete_queries']++;
                 }
             }
 
-            // complete log of the query_logs table
-            $detailed_log[$current_iteration_date][] = [
-                'reference_id' => $item['sid'],
-                'query_type' => $item['query_type'],
-                'ip' => $item['ip'],
-                'query_string' => $item['query_string'],
-                'result' => $item['result'],
-                'login_user_id' => $item['login_user_id'],
-                'error' => $item['error'],
-                'from_cache' => $item['from_cache'],
-                'start_time' => $item['start_time'],
-                'end_time' => $item['end_time'],
-                'benchmark' => $item['benchmark'],
-                'created_at' => $item['created_at'],
-            ];
+            // replace the sid to reference_id
+            $item['reference_id'] = $item['sid'];
+            unset($item['sid']);
+            // push the data to the file data array
+            $detailed_logs_file_data[] = $item;
             $indexed_date = $current_iteration_date;
 
             // update the last_id
-            $last_id = $item['sid'];
+            $last_id = $item['reference_id'];
+            $count_logs_file_data['total_queries']++;
         }
         // push all data to final array
-        $final_array['total_queries'] = $total_insert_queries+$total_update_queries+$total_delete_queries+$total_select_queries;
-        $final_array['insert_queries'] = $total_insert_queries;
-        $final_array['update_queries'] = $total_update_queries;
-        $final_array['delete_queries'] = $total_delete_queries;
-        $final_array['select_queries'] = $total_select_queries;
         $final_array['history'] = $history;
 
-        $this->common_model->update_last_id($last_id);
-        // // update the last id in log_records table
-        // // open file to write
-        // $file = fopen('query_count_logs.json', 'a+');
-        // // write data in file
-        // fwrite($file, json_encode($final_array));
-        // // close file after saving data
-        // fclose($file);
+        $count_logs_file_data['history'] = $history;
+        _e($count_logs_file_data, true, true);
+
+        // update the last id in log_records table
+        //$this->common_model->update_last_id($last_id);
+         // open file to write
+         $file = fopen($count_logs_file_name, 'a+');
+         // write data in file
+         fwrite($file, json_encode($count_logs_file_data));
+         // close file after saving data
+         fclose($file);
         _e($final_array, true, true);
 
-        // open file to write detailed logs
-        // $file = fopen('detailed_query_logs.json', 'a+');
-        // // write data in file
-        // fwrite($file, json_encode($detailed_log));
-        // // close file after saving data
-        // fclose($file);
+        /*// open file to write detailed logs
+         $file = fopen($detailed_logs_file_name, 'w');
+         // write data in file
+         fwrite($file, json_encode($detailed_logs_file_data));
+         // close file after saving data
+         fclose($file);
 
-        _e($final_array, true, true);
+        _e($detailed_logs_file_data, true, true);*/
     }
 
     //
