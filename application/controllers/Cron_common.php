@@ -26,80 +26,98 @@ class Cron_common extends CI_Controller{
         $data = $this->common_model->get_records_from_log($record ? $record->last_id : NULL);
         //
         if ($data){
+            // initialize the default arrays
             $total_insert_queries = 0;
             $total_update_queries = 0;
             $total_delete_queries = 0;
-            $total_queries = 0;
             $indexed_date = '';
             $history = [];
             $final_array = [];
+            $detailed_log = [];
+            $last_id = 0;
+            // loop through the data
             foreach ($data as $item) {
+                // set current date format
                 $current_iteration_date = date('Y-m-d', strtotime($item['created_at']));
+                // check if index of date exist
                 if ($indexed_date !== $current_iteration_date){
+                    // check the type if INSERT
                     if ($item['query_type'] == 'INSERT'){
                         $history[$current_iteration_date]['insert_queries'] = 1;
                         $total_insert_queries++;
                     }
-                    //
+                    // check the type if UPDATE
                     if ($item['query_type'] == 'UPDATE'){
                         $history[$current_iteration_date]['update_queries'] = 1;
                         $total_update_queries++;
                     }
-                    //
+                    // check the type if DELETE
                     if ($item['query_type'] == 'DELETE'){
                         $history[$current_iteration_date]['delete_queries'] = 1;
                         $total_delete_queries++;
                     }
                 }else{
-                    //
+                    // check the type if INSERT
                     if ($item['query_type'] == 'INSERT'){
                         $history[$current_iteration_date]['insert_queries']++;
                         $total_insert_queries++;
                     }
-                    //
+                    // check the type if UPDATE
                     if ($item['query_type'] == 'UPDATE'){
                         $history[$current_iteration_date]['update_queries']++;
                         $total_update_queries++;
                     }
-                    //
+                    // check the type if DELETE
                     if ($item['query_type'] == 'DELETE'){
                         $history[$current_iteration_date]['delete_queries']++;
                         $total_delete_queries++;
                     }
                 }
+
+                // complete log of the query_logs table
+                $detailed_log[$current_iteration_date][] = [
+                    'reference_id' => $item['sid'],
+                    'query_type' => $item['query_type'],
+                    'ip' => $item['ip'],
+                    'query_string' => $item['query_string'],
+                    'result' => $item['result'],
+                    'login_user_id' => $item['login_user_id'],
+                    'error' => $item['error'],
+                    'from_cache' => $item['from_cache'],
+                    'start_time' => $item['start_time'],
+                    'end_time' => $item['end_time'],
+                    'benchmark' => $item['benchmark'],
+                    'created_at' => $item['created_at'],
+                ];
                 $indexed_date = $current_iteration_date;
+
+                // update the last_id
+                $last_id = $item['sid'];
             }
-            $total_queries = $total_insert_queries+$total_update_queries+$total_delete_queries;
-            $final_array['total_queries'] = $total_queries;
+            // push all data to final array
+            $final_array['total_queries'] = $total_insert_queries+$total_update_queries+$total_delete_queries;
             $final_array['insert_queries'] = $total_insert_queries;
             $final_array['update_queries'] = $total_update_queries;
             $final_array['delete_queries'] = $total_delete_queries;
-            $final_array['history'] = array_reverse($history);
+            $final_array['history'] = $history;
         }
-        // if file type is right and update
-        $file = fopen('logs.json', 'w');
+        // update the last id in log_records table
+        $this->common_model->update_last_id($last_id);
+        // open file to write
+        $file = fopen('query_count_logs.json', 'a+');
         // write data in file
         fwrite($file, json_encode($final_array));
         // close file after saving data
         fclose($file);
 
-        _e($final_array, true, true);
-
-
-        foreach (data as $datum) {
-
-        }
-
-        // if file type is right and update
-        $file = fopen('logs.json', 'w');
+        // open file to write detailed logs
+        $file = fopen('detailed_query_logs.json', 'a+');
         // write data in file
-        fwrite($file, json_encode($data));
+        fwrite($file, json_encode($detailed_log));
         // close file after saving data
         fclose($file);
-        // response
-        return 'file data saved successfully';
-        // if success than update the record in log_records
-        _e($data->result_array(), true, true);
+
+        _e($final_array, true, true);
     }
 
     //

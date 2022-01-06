@@ -102,7 +102,10 @@ class Common_model extends CI_Model {
         return $record;
     }
 
-    //
+    /**
+     * @param $sid
+     * @return array
+     */
     function get_records_from_log($sid = null){
         //
         $this->db->select('*');
@@ -112,5 +115,20 @@ class Common_model extends CI_Model {
         }
         $this->db->order_by('created_at', 'ASC');
         return $this->db->get()->result_array();
+    }
+
+    //
+    //
+    function update_last_id($sid){
+        //
+        $check_existance = $this->db->select('table_name')->get('log_records')->row();
+        if ($check_existance){
+            $this->db
+                ->where('table_name', 'query_logs')
+                ->update('log_records', ['last_id' => $sid]);
+            return true;
+        }
+        $this->db->insert('log_records',['table_name' => 'query_logs']);
+
     }
 }
