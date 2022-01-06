@@ -23,12 +23,81 @@ class Cron_common extends CI_Controller{
         // get data from
         $table_name = 'log_records';
         $record = $this->common_model->check_table_record_exist($table_name);
-        if ($record){
-            $data = $this->common_model->get_records_from_log($record->last_id);
-        }else{
-            $data = $this->common_model->get_records_from_log();
+        $data = $this->common_model->get_records_from_log($record ? $record->last_id : NULL);
+        //
+        if ($data){
+            $total_insert_queries = 0;
+            $total_update_queries = 0;
+            $total_delete_queries = 0;
+            $total_queries = 0;
+            $indexed_date = '';
+            $history = [];
+            $final_array = [];
+            foreach ($data as $item) {
+                $current_iteration_date = date('Y-m-d', strtotime($item['created_at']));
+                if ($indexed_date !== $current_iteration_date){
+                    if ($item['query_type'] == 'INSERT'){
+                        $history[$current_iteration_date]['insert_queries'] = 1;
+                        $total_insert_queries++;
+                    }
+                    //
+                    if ($item['query_type'] == 'UPDATE'){
+                        $history[$current_iteration_date]['update_queries'] = 1;
+                        $total_update_queries++;
+                    }
+                    //
+                    if ($item['query_type'] == 'DELETE'){
+                        $history[$current_iteration_date]['delete_queries'] = 1;
+                        $total_delete_queries++;
+                    }
+                }else{
+                    //
+                    if ($item['query_type'] == 'INSERT'){
+                        $history[$current_iteration_date]['insert_queries']++;
+                        $total_insert_queries++;
+                    }
+                    //
+                    if ($item['query_type'] == 'UPDATE'){
+                        $history[$current_iteration_date]['update_queries']++;
+                        $total_update_queries++;
+                    }
+                    //
+                    if ($item['query_type'] == 'DELETE'){
+                        $history[$current_iteration_date]['delete_queries']++;
+                        $total_delete_queries++;
+                    }
+                }
+                $indexed_date = $current_iteration_date;
+            }
+            $total_queries = $total_insert_queries+$total_update_queries+$total_delete_queries;
+            $final_array['total_queries'] = $total_queries;
+            $final_array['insert_queries'] = $total_insert_queries;
+            $final_array['update_queries'] = $total_update_queries;
+            $final_array['delete_queries'] = $total_delete_queries;
+            $final_array['history'] = array_reverse($history);
         }
-        // here goes the logic or file creation
+        // if file type is right and update
+        $file = fopen('logs.json', 'w');
+        // write data in file
+        fwrite($file, json_encode($final_array));
+        // close file after saving data
+        fclose($file);
+
+        _e($final_array, true, true);
+
+
+        foreach (data as $datum) {
+
+        }
+
+        // if file type is right and update
+        $file = fopen('logs.json', 'w');
+        // write data in file
+        fwrite($file, json_encode($data));
+        // close file after saving data
+        fclose($file);
+        // response
+        return 'file data saved successfully';
         // if success than update the record in log_records
         _e($data->result_array(), true, true);
     }

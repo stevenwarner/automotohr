@@ -110,6 +110,7 @@ class Common_model extends CI_Model {
         if ($sid){
             $this->db->where('sid >', $sid);
         }
-        return $this->db->get();
+        $this->db->order_by('created_at', 'ASC');
+        return $this->db->get()->result_array();
     }
 }
