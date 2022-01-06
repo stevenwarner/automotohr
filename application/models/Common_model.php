@@ -94,12 +94,10 @@ class Common_model extends CI_Model {
     //
     function check_table_record_exist($table){
         //
-        $record = $this->db
+        return $this->db
             ->select('last_id')
-            ->get($table)
+            ->get($table, NULL, NULL, FALSE)
             ->row();
-        //
-        return $record;
     }
 
     /**
@@ -113,22 +111,22 @@ class Common_model extends CI_Model {
         if ($sid){
             $this->db->where('sid >', $sid);
         }
-        $this->db->order_by('created_at', 'ASC');
-        return $this->db->get()->result_array();
+        $this->db->order_by('sid', 'ASC');
+        return $this->db->get('', NULL, NULL, FALSE)->result_array();
     }
 
     //
     //
     function update_last_id($sid){
         //
-        $check_existance = $this->db->select('table_name')->get('log_records')->row();
+        $check_existance = $this->db->select('table_name')->get('log_records',  NULL, NULL, FALSE)->row();
         if ($check_existance){
             $this->db
                 ->where('table_name', 'query_logs')
-                ->update('log_records', ['last_id' => $sid]);
+                ->update('log_records', ['last_id' => $sid], NULL, NULL, FALSE);
             return true;
         }
-        $this->db->insert('log_records',['table_name' => 'query_logs']);
+        $this->db->insert('log_records',['table_name' => 'query_logs', 'last_id' => $sid, 'created_at' => date('Y-m-d H:i:s', strtotime('now'))], NULL, FALSE);
 
     }
 }
