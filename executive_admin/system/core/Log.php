@@ -250,6 +250,6 @@ class CI_Log {
 	 */
 	protected function _format_line($level, $date, $message)
 	{
-		return $level.' - '.getUserIP().' - '.$date.' --> '.$message."\n";
+		return $level.' - Executive Admin - '.getUserIP().' - '.$date.' --> '.$message."\n";
 	}
 }

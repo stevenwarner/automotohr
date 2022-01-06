@@ -241,7 +241,7 @@ $config['log_path'] =  APPPATH.'../../../app_logs/';
 | log-Y-m-d.
 |
 */
-$config['log_name'] =  'executive-application-logs';
+$config['log_name'] =  'application-logs';
 
 /*
 |--------------------------------------------------------------------------

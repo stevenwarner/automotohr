@@ -211,8 +211,12 @@ class CI_Log {
 		{
 			$date = date($this->_date_fmt);
 		}
+		//
+		$domain = clean_domain($_SERVER['SERVER_NAME']);
+		//
+		$tmp = explode('.', $domain);
 
-		$message .= $level.' - '.getUserIP().' - '.$date.' --> '.$msg."\n";
+		$message .= $level.' - '.($tmp[0]).' - '.getUserIP().' - '.$date.' --> '.$msg."\n";
 
 		flock($fp, LOCK_EX);
 
