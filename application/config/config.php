@@ -239,7 +239,7 @@ $config['log_path'] =  APPPATH.'../../logs/';
 | log-Y-m-d.
 |
 */
-$config['log_name'] =  'application-logs';
+$config['log_name'] =  'automotohr-application-logs';
 
 /*
 |--------------------------------------------------------------------------

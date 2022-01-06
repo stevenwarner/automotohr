@@ -224,7 +224,18 @@ $config['log_threshold'] = 1;
 | application/logs/ directory. Use a full server path with trailing slash.
 |
 */
-$config['log_path'] = '';
+$config['log_path'] =  APPPATH.'../../../logs/';
+
+/*
+|--------------------------------------------------------------------------
+| Error Logging File Name
+|--------------------------------------------------------------------------
+|
+| Leave this BLANK unless you would like to set something other than the default
+| log-Y-m-d.
+|
+*/
+$config['log_name'] =  'automotosocial-application-logs';
 
 /*
 |--------------------------------------------------------------------------
@@ -238,7 +249,7 @@ $config['log_path'] = '';
 | Note: Leaving it blank will default to 'php'.
 |
 */
-$config['log_file_extension'] = '';
+$config['log_file_extension'] = 'txt';
 
 /*
 |--------------------------------------------------------------------------

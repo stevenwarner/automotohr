@@ -307,7 +307,7 @@ switch (ENVIRONMENT)
 
 	define('VIEWPATH', $view_folder.DIRECTORY_SEPARATOR);
 
-	error_reporting(0);
+	error_reporting(E_ALL);
 	ini_set('display_errors', 0);
 	
 	//
