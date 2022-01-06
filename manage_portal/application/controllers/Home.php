@@ -42,6 +42,16 @@ class Home extends CI_Controller {
         
         $company_sid = $data['company_details']['sid'];
         $data['customize_career_site'] = $this->themes_pages_model->getCustomizeCareerSiteData($company_sid);
+        //
+        if(!isset($data['customize_career_site']['company_sid']) && $data['portal_type'] == 'corporate_career_site'){
+            $data['customize_career_site'] = [
+                'company_sid' => $company_sid,
+                'status' => 1,
+                'menu' => 1,
+                'footer' => 1,
+                'inactive_pages' => []
+            ];
+        }
         $data['remarket_company_settings'] = $this->themes_pages_model->get_remarket_company_settings();
         company_phone_regex_module_check($company_sid, $data, $this);
 
