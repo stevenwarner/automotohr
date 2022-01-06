@@ -53,7 +53,7 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+	define('ENVIRONMENT', preg_match('/staging/i', $_SERVER['HTTP_HOST']) ? "testing" : "production");
 
 /*
  *---------------------------------------------------------------
@@ -305,7 +305,7 @@ switch (ENVIRONMENT)
 
 	define('VIEWPATH', $view_folder.DIRECTORY_SEPARATOR);
 
-	error_reporting(0);
+	error_reporting(E_ALL);
 	ini_set('display_errors', 0);
 	
 	//
@@ -313,6 +313,11 @@ switch (ENVIRONMENT)
 		function getCreds($index = false){
 			//
 			$file = APPPATH.'../../../creds.json';
+			//
+			if(ENVIRONMENT === 'testing'){
+				//
+				$file = APPPATH.'../../../../creds.json';
+			}
 			//
 			$h = fopen($file, 'r');
 			//

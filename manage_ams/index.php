@@ -293,15 +293,12 @@ switch (ENVIRONMENT)
 
 	
 if($_SERVER['HTTP_HOST'] == 'www.automotosocial.com'){
-	error_reporting(0);
+	error_reporting(E_ALL);
 	ini_set('display_errors', 0);
 } else{
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
 }
-
-error_reporting(0);
-ini_set('display_errors', 0);
 
 //
 if(!function_exists('getCreds')){
