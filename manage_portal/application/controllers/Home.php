@@ -42,16 +42,6 @@ class Home extends CI_Controller {
         
         $company_sid = $data['company_details']['sid'];
         $data['customize_career_site'] = $this->themes_pages_model->getCustomizeCareerSiteData($company_sid);
-        //
-        if(!isset($data['customize_career_site']['company_sid']) && $data['portal_type'] == 'corporate_career_site'){
-            $data['customize_career_site'] = [
-                'company_sid' => $company_sid,
-                'status' => 1,
-                'menu' => 1,
-                'footer' => 1,
-                'inactive_pages' => []
-            ];
-        }
         $data['remarket_company_settings'] = $this->themes_pages_model->get_remarket_company_settings();
         company_phone_regex_module_check($company_sid, $data, $this);
 
@@ -146,6 +136,18 @@ class Home extends CI_Controller {
             $list_count                                             = 0;
             $segment7                                                           = $this->uri->segment(7);
             $ajax_flag                                                          = $this->uri->segment(8);
+
+            // Get all categories
+            $all_categories = $this->job_details->GetAllCategories();
+            // Get all states
+            $GetStatesWithCountries = $this->job_details->GetStatesWithCountries();
+            //
+            $all_states = $GetStatesWithCountries['States'];
+            // Get all countries
+            $all_countries = [
+                38 => ['sid' => 38, 'country_code' => 'CA', 'country_name' => 'Canada'],
+                227 => ['sid' => 227, 'country_code' => 'US', 'country_name' => 'United States']
+            ];
                 
             if($data['customize_career_site']['status'] == 1){
                 
@@ -247,6 +249,12 @@ class Home extends CI_Controller {
                     }
                 }
             }
+
+            //
+            $states_array = $all_states;
+            $categories_in_active_jobs = $all_categories;
+            $countries_array = $all_countries;
+            $country_states_array = $GetStatesWithCountries['CountryWithStates'];
 
             if (!empty($list)) {
                 foreach ($list as $key => $value) {

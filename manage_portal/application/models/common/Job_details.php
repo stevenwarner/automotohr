@@ -1085,4 +1085,48 @@ class Job_details extends CI_Model {
 
                 return $record_arr;
             }
+    
+    function GetAllCategories() {
+        $this->db->select('sid,value');
+        $this->db->where('field_sid', '198');
+        $this->db->from('listing_field_list');
+        $results = $this->db->get()->result_array();
+        //
+        if(empty($results)){
+            return [];
+        }
+        //
+        $t = [];
+        //
+        foreach($results as $value){
+            $t[$value['sid']] = $value['value'];
+        }
+        //
+        return $t;
+    }
+
+    function GetStatesWithCountries() {
+        $this->db->select('sid, country_sid, state_name');
+        $this->db->order_by('state_name', 'ASC');
+        $this->db->from('states');
+        $results = $this->db->get()->result_array();
+        //
+        if(empty($results)){
+            return [];
+        }
+        //
+        $t = [];
+        $t2 = [];
+        //
+        foreach($results as $value){
+            $t[$value['sid']] = $value['state_name'];
+            //
+            if(!isset($t2[$value['country_sid']])){
+                $t2[$value['country_sid']] = [];
+            }
+            $t2[$value['country_sid']][] = ['sid' => $value['sid'], 'state_name' => $value['state_name']];
+        }
+        //
+        return ['States' => $t, 'CountryWithStates' => $t2];
+    }
 }
