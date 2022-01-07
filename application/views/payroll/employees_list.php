@@ -62,7 +62,7 @@
             <div class="tab-content csPR">
                 <!--  -->
                 <?php $this->load->view('loader_new', ['id' => 'payroll_employees']); ?>
-                <div class="table-responsive" id="jsPayrollEmployeesTable">
+                <div class="table-responsive" id="jsPayrollEmployeesTable" data-company_sid="<?php echo $company_sid; ?>">
                     <table class="table table-striped">
                         <caption></caption>
                         <thead>

@@ -13890,7 +13890,14 @@ if(!function_exists('getAPIUrl')){
         // Set company path
         $urls['company'] = 'company';
         //
-        return  getCreds('AHR')->API_SERVER_URL.(isset($urls[$index]) ? $urls[$index] : '');
+        $urls['job_compensation'] = 'job/compensation';
+        //
+        if ($index == "employees" || $index == "job_compensation") {
+            return  getCreds('AHR')->API_BROWSER_URL.(isset($urls[$index]) ? $urls[$index] : '');
+        } else {
+            return  getCreds('AHR')->API_SERVER_URL.(isset($urls[$index]) ? $urls[$index] : '');
+        } 
+        // 
     }
 }
 

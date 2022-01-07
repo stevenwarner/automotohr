@@ -87,7 +87,7 @@ $(function PayrollEmployees() {
             rows += '    </td>';
             rows += '    <td class="vam text-right">';
             if (tab == 'payroll') {
-                rows += '        <button class="btn btn-orange csF14"><i class="fa csF16 fa-edit" aria-hidden="true"></i> Edit</button>';
+                rows += '        <button class="btn btn-orange csF14 jsPayrollAddProcess"><i class="fa csF16 fa-edit" aria-hidden="true"></i> Edit</button>';
                 rows += '        <button class="btn btn-danger csF14"><i class="fa csF16 fa-times-circle" aria-hidden="true"></i> Delete</button>';
             } else {
                 rows += '        <button class="btn btn-orange csF14 jsPayrollAddProcess"><i class="fa csF16 fa-plus-circle" aria-hidden="true"></i> Add To Payroll</button>';

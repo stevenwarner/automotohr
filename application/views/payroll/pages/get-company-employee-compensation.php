@@ -3,7 +3,7 @@
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->
-            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee", "subIndex" =>"employee_compensation"]);?>
+            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee_compensation", "subIndex" =>""]);?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
                 <!-- Heading -->

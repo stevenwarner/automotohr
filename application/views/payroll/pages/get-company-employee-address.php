@@ -3,7 +3,7 @@
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->
-            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee", "subIndex" =>"employee_address"]);?>
+            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee_address", "subIndex" =>""]);?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
                 <!-- Heading -->
@@ -21,7 +21,7 @@
                             Home address
                         </h1>
                         <p class="csF16">
-                            Employee's home mailing address, within the United States.
+                            Employee’s home mailing address, within the United States.
                         </p>
                     </div>
                 </div>

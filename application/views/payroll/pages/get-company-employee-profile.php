@@ -5,7 +5,7 @@
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->
-            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee", "subIndex" =>"employee_profile"]);?>
+            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee_profile", "subIndex" =>""]);?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
                 <!-- Heading -->
@@ -23,7 +23,7 @@
                             Personal details
                         </h1>
                         <p class="csF16">
-                            This information will be used for payroll, taxes, and benefits, so double-check that it's accurate.
+                            This information will be used for payroll and taxes, so double-check that it's accurate.
                         </p>
                     </div>
                 </div>
@@ -66,7 +66,30 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Start date <span class="csRequired"></span>
+                            Date of birth <span class="csRequired"></span>
+                        </label>
+                        <input type="text" class="form-control jsEDOB jsDatePicker" value="<?=!empty($employee_info) ? date('m/d/Y',strtotime($employee_info['dob'])) : '';?>" placeholder="MM/DD/YYYY" />
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <label class="csF16 csB7">
+                            Work address
+                        </label>
+                        <select class="form-control jsEWD">
+                            <option value="0">[Select]</option>
+                            <?php foreach($locations as $location): ?>
+                                <option value="<?=$location['gusto_location_id'];?>" <?php echo $workAddressId == $location['gusto_location_id'] ? 'selected="selected"' : ''; ?>><?php echo $location['street_1'].', '.$location['city'].', '.$location['state'].' - '.$location['zip']; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <label class="csF16 csB7">
+                            Start date
                         </label>
                         <?php 
                             $start_date = "";
@@ -85,21 +108,7 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Work address <span class="csRequired"></span>
-                        </label>
-                        <select class="form-control jsEWD">
-                            <option value="0">[Select]</option>
-                            <?php foreach($locations as $location): ?>
-                                <option value="<?=$location['sid'];?>" <?php echo $workAddressId == $location['sid'] ? 'selected="selected"' : ''; ?>><?php echo $location['street_1'].', '.$location['city'].', '.$location['state'].' - '.$location['zip']; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-md-12 col-xs-12">
-                        <label class="csF16 csB7">
-                            Personal email address <span class="csRequired"></span>
+                            Email <span class="csRequired"></span>
                         </label>
                         <input type="text" class="form-control jsEmail" value="<?=!empty($employee_info) ? $employee_info['email'] : '';?>" placeholder="We may use this email address to send them critical information about payroll" />
                     </div>
@@ -108,20 +117,12 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Employee's Social Security number <span class="csRequired"></span>
+                            Social security number <span class="csRequired"></span>
                         </label>
                         <input type="text" class="form-control jsEmployeeSSN" value="<?=!empty($employee_info) ? $employee_info['ssn'] : '';?>" placeholder="123456789" />
                     </div>
                 </div>
-                <br>
-                <div class="row">
-                    <div class="col-md-12 col-xs-12">
-                        <label class="csF16 csB7">
-                            Birthday <span class="csRequired"></span>
-                        </label>
-                        <input type="text" class="form-control jsEDOB jsDatePicker" value="<?=!empty($employee_info) ? date('m/d/Y',strtotime($employee_info['dob'])) : '';?>" placeholder="MM/DD/YYYY" />
-                    </div>
-                </div>
+                
                 <br>
                 <div class="row">
                     <div class="col-sm-12 text-right">

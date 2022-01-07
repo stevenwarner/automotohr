@@ -10,7 +10,7 @@ $(function EmployeeOnboard() {
      * Set default company Id
      * @type {number}
      */
-    var companyId;
+    var companyId = $("#jsPayrollEmployeesTable").data("company_sid");
 
     /**
      * Set modal id
@@ -65,6 +65,18 @@ $(function EmployeeOnboard() {
      * @type {null|int}
      */
     var splitType;
+
+    /**
+     * Saves the employee job sid
+     * @type {null|int}
+     */
+    var employeeJobID;
+
+    /**
+     * Saves the employee Hire Date
+     * @type {null|string}
+     */
+    var employeeHireDate;
 
     /**
      * Saves reference of function
@@ -196,11 +208,13 @@ $(function EmployeeOnboard() {
         //
         event.preventDefault();
         //
-        employeeId = $(this)
+        var employee_sid = $(this)
             .closest(".jsPayrollEmployeeRow")
             .data("id");
+        employeeID = employee_sid;
+        employeeId = employee_sid;
         //
-        StartOnboardProcess()
+        StartOnboardProcess();
     });
 
     /**
@@ -219,7 +233,7 @@ $(function EmployeeOnboard() {
             Loader: modalLoader,
             Container: 'container-fluid',
             CancelClass: 'btn-cancel csW'
-        }, StartEmployeeOnboarding);
+        }, AddUpdateCompanyEmployeeProfile);
     }
 
     /**
@@ -526,13 +540,13 @@ $(function EmployeeOnboard() {
                 ECB
             );
         }
-        if (!o.StartDate) {
-            return alertify.alert(
-                "Warning!",
-                "Start date is mandatory.",
-                ECB
-            );
-        }
+        // if (!o.StartDate) {
+        //     return alertify.alert(
+        //         "Warning!",
+        //         "Start date is mandatory.",
+        //         ECB
+        //     );
+        // }
         if (!o.SSN) {
             return alertify.alert("Warning!", "SSN is mandatory.", ECB);
         }
@@ -550,10 +564,122 @@ $(function EmployeeOnboard() {
                 ECB
             );
         }
-        if (!o.EWA) {
+        // if (!o.EWA) {
+        //     return alertify.alert(
+        //         "Warning!",
+        //         "Employee work address is required.",
+        //         ECB
+        //     );
+        // }
+        
+        ml(true, modalLoader);
+        
+        xhr = $.ajax({
+                method: "POST",
+                headers: { "Content-Type": "application/json", Key: API_KEY },
+                url: API_URL + "/" + employeeID,
+                data: JSON.stringify(o),
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                ml(false, modalLoader);
+                //
+                if (!resp.status) {
+                    return alertify.alert(
+                        "Error!",
+                        typeof resp.response === "object" ?
+                        resp.response.join("<br/>") :
+                        resp.response,
+                        ECB
+                    );
+                }
+
+                return alertify.alert(
+                    "Success!",
+                    resp.response,
+                    UpdateCompanyEmployeeCompensation
+                );
+            })
+            .error(HandleError);
+    }
+
+    /**
+     * Get employee onboarding compensation
+     */
+    function UpdateCompanyEmployeeCompensation() {
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL(
+                    "get_payroll_page/get_company_employee_compensation/" + companyId
+                ),
+                data: { employee_id: employeeID },
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                API_KEY = resp.API_KEY;
+                API_URL = resp.EMPLOYEE_URL;
+                employeeJobID = resp.JOB_ID;
+                employeeHireDate = resp.JOB_HIRE_DATE;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    $(".jsPayrollEmployeeOnboard").click(SendEmployeeToOnboardProcess);
+                    $(".jsPayrollSaveEmployeeJobInfo").click(SaveCompanyEmployeeJob);
+                    //
+                    ml(false, modalLoader);
+                });
+            })
+            .error(HandleError);
+    }
+
+    /**
+     * Save company Employee job
+     * @param {object} event
+     * @returns
+     */
+    function SaveCompanyEmployeeJob(event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        o.Title = $(".jsJobTitle").val().trim();
+        o.Rate = $(".jsAmount").val().trim();
+        o.FlsaStatus = $(".jsEmployeeType option:selected").val();
+        o.PaymentUnit = $(".jsSalaryType option:selected").val();
+        o.EffectiveDate = employeeHireDate;
+        o.CompanyId = companyId;
+        // Validation
+        if (!o.Title) {
             return alertify.alert(
                 "Warning!",
-                "Employee work address is required.",
+                "Job title is mandatory.",
+                ECB
+            );
+        }
+        if (!o.FlsaStatus) {
+            return alertify.alert(
+                "Warning!",
+                "Employee type is mandatory.",
+                ECB
+            );
+        }
+        if (!o.Rate) {
+            return alertify.alert(
+                "Warning!",
+                "Salary amount is mandatory.",
+                ECB
+            );
+        }
+        if (!o.PaymentUnit) {
+            return alertify.alert(
+                "Warning!",
+                "Salary type is mandatory.",
                 ECB
             );
         }
@@ -563,7 +689,8 @@ $(function EmployeeOnboard() {
         xhr = $.ajax({
                 method: "POST",
                 headers: { "Content-Type": "application/json", Key: API_KEY },
-                url: API_URL + "/" + employeeID,
+                // url: API_URL + "/" + employeeID + "/jobs",
+                url: API_URL + "/" + employeeJobID,
                 data: JSON.stringify(o),
             })
             .done(function(resp) {
@@ -676,121 +803,11 @@ $(function EmployeeOnboard() {
         }
         //
         ml(true, modalLoader);
-        console.log(employeeID);
+        //
         xhr = $.ajax({
                 method: "POST",
                 headers: { "Content-Type": "application/json", Key: API_KEY },
                 url: API_URL + "/" + employeeID + "/home_address",
-                data: JSON.stringify(o),
-            })
-            .done(function(resp) {
-                //
-                xhr = null;
-                //
-                ml(false, modalLoader);
-                //
-                if (!resp.status) {
-                    return alertify.alert(
-                        "Error!",
-                        typeof resp.response === "object" ?
-                        resp.response.join("<br/>") :
-                        resp.response,
-                        ECB
-                    );
-                }
-
-                return alertify.alert(
-                    "Success!",
-                    resp.response,
-                    UpdateCompanyEmployeeCompensation
-                );
-            })
-            .error(HandleError);
-        //
-    }
-
-    /**
-     * Get employee onboarding compensation
-     */
-    function UpdateCompanyEmployeeCompensation() {
-        //
-        ml(true, modalLoader);
-        //
-        xhr = $.ajax({
-                method: "GET",
-                url: GetURL(
-                    "get_payroll_page/get_company_employee_compensation/" + companyId
-                ),
-                data: { employee_id: employeeID },
-            })
-            .done(function(resp) {
-                //
-                xhr = null;
-                API_KEY = resp.API_KEY;
-                API_URL = resp.EMPLOYEE_URL;
-                //
-                LoadContent(resp.html, function() {
-                    //
-                    $(".jsPayrollEmployeeOnboard").click(SendEmployeeToOnboardProcess);
-                    $(".jsPayrollSaveEmployeeJobInfo").click(SaveCompanyEmployeeJob);
-                    //
-                    ml(false, modalLoader);
-                });
-            })
-            .error(HandleError);
-    }
-
-    /**
-     * Save company Employee job
-     * @param {object} event
-     * @returns
-     */
-    function SaveCompanyEmployeeJob(event) {
-        //
-        event.preventDefault();
-        //
-        var o = {};
-        o.Title = $(".jsJobTitle").val().trim();
-        o.Rate = $(".jsAmount").val().trim();
-        o.FlsaStatus = $(".jsEmployeeType option:selected").val();
-        o.PaymentUnit = $(".jsSalaryType option:selected").val();
-        o.CompanyId = companyId;
-        // Validation
-        if (!o.Title) {
-            return alertify.alert(
-                "Warning!",
-                "Job title is mandatory.",
-                ECB
-            );
-        }
-        if (!o.FlsaStatus) {
-            return alertify.alert(
-                "Warning!",
-                "Employee type is mandatory.",
-                ECB
-            );
-        }
-        if (!o.Rate) {
-            return alertify.alert(
-                "Warning!",
-                "Salary amount is mandatory.",
-                ECB
-            );
-        }
-        if (!o.PaymentUnit) {
-            return alertify.alert(
-                "Warning!",
-                "Salary type is mandatory.",
-                ECB
-            );
-        }
-        //
-        ml(true, modalLoader);
-        //
-        xhr = $.ajax({
-                method: "POST",
-                headers: { "Content-Type": "application/json", Key: API_KEY },
-                url: API_URL + "/" + employeeID + "/jobs",
                 data: JSON.stringify(o),
             })
             .done(function(resp) {
@@ -818,6 +835,8 @@ $(function EmployeeOnboard() {
             .error(HandleError);
         //
     }
+
+    
 
     function UpdateEmployeeFederalTax() {
         //

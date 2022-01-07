@@ -1,83 +1,41 @@
 <?php 
     $menuArray = [];
-    // Company
-    $menuArray['company'] = [
-        'name' => 'Company',
-        'slug' => '',
+    // 
+    $menuArray['employee_profile'] = [
+        'name' => 'Personal details',
+        'slug' => 'employee_profile',
         'sub' => []
     ];
-    $menuArray['company']['sub'][] = [
-        'name' => 'Company Address',
-        'slug'=> 'company_address'
-    ];
-    $menuArray['company']['sub'][] = [
-        'name' => 'Federal Tax Info',
-        'slug'=> 'federal_tax_info'
-    ];
-    // $menuArray['company']['sub'][] = [
-    //     'name' => 'Industry',
-    //     'slug'=> 'industry'
-    // ];
-    $menuArray['bank'] = [
-        'name' => 'Bank info',
-        'slug' => 'bank_info',
-        'sub' => []
-    ];
-    $menuArray['employee'] = [
-        'name' => 'Employees',
-        'slug' => 'employee',
-        'sub' => []
-    ];
-    $menuArray['employee']['sub'][] = [
-        'name' => 'Profile',
-        'slug'=> 'employee_profile'
-    ];
-    $menuArray['employee']['sub'][] = [
-        'name' => 'Address',
-        'slug'=> 'employee_address'
-    ];
-    $menuArray['employee']['sub'][] = [
+    $menuArray['employee_compensation'] = [
         'name' => 'Compensation',
-        'slug'=> 'employee_compensation'
+        'slug' => 'employee_compensation',
+        'sub' => []
     ];
-    $menuArray['employee']['sub'][] = [
-        'name' => 'Federal Tax',
-        'slug'=> 'employee_federal_tax'
+    $menuArray['employee_address'] = [
+        'name' => 'Home address',
+        'slug' => 'employee_address',
+        'sub' => []
     ];
-    $menuArray['employee']['sub'][] = [
+    $menuArray['employee_federal_tax'] = [
+        'name' => 'Federal tax',
+        'slug' => 'employee_federal_tax',
+        'sub' => []
+    ];
+    $menuArray['employee_state_tax'] = [
         'name' => 'State Tax',
-        'slug'=> 'employee_state_tax'
-    ];
-    $menuArray['employee']['sub'][] = [
-        'name' => 'Payment',
-        'slug'=> 'employee_payment'
-    ];
-    $menuArray['payroll'] = [
-        'name' => 'Payroll',
-        'slug' => 'payroll',
+        'slug' => 'employee_state_tax',
         'sub' => []
     ];
-    $menuArray['tax_details'] = [
-        'name' => 'Tax Details',
-        'slug' => 'tax_details',
+    $menuArray['employee_payment'] = [
+        'name' => 'Payment method',
+        'slug' => 'employee_payment',
         'sub' => []
     ];
-    $menuArray['sign_documents'] = [
-        'name' => 'Sign Documents',
-        'slug' => 'sign_documents',
-        'sub' => []
-    ];
-    $menuArray['bank_verification'] = [
-        'name' => 'Bank Verification',
-        'slug' => 'bank_verification',
-        'sub' => []
-    ];
-
 ?>
 <div class="col-md-2 col-sm-12">
     <div class="panel panel-theme">
         <div class="panel-heading csF16 csB7">
-            Onboarding
+            Employee Onboarding
         </div>
         <div class="panel-body">
             <ul class="csSidebarUL">

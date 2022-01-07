@@ -3,7 +3,7 @@
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->
-            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee", "subIndex" =>"employee_state_tax"]);?>
+            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee_state_tax", "subIndex" =>""]);?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
                 <!-- Heading -->
@@ -44,11 +44,11 @@
                         </p>
                         <select class="form-control jsFilingStatus">
                             <option value="0">Select…</option>
-                            <option value="Single" <?=!empty($state_tax_info) &&  $state_tax_info['filing_status'] === "Single" ? 'selected="selected"' : '';?>>Single or married filing separately</option>
-                            <option value="Married one income" <?=!empty($state_tax_info) &&  $state_tax_info['filing_status'] === "Married one income" ? 'selected="selected"' : '';?>>Married filing jointly</option>
-                            <option value="Married dual income" <?=!empty($state_tax_info) &&  $state_tax_info['filing_status'] === "Married dual income" ? 'selected="selected"' : '';?>>Head of household</option>
-                            <option value="Head of household" <?=!empty($state_tax_info) &&  $state_tax_info['filing_status'] === "Head of household" ? 'selected="selected"' : '';?>>Exempt from withholding</option>
-                            <option value="Do Not Withhold" <?=!empty($state_tax_info) &&  $state_tax_info['filing_status'] === "Do Not Withhold" ? 'selected="selected"' : '';?>>Exempt from withholding</option>
+                            <option value="S" <?=!empty($state_tax_info) &&  $state_tax_info['filing_status'] === "S" ? 'selected="selected"' : '';?>>Single or married filing separately</option>
+                            <option value="M" <?=!empty($state_tax_info) &&  $state_tax_info['filing_status'] === "M" ? 'selected="selected"' : '';?>>Married filing jointly</option>
+                            <option value="MD" <?=!empty($state_tax_info) &&  $state_tax_info['filing_status'] === "MD" ? 'selected="selected"' : '';?>>Head of household</option>
+                            <option value="H" <?=!empty($state_tax_info) &&  $state_tax_info['filing_status'] === "H" ? 'selected="selected"' : '';?>>Exempt from withholding</option>
+                            <option value="E" <?=!empty($state_tax_info) &&  $state_tax_info['filing_status'] === "E" ? 'selected="selected"' : '';?>>Exempt from withholding</option>
                         </select>
                     </div>
                 </div>

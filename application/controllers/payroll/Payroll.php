@@ -70,6 +70,11 @@ class Payroll extends CI_Controller
         $this->data['SelectedTab'] = $type;
         $this->data['PageScripts'] = ['payroll/js/employee', 'payroll/js/employee_onboard'];
         //
+        $session = $this->session->userdata('logged_in');
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['company_sid'] = $company_sid;
+        //
         $this->load
         ->view('main/header', $this->data)
         ->view('payroll/employees_list')

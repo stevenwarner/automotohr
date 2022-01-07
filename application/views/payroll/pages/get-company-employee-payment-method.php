@@ -3,7 +3,7 @@
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->
-            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee", "subIndex" =>"employee_payment"]);?>
+            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee_payment", "subIndex" =>""]);?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
                 <!-- Heading -->
@@ -20,7 +20,7 @@
                             Employee payment details
                         </h1>
                         <p class="csF16">
-                            We recommend direct deposit -- we can deposit paychecks directly into your employee's bank accounts.
+                            We recommend direct deposit — we can deposit paychecks directly into your employees' bank accounts.
                         </p>
                     </div>
                 </div>
@@ -62,11 +62,11 @@
                 <br>
                 <div class="row jsBaseOnDD" <?=$addBankAccount?>>
                     <div class="col-md-12 col-xs-12">
-                        <label class="csF16 csB7">
+                        <label class="csF18 csB7">
                             Employee bank account
                         </label>
-                        <p>
-                            Enter the details of the bank account the epmloyee wishes to be paid with. Multiple accounts can be added after contuining this page.
+                        <p class="csF16">
+                            Enter the details of the bank account the employee wishes to be paid with. Multiple accounts can be added after continuing this page.
                         </p>
                         <span style="<?=!empty($payment_method) ? 'displayed:none;' : '';?>">
                             <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;</i><a href="javascript:;" class="jsAddEmployeeBankAccount" data-account_id="0">Add bank account</a>

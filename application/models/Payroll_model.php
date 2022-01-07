@@ -619,6 +619,7 @@ class Payroll_model extends CI_Model{
         ->select("
             {$this->tables['PEJ']}.sid,
             {$this->tables['PEJ']}.title,
+            {$this->tables['PEJ']}.hire_date,
             {$this->tables['PEJC']}.rate,
             {$this->tables['PEJC']}.payment_unit,
             {$this->tables['PEJC']}.flsa_status,

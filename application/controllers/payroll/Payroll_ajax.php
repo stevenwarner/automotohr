@@ -122,7 +122,7 @@ class Payroll_ajax extends CI_Controller
         //
         if($page === 'employees'){
             // Fetch employees
-            $data['employees'] = $this->em->GetCompanyEmployees($companyId, [
+            $data['employees'] = $this->sem->GetCompanyEmployees($companyId, [
                 "users.sid",
                 "users.first_name",
                 "users.last_name",
@@ -372,7 +372,7 @@ class Payroll_ajax extends CI_Controller
             //
             $data['states'] = $this->pm->GetStates();
             //
-            $employee_info = $this->em->GetEmployeeDetails($_POST["employee_id"], [
+            $employee_info = $this->sem->GetEmployeeDetails($_POST["employee_id"], [
                 "users.sid",
                 "users.first_name",
                 "users.middle_name",
@@ -472,7 +472,7 @@ class Payroll_ajax extends CI_Controller
         }
         //
         if($page === 'get-company-all-employees'){
-            $companyEmployees = $this->em->GetCompanyEmployees($companyId, [
+            $companyEmployees = $this->sem->GetCompanyEmployees($companyId, [
                 "users.sid",
                 "users.first_name",
                 "users.last_name",
@@ -619,7 +619,7 @@ class Payroll_ajax extends CI_Controller
             //
             $payrollEmployeesList = array_column($payrollEmployees, "employee_sid");
             //
-            $companyEmployees = $this->em->GetCompanyEmployees($companyId, [
+            $companyEmployees = $this->sem->GetCompanyEmployees($companyId, [
                 "users.sid",
                 "users.first_name",
                 "users.last_name",
@@ -665,7 +665,7 @@ class Payroll_ajax extends CI_Controller
             //
             $payrollEmployeesList = array_column($payrollEmployees, "employee_sid");
             //
-            $companyEmployees = $this->em->GetCompanyEmployees($companyId, [
+            $companyEmployees = $this->sem->GetCompanyEmployees($companyId, [
                 "users.sid",
                 "users.first_name",
                 "users.last_name",
@@ -704,7 +704,7 @@ class Payroll_ajax extends CI_Controller
             //
             $data['workAddressId'] = $this->pm->GetWorkAddressId($_GET["employee_id"]);
             //
-            $data['employee_info'] = $this->em->GetEmployeeDetails($_GET["employee_id"], [
+            $data['employee_info'] = $this->sem->GetEmployeeDetails($_GET["employee_id"], [
                 "users.sid",
                 "users.first_name",
                 "users.last_name",
@@ -713,7 +713,8 @@ class Payroll_ajax extends CI_Controller
                 "users.	dob",
                 "users.ssn",
                 "users.registration_date",
-                "users.joined_at"
+                "users.joined_at",
+                "users.rehire_date",
             ]);
             //
             return SendResponse(200,[
@@ -729,7 +730,7 @@ class Payroll_ajax extends CI_Controller
             //
             $data['states'] = $this->pm->GetStates();
             //
-            $data['employee_address_info'] = $this->em->GetEmployeeDetails($_GET["employee_id"], [
+            $data['employee_address_info'] = $this->sem->GetEmployeeDetails($_GET["employee_id"], [
                 "users.sid",
                 "users.Location_Country",
                 "users.Location_State",
@@ -754,8 +755,10 @@ class Payroll_ajax extends CI_Controller
             $data['employee_job_info'] = $this->pm->GetEmployeeJobDetails($_GET["employee_id"]);
             //
             return SendResponse(200,[
+                'JOB_ID' => $data['employee_job_info']['sid'],
+                'JOB_HIRE_DATE' => $data['employee_job_info']['hire_date'],
                 'API_KEY' => getAPIKey(),
-                'EMPLOYEE_URL' => getAPIUrl("employees"),
+                'EMPLOYEE_URL' => getAPIUrl("job_compensation"),
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
         }
