@@ -1,22 +1,5 @@
 <?php
-function redirect_traffic()
-{
-    $allowedHTTPUrls = [];
-    $allowedHTTPUrls['automotohr.local/shakoor'] = true;
-    //
-    $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'http';
-    //
-    if(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']!= 'https') {
-        $original_url = $_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
-        $url_parts = parse_url($original_url);
-        $url = preg_replace('/^www\./i', '', $url_parts['path']);
-        //
-        if(!isset($allowedHTTPUrls[strtolower($url)])){
-            return header("Location: http://{$original_url}", true);
-        }
-    }
-}
-redirect_traffic();
+
 $GLOBALS['BENCHMARKSTARTTIME'] = microtime(true);
 /**
  * CodeIgniter
@@ -327,7 +310,7 @@ if($_SERVER['HTTP_HOST'] == 'www.automotohr.com' || $_SERVER['HTTP_HOST'] == 'au
 	ini_set('display_errors', 0);
 } else{
 	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
+	ini_set('display_errors', 0);
 }
 
 //

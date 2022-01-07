@@ -79,6 +79,9 @@ class Custom_job_feeds_management extends Admin_Controller{
                     $insert_data['url'] = base_url().'job_feeds/'.$insert_data['slug'];
                     $insert_data['creator_sid'] = $admin_id;
                     $insert_id = $this->custom_job_feeds_management_model->insert_custom_feed($insert_data);
+                    if ($insert_id){
+                        $this->update_http_url($insert_data);
+                    }
 
                     $redirect = $this->input->post('form-submit');
 
@@ -90,6 +93,13 @@ class Custom_job_feeds_management extends Admin_Controller{
                 break;
             }
         }
+    }
+
+    //
+    public function update_http_url($data_array){
+
+        _e($data_array, true, true);
+
     }
 
     public function edit_job_feed($feed_id)
