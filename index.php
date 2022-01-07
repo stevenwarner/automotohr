@@ -1,5 +1,23 @@
 <?php
-
+function redirect_traffic()
+{
+    $file_name = 'http_urls.json';
+    $file = fopen($file_name, 'r');
+    $allowedHTTPUrls =  fread($file, filesize($file_name));
+    //
+    $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'http';
+    //
+    if(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']!= 'https') {
+        $original_url = $_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
+        $url_parts = parse_url($original_url);
+        $url = preg_replace('/^www\./i', '', $url_parts['path']);
+        //
+        if(!isset($allowedHTTPUrls[strtolower($url)])){
+            return header("Location: http://{$original_url}", true);
+        }
+    }
+}
+redirect_traffic();
 $GLOBALS['BENCHMARKSTARTTIME'] = microtime(true);
 /**
  * CodeIgniter
