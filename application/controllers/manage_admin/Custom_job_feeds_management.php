@@ -80,7 +80,7 @@ class Custom_job_feeds_management extends Admin_Controller{
                     $insert_data['creator_sid'] = $admin_id;
                     $insert_id = $this->custom_job_feeds_management_model->insert_custom_feed($insert_data);
                     // update the url in http_urls file
-                    $this->update_http_url($insert_data);
+                    $this->update_http_url($insert_data['url']);
                     $redirect = $this->input->post('form-submit');
 
                     if($redirect == 'Save and Add More'){
@@ -131,7 +131,7 @@ class Custom_job_feeds_management extends Admin_Controller{
                     $update_data['type'] = $this->input->post('type');
                     $update_data['url'] = base_url().'job_feeds/'.$update_data['slug'];
                     $this->custom_job_feeds_management_model->update_custom_feed($feed_id, $update_data);
-                    $this->update_http_url($update_data);
+                    $this->update_http_url($update_data['url']);
                     $this->session->set_flashdata('message', '<b>Success:</b> Feed Updated Successfully');
                     redirect(base_url('manage_admin/custom_job_feeds_management'), 'refresh');
                 break;
@@ -166,26 +166,26 @@ class Custom_job_feeds_management extends Admin_Controller{
     }
 
     /**
-     * @param $data_array
-     * @return bool
+     * Update custom feed URLs on file
+     * @param string
      */
-    public function update_http_url($data_array)
-    {
-        $file_name = APPPATH.'../http_urls.json';
+    private function update_http_url($url){
+        $urlParts = parse_url($url);
+        $url = (preg_replace('/^www\./', '', $urlParts['host'])).$urlParts['path'];
+        $file_name = APPPATH.'../ahr_jsons/http_urls.json';
+        //
         $file = fopen($file_name, 'r');
         // read data from file
         $file_data =  fread($file, filesize($file_name));
         $file_data = json_decode($file_data, true);
         // save data to file
-        $file_data[$data_array['slug']] = $data_array['url'];
+        $file_data[strtolower($url)] = true;
         // open file to write
         $file = fopen($file_name, 'w');
         // write data in file
         fwrite($file, json_encode($file_data));
         // close file after saving data
         fclose($file);
-        // response
-        return true;
     }
 
 }
