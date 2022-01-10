@@ -947,12 +947,53 @@ $(function EmployeeOnboard() {
                 //
                 LoadContent(resp.html, function() {
                     //
+                    xhr = $.ajax({
+                        method: "GET",
+                        headers: { "Content-Type": "application/json", Key: API_KEY },
+                        url: API_URL + "/" + companyId + "/" + employeeID + "/state_tax",
+                    })
+                    .done(function(resp) {
+                        //
+                        xhr = null;
+                        //
+                        ml(false, modalLoader);
+                        //
+                        $("#JSStateName").text(resp.State_Name);
+                        console.log(resp.questions)
+                        var html = "";
+                        resp.questions.map(function(q,v){
+                            html += '<div class="row">';
+                            html += '    <div class="col-md-12 col-xs-12">';
+                            html += '        <label class="csF16 csB7">';
+                            html +=             q.label
+                            html += '        </label>';
+                            html += '        <p class="csF16">';
+                            html +=             q.description;
+                            html += '        </p>';
+
+                            if (q.input_question_format.type == "Select") {
+                                html += '<select class="form-control js'+q.key+'" data-field_key="'+q.key+'">';
+                                    q.input_question_format.options.map(function(op){
+                                        html += '<option value="'+op.value+'">'+op.label+'</option>';
+                                    })
+                                html += '</select>';
+                            } else {
+                                html += '<input type="'+q.input_question_format.type+'" class="form-control js'+q.key+'" data-field_key="'+q.key+'" value="">';
+                            }
+                                    
+                            html += '    </div>';
+                            html += '</div>';
+                            html += '</br>';
+                        });
+                        $("#JSQusetionSection").html(html);
+                    })
+                    .error(HandleError);
+                    //
                     $(".jsPayrollEmployeeOnboard").click(SendEmployeeToOnboardProcess);
                     $(".jsPayrollSaveEmployeeStateTax").click(
                         SaveCompanyEmployeeStateTax
                     );
                     //
-                    ml(false, modalLoader);
                 });
             })
             .error(HandleError);
@@ -968,10 +1009,18 @@ $(function EmployeeOnboard() {
         event.preventDefault();
         //
         var o = {};
-        o.FilingStatus = $(".jsFilingStatus option:selected").val();
-        o.WithholdingAllowance = $(".jsWithholdingAllowance").val();
-        o.AdditionalWithholding = $(".jsAdditionalWithholding").val();
+        //
+        $('.form-control').each(function(){ 
+            var key = $(this).data('field_key');
+            o.key = $(".js"+key).val();
+        });
+        //
+        
+        // o.FilingStatus = $(".jsFilingStatus option:selected").val();
+        // o.WithholdingAllowance = $(".jsWithholdingAllowance").val();
+        // o.AdditionalWithholding = $(".jsAdditionalWithholding").val();
         o.CompanyId = companyId;
+        console.log(o)
         // Validation
         if (!o.WithholdingAllowance) {
             return alertify.alert(
@@ -980,38 +1029,39 @@ $(function EmployeeOnboard() {
                 ECB
             );
         }
+        console.log(o)
         //
         ml(true, modalLoader);
         //
-        xhr = $.ajax({
-                method: "POST",
-                headers: { "Content-Type": "application/json", Key: API_KEY },
-                url: API_URL + "/" + employeeID + "/state_tax",
-                data: JSON.stringify(o),
-            })
-            .done(function(resp) {
-                //
-                xhr = null;
-                //
-                ml(false, modalLoader);
-                //
-                if (!resp.status) {
-                    return alertify.alert(
-                        "Error!",
-                        typeof resp.response === "object" ?
-                        resp.response.join("<br/>") :
-                        resp.response,
-                        ECB
-                    );
-                }
+        // xhr = $.ajax({
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/json", Key: API_KEY },
+        //         url: API_URL + "/" + employeeID + "/state_tax",
+        //         data: JSON.stringify(o),
+        //     })
+        //     .done(function(resp) {
+        //         //
+        //         xhr = null;
+        //         //
+        //         ml(false, modalLoader);
+        //         //
+        //         if (!resp.status) {
+        //             return alertify.alert(
+        //                 "Error!",
+        //                 typeof resp.response === "object" ?
+        //                 resp.response.join("<br/>") :
+        //                 resp.response,
+        //                 ECB
+        //             );
+        //         }
 
-                return alertify.alert(
-                    "Success!",
-                    resp.response,
-                    UpdateEmployeePaymentMethod
-                );
-            })
-            .error(HandleError);
+        //         return alertify.alert(
+        //             "Success!",
+        //             resp.response,
+        //             UpdateEmployeePaymentMethod
+        //         );
+        //     })
+        //     .error(HandleError);
         //
     }
 
