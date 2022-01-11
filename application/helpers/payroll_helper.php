@@ -77,9 +77,7 @@ if(!function_exists('AddEmployeeToCompany')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                AddEmployeeToCompany($request, $company);
-                //
-                return;
+                return AddEmployeeToCompany($request, $company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -116,9 +114,7 @@ if(!function_exists('DeleteCompanyEmployee')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                DeleteCompanyEmployee($employee_id, $company);
-                //
-                return;
+                return DeleteCompanyEmployee($employee_id, $company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -157,9 +153,7 @@ if(!function_exists('AddCompanyLocation')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                AddCompanyLocation($request, $company);
-                //
-                return false;
+                return AddCompanyLocation($request, $company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -197,7 +191,7 @@ if(!function_exists('Payrolls')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                Payrolls($company);
+                return Payrolls($company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -237,7 +231,7 @@ if(!function_exists('AddBankAccountToPayroll')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                AddBankAccountToPayroll($request, $company);
+                return AddBankAccountToPayroll($request, $company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -276,7 +270,7 @@ if(!function_exists('DeleteBankAccountToPayroll')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                DeleteBankAccountToPayroll($request, $company);
+                return DeleteBankAccountToPayroll($request, $company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -316,7 +310,7 @@ if(!function_exists('AddCompanyBankAccountToPayroll')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                AddCompanyBankAccountToPayroll($request, $company);
+                return AddCompanyBankAccountToPayroll($request, $company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -399,7 +393,7 @@ if(!function_exists('GetCompanyEmployees')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                GetCompanyEmployees($company);
+                return GetCompanyEmployees($company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -441,7 +435,7 @@ if(!function_exists('GetCompany')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                GetCompany($company);
+                return GetCompany($company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -484,7 +478,7 @@ if(!function_exists('UpdatePayrollById')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                UpdatePayrollById($request, $company);
+                return UpdatePayrollById($request, $company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -525,7 +519,7 @@ if(!function_exists('CalculatePayroll')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                CalculatePayroll($company);
+                return CalculatePayroll($company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -607,7 +601,7 @@ if(!function_exists('SubmitPayrollById')){
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                SubmitPayrollById($company);
+                return SubmitPayrollById($company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
