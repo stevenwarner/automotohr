@@ -10433,6 +10433,28 @@ class Hr_documents_management extends Public_Controller {
                     AWS_S3_BUCKET_URL.$post['data']['s3_filename']
                 );
             }
+
+            if ($post['type'] == 'I9' || $post['type'] == 'W9' || $post['type'] == 'W4') {
+                $employee_sid = $post['employeeSid'];
+                $supporting_DOC = $this->hr_documents_management_model->get_varification_supporting_document($post['employeeSid'], $post['type']);
+                //
+                if (!empty($supporting_DOC)) {
+                    $dir = ROOTPATH.'temp_files/employee_export/'.$post['token'].'/'.$post['userFullNameSlug'].'/suporting_documents/'.$post['type'].'/';
+                    //
+                    if(!is_dir($dir)) mkdir($dir, 0777, true);
+                    //
+                    foreach ($supporting_DOC as $SD) {
+                        downloadFileFromAWS(
+                            getFileName(
+                                $dir.time().'_'.$SD['document_name'],
+                                AWS_S3_BUCKET_URL.$SD['s3_filename']
+                            ), 
+                            AWS_S3_BUCKET_URL.$SD['s3_filename']
+                        );
+                    }
+                }
+                
+            }
         } else{
             // Verification documents
             $pathWithFile = $dir.time().'_'.$post['type'].'.pdf';

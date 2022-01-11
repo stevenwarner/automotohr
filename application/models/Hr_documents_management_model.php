@@ -2531,6 +2531,30 @@ class Hr_documents_management_model extends CI_Model {
         return $record;
     }
 
+    function get_varification_supporting_document($employee_sid, $form_type){
+        $varification_type = '';
+        //
+        if ($form_type == "I9") {
+            $varification_type = 'i9_assigned';
+        } else if ($form_type == "W9") {
+            $varification_type = 'w9_assigned';
+        } else if ($form_type == "W4") {
+            $varification_type = 'w4_assigned';
+        }
+        //
+        $this->db->select('*');
+        $this->db->where('employee_sid', $employee_sid);
+        $this->db->where('form_type', $varification_type);
+        $records_obj = $this->db->get('eev_required_documents');
+        $records_arr = $records_obj->result_array();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
     function insert_required_document($data_to_insert){
         if($data_to_insert['sid'] > 0){
             $this->db->where('sid', $data_to_insert['sid']);
