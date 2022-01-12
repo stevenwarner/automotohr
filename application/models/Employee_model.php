@@ -973,7 +973,9 @@
             PhoneNumber,
             job_title,
             dob,
-            IF(joined_at = null, registration_date, joined_at) as joined_at,
+            registration_date,
+            joined_at,
+            rehire_date,
             profile_picture,
             employee_type,
             access_level,
@@ -990,6 +992,9 @@
             return [];
         }
         //
+        $JoinedDate = get_employee_latest_joined_date($v['registration_date'], $v['joined_at'], '', true);
+        $rehiredDate = get_employee_latest_joined_date('', '', $v['rehire_date'], true);
+        //
         $a = [
             'Id' => $v['sid'],
             'Name' => ucwords($v['first_name'].' '.$v['last_name']),
@@ -1001,7 +1006,8 @@
             'JobTitle' => ucwords(strtolower($v['job_title'])),
             'Phone' => $v['PhoneNumber'],
             'DOB' => empty($v['dob']) || $v['dob'] == '0000-00-00' ? '' : DateTime::createfromformat('Y-m-d', $v['dob'])->format('Y-m-d'),
-            'JoinedDate' => empty($v['joined_at']) ? '' : DateTime::createfromformat('Y-m-d H:i:s', $v['joined_at'])->format('Y-m-d')
+            'JoinedDate' => $JoinedDate,
+            'RehiredDate' => $rehiredDate
         ];
         //
         $a = array_merge(
@@ -1548,6 +1554,47 @@
         ->order_by('sid', 'ASC')
         ->get('employee_merge_history')
         ->result_array();
+    }
+
+    /**
+     * Update rehire date in employee status
+     * 
+     * @param number $employeeId
+     * @return
+     */
+    function updateEmployeeRehireDate($rehireDate, $employeeId, $changed_by){
+        //
+
+        $this->db->select('sid');
+        $this->db->where('employee_status', 8);
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->order_by('sid', 'DESC');
+        $record_obj = $this->db->get('terminated_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $row_sid = $record_arr['sid'];
+            //
+            $data_to_update = array();
+            $data_to_update['status_change_date'] = $rehireDate;
+            //            
+            $this->db->where('sid', $row_sid);
+            $this->db->update('terminated_employees', $data_to_update);
+        } else {
+            $data_to_insert = array();
+            $data_to_insert['employee_status'] = 8;
+            $data_to_insert['details'] = '';
+            $data_to_insert['status_change_date'] = $rehireDate;
+            $data_to_insert['termination_date'] = $rehireDate;
+            $data_to_insert['employee_sid '] = $employeeId;
+            $data_to_insert['changed_by'] = $changed_by;
+            $data_to_insert['ip_address'] = getUserIP();
+            $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+            $data_to_insert['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+
+            $this->db->insert('terminated_employees',$data_to_insert);
+        }
     }
 
 }

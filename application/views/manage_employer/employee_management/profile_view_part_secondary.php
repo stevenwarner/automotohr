@@ -188,7 +188,7 @@
                         <div class="col-md-6 col-xs-12">
                             <label class="csF16">Joining Date</label>
                             <?php
-                                $joiningDate = date_with_time(!empty($me["joined_at"]) ? $me["joined_at"] : $me["registration_date"]);
+                                $joiningDate = get_employee_latest_joined_date($me['registration_date'], $me['joined_at'], $me['rehire_date'], true);
                             ?>
                             <p class="dummy-invoice-fields"><?=GetVal($joiningDate); ?></p>
                         </div>

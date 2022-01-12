@@ -1154,10 +1154,18 @@ class Settings extends Public_Controller
             $data["company"] = $this->dashboard_model->get_portal_detail($company_id);
             $data["employer"] = $this->dashboard_model->get_company_detail($employer_id);
             $data['above18'] = $data["employer"]['dob'] != NULL && $data["employer"]['dob'] != '0000-00-00' && !empty($data["employer"]['dob']) ? date('Y') - date('Y', strtotime($data["employer"]['dob'])) : 0;
-            $date_of_emp = !empty($data["employer"]['registration_date']) && $data["employer"]['registration_date'] != NULL ? $data["employer"]['registration_date'] : '';
-            if (empty($date_of_emp)) {
-                $date_of_emp = !empty($data["employer"]['joined_at']) && $data["employer"]['joined_at'] != NULL ? $data["employer"]['joined_at'] : '';
-            }
+            //
+            // ***This below is old logic to get employee joining date*** //
+            //
+            // $date_of_emp = !empty($data["employer"]['registration_date']) && $data["employer"]['registration_date'] != NULL ? $data["employer"]['registration_date'] : '';
+            // if (empty($date_of_emp)) {
+            //     $date_of_emp = !empty($data["employer"]['joined_at']) && $data["employer"]['joined_at'] != NULL ? $data["employer"]['joined_at'] : '';
+            // }
+            //
+            // ***This below is new logic to get employee joining date*** //
+            //
+            $date_of_emp = get_employee_latest_joined_date($data["employer"]['registration_date'], $data["employer"]['joined_at'], $data["employer"]['rehire_date']);
+            //
             if (!empty($date_of_emp)) {
                 $data['month'] = date('F', strtotime($date_of_emp));
                 $data['year'] = date('Y', strtotime($date_of_emp));

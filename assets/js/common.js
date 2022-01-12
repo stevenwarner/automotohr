@@ -73,7 +73,15 @@ $(document).on('click', '.jsEmployeeQuickProfile', function(event) {
         Title: 'Employee Quick Profile View',
         Body: '<div class="container"><div id="jsEmployeeQuickProfileModalBody"></div></div>'
     }, function() {
-        GetAllEmployee(employeeId, 'jsEmployeeQuickProfileModal');
+        
+        if (employeeId) {
+            var html = '<div id="jsEmployeeQuickProfileModalMainBody"></div>';
+            //
+            $('#jsEmployeeQuickProfileModalBody').html(html);
+            GetSpecificEmployeeDetails(employeeId, 'jsEmployeeQuickProfileModal')
+        } else {
+            GetAllEmployee(employeeId, 'jsEmployeeQuickProfileModal');
+        }
     });
 });
 
@@ -147,6 +155,47 @@ function GetEmployeeDetails(
 ) {
     //
     var employeeId = $('#' + id + 'Select').val();
+    //
+    if (employeeId === 0) {
+        // flush view
+        $('#' + id + 'MainBody').html('');
+        return;
+    }
+    //
+    if (isXHRInProgress != null) {
+        isXHRInProgress.abort();
+    }
+    $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
+    //
+    isXHRInProgress =
+        $.get(window.location.origin + '/get_employee_profile/' + employeeId)
+        .done(function(resp) {
+            //
+            isXHRInProgress = null;
+            //
+            if (resp.Status === false) {
+                $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                $('#' + id + 'MainBody').html(resp.Msg);
+                return;
+            }
+            $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+            //
+            $('#' + id + 'MainBody').html(resp.Data);
+        })
+        .error(function(err) {
+            //
+            isXHRInProgress = null;
+            $('#' + id).html('Something went wrong while accessing the employee profile.');
+        });
+    //
+    return '<div id="' + (id) + '"><p class="text-center"><i class="fa fa-spinner fa-spin csF18 csB7" aria-hidden="true"></i></p></div>';
+}
+
+function GetSpecificEmployeeDetails(
+    employeeId,
+    id
+) {
+    
     //
     if (employeeId === 0) {
         // flush view

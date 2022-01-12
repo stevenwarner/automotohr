@@ -165,6 +165,29 @@
     <br>
     <div class="row">
         <div class="col-md-6 col-xs-12">
+            <label class="csF16">Rehire Date</label>
+            <?php
+                $rehireDate = $employer['rehire_date'] != NULL && $employer['rehire_date'] != '0000-00-00' ? date_with_time($employer['rehire_date']) : '';
+            ?>
+            <p class="dummy-invoice-fields">
+                <?=GetVal($rehireDate); ?>
+            </p>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <label class="csF16">Linkedin Profile URL</label>
+            <?php if (isset($employer["linkedin_profile_url"])) { ?>
+            <p class="dummy-invoice-fields"><a href="<?=$employer["linkedin_profile_url"]; ?>"
+                    target="_blank"><?=$employer["linkedin_profile_url"]; ?></a>
+            </p>
+            <?php } else{ ?>
+            <p class="dummy-invoice-fields"><?=GetVal($extra_info['other_PhoneNumber']); ?></p>
+            <?php } ?>
+        </div>
+    </div
+    <!--  -->
+    <br>
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
             <label class="csF16">Secondary Email</label>
             <?php
                 $secondaryEmail = isset($extra_info["secondary_email"]) && !empty($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : $employer["alternative_email"];
@@ -186,20 +209,6 @@
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Other Phone Number</label>
             <p class="dummy-invoice-fields"><?=GetVal($extra_info['other_PhoneNumber']); ?></p>
-        </div>
-    </div>
-    <!--  -->
-    <br>
-    <div class="row">
-        <div class="col-md-12 col-xs-12">
-            <label class="csF16">Linkedin Profile URL</label>
-            <?php if (isset($employer["linkedin_profile_url"])) { ?>
-            <p class="dummy-invoice-fields"><a href="<?=$employer["linkedin_profile_url"]; ?>"
-                    target="_blank"><?=$employer["linkedin_profile_url"]; ?></a>
-            </p>
-            <?php } else{ ?>
-            <p class="dummy-invoice-fields"><?=GetVal($extra_info['other_PhoneNumber']); ?></p>
-            <?php } ?>
         </div>
     </div>
     <!--  -->

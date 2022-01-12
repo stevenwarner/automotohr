@@ -3678,4 +3678,10 @@ textarea.invoice-fields{
     z-index: 9;
 }
 
+.profile-img-responsive {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
 /*-------Loader---------*/

@@ -82,11 +82,8 @@
                                                             <th class="text-center">ID</th>
                                                             <th>Username</th>
                                                             <th>Email</th>
-<!--                                                            <th>Access Level</th>-->
                                                             <th>Contact Name</th>
                                                             <th>Company Name</th>
-                                                            <!--<th>Registration Date</th>-->
-                                                            <!--<th><a>Status</a></th>-->
                                                             <?php $function_names = array('show_employer_multiple_actions', 'employerLogin', 'edit_employers'); ?>
                                                             <?php if(check_access_permissions_for_view($security_details, 'edit_employers')){ ?>
                                                                 <th class="last-col" width="1%" colspan="4">Actions</th>
@@ -101,11 +98,7 @@
                                                                     <td class="text-center">
                                                                         <div class="employee-profile-info">
                                                                             <figure>
-                                                                                <?php if (!empty($value['profile_picture'])) { ?>
-                                                                                    <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $value['profile_picture']; ?>">
-                                                                                <?php } else { ?>
-                                                                                    <img class="img-responsive" src="<?= base_url() ?>assets/images/img-applicant.jpg">
-                                                                                <?php } ?>
+                                                                                <img class="profile-img-responsive" src="<?=getImageURL( $value['profile_picture']);?>" alt="Employee" />
                                                                             </figure>
                                                                         </div>
                                                                         <b><?php echo $value['sid']; ?></b>
@@ -141,7 +134,25 @@
                                                                             } 
                                                                         ?>
                                                                         <br />
-                                                                        <b>Start Date: </b><?php echo date_with_time($value['registration_date']); ?>
+                                                                        <b>Joining Date: </b><?php 
+                                                                            $joiningDate = get_employee_latest_joined_date($value["registration_date"],$value["joined_at"],"",true);
+                                                                            //
+                                                                            if (!empty($joiningDate)) {
+                                                                                echo $joiningDate;
+                                                                            } else {
+                                                                                echo "N/A";
+                                                                            }
+                                                                        ?>    
+                                                                        <br>
+                                                                        <b>Rehire Date: </b><?php
+                                                                            $rehireDate = get_employee_latest_joined_date("","",$value["rehire_date"],true);
+                                                                            //
+                                                                            if (!empty($rehireDate)) {
+                                                                                echo $rehireDate;
+                                                                            } else {
+                                                                                echo "N/A";
+                                                                            }
+                                                                        ?>
                                                                     </td>
                                                                     <td><?php echo ucwords($value['company_name']); ?>
                                                                     <?php   if($value['password'] == '' || is_null($value['password'])) { ?>
@@ -151,7 +162,7 @@
                                                                     <?php   } ?>
                                                                     </td>
                                                                     <?php   if(check_access_permissions_for_view($security_details, 'edit_employers')){ ?>
-                                                                                <td><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'], '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
+                                                                                <td><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'],  '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
                                                                     <?php   } ?>
                                                                                 
                                                                     <?php   if(check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')){ ?>

@@ -179,7 +179,7 @@ class Cron_common extends CI_Controller{
                 //
                 $employeesList = array_diff(explode(',', $activeRecord['included_employees']), explode(',', $activeRecord['excluded_employees']));
                 //
-                $employeesList = $this->pmm->GetEmployeeColumns($employeesList, ['sid', 'joined_at']);
+                $employeesList = $this->pmm->GetEmployeeColumns($employeesList, ['sid', 'joined_at', 'registration_date', 'rehire_date']);
                 //
                 $selectedEmployees = [];
                 //
@@ -193,7 +193,9 @@ class Cron_common extends CI_Controller{
                         else if($run['type'] == 'weeks'){ $run['type'] = 'W' ;}
                         else if($run['type'] == 'months'){ $run['type'] = 'M' ;}
                         //
-                        $runDate = addTimeToDate($employee['joined_at'], "{$run['value']}{$run['type']}", 'Y-m-d');
+                        $latest_joining = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+                        //
+                        $runDate = addTimeToDate($latest_joining, "{$run['value']}{$run['type']}", 'Y-m-d');
                         //
                         if($runDate == $now){
                             $selectedEmployees[] = $employee['sid'];

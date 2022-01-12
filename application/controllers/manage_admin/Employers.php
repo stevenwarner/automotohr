@@ -35,7 +35,7 @@ class employers extends Admin_Controller {
         $status = $status == null ? 2 : $status;
         $employers_count = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, true, $company, $contact_name);
         $employers = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, false, $company, $contact_name);
-
+        // echo "<pre>"; print_r($employers); die();
         $config = array();
         $config['base_url'] = base_url('manage_admin/employers/' . rawurlencode($keyword) . '/' . $status . '/' . rawurlencode($company) . '/' . rawurlencode($contact_name) . '/');
         $config['per_page'] = $records_per_page;
@@ -381,7 +381,6 @@ class employers extends Admin_Controller {
                 else $data['notified_by'] = implode(',', $this->input->post('notified_by', true));
             }
 
-
             if ($registration_date != NULL) {
                 $data['registration_date'] = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                 $data['joined_at'] = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
@@ -389,7 +388,23 @@ class employers extends Admin_Controller {
                 $data['joined_at'] = NULL;
                 $data['registration_date'] = NULL;
             }
+            //
+            // Added on: 21-12-2021
+            if(!empty($this->input->post('rehire_date'))) {
 
+                $rehireDate = DateTime::createFromFormat('m-d-Y', $this->input->post('rehire_date', true))->format('Y-m-d');
+                //
+                $this->company_model->updateEmployeeRehireDate(
+                    $rehireDate,
+                    $sid,
+                    0
+                );
+                //
+                $data['rehire_date'] = $rehireDate;
+                $data['general_status'] = 'rehired';
+                $data['active'] = 0;
+            }
+            //
             $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture'); // Picture Upload and Update
 
             if ($profile_picture != 'error') {

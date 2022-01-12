@@ -144,7 +144,7 @@
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
-                                                            <label>Start Date</label>
+                                                            <label>Joining Date <span class="hr-required">*</span></label>
                                                             <input class="invoice-fields datepicker" id="registration_date" name="registration_date" value="" readonly="readonly" />
                                                         </div>
                                                     </div>
@@ -204,6 +204,9 @@
                 },
                 security_access_level: {
                     required: true
+                },
+                registration_date: {
+                    required: true
                 }
             },
             messages: {
@@ -226,6 +229,9 @@
                 },
                 security_access_level: {
                     required: 'Please select an Access Level'
+                },
+                registration_date: {
+                    required: 'Joining Date is Required'
                 }
             }
         });

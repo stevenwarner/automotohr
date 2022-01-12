@@ -156,6 +156,7 @@ class Terminate_employee extends Public_Controller {
                         $data_to_update['active'] = 0;
                     }else if ($status == 8) {
                         $data_to_update['general_status'] = 'rehired';
+                        $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
                         $data_to_update['active'] = 0;
                     }
                     $data_to_update['terminated_status'] = 0;
@@ -194,10 +195,13 @@ class Terminate_employee extends Public_Controller {
                 $this->session->set_flashdata('message', '<b>Error:</b> Record Not Found!');
                 redirect('employee_status/'.$sid);
             }
-            if($status_data[0]['changed_by'] != $employer_sid){
-                $this->session->set_flashdata('message', '<b>Error:</b> Un-Authorized!');
-                redirect('employee_status/'.$sid);
-            }
+
+            if($status_data[0]['changed_by'] != 0){
+                if($status_data[0]['changed_by'] != $employer_sid){
+                    $this->session->set_flashdata('message', '<b>Error:</b> Un-Authorized!');
+                    redirect('employee_status/'.$sid);
+                }
+            }    
 
             $status_documents = $this->terminate_employee_model->get_status_documents($status_id);
             $data['id'] = $sid;

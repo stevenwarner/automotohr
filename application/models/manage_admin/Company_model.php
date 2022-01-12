@@ -184,6 +184,8 @@ class Company_model extends CI_Model {
         $this->db->select('table_one.email');
         $this->db->select('table_one.job_title');
         $this->db->select('table_one.registration_date');
+        $this->db->select('table_one.joined_at');
+        $this->db->select('table_one.rehire_date');
         $this->db->select('table_one.access_level');
         $this->db->select('table_one.access_level_plus');
         $this->db->select('table_one.pay_plan_flag');
@@ -2400,5 +2402,45 @@ class Company_model extends CI_Model {
             }
         }
         return false;
+    }
+
+    /**
+     * Update rehire date in employee status
+     * 
+     * @param number $employeeId
+     * @return
+     */
+    function updateEmployeeRehireDate($rehireDate, $employeeId, $changed_by){
+        //
+        $this->db->select('sid');
+        $this->db->where('employee_status', 8);
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->order_by('sid', 'DESC');
+        $record_obj = $this->db->get('terminated_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $row_sid = $record_arr['sid'];
+            //
+            $data_to_update = array();
+            $data_to_update['status_change_date'] = $rehireDate;
+            //            
+            $this->db->where('sid', $row_sid);
+            $this->db->update('terminated_employees', $data_to_update);
+        } else {
+            $data_to_insert = array();
+            $data_to_insert['employee_status'] = 8;
+            $data_to_insert['details'] = '';
+            $data_to_insert['status_change_date'] = $rehireDate;
+            $data_to_insert['termination_date'] = $rehireDate;
+            $data_to_insert['employee_sid '] = $employeeId;
+            $data_to_insert['changed_by'] = $changed_by;
+            $data_to_insert['ip_address'] = getUserIP();
+            $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+            $data_to_insert['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            $this->db->insert('terminated_employees',$data_to_insert);
+        }
     }
 }

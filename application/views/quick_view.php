@@ -27,7 +27,27 @@
                 </tr>
                 <tr>
                     <td class="col-sm-3"><strong>Joined On</strong></td>
-                    <td class="col-sm-9"><?=formatDateToDB($JoinedDate, 'Y-m-d', DATE);?></td>
+                    <td class="col-sm-9">
+                        <?php
+                            if (!empty($JoinedDate)) {
+                                echo $JoinedDate;
+                            } else {
+                                echo "N/A";
+                            }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-sm-3"><strong>Rehired On</strong></td>
+                    <td class="col-sm-9">
+                        <?php
+                            if (!empty($RehiredDate)) {
+                                echo $RehiredDate;
+                            } else {
+                                echo "N/A";
+                            }
+                        ?>
+                    </td>
                 </tr>
             </tbody>
         </table>

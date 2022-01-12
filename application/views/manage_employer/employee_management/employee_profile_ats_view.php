@@ -90,9 +90,9 @@
                                             <div class="form-title-section">
                                                 <h2>Personal Information</h2>
                                                 <div class="form-btns">
-                                                    <input type="submit" value="Save"
-                                                        onclick="return validate_employers_form()">
+                                                    <input type="button" value="Save" onclick="submitResult();">
                                                     <input type="button" value="cancel" class="view_button">
+                                                    <input type="submit" id="submit_form" value="Submit Form" onclick="validate_employers_form();" style="display: none;">
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -317,6 +317,24 @@
                                                 </div>
                                                 <!--  -->
                                             </div>
+                                            <div class="row"> 
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Rehire Date:</label>
+                                                    
+                                                    <?php
+                                                        $rehireDate = $employer['rehire_date'] != NULL && $employer['rehire_date'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d', $employer['rehire_date'])->format('m-d-Y') : '';
+                                                    ?>
+                                                    <input class="invoice-fields js-rehireDate" id="js-rehire-date" readonly="" type="text" name="rehireDate" value="<?php echo $rehireDate; ?>">
+                                                        <?php echo form_error('rehireDate'); ?>
+                                                </div>    
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Linkedin Public Profile URL:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('linkedin_profile_url', $employer["linkedin_profile_url"]); ?>"
+                                                        type="text" name="linkedin_profile_url">
+                                                </div>
+                                            </div>
                                             <div class="row">
                                                 <!--  -->      
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
@@ -354,15 +372,6 @@
                                                         type="text" name="other_PhoneNumber">
                                                 </div>
                                                 <!--  -->
-                                            </div>
-                                            <div class="row">     
-                                                <!--  -->
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
-                                                    <label>Linkedin Public Profile URL:</label>
-                                                    <input class="invoice-fields"
-                                                        value="<?php echo set_value('linkedin_profile_url', $employer["linkedin_profile_url"]); ?>"
-                                                        type="text" name="linkedin_profile_url">
-                                                </div>
                                             </div>
                                             <div class="row">  
                                                 <!--  -->  
@@ -801,8 +810,7 @@
                                                             value="<?php echo $employer['profile_picture']; ?>">
                                                         <input type="hidden" name="id"
                                                             value="<?php echo $employer['sid']; ?>">
-                                                        <input type="submit" value="Save" id="add_edit_submit"
-                                                            onclick="return validate_employers_form()">
+                                                        <input type="button" value="Save" id="add_edit_submit" onclick="submitResult();">
                                                         <input type="button" value="cancel" class="view_button">
                                                     </div>
                                                 </div>
@@ -1398,17 +1406,19 @@
 </script>
 <!--file opener modal starts-->
 <script language="JavaScript" type="text/javascript">
-var timeOff = '<?=$timeOff?>';
-$("#teams").select2();
+    var old_rehire_date = '<?php echo $rehireDate; ?>';
+    //
+    var timeOff = '<?=$timeOff?>';
+    $("#teams").select2();
 
 
-$('#js-policies').select2({
-    closeOnSelect: false
-});
+    $('#js-policies').select2({
+        closeOnSelect: false
+    });
 
-$('#js_offdays').select2({
-    closeOnSelect: false
-});
+    $('#js_offdays').select2({
+        closeOnSelect: false
+    });
 
     
 
@@ -1573,8 +1583,35 @@ function remove_event(event_sid) {
         });
 }
 
-function validate_employers_form() {
+function submitResult() {
+    var new_rehire_date = $('#js-rehire-date').val();
+    //
+    if (new_rehire_date != old_rehire_date) {
+        var message = '';
+        //
+        if (old_rehire_date == '' || old_rehire_date == undefined) {
+            var status = '"<strong>Rehired</strong>"';
+            message = "By adding rehire date the employee's '<strong>Employee Status</strong>' will be changed to " + status + ".<br><br>Do you wish to continue?";
+        } else {
+            message = 'Are you sure you want to change the rehire date';
+        }
+        //
+       
+        alertify.confirm('Confirmation', message,
+            function () {
+                $('#submit_form').click();
+                alertify.confirm().destroy(); 
+            },
+            function () {
+            });
+    } else {
+        $('#submit_form').click();
+        alertify.confirm().destroy(); 
+    }
+}
 
+function validate_employers_form() {
+    
     $("#edit_employer").validate({
         ignore: ":hidden:not(select)",
         rules: {
@@ -1722,7 +1759,9 @@ function validate_employers_form() {
 
         },
         submitHandler: function(form) {
-            if (timeoff == "enable") {
+            
+            //
+            if (timeOff == "enable") {
                 var shift_start = $(".js-shift-start-time").val();
                 var shift_end = $(".js-shift-end-time").val();
                 var break_hours = $("#br_hours").val();
@@ -1766,7 +1805,6 @@ function validate_employers_form() {
                 row += "</p>";
             }
 
-
             var breakValidationError = validateBreakTime("validation");
             //
             if (breakValidationError == "yes") {
@@ -1774,76 +1812,58 @@ function validate_employers_form() {
                 return;
             }
 
-           
-                <?php if($is_regex === 1) { ?>
-                    // TODO
-                    var is_error = false;
+            <?php if($is_regex === 1) { ?>
+                // TODO
+                var is_error = false;
 
-                    // Check for phone number
-                    if (_pn.val() != '' && _pn.val().trim() != '(___) ___-____' && !fpn(_pn.val(), '', true)) {
-                        alertify.alert('Invalid mobile number provided.', function() {
-                            return;
-                        });
-                        is_error = true;
+                // Check for phone number
+                if (_pn.val() != '' && _pn.val().trim() != '(___) ___-____' && !fpn(_pn.val(), '', true)) {
+                    alertify.alert('Invalid mobile number provided.', function() {
                         return;
-                    }
+                    });
+                    is_error = true;
+                    return;
+                }
 
-                    // Check for secondary number
-                    // if(_spn.val() != '' && _spn.val().trim() != '(___) ___-____' && !fpn(_spn.val(), '', true)){
-                    //     alertify.alert('Invalid secondary mobile number provided.', function(){ return; });
-                    //     is_error = true;
-                    //     return;
-                    // }
-                    // // Check for other number
-                    // if(_opn.val() != '' && _opn.val().trim() != '(___) ___-____' && !fpn(_opn.val(), '', true)){
-                    //     alertify.alert('Invalid telephone number provided.', function(){ return; });
-                    //     is_error = true;
-                    //     return;
-                    // }
+                // Check for secondary number
+                // if(_spn.val() != '' && _spn.val().trim() != '(___) ___-____' && !fpn(_spn.val(), '', true)){
+                //     alertify.alert('Invalid secondary mobile number provided.', function(){ return; });
+                //     is_error = true;
+                //     return;
+                // }
+                // // Check for other number
+                // if(_opn.val() != '' && _opn.val().trim() != '(___) ___-____' && !fpn(_opn.val(), '', true)){
+                //     alertify.alert('Invalid telephone number provided.', function(){ return; });
+                //     is_error = true;
+                //     return;
+                // }
 
-                    if (is_error === false) {
-                        // Remove and set phone extension
-                        $('#js-phonenumber').remove();
-                        // $('#js-secondary-phonenumber').remove();
-                        // $('#js-other-phonenumber').remove();
-                        // Check the fields
-                        // if(_spn.val().trim() == '(___) ___-____') _spn.val('');
-                        // else $("#edit_employer").append('<input type="hidden" id="js-secondary-phonenumber" name="txt_secondary_phonenumber" value="+1'+(_spn.val().replace(/\D/g, ''))+'" />');
+                if (is_error === false) {
+                    // Remove and set phone extension
+                    $('#js-phonenumber').remove();
+                    // $('#js-secondary-phonenumber').remove();
+                    // $('#js-other-phonenumber').remove();
+                    // Check the fields
+                    // if(_spn.val().trim() == '(___) ___-____') _spn.val('');
+                    // else $("#edit_employer").append('<input type="hidden" id="js-secondary-phonenumber" name="txt_secondary_phonenumber" value="+1'+(_spn.val().replace(/\D/g, ''))+'" />');
 
-                        // if(_opn.val().trim() == '(___) ___-____') _opn.val('');
-                        // else $("#edit_employer").append('<input type="hidden" id="js-other-phonenumber" name="txt_other_phonenumber" value="+1'+(_opn.val().replace(/\D/g, ''))+'" />');
+                    // if(_opn.val().trim() == '(___) ___-____') _opn.val('');
+                    // else $("#edit_employer").append('<input type="hidden" id="js-other-phonenumber" name="txt_other_phonenumber" value="+1'+(_opn.val().replace(/\D/g, ''))+'" />');
 
 
-                        if (_pn.val().trim() == '(___) ___-____') _pn.val('');
-                        else $("#edit_employer").append(
-                            '<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1' + (_pn
-                                .val().replace(/\D/g, '')) + '" />');
+                    if (_pn.val().trim() == '(___) ___-____') _pn.val('');
+                    else $("#edit_employer").append(
+                        '<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1' + (_pn
+                            .val().replace(/\D/g, '')) + '" />');
 
-                        if (timeoff == "enable") {
-                            if (weekTotal > 40) {
-                                alertify.confirm('Confirmation', row,
-                                    function () {
-                                        form.submit();
-                                    },
-                                    function () {
-                                        return;
-                                    });
-                            } else {
-                                form.submit();
-                            }
-                        } else {
-                            form.submit();
-                        }    
-                    }
-                <?php } else { ?>
-                    if (timeoff == "enable") {
+                    if (timeOff == "enable") {console.log("up")
                         if (weekTotal > 40) {
                             alertify.confirm('Confirmation', row,
                                 function () {
                                     form.submit();
+            
                                 },
                                 function () {
-                                    return;
                                 });
                         } else {
                             form.submit();
@@ -1851,8 +1871,25 @@ function validate_employers_form() {
                     } else {
                         form.submit();
                     }    
-                    
-                <?php } ?>
+                }
+            <?php } else { ?>
+
+                console.log("up 1")
+                if (timeOff == "enable") {console.log("down")
+                    if (weekTotal > 40) {
+                        alertify.confirm('Confirmation', row,
+                            function () {
+                                form.submit();
+                            },
+                            function () { 
+                            });
+                    } else {
+                        form.submit();
+                    }
+                } else {
+                    form.submit();
+                } 
+            <?php } ?>
         }
     });
 }
@@ -2218,6 +2255,13 @@ $('#date_of_birth').datepicker({
 }).val();
 
 $('.js-joining-date').datepicker({
+    dateFormat: 'mm-dd-yy',
+    changeMonth: true,
+    changeYear: true,
+    yearRange: "<?php echo JOINING_DATE_LIMIT; ?>",
+}).val();
+
+$('.js-rehireDate').datepicker({
     dateFormat: 'mm-dd-yy',
     changeMonth: true,
     changeYear: true,

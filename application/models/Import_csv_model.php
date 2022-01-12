@@ -332,4 +332,15 @@ class Import_csv_model extends CI_Model {
         $this->db->insert('terminated_employees', $insertArray);
         return $this->db->insert_id();
     }
+
+    //
+    function UpdateRehireDateInUsers($rehireDate, $employeeId){
+        $data_to_update = array(); 
+        $data_to_update['rehire_date'] = $rehireDate;
+        $data_to_update['general_status'] = 'rehired';
+        $data_to_update['active'] = 0;
+
+        $this->db->where('sid', $employeeId);
+        $this->db->update('users', $data_to_update);
+    }
 }

@@ -6,6 +6,7 @@
                     <?php $this->load->view('manage_employer/settings_left_menu_administration'); ?>
                 </div>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                    <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="page-header-area">
                         <span class="page-heading down-arrow"><?php echo $title; ?></span>
                     </div>
@@ -161,14 +162,32 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                     <label class="control control--checkbox">Hourly Rate<input type="checkbox" name="hourly_rate" class="check_it" value="hourly_rate"><div class="control__indicator"></div></label>
                                                 </div>
                                             </div>
+                                            <!--  -->
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Middle Name<input type="checkbox" name="middle_name" class="check_it" value="middle_name"><div class="control__indicator"></div></label>
+                                                </div>
+                                            </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
                                                     <label class="control control--checkbox">Hourly Technician<input type="checkbox" name="hourly_technician" class="check_it" value="hourly_technician"><div class="control__indicator"></div></label>
                                                 </div>
                                             </div>
+                                            <!--  -->
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Rehire Date<input type="checkbox" name="rehire_date" class="check_it" value="rehire_date"><div class="control__indicator"></div></label>
+                                                </div>
+                                            </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
                                                     <label class="control control--checkbox">Flat Rate Technician<input type="checkbox" name="flat_rate_technician" class="check_it" value="flat_rate_technician"><div class="control__indicator"></div></label>
+                                                </div>
+                                            </div>
+                                            <!--  -->
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Terminated Date<input type="checkbox" name="terminated_date" class="check_it" value="terminated_date"><div class="control__indicator"></div></label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
@@ -179,6 +198,12 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
                                                     <label class="control control--checkbox">Semi Monthly Draw<input type="checkbox" name="semi_monthly_draw" class="check_it" value="semi_monthly_draw"><div class="control__indicator"></div></label>
+                                                </div>
+                                            </div>
+                                            <!--  -->
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Terminated Reason<input type="checkbox" name="terminated_reason" class="check_it" value="terminated_reason"><div class="control__indicator"></div></label>
                                                 </div>
                                             </div>
                                       </div>
@@ -298,5 +323,4 @@ radio label, .checkbox label {
     margin-top:-7px;
     font-weight: bolder;
 }
-.
 </style>
