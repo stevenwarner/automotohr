@@ -1697,20 +1697,20 @@ $(document).ready(function() {
             var prepare_radio = $('input[name="section1_preparer_or_translator"]:checked').val();
             if (radio_val == 'permanent-resident') {
                 if ($('#section1_alien_registration_number_one').val() == '') {
-                    alertify.error("Warning", $('#section1_alien_registration_number_two').val() +
+                    alertify.alert("Warning", $('#section1_alien_registration_number_two').val() +
                         ' is required');
                     return false;
                 }
 
             } else if (radio_val == 'alien-work') {
                 if ($('#alien_authorized_expiration_date').val() == '') {
-                    alertify.error("Warning", 'An Alien Authorized To Work (Expiration Date) is required');
+                    alertify.alert("Warning", 'An Alien Authorized To Work (Expiration Date) is required');
                     return false;
                 }
                 if ($('#section1_alien_registration_number_one').val() == '' && $(
                         '#form_admission_number').val() == '' && $('#foreign_passport_number')
                     .val() == '' && $('#country_of_issuance').val() == '') {
-                    alertify.error("Warning", 
+                    alertify.alert("Warning", 
                         'You must provide Form I-94 Admission Number OR Alien/USCIS Number OR Foreign Passport Number OR Country Issuance'
                     );
                     return false;
@@ -1866,7 +1866,7 @@ function func_save_e_signature() {
 
     var is_signature_exist = $('#signature_bas64_image').val();
     if (is_signature_exist == "") {
-        alertify.error("Warning", 'Please Add Your Signature!');
+        alertify.alert("Warning", 'Please Add Your Signature!');
         return false;
     }
 
@@ -1878,7 +1878,7 @@ function func_save_e_signature() {
                 $('#i9-form').submit();
             },
             function() {
-                alertify.error("Warning", 'Cancelled!');
+                alertify.alert("Warning", 'Cancelled!');
             }).set('labels', {
             ok: 'I Consent and Accept!',
             cancel: 'Cancel'

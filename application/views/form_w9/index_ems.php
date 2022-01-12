@@ -1567,7 +1567,7 @@ function func_save_e_signature() {
     var is_signature_exist = $('#signature_bas64_image').val();
 
     if (is_signature_exist == "") {
-        alertify.error("Warning", 'Please Add Your Signature!');
+        alertify.alert("Warning", 'Please Add Your Signature!');
         return false;
     }
 
@@ -1579,7 +1579,7 @@ function func_save_e_signature() {
                 $('#w9-form').submit();
             },
             function() {
-                alertify.error("Warning", 'Cancelled!');
+                alertify.alert("Warning", 'Cancelled!');
             }).set('labels', {
             ok: 'I Consent and Accept!',
             cancel: 'Cancel'

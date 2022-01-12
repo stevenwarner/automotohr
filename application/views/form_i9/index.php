@@ -1505,7 +1505,7 @@
                         id:doc_id
                     },
                     success: function(data){
-                        alertify.success('Document verified successfully');
+                        alertify.alert('Document verified successfully');
                         $('#'+doc_id).html('Verified');
                     },
                     error: function(){
@@ -1718,17 +1718,17 @@
                         var prepare_radio = $('input[name="section1_preparer_or_translator"]:checked').val();
                         if (radio_val == 'permanent-resident') {
                             if ($('#section1_alien_registration_number_one').val() == '') {
-                                alertify.error("Warning", $('#section1_alien_registration_number_two').val() + ' is required');
+                                alertify.alert("Warning", $('#section1_alien_registration_number_two').val() + ' is required');
                                 return false;
                             }
 
                         } else if (radio_val == 'alien-work') {
                             if ($('#alien_authorized_expiration_date').val() == '') {
-                                alertify.error("Warning", 'An Alien Authorized To Work (Expiration Date) is required');
+                                alertify.alert("Warning", 'An Alien Authorized To Work (Expiration Date) is required');
                                 return false;
                             }
                             if ($('#section1_alien_registration_number_one').val() == '' && $('#form_admission_number').val() == '' && $('#foreign_passport_number').val() == '' && $('#country_of_issuance').val() == '') {
-                                alertify.error("Warning", 'You must provide Form I-94 Admission Number OR Alien/USCIS Number OR Foreign Passport Number OR Country Issuance');
+                                alertify.alert("Warning", 'You must provide Form I-94 Admission Number OR Alien/USCIS Number OR Foreign Passport Number OR Country Issuance');
                                 return false;
                             }
 
@@ -1830,7 +1830,7 @@
 
                         if (list_a_document == 'n_a') {
                             if (list_b_document == 'n_a' || list_c_document == 'n_a') {
-                                alertify.error("Warning", 'You must physically examine one document from List A OR a combination of one document from List B and one document from List C as listed on the "Lists of Acceptable Documents."');
+                                alertify.alert("Warning", 'You must physically examine one document from List A OR a combination of one document from List B and one document from List C as listed on the "Lists of Acceptable Documents."');
                                 return false;
                             }
                         }
@@ -2046,7 +2046,7 @@
                     $('#loader').hide();
                     $('#upload').removeClass('disabled-btn');
                     $('#upload').prop('disabled', false);
-                    alertify.success("Success", 'New document has been uploaded');
+                    alertify.alert("Success", 'New document has been uploaded');
                     $('.upload-file').show();
                     $('#uploaded-files').show();
                     $('#uploaded-files').append('<div class="row"><div class="col-lg-6 col-md-6 col-xs-12 col-sm-6"> <div id="uploaded-files-name"><b>Name:</b> '+file_data['name']+'</div> </div> <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 text-right"> <span><b>Status:</b> Uploaded</span> </div> </div>');
@@ -2069,12 +2069,12 @@
             var section3_signature_exist = $('#section3_emp_sign').val();
             
             if(section2_signature_exist == ""){
-                alertify.error("Warning", 'Please Add Employer Or Authorized Representative!');
+                alertify.alert("Warning", 'Please Add Employer Or Authorized Representative!');
                 return false;
             }
 
             if(section3_signature_exist == ""){
-                alertify.error("Warning", 'Please Add Authorized Representative!');
+                alertify.alert("Warning", 'Please Add Authorized Representative!');
                 return false;
             }
 
@@ -2086,7 +2086,7 @@
                         $('#i9-form').submit();
                     },
                     function () {
-                        alertify.error("Warning", 'Cancelled!');
+                        alertify.alert("Warning", 'Cancelled!');
                     }).set('labels', {ok: 'I Consent and Accept!', cancel: 'Cancel'});
             }
         }
@@ -2141,17 +2141,17 @@
             var prepare_radio = $('input[name="section1_preparer_or_translator"]:checked').val();
             if (radio_val == 'permanent-resident') {
                 if ($('#section1_alien_registration_number_one').val() == '') {
-                    alertify.error("Warning", $('#section1_alien_registration_number_two').val() + ' is required');
+                    alertify.alert("Warning", $('#section1_alien_registration_number_two').val() + ' is required');
                     return false;
                 }
 
             } else if (radio_val == 'alien-work') {
                 if ($('#alien_authorized_expiration_date').val() == '') {
-                    alertify.error("Warning", 'An Alien Authorized To Work (Expiration Date) is required');
+                    alertify.alert("Warning", 'An Alien Authorized To Work (Expiration Date) is required');
                     return false;
                 }
                 if ($('#section1_alien_registration_number_one').val() == '' && $('#form_admission_number').val() == '' && $('#foreign_passport_number').val() == '' && $('#country_of_issuance').val() == '') {
-                    alertify.error("Warning", 'You must provide Form I-94 Admission Number OR Alien/USCIS Number OR Foreign Passport Number OR Country Issuance');
+                    alertify.alert("Warning", 'You must provide Form I-94 Admission Number OR Alien/USCIS Number OR Foreign Passport Number OR Country Issuance');
                     return false;
                 }
 
@@ -2178,7 +2178,7 @@
                         $('#i9-form').submit();
                     },
                     function () {
-                        alertify.error("Warning", 'Cancelled!');
+                        alertify.alert("Warning", 'Cancelled!');
                     }).set('labels', {ok: 'I Consent and Accept!', cancel: 'Cancel'});
             }
         }

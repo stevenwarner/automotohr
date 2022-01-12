@@ -3835,7 +3835,7 @@
 
                 if (list_a_document == 'n_a') {
                     if (list_b_document == 'n_a' || list_c_document == 'n_a') {
-                        alertify.error("Warning", 'You must physically examine one document from List A OR a combination of one document from List B and one document from List C as listed on the "Lists of Acceptable Documents."');
+                        alertify.alert("Warning", 'You must physically examine one document from List A OR a combination of one document from List B and one document from List C as listed on the "Lists of Acceptable Documents."');
                         return false;
                     }
                 }
@@ -4365,12 +4365,12 @@
         var section3_signature_exist = $('#section3_emp_sign').val();
 
         if(section2_signature_exist == ""){
-            alertify.error("Warning", 'Please Add Employer Or Authorized Representative!');
+            alertify.alert("Warning", 'Please Add Employer Or Authorized Representative!');
             return false;
         }
 
         if(section3_signature_exist == ""){
-            alertify.error("Warning", 'Please Add Authorized Representative!');
+            alertify.alert("Warning", 'Please Add Authorized Representative!');
             return false;
         }
 
@@ -4382,7 +4382,7 @@
                     $('#i9-form').submit();
                 },
                 function () {
-                    alertify.error("Warning", 'Cancelled!');
+                    alertify.alert("Warning", 'Cancelled!');
                 }).set('labels', {ok: 'I Consent and Accept!', cancel: 'Cancel'});
         }
     }
@@ -4728,7 +4728,7 @@
             $('#form_remove_document_' + type + '_' + document_sid).submit();
         },
         function () {
-            alertify.error("Warning", 'Cancelled!');
+            alertify.alert("Warning", 'Cancelled!');
         });
     }
 
@@ -4740,7 +4740,7 @@
             $('#form_assign_document_' + type + '_' + document_sid).submit();
         },
         function () {
-            alertify.error("Warning", 'Cancelled!');
+            alertify.alert("Warning", 'Cancelled!');
         });
     }
 
@@ -4752,7 +4752,7 @@
             $('#register-form').submit();
         },
         function () {
-            alertify.error("Warning", 'Cancelled!');
+            alertify.alert("Warning", 'Cancelled!');
         });
     }
 
@@ -4764,7 +4764,7 @@
             $('#form_remove_w4').submit();
         },
         function () {
-            alertify.error("Warning", 'Cancelled!');
+            alertify.alert("Warning", 'Cancelled!');
         });
     }
 
@@ -4776,7 +4776,7 @@
             $('#form_assign_w4').submit();
         },
         function () {
-            alertify.error("Warning", 'Cancelled!');
+            alertify.alert("Warning", 'Cancelled!');
         });
     }
 
@@ -4788,7 +4788,7 @@
             $('#form_remove_i9').submit();
         },
         function () {
-            alertify.error("Warning", 'Cancelled!');
+            alertify.alert("Warning", 'Cancelled!');
         });
     }
 
@@ -4800,7 +4800,7 @@
             $('#form_assign_i9').submit();
         },
         function () {
-            alertify.error("Warning", 'Canceled!');
+            alertify.alert("Warning", 'Canceled!');
         }).set('labels', {
             ok: "Yes",
             cancel: "No"
@@ -4815,7 +4815,7 @@
             $('#form_remove_w9').submit();
         },
         function () {
-            alertify.error("Warning", 'Cancelled!');
+            alertify.alert("Warning", 'Cancelled!');
         });
     }
 
@@ -4827,7 +4827,7 @@
             $('#form_assign_w9').submit();
         },
         function () {
-            alertify.error("Warning", 'Cancelled!');
+            alertify.alert("Warning", 'Cancelled!');
         });
     }
 
@@ -5411,7 +5411,7 @@
                 });
             },
             function () {
-                alertify.error("Warning", 'Cancelled!');
+                alertify.alert("Warning", 'Cancelled!');
             }).set('labels', {ok: 'Yes', cancel: 'No'});
     }
 
@@ -5495,7 +5495,7 @@
                 $('#form_archive_hr_document_' + document_sid).submit();
             },
             function () {
-                alertify.error("Warning", 'Cancelled!');
+                alertify.alert("Warning", 'Cancelled!');
             });
     }
 
@@ -5507,7 +5507,7 @@
                     $('#form_activate_hr_document_' + document_sid).submit();
                 },
                 function () {
-                    alertify.error("Warning", 'Cancelled!');
+                    alertify.alert("Warning", 'Cancelled!');
                 });
     }
 
