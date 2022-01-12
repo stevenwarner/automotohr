@@ -338,7 +338,7 @@ if(!function_exists('getCreds')){
 		//
 		$file = APPPATH.'../../creds.json';
 		if($_SERVER['HTTP_HOST'] == 'staging.automotohr.com'){
-			$file = APPPATH.'../../../creds.json';
+			$file = APPPATH.'../../../creds-staging.json';
 		}
 		//
 		$h = fopen($file, 'r');
