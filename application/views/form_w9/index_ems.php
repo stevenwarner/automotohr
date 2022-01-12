@@ -1567,19 +1567,19 @@ function func_save_e_signature() {
     var is_signature_exist = $('#signature_bas64_image').val();
 
     if (is_signature_exist == "") {
-        alertify.error('Please Add Your Signature!');
+        alertify.error("Warning", 'Please Add Your Signature!');
         return false;
     }
 
     if ($('#w9-form').validate()) {
         alertify.confirm(
             'Are you Sure?',
-            'Are you sure you want to Consent And Accept Electronic Signature Agreementsss?',
+            'Are you sure you want to Consent And Accept Electronic Signature Agreements?',
             function() {
                 $('#w9-form').submit();
             },
             function() {
-                alertify.error('Cancelled!');
+                alertify.error("Warning", 'Cancelled!');
             }).set('labels', {
             ok: 'I Consent and Accept!',
             cancel: 'Cancel'

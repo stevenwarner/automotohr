@@ -1570,7 +1570,7 @@ $(document).ready(function() {
                 id: doc_id
             },
             success: function(data) {
-                alertify.success('Document verified successfully');
+                alertify.success("Success", 'Document verified successfully');
                 $('#' + doc_id).html('Verified');
             },
             error: function() {
@@ -1658,9 +1658,9 @@ $(document).ready(function() {
             section1_first_name: {
                 required: 'First Name is required.'
             },
-            section1_middle_initial: {
-                required: 'Middle Initial is required.'
-            },
+            // section1_middle_initial: {
+            //     required: 'Middle Initial is required.'
+            // },
             section1_address: {
                 required: 'Address is required'
             },
@@ -1697,20 +1697,20 @@ $(document).ready(function() {
             var prepare_radio = $('input[name="section1_preparer_or_translator"]:checked').val();
             if (radio_val == 'permanent-resident') {
                 if ($('#section1_alien_registration_number_one').val() == '') {
-                    alertify.error($('#section1_alien_registration_number_two').val() +
+                    alertify.error("Warning", $('#section1_alien_registration_number_two').val() +
                         ' is required');
                     return false;
                 }
 
             } else if (radio_val == 'alien-work') {
                 if ($('#alien_authorized_expiration_date').val() == '') {
-                    alertify.error('An Alien Authorized To Work (Expiration Date) is required');
+                    alertify.error("Warning", 'An Alien Authorized To Work (Expiration Date) is required');
                     return false;
                 }
                 if ($('#section1_alien_registration_number_one').val() == '' && $(
                         '#form_admission_number').val() == '' && $('#foreign_passport_number')
                     .val() == '' && $('#country_of_issuance').val() == '') {
-                    alertify.error(
+                    alertify.error("Warning", 
                         'You must provide Form I-94 Admission Number OR Alien/USCIS Number OR Foreign Passport Number OR Country Issuance'
                     );
                     return false;
@@ -1841,7 +1841,7 @@ function DoUpload() {
             $('#loader').hide();
             $('#upload').removeClass('disabled-btn');
             $('#upload').prop('disabled', false);
-            alertify.success('New document has been uploaded');
+            alertify.success("Success", 'New document has been uploaded');
             $('.upload-file').show();
             $('#uploaded-files').show();
             $('#uploaded-files').append(
@@ -1866,7 +1866,7 @@ function func_save_e_signature() {
 
     var is_signature_exist = $('#signature_bas64_image').val();
     if (is_signature_exist == "") {
-        alertify.error('Please Add Your Signature!');
+        alertify.error("Warning", 'Please Add Your Signature!');
         return false;
     }
 
@@ -1878,7 +1878,7 @@ function func_save_e_signature() {
                 $('#i9-form').submit();
             },
             function() {
-                alertify.error('Cancelled!');
+                alertify.error("Warning", 'Cancelled!');
             }).set('labels', {
             ok: 'I Consent and Accept!',
             cancel: 'Cancel'

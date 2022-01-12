@@ -46,19 +46,6 @@
                                     <a target="_blank" href="<?php echo 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$url_segment_original.'%2Exlsx' ?>" class="btn blue-button btn-block">Print</a>
                                 <?php } ?>
                             </div>
-<!--                            <div class="col-lg-3 pull-right">-->
-<!--                                <a class="btn blue-button btn-block"-->
-<!--                                   href="javascript:void(0);"-->
-<!--                                   onclick="fLaunchModal(this);"-->
-<!--                                   data-preview-url="--><?//= AWS_S3_BUCKET_URL . $pre_form['uploaded_file']; ?><!--"-->
-<!--                                   data-download-url="--><?//= AWS_S3_BUCKET_URL . $pre_form['uploaded_file']; ?><!--"-->
-<!--                                   data-file-name="--><?php //echo $pre_form['uploaded_file']; ?><!--"-->
-<!--                                   data-document-title="--><?php //echo $pre_form['uploaded_file']; ?><!--"-->
-<!--                                   data-preview-ext="--><?php //echo $document_extension ?><!--">Preview</a>-->
-                                <!--                            <a target="_blank"-->
-                                <!--                               href="--><?php //echo base_url('form_i9/preview_i9form/' . $pre_form['user_type'] . '/' . $pre_form['user_sid']) ?><!--"-->
-                                <!--                               class="btn blue-button btn-block">Preview</a>-->
-<!--                            </div>-->
                             <div class="col-lg-3 cs-btn-setting">
                                 <a download="W4 Submitted Form" href="<?php echo base_url('hr_documents_management/download_upload_document').'/'.$pre_form['uploaded_file'];?>" class="btn blue-button btn-block">Download Submitted Form</a>
                             </div>
@@ -109,7 +96,7 @@
                                 <div class="panel-body">
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 cs-full-width">
                                         <div class="form-group">
-                                            <label>1. Your first name</label>
+                                            <label>1. Your first name <span class="staric">*</span></label>
                                             <input type="text" value="<?php echo !empty($pre_form) ? $pre_form['first_name']: ''?>" name="w4_first_name" class="form-control" />
                                         </div>
                                     </div>
@@ -1476,7 +1463,7 @@
 
         var is_signature_exist = $('#signature_bas64_image').val();
         if(is_signature_exist == ""){
-            alertify.error('Please Add Your Signature!');
+            alertify.error("Warning", 'Please Add Your Signature!');
             return false;
         }
 
@@ -1488,7 +1475,7 @@
                     $('#w4-form').submit();
                 },
                 function () {
-                    alertify.error('Cancelled!');
+                    alertify.error("Warning", 'Cancelled!');
                 }).set('labels', {ok: 'I Consent and Accept!', cancel: 'Cancel'});
         }
     }

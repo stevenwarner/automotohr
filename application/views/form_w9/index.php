@@ -1123,17 +1123,17 @@
 //            var checked = $(name).length;
 //            var check_val = $(name).val();
 //            if(!checked){
-//                alertify.error('Federal Tax Classification is required');
+//                alertify.error("Warning", 'Federal Tax Classification is required');
 //                flag = 1;
 //                return false;
 //            }
 //            if(check_val=='llc' && $('#llc_desc').val() == ''){
-//                alertify.error('Enter The Tax Classification (C=C Corporation, S=S Corporation, P=Partnership)');
+//                alertify.error("Warning", 'Enter The Tax Classification (C=C Corporation, S=S Corporation, P=Partnership)');
 //                flag = 1;
 //                return false;
 //            }
 //            if(check_val=='other' && $('#other_desc').val() == ''){
-//                alertify.error('Enter Other Federal Tax Classification');
+//                alertify.error("Warning", 'Enter Other Federal Tax Classification');
 //                flag = 1;
 //                return false;
 //            }
@@ -1157,7 +1157,7 @@
     function func_save_e_signature() {
         var is_signature_exist = $('#signature_bas64_image').val();
         if(is_signature_exist == ""){
-            alertify.error('Please Add Your Signature!');
+            alertify.error("Warning", 'Please Add Your Signature!');
             return false;
         }
         if ($('#w9-form').valid()) {
@@ -1168,7 +1168,7 @@
                     $('#w9-form').submit();
                 },
                 function () {
-                    alertify.error('Cancelled!');
+                    alertify.error("Warning", 'Cancelled!');
                 }).set('labels', {ok: 'I Consent and Accept!', cancel: 'Cancel'});
         }
     }
