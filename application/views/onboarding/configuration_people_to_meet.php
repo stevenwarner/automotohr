@@ -1,4 +1,5 @@
 <?php //foreach ($employees as $key => $value) { echo $value;} die(); ?>
+<?php //echo "<pre>"; print_r($employees); die("here"); ?>
 <div class="row">
     <div class="col-xs-12">
         <div class="table-responsive">
@@ -15,7 +16,7 @@
                         <?php foreach($people  as $person) { ?>
                             <tr>
                                 <td>
-                                    <?php echo ucwords($person['first_name'] . ' ' . $person['last_name']); ?>
+                                    <?php echo getUserNameBySID($person['employer_sid']); ?>
                                 </td>
                                 <td>
                                     <?php echo $person['notes']; ?>
@@ -64,7 +65,12 @@
                                 <?php $field_id = 'employee_sid'; ?>
                                 <?php echo form_label('Employee:', $field_id); ?>
                                 <div class="hr-select-dropdown">
-                                    <?php echo form_dropdown($field_id, $employees, array() , 'class="invoice-fields" id="' . $field_id . '"'); ?>
+                                    <select name="employee_sid" class="invoice-fields" id="employee_sid">
+                                        <?php foreach ($employees as $emp_sid => $employee_name) { ?>
+                                           <option value="<?php echo $emp_sid; ?>"><?php echo getUserNameBySID($emp_sid); ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <?php //echo form_dropdown($field_id, $employees, array() , 'class="invoice-fields" id="' . $field_id . '"'); ?>
                                     <?php echo form_error($field_id); ?>
                                     <span id="add_person_error" class="text-danger person_error"></span>
                                 </div>

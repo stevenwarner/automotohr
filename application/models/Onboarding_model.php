@@ -538,6 +538,9 @@ class Onboarding_model extends CI_Model {
         $this->db->select('users.profile_picture');
         $this->db->join('users', 'users.sid = onboarding_people_to_meet.employer_sid', 'left');
         $this->db->where('onboarding_people_to_meet.company_sid', $company_sid);
+        $this->db->where('users.active', 1);
+        $this->db->where('users.archived', 0);
+        $this->db->where('users.terminated_status', 0);
 
         $records_obj = $this->db->get('onboarding_people_to_meet');
         $records_arr = $records_obj->result_array();
@@ -1234,6 +1237,9 @@ class Onboarding_model extends CI_Model {
                     $this->db->select('PhoneNumber');
                     $this->db->select('profile_picture');
                     $this->db->where('sid', $employer_sid);
+                    $this->db->where('active', 1);
+                    $this->db->where('archived', 0);
+                    $this->db->where('terminated_status', 0);
                     $this->db->order_by(SORT_COLUMN,SORT_ORDER);
                     $employer_obj = $this->db->get('users');
                     $employer_arr = $employer_obj->result_array();
