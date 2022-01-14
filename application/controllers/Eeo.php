@@ -8,6 +8,7 @@ class Eeo extends Public_Controller
         $this->load->model('eeo_model');
         $this->load->model('dashboard_model');
         $this->load->model('application_tracking_system_model');
+        $this->load->model('hr_documents_management_model');
         $this->load->library('pagination');
     }
 
@@ -341,15 +342,15 @@ class Eeo extends Public_Controller
             if ($this->form_validation->run() == false) {
                 //load views
 
-//                if($sid == $employer_sid) {
-//                    $this->load->view('onboarding/on_boarding_header', $data);
-//                    $this->load->view('onboarding/eeoc_form');
-//                    $this->load->view('onboarding/on_boarding_footer');
-//                } else {
+                // if($sid == $employer_sid) {
+                //   $this->load->view('onboarding/on_boarding_header', $data);
+                //   $this->load->view('onboarding/eeoc_form');
+                //   $this->load->view('onboarding/on_boarding_footer');
+                // } else {
                     $this->load->view('main/header', $data);
                     $this->load->view('eeo/form');
                     $this->load->view('main/footer');
-//                }
+                // }
             } else {
                 $perform_action = $this->input->post('perform_action');
                 switch ($perform_action) {
@@ -400,6 +401,89 @@ class Eeo extends Public_Controller
                         break;
                 }
             }
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
+    public function EEOC_form($user_type, $user_sid, $jobs_listing = null)
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'eeo'); // Param2: Redirect URL, Param3: Function Name
+            $company_sid = $data['session']['company_detail']['sid'];
+            //
+            
+            //
+            switch ($user_type) {
+                case 'employee':
+                    $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $user_sid);
+                    
+                    if (empty($user_info)) {
+                        $this->session->set_flashdata('message', '<strong>Error:</strong> Employee Not Found!');
+                        redirect('employee_management', 'refresh');
+                    }
+
+                    $data["user_name"] = getUserNameBySID($user_sid);
+
+                    $data = employee_right_nav($user_sid, $data);
+                    $left_navigation = 'manage_employer/employee_management/profile_right_menu_employee_new';
+                    $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'employee'); // getting applicant ratings - getting average rating of applicant
+                    $data['employer'] = $this->hr_documents_management_model->get_company_detail($user_sid);
+                    $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                    $data['eeo_form_info'] = $eeo_form_info;
+                    $data['left_navigation'] = $left_navigation;
+                    break;
+                case 'applicant':
+                    $user_info = $this->hr_documents_management_model->get_applicant_information($company_sid, $user_sid);
+
+                    if (empty($user_info)) {
+                        $this->session->set_flashdata('message', '<strong>Error:</strong> Applicant Not Found!');
+                        redirect('application_tracking_system/active/all/all/all/all', 'refresh');
+                    }
+
+                    $data = applicant_right_nav($user_sid, $jobs_listing);
+                    $left_navigation = 'manage_employer/application_tracking_system/profile_right_menu_applicant';
+                    $applicant_info = $this->hr_documents_management_model->get_applicants_details($user_sid);
+                    $eeo_form_status = $this->hr_documents_management_model->get_eeo_form_status($user_sid);
+                    $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                    $data['eeo_form_status'] = $eeo_form_status;
+                    $data['eeo_form_info'] = $eeo_form_info;
+
+                    $data_employer = array('sid' => $applicant_info['sid'],
+                        'first_name' => $applicant_info['first_name'],
+                        'last_name' => $applicant_info['last_name'],
+                        'email' => $applicant_info['email'],
+                        'Location_Address' => $applicant_info['address'],
+                        'Location_City' => $applicant_info['city'],
+                        'Location_Country' => $applicant_info['country'],
+                        'Location_State' => $applicant_info['state'],
+                        'Location_ZipCode' => $applicant_info['zipcode'],
+                        'PhoneNumber' => $applicant_info['phone_number'],
+                        'profile_picture' => $applicant_info['pictures'],
+                        'user_type' => ucwords($user_type));
+
+                    $data["user_name"] = $applicant_info['first_name']." ".$applicant_info['last_name'];
+
+                    $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'applicant'); //getting average rating of applicant
+                    $data['employer'] = $data_employer;
+                    $data['company_sid'] = $company_sid;
+                    $data['employer_sid'] = $applicant_info['sid'];
+                    $data['left_navigation'] = $left_navigation;
+                    break;
+            }
+            //
+            $data['title'] = 'EEOC Form';
+            $data['user_type'] = $user_type;
+            $data['user_sid'] = $user_sid;
+            $data['job_list_sid'] = $jobs_listing;
+            //
+            $this->load->view('main/header', $data);
+            $this->load->view('eeo/user_eeoc');
+            $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), "refresh");
         }

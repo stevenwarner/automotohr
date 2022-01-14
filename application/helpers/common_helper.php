@@ -13959,3 +13959,24 @@ if (!function_exists('get_employee_latest_joined_date')) {
         return $format_to_site == true && !empty($return_date) ? date_with_time($return_date) : $return_date;
     }
 }
+
+
+if (!function_exists('getUserEEOC')) {
+
+    function getUserEEOC($type, $sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('*');
+        $CI->db->where('users_type', $type);
+        $CI->db->where('application_sid ', $sid);
+        $CI->db->where('us_citizen', 'yes');
+        //
+        $eeoc = $CI->db->get('portal_eeo_form')->row_array();
+
+        if (!empty($eeoc)) {
+            return $eeoc;
+        } else {
+            return array();
+        }
+    }
+}

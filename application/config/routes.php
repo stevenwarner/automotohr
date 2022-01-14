@@ -836,6 +836,9 @@ $route['eeo/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3';
 $route['eeo/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4';
 $route['eeo/(:any)/(:any)/(:any)/(:any)/(:num)'] = 'eeo/index/$1/$2/$3/$4/$5';
 $route['eeo/export_excel'] = 'eeo/export_excel';
+$route['EEOC/(:any)/(:any)'] = 'eeo/EEOC_form/$1/$2';
+$route['EEOC/(:any)/(:any)/(:any)'] = 'eeo/EEOC_form/$1/$2/$3';
+
 $route['job_products_report'] = 'order_history/job_products_report';
 $route['job_products_report/(:any)'] = 'order_history/job_products_report/index/$1';
 $route['order_history/(:any)'] = 'order_history/index/$1';
