@@ -1971,13 +1971,19 @@ class Home extends CI_Controller {
             exit(0);
         }
         //
-        $data['session']['company_detail'] = $this->hr_documents_management_model->getCompanyInfo(57);
+        $user_sid = $document['application_sid'];
+        $user_type = $document['users_type'];
+        //
+        $company_sid = $this->hr_documents_management_model->getCompanysid($user_sid, $user_type);
+        //
+        $data['session']['company_detail'] = $this->hr_documents_management_model->getCompanyInfo($company_sid);
+        $data['eeo_form_status'] = $this->hr_documents_management_model->get_portal_detail($company_sid);
         //
         $data['company_sid'] = $data['session']['company_detail']['sid'];
         $data['company_name'] = $data['session']['company_detail']['CompanyName'];
         $data['id'] = $id;
-        $data['user_sid'] = $document['application_sid'];
-        $data['user_type'] = $document['users_type'];
+        $data['user_sid'] = $user_sid;
+        $data['user_type'] = $user_type;
         $data['first_name'] = $document['user']['first_name'];
         $data['last_name'] = $document['user']['last_name'];
         $data['email'] = $document['user']['email'];

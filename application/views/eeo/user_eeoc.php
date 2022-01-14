@@ -19,6 +19,12 @@
                                 </span>
                             </div>
                             <?php if (!empty($eeo_form_info)) { ?>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                        <a class="btn btn-success jsResendEEOC float-right" ref="javascript:void(0);" title="Send EEOC form to <?=ucwords($user_name);?>" placement="top">Re-Send EEOC Form</a>
+                                    </div>
+                                </div> 
+                                <hr>       
                                 <section class="sheet padding-10mm">
                                     <article class="sheet-header">
                                         <div class="header-logo"><img src="<?php echo base_url('assets/images/eeoc_logo.jpg')?>"></div>
