@@ -4232,7 +4232,8 @@ if (!function_exists('log_and_send_templated_email')) {
 
         if (!empty($replacement_array)) {
             foreach ($replacement_array as $key => $value) {
-                $emailTemplateBody = str_replace('{{' . $key . '}}', ucwords($value), $emailTemplateBody);
+                $modify_value = $key == "username"? $value : ucwords($value);
+                $emailTemplateBody = str_replace('{{' . $key . '}}', $modify_value, $emailTemplateBody);
                 $emailTemplateSubject = str_replace('{{' . $key . '}}', $value, $emailTemplateSubject);
                 $emailTemplateFromName = str_replace('{{' . $key . '}}', $value, $emailTemplateFromName);
             }
