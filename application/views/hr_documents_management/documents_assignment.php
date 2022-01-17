@@ -2422,6 +2422,37 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="tags-arae">
+                                    <div class="col-md-12">
+                                        <h5><strong>Pay Plan / Offer Letter tags:</strong></h5>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{hourly_rate}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{hourly_technician}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{flat_rate_technician}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{semi_monthly_salary}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{semi_monthly_draw}}">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -3639,6 +3670,37 @@
                                 <div class="col-md-6">
                                     <div class="form-group autoheight">
                                         <input type="text" class="form-control tag" readonly="" value="{{checkbox}}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tags-arae">
+                                <div class="col-md-12">
+                                    <h5><strong>Pay Plan / Offer Letter tags:</strong></h5>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{hourly_rate}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{hourly_technician}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{flat_rate_technician}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{semi_monthly_salary}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{semi_monthly_draw}}">
                                     </div>
                                 </div>
                             </div>
