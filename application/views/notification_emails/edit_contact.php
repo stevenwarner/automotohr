@@ -28,7 +28,9 @@
                                             } else if ($notification_type == 'documents_status') {
                                                 echo base_url("notification_emails/documents");
                                             } else if ($notification_type == 'general_information_status') {
-                                                echo base_url("notification_emails/general_information");     
+                                                echo base_url("notification_emails/general_information");  
+                                            } else if ($notification_type == 'employee_Profile') {      
+                                                echo base_url("notification_emails/employee_Profile");  
                                             } else {
                                                 echo base_url('notification_emails/new_applicant_notifications'); 
                                             }
@@ -52,6 +54,8 @@
                                             Documents Notifications
                                         <?php } else if ($notification_type == 'general_information_status') { ?>
                                             General Information Notifications
+                                        <?php } else if ($notification_type == 'employee_Profile') { ?>
+                                            Employee Profile    
                                         <?php } else { ?>
                                             New Applicant Email Notifications
                                         <?php } ?>
@@ -108,7 +112,9 @@
                                                         } else if ($notification_type == 'documents_status') {
                                                             echo base_url("notification_emails/documents");
                                                         } else if ($notification_type == 'general_information_status') {
-                                                            echo base_url("notification_emails/general_information");    
+                                                            echo base_url("notification_emails/general_information");  
+                                                        } else if ($notification_type == 'employee_Profile') {      
+                                                            echo base_url("notification_emails/employee_Profile");      
                                                         } else {
                                                             echo base_url('notification_emails/new_applicant_notifications'); 
                                                         }

@@ -266,6 +266,9 @@ define('HR_AUTHORIZED_DOCUMENTS_NOTIFICATION', 410);
 define('HR_DOCUMENTS_FOR_APPLICANT', 387);
 
 
+// Added on- 18/01/2022
+define('EMPLOYEE_PROFILE_UPDATE', 417);
+
 //Db Config for Dealers Account
 define('ROOT_DB_NAME', 'dealers2_sjb42_upgrade');
 
@@ -622,6 +625,7 @@ define('ONBOARDING_REQUEST', 'The selected contacts will be notified by email wh
 define('OFFER_LETTER', 'The selected contacts will be notified by email when an offer letter/pay plan is assigned to the employees/applicants.');
 define('DOCUMENT_ASSIGN', 'The selected contacts will be notified by email when a document is assigned to the employees/applicants.');
 define('GENERAL_DOCUMENT', 'The selected contacts will be notified by email when a general information document is assigned to the employees/applicants.');
+define('EMPLOYEE_PROFILE', 'The selected contacts will be notified by email when an employee changes their profile info.');
 
 define('I9_EXPIRES', '10/31/2022');
 define('W4_YEAR', '2022');
