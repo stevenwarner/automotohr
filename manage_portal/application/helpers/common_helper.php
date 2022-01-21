@@ -1843,7 +1843,5 @@ if(!function_exists('getUserNameBySID')){
         } else {
             return '';
         }
-
-        
     }
 }
