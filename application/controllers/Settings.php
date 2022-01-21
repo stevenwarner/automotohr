@@ -520,6 +520,7 @@ class Settings extends Public_Controller
                 $full_employment_app_print = $this->input->post('full_employment_app_print');
                 $job_title_special_chars = $this->input->post('job_title_special_chars');
                 $onboarding_ssn_status = $this->input->post('onboarding_ssn_status');
+                $FEA_sent_to_an_applicant = $this->input->post('FEA_sent_to_an_applicant');
                 $onboarding_dob_status = $this->input->post('onboarding_dob_status');
                 $company_timezone = $this->input->post('company_timezone');
 
@@ -569,6 +570,12 @@ class Settings extends Public_Controller
                     $portal_data['job_title_special_chars'] = 0;
                 } else {
                     $portal_data['job_title_special_chars'] = 1;
+                }
+
+                if (empty($FEA_sent_to_an_applicant)) {
+                    $portal_data['sent_to_an_applicant'] = 0;
+                } else {
+                    $portal_data['sent_to_an_applicant'] = 1;
                 }
 
                 if (empty($onboarding_ssn_status)) {

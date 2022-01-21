@@ -4257,7 +4257,7 @@ if (!function_exists('log_and_send_templated_email')) {
                 . EMAIL_FOOTER;
         }
 
-        if ($log_email == 1) {
+        if ($log_email == 1) { 
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
         } else {
             sendMail($from, $to, $subject, $body, $from_name);
@@ -13959,3 +13959,76 @@ if (!function_exists('get_employee_latest_joined_date')) {
         return $format_to_site == true && !empty($return_date) ? date_with_time($return_date) : $return_date;
     }
 }
+
+if (!function_exists('send_full_employment_application')) {
+
+    function send_full_employment_application($company_sid, $user_sid, $user_type)
+    {
+        $status = check_full_employment_application_module($company_sid);
+        //
+        if ($status == 1) {
+            $CI = &get_instance();
+            //
+            $user_name = '';
+            $user_email = '';
+            $company_name = getCompanyNameBySid($company_sid);
+            //
+            if ($user_type == "applicant") {
+                //
+                $applicant_info = db_get_applicant_profile($user_sid);
+                //
+                $user_email = $applicant_info['email'];
+                $user_name = get_applicant_name($user_sid);
+            } else {
+                //
+                $employee_info = get_employee_profile_info($user_sid);
+                //
+                $user_email = $employee_info['emial'];
+                $user_name = getUserNameBySID($user_sid);
+            }
+            //
+            $verification_key = random_key(80);
+            //
+            $dataToSave = array();
+            $dataToSave['company_sid'] = $company_sid;
+            $dataToSave['user_type'] = $user_type;
+            $dataToSave['user_sid'] = $user_sid;
+            $dataToSave['verification_key'] = $verification_key;
+            $dataToSave['status'] = 'sent';
+            $dataToSave['status_date'] = date('Y-m-d H:i:s');
+            //
+            $CI->db->insert('form_full_employment_application', $dataToSave);
+            //
+            $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('form_full_employment_application/' . $verification_key) . '">Full Employment Application</a>';
+            //
+            $replacement_array = array();
+            $replacement_array['user_name'] = $user_name;
+            $replacement_array['company_name'] = ucwords($company_name);
+            $replacement_array['link'] = $link_html;
+            //
+            $company_email_header_footer = message_header_footer($company_sid, ucwords($company_name));
+            log_and_send_templated_email(FULL_EMPLOYMENT_APPLICATION_REQUEST, $user_email, $replacement_array, $company_email_header_footer);
+        }    
+    }
+}
+
+if (!function_exists('check_full_employment_application_module')) {
+
+    function check_full_employment_application_module($company_sid)
+    {
+        $company_status = 0;
+        //
+        $CI = &get_instance();
+        $CI->db->select('sent_to_an_applicant');
+        $CI->db->where('user_sid', $company_sid);
+        //
+        $company_info = $CI->db->get('portal_employer')->row_array();
+        //
+        if (!empty($company_info)) {
+            $company_status = $company_info['sent_to_an_applicant'];
+        }
+        //
+        return $company_status;
+    }
+}
+

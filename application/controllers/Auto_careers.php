@@ -320,6 +320,8 @@ class Auto_careers extends CI_Controller
                 $applicant_primary_data['referred_by_email']    = $referred_by_email;
 
                 $job_applications_sid = $this->auto_careers_model->save_applicant($applicant_primary_data);
+                //
+                send_full_employment_application($company_sid, $job_applications_sid, "applicant");
             } else {
                 $job_applications_sid = $portal_job_applications_sid;
             }

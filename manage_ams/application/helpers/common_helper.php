@@ -428,7 +428,7 @@ if (!function_exists('is_subdomain_of_automotohr')) {
 
 if (!function_exists('send_templated_email')) {
 
-    function send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array()) {
+    function send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 0) {
         $emailTemplateData = get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
         $emailTemplateSubject = $emailTemplateData['subject'];
@@ -452,7 +452,11 @@ if (!function_exists('send_templated_email')) {
                     . $message_hf['footer'];
         }
 
-        sendMail($from, $to, $subject, $body, $from_name);
+        if ($log_email == 1) {
+            log_and_sendEmail($from, $to, $subject, $body, $from_name);
+        } else {
+            sendMail($from, $to, $subject, $body, $from_name);
+        }
     }
 
 }
@@ -1574,5 +1578,200 @@ if(!function_exists('GetJobHeaderForGoogle')){
             json_encode($googleJobOBJ, JSON_PRETTY_PRINT)
         );
         echo '</script>';
+    }
+}
+
+//
+if (!function_exists('send_full_employment_application')) {
+
+    function send_full_employment_application($company_sid, $user_sid, $user_type)
+    {
+        $status = check_full_employment_application_module($company_sid);
+        //
+        if ($status == 1) {
+            $CI = &get_instance();
+            //
+            $user_name = '';
+            $user_email = '';
+            $company_name = getCompanyNameBySid($company_sid);
+            //
+            if ($user_type == "applicant") {
+                //
+                $applicant_info = db_get_applicant_profile($user_sid);
+                //
+                $user_email = $applicant_info['email'];
+                $user_name = get_applicant_name($user_sid);
+            } else {
+                //
+                $employee_info = get_employee_profile_info($user_sid);
+                //
+                $user_email = $employee_info['emial'];
+                $user_name = getUserNameBySID($user_sid);
+            }
+            //
+            $verification_key = random_key(80);
+            //
+            $dataToSave = array();
+            $dataToSave['company_sid'] = $company_sid;
+            $dataToSave['user_type'] = $user_type;
+            $dataToSave['user_sid'] = $user_sid;
+            $dataToSave['verification_key'] = $verification_key;
+            $dataToSave['status'] = 'sent';
+            $dataToSave['status_date'] = date('Y-m-d H:i:s');
+            //
+            $CI->db->insert('form_full_employment_application', $dataToSave);
+            //
+            $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('form_full_employment_application/' . $verification_key) . '">Full Employment Application</a>';
+            //
+            $replacement_array = array();
+            $replacement_array['user_name'] = $user_name;
+            $replacement_array['company_name'] = ucwords($company_name);
+            $replacement_array['link'] = $link_html;
+            //
+            $company_email_header_footer = message_header_footer_domain($company_sid, ucwords($company_name));
+            send_templated_email(FULL_EMPLOYMENT_APPLICATION_REQUEST, $user_email, $replacement_array, $company_email_header_footer, 1);
+        }    
+    }
+}
+
+//
+if (!function_exists('check_full_employment_application_module')) {
+
+    function check_full_employment_application_module($company_sid)
+    {
+        $company_status = 0;
+        //
+        $CI = &get_instance();
+        $CI->db->select('sent_to_an_applicant');
+        $CI->db->where('user_sid', $company_sid);
+        //
+        $company_info = $CI->db->get('portal_employer')->row_array();
+        //
+        if (!empty($company_info)) {
+            $company_status = $company_info['sent_to_an_applicant'];
+        }
+        //
+        return $company_status;
+    }
+}
+
+//
+if (!function_exists('getCompanyNameBySid')) {
+    function getCompanyNameBySid($company_sid)
+    {
+        $company_name = '';
+        if (!empty($company_sid)) {
+            
+            $CI = &get_instance();
+            $CI->db->select('CompanyName');
+            $CI->db->where('sid', $company_sid);
+            //
+            $company_info = $CI->db->get('users')->row_array();
+
+            if (!empty($company_info)) {
+                $company_name = $company_info['CompanyName'];
+            }   
+
+        } 
+
+        return $company_name;
+    }
+}
+
+if (!function_exists('db_get_applicant_profile')) {
+
+    function db_get_applicant_profile($sid)
+    {
+        $CI = &get_instance();
+        //$CI->db->select('portal_job_applications.*');
+        $CI->db->select('portal_job_applications.sid');
+        $CI->db->select('portal_job_applications.employer_sid');
+        $CI->db->select('portal_job_applications.first_name');
+        $CI->db->select('portal_job_applications.last_name');
+        $CI->db->select('portal_job_applications.pictures');
+        $CI->db->select('portal_job_applications.email');
+        $CI->db->select('portal_job_applications.phone_number');
+        $CI->db->select('portal_job_applications.address');
+        $CI->db->select('portal_job_applications.country');
+        $CI->db->select('portal_job_applications.city');
+        $CI->db->select('portal_job_applications.state');
+        $CI->db->select('portal_job_applications.zipcode');
+        $CI->db->select('portal_job_applications.resume');
+        $CI->db->select('portal_job_applications.cover_letter');
+        $CI->db->select('portal_job_applications.YouTube_Video');
+        $CI->db->select('portal_job_applications.full_employment_application');
+        $CI->db->select('portal_job_applications.hired_sid');
+        $CI->db->select('portal_job_applications.hired_status');
+        $CI->db->select('portal_job_applications.hired_date');
+        $CI->db->select('portal_job_applications.verification_key');
+        $CI->db->select('portal_job_applications.linkedin_profile_url');
+        $CI->db->select('portal_job_applications.extra_info');
+        $CI->db->select('portal_job_applications.referred_by_name');
+        $CI->db->select('portal_job_applications.referred_by_email');
+        $CI->db->select('portal_job_applications.job_fit_category_sid');
+        $CI->db->select('portal_applicant_jobs_list.*, portal_applicant_jobs_list.sid as portal_applicant_jobs_list_sid');
+        $CI->db->join('portal_applicant_jobs_list', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left');
+        $CI->db->where('portal_job_applications.sid', $sid);
+        $result = $CI->db->get('portal_job_applications')->result_array();
+
+        if (empty($result)) { // applicant does not exits
+            return 'error';
+        } else {
+            return $result[0];
+        }
+    }
+}
+
+//
+if (!function_exists('get_applicant_name')) {
+
+    function get_applicant_name($sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('portal_job_applications.first_name');
+        $CI->db->select('portal_job_applications.last_name');
+        $CI->db->where('portal_job_applications.sid', $sid);
+        $result = $CI->db->get('portal_job_applications')->result_array();
+
+        if (empty($result)) { // applicant does not exits
+            return 'error';
+        } else {
+            return $result[0]['first_name']. ' ' . $result[0]['last_name'];
+        }
+    }
+}
+
+//
+if (!function_exists('get_employee_profile_info')) {
+    function get_employee_profile_info($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('first_name,last_name,email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, profile_picture');
+        $CI->db->where('sid', $emp_id);
+        return $CI->db->get('users')->row_array();
+    }
+}
+
+//
+if(!function_exists('getUserNameBySID')){
+    function getUserNameBySID($sid, $remake = true){
+        $user_info = db_get_employee_profile($sid);
+
+        if (!empty($user_info)) {
+            return $remake ? remakeEmployeeName([
+                'first_name' => $user_info[0]['first_name'],
+                'last_name' => $user_info[0]['last_name'],
+                'access_level' => $user_info[0]['access_level'],
+                'timezone' => isset($user_info[0]['timezone']) ? $user_info[0]['timezone'] : '',
+                'access_level_plus' => $user_info[0]['access_level_plus'],
+                'is_executive_admin' => $user_info[0]['is_executive_admin'],
+                'pay_plan_flag' => $user_info[0]['pay_plan_flag'],
+                'job_title' => $user_info[0]['job_title'],
+            ]) : $user_info;
+        } else {
+            return '';
+        }
+
+        
     }
 }
