@@ -533,7 +533,10 @@ if (isset($applicant)) {
                                                                     </figure>
                                                                     <div class="caption">
                                                                         <h4>
-                                                                            <strong><?php echo $person['first_name'] . ' ' . $person['last_name']; ?></strong>
+                                                                            <strong>
+                                                                                <?php //echo $person['first_name'] . ' ' . $person['last_name']; ?>
+                                                                                <?php echo getUserNameBySID($person['employer_sid']); ?>
+                                                                            </strong>
                                                                             <br />
                                                                             <small><?php echo $person['notes']; ?></small>
                                                                         </h4>
