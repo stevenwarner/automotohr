@@ -13959,3 +13959,13 @@ if (!function_exists('get_employee_latest_joined_date')) {
         return $format_to_site == true && !empty($return_date) ? date_with_time($return_date) : $return_date;
     }
 }
+
+if(!function_exists('StripFeedTags')){
+    /**
+     * Set feed content
+     */
+    function StripFeedTags($string){
+        //
+        return strip_tags($string, FEED_STRIP_TAGS);
+    }
+}
