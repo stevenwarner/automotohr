@@ -165,8 +165,8 @@
                     <h2 class="text-blue">Your Colleagues</h2>
                 </div>
                 <div class="full-width applicant-bio">
-<?php       foreach($people as $person) {
-//                if($person['employee_info']['sid'] != $employee['sid']) { ?>
+<?php       foreach($people as $person) { ?>
+                <?php if(!empty($person['employee_info'])) { ?>
                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                         <div class="applicant-details-info">
                             <article class="people-to-contact full-width">
@@ -187,7 +187,7 @@
                             </article>
                         </div>
                     </div>
-<?php //           }
+<?php            }
             }   ?>
                     </div>
 

@@ -95,9 +95,9 @@ class Indeed_feed_new extends CI_Controller {
                 }
 
                 if (isset($job['JobRequirements']) && $job['JobRequirements'] != NULL) {
-                    $jobDesc ='<br><br>Job Description:<br><br>'.strip_tags($job['JobDescription'],'<br>').'<br><br>Job Requirements:<br><br>' . strip_tags($job['JobRequirements'], '<br><br>');
+                    $jobDesc ='<br><br>Job Description:<br><br>'.(StripFeedTags($job['JobDescription'])).'<br><br>Job Requirements:<br><br>' . (StripFeedTags($job['JobRequirements']));
                 } else {
-                    $jobDesc = strip_tags($job['JobDescription'], '<br>');
+                    $jobDesc = StripFeedTags($job['JobDescription']);
                 }
 
                 if (isset($job['Location_Country']) && $job['Location_Country'] != NULL) {
@@ -287,7 +287,7 @@ class Indeed_feed_new extends CI_Controller {
                     $publishDate = $feedData['publish_date'];
                 }
                 //
-                $jobDesc = strip_tags($job['JobDescription'], '<br>');
+                $jobDesc = StripFeedTags($job['JobDescription']);
                 $country['country_code'] = "US";
                 $state['state_name'] = "";
                 $city = "";
@@ -296,7 +296,7 @@ class Indeed_feed_new extends CI_Controller {
                 $jobType = "";
                 //
                 if (isset($job['JobRequirements']) && $job['JobRequirements'] != NULL) {
-                    $jobDesc .= '<br><br>Job Requirements:<br>' . strip_tags($job['JobRequirements'], '<br>');
+                    $jobDesc .= '<br><br>Job Requirements:<br>' . StripFeedTags($job['JobRequirements']);
                 }
                 //
                 if (isset($job['Location_Country']) && $job['Location_Country'] != NULL) {
@@ -441,7 +441,7 @@ class Indeed_feed_new extends CI_Controller {
                     $publishDate = $feedData['publish_date'];
                 }
                 //
-                $jobDesc = strip_tags($job['JobDescription'], '<br>');
+                $jobDesc = StripFeedTags($job['JobDescription']);
                 $country['country_code'] = "US";
                 $state['state_name'] = "";
                 $city = "";
@@ -450,7 +450,7 @@ class Indeed_feed_new extends CI_Controller {
                 $jobType = "";
                 //
                 if (isset($job['JobRequirements']) && $job['JobRequirements'] != NULL) {
-                    $jobDesc .= '<br><br>Job Requirements:<br>' . strip_tags($job['JobRequirements'], '<br>');
+                    $jobDesc .= '<br><br>Job Requirements:<br>' . StripFeedTags($job['JobRequirements']);
                 }
                 //
                 if (isset($job['Location_Country']) && $job['Location_Country'] != NULL) {

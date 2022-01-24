@@ -57,9 +57,9 @@ private function addLastRead($sid){
                     }
 
                     if (isset($job['JobRequirements']) && $job['JobRequirements'] != NULL) {
-                        $jobDesc = strip_tags($job['JobDescription'], '<br>') . '<br><br>Job Requirements:<br>' . strip_tags($job['JobRequirements'], '<br>');
+                        $jobDesc = strip_tags(nl2br($job['JobDescription']), '<br>') . '<br><br>Job Requirements:<br>' . strip_tags(nl2br($job['JobRequirements']), '<br>');
                     } else {
-                        $jobDesc = strip_tags($job['JobDescription'], '<br>');
+                        $jobDesc = strip_tags(nl2br($job['JobDescription']), '<br>');
                     }
 
                     if (isset($job['Location_Country']) && $job['Location_Country'] != NULL) {
