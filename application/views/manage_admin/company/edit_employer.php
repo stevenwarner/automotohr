@@ -290,7 +290,7 @@
                                                 <li>
                                                     <?php echo form_label('Flat Rate Technician', 'flat_rate_technician'); ?>
                                                     <div class="hr-fields-wrap">
-                                                        <input type="text" class="hr-form-fileds" name="flat_rate_technician"  id="jsHRT" value="<?php echo $data['flat_rate_technician']; ?>">
+                                                        <input type="text" class="hr-form-fileds" name="flat_rate_technician"  id="jsFRT" value="<?php echo $data['flat_rate_technician']; ?>">
                                                         <?php
                                                             echo form_error('flat_rate_technician'); 
                                                         ?>
