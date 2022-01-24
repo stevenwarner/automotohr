@@ -6368,4 +6368,62 @@ class Hr_documents_management_model extends CI_Model {
         //
         return $returnArray;
     }
+
+    //
+    function getCompanysid($sid, $type) {
+        $company_sid = 0;
+        //
+        if ($type == "applicant") {
+            $this->db->select('employer_sid');
+            $this->db->where('sid', $sid);
+
+            $record_obj = $this->db->get('portal_job_applications');
+            $record_arr = $record_obj->row_array();
+            $record_obj->free_result();
+            
+            if (!empty($record_arr)) {
+                $company_sid = $record_arr['employer_sid'];
+            } 
+        } else {
+            $this->db->select('parent_sid');
+            $this->db->where('sid', $sid);
+
+            $record_obj = $this->db->get('users');
+            $record_arr = $record_obj->row_array();
+            $record_obj->free_result();
+            
+            if (!empty($record_arr)) {
+                $company_sid = $record_arr['parent_sid'];
+            } 
+        }
+        //
+        return $company_sid;
+    }
+
+    function get_portal_detail($company_id) {
+        $this->db->select('eeo_form_status');
+        $this->db->where('user_sid', $company_id);
+        $result = $this->db->get('portal_employer')->row_array();
+
+        if(!empty($result)){
+            return $result['eeo_form_status'];
+        } else {
+            return 0;
+        }
+    }
+
+    function get_user_eeo_form_info ($sid) {
+        $this->db->select('*');
+        $this->db->where('application_sid', $sid);
+        $this->db->where('is_expired', 1);
+        $this->db->order_by('sid', 'DESC');
+        $result = $this->db->get('portal_eeo_form')->result_array();
+        $return_data = array();
+
+        if (!empty($result)) {
+            $return_data = $result[0];
+        }
+
+        return $return_data;
+    }
 }

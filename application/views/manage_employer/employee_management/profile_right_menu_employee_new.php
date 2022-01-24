@@ -534,6 +534,20 @@
 <!--                                <a href="--><?php //echo base_url('incident_reporting_system/assigned_incidents/'); ?><!--">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>-->
 <!--                            </li>-->
                         <?php }?>
+                        
+                        <?php if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_status']) { ?>
+                            <li>
+                                <span class="left-addon"><i aria-hidden="true" class="fa fa-file-text"></i></span>
+                                <h4>EEOC</h4>
+                                <a href="<?php echo base_url('EEOC/employee/' . $employer['sid']); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                <?php $EEOC = getUserEEOC('employee', $employer['sid']); ?>
+                                <?php if(!empty($EEOC)) { ?>
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Direct Deposit Info Added" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                <?php } else { ?>
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Direct Deposit Info Not Added" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                <?php } ?>
+                            </li>
+                        <?php } ?>
                         <?php if(check_access_permissions_for_view($security_details, 'emp_documents') && $this->session->userdata('logged_in')['company_detail']['ems_status']){?>
                             <li>
                                 <span class="left-addon"><i aria-hidden="true" class="fa fa-file-text"></i></span>

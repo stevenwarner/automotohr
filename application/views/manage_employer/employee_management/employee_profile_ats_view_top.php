@@ -10,7 +10,15 @@
                     } else {
                         ?>default_pic-ySWxT.jpg<?php } ?>" alt="Profile Picture"></figure>
                 <div class="text">
-                    <h2><?= $employer["first_name"] ?> <?= $employer["last_name"] ?> <br><span><?=remakeEmployeeName( $employer, false );?></span></h2>
+                    <h2>
+                        <?= $employer["first_name"] ?> <?= $employer["last_name"] ?> 
+                        <?php if (isset($employer['user_type']) && $employer['user_type'] != 'Applicant') { ?>
+                            <br>
+                            <span>
+                                <?=remakeEmployeeName( $employer, false );?>
+                            </span>
+                        <?php } ?>
+                    </h2>
 
 
                     <div class="start-rating">
