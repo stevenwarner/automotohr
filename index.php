@@ -1,5 +1,9 @@
 <?php
 $GLOBALS['BENCHMARKSTARTTIME'] = microtime(true);
+
+//phpinfo();
+//die();
+
 /**
  * CodeIgniter
  *

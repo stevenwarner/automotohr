@@ -10688,7 +10688,15 @@ class Timeoff_model extends CI_Model
         $employementType = $employee['employee_type'];
         $employeeJoiningDate = !empty($employee['joined_at']) ? $employee['joined_at'] : $employee['registration_date'];
         $durationInMinutes = (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']);
-        $slug = $settings['slug'];
+       
+        if(isset($settings['slug'])){
+            $slug = $settings['slug'];
+        }else{
+            $slug ='';
+        }
+
+       // $slug = $settings['slug'];
+
         //
         foreach($policies as $policy){
             //

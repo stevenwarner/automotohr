@@ -131,7 +131,9 @@ class Task_management extends Public_Controller {
                 $applicant_sid                                                  = $formpost['applicant_sid'];
                 $employee_sid                                                   = $formpost['employee_sid'];
                 $assigned_notes                                                 = $formpost['notes'];
+                if(isset($company_timezone)){
                 date_default_timezone_set($company_timezone);
+                }
                 $assigned_date                                                  = date('Y-m-d H:i:s');
                 $applicant_names                                                = array();
 
@@ -249,7 +251,9 @@ class Task_management extends Public_Controller {
                 $formpost                                                       = $this->input->post(NULL, TRUE);
                 $perform_action                                                 = $formpost['perform_action'];
                 $note_txt                                                       = $formpost['note_txt'];
-                date_default_timezone_set($company_timezone);
+                if(isset($company_timezone)){
+                   date_default_timezone_set($company_timezone);
+                }
                 $current_date_time                                              = date('Y-m-d H:i:s');
                 
                 if($perform_action == 'add_new_note') {

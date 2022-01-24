@@ -1501,8 +1501,9 @@ if (!function_exists('return_value_if_key_exists')) {
             $CI = &get_instance();
             $CI->db->where('company_sid', $company_id);
             $result = $CI->db->get('kpa_onboarding')->row_array();
-
-            if ($result['status'] == 1 && !empty($result['kpa_url'])) {
+            
+            if (isset($result['status']) == 1 && !empty($result['kpa_url'])) {
+                die('df');
                 return 1;
             } else {
                 return 0;

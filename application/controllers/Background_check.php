@@ -473,6 +473,8 @@ class Background_check extends CI_Controller {
     }
 
     public function activate() {
+
+        
         $data['session'] = $this->session->userdata('logged_in');
 
         $security_sid = $employer_sid = $data['session']['employer_detail']['sid'];
@@ -1078,6 +1080,7 @@ class Background_check extends CI_Controller {
                 if ($this->form_validation->run() === FALSE) {
                     $this->load->view('main/header', $data_function);
                     $this->load->view('manage_employer/background_check');
+                    
                     $this->load->view('main/footer');
                 } else {
                     $perform_action = $this->input->post('perform_action');

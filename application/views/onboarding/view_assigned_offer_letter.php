@@ -35,7 +35,7 @@
                                                 <?php if ($employer['active']) { ?>
                                                     Active Employee
                                                 <?php } else { ?>
-                                                    <?php if($employer['archived']!='1') { ?>
+                                                    <?php if(isset($employer['archived']) && $employer['archived']!='1') { ?>
                                                         Onboarding or Deactivated Employee
                                                     <?php } else { ?>
                                                         Archived Employee

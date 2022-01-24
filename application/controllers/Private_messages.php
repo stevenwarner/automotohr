@@ -525,7 +525,10 @@ class Private_messages extends Public_Controller
                         . $secret_key . '</div>';
 
                     if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
-                        $file = explode(".", $_FILES['message_attachment']['name']);
+                        
+                          // $file = explode(".", $_FILES['message_attachment']['name']);
+                        $file = explode(".", $_FILES['message_attachment']['name'][0]);
+                        
                         $file_name = str_replace(" ", "-", $file[0]);
                         $messageFile = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
 

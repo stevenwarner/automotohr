@@ -5074,7 +5074,11 @@ class Hr_documents_management_model extends CI_Model {
         //
         $b = $a->row_array();
         $a = $a->free_result();
+        if($b){
         $c[] = count($b);
+        }else{
+            $c[] ='';
+        }
         //
         if( 
             $c[0]

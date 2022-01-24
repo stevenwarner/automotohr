@@ -43,7 +43,7 @@ if (isset($applicant)) {
                                                 <?php if ($employer['active']) { ?>
                                                     Active Employee
                                                 <?php } else { ?>
-                                                    <?php if($employer['archived']!='1') { ?>
+                                                    <?php if(isset($employer['archived']) && $employer['archived']!='1') { ?>
                                                         Onboarding or Deactivated Employee
                                                     <?php } else { ?>
                                                         Archived Employee
@@ -1988,7 +1988,9 @@ if (isset($applicant)) {
 <script src="<?=base_url('assets/mFileUploader/index.js');?>"></script>
 <?php $this->load->view('iframeLoader'); ?>
 <?php $this->load->view('hr_documents_management/hybrid/scripts'); ?>
-<?php $this->load->view('hr_documents_management/scripts/index', ['offerLetters' => $allOfferLetters, 'doRefresh' => 0]); ?>
+<?php 
+
+$this->load->view('hr_documents_management/scripts/index', ['offerLetters' => @$allOfferLetters, 'doRefresh' => 0]); ?>
 
 <script type="text/javascript">
     $(document).ready(function () {

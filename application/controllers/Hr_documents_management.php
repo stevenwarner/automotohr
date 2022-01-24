@@ -1666,9 +1666,13 @@ class Hr_documents_management extends Public_Controller {
     }
 
     public function documents_assignment($user_type = NULL, $user_sid = NULL, $jobs_listing = NULL) {
+        
+        
         if ($this->session->userdata('logged_in')) {
 
             $data['session'] = $this->session->userdata('logged_in');
+            
+
             // loadCachedFile('documents_assignment_'.($user_type).'_'.($user_sid).'', $data['session']);
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -1767,7 +1771,7 @@ class Hr_documents_management extends Public_Controller {
             }
             $data['EmployeeSid'] = $user_sid;
             $data['Type'] = $user_type;
-            
+          
             // Check for post
             if(isset($_POST) && sizeof($_POST)){
                 $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
@@ -2092,6 +2096,8 @@ class Hr_documents_management extends Public_Controller {
                                 }
                             }
 
+
+                            
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
 
                             if ($user_type == 'employee') {
@@ -2878,6 +2884,8 @@ class Hr_documents_management extends Public_Controller {
                     }
                 }
             }
+  
+         
 
             $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid);
 
@@ -2925,7 +2933,7 @@ class Hr_documents_management extends Public_Controller {
                     }
                 }
             }
-
+            
             $categories = $this->hr_documents_management_model->get_all_documents_category($company_sid);
             $active_categories = [];
 
@@ -3130,6 +3138,7 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
 
+
             $data['i9_form'] = $i9_form;
             $data['w9_form'] = $w9_form;
             $data['w4_form'] = $w4_form;
@@ -3140,7 +3149,11 @@ class Hr_documents_management extends Public_Controller {
             $data['last_name'] = $data['session']['employer_detail']['last_name'];
 
             $data['users_type'] = 'employee';
-            $data['this'] = $this;
+//print_r($this);
+//die('sdf');
+
+           // $data['this'] = $this;
+            $data['this_hr_do_man_obj'] = $this;
             $data['users_sid'] = $emp_sid;
             $data['jobs_listing'] = $jobs_listing;
 
@@ -3194,6 +3207,7 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
 
+       
             $active_documents = $this->hr_documents_management_model->get_all_documents($company_sid, 0);
             $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, $user_type, $user_sid, 0, 1, 0, $pp_flag);
             $company_offer_letters = $this->hr_documents_management_model->get_all_company_offers_letters($company_sid, 0);
@@ -3201,6 +3215,9 @@ class Hr_documents_management extends Public_Controller {
             $assigned_offer_letter_history = $this->hr_documents_management_model->get_assigned_offer_letter_history($company_sid, $user_type, $user_sid, 0);  
             $archived_assign_document = $this->hr_documents_management_model->get_archive_assigned_documents($company_sid, $user_type, $user_sid, $pp_flag);  
             $user_assigned_manual_documents = $this->hr_documents_management_model->get_all_user_assigned_manual_documents($company_sid, $user_type, $user_sid, $pp_flag);  
+
+
+         
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;
@@ -3238,6 +3255,8 @@ class Hr_documents_management extends Public_Controller {
                 $assigned_documents[$key]['is_document_authorized'] = $assigned_document['is_document_authorized'] = $is_document_authorized;
                 $assigned_documents[$key]['authorized_sign_status'] = $assigned_document['authorized_sign_status'] = $authorized_sign_status;
 
+          
+
                 if ($assigned_document['document_sid'] == 0) {
                     $doc_visible_check = $this->hr_documents_management_model->get_manual_doc_visible_payroll_check($assigned_document['sid']);
                     $assigned_document['visible_to_payroll'] = $doc_visible_check;  
@@ -3254,6 +3273,8 @@ class Hr_documents_management extends Public_Controller {
                 } else {
                     $assigned_document['pay_roll_catgory'] = 0; 
                 }
+
+               
 
                 if ($assigned_document['document_type'] != 'offer_letter') {
                     if ($assigned_document['status'] == 1) {
@@ -3400,6 +3421,8 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
 
+            
+
             $data['w4_form_uploaded'] = $this->hr_documents_management_model->get_form_uploaded($user_sid, 'w4');
             $data['w9_form_uploaded'] = $this->hr_documents_management_model->get_form_uploaded($user_sid, 'w9');
             // $data['i9_form_uploaded'] = $this->hr_documents_management_model->get_form_uploaded($user_sid, 'i9');
@@ -3451,6 +3474,8 @@ class Hr_documents_management extends Public_Controller {
             // echo 'Assigned Documents<pre>'; print_r($assigned_documents);
             // exit;
 
+          
+ 
 
             $data['title']                                  = 'Document(s) Management';
             $data['company_offer_letters']                  = $company_offer_letters;
@@ -3494,6 +3519,10 @@ class Hr_documents_management extends Public_Controller {
             $data['uncompleted_payroll_documents']  = $uncompleted_payroll_documents;
             $data['completed_payroll_documents']    = $completed_payroll_documents;
             $data['payroll_documents_sids']         = $payroll_documents_sids;
+
+
+
+
 // Filter assigned documents
             // 01/08/2021
             $data['assigned_documents'] =
@@ -3549,6 +3578,8 @@ class Hr_documents_management extends Public_Controller {
             $managers_list = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, $employer_sid);
             $data['managers_list'] = $managers_list;
             
+
+            
             // _e($assigned_offer_letters, true);
             // _e($data['completed_payrolls'], true);
             // _e($data['uncompleted_payrolls'], true);
@@ -3578,9 +3609,14 @@ class Hr_documents_management extends Public_Controller {
                 true,
                 $employeeDepartments
             );
+
+            
             // Get departments & teams
             $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
             $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
+             
+           
+          
 
             // _e($data['assigned_documents'], true, true);
             // ob_flush();
@@ -3589,7 +3625,16 @@ class Hr_documents_management extends Public_Controller {
             // Set eeoc form status
             $data['EeocFormStatus'] = $data['session']['portal_detail']['eeo_form_status'];
 			
+
             $data['pp_flag'] = $pp_flag;
+           
+           // unset($data['this']);
+
+           //echo "<pre>";
+         //  print_r($data);
+          //  die('dsfs');
+
+            
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');

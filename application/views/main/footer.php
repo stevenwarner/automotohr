@@ -551,10 +551,11 @@ if ($class != 'dashboard' &&
                             $('#checkout_error_message_coupon').html('');
                         }
                     } else {
-                        $('#checkout_error_message_coupon').html('');
-                        $('#checkout_error_message').html('');
-                        $('.noproducterrors').html('');
-                        $('#coupon_response_main_cart').html('');
+
+                           $('#checkout_error_message_coupon').html('');
+                           $('#checkout_error_message').html('');
+                           $('.noproducterrors').html('');
+                           $('#coupon_response_main_cart').html('');
 
                         var myLocation = window.location.href;
                         window.location = myLocation;
