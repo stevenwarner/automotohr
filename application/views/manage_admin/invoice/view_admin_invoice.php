@@ -223,15 +223,15 @@
 
                                                             <?php } ?>
 
-                                                            <?php if ($facebook_api_flag == true) { ?>
-                                                                <tr>
+                                                            <?php //if ($facebook_api_flag == true) { ?>
+                                                               <!--  <tr>
                                                                     <td class="">Facebook API</td>
                                                                     <td class="">Fully Featured Facebook Recruiting Application</td>
-                                                                    <td class="text-right">$ <?php echo number_format(399, 2, '.', ','); ?></td>
+                                                                    <td class="text-right">$ <?php //echo number_format(399, 2, '.', ','); ?></td>
                                                                     <td class="text-center"></td>
-                                                                    <td class="text-right">$ <?php echo number_format(0, 2, '.', ','); ?></td>
-                                                                </tr>
-                                                            <?php } ?>
+                                                                    <td class="text-right">$ <?php //echo number_format(0, 2, '.', ','); ?></td>
+                                                                </tr> -->
+                                                            <?php //} ?>
                                                             <tr>
                                                                 <td class="no-border"></td>
                                                                 <td class="no-border"></td>
