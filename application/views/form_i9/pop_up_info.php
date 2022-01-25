@@ -12,7 +12,7 @@
         
       </div>
       <div class="modal-footer" id="popup-modal-footer">
-        <button type="button" class="btn btn-default" id=close-popup-modal>Close</button>
+        <button type="button" class="btn blue-button close" data-dismiss="modal" id="close-popup-modal">Close</button>
       </div>
     </div>
 
@@ -35,11 +35,11 @@
 </div>
 <div class="modal-text hidden" id="section_1_middle_initial">
     <h1>Middle Initial</h1>
-    <p>Your middle initial is the first letter of your second given name. or the first letter of your middle name, if any. If you have more than one middle name, enter the first letter of your first middle name. If you do not have a middle name, enter N/A in this field.</p>
+    <p>Your middle initial is the first letter of your second given name. or the first letter of your middle name, if any. If you have more than one middle name, enter the first letter of your first middle name. If you do not have a middle name, leave this field empty.</p>
 </div>
 <div class="modal-text hidden" id="section_1_other_last_names_used">
     <h1>Other Last Names Used:</h1>
-    <p>Provide all other last names used, if any (e.g., maiden name). Enter N/A if you have not used other last names.</p>
+    <p>Provide all other last names used, if any (e.g., maiden name). Leave this field empty if you have not used other last names.</p>
     <p>For example, if you legally changed your last name from Smith to Jones, you should enter the name Smith in this field.</p>
 </div>
 <div class="modal-text hidden" id="section_1_address">
@@ -49,7 +49,7 @@
 </div>
 <div class="modal-text hidden" id="section_1_Apt_number">
     <h1>Apt. Number </h1>
-    <p>Enter the number(s) or letter(s) that identify(ies) your apartment If you do not live in an apartment, enter N/A.</p>
+    <p>Enter the number(s) or letter(s) that identify(ies) your apartment If you do not live in an apartment, leave this field empty.</p>
 </div>
 <div class="modal-text hidden" id="section_1_city_or_town">
     <h1>City or Town:</h1>
@@ -82,11 +82,11 @@
 <div class="modal-text hidden" id="section_1_employees_email_address">
     <h1>Employee's E-mail Address</h1>
     <p>Providing your e-mail address is optional on Form I-9, but the field cannot be left blank To enter your e-mail address, use this format:</p>
-    <p>name@site.domain. One reason Department of Homeland Security (DHS) may e-mail you is if your employer uses E-Verify and DHS learns of a potential mismatch between the information provided and the information in government records. This e-mail would contain information on how to begin to resolve the potential mismatch. Enter N/A if you do not enter your e-mail address. You may use either your personal or work e-mail address in this field.</p>
+    <p>name@site.domain. One reason Department of Homeland Security (DHS) may e-mail you is if your employer uses E-Verify and DHS learns of a potential mismatch between the information provided and the information in government records. This e-mail would contain information on how to begin to resolve the potential mismatch. Leave this field empty if you do not enter your e-mail address. You may use either your personal or work e-mail address in this field.</p>
 </div>
 <div class="modal-text hidden" id="section_1_employees_telephone_number">
     <h1>Employee's Telephone Number</h1>
-    <p>Providing your telephone number is optional on Form I-9, but the field cannot be left blank. If you enter your area code and telephone number, use this format: 000-000-0000. Enter N/A if you do not enter your telephone number.</p>
+    <p>Providing your telephone number is optional on Form I-9, but the field cannot be left blank. If you enter your area code and telephone number, use this format: 000-000-0000. Leave this field empty if you do not enter your telephone number.</p>
 </div>
 
 <!-- section 2 -->
@@ -130,7 +130,7 @@
 <div class="modal-text hidden" id="section_2_expiration_date">
     <h1>Expiration Date of Employment Authorization</h1>
     <p>Enter the date your employment authorization expires, if any, in this field.</p>
-    <p>If you select this box. enter the date that your employment authorization expires, if any, in this field. In most cases, your employment authorization expiration date is found on the document(s) evidencing your employment authorization. Refugees, asylees and certain citizens of the Federated States of Micronesia, the Republic of the Marshall Islands, or Palau, and other aliens whose employment authorization does not have an expiration date should enter N/A in this field. In some cases, such as if you have Temporary Protected Status, your employment authorization document may have been automatically extended; in these cases, you should enter the expiration date of the automatic extension in this field.</p>
+    <p>If you select this box. enter the date that your employment authorization expires, if any, in this field. In most cases, your employment authorization expiration date is found on the document(s) evidencing your employment authorization. Refugees, asylees and certain citizens of the Federated States of Micronesia, the Republic of the Marshall Islands, or Palau, and other aliens whose employment authorization does not have an expiration date should leave this field empty. In some cases, such as if you have Temporary Protected Status, your employment authorization document may have been automatically extended; in these cases, you should enter the expiration date of the automatic extension in this field.</p>
 </div>
 <div class="modal-text hidden" id="section_2_admission_number">
     <h1>Form I-94 Admission Number</h1>
@@ -201,7 +201,7 @@
 </div>
 <div class="modal-text hidden" id="section_4_mi">
     <h1>M.I.</h1>
-    <p>This field may already contain information the employee entered in Section 1. If not, enter the employee's middle initial, if any, from Section 1. If the employee entered N/A in the Middle Initial field in Section 1, enter N/A in this field.</p>
+    <p>This field may already contain information the employee entered in Section 1. If not, enter the employee's middle initial, if any, from Section 1. If the employee entered N/A in the Middle Initial field in Section 1, leave this field empty.</p>
     <p>If you are reverifying or rehiring the employee, enter the employee's middle initial (if any) or N/A as the employee entered it on the employee's original Form I-9.</p>
 </div>
 <div class="modal-text hidden" id="section_4_citizenship">
@@ -269,13 +269,13 @@
     <h1>Document Number #1 List A</h1>
     <p>Enter the document number, if any, exactly as it appears on the document you entered in the first Document Title field.</p>
     <p>If you chose a receipt in the Document Title field, you should enter the receipt number, if any, exactly as it appears on the receipt.</p>
-    <p>If the document does not contain a number, enter N/A.</p>
+    <p>If the document does not contain a number, Leave this field empty.</p>
     <p>If the employee presented a combination of documents, use the second and third Document Number fields as necessary.</p>
 </div>
 <div class="modal-text hidden" id="section_5_expiration_date">
     <h1>Expiration Date #1 List A</h1>
     <p>Enter the expiration date, if any, of the document or receipt you entered in the first Document Title field. A document is not acceptable if it has already expired. An unexpired document includes a document where the expiration date shown on the face of a document has been automatically extended, such as for individuals with Temporary Protected Status.</p>
-    <p>If the document uses text rather than a date to indicate when it expires, enter the text shown on the document, such as ‘D/S” (which means, “duration of status"). If the document does not contain an expiration date, enter N/A. If the employee presented a combination of documents, use the second and third Expiration Date fields as necessary. For a receipt, enter the expiration date of the receipt validity period.</p>
+    <p>If the document uses text rather than a date to indicate when it expires, enter the text shown on the document, such as ‘D/S” (which means, “duration of status"). If the document does not contain an expiration date, leave this field empty. If the employee presented a combination of documents, use the second and third Expiration Date fields as necessary. For a receipt, enter the expiration date of the receipt validity period.</p>
     <ol>
     	<li style="margin-left: 26px;">For a receipt showing that the employee has applied to replace a document that was lost, stolen or damaged, enter the date that is 90 days from the first day of work for pay.</li>
     	<li style="margin-left: 26px;">For a receipt that is the arrival portion of Form I-94/I-94A containing a temporary I-551 stamp and a photograph of the individual, enter the expiration date of the stamp or, if there is no expiration date, within one year from the date of admission.</li>
@@ -294,13 +294,13 @@
 </div>
 <div class="modal-text hidden" id="section_51_document_number">
     <h1>Document Number #2 List A</h1>
-    <p>Enter the document or receipt number, if any, exactly as it appears on the document or receipt you entered in the second Document Title field. If the document or receipt does not contain a number, enter N/A.</p>
+    <p>Enter the document or receipt number, if any, exactly as it appears on the document or receipt you entered in the second Document Title field. If the document or receipt does not contain a number, Leave this field empty.</p>
     <p>If a combination of documents was not presented and N/A was entered in the Document Title #2 field, this field will also contain N/A</p>
 </div>
 <div class="modal-text hidden" id="section_51_expiration_date">
     <h1>Expiration Date #2 List A</h1>
     <p>Enter the expiration date, if any, of the document or receipt you entered in the second Document Title field. The document or receipt is not acceptable if it is already expired.</p>
-    <p>If the document or receipt does not contain an expiration date, enter N/A.</p>
+    <p>If the document or receipt does not contain an expiration date, leave this field empty.</p>
     <p>If a combination of documents was not presented and N/A was entered in the Document Title #2 field, this field will also contain N/A</p>
     <p>If the document uses text rather than a date to indicate when it expires, enter the text as shown on the document such as DIS (which means, duration of status).</p>
 </div>
@@ -355,12 +355,12 @@
 </div>
 <div class="modal-text hidden" id="section_53_document_number">
     <h1>Document Number List B</h1>
-    <p>Enter the document number exactly as it appears on the document you entered in the Document Title field. If the document has no number, enter N/A.</p>
+    <p>Enter the document number exactly as it appears on the document you entered in the Document Title field. If the document has no number, leave this field empty.</p>
     <p>If you chose a receipt in the Document Title field, you should enter the receipt number, if any, exactly as it appears on the receipt.</p>
 </div>
 <div class="modal-text hidden" id="section_53_expiration_date">
     <h1>Expiration Date List B</h1>
-    <p>Enter the expiration date, if any, of the document or receipt you entered above. The document is not acceptable if it is already expired. If the document or receipt has no expiration date, enter N/A.</p>
+    <p>Enter the expiration date, if any, of the document or receipt you entered above. The document is not acceptable if it is already expired. If the document or receipt has no expiration date, leave this field empty.</p>
     <p>However, for a receipt showing that the employee has applied to replace a document that was lost stolen or damaged, enter the expiration date of the receipt validity period which is 90 days from the first day of work for pay.</p>
 </div>
 <div class="modal-text hidden" id="section_54_document_title">
@@ -461,7 +461,7 @@
 </div>
 <div class="modal-text hidden" id="section_7_middle_initial">
     <h1>Middle Initial</h1>
-    <p>This field may already contain information the employee entered in Section 1. If not, enter the employee's middle initial, if any, from Section 1. If the employee entered N/A in the Middle Initial field in Section 1, enter N/A in this field.</p>
+    <p>This field may already contain information the employee entered in Section 1. If not, enter the employee's middle initial, if any, from Section 1. If the employee entered N/A in the Middle Initial field in Section 1, leave this field empty.</p>
     <p>If you are reverifying or rehiring the employee, enter the employee’s middle initial (if any) or N/A as the employee entered it on the employee's original Form I-9.</p>
 </div>
 
@@ -477,24 +477,24 @@
 </div>
 <div class="modal-text hidden" id="section_8_first_name">
     <h1>First Name (Given Name)</h1>
-    <p>If an employee who is being reverified or rehired has changed his or her first name since originally completing Section 1 of this form, complete this field with the employee's new first name. If the employee has not changed his or her first name, enter N/A in this field.</p>
+    <p>If an employee who is being reverified or rehired has changed his or her first name since originally completing Section 1 of this form, complete this field with the employee's new first name. If the employee has not changed his or her first name, leave this field empty.</p>
     <p>The employee's first name is his or her given name.</p>
 </div>
 <div class="modal-text hidden" id="section_8_last_name">
     <h1>Last Name (Family Name)</h1>
-    <p>If an employee who is being reverified or rehired has changed his or her last name since originally completing Section 1 of this form, complete this field with the employee's new last name. If the employee has not changed his or her last name, enter N/A in this field.</p>
+    <p>If an employee who is being reverified or rehired has changed his or her last name since originally completing Section 1 of this form, complete this field with the employee's new last name. If the employee has not changed his or her last name, leave this field empty.</p>
     <p>The employee's last name is his or her family name or surname. If the employee has two last names or a hyphenated last name, include both names in this field.</p>
 </div>
 <div class="modal-text hidden" id="section_8_middle_initial">
     <h1>Middle Initial</h1>
-    <p>If an employee who is being reverified or rehired has changed his or her middle initial since originally completing Section 1 of this form, complete this field with the employee's new middle initial. If the employee has not changed his or her middle initial, enter N/A in this field.</p>
+    <p>If an employee who is being reverified or rehired has changed his or her middle initial since originally completing Section 1 of this form, complete this field with the employee's new middle initial. If the employee has not changed his or her middle initial, leave this field empty.</p>
     <p>The middle initial is the first letter of your second given name, or the first letter of your middle name, if any.</p>
 </div>
 <div class="modal-text hidden" id="section_8_date">
     <h1>Date of Rehire (if applicable) (mm/dd/yyyy)</h1>
     <p>Complete this block if you are rehiring an employee within 3 years of the date Form I-9 was originally completed.</p>
     <p>Enter the date of rehire in this field.</p>
-    <p>Enter N/A in this field if the employee is not being rehired. If the employee is being rehired, but it has been more than 3 years from the date Form I-9 was originally completed, a new Form l-9 must be completed.</p>
+    <p>leave this field empty if the employee is not being rehired. If the employee is being rehired, but it has been more than 3 years from the date Form I-9 was originally completed, a new Form l-9 must be completed.</p>
 </div>
 <div class="modal-text hidden" id="section_8_document_title">
     <h1>Document Title</h1>
@@ -507,11 +507,11 @@
     <p>Some employees may have entered N/A in the expiration date field in Section 1 if they are aliens whose employment authorization does not expire, e.g., asylees, refugees, certain citizens of the Federated States of Micronesia, the Republic of the Marshall islands, or Palau. Reverification applies to such employees if they chose to present evidence of employment authorization in Section 2 that contains an expiration date, such as Form I-766, Employment Authorization Document.</p>
     <p>You should not reverify U.S. citizens and noncitizen nationals, or lawful permanent residents (including conditional residents) who presented a permanent Resident Card (Form I-551).</p>
     <p>Select the List A or C document (or receipt) the employee presented to show current employment authorization from the drop-down list provided.</p>
-    <p>If you are completing this field for an employee who is continuing in his or her employment or being rehired within 3 years, and that employee remains authorized to work as indicated on the previously executed Form I-9 and the originally executed Form I-9 is the current version, enter N/A in this field. The other fields in Block C will then contain N/A as well. If you have done this in error, select a different document from the drop-down list.</p>
+    <p>If you are completing this field for an employee who is continuing in his or her employment or being rehired within 3 years, and that employee remains authorized to work as indicated on the previously executed Form I-9 and the originally executed Form I-9 is the current version, leave this field empty. The other fields in Block C will then contain N/A as well. If you have done this in error, select a different document from the drop-down list.</p>
 </div>
 <div class="modal-text hidden" id="section_8_document_number">
     <h1>Document Number</h1>
-    <p>Enter the document number, if any, of the document or receipt you entered in the Document Title field. Enter N/A if the document or receipt does not have a number. If the document is a receipt, enter the word “receipt” in this field.</p>
+    <p>Enter the document number, if any, of the document or receipt you entered in the Document Title field. Leave this field empty if the document or receipt does not have a number. If the document is a receipt, enter the word “receipt” in this field.</p>
 </div>
 <div class="modal-text hidden" id="section_8_expiration">
     <h1>Document Expiration Date (if any) (mm/dd/yyyy)</h1>
@@ -522,7 +522,7 @@
     	<li style="margin-left: 26px;">For a receipt that is the arrival portion of Form I-94/I-94A containing a temporary I-551 stamp and a photograph of the individual, enter the expiration date of the stamp or, if there is no expiration date, within one year from the date of admission.</li>
     	<li style="margin-left: 26px;">For a receipt that is the departure portion of Form I-94/I-94A with a refugee admission stamp, enter a date that is 90 days from the first day of work for pay.</li>
     </ol>
-    <p>If the document does not contain an expiration date, enter N/A</p>
+    <p>If the document does not contain an expiration date, leave this field empty</p>
 </div>
 <div class="modal-text hidden" id="section_8_signature">
     <h1>Signature of Employer or Authorized Representative</h1>
