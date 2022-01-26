@@ -239,6 +239,11 @@ if (!function_exists('replace_tags_for_document')) {
             $CI->db->select('job_title');
             $CI->db->select('email');
             $CI->db->select('job_title');
+            $CI->db->select('hourly_rate');
+            $CI->db->select('flat_rate_technician');
+            $CI->db->select('hourly_technician');
+            $CI->db->select('semi_monthly_salary');
+            $CI->db->select('semi_monthly_draw');
             $CI->db->select('registration_date');
 
             $CI->db->where('sid', $user_sid);
@@ -365,6 +370,21 @@ if (!function_exists('replace_tags_for_document')) {
 
         $value = isset($company_info['CompanyDescription']) ? $company_info['CompanyDescription'] : '[About Company]';
         $my_return = str_replace('{{about_company}}', $value, $my_return);
+
+        $value = isset($user_info['hourly_rate']) && $user_info['hourly_rate'] != 0 ? '<b>Hourly Rate : '.$user_info['hourly_rate'].' $</b>' : '<b>Hourly Rate : N/A</b>';
+        $my_return = str_replace('{{hourly_rate}}', $value, $my_return);
+
+        $value = isset($user_info['flat_rate_technician']) && $user_info['flat_rate_technician'] != 0 ? '<b>Flat Rate Technician : '.$user_info['flat_rate_technician'].' $</b>' : '<b>Flat Rate Technician : N/A</b>';
+        $my_return = str_replace('{{flat_rate_technician}}', $value, $my_return);
+
+        $value = isset($user_info['hourly_technician']) && $user_info['hourly_technician'] != 0 ? '<b>Hourly Technician : '.$user_info['hourly_technician'].' $</b>' : '<b>Hourly Technician : N/A</b>';
+        $my_return = str_replace('{{hourly_technician}}', $value, $my_return);
+
+        $value = isset($user_info['semi_monthly_salary']) && $user_info['semi_monthly_salary'] != 0 ? '<b>Semi Monthly Salary : '.$user_info['semi_monthly_salary'].' $</b>' : '<b>Semi Monthly Salary : N/A</b>';
+        $my_return = str_replace('{{semi_monthly_salary}}', $value, $my_return);
+
+        $value = isset($user_info['semi_monthly_draw']) && $user_info['semi_monthly_draw'] != 0 ? '<b>Semi Monthly Draw : '.$user_info['semi_monthly_draw'].' $</b>' : '<b>Semi Monthly Draw : N/A</b>';
+        $my_return = str_replace('{{semi_monthly_draw}}', $value, $my_return);
 
         $short_textboxes = substr_count($my_return, '{{short_text}}');
         $long_textboxes = substr_count($my_return, '{{text}}');

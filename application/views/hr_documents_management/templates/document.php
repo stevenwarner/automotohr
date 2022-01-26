@@ -568,6 +568,27 @@
                                                         <li style="background-color: transparent; border: 0px; display: block;"><input type="text" class="form-control tag" readonly="" value="{{checkbox}}"></li>
                                                     </ul>
                                                 </div>
+
+                                                <div class="tags-arae">
+                                                    <strong>Pay Plan / Offer Letter tags:</strong>
+                                                    <ul class="tags">
+                                                        <li style="background-color: transparent; border: 0px; display: block;">
+                                                            <input type="text" class="form-control tag" readonly="" value="{{hourly_rate}}">
+                                                        </li>
+                                                        <li style="background-color: transparent; border: 0px; display: block;">
+                                                            <input type="text" class="form-control tag" readonly="" value="{{hourly_technician}}">
+                                                        </li>
+                                                        <li style="background-color: transparent; border: 0px; display: block;">
+                                                            <input type="text" class="form-control tag" readonly="" id="abcde" value="{{flat_rate_technician}}">
+                                                        </li>
+                                                        <li style="background-color: transparent; border: 0px; display: block;">
+                                                            <input type="text" class="form-control tag" readonly="" value="{{semi_monthly_salary}}">
+                                                        </li>
+                                                        <li style="background-color: transparent; border: 0px; display: block;">
+                                                            <input type="text" class="form-control tag" readonly="" value="{{semi_monthly_draw}}">
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
