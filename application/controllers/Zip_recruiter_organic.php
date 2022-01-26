@@ -309,6 +309,8 @@ private function addLastRead($sid){
                             $insert_data_primary['email'] = $email;
                             $insert_data_primary['phone_number'] = $phone;
                             $job_applications_sid = $this->all_feed_model->saveApplicant($insert_data_primary);
+                            //
+                            send_full_employment_application($company_sid, $job_applications_sid, "applicant");
                         } else {
                             $job_applications_sid = $portal_job_applications_sid;
                         }

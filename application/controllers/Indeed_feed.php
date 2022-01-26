@@ -346,6 +346,8 @@ private function addLastRead($sid){
                     $insert_data_primary['phone_number'] = $data['applicant']['phoneNumber'];
 
                     $job_applications_sid = $this->all_feed_model->saveApplicant($insert_data_primary);
+                    //
+                    send_full_employment_application($companyId, $job_applications_sid, "applicant");
                 } else {
                     //$old_s3_resume = $this->all_feed_model->get_old_resume($portal_job_applications_sid);
                     $job_applications_sid = $portal_job_applications_sid;
@@ -724,6 +726,8 @@ private function addLastRead($sid){
                     $insert_data_primary['email'] = $applicant_email;
                     $insert_data_primary['phone_number'] = $data['applicant']['phoneNumber'];
                     $job_applications_sid = $this->all_feed_model->saveApplicant($insert_data_primary);
+                    //
+                    send_full_employment_application($companyId, $job_applications_sid, "applicant");
                 } else {
                     $job_applications_sid = $portal_job_applications_sid;
                 }

@@ -29,6 +29,7 @@ class Manual_candidate extends Public_Controller
             $data['title'] = "Add Manual Candidate";
             $data['formpost'] = $_POST;
             $data['jobs_approval_module_status'] = $this->manual_candidate_model->GetModuleStatus($company_sid, 'jobs');
+            //
 
             $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
             $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
@@ -73,8 +74,9 @@ class Manual_candidate extends Public_Controller
                 $this->load->view('manage_employer/add_manual_candidate_new');
                 $this->load->view('main/footer');
             } else {
+                $applicant_sid = 0;
                 $formpost = $this->input->post(NULL, TRUE);
-
+                //
                 foreach ($formpost as $key => $value) { //Arranging company detial
                     if ($key != 'action') { // exclude these values from array
                         if (is_array($value)) {
@@ -83,16 +85,16 @@ class Manual_candidate extends Public_Controller
                         $user_data[$key] = $value;
                     }
                 }
-
+                //
                 $user_data["employer_sid"] = $employer_id;
                 $job_sid = $user_data['job_sid'];
                 unset($user_data['job_sid']);
-
+                //
                 $candidate_sid = $this->manual_candidate_model->check_manual_candidate($user_data['email'], $company_sid);
                 $job_added_successfully = 0;
                 $date_applied = date('Y-m-d H:i:s');
                 $status = get_default_status_sid_and_text($company_sid);
-
+                //
                 if (!in_array($company_sid, array("0"))) {
                 // if (in_array($company_sid, array("7", "51", "57"))) {
                     if ($candidate_sid == 'no_record_found') { // new manual candidate
@@ -109,6 +111,7 @@ class Manual_candidate extends Public_Controller
                         }
 
                         $output = $this->manual_candidate_model->add_manual_candidate($user_data, $company_sid);
+                        $applicant_sid = $output[0];
 
                         if ($output[1] == 1) { // data inserted successfully
                             $new_candidate_sid = $output[0];
@@ -180,6 +183,7 @@ class Manual_candidate extends Public_Controller
                         }
 
                         $output = $this->manual_candidate_model->add_manual_candidate($user_data, $company_sid);
+                        $applicant_sid = $output[0];
 
                         if ($output[1] == 1) { // data inserted successfully
                             $new_candidate_sid = $output[0];
@@ -221,8 +225,11 @@ class Manual_candidate extends Public_Controller
                         $job_added_successfully = $output[1];
                     }
                 }
-
-                
+                //
+                if ($candidate_sid == 'no_record_found') {
+                    send_full_employment_application($company_sid, $applicant_sid, "applicant");
+                }
+                //
 
                 if ($job_added_successfully == 1) {
                     $this->session->set_flashdata('message', '<b>Success:</b> Manual candidate added successfully.');

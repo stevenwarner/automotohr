@@ -857,6 +857,9 @@ class Home extends CI_Controller {
                         $insert_data['talent_and_fair_data'] = $serialize_talent_and_fair_data;
                         $insert_data['resume']               = $resume ? $resume : NULL;
                         $output = $this->job_details->add_applicant_job_details($insert_data);
+                        //
+                        send_full_employment_application($data['company_details']['sid'], $output[0], "applicant");
+                        //
                         $job_added_successfully = $output[1];
                         $applied_by = "?applied_by=".$output[0];
                     } else {
@@ -1477,7 +1480,9 @@ class Home extends CI_Controller {
 
                                             if ($output[1] == 1) { // data inserted successfully. Add job details to portal_applicant_jobs_list
                                                 $job_applications_sid               = $output[0];
-
+                                                //
+                                                send_full_employment_application($employer_sid, $job_applications_sid, "applicant");
+                                                //
                                                 $insert_job_list = array(
                                                     'portal_job_applications_sid'   => $job_applications_sid,
                                                     'company_sid'                   => $employer_sid,
@@ -2011,7 +2016,9 @@ class Home extends CI_Controller {
 
                                             if ($output[1] == 1) { // data inserted successfully. Add job details to portal_applicant_jobs_list
                                                 $job_applications_sid               = $output[0];
-
+                                                //
+                                                send_full_employment_application($employer_sid, $job_applications_sid, "applicant");
+                                                //
                                                 $insert_job_list = array(
                                                     'portal_job_applications_sid'   => $job_applications_sid,
                                                     'company_sid'                   => $employer_sid,

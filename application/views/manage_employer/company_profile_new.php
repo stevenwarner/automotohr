@@ -180,6 +180,15 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
+                                    Send To Applicant <small class="help_text">Send a Full employment application Form when a new applicant applies on the job.</small>
+                                    <input class="" type="checkbox" id="FEA_sent_to_an_applicant" name="FEA_sent_to_an_applicant" value="1" <?php echo (isset($portal['sent_to_an_applicant']) && $portal['sent_to_an_applicant'] == 1 ? 'checked="checked" ' : '' ); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
                                     Make Social Security Number Mandatory <small class="help_text">Make Social Security Number Mandatory</small>
                                     <input class="" type="checkbox" id="onboarding_ssn_status" name="onboarding_ssn_status" value="1" <?php echo (isset($portal['ssn_required']) && $portal['ssn_required'] == 1 ? 'checked="checked" ' : '' ); ?> />
                                     <div class="control__indicator"></div>
