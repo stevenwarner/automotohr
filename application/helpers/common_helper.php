@@ -1883,6 +1883,8 @@ if (!function_exists('upload_file_to_aws')) {
             $file_name = strtolower($file_name);
             $prefix = str_pad($company_sid, 4, '0', STR_PAD_LEFT);
             $new_file_name = $prefix . '-' . $file_name . '-' . generateRandomString(3) . '.' . $file_ext;
+            //
+            $new_file_name = str_replace("&","and",$new_file_name);
 
             /* $aws = new AwsSdk();
               $aws->putToBucket($new_file_name, $_FILES[$file_input_id]["tmp_name"], $bucket_name); */
@@ -1908,6 +1910,8 @@ if (!function_exists('upload_file_to_aws')) {
             $file_name = strtolower($file_name);
             $prefix = str_pad($company_sid, 4, '0', STR_PAD_LEFT);
             $new_file_name = $prefix . '-' . $file_name . '-' . generateRandomString(3) . '.' . $file_ext;
+            //
+            $new_file_name = str_replace("&","and",$new_file_name);
 
             /* $aws = new AwsSdk();
               $aws->putToBucket($new_file_name, $_FILES[$file_input_id]["tmp_name"], $bucket_name); */
@@ -12823,7 +12827,7 @@ if (!function_exists('concertBase64ToPDF')) {
         $base64_string, $file_name
     ) {
         //
-        // if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName( $fileName, false );
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName( $fileName, false );
         //
         $CI = &get_instance();
         // Set local path
@@ -13987,5 +13991,30 @@ if (!function_exists('getUserEEOC')) {
         } else {
             return array();
         }
+    }
+}
+
+if (!function_exists('modify_AWS_file_name')) {
+
+    function modify_AWS_file_name ($sid, $file_name, $column)
+    {
+        $CI = &get_instance();
+        $CI->load->library('aws_lib');
+        //
+        $new_file_name = str_replace("&","and",$file_name);
+        //
+        $CI->aws_lib->copy_object(AWS_S3_BUCKET_NAME, $file_name, AWS_S3_BUCKET_NAME, $new_file_name);
+        //
+        $CI->aws_lib->delete_object(AWS_S3_BUCKET_NAME, $file_name, "file");
+        //
+        $column_to_update = array(
+            $column => $new_file_name
+        );
+        //
+        $CI->db->where('sid', $sid);
+        $CI->db->update('documents_assigned', $column_to_update);
+        //
+        return $new_file_name;
+
     }
 }

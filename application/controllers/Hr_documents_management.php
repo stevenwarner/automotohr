@@ -3208,6 +3208,16 @@ class Hr_documents_management extends Public_Controller {
                 }
 
                 if ($assigned_document['document_type'] != 'offer_letter') {
+                    if ($assigned_document['document_type'] == 'uploaded') {
+                        if (strpos($assigned_document['document_s3_name'], '&') !== false) {
+                            $assigned_documents[$key]['document_s3_name'] = modify_AWS_file_name($assigned_document['sid'], $assigned_document['document_s3_name'], "document_s3_name");
+                        }
+
+                        if (strpos($assigned_document['uploaded_file'], '&') !== false) {
+                            $assigned_documents[$key]['uploaded_file'] = modify_AWS_file_name($assigned_document['sid'], $assigned_document['uploaded_file'], "uploaded_file");
+                        }
+                    }
+                    //
                     if ($assigned_document['status'] == 1) {
                         if ($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) { 
                             
@@ -4954,6 +4964,16 @@ class Hr_documents_management extends Public_Controller {
                 if ($document['document_type'] == 'offer_letter') {
                     $data['attached_video'] = array();
                 } else {
+                    if ($document['document_type'] == 'uploaded') {
+                        if (strpos($document['document_s3_name'], '&') !== false) {
+                            $document['document_s3_name'] = modify_AWS_file_name($document['sid'], $document['document_s3_name'], "document_s3_name");
+                        }
+
+                        if (strpos($document['uploaded_file'], '&') !== false) {
+                            $document['uploaded_file'] = modify_AWS_file_name($document['sid'], $document['uploaded_file'], "uploaded_file");
+                        }
+                    }
+                    //
                     $attached_video = $this->hr_documents_management_model->get_document_attached_video($document['document_sid']);
                     $data['attached_video'] = $attached_video;
                 }
