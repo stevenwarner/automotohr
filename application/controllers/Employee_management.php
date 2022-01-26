@@ -3267,6 +3267,12 @@ class Employee_management extends Public_Controller {
                         $profile_changed = 1;
                     }       
                 }
+
+                if (!empty($data) && isset($data)) {
+                    if ($data != $form_data[$key]) {
+                        $profile_changed = 1;
+                    }
+                }
             }
         } 
         //
