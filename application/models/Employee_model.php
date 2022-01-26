@@ -1597,4 +1597,32 @@
         }
     }
 
+    function get_employee_profile_notification_list($company_sid, $type, $status)
+    {
+        $this->db->select('
+            notifications_emails_management.sid, 
+            notifications_emails_management.contact_name, 
+            notifications_emails_management.email,
+            notifications_emails_management.employer_sid,
+            users.active,
+            users.terminated_status
+        ');
+        $this->db->where('notifications_emails_management.notifications_type', $type);
+        $this->db->where('notifications_emails_management.company_sid', $company_sid);
+        $this->db->where('notifications_emails_management.status', $status);
+        $this->db->join('users', 'notifications_emails_management.employer_sid = users.sid', 'left');
+        $b = $this->db->get('notifications_emails_management')->result_array();
+        if(count($b)){
+            foreach ($b as $key => $v) {
+                if($v['employer_sid'] != 0 && $v['employer_sid'] != null){
+                    if($v['active'] == 0 || $v['terminated_status'] == 1) unset($b[$key]);
+                }
+            }
+            // Reset the array indexes
+            $b = array_values($b);
+        }
+        return $b;
+    }
+
+
 }

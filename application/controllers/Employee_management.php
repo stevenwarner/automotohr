@@ -1049,7 +1049,6 @@ class Employee_management extends Public_Controller {
                 $data['employer_sid'] = $security_sid;
                 $data['main_employer_id'] = $security_sid;
                 $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
-
                 //
                 if(!empty($data['employer']['full_employment_application'])){
                     //
@@ -1071,7 +1070,7 @@ class Employee_management extends Public_Controller {
                     }
                 }
                 $employee_detail = $data['employer'];
-
+                //
                 // Check and set the company sms module
                 // phone number
                 company_sms_phonenumber(
@@ -1473,6 +1472,7 @@ class Employee_management extends Public_Controller {
                         'department_sid' => $this->input->post('department'),
                         'gender' => $this->input->post('gender')
                     );
+                    //
                     //
                     if (checkIfAppIsEnabled('timeoff')) {
                         $data_to_insert['user_shift_hours'] = $this->input->post('shift_hours');
@@ -2169,6 +2169,27 @@ class Employee_management extends Public_Controller {
                 $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                 $data['full_employment_application'] = serialize($full_emp_app);
                 $this->dashboard_model->update_user($sid, $data);
+                //
+                $difference = $this->findDifference($employee_detail, $data);
+                //
+                if ($difference == 1) {
+                    $notification_list = $this->employee_model->get_employee_profile_notification_list($company_id, 'employee_Profile', 'active');
+                    //
+                    $company_data = get_company_details($company_id);
+                    $company_name = $company_data['CompanyName'];
+                    $employee_name = getUserNameBySID($sid);
+
+                    foreach ($notification_list as $notify_user) {
+                        $replacement_array = array();
+                        $replacement_array['company_name'] = ucwords($company_name);
+                        $replacement_array['user-name'] = ucwords($notify_user['contact_name']);
+                        $replacement_array['employee_name'] = $employee_name;
+
+                        $message_hf = message_header_footer_domain($company_id, $company_name);
+                        log_and_send_templated_email(EMPLOYEE_PROFILE_UPDATE, $notify_user['email'], $replacement_array, $message_hf);
+                    }
+                }
+                //
                 $employer = $this->dashboard_model->get_company_detail($sid);
                 $session = $this->session->userdata('logged_in');
                 $session['employer_detail'] = $employer;
@@ -3232,5 +3253,81 @@ class Employee_management extends Public_Controller {
         }
         //
         res($resp);
+    }
+
+    function findDifference ($previous_data, $form_data) {
+        // 
+        $profile_changed = 0;
+        //
+        if (!empty($previous_data)) {
+            foreach ($previous_data as $key => $data) {
+                //   
+                if (empty($data) && !isset($data) || $data == "") {
+                    if (!empty($form_data[$key])) {
+                        $profile_changed = 1;
+                    }       
+                }
+            }
+        } 
+        //
+        return $profile_changed;
+    }
+
+    function is_serialized( $data, $strict = true ) {
+        // If it isn't a string, it isn't serialized.
+        if ( ! is_string( $data ) ) {
+            return false;
+        }
+        $data = trim( $data );
+        if ( 'N;' === $data ) {
+            return true;
+        }
+        if ( strlen( $data ) < 4 ) {
+            return false;
+        }
+        if ( ':' !== $data[1] ) {
+            return false;
+        }
+        if ( $strict ) {
+            $lastc = substr( $data, -1 );
+            if ( ';' !== $lastc && '}' !== $lastc ) {
+                return false;
+            }
+        } else {
+            $semicolon = strpos( $data, ';' );
+            $brace     = strpos( $data, '}' );
+            // Either ; or } must exist.
+            if ( false === $semicolon && false === $brace ) {
+                return false;
+            }
+            // But neither must be in the first X characters.
+            if ( false !== $semicolon && $semicolon < 3 ) {
+                return false;
+            }
+            if ( false !== $brace && $brace < 4 ) {
+                return false;
+            }
+        }
+        $token = $data[0];
+        switch ( $token ) {
+            case 's':
+                if ( $strict ) {
+                    if ( '"' !== substr( $data, -2, 1 ) ) {
+                        return false;
+                    }
+                } elseif ( false === strpos( $data, '"' ) ) {
+                    return false;
+                }
+                // Or else fall through.
+            case 'a':
+            case 'O':
+                return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data );
+            case 'b':
+            case 'i':
+            case 'd':
+                $end = $strict ? '$' : '';
+                return (bool) preg_match( "/^{$token}:[0-9.E+-]+;$end/", $data );
+        }
+        return false;
     }
 }

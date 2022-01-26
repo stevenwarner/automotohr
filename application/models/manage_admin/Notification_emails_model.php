@@ -71,6 +71,9 @@ class Notification_emails_model extends CI_Model {
             case 'new_applicant':
                 $this->db->select('new_applicant_notifications');
                 break;
+            case 'employee_Profile':
+                $this->db->select('employee_profile');
+                break;
             default:
                 $this->db->select('*');
                 break;
