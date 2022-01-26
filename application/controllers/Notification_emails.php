@@ -1756,7 +1756,8 @@ class Notification_emails extends Public_Controller {
                 $data['notifications_emails']                               = $notifications_emails;
                 $notifications_status                                       = $this->notification_emails_model->get_notifications_status($company_sid, $notifications_type);
                 $data['notifications_status']                               = $notifications_status;
-                $data['current_notification_status']                        = $notifications_status['employee_profile'];
+                $data['current_notification_status']                        = $notifications_status['employee_Profile'];
+                
                 // $data['notifications_type']                                 = 'general_information_status';
                 $data['title_for_js_dialog']                                = 'Employee Profile Notifications';
 
