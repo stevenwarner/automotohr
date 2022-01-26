@@ -385,7 +385,17 @@ class Onboarding extends CI_Controller {
                 $data['title'] = 'Automoto HR Onboarding';
                 $document = $this->hr_documents_management_model->get_assigned_document('applicant', $applicant_sid, $document_sid, $doc);
                 $save_offer_letter_type = '';
+                //
+                if ($document['document_type'] == 'uploaded') {
+                    if (strpos($document['document_s3_name'], '&') !== false) {
+                        $document['document_s3_name'] = modify_AWS_file_name($document['sid'], $document['document_s3_name'], "document_s3_name");
+                    }
 
+                    if (strpos($document['uploaded_file'], '&') !== false) {
+                        $document['uploaded_file'] = modify_AWS_file_name($document['sid'], $document['uploaded_file'], "uploaded_file");
+                    }
+                }
+                //
                 if (!empty($document['document_description'])) {
                     $document_body = $document['document_description'];
                     $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
