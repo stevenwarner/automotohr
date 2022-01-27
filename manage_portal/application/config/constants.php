@@ -180,3 +180,6 @@ define('SES_HOST', 'email-smtp.us-west-1.amazonaws.com');
 define('SES_USER', 'AKIAVVRKKAOCQ7RYZ7Y2');
 define('SES_PASS', 'BJ64LLCLm1H9z/GhygOU2F+jnEgBo+PziG6je998Ice9');
 define('SES_PORT', '587');
+
+// Added on- 27/01/2022
+define('FULL_EMPLOYMENT_APPLICATION_REQUEST', 333);
