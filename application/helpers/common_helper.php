@@ -1447,6 +1447,8 @@ if (!function_exists('convert_email_template')) {
             $emailTemplateBody = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
             $emailTemplateBody = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
             $emailTemplateBody = str_replace('{{username}}', $userData['username'], $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{contact-name}}', $userData['username'], $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{company_name}}', $userData['CompanyName'], $emailTemplateBody);
             $emailTemplateBody = str_replace('{{password}}', decode_string($userData['key']), $emailTemplateBody);
             $emailTemplateBody = str_replace('{{employer_id}}', $employer_sid, $emailTemplateBody);
             $emailTemplateBody = str_replace('{{verification_key}}', $userData['verification_key'], $emailTemplateBody);
