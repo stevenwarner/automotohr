@@ -1621,7 +1621,7 @@ if (!function_exists('send_full_employment_application')) {
             //
             $CI->db->insert('form_full_employment_application', $dataToSave);
             //
-            $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('form_full_employment_application/' . $verification_key) . '">Full Employment Application</a>';
+            $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="https://www.automotohr.com/form_full_employment_application/' . $verification_key . '">Full Employment Application</a>';
             //
             $replacement_array = array();
             $replacement_array['user_name'] = $user_name;
