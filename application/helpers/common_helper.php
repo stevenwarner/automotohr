@@ -13983,7 +13983,7 @@ if (!function_exists('send_full_employment_application')) {
                 //
                 $employee_info = get_employee_profile_info($user_sid);
                 //
-                $user_email = $employee_info['emial'];
+                $user_email = $employee_info['email'];
                 $user_name = getUserNameBySID($user_sid);
             }
             //
