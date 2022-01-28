@@ -365,17 +365,16 @@
                                                                     <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
                                                                 </td>
                                                                 <td class="col-lg-2 text-center">
-                                                                <?php 
-                                                                        if(empty($eeo_form_info)){
+                                                                    <?php if (empty($eeo_form_info)) { ?>
+                                                                        <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
+                                                                    <?php } else { ?>
+                                                                        <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
+                                                                        <div class="text-center">
+                                                                            <?php 
+                                                                                echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');
                                                                             ?>
-                                                                            <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
-                                                                            <?php
-                                                                        } else{
-                                                                            ?>
-                                                                            <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
-                                                                            <?php
-                                                                        }
-                                                                    ?>
+                                                                        </div>
+                                                                    <?php } ?>
                                                                 </td>
                                                                 <td class="col-lg-6 text-center">
                                                                 <?php 
@@ -387,9 +386,9 @@
                                                                     ?>
                                                                     <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top"><?=empty($eeo_form_info) ? 'Send Form' : 'Re-send Form';?></a>
                                                                     <?php 
-                                                                        if(!empty($eeo_form_info['last_sent_at'])){
+                                                                        if(!empty($eeo_form_info['last_completed_on'])){
                                                                             ?>
-                                                                            <p>Last completed on <strong><?=DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');?></strong></p>
+                                                                            <p>Last completed on <strong><?=DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_completed_on'])->format('M d Y, D H:i:s');?></strong></p>
                                                                             <?php
                                                                         }
                                                                     ?>

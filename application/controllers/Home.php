@@ -2013,7 +2013,7 @@ class Home extends CI_Controller {
                 'veteran' => $post['veteran'],
                 'disability' => $post['disability'],
                 'gender' => $post['gender'],
-                'last_sent_at' => date('Y-m-d H:i:s', strtotime('now')),
+                'last_completed_on' => date('Y-m-d H:i:s', strtotime('now')),
                 'is_expired' => 1
             ], 
             [

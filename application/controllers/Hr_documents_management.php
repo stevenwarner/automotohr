@@ -11608,6 +11608,8 @@ class Hr_documents_management extends Public_Controller {
     //
     function send_eeoc_form(){
         //
+        if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
+        //
         if(!strtolower($this->input->method()) == 'post' || empty($this->input->post(NULL, TRUE))){
             exit(0);
         }

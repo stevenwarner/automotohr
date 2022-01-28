@@ -41,6 +41,24 @@
                                         </div>
                                     </div>
                                 </div> 
+                                <hr>  
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                        <span>
+                                            Assigned On : 
+                                            <strong>
+                                                <?php echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s'); ?>
+                                            </strong>
+                                        </span>
+                                        <br>
+                                        <span>
+                                            Assigned By : 
+                                            <strong>
+                                                <?php echo getUserNameBySID($eeo_form_info['last_assigned_by']); ?>
+                                            </strong>
+                                        </span>
+                                    </div>
+                                </div>  
                                 <hr>       
                                 <section class="sheet padding-10mm">
                                     <article class="sheet-header">

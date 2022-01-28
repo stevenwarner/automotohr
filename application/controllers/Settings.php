@@ -517,6 +517,7 @@ class Settings extends Public_Controller
                 $job_title_location = $this->input->post('job_title_location');
                 $resume_mandatory = $this->input->post('is_resume_mandatory');
                 $eeo_form_status = $this->input->post('eeo_form_status');
+                $eeo_form_profile_status = $this->input->post('eeo_form_profile_status');
                 $full_employment_app_print = $this->input->post('full_employment_app_print');
                 $job_title_special_chars = $this->input->post('job_title_special_chars');
                 $onboarding_ssn_status = $this->input->post('onboarding_ssn_status');
@@ -558,6 +559,12 @@ class Settings extends Public_Controller
                     $portal_data['eeo_form_status'] = 0;
                 } else {
                     $portal_data['eeo_form_status'] = 1;
+                }
+
+                if (empty($eeo_form_profile_status)) {
+                    $portal_data['eeo_form_profile_status'] = 0;
+                } else {
+                    $portal_data['eeo_form_profile_status'] = 1;
                 }
 
                 if (empty($full_employment_app_print)) {

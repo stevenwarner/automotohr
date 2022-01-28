@@ -2706,6 +2706,7 @@ class Onboarding extends CI_Controller {
                 $data_to_save['veteran'] = $veteran;
                 $data_to_save['disability'] = $disability;
                 $data_to_save['gender'] = $gender;
+                $data_to_save['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
                 $this->onboarding_model->save_eeoc('applicant', $users_sid, $data_to_save);
                 $data_to_update = array();
                 $data_to_update['eeo_form'] = $eeoc_form_status;

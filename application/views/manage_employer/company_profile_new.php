@@ -170,6 +170,15 @@
                                 </div>
                             </div>
                         <?php } ?>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Enable E.E.O. Form For Profile <small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form in Employee and Applicant Profile Right Nav Bar</small>
+                                    <input class="" type="checkbox" id="eeo_form_profile_status" name="eeo_form_profile_status" value="1" <?php echo ($portal['eeo_form_profile_status'] == 1 ? 'checked="checked" ' : '' ); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
 
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
