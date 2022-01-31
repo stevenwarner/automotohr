@@ -441,7 +441,7 @@ class Eeo extends Public_Controller
                     $left_navigation = 'manage_employer/employee_management/profile_right_menu_employee_new';
                     $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'employee'); // getting applicant ratings - getting average rating of applicant
                     $data['employer'] = $this->hr_documents_management_model->get_company_detail($user_sid);
-                    $eeo_form_info = $this->hr_documents_management_model->get_user_eeo_form_info($user_sid);
+                    $eeo_form_info = $this->eeo_model->get_user_eeo_form_info($user_sid, "employee");
                     $data['eeo_form_info'] = $eeo_form_info;
                     $data['left_navigation'] = $left_navigation;
                     break;
@@ -457,7 +457,7 @@ class Eeo extends Public_Controller
                     $left_navigation = 'manage_employer/application_tracking_system/profile_right_menu_applicant';
                     $applicant_info = $this->hr_documents_management_model->get_applicants_details($user_sid);
                     $eeo_form_status = $this->hr_documents_management_model->get_eeo_form_status($user_sid);
-                    $eeo_form_info = $this->hr_documents_management_model->get_user_eeo_form_info($user_sid);
+                    $eeo_form_info = $this->eeo_model->get_user_eeo_form_info($user_sid, "applicant");
                     $data['eeo_form_status'] = $eeo_form_status;
                     $data['eeo_form_info'] = $eeo_form_info;
 
@@ -495,5 +495,28 @@ class Eeo extends Public_Controller
         } else {
             redirect(base_url('login'), "refresh");
         }
+    }
+
+    //
+    function change_form_status(){
+        //
+        if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
+        //
+        if(!strtolower($this->input->method()) == 'post' || empty($this->input->post(NULL, TRUE))){
+            exit(0);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+
+        //
+        if ($post["action"] == "active") {
+            $this->hr_documents_management_model->activate_EEOC_forms($post["userType"], $post["userId"]);
+
+        } else if ($post["action"] == "deactive") {
+            $this->hr_documents_management_model->deactivate_EEOC_forms($post["userType"], $post["userId"]);
+        }
+        //
+        echo 'success';
+        exit(0);
     }
 }

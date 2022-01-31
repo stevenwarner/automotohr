@@ -24,6 +24,8 @@
     if($i9_status == 0 && sizeof($i9_form)) $nc++;
     if($w4_status == 0 && sizeof($w4_form)) $nc++;
     if($w9_status == 0 && sizeof($w9_form)) $nc++;
+    
+    if(isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 0) { $nc++; }
 
 ?>
 <style>
@@ -378,6 +380,25 @@
                                                 </td>
                                                 <td class="col-lg-2 hidden-xs text-center">
                                                     <a href="<?php echo $i9_url; ?>" class="btn btn-info">View Sign</a>
+                                                </td>
+                                            </tr>
+                                        <?php }?>
+                                        <?php if (isset($eeoc_form) && sizeof($eeoc_form) && $eeoc_form['status'] != 0 && (empty($eeoc_form['is_expired']) || $eeoc_form['is_expired'] == 0)) { ?>
+                                            <tr>
+                                                <td class="col-lg-10">
+                                                    <?php
+                                                    echo 'EEOC Form';
+                                                    echo $eeoc_form['status'] ? '' : '<b>(revoked)</b>';
+                                                    if (isset($eeoc_form['last_sent_at']) && $eeoc_form['last_sent_at'] != '0000-00-00 00:00:00') {
+                                                        echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $eeoc_form['last_sent_at'], '_this' => $this));
+                                                    }
+                                                    ?>
+                                                    <div class="hidden-sm hidden-lg hidden-md">
+                                                       <a href="<?php echo $i9_url; ?>" class="btn btn-info">View Sign</a>
+                                                   </div>
+                                                </td>
+                                                <td class="col-lg-2 hidden-xs text-center">
+                                                    <a href="<?php echo base_url("my_eeoc_form").'/'.$user_sid.'/'.$user_type; ?>" class="btn btn-info">View Sign</a>
                                                 </td>
                                             </tr>
                                         <?php }?>

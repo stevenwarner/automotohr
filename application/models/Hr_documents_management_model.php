@@ -1107,9 +1107,10 @@ class Hr_documents_management_model extends CI_Model {
         return $return_data;
     }
 
-    function get_eeo_form_info ($sid) {
+    function get_eeo_form_info ($sid, $type) {
         $this->db->select('*');
         $this->db->where('application_sid', $sid);
+        $this->db->where('users_type', $type);
         $this->db->order_by('sid', 'DESC');
         $result = $this->db->get('portal_eeo_form')->result_array();
         $return_data = array();
@@ -1385,6 +1386,22 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->where('user_sid', $user_sid);
         $this->db->set('status', 0);
         $this->db->from('applicant_i9form');
+        $this->db->update();
+    }
+
+    function deactivate_EEOC_forms($user_type, $user_sid) {
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
+        $this->db->set('status', 0);
+        $this->db->from('portal_eeo_form');
+        $this->db->update();
+    }
+
+    function activate_EEOC_forms($user_type, $user_sid) {
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
+        $this->db->set('status', 1);
+        $this->db->from('portal_eeo_form');
         $this->db->update();
     }
 
@@ -6165,6 +6182,7 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->where('sid', $sid)
         ->update('portal_eeo_form', [
             'is_expired' => 0,
+            'status' => 1,
             'last_sent_at' => date('Y-m-d H:i:s', strtotime('now')),
             'last_assigned_by' => $assign_by_sid
         ]);

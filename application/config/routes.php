@@ -1289,8 +1289,10 @@ $route['auto_email_reminder/(:any)']['cli'] = 'Cron_common/auto_email_reminder/$
 
 // 
 $route['send_eeoc_form'] = 'Hr_documents_management/send_eeoc_form';
+$route['change_form_status'] = 'eeo/change_form_status';
 $route['eeoc_form/(:any)']['get'] = 'Home/eeoc_form/$1';
 $route['eeoc_form_submit']['post'] = 'Home/eeoc_form_submit';
+$route['my_eeoc_form/(:any)/(:any)'] = 'onboarding/my_eeoc_form/$1/$2';
 
 /**
  * Performance Mnagement - Routes

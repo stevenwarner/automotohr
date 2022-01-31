@@ -9783,5 +9783,9 @@ class Onboarding extends CI_Controller {
                 exit(0);
             break;
         }
-    }      
+    } 
+
+    function my_eeoc_form ($sid, $type) {
+        
+    }       
 }

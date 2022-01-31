@@ -1721,7 +1721,7 @@ class Hr_documents_management extends Public_Controller {
                     $left_navigation = 'manage_employer/employee_management/profile_right_menu_employee_new';
                     $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'employee'); // getting applicant ratings - getting average rating of applicant
                     $data['employer'] = $this->hr_documents_management_model->get_company_detail($user_sid);
-                    $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                    $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
                     $data['eeo_form_info'] = $eeo_form_info;
 
                     $data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name ($company_sid, $user_sid, $user_type, 'single_download');
@@ -1740,7 +1740,7 @@ class Hr_documents_management extends Public_Controller {
                     $left_navigation = 'manage_employer/application_tracking_system/profile_right_menu_applicant';
                     $applicant_info = $this->hr_documents_management_model->get_applicants_details($user_sid);
                     $eeo_form_status = $this->hr_documents_management_model->get_eeo_form_status($user_sid);
-                    $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                    $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
                     $data['eeo_form_status'] = $eeo_form_status;
                     $data['eeo_form_info'] = $eeo_form_info;
 
@@ -2341,6 +2341,28 @@ class Hr_documents_management extends Public_Controller {
                             }
 
                             break;
+                        case 'remove_EEOC': //EEOC Form Deactive
+                            $this->hr_documents_management_model->deactivate_EEOC_forms($user_type, $user_sid);
+                            $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
+                            //
+                            if ($user_type == 'employee') {
+                                $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid, 'refresh');
+                            } else {
+                                $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
+                            }
+
+                            break;  
+                        case 'assign_EEOC': //EEOC Form Active
+                            $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
+                            $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
+                            //
+                            if ($user_type == 'employee') {
+                                $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid, 'refresh');
+                            } else {
+                                $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
+                            }
+
+                            break;   
                         case 'reupload_assign_specific':
                            
                             $data_to_update = array();
@@ -2637,7 +2659,7 @@ class Hr_documents_management extends Public_Controller {
                             $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
                             break;
                         case 'revoke_eeoc':
-                            $eeoc_form_history = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                            $eeoc_form_history = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
                             $eeoc_form_sid = $eeoc_form_history['sid'];
                             $eeoc_form_history['eeoc_form_ref_sid'] = $eeoc_form_sid;
                             unset($eeoc_form_history['sid']);
@@ -4891,6 +4913,11 @@ class Hr_documents_management extends Public_Controller {
                 $data['i9_form'] = $i9_form;
             }
 
+            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_sid,'employee');
+            if (!empty($eeoc_form)) {
+                $data['eeoc_form'] = $eeoc_form;
+            }
+
             $data['assigned_documents']                     = $assigned_documents;
             $data['completed_offer_letter']                 = $completed_offer_letter;
             $data['uncompleted_offer_letter']               = $uncompleted_offer_letter;
@@ -6958,7 +6985,7 @@ class Hr_documents_management extends Public_Controller {
         }
     }
 
-    public function print_eeoc_form($action, $sid) {
+    public function print_eeoc_form($action, $sid, $type) {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data['session']['company_detail']['sid'];
@@ -6967,7 +6994,7 @@ class Hr_documents_management extends Public_Controller {
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
             $data['title'] = 'EEOC Form';
-            $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($sid);
+            $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($sid, $type);
             $data['eeo_form_info'] = $eeo_form_info;
             $data['action'] = $action;
             $this->load->view('eeo/eeoc_print', $data);
@@ -7013,7 +7040,7 @@ class Hr_documents_management extends Public_Controller {
                     $left_navigation = 'manage_employer/employee_management/profile_right_menu_employee_new';
                     $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'employee'); // getting applicant ratings - getting average rating of applicant
                     $data['employer'] = $this->hr_documents_management_model->get_company_detail($user_sid);
-                    $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                    $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
                     $data['eeo_form_info'] = $eeo_form_info;
                     break;
                 case 'applicant':
@@ -7028,7 +7055,7 @@ class Hr_documents_management extends Public_Controller {
                     $left_navigation = 'manage_employer/application_tracking_system/profile_right_menu_applicant';
                     $applicant_info = $this->hr_documents_management_model->get_applicants_details($user_sid);
                     $eeo_form_status = $this->hr_documents_management_model->get_eeo_form_status($user_sid);
-                    $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                    $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
                     $data['eeo_form_status'] = $eeo_form_status;
                     $data['eeo_form_info'] = $eeo_form_info;
 
@@ -9678,7 +9705,7 @@ class Hr_documents_management extends Public_Controller {
                 $left_navigation = 'manage_employer/employee_management/profile_right_menu_employee_new';
                 $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'employee'); // getting applicant ratings - getting average rating of applicant
                 $data['employer'] = $this->hr_documents_management_model->get_company_detail($user_sid);
-                $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
                 $data['eeo_form_info'] = $eeo_form_info;
                 break;
             case 'applicant':
@@ -9693,7 +9720,7 @@ class Hr_documents_management extends Public_Controller {
                 $left_navigation = 'manage_employer/application_tracking_system/profile_right_menu_applicant';
                 $applicant_info = $this->hr_documents_management_model->get_applicants_details($user_sid);
                 $eeo_form_status = $this->hr_documents_management_model->get_eeo_form_status($user_sid);
-                $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
                 $data['eeo_form_status'] = $eeo_form_status;
                 $data['eeo_form_info'] = $eeo_form_info;
 
@@ -11463,7 +11490,7 @@ class Hr_documents_management extends Public_Controller {
 
                 $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'employee'); // getting applicant ratings - getting average rating of applicant
                 $data['employer'] = $this->hr_documents_management_model->get_company_detail($user_sid);
-                $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
                 $data['eeo_form_info'] = $eeo_form_info;
 
                 $data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name ($company_sid, $user_sid, $user_type, 'single_download');
@@ -11485,7 +11512,7 @@ class Hr_documents_management extends Public_Controller {
                 $left_navigation = 'manage_employer/application_tracking_system/profile_right_menu_applicant';
                 $applicant_info = $this->hr_documents_management_model->get_applicants_details($user_sid);
                 $eeo_form_status = $this->hr_documents_management_model->get_eeo_form_status($user_sid);
-                $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+                $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
                 $data['eeo_form_status'] = $eeo_form_status;
                 $data['eeo_form_info'] = $eeo_form_info;
 

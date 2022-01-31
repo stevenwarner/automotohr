@@ -241,4 +241,19 @@ class eeo_model extends CI_Model
             return array();
         }
     }
+
+    function get_user_eeo_form_info ($user_sid, $user_type) {
+        $this->db->select('*');
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
+        $result = $this->db->get('portal_eeo_form')->row_array();
+
+        $return_data = array();
+
+        if (!empty($result)) {
+            $return_data = $result;
+        }
+
+        return $return_data;
+    }
 }
