@@ -1477,7 +1477,7 @@ class employers extends Admin_Controller {
 
         // 
 
-        $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid);
+        $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
         $this->data['eeo_form_info'] = $eeo_form_info;
 
 
