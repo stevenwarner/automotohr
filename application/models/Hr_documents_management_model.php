@@ -1107,9 +1107,10 @@ class Hr_documents_management_model extends CI_Model {
         return $return_data;
     }
 
-    function get_eeo_form_info ($sid) {
+    function get_eeo_form_info ($sid, $type) {
         $this->db->select('*');
         $this->db->where('application_sid', $sid);
+        $this->db->where('users_type', $type);
         $this->db->order_by('sid', 'DESC');
         $result = $this->db->get('portal_eeo_form')->result_array();
         $return_data = array();
@@ -6420,9 +6421,10 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
-    function get_user_eeo_form_info ($sid) {
+    function get_user_eeo_form_info ($sid, $type) {
         $this->db->select('*');
         $this->db->where('application_sid', $sid);
+        $this->db->where('users_type', $type);
         $this->db->where('is_expired', 1);
         $this->db->order_by('sid', 'DESC');
         $result = $this->db->get('portal_eeo_form')->result_array();

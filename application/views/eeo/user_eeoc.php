@@ -22,13 +22,13 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                         <div class="col-lg-3 pull-right" style="padding-right: 0px;">
-                                            <a target="_blank" href="<?php echo base_url('hr_documents_management/print_eeoc_form/download'. '/' . $user_sid); ?>" class="btn btn-success btn-block" title="Download EEOC Form" placement="top">
+                                            <a target="_blank" href="<?php echo base_url('hr_documents_management/print_eeoc_form/download'. '/' . $user_sid . '/' . $user_type); ?>" class="btn btn-success btn-block" title="Download EEOC Form" placement="top">
                                                 <i class="fa fa-download" aria-hidden="true"></i>
                                                 Download PDF
                                             </a>
                                         </div>
                                         <div class="col-lg-3 pull-right">
-                                            <a target="_blank" href="<?php echo base_url('hr_documents_management/print_eeoc_form/print'. '/' . $user_sid); ?>" class="btn btn-success btn-block" title="Print EEOC Form" placement="top">
+                                            <a target="_blank" href="<?php echo base_url('hr_documents_management/print_eeoc_form/print'. '/' . $user_sid . '/' . $user_type); ?>" class="btn btn-success btn-block" title="Print EEOC Form" placement="top">
                                                 <i class="fa fa-print" aria-hidden="true"></i>
                                                 Print PDF
                                             </a>
