@@ -111,7 +111,7 @@
                                                     class="fa fa-question-circle-o modalShow"
                                                     src="section_1_Apt_number"></i></label>
                                             <input autocomplete="nope" type="text"
-                                                value="<?php echo sizeof($pre_form) > 0 && !empty($pre_form['section1_apt_number']) ? $pre_form['section1_apt_number'] : 'N/A' ?>"
+                                                value="<?php echo sizeof($pre_form) > 0 && !empty($pre_form['section1_apt_number']) ? $pre_form['section1_apt_number'] : '' ?>"
                                                 name="section1_apt_number" class="form-control input-grey" />
                                         </div>
                                     </div>
@@ -1550,12 +1550,11 @@ $(document).ready(function() {
                 info_id = 'section_21_alien_number';
             }
         }
-
+        //
         var model_content = $('#' + info_id).html();
-        console.log(model_content);
-        
+        //
         var mymodal = $('#myPopupModal');
-
+        //
         mymodal.find('.modal-title').text(model_title);
         mymodal.find('.modal-body').html(model_content);
         mymodal.modal('show');

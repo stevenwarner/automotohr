@@ -66,7 +66,7 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Apt. Number <i class="fa fa-question-circle-o modalShow" src="section_1_Apt_number"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 && !empty($pre_form['section1_apt_number']) ? $pre_form['section1_apt_number']: 'N/A'?>" name="section1_apt_number" class="form-control" />
+                                            <input type="text" value="<?php echo sizeof($pre_form)>0 && !empty($pre_form['section1_apt_number']) ? $pre_form['section1_apt_number']: ''?>" name="section1_apt_number" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
@@ -1313,7 +1313,7 @@
 
             var model_content =  $('#'+info_id).html(); 
 
-            var mymodal = $('#myModal');
+            var mymodal = $('#myPopupModal');
 
             mymodal.find('.modal-title').text(model_title);
             mymodal.find('.modal-body').html(model_content);
