@@ -11,10 +11,10 @@
         <div class="sheet padding-10mm" style="width: 800px;padding: 10px 10mm; margin: 0 auto;">
             <div class="row mb-2">
                 <div class="col-lg-3 pull-right">
-                    <a target="_blank" href="<?php echo base_url('hr_documents_management/print_eeoc_form/download'. '/' . $user_sid); ?>" class="btn btn-success btn-block">Download PDF</a>
+                    <a target="_blank" href="<?php echo base_url('hr_documents_management/print_eeoc_form/download'. '/' . $user_sid . '/' . $user_type); ?>" class="btn btn-success btn-block">Download PDF</a>
                 </div>
                 <div class="col-lg-3 pull-right">
-                    <a target="_blank" href="<?php echo base_url('hr_documents_management/print_eeoc_form/print'. '/' . $user_sid); ?>" class="btn btn-success btn-block">
+                    <a target="_blank" href="<?php echo base_url('hr_documents_management/print_eeoc_form/print'. '/' . $user_sid . '/' . $user_type); ?>" class="btn btn-success btn-block">
                         Print PDF
                     </a>
                 </div>

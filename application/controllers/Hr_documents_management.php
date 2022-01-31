@@ -6958,7 +6958,7 @@ class Hr_documents_management extends Public_Controller {
         }
     }
 
-    public function print_eeoc_form($action, $sid) {
+    public function print_eeoc_form($action, $sid, $type) {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data['session']['company_detail']['sid'];
@@ -6967,7 +6967,7 @@ class Hr_documents_management extends Public_Controller {
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
             $data['title'] = 'EEOC Form';
-            $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($sid);
+            $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($sid, $type);
             $data['eeo_form_info'] = $eeo_form_info;
             $data['action'] = $action;
             $this->load->view('eeo/eeoc_print', $data);
