@@ -838,8 +838,11 @@ class Home extends CI_Controller {
                 $applied_by = "";
                 if ($talent_network_sid == 'no_record_found') { // new entry in job applications table
                     $output = $this->contact_model->talent_network_applicant($email, $first_name, $last_name, $country, $city, $phone_number, $desired_job_title, $resume, $data, $cover_letter, $state, $date_applied);
-
+                    
                     if ($output[1] == 1) { // data inserted successfully
+                        //
+                        send_full_employment_application($data['company_details']['sid'], $output[0], "applicant");
+                        //
                         $applicant_network_sid = $output[0];
                         $insert_data = array();
                         $insert_data['portal_job_applications_sid'] = $applicant_network_sid;
@@ -857,8 +860,6 @@ class Home extends CI_Controller {
                         $insert_data['talent_and_fair_data'] = $serialize_talent_and_fair_data;
                         $insert_data['resume']               = $resume ? $resume : NULL;
                         $output = $this->job_details->add_applicant_job_details($insert_data);
-                        //
-                        send_full_employment_application($data['company_details']['sid'], $output[0], "applicant");
                         //
                         $job_added_successfully = $output[1];
                         $applied_by = "?applied_by=".$output[0];
