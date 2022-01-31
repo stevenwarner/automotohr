@@ -507,7 +507,8 @@ class Accurate_background_model extends CI_Model
                 $rows .= '    <td>' . $v0['product_name'] . '</td>';
                 $rows .= '    <td>' . $v0['product_type'] . '</td>';
                 $rows .= '    <td>' . ucwords($v0['cname']) . '</td>';
-                $rows .= '    <td ' . $status_color . '>' . ($v0['status'] == 'Draft' ? 'Awaiting Candidate Input' : ($v0['status'] == '' || $v0['status'] == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $v0['status']))) . '</td>';
+              //  $rows .= '    <td ' . $status_color . '>' . ($v0['status'] == 'Draft' ? 'Awaiting Candidate Input' : ($v0['status'] == '' || $v0['status'] == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $v0['status']))) . '</td>';
+                $rows .= '    <td ' . $status_color . '>' . (($v0['status'] == 'Draft' ? 'Awaiting Candidate Input' : ($v0['status'] == '') || ( $v0['status'] == NULL)) ? 'Pending' : ucwords(str_replace('_', ' ', $v0['status']))) . '</td>';
                 $rows .= '    <td class="no-print">
                 <a class="btn btn-success btn-sm" href="' . base_url() . 'manage_admin/accurate_background/order_status/' . $v0['order_sid'] . '" >Order Status</a>';
                 if(isset($v0['is_deleted_status'])){
