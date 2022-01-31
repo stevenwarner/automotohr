@@ -172,10 +172,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		isset(self::$func_override) OR self::$func_override = (extension_loaded('mbstring') && ini_get('mbstring.func_override'));
 		$this->initialize($params);
 
+
 		if ( ! isset($this->_key) && self::strlen($key = config_item('encryption_key')) > 0)
 		{
 			$this->_key = $key;
 		}
+		
 
 		log_message('info', 'Encryption Class Initialized');
 	}
