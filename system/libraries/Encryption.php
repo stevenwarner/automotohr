@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2019, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,10 @@
  *
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	http://opensource.org/licenses/MIT	MIT License
- * @link	http://codeigniter.com
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2019, British Columbia Institute of Technology (https://bcit.ca/)
+ * @license	https://opensource.org/licenses/MIT	MIT License
+ * @link	https://codeigniter.com
  * @since	Version 3.0.0
  * @filesource
  */
@@ -46,10 +46,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage	Libraries
  * @category	Libraries
  * @author		Andrey Andreev
- * @link		http://codeigniter.com/user_guide/libraries/encryption.html
+ * @link		https://codeigniter.com/user_guide/libraries/encryption.html
  */
-//class CI_Encryption {
-	class CI_Encryption {
+class CI_Encryption {
 
 	/**
 	 * Encryption cipher
@@ -98,11 +97,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	 *
 	 * @var	array
 	 */
-
-
-  /// Nisar 
-	protected $_hash_type		= 'sha1';
-// End Nisar
 	protected $_modes = array(
 		'mcrypt' => array(
 			'cbc' => 'cbc',
@@ -141,11 +135,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	);
 
 	/**
-	 * mbstring.func_override flag
+	 * mbstring.func_overload flag
 	 *
 	 * @var	bool
 	 */
-	protected static $func_override;
+	protected static $func_overload;
 
 	// --------------------------------------------------------------------
 
@@ -158,10 +152,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	public function __construct(array $params = array())
 	{
 		$this->_drivers = array(
-			'mcrypt' => defined('MCRYPT_DEV_URANDOM'),
-			// While OpenSSL is available for PHP 5.3.0, an IV parameter
-			// for the encrypt/decrypt functions is only available since 5.3.3
-			'openssl' => (is_php('5.3.3') && extension_loaded('openssl'))
+			'mcrypt'  => defined('MCRYPT_DEV_URANDOM'),
+			'openssl' => extension_loaded('openssl')
 		);
 
 		if ( ! $this->_drivers['mcrypt'] && ! $this->_drivers['openssl'])
@@ -169,15 +161,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			show_error('Encryption: Unable to find an available encryption driver.');
 		}
 
-		isset(self::$func_override) OR self::$func_override = (extension_loaded('mbstring') && ini_get('mbstring.func_override'));
+		isset(self::$func_overload) OR self::$func_overload = (extension_loaded('mbstring') && ini_get('mbstring.func_overload'));
 		$this->initialize($params);
-
 
 		if ( ! isset($this->_key) && self::strlen($key = config_item('encryption_key')) > 0)
 		{
 			$this->_key = $key;
 		}
-		
 
 		log_message('info', 'Encryption Class Initialized');
 	}
@@ -345,9 +335,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	 */
 	public function create_key($length)
 	{
-		return ($this->_driver === 'mcrypt')
-			? mcrypt_create_iv($length, MCRYPT_DEV_URANDOM)
-			: openssl_random_pseudo_bytes($length);
+		if (function_exists('random_bytes'))
+		{
+			try
+			{
+				return random_bytes((int) $length);
+			}
+			catch (Exception $e)
+			{
+				log_message('error', $e->getMessage());
+				return FALSE;
+			}
+		}
+		elseif (defined('MCRYPT_DEV_URANDOM'))
+		{
+			return mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
+		}
+
+		$is_secure = NULL;
+		$key = openssl_random_pseudo_bytes($length, $is_secure);
+		return ($is_secure === TRUE)
+			? $key
+			: FALSE;
 	}
 
 	// --------------------------------------------------------------------
@@ -403,7 +412,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		// The greater-than-1 comparison is mostly a work-around for a bug,
 		// where 1 is returned for ARCFour instead of 0.
 		$iv = (($iv_size = mcrypt_enc_get_iv_size($params['handle'])) > 1)
-			? mcrypt_create_iv($iv_size, MCRYPT_DEV_URANDOM)
+			? $this->create_key($iv_size)
 			: NULL;
 
 		if (mcrypt_generic_init($params['handle'], $params['key'], $iv) < 0)
@@ -466,7 +475,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		}
 
 		$iv = ($iv_size = openssl_cipher_iv_length($params['handle']))
-			? openssl_random_pseudo_bytes($iv_size)
+			? $this->create_key($iv_size)
 			: NULL;
 
 		$data = openssl_encrypt(
@@ -673,10 +682,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			{
 				return FALSE;
 			}
-			else
-			{
-				$params['mode'] = $this->_modes[$this->_driver][$params['mode']];
-			}
+
+			$params['mode'] = $this->_modes[$this->_driver][$params['mode']];
 		}
 
 		if (isset($params['hmac']) && $params['hmac'] === FALSE)
@@ -898,11 +905,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	 * Byte-safe strlen()
 	 *
 	 * @param	string	$str
-	 * @return	integer
+	 * @return	int
 	 */
 	protected static function strlen($str)
 	{
-		return (self::$func_override)
+		return (self::$func_overload)
 			? mb_strlen($str, '8bit')
 			: strlen($str);
 	}
@@ -919,7 +926,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	 */
 	protected static function substr($str, $start, $length = NULL)
 	{
-		if (self::$func_override)
+		if (self::$func_overload)
 		{
 			// mb_substr($str, $start, null, '8bit') returns an empty
 			// string on PHP 5.3
@@ -931,144 +938,4 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			? substr($str, $start, $length)
 			: substr($str, $start);
 	}
-
-
-
-//------ Nisar
-
-
-	/**
-	 * Hash encode a string
-	 *
-	 * @param	string
-	 * @return	string
-	 */
-	public function hash($str)
-	{
-		return hash($this->_hash_type, $str);
-	}
-
-
-/**
-	 * Adds permuted noise to the IV + encrypted data to protect
-	 * against Man-in-the-middle attacks on CBC mode ciphers
-	 * http://www.ciphersbyritter.com/GLOSSARY.HTM#IV
-	 *
-	 * @param	string
-	 * @param	string
-	 * @return	string
-	 */
-	protected function _add_cipher_noise($data, $key)
-	{
-		$key = $this->hash($key);
-		$str = '';
-
-		for ($i = 0, $j = 0, $ld = strlen($data), $lk = strlen($key); $i < $ld; ++$i, ++$j)
-		{
-			if ($j >= $lk)
-			{
-				$j = 0;
-			}
-
-			$str .= chr((ord($data[$i]) + ord($key[$j])) % 256);
-		}
-
-		return $str;
-	}
-
-
-/**
-	 * Get Mcrypt Mode Value
-	 *
-	 * @return	int
-	 */
-	protected function _get_mode()
-	{
-		if ($this->_mcrypt_mode === NULL)
-		{
-			return $this->_mcrypt_mode = MCRYPT_MODE_CBC;
-		}
-
-		return $this->_mcrypt_mode;
-	}
-
-	/**
-	 * Encrypt using Mcrypt
-	 *
-	 * @param	string
-	 * @param	string
-	 * @return	string
-	 */
-	public function mcrypt_encode($data, $key)
-	{
-		$init_size = mcrypt_get_iv_size($this->_get_cipher(), $this->_get_mode());
-		$init_vect = mcrypt_create_iv($init_size, MCRYPT_RAND);
-		return $this->_add_cipher_noise($init_vect.mcrypt_encrypt($this->_get_cipher(), $key, $data, $this->_get_mode(), $init_vect), $key);
-	}
-
-
-
-
-
-
-	/**
-	 * Get Mcrypt cipher Value
-	 *
-	 * @return	int
-	 */
-	protected function _get_cipher()
-	{
-		if ($this->_mcrypt_cipher === NULL)
-		{
-			return $this->_mcrypt_cipher = MCRYPT_RIJNDAEL_256;
-		}
-
-		return $this->_mcrypt_cipher;
-	}
-
-
-	public function get_key($key = '')
-	{
-		if ($key === '')
-		{
-			if ($this->encryption_key !== '')
-			{
-				return $this->encryption_key;
-			}
-
-			$key = config_item('encryption_key');
-
-			if ( ! strlen($key))
-			{
-				show_error('In order to use the encryption class requires that you set an encryption key in your config file.');
-			}
-		}
-
-		return md5($key);
-	}
-
-
-
-
-	/* @param	string	the string to encode
-	* @param	string	the key
-	* @return	string
-	*/
-   public function encode($string, $key = '')
-   {
-	   return base64_encode($this->mcrypt_encode($string, $this->get_key($key)));
-   }
-
-
-	public function decode($string, $key = '')
-	{
-		if (preg_match('/[^a-zA-Z0-9\/\+=]/', $string) OR base64_encode(base64_decode($string)) !== $string)
-		{
-			return FALSE;
-		}
-
-		return $this->mcrypt_decode(base64_decode($string), $this->get_key($key));
-	}
-
-
 }
