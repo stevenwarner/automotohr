@@ -2,6 +2,7 @@
 /**
  * Redirect http to https
  */
+/*
 function redirect_traffic(){
     $file_name = '../ahr_jsons/http_urls.json';
     $file = fopen($file_name, 'r');
@@ -15,9 +16,9 @@ function redirect_traffic(){
             return header("Location: https://{$original_url}", true);
 		}
     }
-}
+}*/
 //
-redirect_traffic();
+//redirect_traffic();
 //
 $GLOBALS['BENCHMARKSTARTTIME'] = microtime(true);
 /**
@@ -329,7 +330,7 @@ if($_SERVER['HTTP_HOST'] == 'www.automotohr.com' || $_SERVER['HTTP_HOST'] == 'au
 	ini_set('display_errors', 0);
 } else{
 	error_reporting(E_ALL);
-	ini_set('display_errors', 0);
+	ini_set('display_errors', 1);
 }
 
 //

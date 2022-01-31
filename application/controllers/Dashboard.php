@@ -30,6 +30,7 @@ class Dashboard extends Public_Controller {
     }
 
     public function index() {
+    
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $employer_detail                                                    = $data['session']['employer_detail'];
@@ -46,7 +47,6 @@ class Dashboard extends Public_Controller {
             $data['companyData']['locationDetail']                              = db_get_state_name($data['companyData']['Location_State']);
             $jobs_approval_module_status                                        = $company_detail['has_job_approval_rights']; //get_job_approval_module_status($company_id);
             $applicant_approval_module_status                                   = $company_detail['has_applicant_approval_rights']; //get_applicant_approval_module_status($company_id);
-
             if(check_blue_panel_status() && strtolower($loggedin_access_level) == 'employee') { //New Panel configuration
 
                 // $configuration  = $this->onboarding_model->get_onboarding_configuration('employee', $employer_id);
@@ -138,9 +138,12 @@ class Dashboard extends Public_Controller {
                 ///////////-----------------------------------------------------------------------------------------\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
             } else { /* It is for Main Dashboard --- Start ---*/
+                
                 if(!isset($company_detail['has_task_management_rights'])) {
+                   
                     $task_management_module_status                              = $this->job_approval_rights_model->GetModuleStatus($company_id, 'tasks_management');
                 } else {
+                    
                     $task_management_module_status                              = $company_detail['has_task_management_rights'];
                 }
 
@@ -152,7 +155,6 @@ class Dashboard extends Public_Controller {
                 } else {
                     $data['task_management_module_status']                      = 0;
                 }
-
 
 
                 $by_date_today                                                  = true;
@@ -408,13 +410,16 @@ class Dashboard extends Public_Controller {
                     }
                 }
             }
+            
 
             $this->load->model('hr_documents_management_model');
             $documents_count = $documents_count + sizeof($assigned_documents) + + $this->hr_documents_management_model->getGeneralDocumentCount(
                 $data['session']['employer_detail']['sid'],
                 'employee',
                 $data['session']['company_detail']['sid']
-            );;
+            );
+
+            
 
             // For Time off
             $pto_user_access = get_pto_user_access($employer_detail['parent_sid'], $employer_detail['sid']);
@@ -481,7 +486,7 @@ class Dashboard extends Public_Controller {
             $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail']);
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
-            
+           
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
             $this->load->view('main/footer');

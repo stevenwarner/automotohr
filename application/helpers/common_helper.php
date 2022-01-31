@@ -13778,7 +13778,10 @@ if(!function_exists('LoginToAPI')){
         // if(isset($_SESSION['logged_in']) && !isset($_SESSION['API_TOKENS'])){
         if(isset($_SESSION['logged_in']) && (!isset($_SESSION['API_TOKENS']) || empty($_SESSION['API_TOKENS']))){
             //
-            $API_TOKEN_CODE = $CI->encrypt->encode('apitoken'.$_SESSION['logged_in']['employer_detail']['sid']);
+           // $API_TOKEN_CODE = $CI->encrypt->encode('apitoken'.$_SESSION['logged_in']['employer_detail']['sid']);
+            $API_TOKEN_CODE = $CI->encryption->encode('apitoken'.$_SESSION['logged_in']['employer_detail']['sid']);
+           
+            
             //
             $_SESSION['API_TOKEN_CODE'] = $API_TOKEN_CODE;
             // Lets store it in database

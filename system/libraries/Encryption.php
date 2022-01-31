@@ -48,7 +48,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author		Andrey Andreev
  * @link		http://codeigniter.com/user_guide/libraries/encryption.html
  */
-class CI_Encryption {
+//class CI_Encryption {
+	class CI_Encryption {
 
 	/**
 	 * Encryption cipher
@@ -97,6 +98,11 @@ class CI_Encryption {
 	 *
 	 * @var	array
 	 */
+
+
+  /// Nisar 
+	protected $_hash_type		= 'sha1';
+// End Nisar
 	protected $_modes = array(
 		'mcrypt' => array(
 			'cbc' => 'cbc',
@@ -923,4 +929,144 @@ class CI_Encryption {
 			? substr($str, $start, $length)
 			: substr($str, $start);
 	}
+
+
+
+//------ Nisar
+
+
+	/**
+	 * Hash encode a string
+	 *
+	 * @param	string
+	 * @return	string
+	 */
+	public function hash($str)
+	{
+		return hash($this->_hash_type, $str);
+	}
+
+
+/**
+	 * Adds permuted noise to the IV + encrypted data to protect
+	 * against Man-in-the-middle attacks on CBC mode ciphers
+	 * http://www.ciphersbyritter.com/GLOSSARY.HTM#IV
+	 *
+	 * @param	string
+	 * @param	string
+	 * @return	string
+	 */
+	protected function _add_cipher_noise($data, $key)
+	{
+		$key = $this->hash($key);
+		$str = '';
+
+		for ($i = 0, $j = 0, $ld = strlen($data), $lk = strlen($key); $i < $ld; ++$i, ++$j)
+		{
+			if ($j >= $lk)
+			{
+				$j = 0;
+			}
+
+			$str .= chr((ord($data[$i]) + ord($key[$j])) % 256);
+		}
+
+		return $str;
+	}
+
+
+/**
+	 * Get Mcrypt Mode Value
+	 *
+	 * @return	int
+	 */
+	protected function _get_mode()
+	{
+		if ($this->_mcrypt_mode === NULL)
+		{
+			return $this->_mcrypt_mode = MCRYPT_MODE_CBC;
+		}
+
+		return $this->_mcrypt_mode;
+	}
+
+	/**
+	 * Encrypt using Mcrypt
+	 *
+	 * @param	string
+	 * @param	string
+	 * @return	string
+	 */
+	public function mcrypt_encode($data, $key)
+	{
+		$init_size = mcrypt_get_iv_size($this->_get_cipher(), $this->_get_mode());
+		$init_vect = mcrypt_create_iv($init_size, MCRYPT_RAND);
+		return $this->_add_cipher_noise($init_vect.mcrypt_encrypt($this->_get_cipher(), $key, $data, $this->_get_mode(), $init_vect), $key);
+	}
+
+
+
+
+
+
+	/**
+	 * Get Mcrypt cipher Value
+	 *
+	 * @return	int
+	 */
+	protected function _get_cipher()
+	{
+		if ($this->_mcrypt_cipher === NULL)
+		{
+			return $this->_mcrypt_cipher = MCRYPT_RIJNDAEL_256;
+		}
+
+		return $this->_mcrypt_cipher;
+	}
+
+
+	public function get_key($key = '')
+	{
+		if ($key === '')
+		{
+			if ($this->encryption_key !== '')
+			{
+				return $this->encryption_key;
+			}
+
+			$key = config_item('encryption_key');
+
+			if ( ! strlen($key))
+			{
+				show_error('In order to use the encryption class requires that you set an encryption key in your config file.');
+			}
+		}
+
+		return md5($key);
+	}
+
+
+
+
+	/* @param	string	the string to encode
+	* @param	string	the key
+	* @return	string
+	*/
+   public function encode($string, $key = '')
+   {
+	   return base64_encode($this->mcrypt_encode($string, $this->get_key($key)));
+   }
+
+
+	public function decode($string, $key = '')
+	{
+		if (preg_match('/[^a-zA-Z0-9\/\+=]/', $string) OR base64_encode(base64_decode($string)) !== $string)
+		{
+			return FALSE;
+		}
+
+		return $this->mcrypt_decode(base64_decode($string), $this->get_key($key));
+	}
+
+
 }
