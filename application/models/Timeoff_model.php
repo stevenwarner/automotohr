@@ -3154,10 +3154,10 @@ class Timeoff_model extends CI_Model
         $policies = $this->getCompanyPoliciesWithAccruals($companyId);
         $balances = $this->getBalances($companyId);
         // Fetch employee policies
-        $balance = 
         //
         $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
         //
+        $balance = 
         $this->getBalanceOfEmployee(
             $employeeId,
             $employee['employee_status'],
@@ -3168,7 +3168,6 @@ class Timeoff_model extends CI_Model
             $balances,
             $employee['employee_type']
         );
-
         //
         $r['Balance'] = [
             'Remaining' => $balance['total']['RemainingTime'],
