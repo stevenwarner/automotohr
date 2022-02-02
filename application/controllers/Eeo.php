@@ -383,6 +383,7 @@ class Eeo extends Public_Controller
                             $data_to_insert['disability'] = $disability;
                             $data_to_insert['gender'] = $gender;
                             $data_to_insert['is_latest'] = 1;
+                            $data_to_insert['is_expired'] = 1;
 
                             $this->eeo_model->insert_eeo_record($users_type, $users_sid, $data_to_insert);
 

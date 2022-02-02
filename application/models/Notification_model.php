@@ -214,8 +214,9 @@ class Notification_model extends CI_Model {
         $w4_form = $this->is_w4_form_assign('employee', $employee_id);
         $w9_form = $this->is_w9_form_assign('employee', $employee_id);
         $i9_form = $this->is_i9_form_assign('employee', $employee_id);
+        $eeoc_form = $this->is_eeoc_form_assign('employee', $employee_id);
         // $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + count($generalDocuments);
-        $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + count($generalDocuments) + $assigned_offer_letter;
+        $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + $eeoc_form + count($generalDocuments) + $assigned_offer_letter;
         //
         if((int)$c !== 0){
             $r[] = array(
@@ -298,6 +299,15 @@ class Notification_model extends CI_Model {
         $this->db->where('user_consent', NULL);
         $this->db->where('status', 1);
         $this->db->from('applicant_i9form');
+        return $this->db->count_all_results();
+    }
+
+    private function is_eeoc_form_assign($user_type, $user_sid) {
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
+        $this->db->where('is_expired', 0);
+        $this->db->where('status', 1);
+        $this->db->from('portal_eeo_form');
         return $this->db->count_all_results();
     }
 

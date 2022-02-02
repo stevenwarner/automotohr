@@ -636,6 +636,7 @@ class Auto_careers extends CI_Controller
                     $eeo_data_to_insert['veteran']                          = $applicant_data['veteran'];
                     $eeo_data_to_insert['disability']                       = $applicant_data['disability'];
                     $eeo_data_to_insert['gender']                           = $applicant_data['gender'];
+                    $eeo_data_to_insert['is_expired']                       = 1;
 
                     $this->auto_careers_model->save_eeo_form($eeo_data_to_insert);
                 }

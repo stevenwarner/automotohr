@@ -609,8 +609,8 @@ if ($this->session->userdata('logged_in')) {
                                 <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Direct Deposit Info Not Added" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                             <?php } ?>
                         </li>
-                        <?php //if ($data['session']['portal_detail']['eeo_form_status']) { ?>
-                            <!--<li>
+                        <?php if (check_user_eeoc_form($applicant_info['sid'], 'applicant')) { ?>
+                            <li>
                                 <span class="left-addon"><i aria-hidden="true" class="fa fa-file-text"></i></span>
                                 <h4>EEOC</h4>
                                 <a href="<?php echo base_url('EEOC/applicant/' . $applicant_info['sid'] . '/' . $job_list_sid); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
@@ -620,8 +620,8 @@ if ($this->session->userdata('logged_in')) {
                                 <?php } else { ?>
                                     <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Direct Deposit Info Not Added" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                                 <?php } ?>
-                            </li> -->
-                        <?php //} ?>
+                            </li>
+                        <?php } ?>
                         <?php } if(check_access_permissions_for_view($security_details, 'ats_documents') && $this->session->userdata('logged_in')['company_detail']['ems_status']){ ?>
                         <li>
                             <span class="left-addon"><i aria-hidden="true" class="fa fa-file-text"></i></span>

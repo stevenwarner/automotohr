@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                         <?php } else { ?>
-                            <?php if (count($documents) > 0 || !empty($w4_form) || !empty($w9_form) || !empty($i9_form) || count($NotCompletedGeneralDocuments)) { ?>
+                            <?php if (count($documents) > 0 || !empty($w4_form) || !empty($w9_form) || !empty($i9_form) || !empty($eeoc_form) || count($NotCompletedGeneralDocuments)) { ?>
                                 <div class="table-responsive">
                                     <h3>Document Details For Employee: <b><?php echo $userDetail['first_name']; ?> <?php echo $userDetail['last_name']; ?></b>
                                     <span class="pull-right">
@@ -135,6 +135,34 @@
                                                         </td>
                                                     </tr>
                                                 <?php } ?>   
+
+                                                <?php if (!empty($eeoc_form)) { ?>
+                                                    <tr>
+                                                        <td>
+                                                            EEOC Fillable <b>(Employment Eligibility Verification Documents)</b> 
+                                                        </td>
+                                                        <td>
+                                                            <i class="fa fa-2x fa-file-text"></i>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo reset_datetime(array('datetime' => $eeoc_form['last_sent_at'], '_this' => $this)); ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo '<b>N/A</b>'; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo '<b>N/A</b>'; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo '<b>N/A</b>'; ?>
+                                                        </td>
+                                                        <td>
+                                                            <a class="btn btn-success btn-sm btn-block" data-toggle="modal" data-target="#eeoc_modal" href="javascript:void(0);">
+                                                                Preview Assigned
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>  
 
                                                 <!-- General Documents -->
                                                 <?php foreach($NotCompletedGeneralDocuments as $v){ ?>
@@ -364,6 +392,29 @@
             </div>
         </div>
     </div>
+<?php } ?>
+
+<?php if(!empty($eeoc_form)) { ?>
+        <div id="eeoc_modal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header modal-header-bg">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="review_modal_title">EEOC FORM</h4>
+                    </div>
+                    <div id="review_modal_body" class="modal-body">
+                        <div class="table-responsive">
+                            <div class="container-fluid">
+                                <?php $this->load->view('eeo/eeoc_view'); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="review_modal_footer" class="modal-footer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
 <?php } ?>
 
  <div id="my_loader" class="text-center my_loader">

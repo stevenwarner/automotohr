@@ -59,7 +59,7 @@
                                         <span>
                                             Assigned On : 
                                             <strong>
-                                                <?php echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s'); ?>
+                                                <?php echo !empty($eeo_form_info['last_sent_at']) ? DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s') : "N/A"; ?>
                                             </strong>
                                         </span>
                                         <br>

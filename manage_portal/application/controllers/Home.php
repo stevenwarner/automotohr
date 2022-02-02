@@ -1909,7 +1909,8 @@ class Home extends CI_Controller {
                                                                     'group_status'                      => $this->input->post('group_status'),
                                                                     'veteran'                           => $this->input->post('veteran'),
                                                                     'disability'                        => $this->input->post('disability'),
-                                                                    'gender'                            => $this->input->post('gender')
+                                                                    'gender'                            => $this->input->post('gender'),
+                                                                    'is_expired'                            => 1
                                                                 );
 
                                                 $this->job_details->save_eeo_form($eeo_data);
@@ -2420,7 +2421,8 @@ class Home extends CI_Controller {
                                                                     'group_status'                      => $this->input->post('group_status'),
                                                                     'veteran'                           => $this->input->post('veteran'),
                                                                     'disability'                        => $this->input->post('disability'),
-                                                                    'gender'                            => $this->input->post('gender')
+                                                                    'gender'                            => $this->input->post('gender'),
+                                                                    'is_expired'                            => 1
                                                                 );
 
                                                 $this->job_details->save_eeo_form($eeo_data);

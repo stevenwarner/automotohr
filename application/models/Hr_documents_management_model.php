@@ -1279,6 +1279,24 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+    function is_eeoc_document_assign($user_type, $user_sid) {
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
+        $this->db->where('is_expired', 0);
+        $this->db->where('status', 1);
+        $this->db->from('portal_eeo_form');
+        //
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr[0];
+        } else {
+            return array();
+        }
+    }
+
     function check_w4_form_exist($user_type, $user_sid) {
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
@@ -1638,6 +1656,7 @@ class Hr_documents_management_model extends CI_Model {
             $pending_w4         = $this->is_employee_w4_document_pending('employee', $employee_sid);
             $pending_w9         = $this->is_employee_w9_document_pending('employee', $employee_sid);
             $pending_i9         = $this->is_employee_i9_document_pending('employee', $employee_sid);
+            $pending_eeoc         = $this->is_eeoc_form_assign('employee', $employee_sid);
 
             // Get General Documents
             $this->addGeneralDocuments(
@@ -1681,6 +1700,19 @@ class Hr_documents_management_model extends CI_Model {
                     'Type' => 'Verification',
                     'AssignedOn' => $i9_info['assigned_on'], 
                     'Days' => $i9_info['days']  
+                );
+            }
+
+            if($pending_eeoc != 0){
+                $eeoc_info = $this->get_eeoc_document_assign_date('employee', $employee_sid);
+                //
+                $employee_sids[$emp_key]['Documents'][] = array( 
+                    'ID' => 0, 
+                    'Title' => 'EEOC Fillable', 
+                    'Type' => 'Verification',
+                    'AssignedOn' => $eeoc_info['assigned_on'], 
+                    'AssignedBy' => $eeoc_info['assigned_by'], 
+                    'Days' => $eeoc_info['days']  
                 );
             }
 
@@ -1849,6 +1881,36 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+    function get_eeoc_document_assign_date ($user_type, $user_sid) {
+        $this->db->select('last_sent_at');
+        $this->db->select('last_assigned_by');
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid ', $user_sid);
+        $this->db->where('is_expired', 0);
+        $this->db->where('status', 1);
+        $this->db->from('portal_eeo_form');
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $assigned_on = date('M d Y, D h:i:s', strtotime($record_arr['last_sent_at']));
+            //
+            $now = time(); 
+            $datediff = $now - strtotime($record_arr['last_sent_at']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
+            $result['assigned_on'] = $assigned_on;
+            $result['assigned_by'] = $record_arr['last_assigned_by'];
+            $result['days'] = $days;
+            //
+            return $result;
+        } else {
+            return array();
+        }
+    }
+
     function is_employee_i9_document_pending($user_type, $user_sid) {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -1868,6 +1930,15 @@ class Hr_documents_management_model extends CI_Model {
         } else {
             return 0;
         }
+    }
+
+    private function is_eeoc_form_assign($user_type, $user_sid) {
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
+        $this->db->where('is_expired', 0);
+        $this->db->where('status', 1);
+        $this->db->from('portal_eeo_form');
+        return $this->db->count_all_results();
     }
 
     function getEmployeesDetails($employees) {
@@ -6155,7 +6226,7 @@ class Hr_documents_management_model extends CI_Model {
         //
         $a = 
         $this->db
-        ->select('sid')
+        ->select('*')
         ->where('application_sid', $id)
         ->where('users_type', $type)
         ->get('portal_eeo_form');
@@ -6163,6 +6234,8 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->row_array();
         //
         unset($a);
+        //
+        $update_eeoc = array();
         //
         if(empty($b)){
             $this->db
@@ -6177,15 +6250,29 @@ class Hr_documents_management_model extends CI_Model {
             $sid = $this->db->insert_id();
         } else{
             $sid = $b['sid'];
+            //
+            unset($b['sid']);
+            //
+            $history = $b;
+            $history['eeo_form_sid'] = $sid;
+            //
+            $this->db->insert("portal_eeo_form_history", $history);
+            //
+            $update_eeoc['us_citizen'] = "";
+            $update_eeoc['visa_status'] = "";
+            $update_eeoc['group_status'] = "";
+            $update_eeoc['veteran'] = "";
+            $update_eeoc['disability'] = "";
+            $update_eeoc['gender'] = "";
         }
         //
+        $update_eeoc['is_expired'] = 0;
+        $update_eeoc['status'] = 1;
+        $update_eeoc['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        $update_eeoc['last_assigned_by'] = $assign_by_sid;
+            //
         $this->db->where('sid', $sid)
-        ->update('portal_eeo_form', [
-            'is_expired' => 0,
-            'status' => 1,
-            'last_sent_at' => date('Y-m-d H:i:s', strtotime('now')),
-            'last_assigned_by' => $assign_by_sid
-        ]);
+        ->update('portal_eeo_form', $update_eeoc);
         //
         return $sid;
     }

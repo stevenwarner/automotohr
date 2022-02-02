@@ -2706,6 +2706,7 @@ class Onboarding extends CI_Controller {
                 $data_to_save['veteran'] = $veteran;
                 $data_to_save['disability'] = $disability;
                 $data_to_save['gender'] = $gender;
+                $data_to_save['is_expired'] = 1;
                 $data_to_save['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
                 $this->onboarding_model->save_eeoc('applicant', $users_sid, $data_to_save);
                 $data_to_update = array();
@@ -9785,7 +9786,50 @@ class Onboarding extends CI_Controller {
         }
     } 
 
-    function my_eeoc_form ($sid, $type) {
-        
+    function my_eeoc_form () {
+        if ($this->session->userdata('logged_in')) {
+            $session = $this->session->userdata('logged_in');
+            //
+            $company_detail = $session['company_detail'];
+            $employee_detail = $session['employer_detail'];
+            //
+            $employee_sid = $employee_detail['sid'];
+            $security_details = db_get_access_level_details($employee_sid);
+            $data['security_details'] = $security_details;
+            //check_access_permissions($security_details, 'appearance', 'customize_appearance'); // no need to check in this Module as Dashboard will be available to all
+            $company_sid = $company_detail['sid'];
+            $company_name = $employee_detail['CompanyName'];
+            $user_type = 'employee';
+            //
+            $print_url = base_url('hr_documents_management/print_eeoc_form/print'. '/' . $employee_sid . '/' . $user_type);
+            $download_url = base_url('hr_documents_management/print_eeoc_form/download'. '/' . $employee_sid . '/' . $user_type);
+            $eeo_form_status = $this->hr_documents_management_model->get_portal_detail($company_sid);
+            $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employee_sid, $user_type);
+            //
+            if ($eeo_form_info['status'] == 0) {
+                redirect('hr_documents_management/my_documents', 'refresh');
+            }
+            //
+            $data['session']            = $session;
+            $data['title']              = 'My EEOC';
+            $data['company_sid']        = $company_sid;
+            $data['company_info']       = $company_detail;
+            $data['first_name']         = $employee_detail['first_name'];
+            $data['last_name']          = $employee_detail['last_name'];
+            $data['email']              = $employee_detail['email'];
+            $data['employee']           = $employee_detail;
+            $data['users_type']         = $user_type;
+            $data['print_url']          = $print_url;
+            $data['download_url']       = $download_url;
+            $data['eeo_form_status']    = $eeo_form_status;
+            $data['eeo_form_info']      = $eeo_form_info;
+            $data['id']                 = $eeo_form_info['sid'];
+            //
+            $this->load->view('onboarding/on_boarding_header', $data);
+            $this->load->view('eeo/employee_eeoc');
+            $this->load->view('onboarding/on_boarding_footer'); 
+        } else {
+            redirect('login', 'refresh');
+        }
     }       
 }

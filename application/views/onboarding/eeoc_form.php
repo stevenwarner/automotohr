@@ -141,14 +141,14 @@ if (isset($applicant)) {
                                                     <label class="control control--radio col-lg-2 col-md-6 col-xs-6 col-sm-6">
                                                         <?php $default_checked = $temp == 'yes' ? true : false ;?>
                                                         Yes
-                                                        <input <?php echo set_radio($field_id, 'yes', $default_checked); ?> type="radio" name="<?php echo $field_id?>" id="citizen-yes" class="citizen_check" value="yes">
+                                                        <input <?php echo set_radio($field_id, 'Yes', $default_checked); ?> type="radio" name="<?php echo $field_id?>" id="citizen-yes" class="citizen_check" value="yes">
                                                         <div class="control__indicator"></div>
                                                     </label>
 
                                                     <label class="control control--radio col-lg-2 col-md-6 col-xs-6 col-sm-6">
                                                         <?php $default_checked = $temp == 'no' ? true : false ;?>
                                                         No
-                                                        <input <?php echo set_radio($field_id, 'no', $default_checked); ?> type="radio" name="<?php echo $field_id?>" id="citizen-no" class="citizen_check" value="no">
+                                                        <input <?php echo set_radio($field_id, 'No', $default_checked); ?> type="radio" name="<?php echo $field_id?>" id="citizen-no" class="citizen_check" value="no">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
