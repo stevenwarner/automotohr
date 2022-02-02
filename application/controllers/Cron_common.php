@@ -502,14 +502,14 @@ class Cron_common extends CI_Controller{
             //
             $typeSlug = 'total_'.strtolower($log_row->query_type);
             //
-            if(!isset($countFileData['history'][$log_row->created_at])){
-                $countFileData['history'][$log_row->created_at] = $defaultArray;
+            if(!isset($countFileData['history'][$log_row->created_date])){
+                $countFileData['history'][$log_row->created_date] = $defaultArray;
             }
             //
             $countFileData['total_queries']++;
             if(isset($countFileData[$typeSlug])){
                 $countFileData[$typeSlug]++;
-                $countFileData['history'][$log_row->created_at][$typeSlug]++;
+                $countFileData['history'][$log_row->created_date][$typeSlug]++;
             }
             //
             unset($log_row->sid);

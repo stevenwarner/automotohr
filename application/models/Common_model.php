@@ -117,7 +117,7 @@ class Common_model extends CI_Model {
             $this->db->where('sid > ', $result->s_count);
         }
         //
-        $this->db->select("*,date_format(created_at, '%Y-%m-%d') as created_at");
+        $this->db->select("*, date_format(created_at, '%Y-%m-%d') as created_date");
         $this->db->from('query_logs');
         //
         return  $this->db->get('',null,null,FALSE)->result();
