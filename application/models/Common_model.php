@@ -101,39 +101,32 @@ class Common_model extends CI_Model {
     }
 
     /**
-     * @param $sid
+     * 
      * @return array
      */
-    function get_records_from_log($sid = null){
-      
+    function get_records_from_log(){
         $this->db->select('s_count');
         $this->db->from('query_logs_check');
         $this->db->where('module', 'querylog' );
+        //
         $result = $this->db->get('',null,null,FALSE)->row();
-             
+        //
         if(!$result){
-              $result =  $this->db->insert("query_logs_check", array('module' =>'querylog','s_count' =>'0') ,null,null,FALSE);
+            $this->db->insert("query_logs_check", array('module' =>'querylog','s_count' =>'0'), null, null, FALSE);
         } else{
-            $this->db->where('sid>', $result->s_count );
+            $this->db->where('sid > ', $result->s_count);
         }
-
+        //
         $this->db->select("*,date_format(created_at, '%Y-%m-%d') as created_at");
         $this->db->from('query_logs');
+        //
         return  $this->db->get('',null,null,FALSE)->result();
-       
-     }
-
-
-
-     function update_from_log($lastId = null){
-        
-           $this->db->update("query_logs_check", array('s_count' =>$lastId) ,null,null,FALSE);
-           
-     }
-
-
-
+    }
     //
+    function update_from_log($lastId){
+        $this->db->update("query_logs_check", array('s_count' => $lastId), null, null, FALSE);
+    }
+
     //
     function update_last_id($sid){
         //

@@ -437,27 +437,30 @@ class Cron_common extends CI_Controller{
         }
     }
 
-    //
+    /**
+     * Creates log of DB queries
+     * 
+     * @param string $verificationToken
+     * @return void
+     */
     public function log_records($verificationToken){
-        
         //
-        // if($verificationToken != $this->verifyToken){
-        //     echo "All done!";
-        //     exit(0);
-        // }
-    
-
-        $logurl=APPPATH."../uploads/automotologs.json";
-        $countFile=APPPATH."../uploads/automotocount.json";
-        //
+        if($verificationToken != $this->verifyToken){
+            echo "All done!";
+            exit(0);
+        }
+        // Define file paths and names
+        $logurl = APPPATH."../../automotologs.json";
+        $countFile = APPPATH."../../automotocount.json";
+        // Define default array for count
         $defaultArray = [
             'total_queries' => 0,
             'total_select' => 0,
             'total_update' => 0,
             'total_insert' => 0,
-            'total_delete' => 0,
+            'total_delete' => 0
         ];
-        //
+        // Check if count file created
         if(!is_file($countFile)){
             //
             $defaultArray['history'] = [];
@@ -468,29 +471,27 @@ class Cron_common extends CI_Controller{
             //
             unset($defaultArray['history']);
         }
-
-        //
-        $handler = fopen($countFile, 'r');
-        $countFileData = json_decode(fread($handler, filesize($countFile)), true);
-        fclose($handler);
-
-        //
+        // Check if log file is created
         if(!is_file($logurl)){
             //
             $handler = fopen($logurl, 'w');
             fwrite($handler, json_encode([]));
             fclose($handler);
         }
-        //
+        // Get the data from count file
+        $handler = fopen($countFile, 'r');
+        $countFileData = json_decode(fread($handler, filesize($countFile)), true);
+        fclose($handler);
+        // Get the data from log file
         $handler = fopen($logurl, 'r');
         $logurlData = json_decode(fread($handler, filesize($logurl)), true);
         fclose($handler);
-        //
+        // Check and get the query logs
         $results = $this->common_model->get_records_from_log();
-
         //
         if(!$results){
-            die('All done buddy.');
+            echo('All done buddy.');
+            exit(0);
         }
         //
         $lastId = 0;
@@ -507,11 +508,9 @@ class Cron_common extends CI_Controller{
             //
             $countFileData['total_queries']++;
             if(isset($countFileData[$typeSlug])){
-            $countFileData[$typeSlug]++;
-            $countFileData['history'][$log_row->created_at][$typeSlug]++;
-        }
-
-            
+                $countFileData[$typeSlug]++;
+                $countFileData['history'][$log_row->created_at][$typeSlug]++;
+            }
             //
             unset($log_row->sid);
             //
@@ -526,10 +525,9 @@ class Cron_common extends CI_Controller{
         fwrite($handler, json_encode($logurlData));
         fclose($handler);
         //
-         $results = $this->common_model->update_from_log($lastId);
-               //
+        $this->common_model->update_from_log($lastId);
+        //
         die('All Done');
-           
     }
 
 }
