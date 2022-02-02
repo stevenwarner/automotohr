@@ -105,15 +105,33 @@ class Common_model extends CI_Model {
      * @return array
      */
     function get_records_from_log($sid = null){
-        //
-        $this->db->select('*');
-        $this->db->from('query_logs');
-        if ($sid){
-            $this->db->where('sid >', $sid);
+      
+        $this->db->select('s_count');
+        $this->db->from('query_logs_check');
+        $this->db->where('module', 'querylog' );
+        $result = $this->db->get('',null,null,FALSE)->row();
+             
+        if(!$result){
+              $result =  $this->db->insert("query_logs_check", array('module' =>'querylog','s_count' =>'0') ,null,null,FALSE);
+        } else{
+            $this->db->where('sid>', $result->s_count );
         }
-        $this->db->order_by('sid', 'ASC');
-        return $this->db->get('', NULL, NULL, FALSE)->result_array();
-    }
+
+        $this->db->select("*,date_format(created_at, '%Y-%m-%d') as created_at");
+        $this->db->from('query_logs');
+        return  $this->db->get('',null,null,FALSE)->result();
+       
+     }
+
+
+
+     function update_from_log($lastId = null){
+        
+           $this->db->update("query_logs_check", array('s_count' =>$lastId) ,null,null,FALSE);
+           
+     }
+
+
 
     //
     //
