@@ -11678,6 +11678,7 @@ class Hr_documents_management extends Public_Controller {
         replace([
             '{{applicant_name}}' => $info['first_name'].' '.$info['last_name'],
             '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('eeoc_form/'.( $token ).'') ).'">EEOC Form</a>',
+            '{{company_name}}' => $this->session->userdata('logged_in')['company_detail']['CompanyName']
         ], $content);
         //
         replace([
