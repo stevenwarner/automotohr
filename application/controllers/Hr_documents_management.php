@@ -8792,6 +8792,7 @@ class Hr_documents_management extends Public_Controller {
                         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
                         //
                         replace([
+                            '{{company_name}}' => $company_name,
                             '{{applicant_name}}' => $userInfoE['first_name'].' '.$userInfoE['last_name'],
                             '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( ucwords(preg_replace('/_/', ' ', $post['documentType'])) ).'</a>',
                         ], $content);
@@ -9616,6 +9617,7 @@ class Hr_documents_management extends Public_Controller {
                             $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
                             //
                             replace([
+                                '{{company_name}}' => $data['session']['company_detail']['CompanyName'],
                                 '{{applicant_name}}' => trim($user_info['first_name'].' '.$user_info['last_name']),
                                 '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $a['document_title'] ).'</a>',
                             ], $content);
@@ -10256,6 +10258,7 @@ class Hr_documents_management extends Public_Controller {
                     $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
                     //
                     replace([
+                        '{{company_name}}' => $post['CompanyName'],
                         '{{applicant_name}}' => trim($user_info['first_name'].' '.$user_info['last_name']),
                         '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $post['documentTitle'] ).'</a>',
                     ], $content);
@@ -10883,6 +10886,7 @@ class Hr_documents_management extends Public_Controller {
         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
         //
         replace([
+            '{{company_name}}' => $data['company_detail']['CompanyName'],
             '{{applicant_name}}' => $document['user']['first_name'].' '.$document['user']['last_name'],
             '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $document['document_title'] ).'</a>',
         ], $content);

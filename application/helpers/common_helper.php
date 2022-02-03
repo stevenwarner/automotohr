@@ -1447,12 +1447,13 @@ if (!function_exists('convert_email_template')) {
             $emailTemplateBody = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
             $emailTemplateBody = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
             $emailTemplateBody = str_replace('{{username}}', $userData['username'], $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{contact-name}}', $userData['username'], $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{contact-name}}', ucfirst($userData['first_name']).' '.ucfirst($userData['last_name']), $emailTemplateBody);
             $emailTemplateBody = str_replace('{{company_name}}', $userData['CompanyName'], $emailTemplateBody);
             $emailTemplateBody = str_replace('{{password}}', decode_string($userData['key']), $emailTemplateBody);
             $emailTemplateBody = str_replace('{{employer_id}}', $employer_sid, $emailTemplateBody);
             $emailTemplateBody = str_replace('{{verification_key}}', $userData['verification_key'], $emailTemplateBody);
             $emailTemplateBody = str_replace('{{change_password}}', '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'change_password/' . $userData['username'] . '/' . $userData['verification_key'] . '" target="_blank">Change your password</a>', $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{change_your_password}}', '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'change_password/' . $userData['username'] . '/' . $userData['verification_key'] . '" target="_blank">Change your password</a>', $emailTemplateBody);
             $emailTemplateBody = str_replace('{{button}}', '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url('login') . '" target="_blank">Button</a>', $emailTemplateBody);
             $emailTemplateBody = str_replace('{{click_here}}', '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'account_activation/{{activation_key}}" target="_blank">Click Here</a>', $emailTemplateBody);
             return $emailTemplateBody;
