@@ -3572,7 +3572,7 @@ class Hr_documents_management extends Public_Controller {
 
             ini_set('memory_limit', -1);
             // Set eeoc form status
-            $data['EeocFormStatus'] = $data['session']['portal_detail']['eeo_form_status'];
+            $data['EeocFormStatus'] = $data['session']['portal_detail']['eeo_form_profile_status'];
 			
             $data['pp_flag'] = $pp_flag;
             $this->load->view('main/header', $data);
