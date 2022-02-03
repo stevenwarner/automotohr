@@ -1968,6 +1968,7 @@ class Home extends CI_Controller {
         //
         $data = [];
         if(empty($document)){
+            redirect('404');
             exit(0);
         }
         //
