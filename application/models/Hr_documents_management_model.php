@@ -1434,7 +1434,7 @@ class Hr_documents_management_model extends CI_Model {
         $this->CheckAndMoveToHistory($user_type, $user_sid);
         // 
         $updateArray = [];
-        $updateArray['status'] = 0;
+        $updateArray['status'] = 1;
         $updateArray['is_expired'] = 0;
         $updateArray['is_latest'] = 1;
         $updateArray['us_citizen'] = NULL;
