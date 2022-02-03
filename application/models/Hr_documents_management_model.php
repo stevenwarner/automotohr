@@ -1430,11 +1430,19 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function activate_EEOC_forms($user_type, $user_sid) {
+        // Check and move to history
+        $this->CheckAndMoveToHistory($user_type, $user_sid);
         // 
         $updateArray = [];
-        $updateArray['status'] = 1;
+        $updateArray['status'] = 0;
         $updateArray['is_expired'] = 0;
         $updateArray['is_latest'] = 1;
+        $updateArray['us_citizen'] = NULL;
+        $updateArray['visa_status'] = NULL;
+        $updateArray['group_status'] = NULL;
+        $updateArray['veteran'] = NULL;
+        $updateArray['disability'] = NULL;
+        $updateArray['gender'] = NULL;
         $updateArray['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
         $updateArray['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
         //
@@ -1454,7 +1462,7 @@ class Hr_documents_management_model extends CI_Model {
         ->get('portal_eeo_form')
         ->row_array();
         //
-        if(!count($form)){
+        if(!count($form) || empty($form['us_citizen'])){
             return false;
         }
         //
