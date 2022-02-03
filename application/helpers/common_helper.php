@@ -3503,10 +3503,10 @@ if (!function_exists('generate_invoice_html')) {
             }
 
             if ($facebook_api_flag == true) {
-                $td = '<td style="width:25%; vertical-align: top; text-align: left; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . 'Facebook API' . '</td>' . '<td style="vertical-align: top; text-align: left; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . 'Fully Featured Facebook Recruiting Application' . '</td>' . '<td style="vertical-align: top; text-align: right; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . '$' . number_format(399, 2, '.', ',') . '</td>' . '<td style="vertical-align: top; text-align: center; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . ' ' . '</td>' . '<td  style="vertical-align: top; text-align: right; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . '$' . number_format(0, 2, '.', ',') . '</td>';
-                $tr = $td;
-                $tr = '<tr>' . $tr . '</tr>';
-                $tr_collection .= $tr;
+                // $td = '<td style="width:25%; vertical-align: top; text-align: left; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . 'Facebook API' . '</td>' . '<td style="vertical-align: top; text-align: left; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . 'Fully Featured Facebook Recruiting Application' . '</td>' . '<td style="vertical-align: top; text-align: right; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . '$' . number_format(399, 2, '.', ',') . '</td>' . '<td style="vertical-align: top; text-align: center; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . ' ' . '</td>' . '<td  style="vertical-align: top; text-align: right; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . '$' . number_format(0, 2, '.', ',') . '</td>';
+                // $tr = $td;
+                // $tr = '<tr>' . $tr . '</tr>';
+                // $tr_collection .= $tr;
             }
 
             $invoice_notes = '<strong>Invoice Notes:</strong>' . '<span>' . $invoice_data['invoice_description'] . '</span>';
@@ -3940,10 +3940,10 @@ if (!function_exists('generate_commission_invoice_html')) {
             }
 
             if ($facebook_api_flag == true) {
-                $td = '<td style="width:25%; vertical-align: top; text-align: left; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . 'Facebook API' . '</td>' . '<td style="vertical-align: top; text-align: left; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . 'Fully Featured Facebook Recruiting Application' . '</td>' . '<td style="vertical-align: top; text-align: right; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . '$' . number_format(399, 2, '.', ',') . '</td>' . '<td style="vertical-align: top; text-align: center; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . ' ' . '</td>' . '<td  style="vertical-align: top; text-align: right; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . '$' . number_format(0, 2, '.', ',') . '</td>';
-                $tr = $td;
-                $tr = '<tr>' . $tr . '</tr>';
-                $tr_collection .= $tr;
+                // $td = '<td style="width:25%; vertical-align: top; text-align: left; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . 'Facebook API' . '</td>' . '<td style="vertical-align: top; text-align: left; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . 'Fully Featured Facebook Recruiting Application' . '</td>' . '<td style="vertical-align: top; text-align: right; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . '$' . number_format(399, 2, '.', ',') . '</td>' . '<td style="vertical-align: top; text-align: center; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . ' ' . '</td>' . '<td  style="vertical-align: top; text-align: right; border-collapse: collapse; border:thin solid #000; padding: 5px;">' . '$' . number_format(0, 2, '.', ',') . '</td>';
+                // $tr = $td;
+                // $tr = '<tr>' . $tr . '</tr>';
+                // $tr_collection .= $tr;
             }
 
             $invoice_notes = '<strong>Invoice Notes:</strong>' . '<span>' . $invoice_data['invoice_description'] . '</span>';
