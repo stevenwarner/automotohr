@@ -38,28 +38,30 @@
                                             <?php } ?>
                                             <div class="col-lg-3 pull-right">
                                                 <button onclick="func_remove_EEOC('deactive');" class="btn btn-danger btn-block">Revoke</button>
-                                            </div>    
+                                            </div>   
+                                            <?php if ($eeo_form_info["is_expired"] != 1) { ?> 
                                             <div class="col-lg-3 pull-right">
                                                 <a class="btn btn-success btn-block jsResendEEOC" ref="javascript:void(0);" title="Send EEOC form to <?=ucwords($user_name);?>" placement="top">
                                                     <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                                                    Send Notification
+                                                    Send Email Reminder
                                                 </a>
                                             </div>
+                                            <?php } ?>
                                         <?php } else { ?>
                                             <div class="col-lg-3 pull-right">
                                                 <button onclick="func_assign_EEOC('active');" class="btn btn-warning btn-block">Re-Assign</button>
-                                            </div>    
+                                            </div>
                                         <?php } ?> 
-                                          
                                     </div>
-                                </div> 
+                                </div>
+                                <?php if ($eeo_form_info["status"] == 1) { ?>     
                                 <hr>  
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                         <span>
                                             Assigned On : 
                                             <strong>
-                                                <?php echo !empty($eeo_form_info['last_sent_at']) ? DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s') : "N/A"; ?>
+                                                <?php echo !empty($eeo_form_info['last_sent_at']) ? DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s') : ""; ?>
                                             </strong>
                                         </span>
                                         <br>
@@ -71,8 +73,9 @@
                                         </span>
                                     </div>
                                 </div>  
+                                <?php } ?>
                                 <hr>  
-                                <?php if ($eeo_form_info["is_expired"] == 1 && $eeo_form_info["status"] == 1) { ?>    
+                                <?php if ($eeo_form_info["status"] == 1) { ?>    
                                     <section class="sheet padding-10mm">
                                         <article class="sheet-header">
                                             <div class="header-logo"><img src="<?php echo base_url('assets/images/eeoc_logo.jpg')?>"></div>
@@ -289,14 +292,14 @@
                                     </section>
                                 <?php } else { ?>
                                     <h2 class="text-center">
-                                        The <?php echo $user_type == 'applicant' ? 'applicant' : 'employee'; ?> has not completed its EEOC form. 
+                                        The <?php echo $user_type == 'applicant' ? 'applicant' : 'employee'; ?> has not completed the EEOC form. 
                                     </h2>
                                 <?php } ?>
                             <?php } else { ?>
                                 <h2 class="text-center">
-                                    The <?php echo $user_type == 'applicant' ? 'applicant' : 'employee'; ?> has not completed its EEOC form. 
+                                    The <?php echo $user_type == 'applicant' ? 'applicant' : 'employee'; ?> has not completed the EEOC form. 
                                     <br>
-                                    <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send EEOC form to <?=ucwords($user_name);?>" placement="top">Send EEOC Form</a>
+                                    <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?=ucwords($user_name);?>" placement="top">Assign</a>
                                 </h2>
                             <?php } ?>
                         </div>    
@@ -392,7 +395,7 @@
                             });
                         } else {
                             //
-                            alertify.alert('Error!', 'Something went wrong while resending the EEOC form.')
+                            alertify.alert('Error!', resp)
                         }
                     });
                 }

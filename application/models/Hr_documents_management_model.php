@@ -1416,11 +1416,46 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function activate_EEOC_forms($user_type, $user_sid) {
+        // Check and move to history
+        $this->CheckAndMoveToHistory($user_type, $user_sid);
         $this->db->where('users_type', $user_type);
         $this->db->where('application_sid', $user_sid);
-        $this->db->set('status', 1);
-        $this->db->from('portal_eeo_form');
-        $this->db->update();
+        // 
+        $updateArray = [];
+        $updateArray['status'] = 1;
+        $updateArray['is_expired'] = 0;
+        $updateArray['is_latest'] = 1;
+        $updateArray['us_citizen'] = NULL;
+        $updateArray['visa_status'] = NULL;
+        $updateArray['group_status'] = NULL;
+        $updateArray['veteran'] = NULL;
+        $updateArray['disability'] = NULL;
+        $updateArray['gender'] = NULL;
+        $updateArray['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
+        $updateArray['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $this->db->update('portal_eeo_form', $updateArray);
+    }
+
+    //
+    function CheckAndMoveToHistory($user_type, $user_sid){
+        //
+        $form = $this->db
+        ->where('users_type', $user_type)
+        ->where('application_sid', $user_sid)
+        ->where('is_expired', 1)
+        ->get('portal_eeo_form')
+        ->row_array();
+        //
+        if(!count($form)){
+            return false;
+        }
+        //
+        $form['eeo_form_sid'] = $form['sid'];
+        //
+        unset($form['sid']);
+        //
+        $this->db->insert('portal_eeo_form_history', $form);
     }
 
     function activate_i9_forms($user_type, $user_sid) {

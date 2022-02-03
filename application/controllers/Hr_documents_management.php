@@ -11662,7 +11662,7 @@ class Hr_documents_management extends Public_Controller {
         }
         //
         if(empty($info)){
-            echo 'inactive';
+            echo 'The employee is inactive.<br> Please activate the employee to send an email notification.';
             exit(0);
         }
         //

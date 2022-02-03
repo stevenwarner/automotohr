@@ -421,7 +421,7 @@ class Eeo extends Public_Controller
                 $this->session->set_flashdata('message', '<strong>Error:</strong> E.E.O.C Form Disable!');
                 //
                 if ($user_type == 'applicant') {
-                    redirect('applicant_profile/' . $user_sid . '/' . $job_list_sid, 'refresh');
+                    redirect('applicant_profile/' . $user_sid . '/' . $jobs_listing, 'refresh');
                 } else {
                     redirect('employee_profile/'. $user_sid, 'refresh');
                 }

@@ -389,10 +389,12 @@
                                                                             </form>
                                                                             <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
                                                                             <a class="btn btn-success" href="<?php echo base_url('EEOC/employee/' . $user_sid); ?>">View EEOC Form</a>
+                                                                            <?php if ($eeo_form_info['is_expired'] != 1) { ?>
                                                                             <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">
                                                                                 <i class="fa fa-paper-plane" aria-hidden="true"></i>
                                                                                 Send Notification
                                                                             </a>
+                                                                            <?php } ?>
                                                                         <?php } else { ?>
                                                                             <form id="form_assign_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                                                                 <input type="hidden" id="perform_action" name="perform_action" value="assign_EEOC"/>
@@ -400,7 +402,7 @@
                                                                             <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
                                                                         <?php } ?>
                                                                     <?php } else { ?>
-                                                                        <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">Send Form</a>
+                                                                        <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">Assign</a>
                                                                     <?php } ?>    
                                                                     
                                                                     <?php if (!empty($eeo_form_info['last_completed_on'])) { ?>
