@@ -355,7 +355,7 @@
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>
-                                                        <?php if($EeocFormStatus == 1 && $user_type == "employee" && !empty($eeo_form_info)) { ?>
+                                                        <?php if($EeocFormStatus == 1 && $user_type == "employee" && !empty($eeo_form_info) && $eeo_form_info['status'] == 1) { ?>
                                                             <tr>
                                                                 <td class="col-lg-2">
                                                                     EEOC FORM
