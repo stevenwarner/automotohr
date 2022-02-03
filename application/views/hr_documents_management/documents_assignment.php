@@ -359,7 +359,7 @@
                                                             <tr>
                                                                 <td class="col-lg-2">
                                                                     EEOC FORM
-                                                                    <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/'.( empty($eeo_form_info['gender']) ? 'off' : 'on'  ).'.gif'); ?>">
+                                                                    <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/'.( empty($eeo_form_info['status'] && $eeo_form_info['is_expired']) ? 'off' : 'on'  ).'.gif'); ?>">
                                                                 </td>
                                                                 <td class="col-lg-1 text-center">
                                                                     <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
@@ -390,9 +390,9 @@
                                                                             <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
                                                                             <a class="btn btn-success" href="<?php echo base_url('EEOC/employee/' . $user_sid); ?>">View EEOC Form</a>
                                                                             <?php if ($eeo_form_info['is_expired'] != 1) { ?>
-                                                                            <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">
+                                                                            <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send reminder email to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">
                                                                                 <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                                                                                Send Notification
+                                                                                Send Email Notification
                                                                             </a>
                                                                             <?php } ?>
                                                                         <?php } else { ?>

@@ -1408,21 +1408,11 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function deactivate_EEOC_forms($user_type, $user_sid) {
-        $this->db->where('users_type', $user_type);
-        $this->db->where('application_sid', $user_sid);
-        $this->db->set('status', 0);
-        $this->db->from('portal_eeo_form');
-        $this->db->update();
-    }
-
-    function activate_EEOC_forms($user_type, $user_sid) {
         // Check and move to history
         $this->CheckAndMoveToHistory($user_type, $user_sid);
-        $this->db->where('users_type', $user_type);
-        $this->db->where('application_sid', $user_sid);
         // 
         $updateArray = [];
-        $updateArray['status'] = 1;
+        $updateArray['status'] = 0;
         $updateArray['is_expired'] = 0;
         $updateArray['is_latest'] = 1;
         $updateArray['us_citizen'] = NULL;
@@ -1433,6 +1423,23 @@ class Hr_documents_management_model extends CI_Model {
         $updateArray['gender'] = NULL;
         $updateArray['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
         $updateArray['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
+        $this->db->update('portal_eeo_form', $updateArray);
+    }
+
+    function activate_EEOC_forms($user_type, $user_sid) {
+        // 
+        $updateArray = [];
+        $updateArray['status'] = 1;
+        $updateArray['is_expired'] = 0;
+        $updateArray['is_latest'] = 1;
+        $updateArray['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
+        $updateArray['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
         //
         $this->db->update('portal_eeo_form', $updateArray);
     }
@@ -6270,8 +6277,6 @@ class Hr_documents_management_model extends CI_Model {
         //
         unset($a);
         //
-        $update_eeoc = array();
-        //
         if(empty($b)){
             $this->db
             ->insert("portal_eeo_form", [
@@ -6283,32 +6288,9 @@ class Hr_documents_management_model extends CI_Model {
             ]);
             //
             $sid = $this->db->insert_id();
-        } else{
+         } else{
             $sid = $b['sid'];
-            //
-            unset($b['sid']);
-            //
-            $history = $b;
-            $history['eeo_form_sid'] = $sid;
-            //
-            $this->db->insert("portal_eeo_form_history", $history);
-            //
-            $update_eeoc['us_citizen'] = "";
-            $update_eeoc['visa_status'] = "";
-            $update_eeoc['group_status'] = "";
-            $update_eeoc['veteran'] = "";
-            $update_eeoc['disability'] = "";
-            $update_eeoc['gender'] = "";
         }
-        //
-        $update_eeoc['is_expired'] = 0;
-        $update_eeoc['status'] = 1;
-        $update_eeoc['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
-        $update_eeoc['last_assigned_by'] = $assign_by_sid;
-            //
-        $this->db->where('sid', $sid)
-        ->update('portal_eeo_form', $update_eeoc);
-        //
         return $sid;
     }
 

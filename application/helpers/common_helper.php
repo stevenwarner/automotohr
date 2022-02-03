@@ -14118,3 +14118,23 @@ if (!function_exists('check_user_eeoc_form')) {
 
     }
 }
+
+if (!function_exists('CheckUserEEOCStatus')) {
+    function CheckUserEEOCStatus($type, $sid)
+    {
+        $CI = &get_instance();
+        //
+        if(
+            $CI->db
+            ->where('users_type', $type)
+            ->where('application_sid ', $sid)
+            ->where('status', 1)
+            ->where('is_expired', 1)
+            ->count_all_results('portal_eeo_form')
+        ){
+            return true;
+        }
+        //
+        return false;
+    }
+}
