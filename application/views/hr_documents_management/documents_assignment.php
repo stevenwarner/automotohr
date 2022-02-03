@@ -355,7 +355,7 @@
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>
-                                                        <?php if($EeocFormStatus == 1 && $user_type == "employee" && !empty($eeo_form_info) && $eeo_form_info['status'] == 1) { ?>
+                                                        <?php if($EeocFormStatus == 1 && $user_type == "employee") { ?>
                                                             <tr>
                                                                 <td class="col-lg-2">
                                                                     EEOC FORM
@@ -5806,6 +5806,14 @@
                 w4_btn = '',
                 i9_btn = '',
                 db = '';
+
+                //
+                if(dn.trim() == 'EEOC FORM'){
+                    if(<?=$eeo_form_info['status'];?> != 1){
+                        return;
+                    }
+                }
+                
 
                 //
                 if($(this).find('td:nth-child(4)').find('button[data-document-type="i9"]').length !== 0){
