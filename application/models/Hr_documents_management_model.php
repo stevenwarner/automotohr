@@ -6552,11 +6552,11 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
-    function get_user_eeo_form_info ($sid, $type) {
+    function get_user_eeo_form_info ($sid, $type, $checkExpired = true) {
         $this->db->select('*');
         $this->db->where('application_sid', $sid);
         $this->db->where('users_type', $type);
-        $this->db->where('is_expired', 1);
+        if($checkExpired){ $this->db->where('is_expired', 1); }
         $this->db->order_by('sid', 'DESC');
         $result = $this->db->get('portal_eeo_form')->result_array();
         $return_data = array();

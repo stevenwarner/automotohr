@@ -417,7 +417,7 @@ class Eeo extends Public_Controller
             check_access_permissions($security_details, 'my_settings', 'eeo'); // Param2: Redirect URL, Param3: Function Name
             $company_sid = $data['session']['company_detail']['sid'];
             //
-            if ($data['session']['portal_detail']['eeo_form_status'] != 1) {
+            if ($data['session']['portal_detail']['eeo_form_profile_status'] != 1) {
                 $this->session->set_flashdata('message', '<strong>Error:</strong> E.E.O.C Form Disable!');
                 //
                 if ($user_type == 'applicant') {
@@ -442,7 +442,7 @@ class Eeo extends Public_Controller
                     $left_navigation = 'manage_employer/employee_management/profile_right_menu_employee_new';
                     $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'employee'); // getting applicant ratings - getting average rating of applicant
                     $data['employer'] = $this->hr_documents_management_model->get_company_detail($user_sid);
-                    $eeo_form_info = $this->hr_documents_management_model->get_user_eeo_form_info($user_sid, $user_type);
+                    $eeo_form_info = $this->hr_documents_management_model->get_user_eeo_form_info($user_sid, $user_type, false);
                     $data['eeo_form_info'] = $eeo_form_info;
                     $data['left_navigation'] = $left_navigation;
                     break;
@@ -458,7 +458,7 @@ class Eeo extends Public_Controller
                     $left_navigation = 'manage_employer/application_tracking_system/profile_right_menu_applicant';
                     $applicant_info = $this->hr_documents_management_model->get_applicants_details($user_sid);
                     $eeo_form_status = $this->eeo_model->get_eeo_form_status($user_type, $user_sid);
-                    $eeo_form_info = $this->hr_documents_management_model->get_user_eeo_form_info($user_sid, $user_type);
+                    $eeo_form_info = $this->hr_documents_management_model->get_user_eeo_form_info($user_sid, $user_type, false);
                     $data['eeo_form_status'] = $eeo_form_status;
                     $data['eeo_form_info'] = $eeo_form_info;
 
