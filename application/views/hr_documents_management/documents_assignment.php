@@ -359,7 +359,7 @@
                                                             <tr>
                                                                 <td class="col-lg-2">
                                                                     EEOC FORM
-                                                                    <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/'.( empty($eeo_form_info['gender']) ? 'off' : 'on'  ).'.gif'); ?>">
+                                                                    <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/'.( empty($eeo_form_info['status'] && $eeo_form_info['is_expired']) ? 'off' : 'on'  ).'.gif'); ?>">
                                                                 </td>
                                                                 <td class="col-lg-1 text-center">
                                                                     <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
@@ -371,27 +371,43 @@
                                                                         <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                         <div class="text-center">
                                                                             <?php 
-                                                                                echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');
+                                                                                if (!empty($eeo_form_info['last_sent_at'])) {
+                                                                                    echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');
+                                                                                } else {
+                                                                                    echo "N/A";
+                                                                                }
                                                                             ?>
                                                                         </div>
                                                                     <?php } ?>
                                                                 </td>
                                                                 <td class="col-lg-6 text-center">
-                                                                <?php 
-                                                                        if(!empty($eeo_form_info['gender'])){
-                                                                            ?>
-                                                                            <a class="btn btn-success" data-toggle="modal" data-target="#eeoc_modal" href="javascript:void(0);">View Form</a>
-                                                                            <?php
-                                                                        }
-                                                                    ?>
-                                                                    <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top"><?=empty($eeo_form_info) ? 'Send Form' : 'Re-send Form';?></a>
-                                                                    <?php 
-                                                                        if(!empty($eeo_form_info['last_completed_on'])){
-                                                                            ?>
-                                                                            <p>Last completed on <strong><?=DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_completed_on'])->format('M d Y, D H:i:s');?></strong></p>
-                                                                            <?php
-                                                                        }
-                                                                    ?>
+
+                                                                    <?php if(!empty($eeo_form_info)) { ?>
+                                                                        <?php if ($eeo_form_info['status']) { ?>
+                                                                            <form id="form_remove_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                <input type="hidden" id="perform_action" name="perform_action" value="remove_EEOC" />
+                                                                            </form>
+                                                                            <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
+                                                                            <a class="btn btn-success" href="<?php echo base_url('EEOC/employee/' . $user_sid); ?>">View EEOC Form</a>
+                                                                            <?php if ($eeo_form_info['is_expired'] != 1) { ?>
+                                                                            <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send reminder email to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">
+                                                                                <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                                                                Send Email Notification
+                                                                            </a>
+                                                                            <?php } ?>
+                                                                        <?php } else { ?>
+                                                                            <form id="form_assign_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                <input type="hidden" id="perform_action" name="perform_action" value="assign_EEOC"/>
+                                                                            </form>
+                                                                            <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
+                                                                        <?php } ?>
+                                                                    <?php } else { ?>
+                                                                        <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">Assign</a>
+                                                                    <?php } ?>    
+                                                                    
+                                                                    <?php if (!empty($eeo_form_info['last_completed_on'])) { ?>
+                                                                        <p>Last completed on <strong><?=DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_completed_on'])->format('M d Y, D H:i:s');?></strong></p>
+                                                                    <?php } ?>
                                                                 </td>
                                                             </tr>
                                                         <?php } ?>
@@ -4892,6 +4908,42 @@
         });
     }
 
+    function func_remove_w9() {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to revoke this document?',
+        function () {
+            $('#form_remove_w9').submit();
+        },
+        function () {
+            alertify.alert("Warning", 'Cancelled!');
+        });
+    }
+
+    function func_remove_EEOC() {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to revoke this document?',
+        function () {
+            $('#form_remove_EEOC').submit();
+        },
+        function () {
+            alertify.alert("Warning", 'Cancelled!');
+        });
+    }
+
+    function func_assign_EEOC() {
+        alertify.confirm(
+        'Are you sure?',
+        'Are you sure you want to assign this document?',
+        function () {
+            $('#form_assign_EEOC').submit();
+        },
+        function () {
+            alertify.alert("Warning", 'Cancelled!');
+        });
+    }
+
     function fLaunchModal(source) {
         var document_preview_url = $(source).attr('data-preview-url');
         var document_download_url = $(source).attr('data-download-url');
@@ -6192,11 +6244,13 @@
                     ).done(function(resp){
                         //
                         if(resp == 'success'){
-                            alertify.alert('Success!','EEOC form has been sent.')
-                            return;
+                            alertify.alert('Success!','EEOC form has been sent.', function(){
+                                window.location.reload();
+                            });
+                        } else {
+                            //
+                            alertify.alert('Error!', 'Something went wrong while resending the EEOC form.')
                         }
-                        //
-                        alertify.alert('Error!', 'Something went wrong while resending the EEOC form.')
                     });
                 }
             ).setHeader('Confirm!');

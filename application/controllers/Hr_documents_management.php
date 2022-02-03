@@ -2341,6 +2341,28 @@ class Hr_documents_management extends Public_Controller {
                             }
 
                             break;
+                        case 'remove_EEOC': //EEOC Form Deactive
+                            $this->hr_documents_management_model->deactivate_EEOC_forms($user_type, $user_sid);
+                            $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
+                            //
+                            if ($user_type == 'employee') {
+                                $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid, 'refresh');
+                            } else {
+                                $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
+                            }
+
+                            break;  
+                        case 'assign_EEOC': //EEOC Form Active
+                            $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
+                            $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
+                            //
+                            if ($user_type == 'employee') {
+                                $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid, 'refresh');
+                            } else {
+                                $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
+                            }
+
+                            break;   
                         case 'reupload_assign_specific':
                            
                             $data_to_update = array();
@@ -4891,6 +4913,11 @@ class Hr_documents_management extends Public_Controller {
                 $data['i9_form'] = $i9_form;
             }
 
+            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_sid,'employee');
+            if (!empty($eeoc_form)) {
+                $data['eeoc_form'] = $eeoc_form;
+            }
+
             $data['assigned_documents']                     = $assigned_documents;
             $data['completed_offer_letter']                 = $completed_offer_letter;
             $data['uncompleted_offer_letter']               = $uncompleted_offer_letter;
@@ -5818,10 +5845,12 @@ class Hr_documents_management extends Public_Controller {
                 $w4_form = $this->hr_documents_management_model->is_w4_form_assign('employee', $employee_id);
                 $w9_form = $this->hr_documents_management_model->is_w9_form_assign('employee', $employee_id);
                 $i9_form = $this->hr_documents_management_model->is_i9_form_assign('employee', $employee_id);
+                $eeoc_form = $this->hr_documents_management_model->is_eeoc_document_assign('employee', $employee_id);
 
                 $data['w4_form'] = $w4_form;
                 $data['w9_form'] = $w9_form;
                 $data['i9_form'] = $i9_form;
+                $data['eeoc_form'] = $eeoc_form;
                 $data['documents'] = $assigned_documents;
                 $data['userDetail'] = $this->hr_documents_management_model->getEmployerDetail($employee_id);
                 // General Documents
@@ -11633,7 +11662,7 @@ class Hr_documents_management extends Public_Controller {
         }
         //
         if(empty($info)){
-            echo 'inactive';
+            echo 'The employee is inactive.<br> Please activate the employee to send an email notification.';
             exit(0);
         }
         //

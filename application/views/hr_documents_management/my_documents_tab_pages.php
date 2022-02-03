@@ -24,6 +24,12 @@
     if($i9_status == 0 && sizeof($i9_form)) $nc++;
     if($w4_status == 0 && sizeof($w4_form)) $nc++;
     if($w9_status == 0 && sizeof($w9_form)) $nc++;
+    
+    if(isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 0 && $eeoc_form["status"] == 1) { $nc++; }
+    $eeoc_status = 0;
+    if(isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && $eeoc_form["status"] == 1) {
+        $eeoc_status = 1;
+    }
 
 ?>
 <style>
@@ -381,6 +387,25 @@
                                                 </td>
                                             </tr>
                                         <?php }?>
+                                        <?php if (isset($eeoc_form) && sizeof($eeoc_form) && $eeoc_form['status'] != 0 && (empty($eeoc_form['is_expired']) || $eeoc_form['is_expired'] == 0)) { ?>
+                                            <tr>
+                                                <td class="col-lg-10">
+                                                    <?php
+                                                    echo 'EEOC Form';
+                                                    echo $eeoc_form['status'] ? '' : '<b>(revoked)</b>';
+                                                    if (isset($eeoc_form['last_sent_at']) && $eeoc_form['last_sent_at'] != '0000-00-00 00:00:00') {
+                                                        echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $eeoc_form['last_sent_at'], '_this' => $this));
+                                                    }
+                                                    ?>
+                                                    <div class="hidden-sm hidden-lg hidden-md">
+                                                       <a href="<?php echo $i9_url; ?>" class="btn btn-info">View Sign</a>
+                                                   </div>
+                                                </td>
+                                                <td class="col-lg-2 hidden-xs text-center">
+                                                    <a href="<?php echo base_url("my_eeoc_form"); ?>" class="btn btn-info">View Sign</a>
+                                                </td>
+                                            </tr>
+                                        <?php }?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -538,7 +563,7 @@
                     <!-- Category Completed Document Start -->
 
                     <?php
-                    $fillable_count = $w4_status + $w9_status + $i9_status;
+                    $fillable_count = $w4_status + $w9_status + $i9_status + $eeoc_status;
                     if (!empty($categories_documents_completed)) { ?>
                         <h3 class="tab-title" style="color: #0000EE;">Completed Document Detail</h3>
                         <?php foreach ($categories_documents_completed as $category_document) { ?>
@@ -694,6 +719,25 @@
                                                         </td>
                                                         <td class="col-lg-2 hidden-xs text-center">
                                                             <a href="<?php echo $i9_url; ?>" class="btn btn-info">View Sign</a>
+                                                        </td>
+                                                    </tr>
+                                                <?php }?>
+                                                <?php if (isset($eeoc_form) && sizeof($eeoc_form) && $eeoc_form['status'] != 0 && (empty($eeoc_form['is_expired']) || $eeoc_form['is_expired'] == 1)) { ?>
+                                                    <tr>
+                                                        <td class="col-lg-10">
+                                                            <?php
+                                                            echo 'EEOC Form';
+                                                            echo $eeoc_form['status'] ? '' : '<b>(revoked)</b>';
+                                                            if (isset($eeoc_form['last_sent_at']) && $eeoc_form['last_sent_at'] != '0000-00-00 00:00:00') {
+                                                                echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $eeoc_form['last_sent_at'], '_this' => $this));
+                                                            }
+                                                            ?>
+                                                            <div class="hidden-sm hidden-lg hidden-md">
+                                                               <a href="<?php echo $i9_url; ?>" class="btn btn-info">View Sign</a>
+                                                           </div>
+                                                        </td>
+                                                        <td class="col-lg-2 hidden-xs text-center">
+                                                            <a href="<?php echo base_url("my_eeoc_form"); ?>" class="btn btn-info">View Sign</a>
                                                         </td>
                                                     </tr>
                                                 <?php }?>

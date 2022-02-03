@@ -383,6 +383,7 @@ class Eeo extends Public_Controller
                             $data_to_insert['disability'] = $disability;
                             $data_to_insert['gender'] = $gender;
                             $data_to_insert['is_latest'] = 1;
+                            $data_to_insert['is_expired'] = 1;
 
                             $this->eeo_model->insert_eeo_record($users_type, $users_sid, $data_to_insert);
 
@@ -420,7 +421,7 @@ class Eeo extends Public_Controller
                 $this->session->set_flashdata('message', '<strong>Error:</strong> E.E.O.C Form Disable!');
                 //
                 if ($user_type == 'applicant') {
-                    redirect('applicant_profile/' . $user_sid . '/' . $job_list_sid, 'refresh');
+                    redirect('applicant_profile/' . $user_sid . '/' . $jobs_listing, 'refresh');
                 } else {
                     redirect('employee_profile/'. $user_sid, 'refresh');
                 }
@@ -495,5 +496,28 @@ class Eeo extends Public_Controller
         } else {
             redirect(base_url('login'), "refresh");
         }
+    }
+
+    //
+    function change_form_status(){
+        //
+        if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
+        //
+        if(!strtolower($this->input->method()) == 'post' || empty($this->input->post(NULL, TRUE))){
+            exit(0);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+
+        //
+        if ($post["action"] == "active") {
+            $this->hr_documents_management_model->activate_EEOC_forms($post["userType"], $post["userId"]);
+
+        } else if ($post["action"] == "deactive") {
+            $this->hr_documents_management_model->deactivate_EEOC_forms($post["userType"], $post["userId"]);
+        }
+        //
+        echo 'success';
+        exit(0);
     }
 }

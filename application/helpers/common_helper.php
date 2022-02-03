@@ -14093,3 +14093,48 @@ if (!function_exists('modify_AWS_file_name')) {
 
     }
 }
+
+//
+if (!function_exists('check_user_eeoc_form')) {
+
+    function check_user_eeoc_form ($user_sid, $user_type)
+    {
+        $CI = &get_instance();
+        //
+        $CI->db->select('*');
+        $CI->db->where('users_type', $user_type);
+        $CI->db->where('application_sid', $user_sid);
+        $CI->db->where('is_expired', 1);
+        $CI->db->where('status', 1);
+        $CI->db->from('portal_eeo_form');
+        //
+        $result = $CI->db->get()->row_array();
+
+        if (!empty($result)) {
+            return 1;
+        } else {
+            return 0;
+        }
+
+    }
+}
+
+if (!function_exists('CheckUserEEOCStatus')) {
+    function CheckUserEEOCStatus($type, $sid)
+    {
+        $CI = &get_instance();
+        //
+        if(
+            $CI->db
+            ->where('users_type', $type)
+            ->where('application_sid ', $sid)
+            ->where('status', 1)
+            ->where('is_expired', 1)
+            ->count_all_results('portal_eeo_form')
+        ){
+            return true;
+        }
+        //
+        return false;
+    }
+}
