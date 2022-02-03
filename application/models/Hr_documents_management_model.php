@@ -6291,6 +6291,7 @@ class Hr_documents_management_model extends CI_Model {
                 'application_sid' => $id,
                 'users_type' => $type,
                 'status' => 1,
+                'expired' => 0,
                 'portal_applicant_jobs_list_sid' => $jobId,
                 'last_sent_at' => date('Y-m-d H:i:s', strtotime('now')),
                 'last_assigned_by' => $assign_by_sid
