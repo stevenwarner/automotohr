@@ -6342,7 +6342,6 @@ class Hr_documents_management_model extends CI_Model {
         ->select('*')
         ->where('sid', $id)
         ->where('status', 1)
-        ->where('is_expired', 0)
         ->get('portal_eeo_form');
         //
         $b = $a->row_array();
