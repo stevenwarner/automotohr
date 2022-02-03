@@ -140,4 +140,25 @@ class Common_model extends CI_Model {
         $this->db->insert('log_records',['table_name' => 'query_logs', 'last_id' => $sid, 'created_at' => date('Y-m-d H:i:s', strtotime('now'))], NULL, FALSE);
 
     }
+
+
+    function get_records_from_log_filter($data){
+
+            $this->db->select('query_type,ip,query_string,result,login_user_id,error,from_cache,start_time,end_time,benchmark,created_at');
+            $this->db->from('query_logs');
+        if($data['ip']!=''){
+           $this->db->where('ip', $data['ip'] );
+        }
+        if($data['benchmark']!=''){
+            $this->db->where('ROUND(benchmark,0)', $data['benchmark'] );
+           }
+        if($data['created_at']!=''){
+            $this->db->where('date(created_at)', $data['created_at'] );
+           }
+          
+            return $this->db->get('',null,null,FALSE)->result();
+     
+    }
+
+
 }

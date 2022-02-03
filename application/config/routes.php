@@ -1401,3 +1401,5 @@ $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany
  * CRON Routes
  */
 $route['logdb/(:any)']['cli'] = 'Cron_common/log_records/$1';
+$route['logdbremove/(:any)']['cli'] = 'Cron_common/log_records_remove/$1';
+$route['logdbfilter']['get'] = 'Cron_common/log_records_filter';

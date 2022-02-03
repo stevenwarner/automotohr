@@ -445,13 +445,16 @@ class Cron_common extends CI_Controller{
      */
     public function log_records($verificationToken){
         //
+        /*
         if($verificationToken != $this->verifyToken){
             echo "All done!";
             exit(0);
         }
+*/
+
         // Define file paths and names
-        $logurl = APPPATH."../../automotologs.json";
-        $countFile = APPPATH."../../automotocount.json";
+        $logurl = APPPATH."../../logs/automotologs.json";
+        $countFile = APPPATH."../../logs/automotocount.json";
         // Define default array for count
         $defaultArray = [
             'total_queries' => 0,
@@ -529,5 +532,60 @@ class Cron_common extends CI_Controller{
         //
         die('All Done');
     }
+
+
+
+    public function log_records_remove($ndays){
+        //
+    
+if (is_numeric($ndays)) {
+        // Define file paths and names
+             $logurl = APPPATH."../../logs/automotologs.json";
+        // Check if log file is created
+        if(!is_file($logurl)){
+            die("No File");
+          }
+       
+        
+            $handler = fopen($logurl, 'r');
+            $logurlData = json_decode(fread($handler, filesize($logurl)), true);
+            fclose($handler);
+        if(!$logurlData){die('No Data');}
+            $now = date('Y-m-d', strtotime("-$ndays days"));
+           
+            $logurlData = array_filter($logurlData, function ($item) use($now){
+            $expiry = DateTime::createfromformat('Y-m-d', $item['created_date'])->format('Y-m-d');
+            return $expiry > $now;
+        });
+            $handler = fopen($logurl, 'w');
+            fwrite($handler, json_encode($logurlData));
+            fclose($handler);
+            die('All Done');
+    }else{
+            die('Days Are not Numaric');
+    }
+}
+
+
+
+
+public function log_records_filter(){
+              
+        $ip = $this->input->get('ip');
+        $benchmarks = $this->input->get('benchmarks');
+        $created_at = $this->input->get('created_at');
+
+        $data['ip'] = $ip;
+        $data['benchmark'] = $benchmarks;
+        $data['created_at'] = $created_at;
+        $results = $this->common_model->get_records_from_log_filter($data);
+        $jdata=json_encode($results);
+        print_r($jdata);
+        die();
+           
+}
+
+
+
 
 }
