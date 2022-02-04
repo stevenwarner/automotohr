@@ -355,7 +355,6 @@
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>
-                                                        <?php if($EeocFormStatus == 1 && $user_type == "employee") { ?>
                                                             <tr>
                                                                 <td class="col-lg-2">
                                                                     EEOC FORM
@@ -388,7 +387,13 @@
                                                                                 <input type="hidden" id="perform_action" name="perform_action" value="remove_EEOC" />
                                                                             </form>
                                                                             <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
+                                                                            <?php if($user_type == 'employee') { ?>
                                                                             <a class="btn btn-success" href="<?php echo base_url('EEOC/employee/' . $user_sid); ?>">View EEOC Form</a>
+                                                                                <?php if ($eeo_form_info['is_expired'] == 1) { ?>
+                                                                                <a class="btn btn-success" href="<?php echo base_url('hr_documents_management/print_eeoc_form/print/' . $user_sid.'/'.$user_type); ?>">Print</a>
+                                                                                <a class="btn btn-success" href="<?php echo base_url('hr_documents_management/print_eeoc_form/download/' . $user_sid.'/'.$user_type); ?>">Download</a>
+                                                                                <?php } ?>
+                                                                            <?php } ?>
                                                                             <?php if ($eeo_form_info['is_expired'] != 1) { ?>
                                                                             <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send reminder email to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">
                                                                                 <i class="fa fa-paper-plane" aria-hidden="true"></i>
@@ -410,7 +415,6 @@
                                                                     <?php } ?>
                                                                 </td>
                                                             </tr>
-                                                        <?php } ?>
                                                     </tbody>
                                                 </table>
                                             </div>
