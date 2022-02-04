@@ -11773,4 +11773,46 @@ class Hr_documents_management extends Public_Controller {
         }
     }
 
+    public function get_verification_history_document ($document_sid, $document_type) {
+        //
+        if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
+        //
+        $html = '';
+        $data = array();
+        $name = '';
+        //
+        if ($document_type == 'W4_Form') {
+            $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "form_w4_original_history");
+            $html = $this->load->view('form_w4/preview_w4_2020', $data, true);
+            $name = 'W4 Fillable History';
+        }
+        //
+        if ($document_type == 'W9_Form') {
+            $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_w9form_history");
+            $html = $this->load->view('form_w9/index-pdf', $data, true);
+            $name = 'W9 Fillable History';
+        }
+        //
+        if ($document_type == 'I9_Form') {
+            $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form_history");
+            $html = $this->load->view('form_i9/index-pdf', $data, true);
+            $name = 'I9 Fillable History';
+        }
+        //
+        if ($document_type == 'EEOC_Form') {
+            $data["eeo_form_info"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "portal_eeo_form_history");
+            $html = $this->load->view('eeo/eeoc_view', $data, true);
+            $name = 'EEOC Fillable History';
+        }
+        //
+        $response = array();
+        $response['status'] = TRUE;
+        $response['name'] = $name;
+        $response['html'] = $html;
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit(0);
+    } 
+
 }
