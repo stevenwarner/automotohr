@@ -80,9 +80,7 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function eeoc_forms_history ($eeoc_form_history) {
-//        echo '<pre>';
-//        print_r($eeoc_form_history);
-//        die();
+        $this->db->insert('portal_eeo_form_history', $eeoc_form_history);
     }
 
     function update_documents($sid, $data, $table_name) {
@@ -1046,6 +1044,84 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+    function fetch_track_record ($type, $document_sid) {
+        $this->db->where('document_sid', $document_sid);
+        $this->db->where('document_type', $type);
+        $this->db->from('verification_documents_track');
+
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
+    public function fetch_form_history($form_name, $user_type, $user_sid) {
+        $this->db->select('*');
+
+        if ($form_name == 'w4') {
+            $this->db->where('user_type', $user_type);
+            $this->db->where('employer_sid', $user_sid);
+            $this->db->from('form_w4_original_history');
+
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+        } elseif ($form_name == 'w9') {
+            $this->db->where('user_type', $user_type);
+            $this->db->where('user_sid', $user_sid);
+            $this->db->from('applicant_w9form_history');
+
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+        } else {
+            $this->db->where('user_type', $user_type);
+            $this->db->where('user_sid', $user_sid);
+            $this->db->from('applicant_i9form_history');
+
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+        }
+
+        if ($form_name == 'eeoc') {
+            $this->db->where('users_type', $user_type);
+            $this->db->where('application_sid', $user_sid);
+            $this->db->from('portal_eeo_form_history');
+
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+        }
+
+        if (sizeof($records_arr) > 0) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
+    public function getUserVarificationHistoryDoc ($sid, $table) {
+        $this->db->select('*');
+        $this->db->where('sid', $sid);
+        $this->db->from($table);
+
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (sizeof($records_arr) > 0) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
     public function fetch_form_for_front_end($form_name, $user_type, $user_sid) {
         $this->db->select('*');
 
@@ -1414,15 +1490,16 @@ class Hr_documents_management_model extends CI_Model {
         $updateArray = [];
         $updateArray['status'] = 0;
         $updateArray['is_expired'] = 0;
-        $updateArray['is_latest'] = 1;
+        $updateArray['is_latest'] = 0;
         $updateArray['us_citizen'] = NULL;
         $updateArray['visa_status'] = NULL;
         $updateArray['group_status'] = NULL;
         $updateArray['veteran'] = NULL;
         $updateArray['disability'] = NULL;
         $updateArray['gender'] = NULL;
-        $updateArray['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
-        $updateArray['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        $updateArray['last_assigned_by'] = 0;
+        $updateArray['last_sent_at'] = NULL;
+        $updateArray['last_completed_on'] = NULL;
         //
         $this->db->where('users_type', $user_type);
         $this->db->where('application_sid', $user_sid);
@@ -1430,19 +1507,9 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function activate_EEOC_forms($user_type, $user_sid) {
-        // Check and move to history
-        $this->CheckAndMoveToHistory($user_type, $user_sid);
-        // 
         $updateArray = [];
         $updateArray['status'] = 1;
-        $updateArray['is_expired'] = 0;
         $updateArray['is_latest'] = 1;
-        $updateArray['us_citizen'] = NULL;
-        $updateArray['visa_status'] = NULL;
-        $updateArray['group_status'] = NULL;
-        $updateArray['veteran'] = NULL;
-        $updateArray['disability'] = NULL;
-        $updateArray['gender'] = NULL;
         $updateArray['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
         $updateArray['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
         //
@@ -1466,6 +1533,7 @@ class Hr_documents_management_model extends CI_Model {
             return false;
         }
         //
+        $
         $form['eeo_form_sid'] = $form['sid'];
         //
         unset($form['sid']);
