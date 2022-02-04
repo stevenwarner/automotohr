@@ -6242,9 +6242,11 @@
         $('.jsResendEEOC').click(function(event){
             //
             event.preventDefault();
+            var msg = $(this).text().trim().toLowerCase() == 'assign' ? "Are you sure you want to assign EEOC form?" : "Are you sure you want to sent an email notification?";
+            var msg2 = $(this).text().trim().toLowerCase() == 'assign' ? 'EEOC form has been assigned.' : 'EEOC form notification has been sent.';
             //
             alertify.confirm(
-                "Are you sure you want to sent an email notification?",
+                msg,
                 function(){
                     //
                     $.post(
@@ -6256,12 +6258,12 @@
                     ).done(function(resp){
                         //
                         if(resp == 'success'){
-                            alertify.alert('Success!','EEOC form notification has been sent.', function(){
+                            alertify.alert('Success!',msg2, function(){
                                 window.location.reload();
                             });
                         } else {
                             //
-                            alertify.alert('Error!', 'Something went wrong while resending the EEOC form.')
+                            alertify.alert('Error!', 'Something went wrong. Please, try again in a few moments.')
                         }
                     });
                 }
