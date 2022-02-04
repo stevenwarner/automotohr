@@ -6275,6 +6275,45 @@
         });
     });
 </script>
+<script type="text/javascript">
+    function preview_verification_doc_history (source) {
+        var history_id = $(source).data('history_id');
+        var history_type = $(source).data('history_type');
+        //
+        $('#document_loader').show();
+        $('#loader_text_div').text("Please wait while we are getting history ");
+        //
+        $.ajax({
+            'url': '<?php echo base_url('hr_documents_management/get_verification_history_document'); ?>'+'/'+history_id+'/'+history_type,
+            'type': 'GET',
+            success: function (resp) {
+
+                var document_title = resp.name;
+                var document_view = resp.html;
+                //
+                $('#fillable_history_document_modal').modal('show');
+                $("#history_document_modal_title").html(document_title);
+                $("#history_document_preview").html(document_view);
+                $("#history_document_preview").show(); 
+                //
+                $('#document_loader').hide();
+                //
+
+                // footer_content = '<a target="_blank" class="btn btn-success" href="' + print_url + '">Print</a>';
+                // footer_content += '<a target="_blank" class="btn btn-success" href="' + download_url + '">Download</a>';
+                // $("#latest_document_modal_footer").html(footer_content);
+            }
+        });
+    }
+
+    $('#show_latest_preview_document_modal').on('hidden.bs.modal', function () {
+        $("#history_document_modal_title").html("Fillable Verification History");
+        $('#history_document_preview').html('');
+        $('#history_document_preview').hide();
+    });
+
+    
+</script>
 <!--  -->
 <?php $this->load->view('hr_documents_management/document_track'); ?>
 <?php $this->load->view('hr_documents_management/verification_document_history', ['user_sid' => $user_sid, 'user_type' => $user_type]); ?>
