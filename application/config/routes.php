@@ -1401,3 +1401,8 @@ $route['manage_admin/merge_employees/merge/(:num)']['get'] = 'manage_admin/Merge
 //
 $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
 $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
+
+
+//
+$route['eeoc/get_trail/(:num)/(:any)']['get'] = 'Eeo/get_trail/$1/$2';
+$route['eeoc/get_history/(:num)/(:any)/(:any)']['get'] = 'Eeo/get_history/$1/$2/$3';

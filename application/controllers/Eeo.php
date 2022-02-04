@@ -542,16 +542,95 @@ class Eeo extends Public_Controller
         if ($post["action"] == "active") {
             $this->hr_documents_management_model->activate_EEOC_forms($post["userType"], $post["userId"]);
             //
-            keepTrackVerificationDocument($employee_sid, 'employee', 'revoke', $eeoc_form['sid'], 'eeoc', 'EEOC Form Page');
+            keepTrackVerificationDocument($employee_sid, 'employee', 'assign', $eeoc_form['sid'], 'eeoc', 'EEOC Form Page');
             //
         } else if ($post["action"] == "deactive") {
             $this->hr_documents_management_model->deactivate_EEOC_forms($post["userType"], $post["userId"]);
             //
-            keepTrackVerificationDocument($employee_sid, 'employee', 'assign', $eeoc_form['sid'], 'eeoc', 'EEOC Form Page');
+            keepTrackVerificationDocument($employee_sid, 'employee', 'revoke', $eeoc_form['sid'], 'eeoc', 'EEOC Form Page');
             //
         }
         //
         echo 'success';
+        exit(0);
+    }
+
+
+    //
+    function get_trail($sid, $document_type){
+        //
+        $eeoc_track = $this->hr_documents_management_model->fetch_track_record($sid, $document_type);
+        //
+        if(empty($eeoc_track)){
+            echo '
+                <tr>
+                    <td colspan="12">
+                        <p class="alert alert-info text-center">No trail found.</p>
+                    </td>
+                </tr>
+            ';
+            exit(0);
+        }
+        //
+        $html = '';
+        foreach($eeoc_track as $track){
+
+            $html .= '<tr>';
+            $html .= '    <td class="col-lg-4">';
+                            if ($track['document_type'] == "eeoc") {
+            $html .= '               EEOC Fillable';
+                            } else if ($track['document_type'] == "w4") {
+            $html .= '                W4 Fillable';
+                            } else if ($track['document_type'] == "w9") {
+            $html .= '                W9 Fillable';
+                            } else if ($track['document_type'] == "i9") {
+            $html .= '                I9 Fillable';
+                            }
+            $html .= '    </td>';
+            $html .= '    <td class="col-lg-4 text-right" colspan="4">';
+            $html .=        getUserNameBySID($track['user_sid']);
+            $html .= '    </td>';
+            $html .= '    <td class="col-lg-4 text-right" colspan="4">';
+            $html .=         reset_datetime(array( 'datetime' => $track['created_at'], '_this' => $this));
+            $html .= '    </td>';
+            $html .= '    <td class="col-lg-4 text-right" colspan="4">';
+                            if ($track['action'] == "revoke") {
+            $html .= '              <strong class="text-danger">Revoked</strong>';
+                            } else if ($track['action'] == "assign") {
+            $html .= '              <strong class="text-success">Assigned</strong>';
+                            } else if ($track['action'] == "completed") {
+            $html .= '              <strong class="text-info">Completed</strong>';
+                            }
+            $html .= '    </td>';
+            $html .= '</tr>';
+        }
+        //
+        echo $html;
+    }
+    //
+    function get_history($user_sid, $user_type, $document_type){
+        //
+        $eeoc_history = $this->hr_documents_management_model->fetch_form_history($document_type, $user_type, $user_sid);
+        //
+        $history_array = array();
+        $h_key = 0;
+        //
+        if (!empty($eeoc_history)) {
+            foreach ($eeoc_history as $history) {
+                $history_array[$h_key]['sid'] = $history['sid'];
+                $history_array[$h_key]['type'] = 'EEOC_Form';
+                $history_array[$h_key]['name'] = (strtoupper($document_type)).' Fillable Document';
+                $history_array[$h_key]['assign_on'] = reset_datetime(array('datetime' => $history['last_sent_at'], '_this' => $this));
+                $history_array[$h_key]['submitted_on'] = reset_datetime(array('datetime' => $history['last_completed_on'], '_this' => $this));
+                $history_array[$h_key]['status'] = !empty($history['is_expired']) && $history['is_expired'] == 1 ? "Completed" : "Not Completed";
+                
+                //
+                $h_key++;
+            }
+        }
+        //
+        header('content-type: application/json');
+        echo json_encode($history_array);
         exit(0);
     }
 }

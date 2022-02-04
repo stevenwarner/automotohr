@@ -1049,6 +1049,7 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->where('document_sid', $document_sid);
         $this->db->where('document_type', $type);
         $this->db->from('verification_documents_track');
+        $this->db->order_by('sid', 'desc');
 
         $records_obj = $this->db->get();
         $records_arr = $records_obj->result_array();
@@ -1068,6 +1069,7 @@ class Hr_documents_management_model extends CI_Model {
             $this->db->where('user_type', $user_type);
             $this->db->where('employer_sid', $user_sid);
             $this->db->from('form_w4_original_history');
+            $this->db->order_by('sid', 'desc');
 
             $records_obj = $this->db->get();
             $records_arr = $records_obj->result_array();
@@ -1076,6 +1078,7 @@ class Hr_documents_management_model extends CI_Model {
             $this->db->where('user_type', $user_type);
             $this->db->where('user_sid', $user_sid);
             $this->db->from('applicant_w9form_history');
+            $this->db->order_by('sid', 'desc');
 
             $records_obj = $this->db->get();
             $records_arr = $records_obj->result_array();
@@ -1084,6 +1087,7 @@ class Hr_documents_management_model extends CI_Model {
             $this->db->where('user_type', $user_type);
             $this->db->where('user_sid', $user_sid);
             $this->db->from('applicant_i9form_history');
+            $this->db->order_by('sid', 'desc');
 
             $records_obj = $this->db->get();
             $records_arr = $records_obj->result_array();
@@ -1094,6 +1098,7 @@ class Hr_documents_management_model extends CI_Model {
             $this->db->where('users_type', $user_type);
             $this->db->where('application_sid', $user_sid);
             $this->db->from('portal_eeo_form_history');
+            $this->db->order_by('sid', 'desc');
 
             $records_obj = $this->db->get();
             $records_arr = $records_obj->result_array();

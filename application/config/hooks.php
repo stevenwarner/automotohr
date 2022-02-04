@@ -18,9 +18,9 @@ $hook['post_controller'][] = array(
     'class' => 'AppVerify'
 );
 // Run 
-$hook['post_controller'][] = array(
-    'filepath' => 'hooks',
-    'filename' => 'AppVerify.php',
-    'function' => 'loginToAPI',
-    'class' => 'AppVerify'
-);
+// $hook['post_controller'][] = array(
+//     'filepath' => 'hooks',
+//     'filename' => 'AppVerify.php',
+//     'function' => 'loginToAPI',
+//     'class' => 'AppVerify'
+// );

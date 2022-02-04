@@ -54,7 +54,7 @@
                                         <?php } ?> 
                                         <?php if (!empty($track_history)) { ?>
                                             <div class="col-lg-3 pull-right">
-                                                <button onclick="show_document_track();" class="btn btn-warning btn-block">Action History</button>
+                                                <button onclick="show_document_track('eeoc', <?=$eeo_form_info['sid'];?>);" class="btn btn-success btn-block" title="View action trail for EEOC form" placement="top">EEOC Trail</button>
                                             </div>
                                         <?php } ?> 
                                     </div>
@@ -307,8 +307,10 @@
                                     <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?=ucwords($user_name);?>" placement="top">Assign</a>
                                 </h2>
                             <?php } ?>
-
+                            
                             <?php if (!empty($verification_documents_history)) { ?>
+                                <br>
+                                <br>
                                 <?php $this->load->view('hr_documents_management/verification_documents_history'); ?>
                             <?php } ?>    
                         </div>    
@@ -320,7 +322,7 @@
     </div>
 </div>
 
-<?php if (!empty($track_history)) { ?>
+<?php if (!empty($eeo_form_info)) { ?>
     <?php $this->load->view('hr_documents_management/document_track'); ?>
 <?php } ?> 
 

@@ -406,6 +406,10 @@
                                                                             </form>
                                                                             <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
                                                                         <?php } ?>
+                                                                        <!--  -->
+                                                                        <button onclick="show_document_track('eeoc', <?=$eeo_form_info['sid'];?>);" class="btn btn-success" title="View action trail for EEOC form" placement="top">EEOC Trail</button>
+                                                                        <!--  -->
+                                                                        <button onclick="VerificationDocumentHistory('eeoc', <?=$eeo_form_info['sid'];?>);" class="btn btn-success" title="View history for EEOC form" placement="top">EEOC History</button>
                                                                     <?php } else { ?>
                                                                         <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">Assign</a>
                                                                     <?php } ?>    
@@ -6271,3 +6275,6 @@
         });
     });
 </script>
+<!--  -->
+<?php $this->load->view('hr_documents_management/document_track'); ?>
+<?php $this->load->view('hr_documents_management/verification_document_history', ['user_sid' => $user_sid, 'user_type' => $user_type]); ?>
