@@ -2342,7 +2342,12 @@ class Hr_documents_management extends Public_Controller {
 
                             break;
                         case 'remove_EEOC': //EEOC Form Deactive
+                            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
+                            //
                             $this->hr_documents_management_model->deactivate_EEOC_forms($user_type, $user_sid);
+                            //
+                            keepTrackVerificationDocument($employer_sid, 'employee', 'revoke', $eeoc_form['sid'], 'eeoc', 'document_center');
+                            //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
                             //
                             if ($user_type == 'employee') {
@@ -2354,6 +2359,11 @@ class Hr_documents_management extends Public_Controller {
                             break;  
                         case 'assign_EEOC': //EEOC Form Active
                             $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
+                            //
+                            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
+                            //
+                            keepTrackVerificationDocument($employer_sid, 'employee', 'assign', $eeoc_form['sid'], 'eeoc', 'document_center');
+                            //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
                             //
                             if ($user_type == 'employee') {

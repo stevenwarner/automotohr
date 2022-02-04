@@ -442,8 +442,6 @@ class Eeo extends Public_Controller
                     $left_navigation = 'manage_employer/employee_management/profile_right_menu_employee_new';
                     $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'employee'); // getting applicant ratings - getting average rating of applicant
                     $data['employer'] = $this->hr_documents_management_model->get_company_detail($user_sid);
-                    $eeo_form_info = $this->hr_documents_management_model->get_user_eeo_form_info($user_sid, $user_type, false);
-                    $data['eeo_form_info'] = $eeo_form_info;
                     $data['left_navigation'] = $left_navigation;
                     break;
                 case 'applicant':
@@ -485,10 +483,36 @@ class Eeo extends Public_Controller
                     break;
             }
             //
+            $eeo_form_info = $this->hr_documents_management_model->get_user_eeo_form_info($user_sid, $user_type, false);
+            $data['eeo_form_info'] = $eeo_form_info;
+            //
+            $eeoc_history = $this->hr_documents_management_model->fetch_form_history('eeoc', $user_type, $user_sid);
+            //
+            $history_array = array();
+            $h_key = 0;
+            //
+            if (!empty($eeoc_history)) {
+                foreach ($eeoc_history as $history) {
+                    $history_array[$h_key]['sid'] = $history['sid'];
+                    $history_array[$h_key]['type'] = 'EEOC_Form';
+                    $history_array[$h_key]['name'] = 'EEOC Fillable Document';
+                    $history_array[$h_key]['assign_on'] = $history['last_sent_at'];
+                    $history_array[$h_key]['submitted_on'] = $history['last_completed_on'];
+                    $history_array[$h_key]['status'] = !empty($history['is_expired']) && $history['is_expired'] == 1 ? "Completed" : "Not Completed";
+                    //
+                    $h_key++;
+                }
+            }
+            //
+            //
+            $eeoc_track = $this->hr_documents_management_model->fetch_track_record($eeo_form_info['sid'], 'eeoc');
+            //
             $data['title'] = 'EEOC Form';
             $data['user_type'] = $user_type;
             $data['user_sid'] = $user_sid;
             $data['job_list_sid'] = $jobs_listing;
+            $data['history_array'] = $history_array;
+            $data['eeoc_track'] = $eeoc_track;
             //
             $this->load->view('main/header', $data);
             $this->load->view('eeo/user_eeoc');
@@ -503,18 +527,27 @@ class Eeo extends Public_Controller
         //
         if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
         //
+        $data['session'] = $this->session->userdata('logged_in');
+        $employee_sid = $data['session']['employer_detail']['sid'];
+        //
         if(!strtolower($this->input->method()) == 'post' || empty($this->input->post(NULL, TRUE))){
             exit(0);
         }
         //
         $post = $this->input->post(NULL, TRUE);
-
+        //
+        $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($post["userId"], $post["userType"]);
         //
         if ($post["action"] == "active") {
             $this->hr_documents_management_model->activate_EEOC_forms($post["userType"], $post["userId"]);
-
+            //
+            keepTrackVerificationDocument($employee_sid, 'employee', 'revoke', $eeoc_form['sid'], 'eeoc', 'eeoc_green_view');
+            //
         } else if ($post["action"] == "deactive") {
             $this->hr_documents_management_model->deactivate_EEOC_forms($post["userType"], $post["userId"]);
+            //
+            keepTrackVerificationDocument($employee_sid, 'employee', 'assign', $eeoc_form['sid'], 'eeoc', 'eeoc_green_view');
+            //
         }
         //
         echo 'success';

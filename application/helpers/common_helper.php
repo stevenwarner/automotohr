@@ -14155,3 +14155,18 @@ if(!function_exists('redirectHandler')){
         }
     }
 }
+if (!function_exists('keepTrackVerificationDocument')) {
+    function keepTrackVerificationDocument ($user_sid, $user_type, $action, $document_sid, $document_type, $location) {
+        //
+        $data_to_insert = array();
+        $data_to_insert['document_sid'] = $document_sid;
+        $data_to_insert['document_type'] = $document_type;
+        $data_to_insert['user_sid'] = $user_sid;
+        $data_to_insert['user_type'] = $user_type;
+        $data_to_insert['location'] = $location;
+        $data_to_insert['action'] = $action;
+        //
+        $CI = &get_instance();
+        $CI->db->insert('verification_documents_track', $data_to_insert);
+    }
+}    
