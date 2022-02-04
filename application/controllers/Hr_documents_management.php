@@ -7014,6 +7014,23 @@ class Hr_documents_management extends Public_Controller {
             redirect('login', "refresh");
         }
     }
+    
+    
+    public function print_eeoc_form_history($action, $sid) {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            $data['title'] = 'EEOC Form';
+            $eeo_form_info = $this->hr_documents_management_model->getUserVarificationHistoryDoc($sid, 'portal_eeo_form_history');
+            $data['eeo_form_info'] = $eeo_form_info;
+            $data['action'] = $action;
+            $this->load->view('eeo/eeoc_print', $data);
+        } else {
+            redirect('login', "refresh");
+        }
+    }
 
     public function required_documents($user_type = NULL, $user_sid = NULL, $eev_documents_sid = NULL, $form_type = 'uploaded') {
         if ($this->session->userdata('logged_in')) {
@@ -11803,7 +11820,7 @@ class Hr_documents_management extends Public_Controller {
             $data["eeo_form_info"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "portal_eeo_form_history");
             $data['user_sid'] = $data['eeo_form_info']['application_sid'];
             $data['user_type'] = $data['eeo_form_info']['users_type'];
-            $html = $this->load->view('eeo/eeoc_view', $data, true);
+            $html = $this->load->view('eeo/eeoc_view_history', $data, true);
             $name = 'EEOC Fillable History';
         }
         //
