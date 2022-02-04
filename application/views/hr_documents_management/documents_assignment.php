@@ -6275,6 +6275,28 @@
         });
     });
 </script>
+<!-- Preview Latest Document Modal Start -->
+<div id="fillable_history_document_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="history_document_modal_title">
+                    Fillable Verification History
+                </h4>
+            </div>
+            <div class="modal-body"> 
+                <div id="history_document_preview" style="display:none;">
+
+                </div>
+            </div>
+            <div class="modal-footer" id="history_document_modal_footer">
+                
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Preview Latest Document Modal Modal End -->
 <script type="text/javascript">
     function preview_verification_doc_history (source) {
         var history_id = $(source).data('history_id');
