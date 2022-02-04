@@ -1989,6 +1989,7 @@ class Home extends CI_Controller {
         $data['last_name'] = $document['user']['last_name'];
         $data['email'] = $document['user']['email'];
         $data['eeo_form_info'] = $document;
+        $data['location'] = "Public Link";
         //
         $this->load->view('onboarding/applicant_boarding_header_public', $data);
         $this->load->view('eeo/eeoc_view_public');
@@ -2021,6 +2022,10 @@ class Home extends CI_Controller {
                 'sid' => $post['id']
             ]
         );
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $employee_sid = $data['session']['employer_detail']['sid'];
+        keepTrackVerificationDocument($employee_sid, 'employee', 'completed', $post['id'], 'eeoc', $post['location']);
         //
         echo 'success';
         exit(0);

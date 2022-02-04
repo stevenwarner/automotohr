@@ -1044,7 +1044,8 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
-    function fetch_track_record ($type, $document_sid) {
+    function fetch_track_record ($document_sid, $type) {
+        //
         $this->db->where('document_sid', $document_sid);
         $this->db->where('document_type', $type);
         $this->db->from('verification_documents_track');
@@ -1533,7 +1534,6 @@ class Hr_documents_management_model extends CI_Model {
             return false;
         }
         //
-        $
         $form['eeo_form_sid'] = $form['sid'];
         //
         unset($form['sid']);

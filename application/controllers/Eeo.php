@@ -511,8 +511,9 @@ class Eeo extends Public_Controller
             $data['user_type'] = $user_type;
             $data['user_sid'] = $user_sid;
             $data['job_list_sid'] = $jobs_listing;
-            $data['history_array'] = $history_array;
-            $data['eeoc_track'] = $eeoc_track;
+            $data['history_title'] = "Re-Assign EEOC History";
+            $data['verification_documents_history'] = $history_array;
+            $data['track_history'] = $eeoc_track;
             //
             $this->load->view('main/header', $data);
             $this->load->view('eeo/user_eeoc');
@@ -541,12 +542,12 @@ class Eeo extends Public_Controller
         if ($post["action"] == "active") {
             $this->hr_documents_management_model->activate_EEOC_forms($post["userType"], $post["userId"]);
             //
-            keepTrackVerificationDocument($employee_sid, 'employee', 'revoke', $eeoc_form['sid'], 'eeoc', 'eeoc_green_view');
+            keepTrackVerificationDocument($employee_sid, 'employee', 'revoke', $eeoc_form['sid'], 'eeoc', 'EEOC Form Page');
             //
         } else if ($post["action"] == "deactive") {
             $this->hr_documents_management_model->deactivate_EEOC_forms($post["userType"], $post["userId"]);
             //
-            keepTrackVerificationDocument($employee_sid, 'employee', 'assign', $eeoc_form['sid'], 'eeoc', 'eeoc_green_view');
+            keepTrackVerificationDocument($employee_sid, 'employee', 'assign', $eeoc_form['sid'], 'eeoc', 'EEOC Form Page');
             //
         }
         //

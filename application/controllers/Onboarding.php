@@ -9845,6 +9845,7 @@ class Onboarding extends CI_Controller {
             $data['eeo_form_status']    = $eeo_form_status;
             $data['eeo_form_info']      = $eeo_form_info;
             $data['id']                 = $eeo_form_info['sid'];
+            $data['location']           = "Blue Panel";
             //
             $this->load->view('onboarding/on_boarding_header', $data);
             $this->load->view('eeo/employee_eeoc');
