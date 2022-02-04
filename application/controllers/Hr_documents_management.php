@@ -11801,6 +11801,8 @@ class Hr_documents_management extends Public_Controller {
         //
         if ($document_type == 'EEOC_Form') {
             $data["eeo_form_info"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "portal_eeo_form_history");
+            $data['user_sid'] = $data['eeo_form_info']['application_sid'];
+            $data['user_type'] = $data['eeo_form_info']['users_type'];
             $html = $this->load->view('eeo/eeoc_view', $data, true);
             $name = 'EEOC Fillable History';
         }
