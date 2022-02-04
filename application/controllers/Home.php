@@ -2023,8 +2023,9 @@ class Home extends CI_Controller {
             ]
         );
         //
-        $data['session'] = $this->session->userdata('logged_in');
-        $employee_sid = $data['session']['employer_detail']['sid'];
+        $document = $this->hr_documents_management_model->getEEOC($post['id']);
+        //
+        $employee_sid = $document['application_sid'];
         keepTrackVerificationDocument($employee_sid, 'employee', 'completed', $post['id'], 'eeoc', $post['location']);
         //
         echo 'success';
