@@ -14155,6 +14155,7 @@ if(!function_exists('redirectHandler')){
         }
     }
 }
+
 if (!function_exists('keepTrackVerificationDocument')) {
     function keepTrackVerificationDocument ($user_sid, $user_type, $action, $document_sid, $document_type, $location) {
         //
