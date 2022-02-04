@@ -283,7 +283,8 @@
                     group: $('input[name="group"]:checked').val(),
                     veteran: $('input[name="veteran"]:checked').val(),
                     disability: $('input[name="disability"]:checked').val(),
-                    gender: $('input[name="gender"]:checked').val()
+                    gender: $('input[name="gender"]:checked').val(),
+                    location: "<?=$location;?>"
                 };
                 
                 //

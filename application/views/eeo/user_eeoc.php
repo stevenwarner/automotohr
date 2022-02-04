@@ -52,6 +52,11 @@
                                                 <button onclick="func_assign_EEOC('active');" class="btn btn-warning btn-block">Re-Assign</button>
                                             </div>
                                         <?php } ?> 
+                                        <?php if (!empty($track_history)) { ?>
+                                            <div class="col-lg-3 pull-right">
+                                                <button onclick="show_document_track();" class="btn btn-warning btn-block">Action History</button>
+                                            </div>
+                                        <?php } ?> 
                                     </div>
                                 </div>
                                 <?php if ($eeo_form_info["status"] == 1) { ?>     
@@ -302,6 +307,10 @@
                                     <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?=ucwords($user_name);?>" placement="top">Assign</a>
                                 </h2>
                             <?php } ?>
+
+                            <?php if (!empty($verification_documents_history)) { ?>
+                                <?php $this->load->view('hr_documents_management/verification_documents_history'); ?>
+                            <?php } ?>    
                         </div>    
                     </div>
                 </div>
@@ -310,6 +319,11 @@
         </div>
     </div>
 </div>
+
+<?php if (!empty($track_history)) { ?>
+    <?php $this->load->view('hr_documents_management/document_track'); ?>
+<?php } ?> 
+
 <script>
     $('[data-toggle="tooltip"]').tooltip({
         trigger: "hover"
