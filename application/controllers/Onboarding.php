@@ -4379,7 +4379,8 @@ class Onboarding extends CI_Controller {
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
             if ($this->form_validation->run() == false) {
-                $data['title'] = 'Setup Onbaording';
+                $data['eeo_form_info'] = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
+                $data['title'] = 'Setup Onboarding';
                 $office_locations = $this->onboarding_model->get_all_office_locations($company_sid);
                 $data['office_locations'] = $office_locations;
                 $office_timings = $this->onboarding_model->get_all_office_timings($company_sid);
@@ -4953,6 +4954,27 @@ class Onboarding extends CI_Controller {
                         $this->hr_documents_management_model->assign_revoke_assigned_offer_documents('offer_letter', $user_sid, $user_type, $data);
                         die();
                         break;
+                    case 'remove_EEOC': //EEOC Form Deactive
+                        $this->hr_documents_management_model->deactivate_EEOC_forms($user_type, $user_sid);
+                        $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
+                        //
+                        if ($user_type == 'employee') {
+                            redirectHandler('onboarding/setup/applicant/'. $user_sid.'#documents', 'refresh');
+                        } else {
+                            redirectHandler('onboarding/setup/applicant/'. $user_sid.'#documents', 'refresh');
+                        }
+
+                        break;  
+                    case 'assign_EEOC': //EEOC Form Active
+                        $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
+                        $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
+                        //
+                        if ($user_type == 'employee') {
+                            redirectHandler('onboarding/setup/applicant/'. $user_sid.'#documents', 'refresh');
+                        } else {
+                            redirectHandler('onboarding/setup/applicant/'. $user_sid.'#documents' , 'refresh');
+                        }
+                        break; 
                 }
 
                 $company_sid = $this->input->post('company_sid');
@@ -5045,7 +5067,6 @@ class Onboarding extends CI_Controller {
                     $this->onboarding_model->update_applicant_status_type($user_sid,array('employee_status'=>$employee_status,'employee_type'=>$employee_type));
                     $this->onboarding_model->save_onboarding_applicant($company_sid, $user_sid, $onboarding_data);
                 }
-
                 $data_to_save = array();
                 $data_to_save['company_sid'] = $company_sid;
                 $data_to_save['user_type'] = $user_type;

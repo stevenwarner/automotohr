@@ -6240,7 +6240,7 @@
             event.preventDefault();
             //
             alertify.confirm(
-                "Are you sure you want to send this document?",
+                "Are you sure you want to sent an email notification?",
                 function(){
                     //
                     $.post(
@@ -6252,7 +6252,7 @@
                     ).done(function(resp){
                         //
                         if(resp == 'success'){
-                            alertify.alert('Success!','EEOC form has been sent.', function(){
+                            alertify.alert('Success!','EEOC form notification has been sent.', function(){
                                 window.location.reload();
                             });
                         } else {

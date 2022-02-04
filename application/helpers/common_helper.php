@@ -14139,3 +14139,19 @@ if (!function_exists('CheckUserEEOCStatus')) {
         return false;
     }
 }
+
+if(!function_exists('redirectHandler')){
+    function redirectHandler($uri, $type = 'auto'){
+        if(headers_sent()){
+            echo '<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                        <meta http-equiv = "refresh" content = "2; url = '.(base_url($uri)).'" />
+            </head>
+            </html>';
+        }else{
+            redirect($uri, $type);
+        }
+    }
+}
