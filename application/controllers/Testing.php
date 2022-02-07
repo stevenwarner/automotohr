@@ -8,6 +8,7 @@ class Testing extends CI_Controller
         parent::__construct();
         // Call the model
         $this->load->model("performance_management_model", "ccp");
+        $this->load->model("test_model", "tm");
 
     }
 
@@ -28,6 +29,20 @@ class Testing extends CI_Controller
             //
             $returnArray['Count']++;
         }
+    }
+
+    function change_assign_datetime()
+    {
+        
+        $records = $this->tm->getEEOCRecords();
+        //
+        foreach ($records as $row) {
+            if (empty($row['assigned_at'])) {
+                $this->tm->updateEEOCTime($row['sid'], $row['last_sent_at']);
+            }
+        }
+
+        die("Process completed");
     }
 
     //

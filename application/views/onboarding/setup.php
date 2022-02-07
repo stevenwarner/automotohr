@@ -3608,7 +3608,8 @@ if (isset($applicant)) {
                         "<?=base_url('send_eeoc_form');?>", {
                             userId: <?=$user_sid;?>,
                             userType: "<?=$user_type;?>",
-                            userJobId: "<?=$job_list_sid;?>"
+                            userJobId: "<?=$job_list_sid;?>",
+                            userLocation: "Setup Panel"
                         }
                     ).done(function(resp){
                         //
