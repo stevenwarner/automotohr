@@ -1147,6 +1147,12 @@ if (isset($applicant)) {
                                                                                         } else { ?>
                                                                                             <a href="javascript:;" id="w4" onclick="func_assign_w4();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
+                                                                                        <!--  -->
+                                                                                        <a href="javascript:;" onclick="show_document_track('w4', <?=$w4_form_data['sid'];?>);" class="btn btn-success" title="View action trail for W4 form" placement="top">W4 Trail</a>
+                                                                                        <!--  -->
+                                                                                        <a href="javascript:;" onclick="VerificationDocumentHistory('w4', <?=$w4_form_data['sid'];?>);" class="btn btn-success" title="View history for W4 form" placement="top">W4
+                                                                                         History</a>
+                                                                                        <!--  -->
                                                                                     </td>
                                                                                 </tr>
                                                                                 <tr>
@@ -1177,6 +1183,12 @@ if (isset($applicant)) {
                                                                                         }else { ?>
                                                                                             <a href="javascript:;" id="w9" onclick="func_assign_w9();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
+                                                                                        <!--  -->
+                                                                                        <a href="javascript:;" onclick="show_document_track('w9', <?=$w9_form_data['sid'];?>);" class="btn btn-success" title="View action trail for W9 form" placement="top">W9 Trail</a>
+                                                                                        <!--  -->
+                                                                                        <a href="javascript:;" onclick="VerificationDocumentHistory('w9', <?=$w9_form_data['sid'];?>);" class="btn btn-success" title="View history for W9 form" placement="top">W9
+                                                                                         History</a>
+                                                                                        <!--  -->
                                                                                     </td>
                                                                                 </tr>
                                                                                 <tr>
@@ -1207,71 +1219,77 @@ if (isset($applicant)) {
                                                                                         }else { ?>
                                                                                             <a href="javascript:;" id="i9" onclick="func_assign_i9();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
+                                                                                        <!--  -->
+                                                                                        <a href="javascript:;" onclick="show_document_track('i9', <?=$i9_form_data['sid'];?>);" class="btn btn-success" title="View action trail for I9 form" placement="top">I9 Trail</a>
+                                                                                        <!--  -->
+                                                                                        <a href="javascript:;" onclick="VerificationDocumentHistory('i9', <?=$i9_form_data['sid'];?>);" class="btn btn-success" title="View history for I9 form" placement="top">I9
+                                                                                         History</a>
+                                                                                        <!--  -->
                                                                                     </td>
                                                                                 </tr>
                                                                                 <tr>
-                                                                <td class="col-lg-2">
-                                                                    EEOC FORM
-                                                                    <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/'.( empty($eeo_form_info['status'] && $eeo_form_info['is_expired']) ? 'off' : 'on'  ).'.gif'); ?>">
-                                                                </td>
-                                                                <td class="col-lg-1 text-center">
-                                                                    <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
-                                                                </td>
-                                                                <td class="col-lg-2 text-center">
-                                                                    <?php if (empty($eeo_form_info)) { ?>
-                                                                        <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
-                                                                    <?php } else { ?>
-                                                                        <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
-                                                                        <div class="text-center">
-                                                                            <?php 
-                                                                                if (!empty($eeo_form_info['last_sent_at'])) {
-                                                                                    echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');
-                                                                                } else {
-                                                                                    echo "N/A";
-                                                                                }
-                                                                            ?>
-                                                                        </div>
-                                                                    <?php } ?>
-                                                                </td>
-                                                                <td class="col-lg-6 text-center">
-                                                                            </form>
-                                                                    <?php if(!empty($eeo_form_info)) { ?>
-                                                                        <?php if ($eeo_form_info['status']) { ?>
-                                                                            <form id="form_remove_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                <input type="hidden" id="perform_action" name="perform_action" value="remove_EEOC" />
-                                                                                <input type="hidden" name="company_sid" value="<?=$company_sid;?>" />
-                                                                                <input type="hidden" name="user_sid" value="<?=$user_sid;?>" />
-                                                                                <input type="hidden" name="user_type" value="<?=$user_type;?>" />
-                                                                            </form>
-                                                                            <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
-                                                                            <?php if ($eeo_form_info['is_expired'] != 1) { ?>
-                                                                            <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send reminder email to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">
-                                                                                <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                                                                                Send Email Notification
-                                                                            </a>
-                                                                            <?php } ?>
-                                                                        <?php } else { ?>
-                                                                            <form id="form_assign_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                <input type="hidden" id="perform_action" name="perform_action" value="assign_EEOC"/>
-                                                                                <input type="hidden" name="company_sid" value="<?=$company_sid;?>" />
-                                                                                <input type="hidden" name="user_sid" value="<?=$user_sid;?>" />
-                                                                                <input type="hidden" name="user_type" value="<?=$user_type;?>" />
-                                                                            </form>
-                                                                            <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
-                                                                        <?php } ?>
-                                                                        <!--  -->
-                                                                        <button onclick="show_document_track('eeoc', <?=$eeo_form_info['sid'];?>);" class="btn btn-success" title="View action trail for EEOC form" placement="top">EEOC Trail</button>
-                                                                        <!--  -->
-                                                                        <button onclick="VerificationDocumentHistory('eeoc', <?=$eeo_form_info['sid'];?>);" class="btn btn-success" title="View history for EEOC form" placement="top">EEOC History</button>
-                                                                    <?php } else { ?>
-                                                                        <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">Assign</a>
-                                                                    <?php } ?>    
-                                                                    
-                                                                    <?php if (!empty($eeo_form_info['last_completed_on'])) { ?>
-                                                                        <p>Last completed on <strong><?=DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_completed_on'])->format('M d Y, D H:i:s');?></strong></p>
-                                                                    <?php } ?>
-                                                                </td>
-                                                            </tr>
+                                                                                    <td class="col-lg-2">
+                                                                                        EEOC FORM
+                                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/'.( empty($eeo_form_info['status'] && $eeo_form_info['is_expired']) ? 'off' : 'on'  ).'.gif'); ?>">
+                                                                                    </td>
+                                                                                    <td class="col-lg-1 text-center">
+                                                                                        <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
+                                                                                    </td>
+                                                                                    <td class="col-lg-2 text-center">
+                                                                                        <?php if (empty($eeo_form_info)) { ?>
+                                                                                            <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
+                                                                                        <?php } else { ?>
+                                                                                            <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
+                                                                                            <div class="text-center">
+                                                                                                <?php 
+                                                                                                    if (!empty($eeo_form_info['last_sent_at'])) {
+                                                                                                        echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');
+                                                                                                    } else {
+                                                                                                        echo "N/A";
+                                                                                                    }
+                                                                                                ?>
+                                                                                            </div>
+                                                                                        <?php } ?>
+                                                                                    </td>
+                                                                                    <td class="col-lg-6 text-center">
+                                                                                                </form>
+                                                                                        <?php if(!empty($eeo_form_info)) { ?>
+                                                                                            <?php if ($eeo_form_info['status']) { ?>
+                                                                                                <form id="form_remove_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="remove_EEOC" />
+                                                                                                    <input type="hidden" name="company_sid" value="<?=$company_sid;?>" />
+                                                                                                    <input type="hidden" name="user_sid" value="<?=$user_sid;?>" />
+                                                                                                    <input type="hidden" name="user_type" value="<?=$user_type;?>" />
+                                                                                                </form>
+                                                                                                <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
+                                                                                                <?php if ($eeo_form_info['is_expired'] != 1) { ?>
+                                                                                                <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send reminder email to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">
+                                                                                                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                                                                                    Send Email Notification
+                                                                                                </a>
+                                                                                                <?php } ?>
+                                                                                            <?php } else { ?>
+                                                                                                <form id="form_assign_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="assign_EEOC"/>
+                                                                                                    <input type="hidden" name="company_sid" value="<?=$company_sid;?>" />
+                                                                                                    <input type="hidden" name="user_sid" value="<?=$user_sid;?>" />
+                                                                                                    <input type="hidden" name="user_type" value="<?=$user_type;?>" />
+                                                                                                </form>
+                                                                                                <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
+                                                                                            <?php } ?>
+                                                                                            <!--  -->
+                                                                                            <button onclick="show_document_track('eeoc', <?=$eeo_form_info['sid'];?>);" class="btn btn-success" title="View action trail for EEOC form" placement="top">EEOC Trail</button>
+                                                                                            <!--  -->
+                                                                                            <button onclick="VerificationDocumentHistory('eeoc', <?=$eeo_form_info['sid'];?>);" class="btn btn-success" title="View history for EEOC form" placement="top">EEOC History</button>
+                                                                                        <?php } else { ?>
+                                                                                            <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">Assign</a>
+                                                                                        <?php } ?>    
+                                                                                        
+                                                                                        <?php if (!empty($eeo_form_info['last_completed_on'])) { ?>
+                                                                                            <p>Last completed on <strong><?=DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_completed_on'])->format('M d Y, D H:i:s');?></strong></p>
+                                                                                        <?php } ?>
+                                                                                    </td>
+                                                                                </tr>
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>

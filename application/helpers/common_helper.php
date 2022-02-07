@@ -14170,4 +14170,39 @@ if (!function_exists('keepTrackVerificationDocument')) {
         $CI = &get_instance();
         $CI->db->insert('verification_documents_track', $data_to_insert);
     }
-}    
+} 
+
+//
+if (!function_exists('getVerificationDocumentSid')) {
+    function getVerificationDocumentSid ($user_sid, $user_type, $doc_type) {
+        $CI = &get_instance();
+        //
+        $CI->db->select('sid');
+        //
+        if ($doc_type == "w4") {
+            $CI->db->where('user_type', $user_type);
+            $CI->db->where('employer_sid', $user_sid);
+            $CI->db->from('form_w4_original');
+        } else if ($doc_type == "w9") {
+            $CI->db->where('user_type', $user_type);
+            $CI->db->where('user_sid', $user_sid);
+            $CI->db->from('applicant_w9form');
+        } else if ($doc_type == "i9") {
+            $CI->db->where('user_type', $user_type);
+            $CI->db->where('user_sid', $user_sid);
+            $CI->db->from('applicant_i9form');
+        } else if ($doc_type == "eeoc") {
+            $CI->db->where('users_type', $user_type);
+            $CI->db->where('application_sid', $user_sid);
+            $CI->db->from('portal_eeo_form');
+        } 
+        //
+        $result = $CI->db->get()->row_array();
+
+        if (!empty($result)) {
+            return $result['sid'];
+        } else {
+            return 0;
+        }
+    }
+}   

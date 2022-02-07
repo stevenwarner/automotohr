@@ -400,7 +400,10 @@ class Form_i9 extends Public_Controller
 
                 //$this->form_wi9_model->insert_form_data('i9', $insert_data, $employer_sid);
                 $this->form_wi9_model->update_form('i9', $type, $employer_sid, $insert_data);
-
+                //
+                $i9_sid = getVerificationDocumentSid ($employer_sid, $type, 'i9');
+                keepTrackVerificationDocument($employer_sid, $type, 'completed', $i9_sid, 'i9', 'Blue Panel');
+                //
                 $this->session->set_flashdata('message', '<strong>Success: </strong> I-9 Submitted Successfully!');
                 redirect($redirect_url, 'refresh');
 

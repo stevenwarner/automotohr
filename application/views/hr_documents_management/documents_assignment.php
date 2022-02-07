@@ -138,6 +138,12 @@
                                                                                     >Upload a hand signed W4</button>
                                                                             <?php } ?>
                                                                     <?php } ?>
+                                                                    <!--  -->
+                                                                    <a href="javascript:;" onclick="show_document_track('w4', <?=$w4_form['sid'];?>);" class="btn btn-success" title="View action trail for W4 form" placement="top">W4 Trail</a>
+                                                                    <!--  -->
+                                                                    <a href="javascript:;" onclick="VerificationDocumentHistory('w4', <?=$w4_form['sid'];?>);" class="btn btn-success" title="View history for W4 form" placement="top">W4
+                                                                     History</a>
+                                                                    <!--  -->
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>
@@ -233,6 +239,12 @@
                                                                             <?php } ?>
                                                                         <?php } ?>
                                                                     <?php } ?>
+                                                                    <!--  -->
+                                                                    <a href="javascript:;" onclick="show_document_track('w9', <?=$w9_form['sid'];?>);" class="btn btn-success" title="View action trail for W9 form" placement="top">W9 Trail</a>
+                                                                    <!--  -->
+                                                                    <a href="javascript:;" onclick="VerificationDocumentHistory('w9', <?=$w9_form['sid'];?>);" class="btn btn-success" title="View history for W9 form" placement="top">W9
+                                                                     History</a>
+                                                                    <!--  -->
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>
@@ -352,6 +364,12 @@
                                                                             </form>
                                                                         <?php } ?>
                                                                     <?php } ?>
+                                                                    <!--  -->
+                                                                    <a href="javascript:;" onclick="show_document_track('i9', <?=$i9_form['sid'];?>);" class="btn btn-success" title="View action trail for I9 form" placement="top">I9 Trail</a>
+                                                                    <!--  -->
+                                                                    <a href="javascript:;" onclick="VerificationDocumentHistory('i9', <?=$i9_form['sid'];?>);" class="btn btn-success" title="View history for I9 form" placement="top">I9
+                                                                     History</a>
+                                                                    <!--  -->
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>

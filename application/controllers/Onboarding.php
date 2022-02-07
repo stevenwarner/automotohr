@@ -4761,12 +4761,19 @@ class Onboarding extends CI_Controller {
                             $w4_data_to_insert['uploaded_by_sid'] = 0;
                             $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_insert);
                         }
-
+                        //
+                        $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
+                        keepTrackVerificationDocument($user_sid, $user_type, 'assign', $w4_sid, 'w4', 'Setup Panel');
+                        //
                         echo date_format(new DateTime(date('Y-m-d H:i:s')), 'M d Y h:i a');
                         die();
                         break;
                     case 'remove_w4': //W4 Form Deactive
                         $this->hr_documents_management_model->deactivate_w4_forms($user_type, $user_sid);
+                        //
+                        $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
+                        keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $w4_sid, 'w4', 'Setup Panel');
+                        //
                         echo 'removed';
                         die();
                         break;
@@ -4798,12 +4805,19 @@ class Onboarding extends CI_Controller {
                             $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
                             // $this->hr_documents_management_model->activate_i9_forms($user_type, $user_sid);
                         }
-
+                        //
+                        $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
+                        keepTrackVerificationDocument($user_sid, $user_type, 'assign', $i9_sid, 'i9', 'Setup Panel');
+                        //
                         echo date_format(new DateTime(date('Y-m-d H:i:s')), 'M d Y h:i a');
                         die();
                         break;
                     case 'remove_i9': //I9 Form Deactive
                         $this->hr_documents_management_model->deactivate_i9_forms($user_type, $user_sid);
+                        //
+                        $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
+                        keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $i9_sid, 'i9', 'Setup Panel');
+                        //
                         echo 'removed';
                         die();
                         break;
@@ -4857,12 +4871,19 @@ class Onboarding extends CI_Controller {
                             $w4_data_to_insert['uploaded_by_sid'] = 0;
                             $this->hr_documents_management_model->activate_w9_forms($user_type, $user_sid, $already_assigned_w9);
                         }
-
+                        //
+                        $w9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w9');
+                        keepTrackVerificationDocument($user_sid, $user_type, 'assign', $w9_sid, 'w9', 'Setup Panel');
+                        //
                         echo date_format(new DateTime(date('Y-m-d H:i:s')), 'M d Y h:i a');
                         die();
                         break;
                     case 'remove_w9': //W9 Form Deactive
                         $this->hr_documents_management_model->deactivate_w9_forms($user_type, $user_sid);
+                        //
+                        $w9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w9');
+                        keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $w9_sid, 'w9', 'Setup Panel');
+                        //
                         echo 'removed';
                         die();
                         break;
@@ -4956,10 +4977,14 @@ class Onboarding extends CI_Controller {
                         break;
                     case 'remove_EEOC': //EEOC Form Deactive
                         $this->hr_documents_management_model->deactivate_EEOC_forms($user_type, $user_sid);
+                        //
+                        $eeoc_sid = getVerificationDocumentSid ($user_sid, $user_type, 'eeoc');
+                        keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $eeoc_sid, 'eeoc', 'Setup Panel');
+                        //
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
                         //
                         if ($user_type == 'employee') {
-                            redirectHandler('onboarding/setup/applicant/'. $user_sid.'#documents', 'refresh');
+                            redirectHandler('onboarding/setup/employee/'. $user_sid.'#documents', 'refresh');
                         } else {
                             redirectHandler('onboarding/setup/applicant/'. $user_sid.'#documents', 'refresh');
                         }
@@ -4967,10 +4992,14 @@ class Onboarding extends CI_Controller {
                         break;  
                     case 'assign_EEOC': //EEOC Form Active
                         $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
+                        //
+                        $eeoc_sid = getVerificationDocumentSid ($user_sid, $user_type, 'eeoc');
+                        keepTrackVerificationDocument($user_sid, $user_type, 'assign', $eeoc_sid, 'eeoc', 'Setup Panel');
+                        //
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
                         //
                         if ($user_type == 'employee') {
-                            redirectHandler('onboarding/setup/applicant/'. $user_sid.'#documents', 'refresh');
+                            redirectHandler('onboarding/setup/employee/'. $user_sid.'#documents', 'refresh');
                         } else {
                             redirectHandler('onboarding/setup/applicant/'. $user_sid.'#documents' , 'refresh');
                         }
@@ -8261,11 +8290,16 @@ class Onboarding extends CI_Controller {
                         $formpost['ip_address'] = getUserIP();
                         $formpost['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
                         $formpost['user_consent'] = 1;
-
+                        //
                         unset($formpost['w9_llc_federaltax_description']);
                         unset($formpost['w9_other_federaltax_description']);
                         unset($formpost['submit']);
+                        //
                         $this->form_wi9_model->update_form('w9', 'applicant', $applicant_sid, $formpost);
+                        //
+                        $w9_sid = getVerificationDocumentSid ($applicant_sid, 'applicant', 'w9');
+                        keepTrackVerificationDocument($applicant_sid, 'applicant', 'completed', $w9_sid, 'w9', 'Blue Panel');
+                        //
                         $this->session->set_flashdata('message', '<strong>Success: </strong> Request Submitted Successfully!');
 
                         redirect('onboarding/hr_documents'. '/' . $unique_sid, 'refresh');
@@ -8535,8 +8569,11 @@ class Onboarding extends CI_Controller {
                             $data_to_update['temjw_amount_in_table_2'] = $temjw_amount_in_table_2;
                             $data_to_update['temjw_multiply_7_by_6'] = $temjw_multiply_7_by_6;
                             $data_to_update['temjw_divide_8_by_period'] = $temjw_divide_8_by_period;
-                        }    
-
+                        }  
+                        //  
+                        $w4_sid = getVerificationDocumentSid ($applicant_sid, 'applicant', 'w4');
+                        keepTrackVerificationDocument($applicant_sid, 'applicant', 'completed', $w4_sid, 'w4', 'Blue Panel');
+                        //
                         $this->form_wi9_model->update_form('w4', 'applicant', $applicant_sid, $data_to_update);
                         $this->session->set_flashdata('message', '<strong>Success: </strong> Request Submitted Successfully!');
                         redirect('onboarding/hr_documents/' . $unique_sid, 'refresh');
@@ -8740,8 +8777,12 @@ class Onboarding extends CI_Controller {
                             $insert_data['employer_flag'] = 1;
                             $insert_data['employer_filled_date'] = date('Y-m-d H:i:s');
                         }
-
+                        //
                         $this->form_wi9_model->update_form('i9', 'applicant', $applicant_sid, $insert_data);
+                        //
+                        $i9_sid = getVerificationDocumentSid ($applicant_sid, 'applicant', 'i9');
+                        keepTrackVerificationDocument($applicant_sid, 'applicant', 'completed', $i9_sid, 'i9', 'Blue Panel');
+                        //
                         $this->session->set_flashdata('message', '<strong>Success: </strong> Request Submitted Successfully!');
                         redirect('onboarding/hr_documents/' . $unique_sid, 'refresh');
                     }
