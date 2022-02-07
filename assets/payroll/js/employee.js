@@ -82,13 +82,15 @@ $(function PayrollEmployees() {
             rows += '    </td>';
             rows += '    <td class="vam text-right">';
             rows += '        <div class="csF14">';
-            rows += '            <strong>' + (tab != 'payroll' ? 'Not On Payroll' : emp.on_payroll) + '</strong>';
+            rows += '            <strong>' + (tab != 'payroll' ? 'Not On Payroll' : (emp.onboard_completed == 1 ? "Completed" : "Inprogress")) + '</strong>';
             rows += '        </div>';
             rows += '    </td>';
             rows += '    <td class="vam text-right">';
             if (tab == 'payroll') {
                 rows += '        <button class="btn btn-orange csF14 jsPayrollAddProcess"><i class="fa csF16 fa-edit" aria-hidden="true"></i> Edit</button>';
-                rows += '        <button class="btn btn-danger csF14"><i class="fa csF16 fa-times-circle" aria-hidden="true"></i> Delete</button>';
+                if (emp.onboard_completed == 0) {
+                    rows += '        <button class="btn btn-danger csF14 jsPayrollDeleteEmployee"><i class="fa csF16 fa-times-circle" aria-hidden="true"></i> Delete</button>';
+                }
             } else {
                 rows += '        <button class="btn btn-orange csF14 jsPayrollAddProcess"><i class="fa csF16 fa-plus-circle" aria-hidden="true"></i> Add To Payroll</button>';
             }

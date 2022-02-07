@@ -3,7 +3,7 @@
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->
-            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee_payment", "subIndex" =>""]);?>
+            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee_payment", "subIndex" => ""]);?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
                 <!-- Heading -->
@@ -32,7 +32,6 @@
                             Select payment method <span class="csRequired"></span>
                         </label>
                         <select class="form-control jsPaymentMethod">
-                            <option value="0">[Select]</option>
                             <option value="Direct Deposit" <?=!empty($payment_method) &&  $payment_method['payment_method'] === "Direct Deposit" ? 'selected="selected"' : 'selected="selected"';?>>Direct Deposit</option>
                             <option value="Check" <?=!empty($payment_method) &&  $payment_method['payment_method'] === "Check" ? 'selected="selected"' : '';?>>Check</option>
                         </select>
@@ -42,10 +41,12 @@
                 <?php
                     $addBankAccount = "";
                     $addSplitType = "";
+                    $jsBaseOnDD = "";
 
                     if (!empty($payment_method) && $payment_method['payment_method'] === "Check") {
                         $addBankAccount = 'style="display:none;"';
                         $addSplitType = 'style="display:none;"';
+                        $jsBaseOnDD = 'style="display:none;"';
                     }
                 ?>
                 <div class="row jsBaseOnDD" <?=$addSplitType?>>
@@ -74,7 +75,7 @@
                     </div>
                 </div>
                 <br>
-                <div class="jsBaseOnDD">
+                <div class="jsBaseOnDD" <?=$jsBaseOnDD;?>>
                     <?php if (!empty($bank_account)) { ?>
                         <?php foreach ($bank_account as $account) { ?>
                             <div class="row">

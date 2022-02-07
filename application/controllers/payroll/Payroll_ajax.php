@@ -1200,6 +1200,16 @@ class Payroll_ajax extends CI_Controller
             ]);
             //
         }
+
+        //
+        if($page === 'get-api-creds'){
+            //
+            $data = [];
+            $data['API_KEY'] = getAPIKey();
+            $data['EMPLOYEE_URL'] = getAPIUrl('employees');
+            //
+            return SendResponse(200, $data);
+        }
         
         //
         SendResponse(200, $this->load->view($this->path.$page, $data, false), 'html');

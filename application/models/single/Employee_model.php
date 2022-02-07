@@ -10,6 +10,7 @@ class Employee_model extends CI_Model{
      */
     function __construct(){
         $this->U = 'users'; 
+        $this->PE = 'payroll_employees'; 
         $this->EBA = 'bank_account_details'; 
     }
     
@@ -70,12 +71,14 @@ class Employee_model extends CI_Model{
             $columns[] = "{$this->U}.pay_plan_flag";
             $columns[] = "{$this->U}.full_employment_application";
             $columns[] = "{$this->U}.on_payroll";
+            $columns[] = "{$this->PE}.onboard_completed";
         }
         //
         $query = 
         $this->db
         ->select($columns)
         ->join("{$this->U} as company", "{$this->U}.parent_sid = company.sid", 'inner')
+        ->join("{$this->PE}", "{$this->PE}.employee_sid = users.sid", 'left')
         ->where("{$this->U}.parent_sid", $companyId)
         ->where($whereArray)
         ->order_by("{$this->U}.first_name", 'asc')
@@ -106,7 +109,8 @@ class Employee_model extends CI_Model{
                     'joined_on' => $record['joined_at'],
                     'ssn' => $record['ssn'],
                     'dob' => $record['dob'],
-                    'on_payroll' => $record['on_payroll']
+                    'on_payroll' => $record['on_payroll'],
+                    'onboard_completed' => $record['onboard_completed'],
                 ];
                 //
                 if(!empty($record['timezone'])){

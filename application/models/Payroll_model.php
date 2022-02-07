@@ -686,16 +686,18 @@ class Payroll_model extends CI_Model{
         $query = 
         $this->db
         ->select("
-            filing_status,
-            withholding_allowance,
-            additional_withholding,
+            state_json
         ")
         ->from($this->tables['PEST'])
         ->where("employee_sid", $employee_sid)
         ->get();
         //
-        $taxInfo = $query->row_array();
-        $query = $query->free_result();
+        $taxInfo = [];
+        //
+        if($query->num_rows){
+            $taxInfo = $query->row_array();
+            $query = $query->free_result();
+        }
         //
         return $taxInfo;
     }

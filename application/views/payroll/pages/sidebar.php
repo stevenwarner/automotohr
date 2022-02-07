@@ -32,7 +32,7 @@
         'sub' => []
     ];
 ?>
-<div class="col-md-2 col-sm-12">
+<div class="col-md-3 col-sm-12">
     <div class="panel panel-theme">
         <div class="panel-heading csF16 csB7">
             Employee Onboarding
