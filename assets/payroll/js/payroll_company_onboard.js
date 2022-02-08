@@ -997,7 +997,7 @@ $(function PayrollCompanyOnboard() {
         var preSelected = GetItem('PayrollEmployees' + companyId);
         //
         if (CURRENTEMPLOYEE > (SELECTEDEMPLOYEE - 1)) {
-            payrollEvents[5]();
+            AddNewCompany();
         }
         //
         $("#jsIPLoaderTextArea").text("Please wait we are adding employee " + EMPLOYEELIST[preSelected[CURRENTEMPLOYEE]]);
