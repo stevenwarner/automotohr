@@ -711,7 +711,7 @@ $(function PayrollCompanyOnboard() {
         xhr = $.ajax({
                 method: "post",
                 url: GetURL('get_payroll_page/company_address/' + companyId),
-                data: { employees: GetItem('PayrollEmployees' + companyId) || [] }
+                data: { companyId: companyId }
             })
             .done(function(resp) {
                 //
