@@ -1261,9 +1261,6 @@
                             <?php }  ?>
                         </div>
                     </div>
-                    <?php if(checkIfAppIsEnabled('gusto')): ?>
-                        <?php $this->load->view('payroll/profile/employee_profile'); ?>
-                    <?php endif; ?>
                 </div>
                 
                 <?php $this->load->view($left_navigation); ?>
