@@ -1210,9 +1210,11 @@ class Payroll_ajax extends CI_Controller
             //
             return SendResponse(200, $data);
         }
-        
+        header("content-type: text/html");
+        echo $this->load->view($this->path.$page, $data, true);
+        exit(0);
         //
-        SendResponse(200, $this->load->view($this->path.$page, $data, false), 'html');
+        // SendResponse(200, $this->load->view($this->path.$page, $data, true), 'html');
     }
 
     /**
