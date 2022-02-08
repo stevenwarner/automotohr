@@ -963,9 +963,8 @@ $(function PayrollCompanyOnboard() {
         $("#jsIPLoaderTextArea").text(payrollEventsMessages[5]);
         //
         var preSelected = GetItem('PayrollEmployees' + companyId);
+
         //
-        console.log((preSelected.length) - 1)
-            //
         if (preSelected !== null && preSelected.length > 0) {
             //
             CURRENTEMPLOYEE = 0;
@@ -979,6 +978,8 @@ $(function PayrollCompanyOnboard() {
             //     //
 
             // }
+        } else {
+            FinishCompanyOnboarding();
         }
     }
 
