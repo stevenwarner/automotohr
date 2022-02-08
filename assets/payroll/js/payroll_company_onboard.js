@@ -693,8 +693,20 @@ $(function PayrollCompanyOnboard() {
         payrollEvents[0]();
 
     }
-
+    /**
+     * Move company to payroll and 
+     * save token to DB
+     * @param {object} event
+     */
     function AddNewCompany() {
+        //
+        event.preventDefault();
+        //
+        if (xhr !== null) {
+            return;
+        }
+        //
+        ml(true, modalLoader);
         //
         xhr = $.ajax({
                 method: "post",
@@ -704,20 +716,17 @@ $(function PayrollCompanyOnboard() {
             .done(function(resp) {
                 //
                 xhr = null;
+                //
+                ml(false, modalLoader);
                 // 
                 if (resp.errors) {
-                    // return alertify.alert('Error!', typeof resp.errors !== undefined ? resp.errors.join('<br/>') : resp.errors);
+                    return alertify.alert('Error!', typeof resp.errors !== undefined ? resp.errors.join('<br/>') : resp.errors);
                 }
-
-                if (resp.status) {
-                    API_URL = resp.Location_URL;
-                    EMPLOYEELIST = resp.employees_list;
-                    $("#jsIPLoaderTextArea").text(payrollEventsMessages[1]);
-                    payrollEvents[1](resp.address_info);
-                }
+                FinishCompanyOnboarding()
             })
-            .error();
+            .error(HandleError);
     }
+
 
     function AddCompanyAddress(address_info) {
         //
@@ -979,7 +988,7 @@ $(function PayrollCompanyOnboard() {
 
             // }
         } else {
-            FinishCompanyOnboarding();
+            AddNewCompany();
         }
     }
 
