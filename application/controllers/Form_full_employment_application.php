@@ -14,7 +14,7 @@ class Form_full_employment_application extends CI_Controller {
 
             $request_details = $this->form_full_employment_application_model->get_form_request($verification_key);
 
-            if (!empty($request_details)) {
+            if (!empty($request_details) && $request_details['status'] == "sent") {
                 $data = array();
                 $data['page_title'] = 'Full Employment Application';
                 $data['request_details'] = $request_details;
