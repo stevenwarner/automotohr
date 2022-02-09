@@ -14183,6 +14183,8 @@ if (!function_exists('keepSecret')) {
             return str_repeat('*', $length - $char_show).substr($string, $length - $char_show, $char_show);
         } else if ($type == "all") {
             return str_repeat('*', $length - $char_show);
+        } else {
+            return $string;
         }
     }
 } 

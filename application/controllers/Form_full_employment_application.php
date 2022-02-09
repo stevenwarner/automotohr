@@ -376,7 +376,7 @@ class Form_full_employment_application extends CI_Controller {
                     $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
                 }
                 
-                if ($this->form_validation->run() == false) {echo validation_errors();
+                if ($this->form_validation->run() == false) {
                     $data['states'] = db_get_active_states(227);
                     $data['starting_year_loop'] = 1930;
                     $suffix_values = array();
