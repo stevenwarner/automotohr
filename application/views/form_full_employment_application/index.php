@@ -32,6 +32,11 @@
                                     <ul>
                                         <div class="container-fluid">
                                             <label><span class="staric">Please Do Not Use Your Web Browser's AutoComplete Feature</span></label>
+                                            <label>
+                                                <span class="staric" style="font-size: 16px;">
+                                                    All the sensitive information is replaced with "*" to keep your data protected.
+                                                </span>
+                                            </label>
                                             <div class="row">
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>

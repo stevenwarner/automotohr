@@ -14173,7 +14173,7 @@ if (!function_exists('keepTrackVerificationDocument')) {
 }    
 
 if (!function_exists('keepSecret')) {
-    function keepSecret ($string, $type, $char_show = CHARACTER_SHOW) {
+    function keepSecret ($string, $type = "end", $char_show = CHARACTER_SHOW) {
         $returnSecret = "";
         $length = strlen($string);
         //
