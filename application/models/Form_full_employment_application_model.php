@@ -253,4 +253,28 @@ class Form_full_employment_application_model extends CI_Model
         $this->db->where('sid', $license_id)->update('license_information', $licenseData);
     }
 
+    function get_user_email_address ($user_sid, $user_type){
+        $table = "";
+        //
+        if ($user_type == "employee"){
+            $table = "users";
+        } else {
+            $table = "portal_job_applications";
+        }
+        //
+        $this->db->select('email');
+        $this->db->where('sid', $user_sid);
+        $this->db->from($table);
+        //
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr["email"];
+        } else {
+            return "";
+        }
+    }
+
 }

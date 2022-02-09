@@ -14171,3 +14171,18 @@ if (!function_exists('keepTrackVerificationDocument')) {
         $CI->db->insert('verification_documents_track', $data_to_insert);
     }
 }    
+
+if (!function_exists('keepSecret')) {
+    function keepSecret ($string, $type, $char_show = CHARACTER_SHOW) {
+        $returnSecret = "";
+        $length = strlen($string);
+        //
+        if ($type == "start"){
+            return substr($string, 0, $char_show).str_repeat('*', $length - $char_show);
+        } else if ($type == "end") {
+            return str_repeat('*', $length - $char_show).substr($string, $length - $char_show, $char_show);
+        } else if ($type == "all") {
+            return str_repeat('*', $length - $char_show);
+        }
+    }
+} 

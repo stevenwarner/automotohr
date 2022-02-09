@@ -56,7 +56,7 @@
                                                         <?php $key = 'last_name'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Last Name <span class="staric">*</span></label>
-                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="last_name" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="last_name" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                         <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -80,7 +80,10 @@
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'TextBoxSSN'; ?>
-                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php 
+                                                            // $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); 
+                                                            $def_value = (isset($user_info[$key]) ? '***-***-***' : '' ); 
+                                                        ?>
                                                         <label>Social Security Number <span class="staric">*</span></label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="TextBoxSSN" value="<?php echo set_value($key, $def_value); ?>" type="text">
                                                         <?php echo form_error($key); ?>
@@ -89,7 +92,7 @@
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
                                                         <?php $key = 'TextBoxDOB'; ?>
-                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : (empty($birthDate) ? '' : $birthDate) ); ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? '**-**-****' : (empty($birthDate) ? '' : '**-**-****') ); ?>
                                                         <label>Date of Birth <span class="staric">*</span></label>
                                                         <input <?php echo $readonly_check; ?> class="invoice-fields startdate" required="required" readonly="" name="TextBoxDOB" value="<?php echo set_value($key, $def_value); ?>" id="TextBoxDOB" type="text">
                                                         <?php echo form_error($key); ?>
@@ -105,7 +108,7 @@
                                                         <?php $key = 'email'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Email Address <span class="staric">*</span></label>
-                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="email" value="<?php echo set_value($key, $def_value); ?>" type="email">
+                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="email" value="<?php echo keepSecret(set_value($key, $def_value), "start"); ?>" type="email">
                                                         <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -114,7 +117,7 @@
                                                         <?php $key = 'TextBoxAddressEmailConfirm'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Confirm Email Address <span class="staric">*</span></label>
-                                                        <input autocomplete="new" <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="TextBoxAddressEmailConfirm" value="<?php echo set_value($key, $def_value); ?>" type="email">
+                                                        <input autocomplete="new" <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="TextBoxAddressEmailConfirm" value="<?php echo keepSecret(set_value($key, $def_value), "start"); ?>" type="email">
                                                         <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -167,7 +170,7 @@
                                                         <?php $key = 'Location_Address'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Current Residence <span class="staric">*</span></label>
-                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="Location_Address" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="Location_Address" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                         <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -254,7 +257,7 @@
                                                             <?php $key = 'TextBoxAddressStreetFormer1'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Former Residence</label>
-                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressStreetFormer1" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressStreetFormer1" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                             <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
@@ -341,7 +344,7 @@
                                                         <?php $key = 'TextBoxAddressStreetFormer2'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Former Residence</label>
-                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressStreetFormer2" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressStreetFormer2" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                         <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -427,7 +430,7 @@
                                                         <?php $key = 'TextBoxAddressStreetFormer3'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? ($user_info[$key]) : (isset($extra_info['other_email']) ? $extra_info['other_email'] : '') ); ?>
                                                         <label>Other Mailing Address</label>
-                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressStreetFormer3" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxAddressStreetFormer3" value="<?php echo keepSecret(set_value($key, $def_value), "start"); ?>" type="text">
                                                         <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -494,7 +497,7 @@
                                                         <?php $key = 'PhoneNumber'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : $user_info['PhoneNumber'] ); ?>
                                                         <label>Primary Telephone <span class="staric">*</span></label>
-                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="PhoneNumber" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" required="required" name="PhoneNumber" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                         <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -503,7 +506,7 @@
                                                         <?php $key = 'TextBoxTelephoneMobile'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <label>Mobile Telephone </label>
-                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxTelephoneMobile" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxTelephoneMobile" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                         <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -512,7 +515,7 @@
                                                         <?php $key = 'TextBoxTelephoneOther'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) && !empty($user_info[$key]) ? ($user_info[$key]) : (isset($extra_info['other_PhoneNumber']) ? $extra_info['other_PhoneNumber'] : '') ); ?>
                                                         <label>Other Telephone </label>
-                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxTelephoneOther" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxTelephoneOther" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                         <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -741,7 +744,7 @@
                                                         <?php $key = 'TextBoxDriversLicenseNumber'; ?>
                                                         <?php $def_value = (isset($user_info[$key]) ? ($user_info[$key]) : (isset($drivers_license_details['license_number']) ? $drivers_license_details['license_number'] : '') ); ?>
                                                         <label>Driver's license number:<?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
-                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxDriversLicenseNumber" id="TextBoxDriversLicenseNumber" value="<?php echo set_value($key, $def_value); ?>" type="text" data-msg="This field is required.">
+                                                        <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxDriversLicenseNumber" id="TextBoxDriversLicenseNumber" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text" data-msg="This field is required.">
                                                         <?php echo form_error($key); ?>
                                                     </li>
                                                 </div>
@@ -821,7 +824,9 @@
                                                                 <span id="license_guilty_details_remaining">512 Characters Left</span>
                                                                 <p style="display: none;" id="license_guilty_details_length">512</p>
                                                             </div>
-                                                            <?php echo form_error($key); ?>
+                                                            <div style="color: red;">
+                                                                <?php echo form_error($key); ?>
+                                                            </div>
                                                         </li>
                                                     </div>
                                                 </div>
@@ -1350,7 +1355,7 @@
 <?php $key = 'TextBoxEducationProfessionalLicenseNumber'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>License Number</label>
-                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEducationProfessionalLicenseNumber" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEducationProfessionalLicenseNumber" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                             <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
@@ -1419,7 +1424,7 @@
                                                             <?php $key = 'TextBoxEmploymentEmployerAddress1'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Address</label>
-                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerAddress1" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerAddress1" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                             <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
@@ -1440,12 +1445,12 @@
                                                             <label>Country:</label>
                                                             <select class="invoice-fields" id="country_ee1" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_ee1')">
                                                                 <option value="">Please Select</option>
-<?php foreach ($active_countries as $active_country) { ?>
+                                                            <?php foreach ($active_countries as $active_country) { ?>
                                                                 <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
                                                                     <option <?php echo set_select($key, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
                                                             <?php } ?>
                                                             </select>
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
 
@@ -1461,12 +1466,12 @@
                                                         } else {
                                                             foreach ($active_states[$country_id] as $active_state) {
                                                                 ?>
-        <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
+                                                                    <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
                                                                         <option <?php echo set_select($key, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
                                                                 <?php } ?>
                                                             <?php } ?>
                                                             </select>
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
 
@@ -1475,9 +1480,9 @@
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6">
                                                         <li>
                                                             <?php $key = 'TextBoxEmploymentEmployerPhoneNumber1'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Telephone</label>
-                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerPhoneNumber1" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerPhoneNumber1" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                                 <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
@@ -1488,12 +1493,12 @@
                                                             <label>Dates of Employment</label>
                                                             <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1">
                                                                 <option vlaue="">Please Select</option>
-<?php foreach ($months as $month) { ?>
+                                                                <?php foreach ($months as $month) { ?>
                                                                 <?php $def_selected = false; ?>
                                                                 <?php $cur_value = $month; ?>
                                                                 <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                     <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
-<?php } ?>
+                                                                <?php } ?>
                                                             </select>
                                                                 <?php echo form_error($key); ?>
                                                         </li>
@@ -1505,14 +1510,14 @@
                                                             <label></label>
                                                             <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1">
                                                                 <option value="">Please Select</option>
-<?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
-    <?php $def_selected = false; ?>
-    <?php $cur_value = $count; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
+                                                                    <?php $def_selected = false; ?>
+                                                                    <?php $cur_value = $count; ?>
+                                                                    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                     <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
-                                                            <?php } ?>
+                                                                <?php } ?>
                                                             </select>
-<?php echo form_error('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'); ?>
+                                                            <?php echo form_error('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1'); ?>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
@@ -1520,31 +1525,31 @@
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                         <li>
-                                                                <?php $key = 'DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'; ?>
+                                                            <?php $key = 'DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label></label>
                                                             <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1">
                                                                 <option vlaue="">Please Select</option>
-<?php foreach ($months as $month) { ?>
+                                                                <?php foreach ($months as $month) { ?>
                                                                 <?php $def_selected = false; ?>
                                                                 <?php $cur_value = $month; ?>
                                                                 <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                     <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
-<?php } ?>
+                                                                <?php } ?>
                                                             </select>
-                                                                <?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 select-year">
                                                         <li>
-                                                                <?php $key = 'DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'; ?>
+                                                            <?php $key = 'DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label></label>
                                                             <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1">
                                                                 <option value="">Please Select</option>
-<?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
-    <?php $def_selected = false; ?>
-    <?php $cur_value = $count; ?>
+                                                            <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
+                                                                <?php $def_selected = false; ?>
+                                                                <?php $cur_value = $count; ?>
                                                                 <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                     <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
                                                             <?php } ?>
@@ -1642,7 +1647,7 @@
                                                                 <?php $key = 'TextBoxEmploymentEmployerAddress2'; ?>
 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>Address</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerAddress2" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerAddress2" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
 <?php echo form_error('TextBoxEmploymentEmployerAddress2'); ?>
                                                             </li>
                                                         </div>
@@ -1700,7 +1705,7 @@
 <?php $key = 'TextBoxEmploymentEmployerPhoneNumber2'; ?>
 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>Telephone</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerPhoneNumber2" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerPhoneNumber2" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                                     <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
@@ -1865,7 +1870,7 @@
 <?php $key = 'TextBoxEmploymentEmployerAddress3'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Address</label>
-                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerAddress3" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerAddress3" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
 <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
@@ -1924,7 +1929,7 @@
 <?php $key = 'TextBoxEmploymentEmployerPhoneNumber3'; ?>
                                                                 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Telephone</label>
-                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerPhoneNumber3" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                            <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerPhoneNumber3" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                                 <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
@@ -2181,7 +2186,7 @@
                                                                 <?php $key = 'TextBoxReferenceAddress1'; ?>
                                                                 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>Address</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceAddress1" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceAddress1" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
 <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
@@ -2240,7 +2245,7 @@
                                                                 <?php $key = 'TextBoxReferenceTelephoneNumber1'; ?>
 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>Telephone Number</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceTelephoneNumber1" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceTelephoneNumber1" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
 <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
@@ -2249,7 +2254,7 @@
                                                                 <?php $key = 'TextBoxReferenceEmail1'; ?>
                                                                 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>E-Mail</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceEmail1" value="<?php echo set_value($key, $def_value); ?>" type="email">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceEmail1" value="<?php echo keepSecret(set_value($key, $def_value),"start"); ?>" type="email">
                                                                 <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
@@ -2282,7 +2287,7 @@
                                                                 <?php $key = 'TextBoxReferenceAddress2'; ?>
 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>Address</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceAddress2" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceAddress2" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
 <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
@@ -2342,7 +2347,7 @@
 <?php $key = 'TextBoxReferenceTelephoneNumber2'; ?>
 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>Telephone Number</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceTelephoneNumber2" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceTelephoneNumber2" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
 <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
@@ -2351,7 +2356,7 @@
                                                                 <?php $key = 'TextBoxReferenceEmail2'; ?>
 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>E-Mail</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceEmail2" value="<?php echo set_value($key, $def_value); ?>" type="email">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceEmail2" value="<?php echo keepSecret(set_value($key, $def_value), "start"); ?>" type="email">
 <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
@@ -2384,7 +2389,7 @@
 <?php $key = 'TextBoxReferenceAddress3'; ?>
 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>Address</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceAddress3" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceAddress3" value="<?php echo keepSecret(set_value($key, $def_value), "start"); ?>" type="text">
                                                                 <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
@@ -2444,7 +2449,7 @@
 <?php $key = 'TextBoxReferenceTelephoneNumber3'; ?>
 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>Telephone Number</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceTelephoneNumber3" value="<?php echo set_value($key, $def_value); ?>" type="text">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceTelephoneNumber3" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
 <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
@@ -2453,7 +2458,7 @@
                                                             <?php $key = 'TextBoxReferenceEmail3'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>E-Mail</label>
-                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceEmail3" value="<?php echo set_value($key, $def_value); ?>" type="email">
+                                                                <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceEmail3" value="<?php echo keepSecret(set_value($key, $def_value), "start"); ?>" type="email">
 <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
@@ -2699,10 +2704,6 @@
                 required: true,
                 pattern: /^[a-zA-Z0-9\ '-]+$/
             },
-            last_name: {
-                required: true,
-                pattern: /^[a-zA-Z0-9\ '-]+$/
-            },
             TextBoxNameMiddle: {
                 pattern: /^[a-zA-Z0-9\ '-]+$/
             },
@@ -2711,14 +2712,6 @@
             },
             TextBoxDOB: {
                 required: true
-            },
-            email: {
-                required: true,
-                email: true
-            },
-            TextBoxAddressEmailConfirm: {
-                required: true,
-                equalTo: '[name="email"]'
             },
             Location_Address:{
                 required: true
@@ -2749,6 +2742,67 @@
                 required: true
             }
         };
+        //
+        var lastName = document.getElementsByName("last_name")[0].value;
+        //
+        if (lastName.includes("*")) {
+            rules['last_name'] = { required: true };
+        } else {
+            rules['last_name'] = {
+                required: true,
+                pattern: /^[a-zA-Z0-9\ '-]+$/
+            }
+        }
+        //
+        var primary_email = document.getElementsByName("email")[0].value;
+        //
+        if (primary_email.includes("*")) {
+            document.getElementsByName("email")[0].type = 'text';
+            rules['email'] = { required: true };
+        } else {
+            document.getElementsByName("TextBoxAddressEmailConfirm")[0].type = 'email';
+            rules['email'] = {
+                required: true,
+                email: true
+            }
+        }
+        //
+        var confirm_email = document.getElementsByName("TextBoxAddressEmailConfirm")[0].value;
+        //
+        if (confirm_email.includes("*")) {
+            document.getElementsByName("TextBoxAddressEmailConfirm")[0].type = 'text';
+            rules['TextBoxAddressEmailConfirm'] = { required: true };
+        } else {
+            document.getElementsByName("TextBoxAddressEmailConfirm")[0].type = 'email';
+            rules['TextBoxAddressEmailConfirm'] = {
+                required: true,
+                // equalTo: '[name="email"]'
+            }
+        }
+        //
+        var reference_email_1 = document.getElementsByName("TextBoxReferenceEmail1")[0].value;
+        //
+        if (reference_email_1.includes("*")) {
+            document.getElementsByName("TextBoxReferenceEmail1")[0].type = 'text';
+        } else {
+            document.getElementsByName("TextBoxReferenceEmail1")[0].type = 'email';
+        }
+        //
+        var reference_email_2 = document.getElementsByName("TextBoxReferenceEmail2")[0].value;
+        //
+        if (reference_email_2.includes("*")) {
+            document.getElementsByName("TextBoxReferenceEmail2")[0].type = 'text';
+        } else {
+            document.getElementsByName("TextBoxReferenceEmail2")[0].type = 'email';
+        }
+        //
+        var reference_email_3 = document.getElementsByName("TextBoxReferenceEmail3")[0].value;
+        //
+        if (reference_email_3.includes("*")) {
+            document.getElementsByName("TextBoxReferenceEmail3")[0].type = 'text';
+        } else {
+            document.getElementsByName("TextBoxReferenceEmail3")[0].type = 'email';
+        }
         //
         var messages = {
             first_name: {
@@ -2904,28 +2958,56 @@
                 rules: rules,
                 messages: messages,
                 submitHandler: function (form) {
-                   var check_radio= $('input[name=is_already_employed]:checked').val();
+                    var confirm_email_address = document.getElementsByName("TextBoxAddressEmailConfirm")[0].value;
+                    if (confirm_email_address.includes("*")) {
+                        var check_radio = $('input[name=is_already_employed]:checked').val();
 
-                    if(check_radio=="Yes")
-                    {
-                        if($("#previous_company_name").val().length > 1)
+                        if(check_radio == "Yes")
                         {
-                           form.submit();
+                            if($("#previous_company_name").val().length > 1)
+                            {
+                               form.submit();
+                            } else {
+                                $("#show_specific_error").text("kindly provide previous company or affiliate company name");
+                            }
                         }else{
-                            $("#show_specific_error").text("kindly provide previous company or affiliate company name");
+                            form.submit();
                         }
-                    }else{
-                        form.submit();
-                    }
-                    
-                    
+                    } else {
+                        var user_sid = "<?php echo $user_sid; ?>";
+                        var user_type = "<?php echo $user_type; ?>";
+                        var url = `<?=base_url('form_full_employment_application/match_confirm_email');?>/${confirm_email_address}/${user_sid}/${user_type}`;
+                        $.get(
+                            url, 
+                            (resp) => {
+                                if (resp == "matched") {
+                                    var check_radio = $('input[name=is_already_employed]:checked').val();
+
+                                    if(check_radio == "Yes")
+                                    {
+                                        if($("#previous_company_name").val().length > 1)
+                                        {
+                                           form.submit();
+                                        } else {
+                                            $("#show_specific_error").text("kindly provide previous company or affiliate company name");
+                                        }
+                                    }else{
+                                        form.submit();
+                                    }
+                                } else {
+                                    alertify.alert('ERROR!', 'Confirmation email not matched.');
+                                    return;
+                                }
+                            }
+                        );
+                    }    
                 }
             });
         }
 
         $('.startdate').datepicker({dateFormat: 'mm-dd-yy', changeMonth: true, changeYear: true, yearRange: "-100:+50", }).val();
 
-<?php   if ($signed_flag == false) { ?>
+        <?php if ($signed_flag == false) { ?>
             $(document).ready(function () {
                 $('.startdate').datepicker({
                     dateFormat: 'mm/dd/yy',
@@ -2937,7 +3019,7 @@
                     $(this).attr('autocomplete', 'none');
                 });
             });
-<?php   } ?>
+        <?php } ?>
 
         function check_length(id) {
             var get_allowed_length = id + '_length';

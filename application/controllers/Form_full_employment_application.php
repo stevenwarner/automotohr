@@ -14,7 +14,7 @@ class Form_full_employment_application extends CI_Controller {
 
             $request_details = $this->form_full_employment_application_model->get_form_request($verification_key);
 
-            if (!empty($request_details) && $request_details['status'] == "sent") {
+            if (!empty($request_details)&& $request_details['status'] == "sent") {
                 $data = array();
                 $data['page_title'] = 'Full Employment Application';
                 $data['request_details'] = $request_details;
@@ -122,7 +122,12 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
                 //$this->form_validation->set_rules('email', 'Email Address', 'valid_email|required|trim|xss_clean|is_unique[users.email]');
-                $this->form_validation->set_rules('TextBoxAddressEmailConfirm', 'Confirm Email Address', 'valid_email|required|trim|xss_clean');
+
+
+                if (isset($_POST['TextBoxAddressEmailConfirm']) && strpos($_POST['TextBoxAddressEmailConfirm'], '*') == false) { 
+                     $this->form_validation->set_rules('TextBoxAddressEmailConfirm', 'Confirm Email Address', 'valid_email|required|trim|xss_clean');
+                } 
+               
                 $this->form_validation->set_rules('Location_Address', 'Address', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxAddressLenghtCurrent', 'How Long', 'trim|xss_clean');
                 $this->form_validation->set_rules('Location_City', 'City', 'required|trim|xss_clean');
@@ -255,22 +260,43 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('TextBoxReferenceAddress1', 'Reference Address', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxReferenceCity1', 'Reference City', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListReferenceState1', 'Reference State', 'trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxReferenceTelephoneNumber1', 'Telephone Number', 'trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxReferenceEmail1', 'Reference Email', 'valid_email|trim|xss_clean');
+                //
+                if (isset($_POST['TextBoxReferenceTelephoneNumber1']) && strpos($_POST['TextBoxReferenceTelephoneNumber1'], '*') == false) { 
+                    $this->form_validation->set_rules('TextBoxReferenceTelephoneNumber1', 'Telephone Number', 'trim|xss_clean');
+                }
+                //
+                if (isset($_POST['TextBoxReferenceEmail1']) && strpos($_POST['TextBoxReferenceEmail1'], '*') == false) { 
+                    $this->form_validation->set_rules('TextBoxReferenceEmail1', 'Reference Email', 'valid_email|trim|xss_clean');
+                } 
+                //
                 $this->form_validation->set_rules('TextBoxReferenceName2', 'Reference Name', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxReferenceAcquainted2', 'Reference Acquainted', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxReferenceAddress2', 'Reference Address', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxReferenceCity2', 'Reference City', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListReferenceState2', 'Reference State', 'trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxReferenceTelephoneNumber2', 'Telephone Number', 'trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxReferenceEmail2', 'Reference Email', 'valid_email|trim|xss_clean');
+                //
+                if (isset($_POST['TextBoxReferenceTelephoneNumber2']) && strpos($_POST['TextBoxReferenceTelephoneNumber2'], '*') == false) { 
+                    $this->form_validation->set_rules('TextBoxReferenceTelephoneNumber2', 'Telephone Number', 'trim|xss_clean');
+                }
+                //
+                if (isset($_POST['TextBoxReferenceEmail2']) && strpos($_POST['TextBoxReferenceEmail2'], '*') == false) { 
+                    $this->form_validation->set_rules('TextBoxReferenceEmail2', 'Reference Email', 'valid_email|trim|xss_clean');
+                } 
+                //
                 $this->form_validation->set_rules('TextBoxReferenceName3', 'Reference Name', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxReferenceAcquainted3', 'Reference Acquainted', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxReferenceAddress3', 'Reference Address', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxReferenceCity3', 'Reference City', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListReferenceState3', 'Reference State', 'trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxReferenceTelephoneNumber3', 'Telephone Number', 'trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxReferenceEmail3', 'Reference Email', 'valid_email|trim|xss_clean');
+                //
+                if (isset($_POST['TextBoxReferenceTelephoneNumber3']) && strpos($_POST['TextBoxReferenceTelephoneNumber3'], '*') == false) { 
+                    $this->form_validation->set_rules('TextBoxReferenceTelephoneNumber3', 'Telephone Number', 'trim|xss_clean');
+                }
+                //
+                if (isset($_POST['TextBoxReferenceEmail3']) && strpos($_POST['TextBoxReferenceEmail3'], '*') == false) { 
+                    $this->form_validation->set_rules('TextBoxReferenceEmail3', 'Reference Email', 'valid_email|trim|xss_clean');
+                } 
+                //
                 $this->form_validation->set_rules('TextBoxAdditionalInfoWorkExperience', 'Additional Work Experience Information', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxAdditionalInfoWorkTraining', 'Additional Work Training Information', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxAdditionalInfoWorkConsideration', 'Additional Work Consideration Information', 'trim|xss_clean');
@@ -350,7 +376,7 @@ class Form_full_employment_application extends CI_Controller {
                     $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
                 }
                 
-                if ($this->form_validation->run() == false) {
+                if ($this->form_validation->run() == false) {echo validation_errors();
                     $data['states'] = db_get_active_states(227);
                     $data['starting_year_loop'] = 1930;
                     $suffix_values = array();
@@ -398,9 +424,12 @@ class Form_full_employment_application extends CI_Controller {
                     $data['ip_track'] = $ip_track;
                     $data['readonly_check'] = $readonly_check;
                     $data['disabled_check'] = $disabled_check;
+                    $data['user_sid'] = $user_sid;
+                    $data['user_type'] = $user_type;
 
                     $this->load->view('form_full_employment_application/index', $data);
                 } else {
+
                     $field_names = array();
                     $field_names[] = 'first_name';
                     $field_names[] = 'last_name';
@@ -414,7 +443,15 @@ class Form_full_employment_application extends CI_Controller {
                     $full_employment_application = array();
                     $driving_no = '';
                     $driving_exp = '';
-
+                    //
+                    // remove staric from user info add on 09/02/2022
+                    //
+                    foreach ($formpost as $f_key => $f_value) {
+                        if (strpos($f_value, '*') !== false) {
+                            $formpost[$f_key] = $user_info[$f_key];
+                        }
+                    }
+                    //
                     foreach ($formpost as $key => $value) {
                         if (!in_array($key, $field_names)) {
                             $full_employment_application[$key] = $value;
@@ -1187,6 +1224,18 @@ class Form_full_employment_application extends CI_Controller {
         } else {
             redirect(base_url('login'), "refresh");
         }
+    }
+
+    public function match_confirm_email ($email, $sid, $type) {
+        $user_email = $this->form_full_employment_application_model->get_user_email_address($sid, $type);
+
+        $result = "not_matched";
+
+        if ($user_email == $email) {
+            $result = "matched";
+        }
+        echo $result;
+        exit(0);
     }
 
 }
