@@ -104,14 +104,18 @@
                                                                         <b><?php echo $value['sid']; ?></b>
                                                                     </td>
                                                                     <td>
-                                                                <?php   if(empty($value['username'])){
-                                                                            echo 'Employee Onboarding';
-                                                                        } else {
-                                                                            echo $value['username']; 
-                                                                            echo '<br> <b> Access Level:</b> '. ucwords($value['access_level']);
-                                                                            echo ($value['access_level_plus'] && $value['pay_plan_flag']) ? ' Plus / Payroll' : ($value['access_level_plus'] ? ' Plus' : ($value['pay_plan_flag'] ? ' Payroll' : ''));
-                                                                            echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="'.$value['sid'].'" data-name="'.$value['company_name'].'">Send Login Email</a>';
-                                                                        } ?>
+                                                                        <?php   
+                                                                            if(empty($value['username'])){
+                                                                                echo 'Employee Onboarding';
+                                                                            } else {
+                                                                                echo $value['username']; 
+                                                                                //
+                                                                                echo '<br> <b> Employee Status:</b> '. ucwords($value['general_status']);
+                                                                                echo '<br> <b> Access Level:</b> '. ucwords($value['access_level']);
+                                                                                echo ($value['access_level_plus'] && $value['pay_plan_flag']) ? ' Plus / Payroll' : ($value['access_level_plus'] ? ' Plus' : ($value['pay_plan_flag'] ? ' Payroll' : ''));
+                                                                                echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="'.$value['sid'].'" data-name="'.$value['company_name'].'">Send Login Email</a>';
+                                                                            } 
+                                                                        ?>
                                                                     </td>
                                                                     <td>
                                                                         <?php echo $value['email'] . '<br>' . '<b>Title:</b> ' . ucwords($value['job_title']); ?>

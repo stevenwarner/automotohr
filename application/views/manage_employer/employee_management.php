@@ -262,7 +262,10 @@
                                                                 <?php } else { ?>
                                                                     <?php echo $name; ?>
                                                                 <?php } ?>
-                                                                    <?php echo '<br />'.$employee['email']; ?>
+                                                                    <?php 
+                                                                        echo '<br />'.$employee['email'];
+                                                                        echo '<br> <b> Employee Status:</b> '. ucwords($employee['general_status']);
+                                                                    ?>
                                                                     <br>
                                                                     <?php
                                                                         if($employee['is_executive_admin'] == 1) { 
