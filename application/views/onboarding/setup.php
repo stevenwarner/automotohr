@@ -1147,7 +1147,7 @@ if (isset($applicant)) {
                                                                                         } else { ?>
                                                                                             <a href="javascript:;" id="w4" onclick="func_assign_w4();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
-                                                                                        <?php if(isset($w4_form['sid'])) { ?>
+                                                                                        <?php if(isset($w4_form_data['sid'])) { ?>
                                                                                         <!--  -->
                                                                                         <a href="javascript:;" onclick="show_document_track('w4', <?=$w4_form_data['sid'];?>);" class="btn btn-success" title="View action trail for W4 form" placement="top">W4 Trail</a>
                                                                                         <!--  -->
@@ -1185,7 +1185,7 @@ if (isset($applicant)) {
                                                                                         }else { ?>
                                                                                             <a href="javascript:;" id="w9" onclick="func_assign_w9();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
-                                                                                        <?php if(isset($w9_form['sid'])) { ?>
+                                                                                        <?php if(isset($w9_form_data['sid'])) { ?>
                                                                                         <!--  -->
                                                                                         <a href="javascript:;" onclick="show_document_track('w9', <?=$w9_form_data['sid'];?>);" class="btn btn-success" title="View action trail for W9 form" placement="top">W9 Trail</a>
                                                                                         <!--  -->
@@ -1223,12 +1223,14 @@ if (isset($applicant)) {
                                                                                         }else { ?>
                                                                                             <a href="javascript:;" id="i9" onclick="func_assign_i9();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
+                                                                                        <?php if(isset($i9_form_data['sid'])) { ?>
                                                                                         <!--  -->
                                                                                         <a href="javascript:;" onclick="show_document_track('i9', <?=$i9_form_data['sid'];?>);" class="btn btn-success" title="View action trail for I9 form" placement="top">I9 Trail</a>
                                                                                         <!--  -->
                                                                                         <a href="javascript:;" onclick="VerificationDocumentHistory('i9', <?=$i9_form_data['sid'];?>);" class="btn btn-success" title="View history for I9 form" placement="top">I9
                                                                                          History</a>
                                                                                         <!--  -->
+                                                                                        <?php } ?>
                                                                                     </td>
                                                                                 </tr>
                                                                                 <tr>
