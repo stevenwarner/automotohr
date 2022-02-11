@@ -97,6 +97,7 @@
                                                                 <option value="0">Please select gender</option>
                                                                 <option value="male" <?php echo $administrator['gender'] == "male" ? "selected='selected'" : ""; ?>>Male</option>
                                                                 <option value="female" <?php echo $administrator['gender'] == "female" ? "selected='selected'" : ""; ?>>Female</option>
+                                                                <option value="female" <?php echo $administrator['gender'] == "other" ? "selected='selected'" : ""; ?>>Other</option>
                                                             </select>
                                                             <?php echo form_error('gender'); ?>
                                                         </div>

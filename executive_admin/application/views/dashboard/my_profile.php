@@ -80,6 +80,7 @@
                                         <option value="0">Please select gender</option>
                                         <option value="male" <?php echo $executive_user['gender'] == "male" ? "selected='selected'" : ""; ?>>Male</option>
                                         <option value="female" <?php echo $executive_user['gender'] == "female" ? "selected='selected'" : ""; ?>>Female</option>
+                                        <option value="female" <?php echo $executive_user['gender'] == "other" ? "selected='selected'" : ""; ?>>Other</option>
                                     </select>
                                     <?php echo form_error('gender'); ?>
                                 </div>
