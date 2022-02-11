@@ -1147,12 +1147,14 @@ if (isset($applicant)) {
                                                                                         } else { ?>
                                                                                             <a href="javascript:;" id="w4" onclick="func_assign_w4();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
+                                                                                        <?php if(isset($w4_form['sid'])) { ?>
                                                                                         <!--  -->
                                                                                         <a href="javascript:;" onclick="show_document_track('w4', <?=$w4_form_data['sid'];?>);" class="btn btn-success" title="View action trail for W4 form" placement="top">W4 Trail</a>
                                                                                         <!--  -->
                                                                                         <a href="javascript:;" onclick="VerificationDocumentHistory('w4', <?=$w4_form_data['sid'];?>);" class="btn btn-success" title="View history for W4 form" placement="top">W4
                                                                                          History</a>
                                                                                         <!--  -->
+                                                                                        <?php } ?>
                                                                                     </td>
                                                                                 </tr>
                                                                                 <tr>
@@ -1183,12 +1185,14 @@ if (isset($applicant)) {
                                                                                         }else { ?>
                                                                                             <a href="javascript:;" id="w9" onclick="func_assign_w9();" class="btn btn-success">Assign</a>
                                                                                         <?php } ?>
+                                                                                        <?php if(isset($w9_form['sid'])) { ?>
                                                                                         <!--  -->
                                                                                         <a href="javascript:;" onclick="show_document_track('w9', <?=$w9_form_data['sid'];?>);" class="btn btn-success" title="View action trail for W9 form" placement="top">W9 Trail</a>
                                                                                         <!--  -->
                                                                                         <a href="javascript:;" onclick="VerificationDocumentHistory('w9', <?=$w9_form_data['sid'];?>);" class="btn btn-success" title="View history for W9 form" placement="top">W9
                                                                                          History</a>
                                                                                         <!--  -->
+                                                                                        <?php } ?>
                                                                                     </td>
                                                                                 </tr>
                                                                                 <tr>
@@ -1277,10 +1281,12 @@ if (isset($applicant)) {
                                                                                                 </form>
                                                                                                 <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
                                                                                             <?php } ?>
+                                                                                            <?php if(isset($eeo_form_info['sid'])) { ?>
                                                                                             <!--  -->
                                                                                             <button onclick="show_document_track('eeoc', <?=$eeo_form_info['sid'];?>);" class="btn btn-success" title="View action trail for EEOC form" placement="top">EEOC Trail</button>
                                                                                             <!--  -->
                                                                                             <button onclick="VerificationDocumentHistory('eeoc', <?=$eeo_form_info['sid'];?>);" class="btn btn-success" title="View history for EEOC form" placement="top">EEOC History</button>
+                                                                                            <?php } ?>
                                                                                         <?php } else { ?>
                                                                                             <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?=ucwords($user_info['first_name'].' '.$user_info['last_name']);?>" placement="top">Assign</a>
                                                                                         <?php } ?>    
