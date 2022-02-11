@@ -31,6 +31,8 @@
 </div>
 <!-- Preview Latest Document Modal Modal End -->
 <script type="text/javascript">
+    //
+    var t_user_type = "<?=$user_type;?>";
     function VerificationDocumentHistory (type, sid) {
         $('#verification_document_history_modal .modal-title').text(type.toUpperCase()+' Document');
         //
@@ -85,17 +87,17 @@
                 html += single.status;
                 html +='     </td>';
                 html +='     <td class="col-lg-2 text-right"style="vertical-align: middle">';
-                <?php if($user_type == 'employee') { ?>
-                html +='         <button';
-                html +='             class="btn btn-success btn-sm btn-block"';
-                html +='             onclick="preview_verification_doc_history_sep(this);"';
-                html +='             data-history_id="'+(single.sid)+'"';
-                html +='             data-history_type="'+(single.type)+'">';
-                html +='             Preview Fillable';
-                html +='         </button>';
-                <?php } else { ?>
+                if(t_user_type == 'applicant' && type == 'eeoc'){
                     html +='         -';
-                <?php } ?>
+                } else{
+                    html +='         <button';
+                    html +='             class="btn btn-success btn-sm btn-block"';
+                    html +='             onclick="preview_verification_doc_history_sep(this);"';
+                    html +='             data-history_id="'+(single.sid)+'"';
+                    html +='             data-history_type="'+(single.type)+'">';
+                    html +='             Preview Fillable';
+                    html +='         </button>';
+                }
                 html +='     </td>';
                 html +=' </tr>';
             });
