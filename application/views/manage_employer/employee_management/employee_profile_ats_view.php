@@ -2134,6 +2134,10 @@ $('#edit_button').click(function(event) {
         }
 
     }, 1000);
+
+    //
+    var state_id = <?php echo $employer['Location_State']; ?>;
+    $('#state option[value="'+state_id+'"]').attr('selected', 'selected');
 });
 
 $('.view_button').click(function(event) {
