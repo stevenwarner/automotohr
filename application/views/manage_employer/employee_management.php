@@ -262,7 +262,10 @@
                                                                 <?php } else { ?>
                                                                     <?php echo $name; ?>
                                                                 <?php } ?>
-                                                                    <?php echo '<br />'.$employee['email']; ?>
+                                                                    <?php 
+                                                                        echo '<br />'.$employee['email'];
+                                                                        echo '<br> <b> Employee Status:</b> '. ucwords($employee['general_status']);
+                                                                    ?>
                                                                     <br>
                                                                     <?php
                                                                         if($employee['is_executive_admin'] == 1) { 
@@ -339,14 +342,14 @@
                                                             $canAccessDocument
                                                         ) { ?>
                                                         <td class="text-center">
-                                                            <?php if($employee['terminated_status'] == 0) { ?>
+                                                            <?php //if($employee['terminated_status'] == 0) { ?>
                                                                 <?php if($ems_status == 1) { ?>
                                                                     <?php if($employee['is_executive_admin'] == 0) { ?>
                                                                         <a title="Document Management"  data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('hr_documents_management/documents_assignment/employee') . '/' . $employee['sid']; ?>">
                                                                             <i class="fa fa-file"></i>
                                                                         </a>
                                                                     <?php } ?>
-                                                                    <?php if(checkIfAppIsEnabled('timeoff', FALSE)){ ?>
+                                                                    <?php if(checkIfAppIsEnabled('timeoff', FALSE) && $employee['terminated_status'] == 0){ ?>
                                                                         <?php 
                                                                             if(
                                                                                 ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) ||
@@ -374,7 +377,7 @@
                                                                         <i class="fa fa-eye" aria-hidden="true"></i>
                                                                     </button>
                                                                 <?php } ?>
-                                                            <?php } ?>
+                                                            <?php //} ?>
                                                         </td>
                                                     <?php } ?>
                                                     <td class="text-center">

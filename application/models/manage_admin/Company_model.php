@@ -192,6 +192,7 @@ class Company_model extends CI_Model {
         $this->db->select('table_one.profile_picture');
         $this->db->select('table_one.active');
         $this->db->select('table_one.system_user_date');
+        $this->db->select('table_one.general_status');
         $this->db->select('table_two.CompanyName as company_name');
         $this->db->where('table_one.is_executive_admin <', 1);
         $this->db->where('table_one.parent_sid > ', 0);
