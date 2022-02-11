@@ -324,6 +324,7 @@ class Dashboard extends CI_Controller {
                     'job_title'              => $formpost['job_title'],
                     'direct_business_number' => $formpost['direct_business_number'],
                     'cell_number'            => $formpost['cell_number'],
+                    'gender'            => $formpost['gender'],
                     'video'                  => $formpost['video']
                 );
                 $executive_admin_data['ip_address'] = getUserIP();

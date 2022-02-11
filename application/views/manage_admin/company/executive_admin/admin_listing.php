@@ -80,7 +80,15 @@
                                                                         </figure>
                                                                     </div>
                                                                 </td>
-                                                                <td><?php echo $admin->first_name . ' ' . $admin->last_name; ?><br> <b>Reg Date:</b> <?php echo date_with_time($admin->created_on);?> </td>
+                                                                <td>
+                                                                    <?php 
+                                                                        echo $admin->first_name . ' ' . $admin->last_name; ?>
+                                                                        <br> 
+                                                                        <b>Reg Date:</b> <?php echo date_with_time($admin->created_on);?> 
+                                                                        <br> 
+                                                                        <b>Gender:</b> <?php echo !empty($admin->gender) ? ucfirst($admin->gender) : "N/A";
+                                                                    ?>
+                                                                </td>
                                                                 <td><?php echo $admin->username; ?><br><b><?php echo $admin->email; ?></b><br> <b>Access Level:</b> <?php echo $admin->access_level;?></td>
                                                                 <td><?php echo $admin->job_title; ?>
                                                                     <?php   if($admin->password == '' || is_null($admin->password)) { ?>
