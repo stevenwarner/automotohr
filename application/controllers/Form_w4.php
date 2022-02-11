@@ -159,14 +159,15 @@ class Form_w4 extends Public_Controller
                 'label' => 'First Name',
                 'rules' => 'xss_clean|trim|required'
             );
-//             $order_field = array(
-//                 'field' => 'w4_middle_name',
-//                 'label' => 'Middle Name',
-//                 'rules' => 'xss_clean|trim|required'
-//             );
+            //
+            // $order_field = array(
+            //    'field' => 'w4_middle_name',
+            //    'label' => 'Middle Name',
+            //    'rules' => 'xss_clean|trim|required'
+            // );
 
             $config[] = $field;
-//            $config[] = $order_field;
+            // $config[] = $order_field;
 
             $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
             $this->form_validation->set_rules($config);
@@ -200,10 +201,10 @@ class Form_w4 extends Public_Controller
 
             // $data['signed_flag'] = false;
             $data['signed_flag'] = isset($previous_form['user_consent']) && $previous_form['user_consent'] == 1 ? true : false;
-
+            //
             $assign_on = date("Y-m-d", strtotime($previous_form['sent_date']));
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
-
+            //
             if ($this->form_validation->run() == FALSE) {
                 $this->load->view('main/header', $data);
                 if(isset($previous_form['manual'])) $this->load->view('form_w4/index_upload');
@@ -344,7 +345,6 @@ class Form_w4 extends Public_Controller
                     $data_to_update['dw_input_3'] = $dw_input_3;
                     $data_to_update['dw_input_4'] = $dw_input_4;
                     $data_to_update['dw_input_5'] = $dw_input_5;
-
                 } else {
                     $data_to_update['different_last_name'] = $different_last_name;
                     $data_to_update['number_of_allowance'] = $number_of_allowance;
@@ -378,9 +378,11 @@ class Form_w4 extends Public_Controller
                     $data_to_update['temjw_multiply_7_by_6'] = $temjw_multiply_7_by_6;
                     $data_to_update['temjw_divide_8_by_period'] = $temjw_divide_8_by_period;
                 }
-
+                //
                 $this->form_wi9_model->update_form('w4', $type, $employer_sid, $data_to_update);
-
+                //
+                $w4_sid = getVerificationDocumentSid ($employer_sid, $type, 'w4');
+                keepTrackVerificationDocument($employer_sid, $type, 'completed', $w4_sid, 'w4', 'Blue Panel');
                 //
                 if($type != 'applicant' && $this->input->post('user_consent') == 1){
                     // Send document completion alert

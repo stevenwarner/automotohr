@@ -618,7 +618,7 @@ class Eeo extends Public_Controller
         if (!empty($eeoc_history)) {
             foreach ($eeoc_history as $history) {
                 $history_array[$h_key]['sid'] = $history['sid'];
-                $history_array[$h_key]['type'] = 'EEOC_Form';
+                $history_array[$h_key]['type'] = strtoupper($document_type).'_Form';
                 $history_array[$h_key]['name'] = (strtoupper($document_type)).' Fillable Document';
                 $history_array[$h_key]['assign_on'] = reset_datetime(array('datetime' => $history['last_sent_at'], '_this' => $this));
                 $history_array[$h_key]['submitted_on'] = reset_datetime(array('datetime' => $history['last_completed_on'], '_this' => $this));

@@ -2091,7 +2091,10 @@ class Hr_documents_management extends Public_Controller {
                                     $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                 }
                             }
-
+                            //
+                            $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
+                            keepTrackVerificationDocument($user_sid, $user_type, 'assign', $w4_sid, 'w4', 'Document Center');
+                            //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
 
                             if ($user_type == 'employee') {
@@ -2103,6 +2106,10 @@ class Hr_documents_management extends Public_Controller {
                             break;
                         case 'remove_w4': //W4 Form Deactive
                             $this->hr_documents_management_model->deactivate_w4_forms($user_type, $user_sid);
+                            //
+                            $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
+                            keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $w4_sid, 'w4', 'Document Center');
+                            //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
 
                             if ($user_type == 'employee') {
@@ -2227,6 +2234,10 @@ class Hr_documents_management extends Public_Controller {
                                     $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                 }
                             }
+                            //
+                            $w9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w9');
+                            keepTrackVerificationDocument($user_sid, $user_type, 'assign', $w9_sid, 'w9', 'Document Center');
+                            //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
 
                             if ($user_type == 'employee') {
@@ -2238,6 +2249,10 @@ class Hr_documents_management extends Public_Controller {
                             break;
                         case 'remove_w9': //W9 Form Deactive
                             $this->hr_documents_management_model->deactivate_w9_forms($user_type, $user_sid);
+                            //
+                            $w9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w9');
+                            keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $w9_sid, 'w9', 'Document Center');
+                            //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
 
                             if ($user_type == 'employee') {
@@ -2278,8 +2293,10 @@ class Hr_documents_management extends Public_Controller {
 
                                 // $this->hr_documents_management_model->activate_i9_forms($user_type, $user_sid);
                             }
-
-
+                            //
+                            $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
+                            keepTrackVerificationDocument($user_sid, $user_type, 'assign', $i9_sid, 'i9', 'Document Center');
+                            //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
 
                             if ($user_type == 'employee') {
@@ -2291,6 +2308,10 @@ class Hr_documents_management extends Public_Controller {
                             break;
                         case 'remove_i9': //I9 Form Deactive
                             $this->hr_documents_management_model->deactivate_i9_forms($user_type, $user_sid);
+                            //
+                            $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
+                            keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $i9_sid, 'i9', 'Document Center');
+                            //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
 
                             if ($user_type == 'employee') {
@@ -2342,11 +2363,11 @@ class Hr_documents_management extends Public_Controller {
 
                             break;
                         case 'remove_EEOC': //EEOC Form Deactive
-                            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
                             //
                             $this->hr_documents_management_model->deactivate_EEOC_forms($user_type, $user_sid);
                             //
-                            keepTrackVerificationDocument($employer_sid, 'employee', 'revoke', $eeoc_form['sid'], 'eeoc', 'Document Center');
+                            $eeoc_sid = getVerificationDocumentSid ($user_sid, $user_type, 'eeoc');
+                            keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $eeoc_sid, 'eeoc', 'Document Center');
                             //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
                             //
@@ -2360,9 +2381,8 @@ class Hr_documents_management extends Public_Controller {
                         case 'assign_EEOC': //EEOC Form Active
                             $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
                             //
-                            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
-                            //
-                            keepTrackVerificationDocument($employer_sid, 'employee', 'assign', $eeoc_form['sid'], 'eeoc', 'Document Center');
+                            $eeoc_sid = getVerificationDocumentSid ($user_sid, $user_type, 'eeoc');
+                            keepTrackVerificationDocument($user_sid, $user_type, 'assign', $eeoc_sid, 'eeoc', 'Document Center');
                             //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
                             //
@@ -11676,7 +11696,7 @@ class Hr_documents_management extends Public_Controller {
         //
         $post = $this->input->post(NULL, TRUE);
         // 
-        $id = $this->hr_documents_management_model->getEEOCId($post['userId'], $post['userType'], $post['userJobId']);
+        $id = $this->hr_documents_management_model->getEEOCId($post['userId'], $post['userType'], $post['userJobId'], $post['userLocation']);
         //
         $this->load->library('encryption');
         //

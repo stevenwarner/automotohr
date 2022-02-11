@@ -390,7 +390,7 @@
 
                         </td>
                         <td style="vertical-align: bottom;">
-                          <span><strong><small>Date ▶</small></strong></span><span> <?php echo DateTime::createFromFormat('Y-m-d H:i:s', $pre_form['signature_timestamp'])->format('M d Y'); ?></span>
+                          <span><strong><small>Date ▶</small></strong></span><span> <?=empty($pre_form['signature_timestamp']) ? '' : DateTime::createFromFormat('Y-m-d H:i:s', $pre_form['signature_timestamp'])->format('M d Y'); ?></span>
                         </td>
                     </tr>
                 </tbody>

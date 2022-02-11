@@ -6342,7 +6342,7 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     //
-    function getEEOCId($id, $type, $jobId){
+    function getEEOCId($id, $type, $jobId, $location){
         //
         $session = $this->session->userdata('logged_in');
         $assign_by_sid = $session['employer_detail']['sid'];
@@ -6367,12 +6367,21 @@ class Hr_documents_management_model extends CI_Model {
                 'is_expired' => 0,
                 'portal_applicant_jobs_list_sid' => $jobId,
                 'last_sent_at' => date('Y-m-d H:i:s', strtotime('now')),
+                'assigned_at' => date('Y-m-d H:i:s', strtotime('now')),
                 'last_assigned_by' => $assign_by_sid
             ]);
             //
             $sid = $this->db->insert_id();
+            //
+            keepTrackVerificationDocument($id, $type, 'assign', $sid, 'eeoc', $location);
+            //
          } else{
             $sid = $b['sid'];
+            //
+            $data_to_update = array();
+            $data_to_update['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            $this->db->where('sid', $sid);
+            $this->db->update('portal_eeo_form', $data_to_update);
         }
         return $sid;
     }

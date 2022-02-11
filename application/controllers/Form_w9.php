@@ -266,9 +266,11 @@ class Form_w9 extends Public_Controller
                 $data_to_update['signature_user_agent'] = $signature_user_agent;
                 $data_to_update['company_sid'] = $company_sid;
                 $data_to_update['employee_sid'] = $employer_sid;
-
+                //
                 $this->form_wi9_model->update_form('w9', $type, $employer_sid, $data_to_update);
-
+                //
+                $w9_sid = getVerificationDocumentSid ($employer_sid, $type, 'w9');
+                keepTrackVerificationDocument($employer_sid, $type, 'completed', $w9_sid, 'w9', 'Blue Panel');
                 //
                 if($type != 'applicant' && $this->input->post('user_consent') == 1){
                     // Send document completion alert

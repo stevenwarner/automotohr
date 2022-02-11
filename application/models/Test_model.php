@@ -10,109 +10,124 @@ class Test_model extends CI_Model {
         //
         parent::__construct();
         //
-        $this->db = $this->load->database('ac', true);
+        // $this->db = $this->load->database('ac', true);
         $this->db2 = $this->load->database('ahr', true);
     }
 
 
     //
-    function jobIds(){
-        $ids = $this->db
-        ->select('sid')
-        ->get(PJL)
-        ->result_array();
-        //
-        return !empty($ids) ? array_column($ids, 'sid') : [];
-    }
+    // function jobIds(){
+    //     $ids = $this->db
+    //     ->select('sid')
+    //     ->get(PJL)
+    //     ->result_array();
+    //     //
+    //     return !empty($ids) ? array_column($ids, 'sid') : [];
+    // }
    
-    //
-    function getJobs(){
-        $ids = $this->db2
-        ->order_by('sid', 'desc')
-        ->get(PJL)
-        ->result_array();
-        //
-        return $ids;
-    }
+    // //
+    // function getJobs(){
+    //     $ids = $this->db2
+    //     ->order_by('sid', 'desc')
+    //     ->get(PJL)
+    //     ->result_array();
+    //     //
+    //     return $ids;
+    // }
 
-    //
-    function updateJob($sid, $data){
-        $this->db
-        ->where('sid', $sid)
-        ->update(PJL, $data);
-    }
+    // //
+    // function updateJob($sid, $data){
+    //     $this->db
+    //     ->where('sid', $sid)
+    //     ->update(PJL, $data);
+    // }
     
-    //
-    function insertJob($data){
-        $this->db
-        ->insert(PJL, $data);
-    }
+    // //
+    // function insertJob($data){
+    //     $this->db
+    //     ->insert(PJL, $data);
+    // }
 
 
-    //
-    function applicantIds(){
-        $ids = $this->db
-        ->select('sid')
-        ->get(PJA)
-        ->result_array();
-        //
-        return !empty($ids) ? array_column($ids, 'sid') : [];
-    }
+    // //
+    // function applicantIds(){
+    //     $ids = $this->db
+    //     ->select('sid')
+    //     ->get(PJA)
+    //     ->result_array();
+    //     //
+    //     return !empty($ids) ? array_column($ids, 'sid') : [];
+    // }
 
-    //
-    function getApplicants(){
-        $ids = $this->db2
-        ->order_by('sid', 'desc')
-        ->get(PJA)
-        ->result_array();
-        //
-        return $ids;
-    }
+    // //
+    // function getApplicants(){
+    //     $ids = $this->db2
+    //     ->order_by('sid', 'desc')
+    //     ->get(PJA)
+    //     ->result_array();
+    //     //
+    //     return $ids;
+    // }
 
-    //
-    function updateApplicant($sid, $data){
-        $this->db
-        ->where('sid', $sid)
-        ->update(PJA, $data);
-    }
+    // //
+    // function updateApplicant($sid, $data){
+    //     $this->db
+    //     ->where('sid', $sid)
+    //     ->update(PJA, $data);
+    // }
     
-    //
-    function insertApplicant($data){
-        $this->db
-        ->insert(PJA, $data);
-    }
+    // //
+    // function insertApplicant($data){
+    //     $this->db
+    //     ->insert(PJA, $data);
+    // }
 
 
-    //
-    function applicantJobIds(){
-        $ids = $this->db
-        ->select('sid')
-        ->get(PAJL)
-        ->result_array();
-        //
-        return !empty($ids) ? array_column($ids, 'sid') : [];
-    }
+    // //
+    // function applicantJobIds(){
+    //     $ids = $this->db
+    //     ->select('sid')
+    //     ->get(PAJL)
+    //     ->result_array();
+    //     //
+    //     return !empty($ids) ? array_column($ids, 'sid') : [];
+    // }
 
-    //
-    function getApplicantsJob(){
-        $ids = $this->db2
-        ->order_by('sid', 'desc')
-        ->get(PAJL)
-        ->result_array();
-        //
-        return $ids;
-    }
+    // //
+    // function getApplicantsJob(){
+    //     $ids = $this->db2
+    //     ->order_by('sid', 'desc')
+    //     ->get(PAJL)
+    //     ->result_array();
+    //     //
+    //     return $ids;
+    // }
 
-    //
-    function updateApplicantJob($sid, $data){
-        $this->db
-        ->where('sid', $sid)
-        ->update(PAJL, $data);
-    }
+    // //
+    // function updateApplicantJob($sid, $data){
+    //     $this->db
+    //     ->where('sid', $sid)
+    //     ->update(PAJL, $data);
+    // }
     
-    //
-    function insertApplicantJob($data){
-        $this->db
-        ->insert(PAJL, $data);
+    // //
+    // function insertApplicantJob($data){
+    //     $this->db
+    //     ->insert(PAJL, $data);
+    // }
+
+    function getEEOCRecords(){
+        $this->db2->select('sid,last_sent_at,assigned_at');
+        $this->db2->from('portal_eeo_form');
+        $result = $this->db2->get()->result_array();
+
+        return $result;
+    }
+
+    function updateEEOCTime($sid, $datetime){
+        $data_to_update = array();
+        $data_to_update['assigned_at'] = $datetime;
+        $this->db->where('sid', $sid);
+        $this->db->update('portal_eeo_form', $data_to_update);
     }
 }
