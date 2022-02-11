@@ -354,6 +354,20 @@ abstract class CI_DB_driver {
 	 */
 	protected $_count_string = 'SELECT COUNT(*) AS ';
 
+    /**
+     * table to save query logs
+     *
+     * @var string
+     */
+    private $table = 'query_logs';
+
+    /**
+     * use to save query logs
+     *
+     * @var array
+     */
+    private $log_array = [];
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -593,10 +607,44 @@ abstract class CI_DB_driver {
 	 * @param	bool	$return_object = NULL
 	 * @return	mixed
 	 */
-	public function query($sql, $binds = FALSE, $return_object = NULL)
+	public function query($sql, $binds = FALSE, $return_object = NULL, $save_log = true)
 	{
+        // get the instance of CI
+        $_this = &get_instance();
+        // get session values
+        $session = [];
+        $session['user'] = $_this->session->userdata('logged_in');
+        $session['admin'] = $_this->session->userdata('user_id');
+        // check if user not logged in return 0
+        if (!isset($session['admin']) && !isset($session['user'])){
+            $logged_in_user_id = 0;
+        }else{
+            $logged_in_user_id = isset($session['user']) ? $session['user']['employer_detail']['sid'] : $session['admin'];
+        }
+		// check if $save_log is set
+		if ($save_log){
+			// log array
+			$this->log_array = [
+                'ip' => getUserIP(),
+				'error' => NULL,
+				'from_cache' => 0,
+				'start_time' => 0,
+				'end_time' => 0,
+				'benchmark' => 0,
+				'result' => 1,
+                'login_user_id' => $logged_in_user_id
+			];
+		}
+
 		if ($sql === '')
 		{
+            // check if $save_log is set
+			if($save_log){
+				$this->log_array['query_type'] = 'Empty';
+				$this->log_array['query_string'] = 'Empty Query';
+				$this->log_array['error'] = 'Empty';
+				$this->SaveLogQuery($sql);
+			}
 			log_message('error', 'Invalid query: '.$sql);
 			return ($this->db_debug) ? $this->display_error('db_invalid_query') : FALSE;
 		}
@@ -625,6 +673,9 @@ abstract class CI_DB_driver {
 			$this->load_rdriver();
 			if (FALSE !== ($cache = $this->CACHE->read($sql)))
 			{
+                // check if $save_log is set
+				if($save_log) { $this->log_array['from_cache'] = 1; $this->SaveLogQuery($sql);}
+				// return response
 				return $cache;
 			}
 		}
@@ -654,6 +705,8 @@ abstract class CI_DB_driver {
 
 			// Grab the error now, as we might run some additional queries before displaying the error
 			$error = $this->error();
+            // check if $save_log is set
+			if($save_log) { $this->log_array['error'] = $error['message']; $this->SaveLogQuery($sql);}
 
 			// Log errors
 			log_message('error', 'Query error: '.$error['message'].' - Invalid query: '.$sql);
@@ -683,6 +736,13 @@ abstract class CI_DB_driver {
 		// Stop and aggregate the query time results
 		$time_end = microtime(TRUE);
 		$this->benchmark += $time_end - $time_start;
+
+        // check if $save_log is set
+		if($save_log){
+			$this->log_array['start_time'] = $time_start;
+			$this->log_array['end_time'] = $time_end;
+			$this->log_array['benchmark'] = $this->benchmark;
+		}
 
 		if ($this->save_queries === TRUE)
 		{
@@ -723,6 +783,9 @@ abstract class CI_DB_driver {
 			$CR->result_array	= $RES->result_array();
 			$CR->num_rows		= $RES->num_rows();
 
+            // check if $save_log is set
+			if($save_log) { $this->SaveLogQuery($sql);}
+
 			// Reset these since cached objects can not utilize resource IDs.
 			$CR->conn_id		= NULL;
 			$CR->result_id		= NULL;
@@ -730,7 +793,30 @@ abstract class CI_DB_driver {
 			$this->CACHE->write($sql, $CR);
 		}
 
+        // check if $save_log is set
+        if($save_log) { $this->SaveLogQuery($sql);}
+
 		return $RES;
+	}
+
+	private function SaveLogQuery($sql){
+		// check query type
+		if (preg_match("/select /i", $sql)){
+			$query_type = 'SELECT';
+		}elseif (preg_match("/insert /i", $sql) || preg_match("/replace/i", $sql)){
+			$query_type = 'INSERT';
+		}elseif (preg_match("/update /i", $sql)){
+			$query_type = 'UPDATE';
+		}elseif (preg_match("/delete /i", $sql)){
+			$query_type = 'DELETE';
+		}
+        $this->log_array['query_type'] = $query_type;
+        $this->log_array['query_string'] = addslashes($sql);
+        $this->log_array['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+		// make query for log entry
+		$query = 'INSERT INTO '.$this->table.' ('.implode(', ', array_keys($this->log_array)).') VALUES ("'.implode('","',array_values($this->log_array)).'")';
+		// call the query function
+		$this->query($query, true, NULL, false);
 	}
 
 	// --------------------------------------------------------------------

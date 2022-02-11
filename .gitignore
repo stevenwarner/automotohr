@@ -7,6 +7,8 @@ temp_files
 temp_files/*
 
 .ftpquota
+.idea
+json_files
 
 assets/fba
 assets/ics_files

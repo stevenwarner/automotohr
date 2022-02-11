@@ -1,34 +1,37 @@
 <?php defined('BASEPATH') || exit('No direct script access allowed');
 
 
-class Cron_common extends CI_Controller{
+class Cron_common extends CI_Controller
+{
     //
     private $verifyToken;
 
-    function __construct(){
+    function __construct()
+    {
         parent::__construct();
         $this->load->model('common_model');
         //
         $this->verifyToken = getCreds('AHR')->VerifyToken;
     }
 
-    function tos(){
+    function tos()
+    {
         //
         $this->common_model->startR();
         $this->common_model->endR();
     }
 
-    //
-    function auto_email_reminder($verificationToken){
+    function auto_email_reminder($verificationToken)
+    {
         //
-        if($this->verifyToken != $verificationToken){
+        if ($this->verifyToken != $verificationToken) {
             echo "Failed";
             exit(0);
         }
         //
         $records = $this->common_model->get_all_licenses();
         //
-        if(empty($records)){
+        if (empty($records)) {
             exit(0);
         }
         //
@@ -36,11 +39,11 @@ class Cron_common extends CI_Controller{
         //
         $this->load->model('common_ajax_model');
         //
-        foreach($records as $record){
+        foreach ($records as $record) {
             //
             $expiryDate = !empty($record['license_details']['license_expiration_date']) ? trim($record['license_details']['license_expiration_date']) : '';
             // //
-            if(empty($expiryDate)){
+            if (empty($expiryDate)) {
                 continue;
             }
             //
@@ -48,7 +51,7 @@ class Cron_common extends CI_Controller{
             //
             $format = 'Y-m-d';
             // Re-format the date
-            if(preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $expiryDate)){
+            if (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $expiryDate)) {
                 $format = 'm-d-Y';
             }
             //
@@ -58,15 +61,15 @@ class Cron_common extends CI_Controller{
             //
             $days = 0;
             //
-            if($difference == 15){
+            if ($difference == 15) {
                 $days = 15;
-            } else if($difference == 7){
+            } else if ($difference == 7) {
                 $days = 7;
-            } else if($difference == 3){
+            } else if ($difference == 3) {
                 $days = 3;
             }
             //
-            if($days != 0){
+            if ($days != 0) {
                 //
                 $type = $record['license_type'] == 'drivers' ? 'drivers-license' : 'occupational-license';
                 //
@@ -101,13 +104,14 @@ class Cron_common extends CI_Controller{
     }
 
     //
-    private function send_email_reminder($type, $note, $user_detail, $company_detail, $email_hf){
+    private function send_email_reminder($type, $note, $user_detail, $company_detail, $email_hf)
+    {
         //
         $this->load->model('common_ajax_model');
         // Set link
-        $link = '<a href="'.(base_url('general_info')).'" style="padding: 10px; color: #ffffff; background-color: #0000ff; border-radius: 5px;">Go To Document</a>';
+        $link = '<a href="' . (base_url('general_info')) . '" style="padding: 10px; color: #ffffff; background-color: #0000ff; border-radius: 5px;">Go To Document</a>';
         //
-        $email_slug = $type.'-reminder-email';
+        $email_slug = $type . '-reminder-email';
         // Get email template
         $template = $this->common_ajax_model->get_email_template_by_code($email_slug);
         // Set replace array
@@ -117,14 +121,14 @@ class Cron_common extends CI_Controller{
         $replaceArray['{{company_name}}'] = ucwords($company_detail['CompanyName']);
         $replaceArray['{{company_address}}'] = $company_detail['Location_Address'];
         $replaceArray['{{company_phone}}'] = $company_detail['PhoneNumber'];
-        $replaceArray['{{career_site_url}}'] = 'https://'.$email_hf['sub_domain'];
-        $replaceArray['{{note}}'] = "<strong>Note:</strong>".$note;
+        $replaceArray['{{career_site_url}}'] = 'https://' . $email_hf['sub_domain'];
+        $replaceArray['{{note}}'] = "<strong>Note:</strong>" . $note;
         $replaceArray['{{link}}'] = $link;
         //
         $indexes = array_keys($replaceArray);
         // Change subject
         $subject = str_replace($indexes, $replaceArray, $template['subject']);
-        $body = $email_hf['header'].str_replace($indexes, $replaceArray, $template['text']).$email_hf['footer'];
+        $body = $email_hf['header'] . str_replace($indexes, $replaceArray, $template['text']) . $email_hf['footer'];
         //
         $from_email = empty($template['from_email']) ? FROM_EMAIL_NOTIFICATIONS : $template['from_email'];
         $from_name = empty($template['from_name']) ? ucwords($company_detail['CompanyName']) : str_replace($indexes, $replaceArray, $template['from_name']);
@@ -136,9 +140,10 @@ class Cron_common extends CI_Controller{
     /**
      * 
      */
-    function PMMCronStartAndEndReplicate($verificationToken){
+    function PMMCronStartAndEndReplicate($verificationToken)
+    {
         //
-        if($verificationToken != $this->verifyToken){
+        if ($verificationToken != $this->verifyToken) {
             echo "All done!";
             exit(0);
         }
@@ -147,21 +152,25 @@ class Cron_common extends CI_Controller{
         //
         $records = $this->pmm->GetReviewsForCron();
         //
-        if(empty($records)){
+        if (empty($records)) {
             exit(0);
         }
         //
         $now = date('Y-m-d', strtotime('now'));
         //
-        foreach($records as $record){
+        foreach ($records as $record) {
             //
             $insertArray = [];
             //
-            if(isset($reviewId)){ unset($reviewId); }
+            if (isset($reviewId)) {
+                unset($reviewId);
+            }
             //
-            if(isset($activeRecord)){ unset($activeRecord); }
+            if (isset($activeRecord)) {
+                unset($activeRecord);
+            }
             // Case 3
-            if($record['frequency'] == 'custom'){
+            if ($record['frequency'] == 'custom') {
                 //
                 $activeRecord = $record;
                 //
@@ -171,9 +180,13 @@ class Cron_common extends CI_Controller{
                 //
                 $dueInType = $activeRecord['review_due_type'];
                 //
-                if($dueInType == 'days'){ $dueInType = 'D' ;}
-                else if($dueInType == 'weeks'){ $dueInType = 'W' ;}
-                else if($dueInType == 'months'){ $dueInType = 'M' ;}
+                if ($dueInType == 'days') {
+                    $dueInType = 'D';
+                } else if ($dueInType == 'weeks') {
+                    $dueInType = 'W';
+                } else if ($dueInType == 'months') {
+                    $dueInType = 'M';
+                }
                 //
                 $repeat = $activeRecord['repeat_review']; // todo
                 //
@@ -185,19 +198,23 @@ class Cron_common extends CI_Controller{
                 //
                 $i = 0;
                 //
-                foreach($employeesList as $employee){
+                foreach ($employeesList as $employee) {
                     //
-                    foreach($customRuns as $run){
+                    foreach ($customRuns as $run) {
                         //
-                        if($run['type'] == 'days'){ $run['type'] = 'D' ;}
-                        else if($run['type'] == 'weeks'){ $run['type'] = 'W' ;}
-                        else if($run['type'] == 'months'){ $run['type'] = 'M' ;}
+                        if ($run['type'] == 'days') {
+                            $run['type'] = 'D';
+                        } else if ($run['type'] == 'weeks') {
+                            $run['type'] = 'W';
+                        } else if ($run['type'] == 'months') {
+                            $run['type'] = 'M';
+                        }
                         //
                         $latest_joining = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
                         //
                         $runDate = addTimeToDate($latest_joining, "{$run['value']}{$run['type']}", 'Y-m-d');
                         //
-                        if($runDate == $now){
+                        if ($runDate == $now) {
                             $selectedEmployees[] = $employee['sid'];
                             break;
                         }
@@ -205,7 +222,7 @@ class Cron_common extends CI_Controller{
                 }
 
                 //
-                if(!empty($selectedEmployees)){
+                if (!empty($selectedEmployees)) {
                     // Insert new record here
                     $insertArray = $activeRecord;
                     $insertArray['parent_review_sid'] = $record['sid'];
@@ -221,12 +238,12 @@ class Cron_common extends CI_Controller{
                 }
             }
             // Case 2
-            if($record['frequency'] == 'recurring'){
+            if ($record['frequency'] == 'recurring') {
 
                 // Lets check for sub record
-                if(!empty($record['Cycles'])){ // Sub record found
+                if (!empty($record['Cycles'])) { // Sub record found
                     $activeRecord = $record['Cycles'][0];
-                } else{ // Sub record not found
+                } else { // Sub record not found
                     $activeRecord = $record;
                 }
                 //
@@ -234,13 +251,17 @@ class Cron_common extends CI_Controller{
                 //
                 $repeatType = $activeRecord['repeat_type'];
                 //
-                if($repeatType == 'days'){ $repeatType = 'D' ;}
-                else if($repeatType == 'weeks'){ $repeatType = 'W' ;}
-                else if($repeatType == 'months'){ $repeatType = 'M' ;}
+                if ($repeatType == 'days') {
+                    $repeatType = 'D';
+                } else if ($repeatType == 'weeks') {
+                    $repeatType = 'W';
+                } else if ($repeatType == 'months') {
+                    $repeatType = 'M';
+                }
                 //
                 $compareDate = addTimeToDate($activeRecord['review_end_date'], "{$repeatValue}{$repeatType}", 'Y-m-d');
                 //
-                if(date('Y-m-d', strtotime('now')) == $compareDate){
+                if (date('Y-m-d', strtotime('now')) == $compareDate) {
                     // Insert new record here
                     $insertArray = $activeRecord;
                     $insertArray['parent_review_sid'] = $record['sid'];
@@ -255,7 +276,7 @@ class Cron_common extends CI_Controller{
             }
 
             // Add reviewers and reviewees
-            if(isset($reviewId)){
+            if (isset($reviewId)) {
                 // Get the review
                 $review = $this->pmm->GetReviewRowById($reviewId, $activeRecord['company_sid']);
 
@@ -264,7 +285,7 @@ class Cron_common extends CI_Controller{
                 //
                 $ins = [];
                 //
-                foreach($questions as $question){
+                foreach ($questions as $question) {
                     //
                     $ins[] = [
                         'review_sid' => $review['reviewId'],
@@ -282,7 +303,7 @@ class Cron_common extends CI_Controller{
                 //
                 $reviewees = explode(',', $review['included']);
                 //
-                foreach($reviewees as $reviewee){
+                foreach ($reviewees as $reviewee) {
                     //
                     $ins[] = [
                         'review_sid' => $review['reviewId'],
@@ -304,11 +325,11 @@ class Cron_common extends CI_Controller{
                 //
                 $reviewers = json_decode($review['reviewers'], true);
                 //
-                foreach($reviewers['reviewees'] as $reviewee => $reviewer){
+                foreach ($reviewers['reviewees'] as $reviewee => $reviewer) {
                     //
                     $newReviewers = array_diff($reviewer['included'], isset($reviewer['excluded']) ? $reviewer['excluded'] : []);
                     //
-                    foreach($newReviewers as $newReviewer){
+                    foreach ($newReviewers as $newReviewer) {
                         //
                         $ins[] = [
                             'review_sid' => $review['reviewId'],
@@ -326,21 +347,21 @@ class Cron_common extends CI_Controller{
             }
 
             // Lets check for sub record
-            if(!empty($record['Cycles'])){ // Sub record found
+            if (!empty($record['Cycles'])) { // Sub record found
                 $activeRecord = $record['Cycles'][0];
-            } else{ // Sub record not found
+            } else { // Sub record not found
                 $activeRecord = $record;
             }
 
             // Start and end reviews
             // Review will start
-            if($activeRecord['review_start_date'] == $now && $activeRecord['review_end_date'] > $now){
+            if ($activeRecord['review_start_date'] == $now && $activeRecord['review_end_date'] > $now) {
                 $this->pmm->UpdateReview(['status' => "started"], $activeRecord['sid']);
                 //
             }
-            
+
             // Review will end
-            if($activeRecord['review_end_date'] <= $now){
+            if ($activeRecord['review_end_date'] <= $now) {
                 $this->pmm->UpdateReview(['status' => "ended"], $activeRecord['sid']);
             }
             // Check and start/end reviews 
@@ -356,9 +377,10 @@ class Cron_common extends CI_Controller{
     /**
      * 
      */
-    function SendNotificationEmails($verificationToken){
+    function SendNotificationEmails($verificationToken)
+    {
         //
-        if($verificationToken != $this->verifyToken){
+        if ($verificationToken != $this->verifyToken) {
             echo "All done!";
             exit(0);
         }
@@ -371,14 +393,14 @@ class Cron_common extends CI_Controller{
         $this->getEmployeesForNotification(3, $toArray);
         $this->getEmployeesForNotification(1, $toArray);
         //
-        if(empty($toArray)){
+        if (empty($toArray)) {
             echo "All Done!";
             exit(0);
         }
         // Get template
         $template = get_email_template(REVIEW_EXPIRING);
         //
-        foreach($toArray as $record){
+        foreach ($toArray as $record) {
             //
             $hf = message_header_footer($record['companyId'], $record['companyName']);
             //
@@ -386,7 +408,7 @@ class Cron_common extends CI_Controller{
             //
             $subject = str_replace($indexes, $record['replace'], $template['subject']);
             //
-            $body = $hf['header'].str_replace($indexes, $record['replace'], $template['text']).$hf['footer'];
+            $body = $hf['header'] . str_replace($indexes, $record['replace'], $template['text']) . $hf['footer'];
             //
             log_and_sendEmail(
                 $template['from_email'],
@@ -406,17 +428,18 @@ class Cron_common extends CI_Controller{
     /**
      * 
      */
-    private function getEmployeesForNotification($days, &$toArray){
+    private function getEmployeesForNotification($days, &$toArray)
+    {
         //
         $records = $this->pmm->GetEmployeesForNotificationEmailByDays($days);
         //
-        if(!empty($records)){
-            foreach($records as $record) {
+        if (!empty($records)) {
+            foreach ($records as $record) {
                 //
                 $reviewPeriod = formatDateToDB($record['start_date'], 'Y-m-d', 'M d Y, D');
-                $reviewPeriod .= ' - '.formatDateToDB($record['end_date'], 'Y-m-d', 'M d Y, D');
+                $reviewPeriod .= ' - ' . formatDateToDB($record['end_date'], 'Y-m-d', 'M d Y, D');
                 //
-                $link = base_url("performance-management/".($record['is_manager'] ? "feedback" : "review")."/".($record['sid'])."/".($record['reviewee_sid'])."/".($record['reviewer_sid'])."");
+                $link = base_url("performance-management/" . ($record['is_manager'] ? "feedback" : "review") . "/" . ($record['sid']) . "/" . ($record['reviewee_sid']) . "/" . ($record['reviewer_sid']) . "");
                 //
                 // Set replace array 
                 $replaceArray = [];
@@ -427,17 +450,157 @@ class Cron_common extends CI_Controller{
                 $replaceArray['{{review_period}}'] = $reviewPeriod;
                 $replaceArray['{{reviewee_first_name}}'] = ucwords($record['reviewer_first_name']);
                 $replaceArray['{{reviewee_last_name}}'] = ucwords($record['reviewer_last_name']);
-                $replaceArray['{{link}}'] = getButtonForEmail(['{{url}}' => $link, '{{text}}' => 'Complete The Review', '{{color}}'=> '#0000ff']);
+                $replaceArray['{{link}}'] = getButtonForEmail(['{{url}}' => $link, '{{text}}' => 'Complete The Review', '{{color}}' => '#0000ff']);
                 //
                 $toArray[] = [
                     "companyId" => $record['company_sid'],
                     "companyName" => ucwords(strtolower(trim($record['company_name']))),
                     "email" => strtolower(trim($record['reviewer_email'])),
-                    "name" => ucwords(strtolower(trim($record['reviewer_first_name'].' '.$record['reviewer_last_name']))),
+                    "name" => ucwords(strtolower(trim($record['reviewer_first_name'] . ' ' . $record['reviewer_last_name']))),
                     "replace" => $replaceArray
                 ];
             }
         }
     }
 
+    /**
+     * Creates log of DB queries
+     * 
+     * @param string $verificationToken
+     * @return void
+     */
+    public function log_records($verificationToken)
+    {
+        //
+        if ($verificationToken != $this->verifyToken) {
+            echo "All done!";
+            exit(0);
+        }
+        // Define file paths and names
+        $logurl = APPPATH . "../../app_logs/db_log.json";
+        $countFile = APPPATH . "../../app_logs/db_count_log.json";
+        // Define default array for count
+        $defaultArray = [
+            'total_queries' => 0,
+            'total_select' => 0,
+            'total_update' => 0,
+            'total_insert' => 0,
+            'total_delete' => 0
+        ];
+        // Check if count file created
+        if (!is_file($countFile)) {
+            //
+            $defaultArray['history'] = [];
+            //
+            $handler = fopen($countFile, 'w');
+            fwrite($handler, json_encode($defaultArray));
+            fclose($handler);
+            //
+            unset($defaultArray['history']);
+        }
+        // Check if log file is created
+        if (!is_file($logurl)) {
+            //
+            $handler = fopen($logurl, 'w');
+            fwrite($handler, json_encode([]));
+            fclose($handler);
+        }
+        // Get the data from count file
+        $handler = fopen($countFile, 'r');
+        $countFileData = json_decode(fread($handler, filesize($countFile)), true);
+        fclose($handler);
+        // Get the data from log file
+        $handler = fopen($logurl, 'r');
+        $logurlData = json_decode(fread($handler, filesize($logurl)), true);
+        fclose($handler);
+        // Check and get the query logs
+        $results = $this->common_model->get_records_from_log();
+        //
+        if (!$results) {
+            echo ('All done buddy.');
+            exit(0);
+        }
+        //
+        $lastId = 0;
+        //
+        foreach ($results as $log_row) {
+            //
+            $lastId = $log_row->sid;
+            //
+            $typeSlug = 'total_' . strtolower($log_row->query_type);
+            //
+            if (!isset($countFileData['history'][$log_row->created_date])) {
+                $countFileData['history'][$log_row->created_date] = $defaultArray;
+            }
+            //
+            $countFileData['total_queries']++;
+            if (isset($countFileData[$typeSlug])) {
+                $countFileData[$typeSlug]++;
+                $countFileData['history'][$log_row->created_date][$typeSlug]++;
+            }
+            //
+            unset($log_row->sid);
+            //
+            $logurlData[] = $log_row;
+        }
+        //
+        $handler = fopen($countFile, 'w');
+        fwrite($handler, json_encode($countFileData));
+        fclose($handler);
+        //
+        $handler = fopen($logurl, 'w');
+        fwrite($handler, json_encode($logurlData));
+        fclose($handler);
+        //
+        $this->common_model->update_from_log($lastId);
+        //
+        die('All Done');
+    }
+
+    public function log_records_remove($ndays)
+    {
+        //
+        if (!is_numeric($ndays)) {
+            die('Days Are not Numeric');
+        }
+        // Define file paths and names
+        $logurl = APPPATH . "../../logs/automotologs.json";
+        // Check if log file is created
+        if (!is_file($logurl)) {
+            die("No File");
+        }
+        //
+        $handler = fopen($logurl, 'r');
+        $logurlData = json_decode(fread($handler, filesize($logurl)), true);
+        fclose($handler);
+        //
+        if (!$logurlData) {
+            die('No Data');
+        }
+        //
+        $now = date('Y-m-d', strtotime("-{$ndays}days"));
+        //
+        $logurlData = array_filter($logurlData, function ($item) use ($now) {
+            return $item['created_date'] > $now;
+        });
+        //
+        $handler = fopen($logurl, 'w');
+        fwrite($handler, json_encode($logurlData));
+        fclose($handler);
+        die('All Done');
+    }
+
+    public function log_records_filter()
+    {
+        $data['ip'] = $this->input->get('ip', true);
+        $data['benchmark'] = $this->input->get('benchmark', true);
+        $data['date'] = $this->input->get('date', true);
+        $data['limit'] = $this->input->get('limit', true);
+        //
+        header('content-type: application/json');
+        //
+        echo json_encode($this->common_model->get_records_from_log_filter($data));
+        //
+        exit(0);
+    }
 }

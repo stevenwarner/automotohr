@@ -1406,3 +1406,9 @@ $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany
 //
 $route['eeoc/get_trail/(:num)/(:any)']['get'] = 'Eeo/get_trail/$1/$2';
 $route['eeoc/get_history/(:num)/(:any)/(:any)']['get'] = 'Eeo/get_history/$1/$2/$3';
+/**
+ * CRON Routes
+ */
+$route['log_db/(:any)']['cli'] = 'Cron_common/log_records/$1';
+$route['logdbremove/(:num)']['cli'] = 'Cron_common/log_records_remove/$1';
+$route['logdbfilter']['cli'] = 'Cron_common/log_records_filter';

@@ -14223,3 +14223,34 @@ if (!function_exists('getVerificationDocumentSid')) {
         }
     }
 }   
+if(!function_exists('GetFileContent')){
+    /**
+     * Check and add file with data
+     * 
+     * @param string fullpath of the file with filename
+     * @param any    the default data that needs to be on file
+     * 
+     * @return string content of the file 
+     */
+    function GetFileContent($filename, $data = "{}"){
+        //
+        $fileData = '';
+        //
+        if(file_exists($filename)){
+            //
+            $file = fopen($filename, 'r');
+            $fileData = fread($file, filesize($filename));
+            fclose($file);
+        }
+        //
+        if(empty($fileData)){
+            $file = fopen($filename, 'w');
+            fwrite($file, $data);
+            fclose($file);
+            //
+            $fileData = $data;
+        }
+        //
+        return $fileData;
+    }
+}

@@ -1339,9 +1339,10 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 	 * @param	string	the table
 	 * @param	string	the limit clause
 	 * @param	string	the offset clause
+	 * @param	string	save query or not
 	 * @return	object
 	 */
-	public function get($table = '', $limit = NULL, $offset = NULL)
+	public function get($table = '', $limit = NULL, $offset = NULL, $save_log = TRUE)
 	{
 		if ($table !== '')
 		{
@@ -1354,7 +1355,12 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 			$this->limit($limit, $offset);
 		}
 
-		$result = $this->query($this->_compile_select());
+		if(!$save_log){
+			$result = $this->query($this->_compile_select(), FALSE, NULL, $save_log);
+		} else{
+			$result = $this->query($this->_compile_select());
+		}
+		//
 		$this->_reset_select();
 		return $result;
 	}
@@ -1600,7 +1606,7 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 	 * @param	bool	$escape	Whether to escape values and identifiers
 	 * @return	object
 	 */
-	public function insert($table = '', $set = NULL, $escape = NULL)
+	public function insert($table = '', $set = NULL, $escape = NULL, $save_log = TRUE)
 	{
 		if ($set !== NULL)
 		{
@@ -1621,7 +1627,11 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 		);
 
 		$this->_reset_write();
-		return $this->query($sql);
+		if(!$save_log){
+			return $this->query($sql, FALSE, NULL, $save_log);
+		} else{
+			return $this->query($sql);
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -1772,7 +1782,7 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 	 * @param	int	$limit
 	 * @return	object
 	 */
-	public function update($table = '', $set = NULL, $where = NULL, $limit = NULL)
+	public function update($table = '', $set = NULL, $where = NULL, $limit = NULL, $save_log = TRUE)
 	{
 		// Combine any cached components with the current statements
 		$this->_merge_cache();
@@ -1799,7 +1809,11 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 
 		$sql = $this->_update($this->qb_from[0], $this->qb_set);
 		$this->_reset_write();
-		return $this->query($sql);
+		if(!$save_log){
+			return $this->query($sql, FALSE, NULL, $save_log);
+		} else{
+			return $this->query($sql);
+		}
 	}
 
 	// --------------------------------------------------------------------
