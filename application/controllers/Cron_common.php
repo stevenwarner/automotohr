@@ -470,16 +470,13 @@ class Cron_common extends CI_Controller
     public function log_records($verificationToken)
     {
         //
-        /*
-        if($verificationToken != $this->verifyToken){
+        if ($verificationToken != $this->verifyToken) {
             echo "All done!";
             exit(0);
         }
-*/
-
         // Define file paths and names
-        $logurl = APPPATH . "../../logs/automotologs.json";
-        $countFile = APPPATH . "../../logs/automotocount.json";
+        $logurl = APPPATH . "../../app_logs/db_log.json";
+        $countFile = APPPATH . "../../app_logs/db_count_log.json";
         // Define default array for count
         $defaultArray = [
             'total_queries' => 0,
@@ -579,7 +576,7 @@ class Cron_common extends CI_Controller
             die('No Data');
         }
         //
-        $now = date('Y-m-d', strtotime("-{$ndays }days"));
+        $now = date('Y-m-d', strtotime("-{$ndays}days"));
         //
         $logurlData = array_filter($logurlData, function ($item) use ($now) {
             return $item['created_date'] > $now;
