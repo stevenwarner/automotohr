@@ -755,6 +755,8 @@ abstract class CI_DB_driver {
 		// Will we have a result object instantiated? If not - we'll simply return TRUE
 		if ($return_object !== TRUE)
 		{
+			// check if $save_log is set
+			if($save_log) { $this->SaveLogQuery($sql);}
 			// If caching is enabled we'll auto-cleanup any existing files related to this particular URI
 			if ($this->cache_on === TRUE && $this->cache_autodel === TRUE && $this->_cache_init())
 			{
