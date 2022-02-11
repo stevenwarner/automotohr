@@ -61,7 +61,7 @@
                 html +='     </td>';
                 html +='     <td class="col-lg-1 text-center">';
                 //
-                if(single.assign_on != '0000-00-00 00:00:00'){
+                if(single.assign_on && single.assign_on != '0000-00-00 00:00:00'){
                     html +='<i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>';
                     html +='<div class="text-center">';
                     html += single.assign_on;
@@ -72,7 +72,7 @@
                 html +='     </td>';
                 html +='     <td class="col-lg-2 text-center"style="vertical-align: middle">';
                 //
-                if(single.submitted_on != '0000-00-00 00:00:00'){
+                if(single.submitted_on && single.submitted_on != '0000-00-00 00:00:00'){
                     html +='<i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>';
                     html +='<div class="text-center">';
                     html += single.submitted_on;
