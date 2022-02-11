@@ -6373,7 +6373,7 @@ class Hr_documents_management_model extends CI_Model {
             //
             $sid = $this->db->insert_id();
             //
-            keepTrackVerificationDocument($id, $type, 'assign', $sid, 'eeoc', $location);
+            keepTrackVerificationDocument($assign_by_sid, "employee", 'assign', $sid, 'eeoc', $location);
             //
          } else{
             $sid = $b['sid'];

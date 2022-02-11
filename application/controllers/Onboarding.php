@@ -4763,7 +4763,7 @@ class Onboarding extends CI_Controller {
                         }
                         //
                         $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
-                        keepTrackVerificationDocument($user_sid, $user_type, 'assign', $w4_sid, 'w4', 'Setup Panel');
+                        keepTrackVerificationDocument($security_sid, "employee", 'assign', $w4_sid, 'w4', 'Setup Panel');
                         //
                         echo date_format(new DateTime(date('Y-m-d H:i:s')), 'M d Y h:i a');
                         die();
@@ -4772,7 +4772,7 @@ class Onboarding extends CI_Controller {
                         $this->hr_documents_management_model->deactivate_w4_forms($user_type, $user_sid);
                         //
                         $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
-                        keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $w4_sid, 'w4', 'Setup Panel');
+                        keepTrackVerificationDocument($security_sid, "employee", 'revoke', $w4_sid, 'w4', 'Setup Panel');
                         //
                         echo 'removed';
                         die();
@@ -4807,7 +4807,7 @@ class Onboarding extends CI_Controller {
                         }
                         //
                         $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
-                        keepTrackVerificationDocument($user_sid, $user_type, 'assign', $i9_sid, 'i9', 'Setup Panel');
+                        keepTrackVerificationDocument($security_sid, "employee", 'assign', $i9_sid, 'i9', 'Setup Panel');
                         //
                         echo date_format(new DateTime(date('Y-m-d H:i:s')), 'M d Y h:i a');
                         die();
@@ -4816,7 +4816,7 @@ class Onboarding extends CI_Controller {
                         $this->hr_documents_management_model->deactivate_i9_forms($user_type, $user_sid);
                         //
                         $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
-                        keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $i9_sid, 'i9', 'Setup Panel');
+                        keepTrackVerificationDocument($security_sid, "employee", 'revoke', $i9_sid, 'i9', 'Setup Panel');
                         //
                         echo 'removed';
                         die();
@@ -4873,7 +4873,7 @@ class Onboarding extends CI_Controller {
                         }
                         //
                         $w9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w9');
-                        keepTrackVerificationDocument($user_sid, $user_type, 'assign', $w9_sid, 'w9', 'Setup Panel');
+                        keepTrackVerificationDocument($security_sid, "employee", 'assign', $w9_sid, 'w9', 'Setup Panel');
                         //
                         echo date_format(new DateTime(date('Y-m-d H:i:s')), 'M d Y h:i a');
                         die();
@@ -4882,7 +4882,7 @@ class Onboarding extends CI_Controller {
                         $this->hr_documents_management_model->deactivate_w9_forms($user_type, $user_sid);
                         //
                         $w9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w9');
-                        keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $w9_sid, 'w9', 'Setup Panel');
+                        keepTrackVerificationDocument($security_sid, "employee", 'revoke', $w9_sid, 'w9', 'Setup Panel');
                         //
                         echo 'removed';
                         die();
@@ -4979,7 +4979,7 @@ class Onboarding extends CI_Controller {
                         $this->hr_documents_management_model->deactivate_EEOC_forms($user_type, $user_sid);
                         //
                         $eeoc_sid = getVerificationDocumentSid ($user_sid, $user_type, 'eeoc');
-                        keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $eeoc_sid, 'eeoc', 'Setup Panel');
+                        keepTrackVerificationDocument($security_sid, "employee", 'revoke', $eeoc_sid, 'eeoc', 'Setup Panel');
                         //
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
                         //
@@ -4994,7 +4994,7 @@ class Onboarding extends CI_Controller {
                         $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
                         //
                         $eeoc_sid = getVerificationDocumentSid ($user_sid, $user_type, 'eeoc');
-                        keepTrackVerificationDocument($user_sid, $user_type, 'assign', $eeoc_sid, 'eeoc', 'Setup Panel');
+                        keepTrackVerificationDocument($security_sid, "employee", 'assign', $eeoc_sid, 'eeoc', 'Setup Panel');
                         //
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
                         //
