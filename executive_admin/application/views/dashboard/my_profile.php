@@ -75,11 +75,14 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                 <div class="form-group">
-                                    <label for="profile_picture">Profile Picture:</label>
-                                    <div class="choose-file-wrp">
-                                        <input name="profile_picture" id="profile_picture" onchange="check_file_all('profile_picture')" accept="image/*" type="file" class="choose-file">
-                                    </div>
-                                    <?php echo form_error('profile_picture'); ?>
+                                    <label for="profile_picture">Gender:</label>
+                                    <select class="invoice-fields form-control" name="gender">
+                                        <option value="0">Please select gender</option>
+                                        <option value="male" <?php echo $executive_user['gender'] == "male" ? "selected='selected'" : ""; ?>>Male</option>
+                                        <option value="female" <?php echo $executive_user['gender'] == "female" ? "selected='selected'" : ""; ?>>Female</option>
+                                        <option value="female" <?php echo $executive_user['gender'] == "other" ? "selected='selected'" : ""; ?>>Other</option>
+                                    </select>
+                                    <?php echo form_error('gender'); ?>
                                 </div>
                             </div>
                         </div>
@@ -101,12 +104,23 @@
                                             array(
                                                 'name' => 'timezone',
                                                 'id' => 'timezone',
-                                                'class' => 'hr-form-fileds js-timezone',
+                                                'class' => 'form-control hr-form-fileds js-timezone',
                                             )
                                         );  ?>
                                     </div>
                                 </div>
                             <?php } ?>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="profile_picture">Profile Picture:</label>
+                                    <div class="choose-file-wrp">
+                                        <input name="profile_picture" id="profile_picture" onchange="check_file_all('profile_picture')" accept="image/*" type="file" class="choose-file">
+                                    </div>
+                                    <?php echo form_error('profile_picture'); ?>
+                                </div>
+                            </div>
                         </div>
 <!--                        --><?php //if($complynet_status){?>
 <!--                        <div class="row">-->

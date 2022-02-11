@@ -878,6 +878,7 @@ class Companies extends Admin_Controller {
             $admin_data['direct_business_number'] = $this->input->post('direct_business_number');
             $admin_data['job_title'] = $this->input->post('job_title');
             $admin_data['cell_number'] = $this->input->post('cell_number');
+            $admin_data['gender'] = $this->input->post('gender');
             $admin_data['access_level'] = $this->input->post('access_level');
             $admin_data['ip_address'] = getUserIP();
 

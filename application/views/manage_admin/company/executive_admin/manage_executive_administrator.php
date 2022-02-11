@@ -68,6 +68,10 @@
                                                                             <td><?=phonenumber_format($administrator['cell_number']);?></td>
                                                                         </tr>
                                                                         <tr>
+                                                                            <th class="col-xs-3">Gender</th>
+                                                                            <td><?php echo ucfirst($administrator['gender']); ?></td>
+                                                                        </tr>
+                                                                        <tr>
                                                                             <th class="col-xs-3">Password Generated</th>
                                                                             <td><?php if($administrator['password']!=NULL) echo 'Generated' ; else echo 'Not Generated'; ?></td>
                                                                         </tr>
