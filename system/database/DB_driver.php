@@ -643,7 +643,7 @@ abstract class CI_DB_driver {
 				$this->log_array['query_type'] = 'Empty';
 				$this->log_array['query_string'] = 'Empty Query';
 				$this->log_array['error'] = 'Empty';
-				$this->SaveLogQuery($sql);
+				// $this->SaveLogQuery($sql);
 			}
 			log_message('error', 'Invalid query: '.$sql);
 			return ($this->db_debug) ? $this->display_error('db_invalid_query') : FALSE;
@@ -674,7 +674,7 @@ abstract class CI_DB_driver {
 			if (FALSE !== ($cache = $this->CACHE->read($sql)))
 			{
                 // check if $save_log is set
-				if($save_log) { $this->log_array['from_cache'] = 1; $this->SaveLogQuery($sql);}
+				// if($save_log) { $this->log_array['from_cache'] = 1; $this->SaveLogQuery($sql);}
 				// return response
 				return $cache;
 			}
@@ -706,7 +706,7 @@ abstract class CI_DB_driver {
 			// Grab the error now, as we might run some additional queries before displaying the error
 			$error = $this->error();
             // check if $save_log is set
-			if($save_log) { $this->log_array['error'] = $error['message']; $this->SaveLogQuery($sql);}
+			// if($save_log) { $this->log_array['error'] = $error['message']; $this->SaveLogQuery($sql);}
 
 			// Log errors
 			log_message('error', 'Query error: '.$error['message'].' - Invalid query: '.$sql);
@@ -756,7 +756,7 @@ abstract class CI_DB_driver {
 		if ($return_object !== TRUE)
 		{
 			// check if $save_log is set
-			if($save_log) { $this->SaveLogQuery($sql);}
+			// if($save_log) { $this->SaveLogQuery($sql);}
 			// If caching is enabled we'll auto-cleanup any existing files related to this particular URI
 			if ($this->cache_on === TRUE && $this->cache_autodel === TRUE && $this->_cache_init())
 			{
@@ -786,7 +786,7 @@ abstract class CI_DB_driver {
 			$CR->num_rows		= $RES->num_rows();
 
             // check if $save_log is set
-			if($save_log) { $this->SaveLogQuery($sql);}
+			// if($save_log) { $this->SaveLogQuery($sql);}
 
 			// Reset these since cached objects can not utilize resource IDs.
 			$CR->conn_id		= NULL;
@@ -796,7 +796,7 @@ abstract class CI_DB_driver {
 		}
 
         // check if $save_log is set
-        if($save_log) { $this->SaveLogQuery($sql);}
+        // if($save_log) { $this->SaveLogQuery($sql);}
 
 		return $RES;
 	}

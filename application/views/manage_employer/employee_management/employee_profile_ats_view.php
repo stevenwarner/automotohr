@@ -2136,7 +2136,7 @@ $('#edit_button').click(function(event) {
     }, 1000);
 
     //
-    var state_id = <?php echo $employer['Location_State']; ?>;
+    var state_id = "<?=(isset($employer['Location_State'])) ? $employer['Location_State'] : 0; ?>";
     $('#state option[value="'+state_id+'"]').attr('selected', 'selected');
 });
 

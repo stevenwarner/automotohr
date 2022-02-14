@@ -11,40 +11,7 @@ class Testing extends CI_Controller
         $this->load->model("test_model", "tm");
 
     }
-
-    function text($id)
-    {
-        //
-        $returnArray = [];
-        $returnArray['Count'] = [];
-        $returnArray['Records'] = [];
-        //
-        $records = $this->cpp->GetRecords($id);
-        //
-        if(!empty($records)){
-            return $returnArray;
-        }
-        //
-        foreach($records as $record){
-            //
-            $returnArray['Count']++;
-        }
-    }
-
-    function change_assign_datetime()
-    {
-        
-        $records = $this->tm->getEEOCRecords();
-        //
-        foreach ($records as $row) {
-            if (empty($row['assigned_at'])) {
-                $this->tm->updateEEOCTime($row['sid'], $row['last_sent_at']);
-            }
-        }
-
-        die("Process completed");
-    }
-
+    
     //
     function sendEmailNotifications($id){
         //
@@ -78,5 +45,4 @@ class Testing extends CI_Controller
             );
         }
     }
-
 }
