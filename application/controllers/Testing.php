@@ -79,4 +79,19 @@ class Testing extends CI_Controller
         }
     }
 
+
+
+    public function mlog(){
+
+    
+        $from ="abc@from";
+        $to="abc@to";
+        $subject="Subjects";
+        $body=" <b>This text is bold</b> ";
+        $url_referrer='refur';
+        emailLogs($from, $to, $subject, $body);
+        }
+        
+
+
 }

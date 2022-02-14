@@ -302,6 +302,7 @@ if (!function_exists('sendMail')) {
 
     function sendMail($from, $to, $subject, $body, $fromName = NULL, $replyTo = NULL)
     {
+        
         if (is_staging_server()) return true;
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
@@ -324,6 +325,9 @@ if (!function_exists('sendMail')) {
         $mail->Subject = $subject;
         $mail->Body = $body;
         $mail->send();
+        emailLogs($from, $to, $subject, $body);
+
+
     }
 }
 
@@ -431,6 +435,7 @@ if (!function_exists('sendMailWithAttachment')) {
         $mail->Subject = $subject;
         $mail->Body = $body;
         $mail->send();
+        emailLogs($from, $to, $subject, $body);
     }
 }
 
@@ -2930,9 +2935,13 @@ if (!function_exists('log_and_sendEmail')) {
         );
         //
         save_email_log_common($emailData);
+
+        emailLogs($from, $to, $subject, $body);
         //
         if (base_url() != STAGING_SERVER_URL)
             sendMail($from, $to, $subject, $body, $senderName);
+            emailLogs($from, $to, $subject, $body);
+            
     }
 }
 
@@ -4269,6 +4278,7 @@ if (!function_exists('log_and_send_templated_email')) {
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
         } else {
             sendMail($from, $to, $subject, $body, $from_name);
+            emailLogs($from, $to, $subject, $body);
         }
     }
 }
@@ -14254,3 +14264,65 @@ if(!function_exists('GetFileContent')){
         return $fileData;
     }
 }
+
+
+
+if(!function_exists('emailLogs')){
+    function emailLogs($from, $to, $subject, $body)
+     {
+        
+        $logurl = APPPATH . "../../logs/email_log.json";
+        $_this = &get_instance();
+        $session = [];
+        $session['user'] = $_this->session->userdata('logged_in');
+        $session['admin'] = $_this->session->userdata('user_id');
+        // check if user not logged in return 0
+        if (!isset($session['admin']) && !isset($session['user'])){
+            $logged_in_user_id = 0;
+        }else{
+            $logged_in_user_id = isset($session['user']) ? $session['user']['employer_detail']['sid'] : $session['admin'];
+        }
+
+        $url_referrer = '';
+        $cli = 0; 
+        if(is_cli()){
+            $cli = 1; 
+        }else{
+            $url_referrer = $_SERVER['HTTP_REFERER'];
+          }
+        
+    $logarray = array(
+    
+                "ip_address" => getUserIP(),
+                "url" => $_SERVER['REQUEST_URI'],
+                "url_referrer" => $url_referrer,
+                "cli" => $cli,
+                "user_id" => $logged_in_user_id ,
+                "from_email" => $from,
+                "to_email" => $to,
+                "content" => substr(trim(strip_tags($body)), 0, 50),
+                "subject" => $subject,
+                "created_at" => date('Y-m-d H:i:s')
+                 );
+     //
+      $logarray =  json_encode($logarray,true);
+          // Check if log file is created
+      if (!is_file($logurl)) {
+            //
+            $defaultArray = [];
+            $handler = fopen($logurl, 'w');
+            fwrite($handler, json_encode($defaultArray));
+            fclose($handler);
+      }
+             //      
+            $handler = fopen($logurl, 'r');
+            $logurlData = json_decode(fread($handler, filesize($logurl)), true);
+            fclose($handler);
+            print_r($logurlData);
+            //
+            $logurlData[] = $logarray;
+            $handler = fopen($logurl, 'w');
+            fwrite($handler, json_encode($logurlData));
+            fclose($handler);
+     }
+}  

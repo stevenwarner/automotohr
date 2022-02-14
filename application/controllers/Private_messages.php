@@ -443,6 +443,7 @@ class Private_messages extends Public_Controller
 
     public function compose_message()
     {
+        
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $employer_detail = $data['session']['employer_detail'];
@@ -478,6 +479,7 @@ class Private_messages extends Public_Controller
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/compose_message_new');
                 $this->load->view('main/footer');
+              
             } else {
                 $formpost = $this->input->post(NULL, TRUE);
                 $this->load->helper('email');
@@ -552,6 +554,8 @@ class Private_messages extends Public_Controller
                     $emails = explode(',', $formpost['toemail']);
                     $message_date = date('Y-m-d H:i:s');
 
+                   
+
                     foreach ($emails as $email) {
                         if (valid_email(trim($email))) {
                             foreach ($formpost as $key => $value) {
@@ -565,8 +569,9 @@ class Private_messages extends Public_Controller
 
                             $found = 0;
                             $email_result = $this->message_model->get_email_for_record($email, $company_id); //check if the email belongs to any applicant or employee in the company.
-
+                       
                             if (!empty($email_result['employee'])) {
+                             
                                 $found = 1;
                                 $message_data['from_id'] = $employer_id;
                                 $message_data['from_type'] = 'employer';
@@ -611,7 +616,10 @@ class Private_messages extends Public_Controller
                                     $aws->putToBucket($messageFile, $_FILES['message_attachment']['tmp_name'], AWS_S3_BUCKET_NAME);
                                     $message_data['attachment'] = $messageFile;
                                     sendMailWithAttachment($from, $to_email, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
+                               
+                                   
                                 } else {
+                                  
                                     sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
                                 }
 
@@ -619,6 +627,7 @@ class Private_messages extends Public_Controller
                             }
 
                             if (!empty($email_result['applicant'])) {
+                                
                                 $found = 1;
                                 $message_data['from_id'] = $employer_id;
                                 $message_data['from_type'] = 'employer';
@@ -663,8 +672,10 @@ class Private_messages extends Public_Controller
                                     $aws = new AwsSdk();
                                     $aws->putToBucket($messageFile, $_FILES['message_attachment']['tmp_name'], AWS_S3_BUCKET_NAME);
                                     $message_data['attachment'] = $messageFile;
+                                  
                                     sendMailWithAttachment($from, $to_email, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
                                 } else {
+                                   
                                     sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
                                 }
 
