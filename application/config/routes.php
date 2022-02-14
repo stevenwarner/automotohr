@@ -1412,3 +1412,7 @@ $route['eeoc/get_history/(:num)/(:any)/(:any)']['get'] = 'Eeo/get_history/$1/$2/
 $route['log_db/(:any)']['cli'] = 'Cron_common/log_records/$1';
 $route['logdbremove/(:num)']['cli'] = 'Cron_common/log_records_remove/$1';
 $route['logdbfilter']['cli'] = 'Cron_common/log_records_filter';
+
+
+//
+$route['fix_applicants/(:any)']['get'] = "Cron_common/applicant_fixer/$1";

@@ -603,4 +603,80 @@ class Cron_common extends CI_Controller
         //
         exit(0);
     }
+
+    //
+    public function applicant_fixer($date){
+        //
+        $folders = [ 
+            [
+                'folder' => 'autocareers',
+                'link' => 'Auto_careers/add_applicant'
+            ],
+            [
+                'folder' => 'Facebook',
+                'link' => 'Facebook_feed/jobXmlCallback'
+            ],
+            [
+                'folder' => 'indeed',
+                'link' => 'Indeed_feed/indeedPostUrl'
+            ],
+            [
+                'folder' => 'zipRecruiter',
+                'link' => 'Zip_recruiter_organic/zipPostUrl'
+            ]
+        ];
+        //
+        foreach($folders as $folder){
+            //
+            $this->putBackApplicants(
+                $date,
+                $folder['folder'],
+                $folder['link']
+            );
+            //
+            usleep(1);
+        }
+        //
+        die ('All Done');
+    }
+
+    //
+    private function putBackApplicants($date, $folder, $link){
+        //
+        $file_path = APPPATH.'../../applicant/'.($folder).'/';
+        //
+        $files = scandir($file_path, 1);
+        //
+        foreach($files as $file){
+            //
+            if(!preg_match("/$date/", $file)){
+                continue;
+            }
+            //
+            $content = file_get_contents($file_path.$file);
+            //
+            $curl = curl_init();
+            //
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://www.automotohr.com/'.$link,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => $content,
+                CURLOPT_HTTPHEADER => array(
+                  'Content-Type: application/json',
+                ),
+            ));
+            //
+            curl_exec($curl);
+            //
+            curl_close($curl);
+            //
+            sleep(1);
+        }
+    }
 }
