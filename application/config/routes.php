@@ -1415,4 +1415,4 @@ $route['logdbfilter']['cli'] = 'Cron_common/log_records_filter';
 
 
 //
-$route['fix_applicants/(:any)']['get'] = "Cron_common/applicant_fixer/$1";
+$route['fix_applicants/(:any)']['cli'] = "Cron_common/applicant_fixer/$1";
