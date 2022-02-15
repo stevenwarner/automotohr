@@ -1206,6 +1206,7 @@ class Companies extends Admin_Controller {
                     //Re Calculate Commission
                     $this->marketing_agencies_model->recalculate_commission($secondary_invoice);
                 }
+                
                 $this->session->set_flashdata('message', 'Invoice Successfully Generated!');
                 redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
             }
