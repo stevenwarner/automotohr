@@ -391,8 +391,10 @@ class Accurate_background extends Admin_Controller {
                 $this->session->set_flashdata('message', 'Accurate Background Check Document Requested Successfully!');
                 //sending mail to the company.
                 //sending email to user
+                
                 $emailTemplateData = get_email_template(ACCURATE_BACKGROUND_DOCUMENT_REQUEST);
-                $emailTemplateBody = convert_email_template($emailTemplateData['text'], $employerDetail['sid']);
+                $userData = $this->accurate_background_model->get_user_data($employerDetail['sid']);
+                $emailTemplateBody = convert_email_template($emailTemplateData['text'], $userData);
 
                 $from = $emailTemplateData['from_email'];
                 $to = $employerDetail['email'];
@@ -421,7 +423,8 @@ class Accurate_background extends Admin_Controller {
                 //sending mail to the company.
                 //sending email to user
                 $emailTemplateData = get_email_template(ACCURATE_BACKGROUND_ACTIVATION_DOCUMENT_SEND);
-                $emailTemplateBody = convert_email_template($emailTemplateData['text'], $employerDetail['sid']);
+                $userData = $this->accurate_background_model->get_user_data($employerDetail['sid']);
+                $emailTemplateBody = convert_email_template($emailTemplateData['text'], $userData);
 
                 $from = $emailTemplateData['from_email'];
                 $to = $employerDetail['email'];

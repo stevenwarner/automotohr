@@ -399,16 +399,20 @@ class Govt_user extends Public_Controller {
     private function sendEmail($post, $ses){
         $encrypted_company_id = str_replace('/', '$slash$', $this->encryption->encrypt( $ses['company_detail']['sid'] ) );
         // Fetch goverment email template
-        $company_name = $ses['company_detail']['CompanyName'];
+        $parent_sid = $ses['company_detail']['sid'];
         //
         $template = get_email_template(GOVERMENT_EMAIL_TEMPLATE_SID);
         //
-        $subject = str_replace(['{{company_name}}'], [$company_name], $template['subject']);
-        $message = str_replace(
-            ['{{company_name}}', '{{username}}', '{{password}}', '{{login_button}}'],
-            [$company_name, $post['username'], $post['password'], '<a href="'.( base_url('govt_login/'.$encrypted_company_id)).'" style=" text-decoration: none; background-color: #81b431; color: #ffffff; padding: 10px ; margin: 10px; font-size: 16px; border-radius: 3px;">Click to login</a>'],
-            $template['text']
-        );
+        $replacement_array = array();
+        $replacement_array['parent_sid'] = $parent_sid;
+        $replacement_array['username'] = $post['username'];
+        $replacement_array['password'] = $post['password'];
+        $replacement_array['password_encrypt'] = "no";
+        $replacement_array['login_button'] = '<a href="'.( base_url('govt_login/'.$encrypted_company_id)).'" style=" text-decoration: none; background-color: #81b431; color: #ffffff; padding: 10px ; margin: 10px; font-size: 16px; border-radius: 3px;">Click to login</a>';
+        //
+        $subject = convert_email_template($template['subject'], $replacement_array);
+        $message = convert_email_template($template['text'], $replacement_array);
+        //
         log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $post['email'], $subject, $message, $post['username']);
         $this->db->insert('govt_users_email_history', [
             'govt_user_id' => $post['sid'],

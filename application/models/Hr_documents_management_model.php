@@ -226,6 +226,8 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->select('verification_key');
         $this->db->select('employee_status');
         $this->db->select('employee_type');
+        $this->db->select('employer_sid AS parent_sid');
+        $this->db->select('desired_job_title AS job_title');
         $this->db->where('employer_sid', $company_sid);
         $this->db->where('sid', $applicant_sid);
 
@@ -5236,9 +5238,15 @@ class Hr_documents_management_model extends CI_Model {
         $companySid
     ){
         //
+        $columns = 'first_name, last_name, email, parent_sid, job_title';
+        //
+        if($userType == 'applicant'){
+            $columns = 'first_name, last_name, email, employer_sid AS parent_sid, desired_job_title AS job_title';
+        }
+        //
         $a = 
         $this->db
-        ->select('first_name, last_name, email')
+        ->select($columns)
         ->where('sid', $userSid)
         ->where($userType == 'employee' ? 'parent_sid' : 'employer_sid', $companySid)
         ->get($userType == 'employee' ? 'users' : 'portal_job_applications');
@@ -6390,7 +6398,7 @@ class Hr_documents_management_model extends CI_Model {
     function getEmployeeInfo($id){
         $a = 
         $this->db
-        ->select('first_name, last_name, email')
+        ->select('first_name, last_name, email, parent_sid, job_title')
         ->where('sid', $id)
         ->where('active', 1)
         ->where('terminated_status', 0)
@@ -6407,7 +6415,7 @@ class Hr_documents_management_model extends CI_Model {
     function getApplicantInfo($id){
         $a = 
         $this->db
-        ->select('first_name, last_name, email')
+        ->select('first_name, last_name, email, employer_sid AS parent_sid, desired_job_title AS job_title')
         ->where('sid', $id)
         ->get('portal_job_applications');
         //

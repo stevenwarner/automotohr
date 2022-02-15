@@ -8827,8 +8827,6 @@ class Hr_documents_management extends Public_Controller {
                         // Set email content
                         $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
                         //
-                        $content = $template['text'];
-                        //
                         $this->load->library('encryption', 'encrypt');
                         //
                         $time = strtotime('+10 days');
@@ -8838,18 +8836,13 @@ class Hr_documents_management extends Public_Controller {
                         $encryptedKey = $this->encrypt->encode($insertId.'/'.$post['userSid'].'/'.$post['userType'].'/'.$time.'/'.$type);
                         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
                         //
-                        replace([
-                            '{{company_name}}' => $company_name,
-                            '{{applicant_name}}' => $userInfoE['first_name'].' '.$userInfoE['last_name'],
-                            '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( ucwords(preg_replace('/_/', ' ', $post['documentType'])) ).'</a>',
-                        ], $content);
+                        $userInfoE["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( ucwords(preg_replace('/_/', ' ', $post['documentType'])) ).'</a>';
                         //
-                        replace([
-                            '{{company_name}}' => $company_name
-                        ], $template['subject']);
+                        $subject = convert_email_template($template['subject'], $userInfoE);
+                        $message = convert_email_template($template['text'], $userInfoE);
                         //
                         $body = $hf['header'];
-                        $body .= $content;
+                        $body .= $message;
                         $body .= $hf['footer'];
                         //
                         $this->hr_documents_management_model
@@ -8861,7 +8854,7 @@ class Hr_documents_management extends Public_Controller {
                         log_and_sendEmail(
                             FROM_EMAIL_NOTIFICATIONS,
                             $userInfoE['email'],
-                            $template['subject'],
+                            $subject,
                             $body,
                             $company_name
                         );
@@ -9654,8 +9647,6 @@ class Hr_documents_management extends Public_Controller {
                             // Set email content
                             $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
                             //
-                            $content = $template['text'];
-                            //
                             $this->load->library('encryption', 'encrypt');
                             //
                             $time = strtotime('+10 days');
@@ -9663,18 +9654,13 @@ class Hr_documents_management extends Public_Controller {
                             $encryptedKey = $this->encrypt->encode($assignInsertId.'/'.$user_info['sid'].'/applicant/'.$time);
                             $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
                             //
-                            replace([
-                                '{{company_name}}' => $data['session']['company_detail']['CompanyName'],
-                                '{{applicant_name}}' => trim($user_info['first_name'].' '.$user_info['last_name']),
-                                '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $a['document_title'] ).'</a>',
-                            ], $content);
+                            $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $a['document_title'] ).'</a>';
                             //
-                            replace([
-                                '{{company_name}}' => $data['session']['company_detail']['CompanyName']
-                            ], $template['subject']);
+                            $message = convert_email_template($template['text'], $user_info);
+                            $subject = convert_email_template($template['subject'], $user_info);
                             //
                             $body = $hf['header'];
-                            $body .= $content;
+                            $body .= $message;
                             $body .= $hf['footer'];
                             //
                             $this->hr_documents_management_model
@@ -9686,7 +9672,7 @@ class Hr_documents_management extends Public_Controller {
                             log_and_sendEmail(
                                 FROM_EMAIL_NOTIFICATIONS,
                                 $user_info['email'],
-                                $template['subject'],
+                                $subject,
                                 $body,
                                 $data['session']['company_detail']['CompanyName']
                             );
@@ -10295,8 +10281,6 @@ class Hr_documents_management extends Public_Controller {
                     // Set email content
                     $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
                     //
-                    $content = $template['text'];
-                    //
                     $this->load->library('encryption', 'encrypt');
                     //
                     $time = strtotime('+10 days');
@@ -10304,18 +10288,13 @@ class Hr_documents_management extends Public_Controller {
                     $encryptedKey = $this->encrypt->encode($assignInsertId.'/'.$user_info['sid'].'/applicant/'.$time);
                     $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
                     //
-                    replace([
-                        '{{company_name}}' => $post['CompanyName'],
-                        '{{applicant_name}}' => trim($user_info['first_name'].' '.$user_info['last_name']),
-                        '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $post['documentTitle'] ).'</a>',
-                    ], $content);
+                    $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $post['documentTitle'] ).'</a>';
                     //
-                    replace([
-                        '{{company_name}}' => $post['CompanyName']
-                    ], $template['subject']);
+                    $subject = convert_email_template($template['subject'], $user_info);
+                    $message = convert_email_template($template['text'], $user_info);
                     //
                     $body = $hf['header'];
-                    $body .= $content;
+                    $body .= $message;
                     $body .= $hf['footer'];
                     //
                     $this->hr_documents_management_model
@@ -10327,7 +10306,7 @@ class Hr_documents_management extends Public_Controller {
                     log_and_sendEmail(
                         FROM_EMAIL_NOTIFICATIONS,
                         $user_info['email'],
-                        $template['subject'],
+                        $subject,
                         $body,
                         $post['CompanyName']
                     );
@@ -10923,8 +10902,6 @@ class Hr_documents_management extends Public_Controller {
         // Set email content
         $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
         //
-        $content = $template['text'];
-        //
         $this->load->library('encryption', 'encrypt');
         //
         $time = strtotime('+10 days');
@@ -10932,18 +10909,19 @@ class Hr_documents_management extends Public_Controller {
         $encryptedKey = $this->encrypt->encode($post['assignedDocumentSid'].'/'.$document['user_sid'].'/'.$document['user_type'].'/'.$time);
         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
         //
-        replace([
-            '{{company_name}}' => $data['company_detail']['CompanyName'],
-            '{{applicant_name}}' => $document['user']['first_name'].' '.$document['user']['last_name'],
-            '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $document['document_title'] ).'</a>',
-        ], $content);
+        $user_info = $this->hr_documents_management_model->getUserData(
+            $document['user_sid'],
+            $document['user_type'],
+            $data['company_detail']['sid']
+        );
         //
-        replace([
-            '{{company_name}}' => $data['company_detail']['CompanyName']
-        ], $template['subject']);
+        $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $document['document_title'] ).'</a>';
+        //
+        $subject = convert_email_template($template['subject'], $user_info);
+        $message = convert_email_template($template['text'], $user_info);
         //
         $body = $hf['header'];
-        $body .= $content;
+        $body .= $message;
         $body .= $hf['footer'];
         //
         $this->hr_documents_management_model
@@ -10955,7 +10933,7 @@ class Hr_documents_management extends Public_Controller {
         log_and_sendEmail(
             FROM_EMAIL_NOTIFICATIONS,
             $document['user']['email'],
-            $template['subject'],
+            $subject,
             $body,
             $data['company_detail']['CompanyName']
         );
@@ -11724,26 +11702,19 @@ class Hr_documents_management extends Public_Controller {
         //
         $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
         //
-        $content = $template['text'];
+        $info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('eeoc_form/'.( $token ).'') ).'">EEOC Form</a>';
         //
-        replace([
-            '{{applicant_name}}' => $info['first_name'].' '.$info['last_name'],
-            '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('eeoc_form/'.( $token ).'') ).'">EEOC Form</a>',
-            '{{company_name}}' => $this->session->userdata('logged_in')['company_detail']['CompanyName']
-        ], $content);
-        //
-        replace([
-            '{{company_name}}' => $this->session->userdata('logged_in')['company_detail']['CompanyName']
-        ], $template['subject']);
+        $subject = convert_email_template($template['subject'], $info);
+        $message = convert_email_template($template['text'], $info);
         //
         $body = $hf['header'];
-        $body .= $content;
+        $body .= $message;
         $body .= $hf['footer'];
         //
         log_and_sendEmail(
             FROM_EMAIL_NOTIFICATIONS,
             $info['email'],
-            $template['subject'],
+            $subject,
             $body,
             $this->session->userdata('logged_in')['company_detail']['CompanyName']
         );

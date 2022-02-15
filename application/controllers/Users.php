@@ -329,7 +329,8 @@ class Users extends CI_Controller
                 $this->session->set_flashdata('message', 'Check Your Email and follow link to Reset Your password.');
                 //sending email to user
                 $emailTemplateData = get_email_template(PASSWORD_RECOVERY);
-                $emailTemplateBody = convert_email_template($emailTemplateData['text'], $user_data["sid"]);
+                //
+                $emailTemplateBody = convert_email_template($emailTemplateData['text'], $user_data);
                 $from = $emailTemplateData['from_email'];
                 $to = $email;
                 $subject = $emailTemplateData['subject'];
@@ -449,7 +450,8 @@ class Users extends CI_Controller
                 $this->users_model->reset_key($user);
                 $user_data = $this->users_model->username_user_data($user);
                 $emailTemplateData = get_email_template(PASSWORD_CHANGE);
-                $emailTemplateBody = convert_email_template($emailTemplateData['text'], $user_data["sid"]);
+                //
+                $emailTemplateBody = convert_email_template($emailTemplateData['text'], $user_data);
                 $from = $emailTemplateData['from_email'];
                 $to = $user_data['email'];
                 $subject = $emailTemplateData['subject'];

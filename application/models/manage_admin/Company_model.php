@@ -2443,4 +2443,15 @@ class Company_model extends CI_Model {
             $this->db->insert('terminated_employees',$data_to_insert);
         }
     }
+
+    function get_user_data($sid) {
+        $this->db->select('*');
+        $this->db->from('users');
+        $this->db->where('sid', $sid);
+        $query_result = $this->db->get();
+        
+        if ($query_result->num_rows() > 0) {
+            return $row = $query_result->row_array();
+        }
+    }
 }

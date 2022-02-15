@@ -138,8 +138,6 @@ class Common_ajax extends Public_Controller{
         // Set email content
         $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
         //
-        $content = $template['text'];
-        //
         $this->load->library('encryption', 'encrypt');
         //
         $time = strtotime('+10 days');
@@ -147,17 +145,14 @@ class Common_ajax extends Public_Controller{
         $encryptedKey = $this->encrypt->encode($insertId.'/'.$user_id.'/'.$user_type.'/'.$time.'/'.$type);
         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
         //
-        replace([
-            '{{applicant_name}}' => ucwords($user_detail['first_name'].' '.$user_detail['last_name']),
-            '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( ucwords(preg_replace('/_/', ' ', $type)) ).'</a>',
-        ], $content);
+        $user_detail['link'] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( ucwords(preg_replace('/_/', ' ', $type)) ).'</a>';
         //
-        replace([
-            '{{company_name}}' => $company_name
-        ], $template['subject']);
+        $emailTemplateBody = convert_email_template($template['text'], $user_detail);
+        //
+        $emailTemplateSubject = convert_email_template($template['subject'], $user_detail);
         //
         $body = $email_hf['header'];
-        $body .= $content;
+        $body .= $emailTemplateBody;
         $body .= $email_hf['footer'];
         //
         $this->hr_documents_management_model
@@ -169,7 +164,7 @@ class Common_ajax extends Public_Controller{
         log_and_sendEmail(
             FROM_EMAIL_NOTIFICATIONS,
             $user_detail['email'],
-            $template['subject'],
+            $emailTemplateSubject,
             $body,
             $company_name
         );
