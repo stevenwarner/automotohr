@@ -1435,8 +1435,6 @@ if (!function_exists('get_sms_template')) {
 }
 
 if (!function_exists('convert_email_template')) {
-
-    // function convert_email_template($emailTemplateBody, $employer_sid = NULL, $replacement_array = array())
     function convert_email_template($emailTemplateBody, $replacement_array = array())
     {
         // $CI = &get_instance();
