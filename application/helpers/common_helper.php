@@ -4294,13 +4294,20 @@ if (!function_exists('update_from_table')) {
 
 if (!function_exists('log_and_send_templated_email')) {
 
-    function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1)
+    function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1, $extra_user_info = array())
     {
         if (empty($to) || $to == NULL) return 0;
         $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
         $emailTemplateSubject = $emailTemplateData['subject'];
         $emailTemplateFromName = $emailTemplateData['from_name'];
+
+        if (!empty($extra_user_info)) {
+            $user_info = get_user_required_info($extra_user_info["user_sid"], $extra_user_info["user_type"]);
+            //
+            $emailTemplateSubject = convert_email_template($emailTemplateSubject, $user_info);
+            $emailTemplateBody = convert_email_template($emailTemplateBody, $user_info);
+        }
 
         if (!empty($replacement_array)) {
             foreach ($replacement_array as $key => $value) {
@@ -4310,6 +4317,8 @@ if (!function_exists('log_and_send_templated_email')) {
                 $emailTemplateFromName = str_replace('{{' . $key . '}}', $value, $emailTemplateFromName);
             }
         }
+
+        
 
 
         $from = $emailTemplateData['from_email'];
@@ -4334,6 +4343,29 @@ if (!function_exists('log_and_send_templated_email')) {
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
         } else {
             sendMail($from, $to, $subject, $body, $from_name);
+        }
+    }
+}
+
+if (!function_exists('get_user_required_info')) {
+    function get_user_required_info ($user_sid, $user_type) {
+        $columns = 'first_name, last_name, email, parent_sid, job_title';
+        $table_name = 'users';
+        //
+        if($userType == 'applicant'){
+            $columns = 'first_name, last_name, email, employer_sid AS parent_sid, desired_job_title AS job_title';
+            $table_name = 'portal_job_applications';
+        }
+        //
+        $CI = &get_instance();
+        $CI->db->select($columns);
+        $CI->db->where('sid', $user_sid);
+        $result = $CI->db->get($table_name)->row_array();
+        //
+        if (!empty($result)) {
+            return $result;
+        } else {
+            return array();
         }
     }
 }

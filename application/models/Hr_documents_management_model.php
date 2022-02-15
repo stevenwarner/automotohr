@@ -5850,7 +5850,11 @@ class Hr_documents_management_model extends CI_Model {
             $replacement_array['baseurl'] = base_url();
             $replacement_array['url'] = base_url('hr_documents_management/my_documents');
             //
-            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+            $user_extra_info = array();
+            $user_extra_info['user_sid'] = $document['user_sid'];
+            $user_extra_info['user_type'] = $document['user_type'];
+            //
+            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
         }
     }
 

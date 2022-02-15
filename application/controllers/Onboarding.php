@@ -868,13 +868,11 @@ class Onboarding extends CI_Controller {
         $company_sid = $company_info['sid'];
         //
         $assign_managers = $this->hr_documents_management_model->getAllAuthorizedAssignManagers($company_sid, $document_sid);
-
-        $employee_name = getUserNameBySID($employer_sid);
-
+        //
         $email_template_id = $this->hr_documents_management_model->getAuthorizedManagerTemplate('Authorized Manager Notification');
-
+        //
         $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('view_assigned_authorized_document/' . $document_sid) . '">Assign Authorized Document</a>';
-
+        //
         if (!empty($assign_managers)) {
             foreach ($assign_managers as $manager) {
                 $replacement_array['first_name'] = $manager['first_name'];
@@ -884,8 +882,12 @@ class Onboarding extends CI_Controller {
                 $to_email = $manager['email'];
 
                 $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
-
-                log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
+                //
+                $user_extra_info = array();
+                $user_extra_info['user_sid'] = $applicant_sid;
+                $user_extra_info['user_type'] = "applicant";
+                //
+                log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
             }
         }
     }
@@ -7160,7 +7162,12 @@ class Onboarding extends CI_Controller {
         $replacement_array['company_name'] = $company_name;
         $replacement_array['applicant_name'] = $applicant_name;
         $replacement_array['onboarding_portal_link'] = $onboarding_portal_link;
-        log_and_send_templated_email(APPLICANT_ONBOARDING_WELCOME, $applicant_email, $replacement_array, message_header_footer_domain($company_sid, $company_name));
+        //
+        $user_extra_info = array();
+        $user_extra_info['user_sid'] = $user_sid;
+        $user_extra_info['user_type'] = "applicant";
+        //
+        log_and_send_templated_email(APPLICANT_ONBOARDING_WELCOME, $applicant_email, $replacement_array, message_header_footer_domain($company_sid, $company_name), 1, $user_extra_info);
         $sent_date = date('Y-m-d H:i:s');
         $this->onboarding_model->update_emailSent_date($unique_sid,array('email_sent_date' => $sent_date));
         print_r('A Notification email has been sent at '.date('m-d-Y h:i:s A',strtotime($sent_date)));
@@ -9112,7 +9119,12 @@ class Onboarding extends CI_Controller {
         $replacement_array['company_name'] = $company_name;
         $replacement_array['applicant_name'] = $applicant_name;
         $replacement_array['onboarding_portal_link'] = $onboarding_portal_link;
-        log_and_send_templated_email(APPLICANT_ONBOARDING_WELCOME, $applicant_email, $replacement_array, message_header_footer_domain($company_sid, $company_name));
+        //
+        $user_extra_info = array();
+        $user_extra_info['user_sid'] = $user_sid;
+        $user_extra_info['user_type'] = "applicant";
+        //
+        log_and_send_templated_email(APPLICANT_ONBOARDING_WELCOME, $applicant_email, $replacement_array, message_header_footer_domain($company_sid, $company_name), 1, $user_extra_info);
     }
 
     public function print_form_w4($unique_sid) {

@@ -308,7 +308,12 @@ class Hr_documents_management extends Public_Controller {
                                                     );
                                                 }
                                             }
-                                            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                                            //
+                                            $user_extra_info = array();
+                                            $user_extra_info['user_sid'] = $emp;
+                                            $user_extra_info['user_type'] = "employee";
+                                            //
+                                            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                                             $this->hr_documents_management_model->update_employee($emp, array('document_sent_on' => date('Y-m-d H:i:s')));
                                         }
                                         
@@ -1924,7 +1929,12 @@ class Hr_documents_management extends Public_Controller {
                                     $is_manual = get_document_type($assignment_sid);
                                     //
                                     if ($is_manual == 'no') {
-                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                        //
+                                        $user_extra_info = array();                                                  
+                                        $user_extra_info['user_sid'] = $user_sid;
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
 
                                         $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                     }
@@ -2087,7 +2097,12 @@ class Hr_documents_management extends Public_Controller {
                                             );
                                         }
                                     }
-                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                    //
+                                    $user_extra_info = array();
+                                    $user_extra_info['user_sid'] = $user_sid;
+                                    $user_extra_info['user_type'] = $user_type;
+                                    //
+                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
                                     $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                 }
                             }
@@ -2230,7 +2245,12 @@ class Hr_documents_management extends Public_Controller {
                                             );
                                         }
                                     }
-                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                    //
+                                    $user_extra_info = array();
+                                    $user_extra_info['user_sid'] = $user_sid;
+                                    $user_extra_info['user_type'] = $user_type;
+                                    //
+                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
                                     $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                 }
                             }
@@ -2351,7 +2371,12 @@ class Hr_documents_management extends Public_Controller {
                                             );
                                         }
                                     }
-                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                    //
+                                    $user_extra_info = array();
+                                    $user_extra_info['user_sid'] = $user_sid;
+                                    $user_extra_info['user_type'] = $user_type;
+                                    //
+                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
                                     $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                 }
 
@@ -2677,8 +2702,12 @@ class Hr_documents_management extends Public_Controller {
                                                 );
                                             }
                                         }
-
-                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                        //
+                                        $user_extra_info = array();
+                                        $user_extra_info['user_sid'] = $user_sid;
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1,$user_extra_info);
                                         $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                     }    
 
@@ -4131,7 +4160,12 @@ class Hr_documents_management extends Public_Controller {
                 $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
                 $replacement_array['company_name']  = ucwords($session['company_detail']['CompanyName']);
                 $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-                log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf);
+                //
+                $user_extra_info = array();
+                $user_extra_info['user_sid'] = $v;
+                $user_extra_info['user_type'] = "employee";
+                //
+                log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
             }
             //
             echo 'success';
@@ -5382,8 +5416,12 @@ class Hr_documents_management extends Public_Controller {
                                         $to_email = $manager['email'];
 
                                         $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
-
-                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
+                                        //
+                                        $user_extra_info = array();
+                                        $user_extra_info['user_sid'] = $user_sid;
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
                                     }
                                 }
                             }
@@ -5454,8 +5492,12 @@ class Hr_documents_management extends Public_Controller {
                                         $to_email = $manager['email'];
 
                                         $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
-
-                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
+                                        //
+                                        $user_extra_info = array();
+                                        $user_extra_info['user_sid'] = $user_sid;
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
                                     }
                                 }
                             }
@@ -5539,8 +5581,12 @@ class Hr_documents_management extends Public_Controller {
                                         $to_email = $manager['email'];
 
                                         $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
-
-                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
+                                        //
+                                        $user_extra_info = array();
+                                        $user_extra_info['user_sid'] = $user_sid;
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
                                     }
                                 }
                             }
@@ -8608,7 +8654,12 @@ class Hr_documents_management extends Public_Controller {
                                         );
                                     }
                                 }
-                                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                                //
+                                $user_extra_info = array();
+                                $user_extra_info['user_sid'] = $emp;
+                                $user_extra_info['user_type'] = $user_type;
+                                //
+                                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                                 $this->hr_documents_management_model->update_employee($emp, array('document_sent_on' => date('Y-m-d H:i:s')));
                             }
                             break;
@@ -8821,7 +8872,11 @@ class Hr_documents_management extends Public_Controller {
                         //
                         $this->hr_documents_management_model->update_employee($post['userSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
                         //
-                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $userInfoE['email'], $replacement_array, $hf);
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $post['userSid'];
+                        $user_extra_info['user_type'] = $post['userType'];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $userInfoE['email'], $replacement_array, $hf, 1, $user_extra_info);
                     } else {
                         // Send single document emails to applicant
                         // Set email content
@@ -9267,7 +9322,14 @@ class Hr_documents_management extends Public_Controller {
                     //
                     $is_manual = get_document_type($assignInsertId);
                     //
-                    if(sizeof($replacement_array) && $is_manual == 'no') log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                    if(sizeof($replacement_array) && $is_manual == 'no') {
+                        //
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                        $user_extra_info['user_type'] = $post['Type'];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                    }
                 }
 
                 // Check if it's Authorize document
@@ -9639,7 +9701,14 @@ class Hr_documents_management extends Public_Controller {
                             //
                             $is_manual = get_document_type($assignInsertId);
                             //
-                            if(sizeof($replacement_array) && $is_manual == 'no') log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                            if(sizeof($replacement_array) && $is_manual == 'no') {
+                                //
+                                $user_extra_info = array();
+                                $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                                $user_extra_info['user_type'] = $user_type;
+                                //
+                                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                            }    
                         break;
 
                         case 'applicant':
@@ -9949,7 +10018,14 @@ class Hr_documents_management extends Public_Controller {
                     //
                     $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
                     //
-                    if(sizeof($replacement_array)) log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                    if(sizeof($replacement_array)) {
+                        //
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                        $user_extra_info['user_type'] = $post['Type'];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                    }    
                 break;
 
                 case 'applicant':
@@ -9971,7 +10047,14 @@ class Hr_documents_management extends Public_Controller {
                         $time,
                         $assignInsertId
                     );
-                    if(sizeof($replacement_array)) log_and_send_templated_email(HR_DOCUMENTS_FOR_APPLICANT, $user_info['email'], $replacement_array, $hf);
+                    if(sizeof($replacement_array)) {
+                        //
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                        $user_extra_info['user_type'] = $post['Type'];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_FOR_APPLICANT, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                    }    
                 break;
             }
             //
@@ -10273,7 +10356,14 @@ class Hr_documents_management extends Public_Controller {
                     //
                     $is_manual = get_document_type($assignInsertId);
                     //
-                    if(sizeof($replacement_array) && $is_manual == 'no') log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                    if(sizeof($replacement_array) && $is_manual == 'no') {
+                        //
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                        $user_extra_info['user_type'] = $post['Type'];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                    }    
                 break;
 
                 case 'applicant':
