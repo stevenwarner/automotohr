@@ -786,9 +786,10 @@ abstract class CI_DB_driver {
 			$CR->num_rows		= $RES->num_rows();
 
             // check if $save_log is set
+			
 			if($save_log) { $this->SaveLogQuery($sql);}
-
-			// Reset these since cached objects can not utilize resource IDs.
+           			
+		   // Reset these since cached objects can not utilize resource IDs.
 			$CR->conn_id		= NULL;
 			$CR->result_id		= NULL;
 
@@ -796,12 +797,24 @@ abstract class CI_DB_driver {
 		}
 
         // check if $save_log is set
+		
         if($save_log) { $this->SaveLogQuery($sql);}
-
+		
 		return $RES;
 	}
 
 	private function SaveLogQuery($sql){
+		
+		$creds = getCreds();
+		$logurl = $creds->dblog;
+		
+		if(!is_file($logurl)){
+            //
+            $handler = fopen($logurl, 'w');
+            fwrite($handler, '');
+            fclose($handler);
+        }
+			
 		// check query type
 		if (preg_match("/select /i", $sql)){
 			$query_type = 'SELECT';
@@ -816,9 +829,15 @@ abstract class CI_DB_driver {
         $this->log_array['query_string'] = addslashes($sql);
         $this->log_array['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
 		// make query for log entry
-		$query = 'INSERT INTO '.$this->table.' ('.implode(', ', array_keys($this->log_array)).') VALUES ("'.implode('","',array_values($this->log_array)).'")';
+	  	$query = 'INSERT INTO '.$this->table.' ('.implode(', ', array_keys($this->log_array)).') VALUES ("'.implode('","',array_values($this->log_array)).'")';
 		// call the query function
-		$this->query($query, true, NULL, false);
+		$logurlData = $this->log_array['query_type']." ".$this->log_array['ip']." ". trim(preg_replace('~[\r\n]+~', ' ', $this->log_array['query_string'])) . " ". $this->log_array['login_user_id']." " . $this->log_array['from_cache'] . " " . $this->log_array['start_time']." ". $this->log_array['end_time']. " " . $this->log_array['benchmark']. " " .$this->log_array['created_at']." ".$this->log_array['result']. " ".date('Y-m-d');
+		
+		$myfile = fopen($logurl, "a"); 
+		fwrite($myfile, "\n".$logurlData);
+		fclose($myfile);
+
+   		//$this->query($query, true, NULL, false);
 	}
 
 	// --------------------------------------------------------------------
