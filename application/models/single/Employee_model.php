@@ -185,4 +185,26 @@ class Employee_model extends CI_Model{
         //
         return $records;
     }
+
+
+    /**
+     * 
+     */
+    function GetEmployeeDetailWithPayroll(
+        $employeeId, 
+        $columns = '*'
+    ){
+        $query = 
+        $this->db
+        ->select($columns)
+        ->join('payroll_employee_address', 'users.sid = payroll_employee_address.employee_sid', 'left')
+        ->where("{$this->U}.sid", $employeeId)
+        ->get($this->U);
+        //
+        $record = $query->row_array();
+        //
+        $query = $query->free_result();
+        //
+        return $record;
+    }
 }

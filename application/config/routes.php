@@ -1447,3 +1447,10 @@ $route['get_payroll_page/(:any)'] = 'payroll/Payroll_ajax/GetPage/$1';
 $route['get_payroll_page/(:any)/(:num)'] = 'payroll/Payroll_ajax/GetPage/$1/$2';
 //
 $route['save_payroll_admin/(:num)'] = 'payroll/Payroll_ajax/SaveAdmin/$1';
+
+
+/**
+ * 
+ */
+$route['payroll/onboard_company/(:num)']['post'] = "payroll/Payroll_onboard/OnboardCompany/$1";
+$route['payroll/onboard_employee/(:num)']['post'] = "payroll/Payroll_onboard/OnboardEmployee/$1";

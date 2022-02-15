@@ -24,7 +24,7 @@
                                         >
                                             <?php echo $companyPayrollStatus==0 ? "Activate" : "Deactivate" ?>
                                         </button>
-                                        <?php if(!$companyPayrollStatus): ?>
+                                        <?php if(!$company_info['gusto_company_uid']): ?>
                                         <button class="btn btn-success jsSetSSN">
                                             Update EIN Number
                                         </button>
@@ -47,6 +47,9 @@
                                                 Start Onboarding Process
                                             </button>
                                         <?php } ?>
+                                        <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
+                                                Start Onboarding Process t
+                                            </button>
                                         </div>
                                     </div>
                                     <!-- Email Logs Start -->

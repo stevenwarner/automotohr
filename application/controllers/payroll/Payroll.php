@@ -39,6 +39,10 @@ class Payroll extends CI_Controller
         $this->pages['footer'] = 'main/footer';
         //
         $this->version = 'v='.(MINIFIED ? '1.0' : time());
+        //
+        if(!$this->session->userdata('logged_in')['company_details']['on_payroll']){
+            return redirect('/dashboard');
+        }
     }
 
     /**

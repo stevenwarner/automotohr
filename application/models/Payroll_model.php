@@ -885,4 +885,44 @@ class Payroll_model extends CI_Model{
             return array();
         }
     }
+
+
+    //
+    public function InsertPayroll($table, $dataArray){
+        //
+        $this->db->insert($table, $dataArray);
+        return $this->db->insert_id();
+    }
+   
+    //
+    public function UpdatePayroll($table, $dataArray, $whereArray){
+        //
+        $this->db
+        ->where($whereArray)
+        ->update($table, $dataArray);
+    }
+
+
+    //--------------------------------
+
+    public function GetCompanyOnboardDetails($companyId){
+        //
+        return
+        $this->db
+        ->select('
+            users.on_payroll,
+            users.Location_City,
+            users.Location_Address,
+            users.Location_Address_2,
+            users.Location_State,
+            users.Location_Country,
+            users.Location_ZipCode,
+            users.PhoneNumber,
+            payroll_companies.gusto_company_uid
+        ')
+        ->join('payroll_companies', 'payroll_companies.company_sid = users.sid', 'left')
+        ->where('users.sid', $companyId)
+        ->get('users')
+        ->row_array();
+    }
 }
