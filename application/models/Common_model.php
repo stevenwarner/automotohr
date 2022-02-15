@@ -107,7 +107,7 @@ class Common_model extends CI_Model {
     function get_records_from_log(){
         $this->db->select('s_count');
         $this->db->from('query_logs_check');
-        $this->db->where('module', 'querylog' );
+        $this->db->where('module', 'querylog');
         //
         $result = $this->db->get('',null,null,FALSE)->row();
         //
@@ -140,6 +140,10 @@ class Common_model extends CI_Model {
         $this->db->insert('log_records',['table_name' => 'query_logs', 'last_id' => $sid, 'created_at' => date('Y-m-d H:i:s', strtotime('now'))], NULL, FALSE);
 
     }
+
+
+
+    
 
 
     function get_records_from_log_filter($data){
