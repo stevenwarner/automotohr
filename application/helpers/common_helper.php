@@ -4352,7 +4352,7 @@ if (!function_exists('get_user_required_info')) {
         $columns = 'first_name, last_name, email, parent_sid, job_title';
         $table_name = 'users';
         //
-        if($userType == 'applicant'){
+        if($user_type == 'applicant'){
             $columns = 'first_name, last_name, email, employer_sid AS parent_sid, desired_job_title AS job_title';
             $table_name = 'portal_job_applications';
         }
