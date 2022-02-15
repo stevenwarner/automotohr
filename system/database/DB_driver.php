@@ -611,40 +611,34 @@ abstract class CI_DB_driver {
 	{
         // get the instance of CI
         $_this = &get_instance();
-        // get session values
-        $session = [];
-        $session['user'] = $_this->session->userdata('logged_in');
-        $session['admin'] = $_this->session->userdata('user_id');
-        // check if user not logged in return 0
-        if (!isset($session['admin']) && !isset($session['user'])){
-            $logged_in_user_id = 0;
-        }else{
-            $logged_in_user_id = isset($session['user']) ? $session['user']['employer_detail']['sid'] : $session['admin'];
-        }
-		// check if $save_log is set
-		if ($save_log){
-			// log array
-			$this->log_array = [
-                'ip' => getUserIP(),
-				'error' => NULL,
-				'from_cache' => 0,
-				'start_time' => 0,
-				'end_time' => 0,
-				'benchmark' => 0,
-				'result' => 1,
-                'login_user_id' => $logged_in_user_id
-			];
+		//
+		$logged_in_user_id = 0;
+		//
+		if($_this->session->userdata('logged_in')){
+			$logged_in_user_id = $_this->session->userdata('logged_in')['employer_detail']['sid'];
+		} else if($_this->session->userdata('user_id')){
+			$logged_in_user_id = $_this->session->userdata('user_id');
 		}
+		// check if $save_log is set
+		// log array
+		$this->log_array = [
+			'ip' => getUserIP(),
+			'error' => NULL,
+			'from_cache' => 0,
+			'start_time' => 0,
+			'end_time' => 0,
+			'benchmark' => 0,
+			'result' => 1,
+			'login_user_id' => $logged_in_user_id
+		];
 
 		if ($sql === '')
 		{
             // check if $save_log is set
-			if($save_log){
-				$this->log_array['query_type'] = 'Empty';
-				$this->log_array['query_string'] = 'Empty Query';
-				$this->log_array['error'] = 'Empty';
-				$this->SaveLogQuery($sql);
-			}
+			$this->log_array['query_type'] = 'Empty';
+			$this->log_array['query_string'] = 'Empty Query';
+			$this->log_array['error'] = 'Empty';
+			$this->SaveLogQuery($sql);
 			log_message('error', 'Invalid query: '.$sql);
 			return ($this->db_debug) ? $this->display_error('db_invalid_query') : FALSE;
 		}
@@ -674,7 +668,8 @@ abstract class CI_DB_driver {
 			if (FALSE !== ($cache = $this->CACHE->read($sql)))
 			{
                 // check if $save_log is set
-				if($save_log) { $this->log_array['from_cache'] = 1; $this->SaveLogQuery($sql);}
+				$this->log_array['from_cache'] = 1; 
+				$this->SaveLogQuery($sql);
 				// return response
 				return $cache;
 			}
@@ -706,7 +701,8 @@ abstract class CI_DB_driver {
 			// Grab the error now, as we might run some additional queries before displaying the error
 			$error = $this->error();
             // check if $save_log is set
-			if($save_log) { $this->log_array['error'] = $error['message']; $this->SaveLogQuery($sql);}
+			$this->log_array['error'] = $error['message']; 
+			$this->SaveLogQuery($sql);
 
 			// Log errors
 			log_message('error', 'Query error: '.$error['message'].' - Invalid query: '.$sql);
@@ -738,11 +734,9 @@ abstract class CI_DB_driver {
 		$this->benchmark += $time_end - $time_start;
 
         // check if $save_log is set
-		if($save_log){
-			$this->log_array['start_time'] = $time_start;
-			$this->log_array['end_time'] = $time_end;
-			$this->log_array['benchmark'] = $this->benchmark;
-		}
+		$this->log_array['start_time'] = $time_start;
+		$this->log_array['end_time'] = $time_end;
+		$this->log_array['benchmark'] = $this->benchmark;
 
 		if ($this->save_queries === TRUE)
 		{
@@ -756,7 +750,7 @@ abstract class CI_DB_driver {
 		if ($return_object !== TRUE)
 		{
 			// check if $save_log is set
-			if($save_log) { $this->SaveLogQuery($sql);}
+			$this->SaveLogQuery($sql);
 			// If caching is enabled we'll auto-cleanup any existing files related to this particular URI
 			if ($this->cache_on === TRUE && $this->cache_autodel === TRUE && $this->_cache_init())
 			{
@@ -785,11 +779,7 @@ abstract class CI_DB_driver {
 			$CR->result_array	= $RES->result_array();
 			$CR->num_rows		= $RES->num_rows();
 
-            // check if $save_log is set
-			
-			if($save_log) { $this->SaveLogQuery($sql);}
-           			
-		   // Reset these since cached objects can not utilize resource IDs.
+		    // Reset these since cached objects can not utilize resource IDs.
 			$CR->conn_id		= NULL;
 			$CR->result_id		= NULL;
 
@@ -797,47 +787,9 @@ abstract class CI_DB_driver {
 		}
 
         // check if $save_log is set
-		
-        if($save_log) { $this->SaveLogQuery($sql);}
+        $this->SaveLogQuery($sql);
 		
 		return $RES;
-	}
-
-	private function SaveLogQuery($sql){
-		
-		$creds = getCreds();
-		$logurl = $creds->dblog;
-		
-		if(!is_file($logurl)){
-            //
-            $handler = fopen($logurl, 'w');
-            fwrite($handler, '');
-            fclose($handler);
-        }
-			
-		// check query type
-		if (preg_match("/select /i", $sql)){
-			$query_type = 'SELECT';
-		}elseif (preg_match("/insert /i", $sql) || preg_match("/replace/i", $sql)){
-			$query_type = 'INSERT';
-		}elseif (preg_match("/update /i", $sql)){
-			$query_type = 'UPDATE';
-		}elseif (preg_match("/delete /i", $sql)){
-			$query_type = 'DELETE';
-		}
-        $this->log_array['query_type'] = $query_type;
-        $this->log_array['query_string'] = addslashes($sql);
-        $this->log_array['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
-		// make query for log entry
-	  	$query = 'INSERT INTO '.$this->table.' ('.implode(', ', array_keys($this->log_array)).') VALUES ("'.implode('","',array_values($this->log_array)).'")';
-		// call the query function
-		$logurlData = $this->log_array['query_type']." ".$this->log_array['ip']." ". trim(preg_replace('~[\r\n]+~', ' ', $this->log_array['query_string'])) . " ". $this->log_array['login_user_id']." " . $this->log_array['from_cache'] . " " . $this->log_array['start_time']." ". $this->log_array['end_time']. " " . $this->log_array['benchmark']. " " .$this->log_array['created_at']." ".$this->log_array['result']. " ".date('Y-m-d');
-		
-		$myfile = fopen($logurl, "a"); 
-		fwrite($myfile, "\n".$logurlData);
-		fclose($myfile);
-
-   		//$this->query($query, true, NULL, false);
 	}
 
 	// --------------------------------------------------------------------
@@ -2006,4 +1958,38 @@ abstract class CI_DB_driver {
 	{
 	}
 
+
+	/**
+	 * Save the query to the log file
+	 * 
+	 * @param string $sql
+	 */
+	private function SaveLogQuery($sql){
+		//
+		$_this = get_instance();
+		//
+		$file_name = getCreds('AHR')->LOG_PATH.'db_log.txt';
+		// Check if file exists
+		if(!is_file($file_name)){
+            //
+            $handler = fopen($file_name, 'w');
+            fclose($handler);
+        }
+		//
+        $this->log_array['query_string'] = addslashes($sql);
+        $this->log_array['created_at'] = date('c', strtotime('now'));
+		//
+		$data = '';
+		//
+		$data .= "[{$this->log_array['created_at']}] ";
+		$data .= 'Id="'.($this->log_array['login_user_id']).'" ';
+		$data .= 'Benchmark="'.($this->log_array['benchmark']).'" ';
+		$data .= 'Query="'.(trim(preg_replace('~[\r\n]+~', ' ', $this->log_array['query_string']))).'" ';
+		$data .= 'IP="'.(getUserIp()).'" ';
+		$data .= 'URI="'.($_this->uri->uri_string()).'"';
+		// Save data to file		
+		$handler = fopen($file_name, "a"); 
+		fwrite($handler, "\n".$data);
+		fclose($handler);
+	}
 }
