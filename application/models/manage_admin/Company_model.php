@@ -275,6 +275,13 @@ class Company_model extends CI_Model {
         ->get('terminated_employees')
         ->result_array();
         //
+        $last_statuses = $this->db
+        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status')
+        ->where_in('employee_sid', $employeeIds)
+        ->order_by('terminated_employees.sid', 'DESC')
+        ->get('terminated_employees')
+        ->result_array();
+        //
         if(!empty($statuses)){
             //
             $tmp = [];
@@ -286,12 +293,25 @@ class Company_model extends CI_Model {
             //
             $statuses = $tmp;
             //
+            $tmp = [];
+            //
+            foreach($last_statuses as $stat){
+                //
+                if(!isset($tmp[$stat['employee_sid']])){
+                    $tmp[$stat['employee_sid']] = $stat;
+                }
+            }
+            //
+            $last_statuses = $tmp;
+            //
             unset($tmp);
         }
         //
         foreach($employees as $index => $employee){
             //
             $employees[$index]['last_status'] = isset($statuses[$employee['sid']]) ? $statuses[$employee['sid']] : [];
+            $employees[$index]['last_status_2'] = isset($last_statuses[$employee['sid']]) ? $last_statuses[$employee['sid']] : [];
+            $employees[$index]['last_status_text'] = isset($last_statuses[$employee['sid']]) ? GetEmployeeStatusText($last_statuses[$employee['sid']]['employee_status']) : '';
         }
         //
         return true;

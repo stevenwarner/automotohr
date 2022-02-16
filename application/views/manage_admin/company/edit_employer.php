@@ -334,7 +334,7 @@
                                                 <li>
                                                     <label>Employee Status</label>
                                                     <div class="hr-fields-wrap">
-                                                        <input type="text" class="hr-form-fileds" readonly value="<?=strtoupper($data['general_status']);?>">
+                                                        <input type="text" class="hr-form-fileds" readonly value="<?=strtoupper($data['last_status_text'] ? $data['last_status_text'] : $data['general_status']);?>">
                                                     </div>
                                                 </li>
                                                 <li>

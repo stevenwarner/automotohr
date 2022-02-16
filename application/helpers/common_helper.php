@@ -14344,3 +14344,21 @@ if(!function_exists('GetFileContent')){
         return $fileData;
     }
 }
+
+
+if(!function_exists('GetEmployeeStatusText')){
+    function GetEmployeeStatusText($index){
+        //
+        $arr = [];
+        $arr[1] = 'Terminated';
+        $arr[2] = 'Retired';
+        $arr[3] = 'Deceased';
+        $arr[4] = 'Suspended';
+        $arr[5] = 'Active';
+        $arr[6] = 'Inactive';
+        $arr[7] = 'Leave';
+        $arr[8] = 'Rehired';
+        //
+        return $arr[$index];
+    }
+}

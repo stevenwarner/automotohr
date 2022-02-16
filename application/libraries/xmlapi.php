@@ -1260,7 +1260,7 @@ class xmlapi
     */
 
     public function domainuserdata( $domain )
-    {/*
+    {
         if (!isset( $domain ) ) {
             error_log("domainuserdata requires that domain is passed to it");
 
@@ -1268,8 +1268,6 @@ class xmlapi
         }
 
         return $this->xmlapi_query("domainuserdata", array( 'domain' => $domain ) );
-     * 
-     */
     }
 
     /**
