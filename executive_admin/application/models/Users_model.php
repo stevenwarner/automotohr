@@ -514,6 +514,7 @@ class Users_model extends CI_Model {
         ->limit($offset, $inset)
         ->order_by('user_name', 'ASC')
         ->where_in('portal_job_applications.employer_sid', $executiveCompanyIds, false)
+        ->where('portal_job_applications.hired_sid IS NULL', NULL)
         ->get();
         //
         $applicants = $result->result_array();
