@@ -443,6 +443,7 @@ class Users_model extends CI_Model {
         ->or_like('portal_job_applications.email', $query)
         ->group_end()
         ->where_in('portal_job_applications.employer_sid', $executiveCompanyIds, false)
+        ->where('portal_job_applications.hired_sid IS NULL', NULL)
         ->count_all_results();
         //
         return $employeeCount + $applicantCount;
