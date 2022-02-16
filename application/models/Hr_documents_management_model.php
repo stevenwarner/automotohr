@@ -1483,6 +1483,27 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+     function check_eeoc_exist($user_sid, $user_type) {
+        $this->db->where('application_sid', $user_sid);
+        $this->db->where('users_type', $user_type);
+        $this->db->from('portal_eeo_form');
+
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+    function insert_eeoc_form_record ($data_to_insert) {
+        $this->db->insert("portal_eeo_form", $data_to_insert);
+        return $this->db->insert_id();
+    }
+
     function deactivate_i9_forms($user_type, $user_sid) {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -5333,6 +5354,7 @@ class Hr_documents_management_model extends CI_Model {
                     ]
                 );
             }
+            return $insertId;
         } else if(isset($b['status']) && $b['status'] == 0){
             // $this->db
             // ->where('sid', $b['sid'])
@@ -5351,6 +5373,7 @@ class Hr_documents_management_model extends CI_Model {
             //         'action' => 'assign'
             //     ]
             // );
+            return 0;
         }
     }
 
