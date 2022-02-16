@@ -4307,8 +4307,9 @@ if (!function_exists('log_and_send_templated_email')) {
             //
             $user_info = get_user_required_info($extra_user_info["user_sid"], $extra_user_info["user_type"]);
             //
-            if(!$user_info){
+            if($user_info){
                 //
+                $emailTemplateFromName = convert_email_template($emailTemplateFromName, $user_info);
                 $emailTemplateSubject = convert_email_template($emailTemplateSubject, $user_info);
                 $emailTemplateBody = convert_email_template($emailTemplateBody, $user_info);
             }
@@ -4316,7 +4317,7 @@ if (!function_exists('log_and_send_templated_email')) {
 
         $from = $emailTemplateData['from_email'];
         $subject = $emailTemplateSubject;
-        $from_name = $emailTemplateData['from_name'];
+        $from_name = $emailTemplateFromName;
 
         if ($from_name == '{{company_name}}' && isset($replacement_array['company_name'])) {
             $from_name = $replacement_array['company_name'];
