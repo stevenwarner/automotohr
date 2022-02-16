@@ -62,6 +62,13 @@
                                                                 <div class="control__indicator"></div>    
                                                             </label>
                                                         </div>
+                                                        <div class="col-xs-6">
+                                                            <label class="control control--checkbox font-normal">
+                                                                EEOC Fillable
+                                                                <input class="doc_checkbox" name="system_documents[]" value="eeoc" type="checkbox" <?php echo $group['eeoc'] == 1 ? 'checked="checked"' : ''; ?>>
+                                                                <div class="control__indicator"></div>    
+                                                            </label>
+                                                        </div>
                                                         <!-- system documents end -->
 
                                                         <div class="col-xs-12">

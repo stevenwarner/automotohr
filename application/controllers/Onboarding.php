@@ -71,6 +71,8 @@ class Onboarding extends CI_Controller {
                 $signed_documents                       = array();
                 $no_action_required_payroll_documents   = array();
 
+                $sendGroupEmail = 0;
+
                 if (!empty($groups_assign)) {
                     foreach ($groups_assign as $value) {
                         $system_document = $this->hr_documents_management_model->get_document_group($value['group_sid']);
@@ -86,6 +88,8 @@ class Onboarding extends CI_Controller {
                                 $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                                 $w4_data_to_insert['status'] = 1;
                                 $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
+                                //
+                                $sendGroupEmail = 1;
                             }
                         }
 
@@ -101,6 +105,8 @@ class Onboarding extends CI_Controller {
                                 $w9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                                 $w9_data_to_insert['status'] = 1;
                                 $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
+                                //
+                                $sendGroupEmail = 1;
                             }
                         }
 
@@ -116,6 +122,28 @@ class Onboarding extends CI_Controller {
                                 $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                                 $i9_data_to_insert['status'] = 1;
                                 $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
+                                //
+                                $sendGroupEmail = 1;
+                            }
+                        }
+
+                        if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
+                            $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($applicant_sid, 'applicant');
+
+                            if (empty($is_eeoc_assign)) {
+                                $eeoc_data_to_insert = array();
+                                $eeoc_data_to_insert['application_sid'] = $applicant_sid;
+                                $eeoc_data_to_insert['users_type'] = 'applicant';
+                                $eeoc_data_to_insert['status'] = 1;
+                                $eeoc_data_to_insert['is_expired'] = 0;
+                                $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
+                                $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                                $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                                $eeoc_data_to_insert['last_assigned_by'] = 0;
+                                //
+                                $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
+                                //
+                                $sendGroupEmail = 1;
                             }
                         }
                     }
@@ -145,8 +173,28 @@ class Onboarding extends CI_Controller {
                             $data_to_insert['document_title'] = $document['document_title'];
                             $data_to_insert['document_description'] = $document['document_description'];
                             $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                            //
+                            $sendGroupEmail = 1;
                         }
                     }
+                }
+
+                if ($sendGroupEmail == 1) {
+                    //
+                    $hf = message_header_footer(
+                        $company_info['sid'],
+                        ucwords($company_info['CompanyName'])
+                    );
+                    //
+                    $replacement_array = array();
+                    $replacement_array['contact-name'] = ucwords($applicant_info['first_name'] . ' ' . $applicant_info['last_name']);
+                    $replacement_array['baseurl'] = base_url();
+                    //
+                    $extra_user_info = array();
+                    $extra_user_info["user_type"] = 'applicant';
+                    $extra_user_info["user_sid"] = $applicant_sid;
+                    //
+                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $applicant_info['email'], $replacement_array, $hf, 1, $extra_user_info);
                 }
 
                 $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_info['sid'], 'applicant', $applicant_sid, 0);
@@ -4321,6 +4369,7 @@ class Onboarding extends CI_Controller {
                     break;
             }
 
+            $sendGroupEmail = 0;
             $assign_group_documents = $this->hr_documents_management_model->get_assign_group_documents($company_sid, $user_type, $user_sid);
 
             if (!empty($assign_group_documents)) {
@@ -4353,9 +4402,120 @@ class Onboarding extends CI_Controller {
                                 $company_sid,
                                 $employer_sid
                             );
+                            //
+                            $sendGroupEmail = 1;
                         }
                     }
                 }
+            }
+
+            $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid);
+
+            if (!empty($groups)) {
+                foreach ($groups as $key => $group) {
+                    $document_status = $this->hr_documents_management_model->is_document_assign_2_group($group['sid']);
+                    $groups[$key]['document_status'] = $document_status;
+                }
+            }
+
+            $data['groups'] = $groups;
+            $groups_assign = $this->hr_documents_management_model->get_all_documents_group_assigned($company_sid, $user_type, $user_sid);
+            $assigned_groups = array();
+
+            if (!empty($groups_assign)) {
+                foreach ($groups_assign as $value) {
+                    array_push($assigned_groups, $value['group_sid']);
+                    $system_document = $this->hr_documents_management_model->get_document_group($value['group_sid']);
+
+                    if ($system_document['w4'] == 1) {
+                        $is_w4_assign = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
+                        if (empty($is_w4_assign)) {
+                            $w4_data_to_insert = array();
+                            $w4_data_to_insert['employer_sid'] = $user_sid;
+                            $w4_data_to_insert['company_sid'] = $company_sid;
+                            $w4_data_to_insert['user_type'] = $user_type;
+                            $w4_data_to_insert['sent_status'] = 1;
+                            $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                            $w4_data_to_insert['status'] = 1;
+                            $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
+                            //
+                            $sendGroupEmail = 1;
+
+                        }
+                    }
+
+                    if ($system_document['w9'] == 1) {
+                        $is_w9_assign = $this->hr_documents_management_model->check_w9_form_exist($user_type, $user_sid);
+
+                        if (empty($is_w9_assign)) {
+                            $w9_data_to_insert = array();
+                            $w9_data_to_insert['user_sid'] = $user_sid;
+                            $w9_data_to_insert['company_sid'] = $company_sid;
+                            $w9_data_to_insert['user_type'] = $user_type;
+                            $w9_data_to_insert['sent_status'] = 1;
+                            $w9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                            $w9_data_to_insert['status'] = 1;
+                            $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
+                            //
+                            $sendGroupEmail = 1;
+                        }
+                    }
+
+                    if ($system_document['i9'] == 1) {
+                        $is_i9_assign = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
+
+                        if (empty($is_i9_assign)) {
+                            $i9_data_to_insert = array();
+                            $i9_data_to_insert['user_sid'] = $user_sid;
+                            $i9_data_to_insert['user_type'] = $user_type;
+                            $i9_data_to_insert['company_sid'] = $company_sid;
+                            $i9_data_to_insert['sent_status'] = 1;
+                            $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                            $i9_data_to_insert['status'] = 1;
+                            $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
+                            //
+                            $sendGroupEmail = 1;
+                        }
+                    }
+
+                    if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
+                        $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, $user_type);
+
+                        if (empty($is_eeoc_assign)) {
+                            $eeoc_data_to_insert = array();
+                            $eeoc_data_to_insert['application_sid'] = $user_sid;
+                            $eeoc_data_to_insert['users_type'] = $user_type;
+                            $eeoc_data_to_insert['status'] = 1;
+                            $eeoc_data_to_insert['is_expired'] = 0;
+                            $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
+                            $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                            $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                            $eeoc_data_to_insert['last_assigned_by'] = 0;
+                            //
+                            $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
+                            //
+                            $sendGroupEmail = 1;
+                        }
+                    }
+                }
+            }
+
+            if ($sendGroupEmail == 1) {
+                //
+                $hf = message_header_footer(
+                        $company_sid,
+                        ucwords($company_name)
+                    );
+                //
+                $replacement_array = array();
+                $replacement_array['contact-name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
+                $replacement_array['baseurl'] = base_url();
+                //
+                $extra_user_info = array();
+                $extra_user_info["user_type"] = $user_type;
+                $extra_user_info["user_sid"] = $employer_sid;
+                //
+                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $data['session']['employer_detail']['email'], $replacement_array, $hf, 1, $extra_user_info);
             }
 
             $all_assigned_sids = array();
@@ -4524,69 +4684,7 @@ class Onboarding extends CI_Controller {
                 $data['company_name'] = $company_name;
                 $data['unique_sid'] = $unique_sid;
                 $data['email_sent_date'] = $email_sent_date;
-                $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid);
-
-                if (!empty($groups)) {
-                    foreach ($groups as $key => $group) {
-                        $document_status = $this->hr_documents_management_model->is_document_assign_2_group($group['sid']);
-                        $groups[$key]['document_status'] = $document_status;
-                    }
-                }
-
-                $data['groups'] = $groups;
-                $groups_assign = $this->hr_documents_management_model->get_all_documents_group_assigned($company_sid, $user_type, $user_sid);
-                $assigned_groups = array();
-
-                if (!empty($groups_assign)) {
-                    foreach ($groups_assign as $value) {
-                        array_push($assigned_groups, $value['group_sid']);
-                        $system_document = $this->hr_documents_management_model->get_document_group($value['group_sid']);
-
-                        if ($system_document['w4'] == 1) {
-                            $is_w4_assign = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
-                            if (empty($is_w4_assign)) {
-                                $w4_data_to_insert = array();
-                                $w4_data_to_insert['employer_sid'] = $user_sid;
-                                $w4_data_to_insert['company_sid'] = $company_sid;
-                                $w4_data_to_insert['user_type'] = $user_type;
-                                $w4_data_to_insert['sent_status'] = 1;
-                                $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-                                $w4_data_to_insert['status'] = 1;
-                                $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
-                            }
-                        }
-
-                        if ($system_document['w9'] == 1) {
-                            $is_w9_assign = $this->hr_documents_management_model->check_w9_form_exist($user_type, $user_sid);
-
-                            if (empty($is_w9_assign)) {
-                                $w9_data_to_insert = array();
-                                $w9_data_to_insert['user_sid'] = $user_sid;
-                                $w9_data_to_insert['company_sid'] = $company_sid;
-                                $w9_data_to_insert['user_type'] = $user_type;
-                                $w9_data_to_insert['sent_status'] = 1;
-                                $w9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-                                $w9_data_to_insert['status'] = 1;
-                                $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
-                            }
-                        }
-
-                        if ($system_document['i9'] == 1) {
-                            $is_i9_assign = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
-
-                            if (empty($is_i9_assign)) {
-                                $i9_data_to_insert = array();
-                                $i9_data_to_insert['user_sid'] = $user_sid;
-                                $i9_data_to_insert['user_type'] = $user_type;
-                                $i9_data_to_insert['company_sid'] = $company_sid;
-                                $i9_data_to_insert['sent_status'] = 1;
-                                $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-                                $i9_data_to_insert['status'] = 1;
-                                $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
-                            }
-                        }
-                    }
-                }
+                
 
                 $data['managers_list'] = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, $employer_sid);
 

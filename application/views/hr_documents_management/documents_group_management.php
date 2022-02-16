@@ -43,7 +43,7 @@
                                                 <td><?php echo html_entity_decode($group['description']); ?></td>
                                                 <td><?php echo $group['status'] == 1 ? '<b class="paid">Active</b>' : '<b class="unpaid">Inactive</b>'; ?></td>
                                                 <td>
-                                                    <?php if ($group['document_status'] == 1 || $group['w4'] == 1 || $group['w9'] == 1 || $group['i9'] == 1 || $group['direct_deposit'] == 1|| $group['drivers_license'] == 1|| $group['occupational_license'] == 1|| $group['emergency_contacts'] == 1|| $group['dependents'] == 1) { ?>
+                                                    <?php if ($group['document_status'] == 1 || $group['w4'] == 1 || $group['w9'] == 1 || $group['i9'] == 1 || $group['eeoc'] == 1 || $group['direct_deposit'] == 1|| $group['drivers_license'] == 1|| $group['occupational_license'] == 1|| $group['emergency_contacts'] == 1|| $group['dependents'] == 1) { ?>
                                                         <button onclick="func_assign_document_group(<?php echo $group['sid']; ?>)" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                     <?php } else { ?>
                                                         No Document Found
