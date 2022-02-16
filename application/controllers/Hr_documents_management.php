@@ -308,7 +308,12 @@ class Hr_documents_management extends Public_Controller {
                                                     );
                                                 }
                                             }
-                                            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                                            //
+                                            $user_extra_info = array();
+                                            $user_extra_info['user_sid'] = $emp;
+                                            $user_extra_info['user_type'] = "employee";
+                                            //
+                                            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                                             $this->hr_documents_management_model->update_employee($emp, array('document_sent_on' => date('Y-m-d H:i:s')));
                                         }
                                         
@@ -1924,7 +1929,12 @@ class Hr_documents_management extends Public_Controller {
                                     $is_manual = get_document_type($assignment_sid);
                                     //
                                     if ($is_manual == 'no') {
-                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                        //
+                                        $user_extra_info = array();                                                  
+                                        $user_extra_info['user_sid'] = $user_sid;
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
 
                                         $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                     }
@@ -2087,7 +2097,12 @@ class Hr_documents_management extends Public_Controller {
                                             );
                                         }
                                     }
-                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                    //
+                                    $user_extra_info = array();
+                                    $user_extra_info['user_sid'] = $user_sid;
+                                    $user_extra_info['user_type'] = $user_type;
+                                    //
+                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
                                     $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                 }
                             }
@@ -2230,7 +2245,12 @@ class Hr_documents_management extends Public_Controller {
                                             );
                                         }
                                     }
-                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                    //
+                                    $user_extra_info = array();
+                                    $user_extra_info['user_sid'] = $user_sid;
+                                    $user_extra_info['user_type'] = $user_type;
+                                    //
+                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
                                     $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                 }
                             }
@@ -2351,7 +2371,12 @@ class Hr_documents_management extends Public_Controller {
                                             );
                                         }
                                     }
-                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                    //
+                                    $user_extra_info = array();
+                                    $user_extra_info['user_sid'] = $user_sid;
+                                    $user_extra_info['user_type'] = $user_type;
+                                    //
+                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
                                     $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                 }
 
@@ -2677,8 +2702,12 @@ class Hr_documents_management extends Public_Controller {
                                                 );
                                             }
                                         }
-
-                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+                                        //
+                                        $user_extra_info = array();
+                                        $user_extra_info['user_sid'] = $user_sid;
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1,$user_extra_info);
                                         $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                     }    
 
@@ -4131,7 +4160,12 @@ class Hr_documents_management extends Public_Controller {
                 $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
                 $replacement_array['company_name']  = ucwords($session['company_detail']['CompanyName']);
                 $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-                log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf);
+                //
+                $user_extra_info = array();
+                $user_extra_info['user_sid'] = $v;
+                $user_extra_info['user_type'] = "employee";
+                //
+                log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
             }
             //
             echo 'success';
@@ -5382,8 +5416,12 @@ class Hr_documents_management extends Public_Controller {
                                         $to_email = $manager['email'];
 
                                         $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
-
-                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
+                                        //
+                                        $user_extra_info = array();
+                                        $user_extra_info['user_sid'] = $user_sid;
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
                                     }
                                 }
                             }
@@ -5454,8 +5492,12 @@ class Hr_documents_management extends Public_Controller {
                                         $to_email = $manager['email'];
 
                                         $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
-
-                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
+                                        //
+                                        $user_extra_info = array();
+                                        $user_extra_info['user_sid'] = $user_sid;
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
                                     }
                                 }
                             }
@@ -5539,8 +5581,12 @@ class Hr_documents_management extends Public_Controller {
                                         $to_email = $manager['email'];
 
                                         $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
-
-                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer);
+                                        //
+                                        $user_extra_info = array();
+                                        $user_extra_info['user_sid'] = $user_sid;
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
                                     }
                                 }
                             }
@@ -8608,7 +8654,12 @@ class Hr_documents_management extends Public_Controller {
                                         );
                                     }
                                 }
-                                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                                //
+                                $user_extra_info = array();
+                                $user_extra_info['user_sid'] = $emp;
+                                $user_extra_info['user_type'] = $user_type;
+                                //
+                                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                                 $this->hr_documents_management_model->update_employee($emp, array('document_sent_on' => date('Y-m-d H:i:s')));
                             }
                             break;
@@ -8821,13 +8872,15 @@ class Hr_documents_management extends Public_Controller {
                         //
                         $this->hr_documents_management_model->update_employee($post['userSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
                         //
-                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $userInfoE['email'], $replacement_array, $hf);
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $post['userSid'];
+                        $user_extra_info['user_type'] = $post['userType'];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $userInfoE['email'], $replacement_array, $hf, 1, $user_extra_info);
                     } else {
                         // Send single document emails to applicant
                         // Set email content
                         $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
-                        //
-                        $content = $template['text'];
                         //
                         $this->load->library('encryption', 'encrypt');
                         //
@@ -8838,18 +8891,13 @@ class Hr_documents_management extends Public_Controller {
                         $encryptedKey = $this->encrypt->encode($insertId.'/'.$post['userSid'].'/'.$post['userType'].'/'.$time.'/'.$type);
                         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
                         //
-                        replace([
-                            '{{company_name}}' => $company_name,
-                            '{{applicant_name}}' => $userInfoE['first_name'].' '.$userInfoE['last_name'],
-                            '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( ucwords(preg_replace('/_/', ' ', $post['documentType'])) ).'</a>',
-                        ], $content);
+                        $userInfoE["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( ucwords(preg_replace('/_/', ' ', $post['documentType'])) ).'</a>';
                         //
-                        replace([
-                            '{{company_name}}' => $company_name
-                        ], $template['subject']);
+                        $subject = convert_email_template($template['subject'], $userInfoE);
+                        $message = convert_email_template($template['text'], $userInfoE);
                         //
                         $body = $hf['header'];
-                        $body .= $content;
+                        $body .= $message;
                         $body .= $hf['footer'];
                         //
                         $this->hr_documents_management_model
@@ -8861,7 +8909,7 @@ class Hr_documents_management extends Public_Controller {
                         log_and_sendEmail(
                             FROM_EMAIL_NOTIFICATIONS,
                             $userInfoE['email'],
-                            $template['subject'],
+                            $subject,
                             $body,
                             $company_name
                         );
@@ -9274,7 +9322,14 @@ class Hr_documents_management extends Public_Controller {
                     //
                     $is_manual = get_document_type($assignInsertId);
                     //
-                    if(sizeof($replacement_array) && $is_manual == 'no') log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                    if(sizeof($replacement_array) && $is_manual == 'no') {
+                        //
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                        $user_extra_info['user_type'] = $post['Type'];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                    }
                 }
 
                 // Check if it's Authorize document
@@ -9646,15 +9701,20 @@ class Hr_documents_management extends Public_Controller {
                             //
                             $is_manual = get_document_type($assignInsertId);
                             //
-                            if(sizeof($replacement_array) && $is_manual == 'no') log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                            if(sizeof($replacement_array) && $is_manual == 'no') {
+                                //
+                                $user_extra_info = array();
+                                $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                                $user_extra_info['user_type'] = $user_type;
+                                //
+                                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                            }    
                         break;
 
                         case 'applicant':
                             $user_info = $this->hr_documents_management_model->get_applicant_information($post['CompanySid'], $post['EmployeeSid']);
                             // Set email content
                             $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
-                            //
-                            $content = $template['text'];
                             //
                             $this->load->library('encryption', 'encrypt');
                             //
@@ -9663,18 +9723,13 @@ class Hr_documents_management extends Public_Controller {
                             $encryptedKey = $this->encrypt->encode($assignInsertId.'/'.$user_info['sid'].'/applicant/'.$time);
                             $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
                             //
-                            replace([
-                                '{{company_name}}' => $data['session']['company_detail']['CompanyName'],
-                                '{{applicant_name}}' => trim($user_info['first_name'].' '.$user_info['last_name']),
-                                '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $a['document_title'] ).'</a>',
-                            ], $content);
+                            $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $a['document_title'] ).'</a>';
                             //
-                            replace([
-                                '{{company_name}}' => $data['session']['company_detail']['CompanyName']
-                            ], $template['subject']);
+                            $message = convert_email_template($template['text'], $user_info);
+                            $subject = convert_email_template($template['subject'], $user_info);
                             //
                             $body = $hf['header'];
-                            $body .= $content;
+                            $body .= $message;
                             $body .= $hf['footer'];
                             //
                             $this->hr_documents_management_model
@@ -9686,7 +9741,7 @@ class Hr_documents_management extends Public_Controller {
                             log_and_sendEmail(
                                 FROM_EMAIL_NOTIFICATIONS,
                                 $user_info['email'],
-                                $template['subject'],
+                                $subject,
                                 $body,
                                 $data['session']['company_detail']['CompanyName']
                             );
@@ -9963,7 +10018,14 @@ class Hr_documents_management extends Public_Controller {
                     //
                     $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
                     //
-                    if(sizeof($replacement_array)) log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                    if(sizeof($replacement_array)) {
+                        //
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                        $user_extra_info['user_type'] = $post['Type'];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                    }    
                 break;
 
                 case 'applicant':
@@ -9985,7 +10047,14 @@ class Hr_documents_management extends Public_Controller {
                         $time,
                         $assignInsertId
                     );
-                    if(sizeof($replacement_array)) log_and_send_templated_email(HR_DOCUMENTS_FOR_APPLICANT, $user_info['email'], $replacement_array, $hf);
+                    if(sizeof($replacement_array)) {
+                        //
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                        $user_extra_info['user_type'] = $post['Type'];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_FOR_APPLICANT, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                    }    
                 break;
             }
             //
@@ -10287,15 +10356,20 @@ class Hr_documents_management extends Public_Controller {
                     //
                     $is_manual = get_document_type($assignInsertId);
                     //
-                    if(sizeof($replacement_array) && $is_manual == 'no') log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf);
+                    if(sizeof($replacement_array) && $is_manual == 'no') {
+                        //
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                        $user_extra_info['user_type'] = $post['Type'];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                    }    
                 break;
 
                 case 'applicant':
                     $user_info = $this->hr_documents_management_model->get_applicant_information($post['CompanySid'], $post['EmployeeSid']);
                     // Set email content
                     $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
-                    //
-                    $content = $template['text'];
                     //
                     $this->load->library('encryption', 'encrypt');
                     //
@@ -10304,18 +10378,13 @@ class Hr_documents_management extends Public_Controller {
                     $encryptedKey = $this->encrypt->encode($assignInsertId.'/'.$user_info['sid'].'/applicant/'.$time);
                     $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
                     //
-                    replace([
-                        '{{company_name}}' => $post['CompanyName'],
-                        '{{applicant_name}}' => trim($user_info['first_name'].' '.$user_info['last_name']),
-                        '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $post['documentTitle'] ).'</a>',
-                    ], $content);
+                    $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $post['documentTitle'] ).'</a>';
                     //
-                    replace([
-                        '{{company_name}}' => $post['CompanyName']
-                    ], $template['subject']);
+                    $subject = convert_email_template($template['subject'], $user_info);
+                    $message = convert_email_template($template['text'], $user_info);
                     //
                     $body = $hf['header'];
-                    $body .= $content;
+                    $body .= $message;
                     $body .= $hf['footer'];
                     //
                     $this->hr_documents_management_model
@@ -10327,7 +10396,7 @@ class Hr_documents_management extends Public_Controller {
                     log_and_sendEmail(
                         FROM_EMAIL_NOTIFICATIONS,
                         $user_info['email'],
-                        $template['subject'],
+                        $subject,
                         $body,
                         $post['CompanyName']
                     );
@@ -10923,8 +10992,6 @@ class Hr_documents_management extends Public_Controller {
         // Set email content
         $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
         //
-        $content = $template['text'];
-        //
         $this->load->library('encryption', 'encrypt');
         //
         $time = strtotime('+10 days');
@@ -10932,18 +10999,19 @@ class Hr_documents_management extends Public_Controller {
         $encryptedKey = $this->encrypt->encode($post['assignedDocumentSid'].'/'.$document['user_sid'].'/'.$document['user_type'].'/'.$time);
         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
         //
-        replace([
-            '{{company_name}}' => $data['company_detail']['CompanyName'],
-            '{{applicant_name}}' => $document['user']['first_name'].' '.$document['user']['last_name'],
-            '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $document['document_title'] ).'</a>',
-        ], $content);
+        $user_info = $this->hr_documents_management_model->getUserData(
+            $document['user_sid'],
+            $document['user_type'],
+            $data['company_detail']['sid']
+        );
         //
-        replace([
-            '{{company_name}}' => $data['company_detail']['CompanyName']
-        ], $template['subject']);
+        $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $document['document_title'] ).'</a>';
+        //
+        $subject = convert_email_template($template['subject'], $user_info);
+        $message = convert_email_template($template['text'], $user_info);
         //
         $body = $hf['header'];
-        $body .= $content;
+        $body .= $message;
         $body .= $hf['footer'];
         //
         $this->hr_documents_management_model
@@ -10955,7 +11023,7 @@ class Hr_documents_management extends Public_Controller {
         log_and_sendEmail(
             FROM_EMAIL_NOTIFICATIONS,
             $document['user']['email'],
-            $template['subject'],
+            $subject,
             $body,
             $data['company_detail']['CompanyName']
         );
@@ -11724,26 +11792,19 @@ class Hr_documents_management extends Public_Controller {
         //
         $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
         //
-        $content = $template['text'];
+        $info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('eeoc_form/'.( $token ).'') ).'">EEOC Form</a>';
         //
-        replace([
-            '{{applicant_name}}' => $info['first_name'].' '.$info['last_name'],
-            '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('eeoc_form/'.( $token ).'') ).'">EEOC Form</a>',
-            '{{company_name}}' => $this->session->userdata('logged_in')['company_detail']['CompanyName']
-        ], $content);
-        //
-        replace([
-            '{{company_name}}' => $this->session->userdata('logged_in')['company_detail']['CompanyName']
-        ], $template['subject']);
+        $subject = convert_email_template($template['subject'], $info);
+        $message = convert_email_template($template['text'], $info);
         //
         $body = $hf['header'];
-        $body .= $content;
+        $body .= $message;
         $body .= $hf['footer'];
         //
         log_and_sendEmail(
             FROM_EMAIL_NOTIFICATIONS,
             $info['email'],
-            $template['subject'],
+            $subject,
             $body,
             $this->session->userdata('logged_in')['company_detail']['CompanyName']
         );

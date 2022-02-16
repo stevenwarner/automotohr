@@ -656,4 +656,15 @@ class Accurate_background_model extends CI_Model
         //
         return -1;
     }
+
+    function get_user_data($sid) {
+        $this->db->select('*');
+        $this->db->from('users');
+        $this->db->where('sid', $sid);
+        $query_result = $this->db->get();
+        
+        if ($query_result->num_rows() > 0) {
+            return $row = $query_result->row_array();
+        }
+    }
 }

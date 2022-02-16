@@ -134,7 +134,13 @@ class Users extends Admin_Controller {
                 $replacement_array['firstname'] = $first_name;
                 $replacement_array['lastname'] = $last_name;
                 $replacement_array['create_password_link']  = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url() . "manage_admin/users/generate_password/" . $salt . '">Generate Password</a>';
-                log_and_send_templated_email(NEW_EMPLOYEE_TEAM_MEMBER_NOTIFICATION, $email, $replacement_array);
+                //
+                $employee_details = $this->users_model->email_user_data($email);
+                $user_extra_info = array();
+                $user_extra_info['user_sid'] = $employee_details['sid'];
+                $user_extra_info['user_type'] = "employee";
+                //
+                log_and_send_templated_email(NEW_EMPLOYEE_TEAM_MEMBER_NOTIFICATION, $email, $replacement_array, [], 1, $user_extra_info);
                 $this->session->set_flashdata('message', 'Email Sent Successfully');
 
             }
@@ -168,7 +174,12 @@ class Users extends Admin_Controller {
             $replacement_array['firstname'] = $first_name;
             $replacement_array['lastname'] = $last_name;
             $replacement_array['create_password_link']  = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url() . "manage_admin/users/generate_password/" . $salt . '">Generate Password</a>';
-            log_and_send_templated_email(NEW_EMPLOYEE_TEAM_MEMBER_NOTIFICATION, $email, $replacement_array);
+            //
+            $user_extra_info = array();
+            $user_extra_info['user_sid'] = $sid;
+            $user_extra_info['user_type'] = "employee";
+            //
+            log_and_send_templated_email(NEW_EMPLOYEE_TEAM_MEMBER_NOTIFICATION, $email, $replacement_array, [], 1, $user_extra_info);
 
             echo 'success';
         } else {

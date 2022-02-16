@@ -235,11 +235,12 @@ class Users_model extends CI_Model {
         $this->db->order_by('sid', 'DESC');
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $query_result                                                           = $this->db->get();
+        $query_result  = $this->db->get();
         
         if ($query_result->num_rows() > 0) {
-            return $row = $query_result->row_array();
+            return $query_result->row_array();
         }
+        return false;
     }
 
     function username_user_data($user) {

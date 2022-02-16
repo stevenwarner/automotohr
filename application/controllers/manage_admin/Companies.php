@@ -357,8 +357,14 @@ class Companies extends Admin_Controller {
             foreach ($employers as $employer) {
                 if ($employer['access_level'] == 'Admin') { //getting email template
                     $emailTemplateData = get_email_template(REACTIVE_EXPIRED_ACCOUNT);
-                    $emailTemplateBody = convert_email_template($emailTemplateData['text'], $employer["sid"]);
-                    $emailTemplateBody = str_replace('{{activation_key}}', $activation_key, $emailTemplateBody);
+                    // $emailTemplateBody = convert_email_template($emailTemplateData['text'], $employer["sid"]);
+                    // $emailTemplateBody = str_replace('{{activation_key}}', $activation_key, $emailTemplateBody);
+                    //
+                    $replacement_array = array();
+                    $replacement_array = $this->company_model->get_user_data($employer['sid']);
+                    $replacement_array['activation_key'] = $activation_key;
+                    $emailTemplateBody = convert_email_template($emailTemplateData['text'], $replacement_array);
+                    //
                     $from = $emailTemplateData['from_email'];
                     $to = $employer['email'];
                     $subject = $emailTemplateData['subject'];

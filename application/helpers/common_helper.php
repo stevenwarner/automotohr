@@ -1435,30 +1435,93 @@ if (!function_exists('get_sms_template')) {
 }
 
 if (!function_exists('convert_email_template')) {
-
-    function convert_email_template($emailTemplateBody, $employer_sid = NULL)
+    function convert_email_template($emailTemplateBody, $replacement_array = array())
     {
-        $CI = &get_instance();
-        $CI->db->where('sid', $employer_sid);
-        $userData = $CI->db->get('users')->row_array();
-        if (count($userData) > 0) {
-            $emailTemplateBody = str_replace('{{firstname}}', ucfirst($userData['first_name']), $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{lastname}}', ucfirst($userData['last_name']), $emailTemplateBody);
+        // $CI = &get_instance();
+        // $CI->db->where('sid', $employer_sid);
+        // $userData = $CI->db->get('users')->row_array();
+        
+        // if (count($userData) > 0) {
+        if (count($replacement_array) > 0) {
+            $company_data = get_company_data($replacement_array["parent_sid"]);
+            //
+            $change_password = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'change_password/' . $replacement_array['username'] . '/' . $replacement_array['verification_key'] . '" target="_blank">Change your password</a>';
+            //
+            $change_your_password = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'change_password/' . $replacement_array['username'] . '/' . $replacement_array['verification_key'] . '" target="_blank">Change your password</a>';
+            //
+            $button = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url('login') . '" target="_blank">Button</a>';
+            //
+            $click_here = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'account_activation/{{activation_key}}" target="_blank">Click Here</a>';
+            //
+            $login_link = '<a href="'.( base_url('login')).'" style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;">Click to login</a>';
+            //
+            $emailTemplateBody = str_replace('{{company_name}}', $company_data['company_name'], $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{company_address}}', $company_data['company_address'], $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{company_phone}}', $company_data['company_phone'], $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{career_site_url}}', $company_data['career_site_url'], $emailTemplateBody);
+            //
+            $emailTemplateBody = str_replace('{{email}}', ucfirst($replacement_array['email']), $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{job_title}}', ucfirst($replacement_array['job_title']), $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{first_name}}', ucfirst($replacement_array['first_name']), $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{last_name}}', ucfirst($replacement_array['last_name']), $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{firstname}}', ucfirst($replacement_array['first_name']), $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{lastname}}', ucfirst($replacement_array['last_name']), $emailTemplateBody);
             $emailTemplateBody = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
             $emailTemplateBody = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{username}}', $userData['username'], $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{contact-name}}', ucfirst($userData['first_name']).' '.ucfirst($userData['last_name']), $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{company_name}}', $userData['CompanyName'], $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{password}}', decode_string($userData['key']), $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{username}}', $replacement_array['username'], $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{contact-name}}', ucfirst($replacement_array['first_name']).' '.ucfirst($replacement_array['last_name']), $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{applicant_name}}', ucwords($replacement_array['first_name'].' '.$replacement_array['last_name']), $emailTemplateBody);
+            //
+            if (isset($replacement_array['password_encrypt']) && $replacement_array['password_encrypt'] == "no") {
+                $emailTemplateBody = str_replace('{{password}}', $replacement_array['password'], $emailTemplateBody);
+            } else {
+                $emailTemplateBody = str_replace('{{password}}', decode_string($replacement_array['key']), $emailTemplateBody);
+            }
+            //
             $emailTemplateBody = str_replace('{{employer_id}}', $employer_sid, $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{verification_key}}', $userData['verification_key'], $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{change_password}}', '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'change_password/' . $userData['username'] . '/' . $userData['verification_key'] . '" target="_blank">Change your password</a>', $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{change_your_password}}', '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'change_password/' . $userData['username'] . '/' . $userData['verification_key'] . '" target="_blank">Change your password</a>', $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{button}}', '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url('login') . '" target="_blank">Button</a>', $emailTemplateBody);
-            $emailTemplateBody = str_replace('{{click_here}}', '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'account_activation/{{activation_key}}" target="_blank">Click Here</a>', $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{verification_key}}', $replacement_array['verification_key'], $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{activation_key}}', $replacement_array['activation_key'], $emailTemplateBody);
+            //
+            $emailTemplateBody = str_replace('{{link}}', $replacement_array['link'], $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{change_password}}', $change_password, $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{change_your_password}}', $change_your_password, $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{button}}', $button, $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{click_here}}', $click_here, $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{login_button}}', $replacement_array['login_button'], $emailTemplateBody);
+            $emailTemplateBody = str_replace('{{login_link}}', $login_link, $emailTemplateBody);
             return $emailTemplateBody;
         } else {
             return 0;
+        }
+    }
+}
+
+//
+if (!function_exists('get_company_data')) {
+
+    function get_company_data($sid)
+    {
+        $CI = &get_instance();
+        $CI->db->where('sid', $sid);
+        $result = $CI->db->get('users')->row_array();
+
+        if (!empty($result)) {
+            $address = !empty($result["Location_Address"]) ? $result["Location_Address"] : "";
+            $city = !empty($result["Location_City"]) ? ", ".$result["Location_City"] : "";
+            $state = !empty($result["Location_State"]) ? ", ".db_get_state_name_only($result["Location_State"]) : "";
+            $country = !empty($result["Location_Country"]) ? ", ".db_get_country_name($result['Location_Country'], $_this, 'country_name') : "";
+            $company_address = $address.$city.$state.$country;
+            $career_site_url = STORE_PROTOCOL_SSL . db_get_sub_domain($sid);
+            //
+            $result_array = array();
+            $result_array["company_name"] = $result["CompanyName"];
+            $result_array["contact_name"] = $result["ContactName"];
+            $result_array["company_phone"] = $result["PhoneNumber"];
+            $result_array["company_address"] = $company_address;
+            $result_array["career_site_url"] = $career_site_url;
+            return $result_array;
+        } else {
+            return array();
         }
     }
 }
@@ -4229,13 +4292,20 @@ if (!function_exists('update_from_table')) {
 
 if (!function_exists('log_and_send_templated_email')) {
 
-    function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1)
+    function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1, $extra_user_info = array())
     {
         if (empty($to) || $to == NULL) return 0;
         $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
         $emailTemplateSubject = $emailTemplateData['subject'];
         $emailTemplateFromName = $emailTemplateData['from_name'];
+
+        if (!empty($extra_user_info)) {
+            $user_info = get_user_required_info($extra_user_info["user_sid"], $extra_user_info["user_type"]);
+            //
+            $emailTemplateSubject = convert_email_template($emailTemplateSubject, $user_info);
+            $emailTemplateBody = convert_email_template($emailTemplateBody, $user_info);
+        }
 
         if (!empty($replacement_array)) {
             foreach ($replacement_array as $key => $value) {
@@ -4245,6 +4315,8 @@ if (!function_exists('log_and_send_templated_email')) {
                 $emailTemplateFromName = str_replace('{{' . $key . '}}', $value, $emailTemplateFromName);
             }
         }
+
+        
 
 
         $from = $emailTemplateData['from_email'];
@@ -4269,6 +4341,29 @@ if (!function_exists('log_and_send_templated_email')) {
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
         } else {
             sendMail($from, $to, $subject, $body, $from_name);
+        }
+    }
+}
+
+if (!function_exists('get_user_required_info')) {
+    function get_user_required_info ($user_sid, $user_type) {
+        $columns = 'first_name, last_name, email, parent_sid, job_title';
+        $table_name = 'users';
+        //
+        if($user_type == 'applicant'){
+            $columns = 'first_name, last_name, email, employer_sid AS parent_sid, desired_job_title AS job_title';
+            $table_name = 'portal_job_applications';
+        }
+        //
+        $CI = &get_instance();
+        $CI->db->select($columns);
+        $CI->db->where('sid', $user_sid);
+        $result = $CI->db->get($table_name)->row_array();
+        //
+        if (!empty($result)) {
+            return $result;
+        } else {
+            return array();
         }
     }
 }
