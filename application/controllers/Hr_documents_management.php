@@ -3087,7 +3087,7 @@ class Hr_documents_management extends Public_Controller {
 
             $sendGroupEmail = 0;
             $assign_group_documents = $this->hr_documents_management_model->get_assign_group_documents($company_sid, $user_type, $user_sid);
-
+           
             if (!empty($assign_group_documents)) {
                 foreach ($assign_group_documents as $key => $assign_group_document) {
                     $is_document_assign = $this->hr_documents_management_model->check_document_already_assigned($company_sid, $user_type, $user_sid, $assign_group_document['document_sid']);
@@ -3120,15 +3120,14 @@ class Hr_documents_management extends Public_Controller {
                     }
                 }
             }
-
             $groups_assign = $this->hr_documents_management_model->get_all_documents_group_assigned($company_sid, $user_type, $user_sid);
             $assigned_groups = array();
-
+            
             if (!empty($groups_assign)) {
                 foreach ($groups_assign as $value) {
                     array_push($assigned_groups, $value['group_sid']);
                     $system_document = $this->hr_documents_management_model->get_document_group($value['group_sid']);
-
+                    
                     // General Documents
                     foreach($system_document as $gk => $gv){
                         //
@@ -3141,15 +3140,16 @@ class Hr_documents_management extends Public_Controller {
                         ])) continue;
                         //
                         if($gv == 1){
-                            $this->hr_documents_management_model->checkAndAssignGeneralDocument(
+                            if($this->hr_documents_management_model->checkAndAssignGeneralDocument(
                                 $user_sid,
                                 $user_type,
                                 $company_sid,
                                 $gk,
                                 $employer_sid
-                            );
-                            //
-                            $sendGroupEmail = 1;
+                            )){
+                                //
+                                $sendGroupEmail = 1;
+                            }
                         }
                     }
 
@@ -4730,15 +4730,16 @@ class Hr_documents_management extends Public_Controller {
                         ])) continue;
                         //
                         if($gv == 1){
-                            $this->hr_documents_management_model->checkAndAssignGeneralDocument(
+                            if($this->hr_documents_management_model->checkAndAssignGeneralDocument(
                                 $employer_sid,
                                 'employee',
                                 $company_sid,
                                 $gk,
                                 $employer_sid
-                            );
-                            //
-                            $sendGroupEmail = 1;
+                            )){
+                                //
+                                $sendGroupEmail = 1;
+                            }
                         }
                     }
 

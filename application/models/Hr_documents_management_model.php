@@ -5346,6 +5346,7 @@ class Hr_documents_management_model extends CI_Model {
                     ]
                 );
             }
+            return $insertId;
         } else if(isset($b['status']) && $b['status'] == 0){
             // $this->db
             // ->where('sid', $b['sid'])
@@ -5364,6 +5365,7 @@ class Hr_documents_management_model extends CI_Model {
             //         'action' => 'assign'
             //     ]
             // );
+            return 0;
         }
     }
 
