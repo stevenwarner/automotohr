@@ -83,6 +83,7 @@
                                                             <th>Username</th>
                                                             <th>Email</th>
                                                             <th>Contact Name</th>
+                                                            <th>Dates</th>
                                                             <th>Company Name</th>
                                                             <?php $function_names = array('show_employer_multiple_actions', 'employerLogin', 'edit_employers'); ?>
                                                             <?php if(check_access_permissions_for_view($security_details, 'edit_employers')){ ?>
@@ -137,7 +138,9 @@
                                                                                 echo "N/A";
                                                                             } 
                                                                         ?>
-                                                                        <br />
+                                                                    </td>
+
+                                                                    <td>
                                                                         <b>Joining Date: </b><?php 
                                                                             $joiningDate = get_employee_latest_joined_date($value["registration_date"],$value["joined_at"],"",true);
                                                                             //
@@ -155,6 +158,16 @@
                                                                                 echo $rehireDate;
                                                                             } else {
                                                                                 echo "N/A";
+                                                                            }
+                                                                        ?>
+                                                                        <br>
+                                                                        <b>Termination Date: </b>
+                                                                        <?php 
+                                                                            // Termination date
+                                                                            if(!$value['last_status']){
+                                                                                echo "N/A";
+                                                                            } else{
+                                                                                echo formatDateToDB($value['last_status']["termination_date"], DB_DATE, DATE);
                                                                             }
                                                                         ?>
                                                                     </td>

@@ -332,6 +332,24 @@
                                                 </li>
                                                 <?php } ?>
                                                 <li>
+                                                    <label>Employee Status</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" readonly value="<?=strtoupper($data['general_status']);?>">
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <label>Terminated Date</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" readonly value="<?=!$data['last_status'] ? "N/A" : formatDateToDB($data['last_status']["termination_date"], DB_DATE, DATE);?>">
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <label>Terminated Reason</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="hr-form-fileds" readonly><?=!$data['last_status'] ? "N/A" : html_entity_decode($data['last_status']['details']);?></div>
+                                                    </div>
+                                                </li>
+                                                <li>
                                                     <?php echo form_label('', ''); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="col-md-6 col-lg-6 col-xl-6" style="padding-left:0px">

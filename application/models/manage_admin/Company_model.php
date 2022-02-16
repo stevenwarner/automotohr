@@ -253,8 +253,48 @@ class Company_model extends CI_Model {
             $records_obj = $this->db->get();
             $records_arr = $records_obj->result_array();
             $records_obj->free_result();
+            //
+            $this->GetEmployeeStatus($records_arr);
+            //
             return $records_arr;
         }
+    }
+
+    private function GetEmployeeStatus(&$employees, $status = 1){
+        //
+        if(empty($employees)){
+            return false;
+        }
+        //
+        $employeeIds = array_column($employees, 'sid');
+        //
+        $statuses = $this->db
+        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire')
+        ->where_in('employee_sid', $employeeIds)
+        ->where('employee_status', $status)
+        ->get('terminated_employees')
+        ->result_array();
+        //
+        if(!empty($statuses)){
+            //
+            $tmp = [];
+            //
+            foreach($statuses as $stat){
+                //
+                $tmp[$stat['employee_sid']] = $stat;
+            }
+            //
+            $statuses = $tmp;
+            //
+            unset($tmp);
+        }
+        //
+        foreach($employees as $index => $employee){
+            //
+            $employees[$index]['last_status'] = isset($statuses[$employee['sid']]) ? $statuses[$employee['sid']] : [];
+        }
+        //
+        return true;
     }
 
     function get_all_employers($limit, $start, $search) {
@@ -393,8 +433,14 @@ class Company_model extends CI_Model {
             $this->db->where('user_sid', $sid);
             $this->db->from('portal_employer');
         }
+        
+        $results = $this->db->get()->result_array();
+        //
+        if ($custom_check == 'employer') {
+            $this->GetEmployeeStatus($results);
+        }
 
-        return $this->db->get()->result_array();
+        return $results;
     }
 
     //

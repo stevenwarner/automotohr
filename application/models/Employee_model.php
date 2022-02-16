@@ -46,7 +46,7 @@
 
     function get_terminated_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0, $orderType = 'users.sid', $order="DESC") {
         $keyword = trim($keyword);
-        $this->db->select('users.*, terminated_employees.termination_date, terminated_employees.details as terminated_reason');
+        $this->db->select('users.*');
         $this->db->where('users.parent_sid', $parent_sid);
         $this->db->where('users.terminated_status', 1);
         $this->db->where('users.is_executive_admin', 0);
@@ -55,15 +55,55 @@
         }
         $this->db->where('users.sid != ' . $sid);
         $this->db->order_by($orderType, $order);
-        $this->db->join('terminated_employees', 'terminated_employees.employee_sid = users.sid', 'inner');
+        // $this->db->join('terminated_employees', 'terminated_employees.employee_sid = users.sid', 'inner');
         $all_employees = $this->db->get('users')->result_array();
         $all_employees = $this->verify_executive_admin_status($all_employees);
+        //
+        $this->GetEmployeeStatus($all_employees, 1);
         return $all_employees;
+    }
+
+
+    private function GetEmployeeStatus(&$employees, $status = 1){
+        //
+        if(empty($employees)){
+            return false;
+        }
+        //
+        $employeeIds = array_column($employees, 'sid');
+        //
+        $statuses = $this->db
+        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire')
+        ->where_in('employee_sid', $employeeIds)
+        ->where('employee_status', $status)
+        ->get('terminated_employees')
+        ->result_array();
+        //
+        if(!empty($statuses)){
+            //
+            $tmp = [];
+            //
+            foreach($statuses as $stat){
+                //
+                $tmp[$stat['employee_sid']] = $stat;
+            }
+            //
+            $statuses = $tmp;
+            //
+            unset($tmp);
+        }
+        //
+        foreach($employees as $index => $employee){
+            //
+            $employees[$index]['last_status'] = isset($statuses[$employee['sid']]) ? $statuses[$employee['sid']] : [];
+        }
+        //
+        return true;
     }
 
     function get_all_company_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0,  $order_by = 'sid', $order="DESC") {
         $keyword = trim($keyword);
-        $this->db->select('users.*, terminated_employees.termination_date');
+        $this->db->select('users.*');
         $this->db->where('users.parent_sid', $parent_sid);
         if ($keyword != null) {
             $tK = preg_replace('/\s+/', '|', strtolower(trim($keyword)));
@@ -74,10 +114,11 @@
         $this->db->where('users.is_executive_admin', 0);
         $this->db->group_by('users.sid');
         $this->db->order_by($order_by, $order);
-        $this->db->join('terminated_employees', 'terminated_employees.employee_sid = users.sid', 'left');
         $all_employees = $this->db->get('users')->result_array();
 
         $all_employees = $this->verify_executive_admin_status($all_employees);
+        //
+        $this->GetEmployeeStatus($all_employees, 1);
         return $all_employees;
     }
 

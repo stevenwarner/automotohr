@@ -325,12 +325,15 @@
                                                     <?php if ($all === true || $terminated === true) { ?>
                                                         <td class="text-center">
                                                             <?php 
-                                                                if ($employee['active'] == 0 && $employee['terminated_status'] == 1 && $employee['archived'] == 0) { 
-                                                                    echo formatDateToDB($employee["termination_date"], DB_DATE, DATE);
-                                                                    if(!empty($employee['terminated_reason'])) {
-                                                                        echo "<br/> Reason: ".$employee['terminated_reason']; 
+                                                                //
+                                                                if($employee['last_status']){
+                                                                    //
+                                                                    echo formatDateToDB($employee['last_status']["termination_date"], DB_DATE, DATE);
+                                                                    if($employee['last_status']['details']) {
+                                                                        echo "<br/> Reason: ".(html_entity_decode($employee['last_status']['details'])); 
                                                                     }
-                                                                } else {
+                                                                }
+                                                                else {
                                                                     echo "N/A";
                                                                 }
                                                             ?>
