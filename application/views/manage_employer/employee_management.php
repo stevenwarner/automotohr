@@ -264,7 +264,7 @@
                                                                 <?php } ?>
                                                                     <?php 
                                                                         echo '<br />'.$employee['email'];
-                                                                        echo '<br> <b> Employee Status:</b> '. ucwords($employee['last_status_text'] ? $employee['last_status_text'] : $employee['general_status']);
+                                                                        echo '<br> <b> Employee Status:</b> '. (GetEmployeeStatus($employee['last_status_text'], $employee['active']));
                                                                     ?>
                                                                     <br>
                                                                     <?php

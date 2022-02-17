@@ -14363,3 +14363,17 @@ if(!function_exists('GetEmployeeStatusText')){
         return $arr[$index];
     }
 }
+
+if(!function_exists('GetEmployeeStatus')){
+    /**
+     * Get employee last status
+     * 
+     * @param string $lastStatusText
+     * @param number $active
+     * @return
+     */
+    function GetEmployeeStatus($lastStatusText, $active){
+        //
+        return ucwords($lastStatusText ? $lastStatusText : ($active ? 'Active' : 'De-activated'));
+    }
+}
