@@ -4510,14 +4510,14 @@ class Onboarding extends CI_Controller {
                     );
                 //
                 $replacement_array = array();
-                $replacement_array['contact-name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
+                $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
                 $replacement_array['baseurl'] = base_url();
                 //
                 $extra_user_info = array();
                 $extra_user_info["user_type"] = $user_type;
-                $extra_user_info["user_sid"] = $employer_sid;
+                $extra_user_info["user_sid"] = $user_sid;
                 //
-                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $data['session']['employer_detail']['email'], $replacement_array, $hf, 1, $extra_user_info);
+                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS,  $user_info['email'], $replacement_array, $hf, 1, $extra_user_info);
             }
 
             $all_assigned_sids = array();
