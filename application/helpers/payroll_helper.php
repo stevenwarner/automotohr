@@ -614,8 +614,7 @@ if(!function_exists('AddEmployeeToCompany')){
         return $response;
     }
 }
-
-
+//
 if(!function_exists('UpdateEmployeeAddress')){
     function UpdateEmployeeAddress($request, $employeeId, $company){
         //
@@ -645,6 +644,81 @@ if(!function_exists('UpdateEmployeeAddress')){
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
                 return UpdateEmployeeAddress($request, $employeeId, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+//
+if(!function_exists('CreateEmployeeAddress')){
+    function CreateEmployeeAddress($request, $employeeId, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('CreateEmployeeAddress', $employeeId),[
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return CreateEmployeeAddress($request, $employeeId, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+//
+if(!function_exists('DeleteOnboardingEmployee')){
+    function DeleteOnboardingEmployee($employeeId, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('DeleteOnboardingEmployee', $employeeId),[
+                CURLOPT_CUSTOMREQUEST => "DELETE",
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return DeleteOnboardingEmployee($employeeId, $company);
             } else{
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -920,7 +994,7 @@ if(!function_exists('PayrollURL')){
         // } else {
             //     $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'?show_calculation=false&include=benefits,deductions,taxes';
             // }
-            $urls['GetCompanyEmployees'] = 'v1/companies/'.($key).'/employees';
+        $urls['GetCompanyEmployees'] = 'v1/companies/'.($key).'/employees';
         $urls['UpdatePayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1);
         $urls['CalculatePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/calculate';
         $urls['CancelPayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/cancel';
@@ -937,6 +1011,8 @@ if(!function_exists('PayrollURL')){
         // Employee routes
         $urls['AddEmployeeToCompany'] = 'v1/companies/'.($key).'/employees';
         $urls['UpdateEmployeeAddress'] = 'v1/employees/'.($key).'/home_address';
+        $urls['CreateEmployeeAddress'] = 'v1/employees/'.($key).'/jobs';
+        $urls['DeleteOnboardingEmployee'] = 'v1/employees/'.($key);
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }
@@ -944,13 +1020,6 @@ if(!function_exists('PayrollURL')){
 
 if(!function_exists('MakeCall')){
     function MakeCall($url, $options = [], $force = false){
-        //
-        if(!$force){
-            $tr = CacheHolder($url);
-            if($tr){
-                return $tr;
-            }
-        }
         //
         $curl = curl_init();
         //
@@ -1070,5 +1139,52 @@ if(!function_exists('CacheHolder')){
         // if(!empty($data)){
         //     $_this->session->set_userdata($url, $data);
         // }
+    }
+}
+
+
+if(!function_exists('EmployeePayrollOnboardStatus')){
+    /**
+     * Get the employee onboard status
+     * 
+     * @param array $o
+     * @return
+     */
+    function EmployeePayrollOnboardStatus($o){
+        //
+        $ra = [];
+        //
+        $ra['status'] = 'pending';
+        //
+        $ra['details'] = [
+            'personal_profile' => 0,
+            'compensation' => 0,
+            'home_address' => 0,
+            'federal_tax' => 0,
+            'state_tax' => 0,
+            'payment_method' => 0
+        ];
+        //
+        $count = 0;
+        //
+        $ra['details']['personal_profile'] = $o['personal_profile'];
+        $ra['details']['compensation'] = $o['compensation'];
+        $ra['details']['home_address'] = $o['home_address'];
+        $ra['details']['federal_tax'] = $o['federal_tax'];
+        $ra['details']['state_tax'] = $o['state_tax'];
+        $ra['details']['payment_method'] = $o['payment_method'];
+        //
+        if($ra['details']['personal_profile']){ $count++; }
+        if($ra['details']['compensation']){ $count++; }
+        if($ra['details']['home_address']){ $count++; }
+        if($ra['details']['federal_tax']){ $count++; }
+        if($ra['details']['state_tax']){ $count++; }
+        if($ra['details']['payment_method']){ $count++; }
+        //
+        if($count == 6){
+            $ra['status'] = 'completed';
+        }
+        //
+        return $ra;
     }
 }

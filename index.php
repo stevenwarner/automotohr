@@ -310,7 +310,7 @@ if($_SERVER['HTTP_HOST'] == 'www.automotohr.com' || $_SERVER['HTTP_HOST'] == 'au
 	define('MINIFIED', '-min');
 } else{
 	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
+	ini_set('display_errors', 0);
 	define('MINIFIED', '');
 }	
 //

@@ -192,12 +192,13 @@ class Employee_model extends CI_Model{
      */
     function GetEmployeeDetailWithPayroll(
         $employeeId, 
-        $columns = '*'
+        $columns = '*',
+        $table = 'payroll_employees'
     ){
         $query = 
         $this->db
         ->select($columns)
-        ->join('payroll_employee_address', 'users.sid = payroll_employee_address.employee_sid', 'left')
+        ->join($table, "users.sid = {$table}.employee_sid", 'left')
         ->where("{$this->U}.sid", $employeeId)
         ->get($this->U);
         //
@@ -206,5 +207,51 @@ class Employee_model extends CI_Model{
         $query = $query->free_result();
         //
         return $record;
+    }
+
+
+    /**
+     * Get all the payroll employees
+     * 
+     * @version 1.0
+     * @param number       $companyId
+     * @param string|array $columns
+     * @return
+     */
+    function GetPayrollEmployees(
+        $companyId, 
+        $columns = '*'
+    ){
+        $query = 
+        $this->db
+        ->select($columns, false)
+        ->join('payroll_employees', "users.sid = payroll_employees.employee_sid", 'left')
+        ->where("{$this->U}.parent_sid", $companyId)
+        ->where("{$this->U}.active", 1)
+        ->where("{$this->U}.terminated_status", 0)
+        ->order_by("{$this->U}.first_name", "ASC")
+        ->get($this->U);
+        //
+        $records = $query->result_array();
+        //
+        $query = $query->free_result();
+        //
+        return $records;
+    }
+
+    /**
+     * Deletes payroll employee
+     * 
+     * @param number $employeeId
+     */
+    public function DeletePayrollEmployee($employeeId){
+        //
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employees');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_address');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_federal_tax');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_jobs');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_state_tax');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_payment_method');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_bank_accounts');
     }
 }

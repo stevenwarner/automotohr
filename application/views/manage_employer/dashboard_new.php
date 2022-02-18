@@ -804,7 +804,7 @@
                                     </div>
                                 <?php } ?>
 
-                                <?php if (checkIfAppIsEnabled('payroll') && $session['company_details']['on_payroll'] && isPayrollOrPlus()) { ?>
+                                <?php if (checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll'] && isPayrollOrPlus()) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">

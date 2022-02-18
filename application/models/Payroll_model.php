@@ -925,4 +925,31 @@ class Payroll_model extends CI_Model{
         ->get('users')
         ->row_array();
     }
+
+
+    //
+    public function GetCompanyWorkAddress($companyId){
+        //
+        $query = 
+        $this->db
+        ->select('gusto_location_id')
+        ->where('company_sid', $companyId)
+        ->get('payroll_company_locations')
+        ->row_array();
+        //
+        return $query ? $query['gusto_location_id'] : 0;
+    }
+    
+    //
+    public function GetStateCodeById($stateId){
+        //
+        $query = 
+        $this->db
+        ->select('state_code')
+        ->where('sid', $stateId)
+        ->get('states')
+        ->row_array();
+        //
+        return ucwords($query ? $query['state_code'] : 'CA');
+    }
 }

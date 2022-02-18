@@ -13983,3 +13983,30 @@ if(!function_exists('_m')){
         return $string.( ENVIRONMENT === 'production' ? '.min' : '' ).'.'.$type.'?v='.(ENVIRONMENT === 'production' ? $version : time());
     }
 }
+
+
+if(!function_exists('GetHireDate')){
+    /**
+     * Get the new joined date
+     * 
+     * @param string $rd  Rehire date
+     * @param string $jd  Joining date
+     * @param string $red Registration date
+     * 
+     * @return
+     */
+    function GetHireDate(
+        $rd,
+        $jd,
+        $red
+    ){
+        //
+        if($red){
+            return $red;
+        } else if($jd){
+            return $jd;
+        } else if($rd){
+            return DateTime::createfromformat('Y-m-d H:i:s', $rd)->format('Y-m-d');
+        }
+    }
+}

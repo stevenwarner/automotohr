@@ -36,9 +36,6 @@
                                             <a class="btn btn-success" href="<?php echo $onboarding_link; ?>" target="_blank">
                                                 Onboarding Process
                                             </a>
-                                            <button class="btn btn-success jsGetEmployeesList" data-company_sid="<?php echo $company_info['sid'] ?>">
-                                                Manage Employees
-                                            </button>
                                             <button class="btn btn-success jsGetAdminUser" data-company_sid="<?php echo $company_info['sid'] ?>">
                                                 Show Payroll Admin
                                             </button>
@@ -47,9 +44,6 @@
                                                 Start Onboarding Process
                                             </button>
                                         <?php } ?>
-                                        <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
-                                                Start Onboarding Process t
-                                            </button>
                                         </div>
                                     </div>
                                     <!-- Email Logs Start -->
@@ -127,6 +121,45 @@
                                         </div>
                                     <?php } ?>
                                     <!-- Compant Status info End -->
+
+                                    <!--  -->
+                                    <div class="hr-box">
+                                            <div class="hr-box-header bg-header-green">
+                                                <span class="pull-left">
+                                                    <h1 class="hr-registered">Payroll Employees</h1>
+                                                </span>
+                                                <span class="pull-right">
+                                                    <span id="jsPayrollEmployeesListingCount" class="hr-registered">Total: 0</span>
+                                                </span>
+                                            </div>
+                                            <div class="hr-innerpadding">
+                                                <!--  -->
+                                                <div class="row">
+                                                    <div class="col-xs-12 text-right">
+                                                        <button class="btn btn-success" id="jsPayrollEmployeeAddBtn"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Onboard Employee To Payroll</button>
+                                                    </div>
+                                                </div>
+                                                <!--  -->
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered table-striped table-hover">
+                                                                <caption></caption>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="col">Employee</th>
+                                                                        <th scope="col" class="text-right">Payroll Id</th>
+                                                                        <th scope="col" class="text-right">Onboard Status</th>
+                                                                        <th scope="col" class="text-right">Actions</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="jsPayrollEmployeesListingBox"></tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <!--  -->
                                 </div>
                             </div>
                         </div>
@@ -136,6 +169,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    /**
+     * Set default company Id
+     * @type {number}
+     */
+    var companyId = <?php echo $this->uri->segment(4);?>;
+
+    /**
+     * Set base url
+     * @type {string}
+     */
+    var baseURI = "<?php echo base_url();?>/";
+</script>
 <!-- Include Modal -->
 <link rel="stylesheet" href="<?=base_url("assets/css/SystemModel.css");?>" />
 <script src="<?=base_url("assets/js/SystemModal.js");?>"></script>
@@ -147,6 +194,7 @@
 <!-- Include payroll -->
 <link rel="stylesheet" href="<?=base_url("assets/css/theme-2021.css");?>" />
 <script src="<?=base_url("assets/payroll/js/payroll_company_onboard.js");?>"></script>
+<script src="<?=base_url("assets/payroll/js/employee_onboard.js");?>"></script>
 
 
 <script>
