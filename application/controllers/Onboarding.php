@@ -4538,6 +4538,10 @@ class Onboarding extends CI_Controller {
             $data['user_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($user_sid, $user_type); //getting average rating of applicant
             $access_levels = $this->onboarding_model->get_security_access_levels();
             $data['access_levels'] = $access_levels;
+            //
+            $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
+            $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
+            //
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
             if ($this->form_validation->run() == false) {

@@ -4333,6 +4333,8 @@ if (!function_exists('log_and_send_templated_email')) {
                 . EMAIL_FOOTER;
         }
 
+        $body = preg_replace("/{{(.*)}}/","", $body);
+
         if ($log_email == 1) { 
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
         } else {

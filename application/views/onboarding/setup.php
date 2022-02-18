@@ -2142,7 +2142,7 @@ if (isset($applicant)) {
 <script src="<?=base_url('assets/mFileUploader/index.js');?>"></script>
 <?php $this->load->view('iframeLoader'); ?>
 <?php $this->load->view('hr_documents_management/hybrid/scripts'); ?>
-<?php $this->load->view('hr_documents_management/scripts/index', ['offerLetters' => $allOfferLetters, 'doRefresh' => 0]); ?>
+<?php $this->load->view('hr_documents_management/scripts/index', ['offerLetters' => $allOfferLetters, 'doRefresh' => 1]); ?>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -2743,12 +2743,9 @@ if (isset($applicant)) {
                         'perform_action': 'remove_w4'
                     },
                     success: function(){
-                        var w4_date = '<i class="fa fa-times fa-2x text-danger"></i>';
-                        $('#w4').html('Assign');
-                        $('#w4').removeClass('btn-danger');
-                        $('#w4').addClass('btn-success');
-                        $('#w4').attr('onclick','func_assign_w4()');
-                        $('#w4-date').html(w4_date);
+                        alertify.alert("Success", 'W4 fillable revoke successfully!',function(){
+                            window.location.reload();
+                        });
                     }
                 });
             },
@@ -2769,12 +2766,9 @@ if (isset($applicant)) {
                         'perform_action': 'assign_w4'
                     },
                     success: function(data){
-                        var w4_date = '<i class="fa fa-check fa-2x text-success"></i><div class="text-center">'+data+'</div>';
-                        $('#w4').html('Revoke');
-                        $('#w4').removeClass('btn-success');
-                        $('#w4').addClass('btn-danger');
-                        $('#w4').attr('onclick','func_remove_w4()');
-                        $('#w4-date').html(w4_date);
+                        alertify.alert("Success", 'W4 fillable assign successfully!',function(){
+                            window.location.reload();
+                        });
                     }
                 });
             },
@@ -2795,12 +2789,9 @@ if (isset($applicant)) {
                         'perform_action': 'remove_i9'
                     },
                     success: function(){
-                        var i9_date = '<i class="fa fa-times fa-2x text-danger"></i>';
-                        $('#i9').html('Assign');
-                        $('#i9').removeClass('btn-danger');
-                        $('#i9').addClass('btn-success');
-                        $('#i9').attr('onclick','func_assign_i9()');
-                        $('#i9-date').html(i9_date);
+                        alertify.alert("Success", 'I9 fillable revoke successfully!',function(){
+                            window.location.reload();
+                        });
                     }
                 });
             },
@@ -2821,12 +2812,9 @@ if (isset($applicant)) {
                         'perform_action': 'assign_i9'
                     },
                     success: function(data){
-                        var i9_date = '<i class="fa fa-check fa-2x text-success"></i><div class="text-center">'+data+'</div>';
-                        $('#i9').html('Revoke');
-                        $('#i9').removeClass('btn-success');
-                        $('#i9').addClass('btn-danger');
-                        $('#i9').attr('onclick','func_remove_i9()');
-                        $('#i9-date').html(i9_date);
+                        alertify.alert("Success", 'I9 fillable assign successfully!',function(){
+                            window.location.reload();
+                        });
                     }
                 });
             },
@@ -2847,12 +2835,9 @@ if (isset($applicant)) {
                         'perform_action': 'remove_w9'
                     },
                     success: function(){
-                        var w9_date = '<i class="fa fa-times fa-2x text-danger"></i>';
-                        $('#w9').html('Assign');
-                        $('#w9').removeClass('btn-danger');
-                        $('#w9').addClass('btn-success');
-                        $('#w9').attr('onclick','func_assign_w9()');
-                        $('#w9-date').html(w9_date);
+                        alertify.alert("Success", 'W9 fillable revoke successfully!',function(){
+                            window.location.reload();
+                        });
                     }
                 });
             },
@@ -2873,12 +2858,9 @@ if (isset($applicant)) {
                         'perform_action': 'assign_w9'
                     },
                     success: function(data){
-                        var w9_date = '<i class="fa fa-check fa-2x text-success"></i><div class="text-center">'+data+'</div>';
-                        $('#w9').html('Revoke');
-                        $('#w9').removeClass('btn-success');
-                        $('#w9').addClass('btn-danger');
-                        $('#w9').attr('onclick','func_remove_w9()');
-                        $('#w9-date').html(w9_date);
+                        alertify.alert("Success", 'W9 fillable assign successfully!',function(){
+                            window.location.reload();
+                        });
                     }
                 });
             },

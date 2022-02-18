@@ -2300,7 +2300,8 @@ if(!function_exists('broadcastAlert')){
             if(!count($_SESSION[$templateCode.'_SES'])) $_SESSION[$templateCode.'_SES'] = get_email_template($templateCode);
         }
         //
-        $template = $_SESSION[$templateCode.'_SES'];
+        // $template = $_SESSION[$templateCode.'_SES'];
+        $template = get_email_template($templateCode);
         //
         $fromName = str_replace('{{company_name}}', $companyName, $template['from_name']);
         $fromEmail = !empty($template['from_email']) ? $template['from_email'] : FROM_EMAIL_NOTIFICATIONS;
@@ -2320,6 +2321,16 @@ if(!function_exists('broadcastAlert')){
             $dti => $dt
         ];
 
+        // $CI = &get_instance();
+        // $user_info = get_user_required_info($CI->session->userData('logged_in')['employer_detail']['sid'], "employee");
+        // // //
+        // if($user_info){
+        //     //
+        //     $content = convert_email_template($content, $user_info);
+        // }
+
+        //
+        $CI = &get_instance();
         //
         foreach($employers as $employer){
             //
@@ -2330,6 +2341,18 @@ if(!function_exists('broadcastAlert')){
                 $replaceArray,
                 $content
             );
+            if ($employer['employer_sid'] != 0) {
+                //
+                $user_info = get_user_required_info($employer['employer_sid'], "employee");
+                //
+                if($user_info){
+                    //
+                    $body = convert_email_template($body, $user_info);
+                }
+            } 
+            //
+            $body = preg_replace("/{{(.*)}}/","", $body);
+            
             //
             log_and_sendEmail(
                 $fromEmail,
