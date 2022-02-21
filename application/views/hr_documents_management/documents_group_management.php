@@ -181,7 +181,8 @@
                         for (var i = 0; i < employees.length; i++) {
                             arr[j++] = {
                                 value: employees[i].sid,
-                                text: employees[i].first_name + ' ' + employees[i].last_name
+                                text: employees[i].full_name 
+                                // text: employees[i].first_name + ' ' + employees[i].last_name
                             }
                         }
 
