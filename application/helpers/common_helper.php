@@ -14177,14 +14177,10 @@ if (!function_exists('modify_AWS_file_name')) {
         //
         $CI->aws_lib->copy_object(AWS_S3_BUCKET_NAME, $file_name, AWS_S3_BUCKET_NAME, $new_file_name);
         //
-        $CI->aws_lib->delete_object(AWS_S3_BUCKET_NAME, $file_name, "file");
-        //
-        $column_to_update = array(
-            $column => $new_file_name
-        );
+        // $CI->aws_lib->delete_object(AWS_S3_BUCKET_NAME, $file_name, "file");
         //
         $CI->db->where('sid', $sid);
-        $CI->db->update($table_name, $column_to_update);
+        $CI->db->update($table_name, [$column => $new_file_name]);
         //
         return $new_file_name;
 
