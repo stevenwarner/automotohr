@@ -1934,63 +1934,68 @@ if (!function_exists('upload_file_to_aws')) {
         $CI = &get_instance();
 
         //require_once(APPPATH . 'libraries/aws/aws.php');
-        if ($key !== NULL && isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'][$key] != '') {
-
-            $last_index_of_dot = strrpos($_FILES[$file_input_id]["name"][$key], '.') + 1;
-            $file_ext = substr($_FILES[$file_input_id]["name"][$key], $last_index_of_dot, strlen($_FILES[$file_input_id]["name"][$key]) - $last_index_of_dot);
-            $file_name = trim($document_name . '-' . $suffix);
-            $file_name = str_replace(" ", "_", $file_name);
-            $file_name = strtolower($file_name);
-            $prefix = str_pad($company_sid, 4, '0', STR_PAD_LEFT);
-            $new_file_name = $prefix . '-' . $file_name . '-' . generateRandomString(3) . '.' . $file_ext;
+        if ($key !== NULL && isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'][$key] != '') {die("hope");
             //
-            $new_file_name = str_replace("&","and",$new_file_name);
-
+            $modify_file_name = modify_document_name($document_name, $_FILES[$file_input_id]["name"][$key], $company_sid, $suffix);
+            //
             /* $aws = new AwsSdk();
               $aws->putToBucket($new_file_name, $_FILES[$file_input_id]["tmp_name"], $bucket_name); */
-
+            //  
             $CI->load->library('aws_lib');
-
+            //
             $options = [
                 'Bucket' => $bucket_name,
-                'Key' => $new_file_name,
+                'Key' => $modify_file_name,
                 'Body' => file_get_contents($_FILES[$file_input_id]["tmp_name"][$key]),
                 'ACL' => 'public-read',
                 'ContentType' => $_FILES[$file_input_id]["type"][$key]
             ];
-            $CI->aws_lib->put_object($options);
-
-            return $new_file_name;
-        } else if (isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'] != '') {
-            //$file = explode(".", $_FILES[$file_input_id]["name"]);
-            $last_index_of_dot = strrpos($_FILES[$file_input_id]["name"], '.') + 1;
-            $file_ext = substr($_FILES[$file_input_id]["name"], $last_index_of_dot, strlen($_FILES[$file_input_id]["name"]) - $last_index_of_dot);
-            $file_name = trim($document_name . '-' . $suffix);
-            $file_name = str_replace(" ", "_", $file_name);
-            $file_name = strtolower($file_name);
-            $prefix = str_pad($company_sid, 4, '0', STR_PAD_LEFT);
-            $new_file_name = $prefix . '-' . $file_name . '-' . generateRandomString(3) . '.' . $file_ext;
             //
-            $new_file_name = str_replace("&","and",$new_file_name);
-
+            $CI->aws_lib->put_object($options);
+            //
+            return $modify_file_name;
+            //
+        } else if (isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'] != '') {
+            $modify_file_name = modify_document_name($document_name, $_FILES[$file_input_id]["name"], $company_sid, $suffix);
+            //
             /* $aws = new AwsSdk();
               $aws->putToBucket($new_file_name, $_FILES[$file_input_id]["tmp_name"], $bucket_name); */
-
+            //
             $CI->load->library('aws_lib');
-
+            //
             $options = [
                 'Bucket' => $bucket_name,
-                'Key' => $new_file_name,
+                'Key' => $modify_file_name,
                 'Body' => file_get_contents($_FILES[$file_input_id]["tmp_name"]),
                 'ACL' => 'public-read',
                 'ContentType' => $_FILES[$file_input_id]["type"]
             ];
+            //
             $CI->aws_lib->put_object($options);
-
-            return $new_file_name;
+            //
+            return $modify_file_name;
+            //
         } else {
             return 'error';
         }
+    }
+}
+
+if (!function_exists('modify_document_name')) {
+
+    function modify_document_name($document_title, $document_name, $company_sid, $suffix)
+    {
+        $file_name = preg_replace('/[^A-Za-z0-9_]/', '_', pathinfo($document_title, PATHINFO_FILENAME));
+        $file_name = strtolower(str_replace([$company_sid, $suffix, "pdf", "doc", "docx", "xls", "xlsx", "csv", "rtf" ],"",$file_name));
+        //
+        $last_index_of_dot = strrpos($document_name, '.') + 1;
+        $file_ext = substr($document_name, $last_index_of_dot, strlen($document_name) - $last_index_of_dot);
+        //
+        $modify_file_name = $company_sid . '_' . $suffix . '_' . generateRandomString(3) . '_' . $file_name  . '.' . $file_ext;
+        //
+        // echo $document_title."<br>";
+        // die(preg_replace('/_+/', '_', $modify_file_name));
+        return $modify_file_name;
     }
 }
 
@@ -14163,12 +14168,14 @@ if (!function_exists('check_full_employment_application_module')) {
 
 if (!function_exists('modify_AWS_file_name')) {
 
-    function modify_AWS_file_name ($sid, $file_name, $column)
+    function modify_AWS_file_name ($sid, $file_name, $column, $table_name = 'documents_assigned')
     {
         $CI = &get_instance();
         $CI->load->library('aws_lib');
         //
-        $new_file_name = str_replace("&","and",$file_name);
+        $file_info = get_file_info ($sid, $table_name);
+        //
+        $new_file_name = modify_document_name($file_name, $file_name, $file_info["company_sid"], $file_info["user_sid"]);
         //
         $CI->aws_lib->copy_object(AWS_S3_BUCKET_NAME, $file_name, AWS_S3_BUCKET_NAME, $new_file_name);
         //
@@ -14179,10 +14186,40 @@ if (!function_exists('modify_AWS_file_name')) {
         );
         //
         $CI->db->where('sid', $sid);
-        $CI->db->update('documents_assigned', $column_to_update);
+        $CI->db->update($table_name, $column_to_update);
         //
         return $new_file_name;
 
+    }
+}
+
+if (!function_exists('get_file_info')) {
+
+    function get_file_info ($sid, $table_name)
+    {
+        $columns = 'user_sid';
+        //
+        if($table_name == 'eev_documents' || $table_name == 'eev_required_documents'){
+            $columns = 'employee_sid AS user_sid';
+        } 
+        //
+        $CI = &get_instance();
+        $CI->db->select($columns);
+        $CI->db->where('sid', $sid);
+        $result = $CI->db->get($table_name)->row_array();
+        //
+        if (!empty($result)) {
+            $data['session'] = $CI->session->userdata('logged_in');
+            $company_sid = $data['session']['company_detail']['sid'];
+            //
+            $return_array = array();
+            $return_array["user_sid"] = $result["user_sid"];
+            $return_array["company_sid"] = $company_sid;
+            //
+            return $return_array;
+        } else {
+            return array();
+        }
     }
 }
 
