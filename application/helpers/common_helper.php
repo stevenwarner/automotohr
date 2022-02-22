@@ -1934,7 +1934,7 @@ if (!function_exists('upload_file_to_aws')) {
         $CI = &get_instance();
 
         //require_once(APPPATH . 'libraries/aws/aws.php');
-        if ($key !== NULL && isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'][$key] != '') {die("hope");
+        if ($key !== NULL && isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'][$key] != '') {
             //
             $modify_file_name = modify_document_name($document_name, $_FILES[$file_input_id]["name"][$key], $company_sid, $suffix);
             //
@@ -1993,8 +1993,6 @@ if (!function_exists('modify_document_name')) {
         //
         $modify_file_name = $company_sid . '_' . $suffix . '_' . generateRandomString(3) . '_' . $file_name  . '.' . $file_ext;
         //
-        // echo $document_title."<br>";
-        // die(preg_replace('/_+/', '_', $modify_file_name));
         return $modify_file_name;
     }
 }
