@@ -8,14 +8,6 @@
             <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee_profile", "subIndex" =>""]);?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
-                <!-- Heading -->
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h1 class="csF18 csB7">
-                            Employee profile
-                        </h1>
-                    </div>
-                </div>
                 <!-- Body -->
                 <div class="row">
                     <div class="col-sm-12">
@@ -31,7 +23,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="csF16">
-                            Fields marked with asterisk (<span class="csRequired"></span>) are mendatory.
+                            Fields marked with asterisk (<span class="csRequired"></span>) are mandatory.
                         </p>
                     </div>
                 </div>
@@ -39,7 +31,7 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            First name <span class="csRequired"></span>
+                            First Name <span class="csRequired"></span>
                         </label>
                         <input type="text" class="form-control jsFirstName" value="<?=!empty($employee_info) ? $employee_info['first_name'] : '';?>" placeholder="John" />
                     </div>
@@ -48,7 +40,7 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Middle name / initial 
+                            Middle Name / Initial 
                         </label>
                         <input type="text" class="form-control jsMiddleName" value="<?=!empty($employee_info) ? $employee_info['middle_name'] : '';?>" placeholder="B" />
                     </div>
@@ -57,7 +49,7 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Last name <span class="csRequired"></span>
+                            Last Name <span class="csRequired"></span>
                         </label>
                         <input type="text" class="form-control jsLastName" value="<?=!empty($employee_info) ? $employee_info['last_name'] : '';?>" placeholder="Doe" />
                     </div>
@@ -66,19 +58,18 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Date of birth <span class="csRequired"></span>
+                            Date Of Birth <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsEDOB jsDatePicker" value="<?=!empty($employee_info) ? date('m/d/Y',strtotime($employee_info['dob'])) : '';?>" placeholder="MM/DD/YYYY" />
+                        <input type="text" class="form-control jsEDOB jsDOBPicker" value="<?=!empty($employee_info) ? date('m/d/Y',strtotime($employee_info['dob'])) : '';?>" readonly placeholder="MM/DD/YYYY" />
                     </div>
                 </div>
                 <br>
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Work address
+                            Work Address
                         </label>
                         <select class="form-control jsEWD">
-                            <option value="0">[Select]</option>
                             <?php foreach($locations as $location): ?>
                                 <option value="<?=$location['gusto_location_id'];?>" <?php echo $workAddressId == $location['gusto_location_id'] ? 'selected="selected"' : ''; ?>><?php echo $location['street_1'].', '.$location['city'].', '.$location['state'].' - '.$location['zip']; ?></option>
                             <?php endforeach; ?>
@@ -89,19 +80,9 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Start date
+                            Start Date
                         </label>
-                        <?php 
-                            $start_date = "";
-                            if(isset($employee_info)){
-                                if (!empty($employee_info['joined_at'])) {
-                                    $start_date = date('m/d/Y',strtotime($employee_info['joined_at']));
-                                } else if (!empty($employee_info['registration_date'])) {
-                                    $start_date = date('m/d/Y',strtotime($employee_info['registration_date']));
-                                }
-                            }
-                        ?>
-                        <input type="text" class="form-control jsStartDate jsDatePicker" value="<?php echo $start_date; ?>" placeholder="MM/DD/YYYY" />
+                        <input type="text" class="form-control jsStartDate jsDatePicker" value="<?=isset($employee_info) ?  formatDate(GetHireDate($employee_info['rehire_date'], $employee_info['joined_at'], $employee_info['registration_date']), 'Y-m-d', 'm/d/Y') : ''; ?>" placeholder="MM/DD/YYYY" readonly />
                     </div>
                 </div>
                 <br>
@@ -117,7 +98,7 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Social security number <span class="csRequired"></span>
+                            Social Security Number <span class="csRequired"></span>
                         </label>
                         <input type="text" class="form-control jsEmployeeSSN" value="<?=!empty($employee_info) ? $employee_info['ssn'] : '';?>" placeholder="123456789" />
                     </div>
@@ -132,7 +113,7 @@
                         </button>
                         <button class="btn btn-orange csF16 csB7 jsPayrollSaveCompanyEmployee">
                             <i class="fa fa-save" aria-hidden="true"></i>&nbsp;
-                            <span id="jsSaveBtnTxt">Save & continue</span>
+                            <span id="jsSaveBtnTxt">Save & Continue</span>
                         </button>
                     </div>
                 </div>

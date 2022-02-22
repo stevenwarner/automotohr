@@ -30,10 +30,6 @@ class Payroll_ajax extends CI_Controller
         $this->path = 'payroll/pages/';
         //
         $this->session = $this->session->userdata('logged_in');
-        //
-        if(!$this->session){
-            return SendResponse(401);
-        }
     }
 
     /**
@@ -718,8 +714,6 @@ class Payroll_ajax extends CI_Controller
             ]);
             //
             return SendResponse(200,[
-                'API_KEY' => getAPIKey(),
-                'EMPLOYEE_URL' => getAPIUrl("employees"),
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
         }
@@ -757,8 +751,6 @@ class Payroll_ajax extends CI_Controller
             return SendResponse(200,[
                 'JOB_ID' => $data['employee_job_info']['sid'],
                 'JOB_HIRE_DATE' => $data['employee_job_info']['hire_date'],
-                'API_KEY' => getAPIKey(),
-                'EMPLOYEE_URL' => getAPIUrl("job_compensation"),
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
         }
@@ -795,13 +787,15 @@ class Payroll_ajax extends CI_Controller
             //
             $data['payment_method'] = $this->pm->GetEmployeePaymentMethod($_GET["employee_id"]);
             //
-            $data['bank_account'] = $this->pm->GetEmployeeBankDetails($_GET["employee_id"]);
-            //
-            $data['payroll_bank_account'] = $this->pm->GetEmployeePayrollBankDetails($_GET["employee_id"]);
+            if(empty($data['payment_method'])){
+                //
+                $data['payment_method'] = $this->GetEmployeePaymentMethod(
+                    $companyId,
+                    $data['employee_sid']
+                );
+            }
             //
             return SendResponse(200,[
-                'API_KEY' => getAPIKey(),
-                'EMPLOYEE_URL' => getAPIUrl("employees"),
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);
         }
@@ -1280,5 +1274,38 @@ class Payroll_ajax extends CI_Controller
         }
         //
         SendResponse(200, $responseArray);
+    }
+
+    /**
+     * 
+     */
+    private function GetEmployeePaymentMethod($companyId, $employeeId){
+        //
+        $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $employeeId], 'payroll_employee_uuid');
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = GetEmployeePaymentMethod($payrollId, $company_details);
+        //
+        if (isset($response['errors'])) {
+            return MakeErrorArray($response['errors']);
+        }
+        //
+        $sid = $this->pm->GetPayrollColumn('payroll_employee_payment_method', ['employee_sid' => $employeeId], 'sid');
+        //
+        $response['sid'] = $sid;
+        // Add entry to the payroll job
+        $ia = [];
+        $ia['employee_sid'] = $employeeId;
+        $ia['company_sid'] = $companyId;
+        $ia['payment_method'] = $response['type'];
+        $ia['split_method'] = $response['split_by'];
+        $ia['version'] = $response['version'];
+        $ia['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $ia['sid'] = $this->pm->InsertPayroll('payroll_employee_payment_method', $ia);
+        //
+        return $ia;
     }
 }

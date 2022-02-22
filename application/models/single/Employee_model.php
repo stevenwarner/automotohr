@@ -35,7 +35,7 @@ class Employee_model extends CI_Model{
         return $record;
     }
 
-     /**
+    /**
      * 
      */
     function GetCompanyEmployees(

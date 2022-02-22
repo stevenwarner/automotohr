@@ -40,9 +40,9 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                        Account Name <span class="csRequired"></span>
+                        Bank name <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsAccountName" placeholder=""  value="<?=!empty($bank_detail) ? $bank_detail['account_title'] : '';?>"/>
+                        <input type="text" class="form-control jsBankName" placeholder="" value="<?=!empty($bank_detail) ? $bank_detail['name'] : '';?>"/>
                     </div>
                 </div>
                 <br>
@@ -51,7 +51,7 @@
                         <label class="csF16 csB7">
                         Routing number (9 digits) <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsRoutingNumber" placeholder=""  value="<?=!empty($bank_detail) ? $bank_detail['routing_transaction_number'] : '';?>"/>
+                        <input type="text" class="form-control jsRoutingNumber" placeholder=""  value="<?=!empty($bank_detail) ? $bank_detail['routing_number'] : '';?>"/>
                     </div>
                 </div>
                 <br>
@@ -67,25 +67,13 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16 csB7">
-                            Acount type <span class="csRequired"></span>
+                            Account type <span class="csRequired"></span>
                         </label>
                         <select class="form-control jsAccountType">
                             <option value="0">[Select]</option>
-                            <option value="checking" <?=!empty($bank_detail) &&  $bank_detail['account_type'] === "checking" ? 'selected="selected"' : '';?>>Checking</option>
-                            <option value="savings" <?=!empty($bank_detail) &&  $bank_detail['account_type'] === "savings" ? 'selected="selected"' : '';?>>Savings</option>
+                            <option value="Checking" <?=!empty($bank_detail) &&  $bank_detail['account_type'] === "Checking" ? 'selected="selected"' : '';?>>Checking</option>
+                            <option value="Savings" <?=!empty($bank_detail) &&  $bank_detail['account_type'] === "Savings" ? 'selected="selected"' : '';?>>Savings</option>
                         </select>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-md-12 col-xs-12">
-                        <label class="csF16 csB7">
-                        <?=$type === "Percentage" ? 'Split Percentage' : 'Split Amount';?> <span class="csRequired"></span>
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-addon"><?=$type === "Percentage" ? '%' : '$';?></span>
-                            <input type="text" class="form-control jsSplitAmount" placeholder=""  value="<?=!empty($bank_detail) ? $bank_detail['account_percentage'] : '';?>"/>
-                        </div>
                     </div>
                 </div>
                 <br>

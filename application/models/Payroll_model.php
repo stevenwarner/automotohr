@@ -1,5 +1,7 @@
 <?php
 
+use phpDocumentor\Reflection\DocBlock\Tags\Return_;
+
 class Payroll_model extends CI_Model{
     //
     private $tables;
@@ -710,7 +712,8 @@ class Payroll_model extends CI_Model{
         ->select("
             payment_method,
             split_method,
-            version,
+            splits,
+            version
         ")
         ->from($this->tables['PEPM'])
         ->where("employee_sid", $employee_sid)
@@ -729,14 +732,13 @@ class Payroll_model extends CI_Model{
         $this->db
         ->select("
             sid,
-            routing_transaction_number,
+            routing_number,
             account_number,
             account_type,
+            name
         ")
-        ->from($this->tables['BAD'])
-        ->where("users_sid", $employee_sid)
-        ->where("users_type", "employee")
-        ->where("is_payroll", 0)
+        ->from('payroll_employee_bank_accounts')
+        ->where("employee_sid", $employee_sid)
         ->get();
         //
         $taxInfo = $query->result_array();
@@ -751,6 +753,7 @@ class Payroll_model extends CI_Model{
         $this->db
         ->select("
             payroll_bank_uuid,
+            name,
             routing_number,
             account_number,
             account_type,
@@ -951,5 +954,68 @@ class Payroll_model extends CI_Model{
         ->row_array();
         //
         return ucwords($query ? $query['state_code'] : 'CA');
+    }
+    
+    //
+    public function GetStateId($stateCode){
+        //
+        $query = 
+        $this->db
+        ->select('sid')
+        ->where('sid', $stateCode)
+        ->get('states')
+        ->row_array();
+        //
+        return $query ? $query['sid'] : 0;
+    }
+    
+    //
+    public function GetPayrollColumn($table, $where, $col = 'sid', $single = true){
+        //
+        $query = 
+        $this->db
+        ->select($col)
+        ->where($where)
+        ->get($table)
+        ->row_array();
+        //
+        if(!$single){
+            return $query;
+        }
+        return $query ? $query[$col] : '';
+    }
+
+
+    //
+    public function GetCompanyWorkAddressBySid($sid){
+        //
+        return 
+        $this->db
+        ->select('gusto_location_id')
+        ->where('sid', $sid)
+        ->get('payroll_company_locations')
+        ->row_array();
+    }
+    
+    //
+    public function GetCompensationColumn($uuid){
+        //
+        return 
+        $this->db
+        ->select('sid')
+        ->where('payroll_id', $uuid)
+        ->get('payroll_employee_job_compensations')
+        ->row_array()['sid'];
+    }
+    
+    //
+    public function GetJobColumn($where){
+        //
+        return 
+        $this->db
+        ->select('sid')
+        ->where($where)
+        ->get('payroll_employee_jobs')
+        ->row_array()['sid'];
     }
 }

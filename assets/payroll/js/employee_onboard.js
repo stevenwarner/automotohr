@@ -65,6 +65,18 @@ $(function EmployeeOnboard() {
     var selectedEmployeeId = 0;
 
     /**
+     * Holds state name
+     * @type string
+     */
+    var selectedStateName = '';
+
+    /**
+     * Holds bank id
+     * @type number
+     */
+    var selectedBankId = 0;
+
+    /**
      * Starts the process of adding employees on payroll
      * 
      */
@@ -136,6 +148,24 @@ $(function EmployeeOnboard() {
         selectedEmployeeId = $(this).closest('.jsPayrollOnEmployeeRow').data('id');
         //
         StartOnboardProcess();
+    });
+
+    /**
+     * Trigger when cancel is pressed
+     */
+    $(document).on("change", ".jsPaymentMethod", function() {
+        //
+        var type = $(this).val();
+        //
+        if (type == "Check") {
+            $(".jsBaseOnC").show();
+            $(".jsBaseOnDD").hide();
+        }
+
+        if (type == "Direct Deposit") {
+            $(".jsBaseOnC").hide();
+            $(".jsBaseOnDD").show();
+        }
     });
 
     /**
@@ -367,7 +397,8 @@ $(function EmployeeOnboard() {
             Loader: modalId + 'Loader',
             Container: 'container',
             CancelClass: 'btn-cancel csW'
-        }, AddUpdateCompanyEmployeeProfile);
+        }, UpdateEmployeePaymentMethod);
+        // }, AddUpdateCompanyEmployeeProfile);
     }
 
     /**
@@ -388,8 +419,551 @@ $(function EmployeeOnboard() {
                 //
                 LoadContent(resp.html, function() {
                     //
-                    // $(".jsAddEmployeeCancel").click(ShowCompanyEmployeeList);
-                    // $(".jsPayrollSaveCompanyEmployee").click(SaveCompanyEmployeeProfile);
+                    $(".jsPayrollSaveCompanyEmployee").click(SaveCompanyEmployeeProfile);
+                    //
+                    $(".jsDOBPicker").datepicker({
+                        format: "m/d/Y",
+                        changeMonth: true,
+                        changeYear: true,
+                        yearRange: "-80:+0",
+                    });
+                    $(".jsDatePicker").datepicker({
+                        format: "m/d/Y",
+                        changeMonth: true,
+                        changeYear: true,
+                        yearRange: "-100:+50",
+                    });
+                    //
+                    ml(false, 'jsEmployeeOnboardModelLoader');
+                });
+            })
+            .error(ErrorHandler);
+    }
+
+    /**
+     * Save company Employee
+     * @param {object} event
+     * @returns
+     */
+    function SaveCompanyEmployeeProfile(event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        o.FirstName = $(".jsFirstName").val().trim();
+        o.MiddleInitial = $(".jsMiddleName").val().trim();
+        o.LastName = $(".jsLastName").val().trim();
+        o.StartDate = $(".jsStartDate").val() || '';
+        o.SSN = $(".jsEmployeeSSN").val().replace(/[^\d]/g, "");
+        o.DOB = $(".jsEDOB").val() || '';
+        o.EWA = $(".jsEWD option:selected").val() || 0;
+        o.Email = $(".jsEmail").val().trim();
+
+        // Validation
+        if (!o.FirstName) {
+            return alertify.alert(
+                "Warning!",
+                "First name is mandatory.",
+                ECB
+            );
+        }
+        if (!o.LastName) {
+            return alertify.alert(
+                "Warning!",
+                "Last name is mandatory.",
+                ECB
+            );
+        }
+        if (!o.Email) {
+            return alertify.alert(
+                "Warning!",
+                "Email address is mandatory.",
+                ECB
+            );
+        }
+        if (!o.SSN) {
+            return alertify.alert("Warning!", "SSN is mandatory.", ECB);
+        }
+        if (o.SSN.length != 9) {
+            return alertify.alert(
+                "Warning!",
+                "SSN number must be of 9 digits long.",
+                ECB
+            );
+        }
+        if (!o.DOB) {
+            return alertify.alert(
+                "Warning!",
+                "Date of birth is mandatory.",
+                ECB
+            );
+        }
+
+        o.employeeId = selectedEmployeeId;
+
+        ml(true, 'jsEmployeeOnboardModelLoader');
+
+        xhr = $.ajax({
+                method: "POST",
+                url: baseURI + 'payroll/onboard_employee/profile/' + companyId,
+                data: o,
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                ml(false, 'jsEmployeeOnboardModelLoader');
+                //
+                if (!resp.status) {
+                    return alertify.alert(
+                        "Error!",
+                        typeof resp.errors === "object" ?
+                        resp.errors.join("<br/>") :
+                        resp.errors,
+                        ECB
+                    );
+                }
+                //
+                return alertify.alert(
+                    "Success!",
+                    resp.response,
+                    function() {
+                        if (resp.move) {
+                            UpdateCompanyEmployeeCompensation();
+                            return true;
+                        }
+                    }
+                );
+            })
+            .error(ErrorHandler);
+    }
+
+    /**
+     * Save company Employee job
+     * @param {object} event
+     * @returns
+     */
+    function SaveCompanyEmployeeJob(event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        o.Title = $(".jsJobTitle").val().trim();
+        o.Rate = $(".jsAmount").val().trim().replace(/[^0-9.]/g, '');
+        o.FlsaStatus = $(".jsEmployeeType option:selected").val();
+        o.PaymentUnit = $(".jsSalaryType option:selected").val();
+        o.employeeId = selectedEmployeeId;
+        // Validation
+        if (!o.Title) {
+            return alertify.alert(
+                "Warning!",
+                "Job title is mandatory.",
+                ECB
+            );
+        }
+        if (!o.FlsaStatus || o.FlsaStatus == 0) {
+            return alertify.alert(
+                "Warning!",
+                "Employee type is mandatory.",
+                ECB
+            );
+        }
+        if (!o.Rate) {
+            return alertify.alert(
+                "Warning!",
+                "Salary amount is mandatory.",
+                ECB
+            );
+        }
+        if (!o.PaymentUnit || o.PaymentUnit == 0) {
+            return alertify.alert(
+                "Warning!",
+                "Salary type is mandatory.",
+                ECB
+            );
+        }
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.ajax({
+                method: "POST",
+                url: baseURI + 'payroll/onboard_employee/compensation/' + companyId,
+                data: o
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                ml(false, 'jsEmployeeOnboardModelLoader');
+                //
+                if (!resp.status) {
+                    return alertify.alert(
+                        "Error!",
+                        typeof resp.errors === "object" ?
+                        resp.errors.join("<br/>") :
+                        resp.errors,
+                        ECB
+                    );
+                }
+                //
+                return alertify.alert(
+                    "Success!",
+                    resp.response,
+                    UpdateCompanyEmployeeAddress
+                );
+            })
+            .error(ErrorHandler);
+        //
+    }
+
+    /**
+     * Save Employee home address
+     * @param {object} event
+     * @returns
+     */
+    function SaveCompanyEmployeeAddress(event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        o.Street1 = $(".jsStreet1").val().trim();
+        o.Street2 = $(".jsStreet2").val().trim();
+        o.Country = "USA";
+        o.City = $(".jsCity").val().trim();
+        o.State = $(".jsState option:selected").val();
+        o.Zipcode = $(".jsZip").val().trim();
+        o.PhoneNumber = $(".jsPhoneNumber").val().replace(/[^\d]/g, "");
+        o.employeeId = selectedEmployeeId;
+        // Validation
+        if (!o.Street1) {
+            return alertify.alert(
+                "Warning!",
+                "Street 1 is mandatory.",
+                ECB
+            );
+        }
+        if (!o.City) {
+            return alertify.alert("Warning!", "City is mandatory.", ECB);
+        }
+        if (!o.State) {
+            return alertify.alert("Warning!", "State is mandatory.", ECB);
+        }
+        if (!o.Zipcode) {
+            return alertify.alert("Warning!", "Zip is mandatory.", ECB);
+        }
+        if (o.Zipcode.length != 5) {
+            return alertify.alert("Warning!", "Zip must be 5 characters long.", ECB);
+        }
+
+        if (o.PhoneNumber && o.PhoneNumber.length != 10) {
+            return alertify.alert(
+                "Warning!",
+                "Phone number must be of 10 digits long.",
+                ECB
+            );
+        }
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.ajax({
+                method: "POST",
+                url: baseURI + 'payroll/onboard_employee/home_address/' + companyId,
+                data: o
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                ml(false, 'jsEmployeeOnboardModelLoader');
+                //
+                if (!resp.status) {
+                    return alertify.alert(
+                        "Error!",
+                        typeof resp.errors === "object" ?
+                        resp.errors.join("<br/>") :
+                        resp.errors,
+                        ECB
+                    );
+                }
+                //
+                return alertify.alert(
+                    "Success!",
+                    resp.response,
+                    UpdateEmployeeFederalTax
+                );
+            })
+            .error(ErrorHandler);
+        //
+    }
+
+    /**
+     * Save company Employee Federal tax
+     * @param {object} event
+     * @returns
+     */
+    function SaveCompanyEmployeeFederalTax(event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        o.FederalFilingStatus = $(".jsFederalFilingStatus option:selected").val();
+        o.MultipleJobs = $(".jsMultipleJobs option:selected").val();
+        o.DependentTotal = $(".jsDependentTotal").val();
+        o.OtherIncome = $(".jsOtherIncome").val();
+        o.Deductions = $(".jsDeductions").val();
+        o.ExtraWithholding = $(".jsExtraWithholding").val();
+        o.employeeId = selectedEmployeeId;
+        // Validation
+        if (!o.FederalFilingStatus || o.FederalFilingStatus == 0) {
+            return alertify.alert(
+                "Warning!",
+                "Federal Filing Status is mandatory.",
+                ECB
+            );
+        }
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.ajax({
+                method: "POST",
+                url: baseURI + 'payroll/onboard_employee/federal_tax/' + companyId,
+                data: o,
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                ml(false, 'jsEmployeeOnboardModelLoader');
+                //
+                if (!resp.status) {
+                    return alertify.alert(
+                        "Error!",
+                        typeof resp.errors === "object" ?
+                        resp.errors.join("<br/>") :
+                        resp.errors,
+                        ECB
+                    );
+                }
+
+                return alertify.alert(
+                    "Success!",
+                    resp.response,
+                    UpdateEmployeeStateTax
+                );
+            })
+            .error(HandleError);
+        //
+    }
+
+    /**
+     * Save company Employee Federal tax
+     * @param {object} event
+     * @returns
+     */
+    function SaveCompanyEmployeeStateTax(event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        //
+        o.employeeId = selectedEmployeeId;
+        //
+        o.state_name = selectedStateName;
+        //
+        $('.jsStateField').each(function() {
+            var key = $(this).data('field_key');
+            o[key] = key == 'withholding_allowance' ? parseInt($(".js" + key).val()) : $(".js" + key).val();
+        });
+        //
+        for (key in o) {
+            //
+            if (!o[key]) {
+                return alertify.alert('Error!', key.replace(/_/ig, ' ') + " is mandatory", ECB);
+            }
+            //
+            if (key === 'withholding_allowance' && o[key] > 99) {
+                return alertify.alert('Error!', "Withholding Allowance must be less than or equal to 99", ECB);
+            }
+        }
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.ajax({
+                method: "POST",
+                url: baseURI + 'payroll/onboard_employee/state_tax/' + companyId,
+                data: o,
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                ml(false, 'jsEmployeeOnboardModelLoader');
+                //
+                if (!resp.status) {
+                    return alertify.alert(
+                        "Error!",
+                        typeof resp.errors === "object" ?
+                        resp.errors.join("<br/>") :
+                        resp.errors,
+                        ECB
+                    );
+                }
+                //
+                return alertify.alert(
+                    "Success!",
+                    resp.response,
+                    UpdateEmployeePaymentMethod
+                );
+            })
+            .error(ErrorHandler);
+    }
+
+    /**
+     * Save company Employee Bank Detail
+     * @param {object} event
+     * @returns
+     */
+    function SaveEmployeeBankDetail(event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        //
+        o.RoutingNumber = $(".jsRoutingNumber").val().replace(/[^\d]/g, "");
+        o.AccountNumber = $(".jsAccountNumber").val().replace(/[^\d]/g, "");
+        o.AccountType = $(".jsAccountType option:selected").val();
+        o.BankName = $(".jsBankName").val().trim();
+        o.employeeId = selectedEmployeeId;
+        o.bankId = selectedBankId;
+        // Validation
+        if (!o.BankName) {
+            return alertify.alert(
+                "Warning!",
+                "Bank name is mandatory.",
+                ECB
+            );
+        }
+        if (!o.RoutingNumber) {
+            return alertify.alert(
+                "Warning!",
+                "Routing number is mandatory.",
+                ECB
+            );
+        }
+        if (o.RoutingNumber.length !== 9) {
+            return alertify.alert(
+                "Warning!",
+                "Routing number must be of 9 digits.",
+                ECB
+            );
+        }
+        if (!o.AccountNumber) {
+            return alertify.alert(
+                "Warning!",
+                "Account number is mandatory.",
+                ECB
+            );
+        }
+        if (o.AccountNumber.length !== 9) {
+            return alertify.alert(
+                "Warning!",
+                "Account number must be of 9 digits.",
+                ECB
+            );
+        }
+        if (!o.AccountType || o.AccountType == '0') {
+            return alertify.alert(
+                "Warning!",
+                "Please, select the account type.",
+                ECB
+            );
+        }
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.ajax({
+                method: "POST",
+                url: baseURI + 'payroll/onboard_employee/bank_account/' + companyId,
+                data: o,
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                ml(false, 'jsEmployeeOnboardModelLoader');
+                //
+                if (!resp.status) {
+                    return alertify.alert(
+                        "Error!",
+                        typeof resp.errors === "object" ?
+                        resp.errors.join("<br/>") :
+                        resp.errors,
+                        ECB
+                    );
+                }
+
+                return alertify.alert(
+                    "Success!",
+                    resp.response,
+                    UpdateEmployeePaymentMethod
+                );
+            })
+            .error(ErrorHandler);
+        //
+    }
+
+    /**
+     * Get employee onboarding compensation
+     */
+    function UpdateCompanyEmployeeCompensation() {
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL(
+                    "get_payroll_page/get_company_employee_compensation/" + companyId
+                ),
+                data: { employee_id: selectedEmployeeId },
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                employeeJobID = resp.JOB_ID;
+                employeeHireDate = resp.JOB_HIRE_DATE;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    $(".jsPayrollEmployeeOnboard").click(AddUpdateCompanyEmployeeProfile);
+                    $(".jsPayrollSaveEmployeeJobInfo").click(SaveCompanyEmployeeJob);
+                    //
+                    ml(false, 'jsEmployeeOnboardModelLoader');
+                });
+            })
+            .error(ErrorHandler);
+    }
+
+    /**
+     * Get employee onboarding address
+     */
+    function UpdateCompanyEmployeeAddress() {
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL("get_payroll_page/get_company_employee_address/" + companyId),
+                data: { employee_id: selectedEmployeeId },
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    $(".jsPayrollEmployeeOnboard").click(UpdateCompanyEmployeeCompensation);
+                    $(".jsPayrollSaveEmployeeAddressInfo").click(
+                        SaveCompanyEmployeeAddress
+                    );
                     //
                     $(".jsDatePicker").datepicker({
                         format: "m/d/Y",
@@ -397,6 +971,191 @@ $(function EmployeeOnboard() {
                         changeYear: true,
                         yearRange: "-100:+50",
                     });
+                    //
+                    ml(false, 'jsEmployeeOnboardModelLoader');
+                });
+            })
+            .error(ErrorHandler);
+    }
+
+    /**
+     * Get employee federal tax
+     */
+    function UpdateEmployeeFederalTax() {
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL(
+                    "get_payroll_page/get_company_employee_federal_tax/" + companyId
+                ),
+                data: { employee_id: selectedEmployeeId },
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    $(".jsPayrollEmployeeOnboard").click(UpdateCompanyEmployeeAddress);
+                    $(".jsPayrollSaveEmployeeFederalTax").click(
+                        SaveCompanyEmployeeFederalTax
+                    );
+                    //
+                    ml(false, 'jsEmployeeOnboardModelLoader');
+                });
+            })
+            .error(ErrorHandler);
+    }
+
+    /**
+     * Get employee's state tax
+     */
+    function UpdateEmployeeStateTax() {
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL(
+                    "get_payroll_page/get_company_employee_state_tax/" + companyId
+                ),
+                data: { employee_id: selectedEmployeeId },
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    LoadEmployeeStateTax();
+                    //
+                    $(".jsPayrollEmployeeOnboard").click(UpdateEmployeeFederalTax);
+                    $(".jsPayrollSaveEmployeeStateTax").click(
+                        SaveCompanyEmployeeStateTax
+                    );
+                });
+            })
+            .error(ErrorHandler);
+    }
+
+    /**
+     *  Get employee's payment method
+     */
+    function UpdateEmployeePaymentMethod() {
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL(
+                    "get_payroll_page/get_company_employee_payment_method/" + companyId
+                ),
+                data: { employee_id: selectedEmployeeId },
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    $(".jsPayrollEmployeeOnboard").click(UpdateEmployeeStateTax);
+                    // $(".jsPayrollEmployeePaymentMethod").click(
+                    //     SaveCompanyEmployeePaymentMethod
+                    // );
+                    $(".jsAddEmployeeBankAccount").click(AddEmployeeBankAccount);
+                    // $(".jsDeleteEmployeeBankAccount").click(DeleteEmployeeoBankAccount);
+                    //
+                    ml(false, 'jsEmployeeOnboardModelLoader');
+                });
+            })
+            .error(ErrorHandler);
+    }
+
+    /**
+     * 
+     */
+    function LoadEmployeeStateTax() {
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.get(
+                baseURI + 'payroll/onboard_employee/state_tax/' + companyId + '/' + selectedEmployeeId
+            )
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                $("#JSStateName").text(resp.response.state_name);
+                //
+                selectedStateName = resp.response.state_name;
+                //
+                var html = "";
+                //
+                resp.response.state_json.questions.map(function(q) {
+                    //
+                    var value = 0;
+                    //
+                    if (q.answers.length) {
+                        value = q.answers[0]['value'];
+                    }
+                    //
+                    html += '<div class="row">';
+                    html += '    <div class="col-md-12 col-xs-12">';
+                    html += '        <label class="csF16 csB7">';
+                    html += q.label
+                    html += '        </label>';
+                    html += '        <p class="csF16">';
+                    html += q.description;
+                    html += '        </p>';
+                    //
+                    if (q.input_question_format.type == "Select") {
+                        html += '<select class="form-control jsStateField js' + q.key + '" data-field_key="' + q.key + '">';
+                        q.input_question_format.options.map(function(op) {
+                            html += '<option value="' + op.value + '" ' + (value == op.value ? "selected" : "") + '>' + op.label + '</option>';
+                        })
+                        html += '</select>';
+                    } else {
+                        html += '<input type="' + q.input_question_format.type + '" min="0" class="form-control jsStateField js' + q.key + '" data-field_key="' + q.key + '" value="' + (value) + '">';
+                    }
+
+                    html += '    </div>';
+                    html += '</div>';
+                    html += '</br>';
+                });
+                //
+                $("#JSQusetionSection").html(html);
+                //
+                ml(false, 'jsEmployeeOnboardModelLoader');
+            })
+            .error(ErrorHandler);
+    }
+
+    /**
+     * 
+     */
+    function AddEmployeeBankAccount() {
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        selectedBankId = $(this).data("account_id");
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: GetURL(
+                    "get_payroll_page/get_company_employee_bank_detail/" + companyId
+                ),
+                data: { employee_id: selectedEmployeeId, row_id: selectedBankId },
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                LoadContent(resp.html, function() {
+                    //
+                    $(".jsBackToPaymentMethod").click(UpdateEmployeePaymentMethod);
+                    $(".jsSaveEmployeeBankInfo").click(SaveEmployeeBankDetail);
                     //
                     ml(false, 'jsEmployeeOnboardModelLoader');
                 });
@@ -439,6 +1198,12 @@ $(function EmployeeOnboard() {
         //
         !cb ? ml(false, modalLoader) : cb();
     }
+
+    /**
+     * Alertify callback error
+     * @returns
+     */
+    function ECB() {}
 
     // Quickly load all the employees
     LoadPayrollEmployees();

@@ -49,17 +49,13 @@
                         $jsBaseOnDD = 'style="display:none;"';
                     }
                 ?>
-                <div class="row jsBaseOnDD" <?=$addSplitType?>>
-                    <div class="col-md-12 col-xs-12">
-                        <label class="csF16 csB7">
-                            Split method
-                        </label>
-                        <select class="form-control jsSplitType">
-                            <option value="Percentage" <?=!empty($payment_method) &&  $payment_method['split_method'] === "Percentage" ? 'selected="selected"' : '';?>>Percentage</option>
-                            <option value="Amount" <?=!empty($payment_method) &&  $payment_method['split_method'] === "Amount" ? 'selected="selected"' : '';?>>Amount</option>
-                        </select>
+                <!--  -->
+                <div class="row jsBaseOnC" <?=$payment_method['payment_method'] != 'Check' ? 'style="display: none;"' : '';?>>
+                    <div class="col-sm-12">
+                        <p class="csF16">By selecting Check as the payment method you will be required to write a physical check to this employee every payday (we will tell you the exact amount to pay).</p>
                     </div>
                 </div>
+                <!--  -->
                 <br>
                 <div class="row jsBaseOnDD" <?=$addBankAccount?>>
                     <div class="col-md-12 col-xs-12">
@@ -76,59 +72,32 @@
                 </div>
                 <br>
                 <div class="jsBaseOnDD" <?=$jsBaseOnDD;?>>
-                    <?php if (!empty($bank_account)) { ?>
-                        <?php foreach ($bank_account as $account) { ?>
+                <?php
+                    $payroll_bank_accounts = $payment_method['splits'] ? json_decode($payment_method['splits'], true) : [];
+                ?>
+                    <?php if (!empty($payroll_bank_accounts)) { ?>
+                        <?php foreach ($payroll_bank_accounts as $account) { ?>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <p class="csF16">
-                                        <b><?php echo $account['routing_transaction_number']; ?></b>
+                                        <span>Bank name</span>
                                         <br>
+                                        <b><?php echo $account['name']; ?></b>
+                                    </p>
+                                    <p class="csF16">
                                         <span>Routing number</span>
-                                    </p>
-                                    <p class="csF16">
-                                        <b><?php echo $account['account_number']; ?></b>
                                         <br>
-                                        <span>Account number</span>
-                                    </p>
-                                    <p class="csF16">
-                                        <b><?php echo ucfirst($account['account_type']); ?></b>
-                                        <br>
-                                        <span>Account type</span>
-                                    </p>
-                                </div>
-                                <div class="col-sm-6 ">
-                                    <button class="btn btn-orange csF16 csB7 jsAddEmployeeBankAccount" data-account_id="<?php echo $account['sid']; ?>">
-                                        <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
-                                        Edit
-                                    </button>
-                                </div>
-                            </div>
-                            <br>
-                        <?php } ?>
-                    <?php } ?>
-                    <?php if (!empty($payroll_bank_account)) { ?>
-                        <?php foreach ($payroll_bank_account as $account) { ?>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <p class="csF16">
                                         <b><?php echo $account['routing_number']; ?></b>
-                                        <br>
-                                        <span>Routing number (9 digits)</span>
                                     </p>
                                     <p class="csF16">
-                                        <b><?php echo $account['account_number']; ?></b>
-                                        <br>
                                         <span>Account number</span>
+                                        <br>
+                                        <b><?php echo $account['account_number']; ?></b>
                                     </p>
                                     <p class="csF16">
-                                        <b><?php echo ucfirst($account['account_type']); ?></b>
-                                        <br>
                                         <span>Account type</span>
-                                    </p>
-                                    <p class="csF16">
-                                        <b><?php echo $account['account_percentage']; ?></b>
                                         <br>
-                                        <span>percentage/Amount</span>
+                                        <b><?php echo ucfirst($account['account_type']); ?></b>
                                     </p>
                                 </div>
                                 <div class="col-sm-6 ">

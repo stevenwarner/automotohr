@@ -39,7 +39,7 @@
                         <label class="csF16 csB7">
                             Job title <span class="csRequired"></span>
                         </label>
-                        <input type="text" class="form-control jsJobTitle" value="<?=!empty($employee_job_info) ? $employee_job_info['title'] : '';?>" placeholder="What is this person's job" />
+                        <input type="text" class="form-control jsJobTitle" value="<?=!empty($employee_job_info) ? (!empty($employee_job_info['title']) ? $employee_job_info['title'] : 'Automotive') : '';?>" placeholder="What is this person's job" />
                     </div>
                 </div>
                 <br>

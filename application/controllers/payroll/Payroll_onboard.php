@@ -1,4 +1,5 @@
-<?php defined('BASEPATH') || exit('No direct script access allowed');
+<?php
+ defined('BASEPATH') || exit('No direct script access allowed');
 
 /**
  * 
@@ -180,6 +181,7 @@ class Payroll_onboard extends CI_Controller
      * Deleted employee from payroll
      * 
      * @param number $companyId
+     * @param number $employeeId
      * @return
      */
     public function DeleteEmployeeFromPayroll($companyId, $employeeId){
@@ -207,6 +209,65 @@ class Payroll_onboard extends CI_Controller
         //
         return SendResponse(200, ['status' => true]);
     }
+
+    /** 
+     * Add/Update employee section for payroll
+     * 
+     * @param string $section
+     * @param number $companyId
+     * @return
+     */
+    public function EmployeeOnboardPiece($section, $companyId){
+        //
+        $section = strtolower($section);
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        switch($section){
+            case "profile":
+                $this->AddEditEmployeeProfile($companyId, $post);
+                break;
+            case "compensation":
+                $this->EditEmployeeJobAndCompensation($companyId, $post);
+                break;
+            case "home_address":
+                $this->EditEmployeeHomeAddress($companyId, $post);
+                break;
+            case "federal_tax":
+                $this->EditEmployeeFederalTax($companyId, $post);
+                break;
+            case "state_tax":
+                $this->EditEmployeeStateTax($companyId, $post);
+                break;
+            case "bank_account":
+                $this->AddEditEmployeeBankAccount($companyId, $post);
+                break;
+            default:
+            return SendResponse(401, 'Invalid call made.');
+        }
+    }
+    
+    /** 
+     * Get employee section for payroll
+     * 
+     * @param string $section
+     * @param number $companyId
+     * @param number $employeeId
+     * @return
+     */
+    public function GetEmployeeOnboardSection($section, $companyId, $employeeId){
+        //
+        $section = strtolower($section);
+        //
+        switch($section){
+            case "state_tax":
+                $this->GetEmployeeStateTax($companyId, $employeeId);
+                break;
+            default:
+            return SendResponse(401, 'Invalid call made.');
+        }
+    }
+
 
     // -------------------------------------------------------------------------------------------------------------------------------------
 
@@ -264,7 +325,7 @@ class Payroll_onboard extends CI_Controller
     }
 
     /**
-     * Add company address
+     * Add company location
      * 
      * @param number $companyId
      * @param array  $cd
@@ -340,8 +401,8 @@ class Payroll_onboard extends CI_Controller
         $request['last_name'] = $ei['last_name'];
         $request['date_of_birth'] = $ei['dob'];
         $request['email'] = $ei['email'];
-        // $request['ssn'] = $ei['ssn'];
-        $request['ssn'] = rand(1, 999999999);
+        $request['ssn'] = $ei['ssn'];
+        // $request['ssn'] = rand(1, 999999999);
         //
         $error_flag = 0;
         $missing_info = [];
@@ -555,7 +616,7 @@ class Payroll_onboard extends CI_Controller
         // Get company details
         $company_details = $this->pm->GetPayrollCompany($companyId);
         //
-        $response = CreateEmployeeAddress($request, $ed['payroll_employee_uuid'],  $company_details);
+        $response = CreateEmployeeJob($request, $ed['payroll_employee_uuid'],  $company_details);
         //
         if (isset($response['errors'])) {
             //
@@ -623,5 +684,798 @@ class Payroll_onboard extends CI_Controller
         $this->pm->UpdatePayroll('payroll_employees', ['compensation' => 1], ['employee_sid' => $employeeId]);
         //
         return $id;
+    }
+
+    /**
+     * Create employee or update on Gusto
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function AddEditEmployeeProfile($companyId, $post){
+        // Errors array
+        $er = [];
+        // Validations
+        if(empty($post['FirstName'])){
+            $er[] = 'First name is missing.';
+        }
+        if(empty($post['LastName'])){
+            $er[] = 'Last name is missing.';
+        }
+        if(empty($post['DOB'])){
+            $er[] = 'Date Of Birth is missing.';
+        }
+        if(empty($post['Email'])){
+            $er[] = 'Email is missing.';
+        }
+        if(empty($post['SSN'])){
+            $er[] = 'Social Security Number is missing.';
+        }
+
+        if($er){
+            return SendResponse(200, [
+                'status' => false,
+                'errors' => $er
+            ]);
+        }
+        // Check if employee is already on payroll
+        //
+        $ei = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employees.payroll_employee_uuid",
+            "payroll_employees.version",
+            "payroll_employees.work_address_sid"
+        ]);
+        // Either employee is on payroll or not
+        if(!$ei['payroll_employee_uuid']){
+            $this->CreateEmployeeOnGusto($companyId, $post['employeeId'], $ei);
+        } else{
+            // Let's update the employee data
+            $this->UpdateEmployeeOnGusto($companyId, $post, $ei['payroll_employee_uuid'], $ei['version']);
+            // Check the jobs view
+            if(!$post['EWA'] || $post['EWA'] == 0){
+                //
+                return SendResponse(200, ['status' => true, 'response' => 'Employee\'s personal details is added/updated. The system is unable to update job due to missing work address and start date. Please, complete these two in order to proceed. ', 'move' => false]);
+            }
+            // Lets update the job
+            $response = $this->UpdateEmployeeJob($companyId, $post);
+            //
+            if(is_array($response)){
+                return SendResponse(200, ['status' => false, 'errors' => $response]);
+            }
+            //
+            return SendResponse(200, ['status' => true, 'response' => 'Employee\'s personal details is added/updated. ', 'move' => true]);
+        }
+    }
+
+    /**
+     * Create employee or update on Gusto
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * @param string $employee_uuid
+     * @param string $version
+     * 
+     * @return
+     */
+    private function UpdateEmployeeOnGusto($companyId, $post, $employee_uuid, $version){
+        // Make update array
+        $upa = [];
+        $upa['first_name'] = $post['FirstName'];
+        $upa['middle_initial'] = !$post['MiddleInitial'] ? '' : $post['MiddleInitial'][0];
+        $upa['last_name'] = $post['LastName'];
+        $upa['date_of_birth'] = formatDateToDB($post['DOB']);
+        $upa['email'] = $post['Email'];
+        $upa['ssn'] = $post['SSN'];
+        $upa['version'] = $version;
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $company_details['employee_uuid'] = $employee_uuid;
+        //
+        $response = UpdateEmployeeOnGusto($upa, $company_details);
+        //
+        if (isset($response['errors'])) {
+            //
+            $errors = [];
+            //
+            foreach ($response['errors'] as $error) {
+                $errors[] = $error[0]['message'];
+            }
+            // Error took place
+            return SendResponse(200, [
+                'status' => false,
+                'errors' => $errors
+            ]);
+        }
+        // Change the payroll status
+        $this->pm->UpdateEmployee($post['employeeId'], [
+            'on_payroll' => 1,
+            'first_name' => $upa['first_name'],
+            'middle_name' => $post['MiddleInitial'],
+            'last_name' => $upa['last_name'],
+            'email' => $upa['email'],
+            'ssn' => $upa['ssn'],
+            'dob' => $upa['date_of_birth']
+        ]);
+        // Update entry to the main payroll table
+        $ia = [];
+        $ia['last_updated_by'] = $this->userId;
+        $ia['version'] = $response['version'];
+        $ia['updated_at'] = $this->datetime;
+        $ia['personal_profile'] = 1;
+        //
+        $this->pm->UpdatePayroll('payroll_employees', $ia, ['employee_sid' => $post['employeeId']]);
+        //
+        $ia = [];
+        $ia['payroll_employee_sid'] = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $post['employeeId']], 'sid');
+        $ia['payroll_json'] = json_encode($response);
+        $ia['last_updated_by'] = $this->userId;
+        $ia['created_at'] = $this->datetime;
+        //
+        $this->pm->InsertPayroll('payroll_employee_versions', $ia);
+    }
+
+    /**
+     * Update job on Gusto
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function UpdateEmployeeJob($companyId, $post){
+        //
+        $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "users.job_title",
+            "users.joined_at",
+            "users.registration_date",
+            "users.rehire_date"
+        ]);
+        //
+        $ej = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employee_jobs.payroll_job_id",
+            "payroll_employee_jobs.version"
+        ], 'payroll_employee_jobs');
+        //
+        $hire_date = GetHireDate($ed['registration_date'], $ed['joined_at'], $ed['rehire_date']);
+        //
+        $request = [];
+        $request['title'] = $ed['job_title'] ? $ed['job_title'] : 'Automotive';
+        if(isset($post['job_title'])){
+            $request['title'] = $post['job_title'];
+        }
+        $request['location_id'] = $post['EWA'];
+        $request['hire_date'] = $hire_date;
+        $request['version'] = $ej['version'];
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = UpdateEmployeeJob($request, $ej['payroll_job_id'],  $company_details);
+        //
+        if (isset($response['errors'])) {
+            //
+            $errors = [];
+            //
+            foreach ($response['errors'] as $error) {
+                $errors[] = $error[0]['message'];
+            }
+            // Error took place
+            return $errors;
+        }
+        //
+        if(isset($response['name'])){
+            return [$response['message']];
+        }
+        // Add entry to the payroll job
+        $ia = [];
+        $ia['version'] = $response['version'];
+        $ia['payroll_location_id'] = $response['location_id'];
+        $ia['hire_date'] = $response['hire_date'];
+        $ia['title'] = $response['title'];
+        $ia['is_primary'] = (int)$response['primary'];
+        $ia['rate'] = $response['rate'];
+        $ia['payment_unit'] = $response['payment_unit'];
+        $ia['current_compensation_id'] = $response['current_compensation_id'];
+        $ia['last_modified_by'] = $this->userId;
+        $ia['is_deleted'] = 0;
+        $ia['updated_at'] = $this->datetime;
+        // Get job sid
+        $sid = $this->pm->GetJobColumn(['employee_sid' => $post['employeeId']]);
+        //
+        $this->pm->UpdatePayroll('payroll_employee_jobs', $ia, ['sid' => $sid]);
+        //
+        $ia = [];
+        $ia['payroll_employee_job_sid'] = $sid;
+        $ia['payroll_json'] = json_encode($response);
+        $ia['last_updated_by'] = $this->userId;
+        $ia['created_at'] = $this->datetime;
+        //
+        $this->pm->InsertPayroll('payroll_employee_job_versions', $ia);
+        // //
+        foreach($response['compensations'] as $compensation){
+            // Get compensation sid
+            $sid = $this->pm->GetCompensationColumn($compensation['id']);
+            // Add entry to the payroll job compensation
+            $ia = [];
+            $ia['rate'] = $compensation['rate'];
+            $ia['payment_unit'] = $compensation['payment_unit'];
+            $ia['flsa_status'] = $compensation['flsa_status'];
+            $ia['effective_date'] = $compensation['effective_date'];
+            $ia['payroll_id'] = $compensation['id'];
+            $ia['version'] = $compensation['version'];
+            $ia['last_updated_by'] = $this->userId;
+            $ia['updated_at'] = $this->datetime;
+            //
+            $this->pm->UpdatePayroll('payroll_employee_job_compensations', $ia, ['sid' => $sid]);
+            //
+            $ia = [];
+            $ia['payroll_employee_job_compensations_sid'] = $sid;
+            $ia['payroll_json'] = json_encode($compensation);
+            $ia['last_updated_by'] = $this->userId;
+            $ia['created_at'] = $this->datetime;
+            //
+            $this->pm->InsertPayroll('payroll_employee_job_compensations_versions', $ia);
+        }
+        // Change the payroll status
+        $this->pm->UpdatePayroll('payroll_employees', ['compensation' => 1, 'work_address_sid' => $response['location_id']], ['employee_sid' => $post['employeeId']]);
+        $this->pm->UpdatePayroll('users', ['job_title' => $request['title']], ['sid' => $post['employeeId']]);
+        //
+        return $sid;
+    }
+
+    /**
+     * Update job and compensation on Gusto
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function EditEmployeeJobAndCompensation($companyId, $post){
+        //
+        $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employees.work_address_sid"
+        ]);
+        // Update job
+        $response = $this->UpdateEmployeeJob($companyId, ['job_title' => $post['Title'], 'EWA' => $ed['work_address_sid'], 'employeeId' => $post['employeeId']]);
+        // Check if there was an error
+        if(is_array($response)){
+            return sendResponse(200, ['status' => false, 'errors' => $response]);
+        }
+        //
+        $sid = $this->pm->GetPayrollColumn('payroll_employee_job_compensations', ['payroll_job_sid' => $response], 'sid');
+        $version = $this->pm->GetPayrollColumn('payroll_employee_job_compensations', ['sid' => $sid], 'version');
+        $payrollId = $this->pm->GetPayrollColumn('payroll_employee_job_compensations', ['sid' => $sid], 'payroll_id');
+        // Let's update the compensations
+        $request = [];
+        $request['rate'] = $post['Rate'];
+        $request['payment_unit'] = $post['PaymentUnit'];
+        $request['flsa_status'] = $post['FlsaStatus'];
+        $request['version'] = $version;
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $compensation = UpdateJobCompensation($request, $payrollId,  $company_details);
+        //
+        if (isset($compensation['errors'])) {
+            // Error took place
+            return SendResponse(200, ['status' => false, 'errors' => MakeErrorArray($compensation['errors'])]);
+        }
+        // Add entry to the payroll job compensation
+        $ia = [];
+        $ia['rate'] = $compensation['rate'];
+        $ia['payment_unit'] = $compensation['payment_unit'];
+        $ia['flsa_status'] = $compensation['flsa_status'];
+        $ia['effective_date'] = $compensation['effective_date'];
+        $ia['payroll_id'] = $compensation['id'];
+        $ia['version'] = $compensation['version'];
+        $ia['last_updated_by'] = $this->userId;
+        $ia['updated_at'] = $this->datetime;
+        //
+        $this->pm->UpdatePayroll('payroll_employee_job_compensations', $ia, ['sid' => $sid]);
+        //
+        $ia = [];
+        $ia['payroll_employee_job_compensations_sid'] = $sid;
+        $ia['payroll_json'] = json_encode($compensation);
+        $ia['last_updated_by'] = $this->userId;
+        $ia['created_at'] = $this->datetime;
+        //
+        $this->pm->InsertPayroll('payroll_employee_job_compensations_versions', $ia);
+        $this->pm->UpdatePayroll('payroll_employees', ['compensation' => 1], ['employee_sid' => $post['employeeId']]);
+        //
+        $this->GetAndUpdateJob($companyId, $response);
+        //
+        return SendResponse(200, ['status' => true, 'response' => 'Employee\'s job and compensation is successfully updated.']);
+    }
+
+    /**
+     * Get latest job id from gusto
+     * 
+     * @param number $companyId
+     * @param number $jobId
+     * 
+     * @return
+     */
+    private function GetAndUpdateJob($companyId, $jobId){
+        //
+        $payrollId = $this->pm->GetPayrollColumn('payroll_employee_jobs', ['sid' => $jobId], 'payroll_job_id');
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = GetJob($payrollId,  $company_details);
+        //
+        if (isset($response['errors'])) {
+            return MakeErrorArray($response['errors']);
+        }
+        // Add entry to the payroll job
+        $ia = [];
+        $ia['version'] = $response['version'];
+        $ia['updated_at'] = $this->datetime;
+        //
+        $this->pm->UpdatePayroll('payroll_employee_jobs', $ia, ['sid' => $jobId]);
+        //
+        $ia = [];
+        $ia['payroll_employee_job_sid'] = $jobId;
+        $ia['payroll_json'] = json_encode($response);
+        $ia['last_updated_by'] = $this->userId;
+        $ia['created_at'] = $this->datetime;
+        //
+        $this->pm->InsertPayroll('payroll_employee_job_versions', $ia);
+        //
+        return true;
+    }
+
+    /**
+     * Update job and compensation on Gusto
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function EditEmployeeHomeAddress($companyId, $post){
+        //
+        $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employee_address.sid",
+            "payroll_employee_address.version"
+        ], 'payroll_employee_address');
+        // Let's update the compensations
+        $request = [];
+        $request['street_1'] = $post['Street1'];
+        $request['street_2'] = $post['Street2'];
+        $request['city'] = $post['City'];
+        $request['state'] = $post['State'];
+        $request['zip'] = $post['Zipcode'];
+        $request['version'] = $ed['version'];
+        //
+        $employeeUUID = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employees.payroll_employee_id"
+        ])['payroll_employee_id'];
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = UpdateEmployeeAddress($request, $employeeUUID,  $company_details);
+        //
+        if (isset($response['errors'])) {
+            // Error took place
+            return SendResponse(200, ['status' => false, 'errors' => MakeErrorArray($response['errors'])]);
+        }
+        // Add entry to the payroll job response
+        $ia = [];
+        $ia['street_1'] = $response['street_1'];
+        $ia['street_2'] = $response['street_2'];
+        $ia['city'] = $response['city'];
+        $ia['state'] = $response['state'];
+        $ia['zip'] = $response['zip'];
+        $ia['version'] = $response['version'];
+        $ia['updated_at'] = $this->datetime;
+        //
+        $this->pm->UpdatePayroll('payroll_employee_address', $ia, ['sid' => $ed['sid']]);
+        //
+        $ia = [];
+        $ia['payroll_employee_address_sid'] = $ed['sid'];
+        $ia['payroll_json'] = json_encode($response);
+        $ia['created_at'] = $this->datetime;
+        //
+        $this->pm->InsertPayroll('payroll_employee_address_versions', $ia);
+        //
+        $this->pm->UpdatePayroll('payroll_employees', ['home_address' => 1], ['employee_sid' => $post['employeeId']]);
+        //
+        $this->pm->UpdatePayroll('users', [
+            'Location_Address' => $response['street_1'],
+            'Location_Address_2' => $response['street_2'],
+            'Location_State' => $this->pm->GetStateId($response['state']),
+            'Location_ZipCode' => $response['zip'],
+            'Location_City' => $response['city']
+        ], ['sid' => $post['employeeId']]);
+        //
+        if(!empty($post['PhoneNumber'])){
+            $this->pm->UpdatePayroll('users', ['PhoneNumber' => $post['PhoneNumber']], ['sid' => $post['employeeId']]);
+        }
+        //
+        return SendResponse(200, ['status' => true, 'response' => 'Employee\'s home address is successfully updated.']);
+    }
+
+    /**
+     * Update federal tax
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function EditEmployeeFederalTax($companyId, $post){
+        //
+        $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employee_federal_tax.sid",
+            "payroll_employee_federal_tax.version"
+        ], 'payroll_employee_federal_tax');
+        //
+        if(empty($ed['sid'])){
+            $ed = $this->GetEmployeeFederalTax($companyId, $post['employeeId']);
+        }
+        // Let's update the compensations
+        $request = [];
+        $request['filing_status'] = $post['FederalFilingStatus'];
+        $request['multiple_jobs'] = $post['MultipleJobs'];
+        $request['dependent'] = $post['DependentTotal'];
+        $request['other_income'] = $post['OtherIncome'];
+        $request['deductions'] = $post['Deductions'];
+        $request['extra_withholding'] = $post['ExtraWithholding'];
+        $request['w4_data_type'] = 'rev_2020_w4';
+        $request['version'] = $ed['version'];
+        //
+        $employeeUUID = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employees.payroll_employee_uuid"
+        ])['payroll_employee_uuid'];
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = UpdateEmployeeFederalTax($request, $employeeUUID,  $company_details);
+        //
+        if (isset($response['errors'])) {
+            // Error took place
+            return SendResponse(200, ['status' => false, 'errors' => MakeErrorArray($response['errors'])]);
+        }
+        if (isset($response['message'])) {
+            // Error took place
+            return SendResponse(200, ['status' => false, 'errors' => [$response['message']]]);
+        }
+        $ia = [];
+        $ia['filing_status'] = $response['filing_status'];
+        $ia['multiple_jobs'] = $response['two_jobs'];
+        $ia['dependent'] = $response['dependents_amount'];
+        $ia['other_income'] = $response['other_income'];
+        $ia['deductions'] = $response['deductions'];
+        $ia['extra_withholding'] = $response['extra_withholding'];
+        $ia['w4_data_type'] = $response['w4_data_type'];
+        $ia['version'] = $response['version'];
+        $ia['updated_at'] = $this->datetime;
+        //
+        $this->pm->UpdatePayroll('payroll_employee_federal_tax', $ia, ['sid' => $ed['sid']]);
+        //
+        $ia = [];
+        $ia['payroll_employee_federal_tax_sid'] = $ed['sid'];
+        $ia['payroll_json'] = json_encode($response);
+        $ia['last_updated_by'] = $this->userId;
+        $ia['created_at'] = $this->datetime;
+        //
+        $this->pm->InsertPayroll('payroll_employee_federal_tax_versions', $ia);
+        //
+        $this->pm->UpdatePayroll('payroll_employees', ['federal_tax' => 1], ['employee_sid' => $post['employeeId']]);
+        //
+        return SendResponse(200, ['status' => true, 'response' => 'Employee\'s federal taxes are successfully updated.']);
+    }
+
+    /**
+     * Update state tax
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function EditEmployeeStateTax($companyId, $post){
+        //
+        $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employee_state_tax.sid",
+        ], 'payroll_employee_state_tax');
+        //
+        if(empty($ed['sid'])){
+            $ed = $this->GetEmployeeStateTax($companyId, $post['employeeId']);
+        }
+         //
+        $employeeUUID = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employees.payroll_employee_uuid"
+        ])['payroll_employee_uuid'];
+        //
+        $tpost = $post;
+        // Let's update the compensations
+        $request = [];
+        $request['employee_id'] = $employeeUUID;
+        $request['states'] = [];
+        $request['states'][0]['state'] = strtoupper($this->pm->GetPayrollColumn('states', ['state_name' => $post['state_name']], 'state_code'));
+        $request['states'][0]['questions'] = [];
+        //
+        unset($tpost['state_name'], $tpost['employeeId']);
+        //
+        foreach($tpost as $k => $v){
+            $request['states'][0]['questions'][] = [
+                'key' => $k,
+                'answers' => [[
+                    'value' => $v,
+                    'valid_from' => "2010-01-01"
+                ]]
+            ];
+        }
+        
+       
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = UpdateEmployeeStateTax($request, $employeeUUID,  $company_details);
+        //
+        if (isset($response['errors'])) {
+            // Error took place
+            return SendResponse(200, ['status' => false, 'errors' => MakeErrorArray($response['errors'])]);
+        }
+        if (isset($response['message'])) {
+            // Error took place
+            return SendResponse(200, ['status' => false, 'errors' => [$response['message']]]);
+        }
+        //
+        $ia = [];
+        $ia['employee_sid'] = $post['employeeId'];
+        $ia['company_sid'] = $companyId;
+        $ia['state'] = $response[0]['state'];
+        $ia['state_json'] = json_encode($response[0]);
+        $ia['updated_at'] = $this->datetime;
+        //
+        $this->pm->UpdatePayroll('payroll_employee_state_tax', $ia, ['sid' => $ed['sid']]);
+        //
+        $this->pm->UpdatePayroll('payroll_employees', ['state_tax' => 1], ['employee_sid' => $post['employeeId']]);
+        //
+        return SendResponse(200, ['status' => true, 'response' => 'Employee\'s state taxes are successfully updated.']);
+    }
+
+    /**
+     * Add/Update bank account
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function AddEditEmployeeBankAccount($companyId, $post){
+        //
+        if($post['bankId'] == 0){
+            $this->AddEmployeeBankDetails($companyId, $post);  
+        }
+        // Get the latest payment method
+        $this->UpdateEmployeePaymentMethod($companyId, $post['employeeId']);
+        //
+        return SendResponse(200, ['status' => true, 'response' => 'Employee\'s bank account is successfully added/updated.']);
+    }
+
+    /**
+     * Add bank account
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function AddEmployeeBankDetails($companyId, $post){
+        //
+        $employeeUUID = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employees.payroll_employee_uuid"
+        ])['payroll_employee_uuid'];
+        // Let's update the compensations
+        $request = [];
+        $request['name'] = $post['BankName'];
+        $request['routing_number'] = $post['RoutingNumber'];
+        $request['account_number'] = $post['AccountNumber'];
+        $request['account_type'] = ucwords($post['AccountType']);
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = AddEmployeeBandAccount($request, $employeeUUID,  $company_details);
+        //
+        if (isset($response['errors'])) {
+            // Error took place
+            return SendResponse(200, ['status' => false, 'errors' => MakeErrorArray($response['errors'])]);
+        }
+        if (isset($response['message'])) {
+            // Error took place
+            return SendResponse(200, ['status' => false, 'errors' => [$response['message']]]);
+        }
+        //
+        $ia = [];
+        $ia['employee_sid'] = $post['employeeId'];
+        $ia['payroll_bank_uuid'] = $response['uuid'];
+        $ia['account_type'] = $response['account_type'];
+        $ia['name'] = $response['name'];
+        $ia['routing_number'] = $response['routing_number'];
+        $ia['account_number'] = $request['account_number'];
+        $ia['account_percentage'] = 0;
+        $ia['direct_deposit_id'] = 0;
+        $ia['is_deleted'] = 0;
+        $ia['created_at'] = $this->datetime;
+        $ia['updated_at'] = $this->datetime;
+        //
+        $this->pm->InsertPayroll('payroll_employee_bank_accounts', $ia);
+        //
+        return $ia;
+    }
+
+    /**
+     * Get latest job id from gusto
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     * 
+     * @return
+     */
+    private function GetEmployeeFederalTax($companyId, $employeeId){
+        //
+        $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $employeeId], 'payroll_employee_uuid');
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = GetEmployeeFederalTax($payrollId,  $company_details);
+        //
+        if (isset($response['errors'])) {
+            return MakeErrorArray($response['errors']);
+        }
+        // Add entry to the payroll job
+        $ia = [];
+        $ia['employee_sid'] = $employeeId;
+        $ia['company_sid'] = $companyId;
+        $ia['filing_status'] = $response['filing_status'];
+        $ia['multiple_jobs'] = $response['two_jobs'];
+        $ia['dependent'] = $response['dependents_amount'];
+        $ia['other_income'] = $response['other_income'];
+        $ia['deductions'] = $response['deductions'];
+        $ia['extra_withholding'] = $response['extra_withholding'];
+        $ia['w4_data_type'] = $response['w4_data_type'];
+        $ia['version'] = $response['version'];
+        $ia['updated_at'] = $this->datetime;
+        $ia['created_at'] = $this->datetime;
+        //
+        $id = $this->pm->InsertPayroll('payroll_employee_federal_tax', $ia);
+        //
+        $ia = [];
+        $ia['payroll_employee_federal_tax_sid'] = $id;
+        $ia['payroll_json'] = json_encode($response);
+        $ia['last_updated_by'] = $this->userId;
+        $ia['created_at'] = $this->datetime;
+        //
+        $this->pm->InsertPayroll('payroll_employee_federal_tax_versions', $ia);
+        //
+        $response['sid'] = $id;
+        //
+        return $response;
+    }
+
+    /**
+     * Get state tax from gusto
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     * 
+     * @return
+     */
+    private function GetEmployeeStateTax($companyId, $employeeId){
+        //
+        $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $employeeId], 'payroll_employee_uuid');
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = GetEmployeeStateTax($payrollId,  $company_details);
+        //
+        if (isset($response['errors'])) {
+            return MakeErrorArray($response['errors']);
+        }
+        //
+        $sid = $this->pm->GetPayrollColumn('payroll_employee_state_tax', ['employee_sid' => $employeeId], 'sid');
+        //
+        $response['sid'] = $sid;
+        // Add entry to the payroll job
+        $ia = [];
+        $ia['employee_sid'] = $employeeId;
+        $ia['company_sid'] = $companyId;
+        $ia['state'] = $response[0]['state'];
+        $ia['state_json'] = json_encode($response[0]);
+        $ia['updated_at'] = $this->datetime;
+        //
+        if(!$sid){
+            $ia['created_at'] = $this->datetime;
+            $response['sid'] = $this->pm->InsertPayroll('payroll_employee_state_tax', $ia);
+        } else{
+            $this->pm->UpdatePayroll('payroll_employee_state_tax', $ia, ['sid' => $response['sid']]);
+        }
+        //
+        $ia['sid'] = $response['sid'];
+        //
+        $ia['state_json'] = json_decode($ia['state_json'], true);
+        //
+        $ia['state_name'] = $this->pm->GetPayrollColumn('states', ['state_code' => $ia['state']], 'state_name');
+        //
+        return SendResponse(200, ['status' => true, 'response' => $ia]);
+    }
+
+    /**
+     * 
+     */
+    private function UpdateEmployeePaymentMethod($companyId, $employeeId){
+        //
+        $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $employeeId], 'payroll_employee_uuid');
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = GetEmployeePaymentMethod($payrollId, $company_details);
+        //
+        if (isset($response['errors'])) {
+            return MakeErrorArray($response['errors']);
+        }
+        //
+        $sid = $this->pm->GetPayrollColumn('payroll_employee_payment_method', ['employee_sid' => $employeeId], 'sid');
+        // Add entry to the payroll job
+        $ia = [];
+        $ia['payment_method'] = $response['type'];
+        $ia['split_method'] = $response['split_by'];
+        $ia['splits'] = json_encode($response['splits']);
+        $ia['version'] = $response['version'];
+        $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $this->pm->UpdatePayroll('payroll_employee_payment_method', $ia, ['sid' => $sid]);
+        //
+        return $ia;
+    }
+
+    /**
+     * Get bank details from gusto
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function GetEmployeeBankDetails($companyId, $post){
+        //
+        $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $post['employeeId']], 'payroll_employee_uuid');
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = GetEmployeeBankDetails($payrollId,  $company_details);
+        //
+        if (isset($response['errors'])) {
+            return MakeErrorArray($response['errors']);
+        }
+        //
+        if(!$response){
+            //
+            $result = $this->pm->GetPayrollColumn('bank_account_details', ['users_sid' => $post['employeeId'], 'users_type' => 'employee'], 'sid, account_title, routing_transaction_number, account_number, account_type', false);
+            // Add entry to the payroll job
+            $ia = [];
+            $ia['employee_sid'] = $post['employeeId'];
+            $ia['company_sid'] = $companyId;
+            $ia['payroll_bank_uuid'] = 0;
+            $ia['account_type'] = $result ? $result['account_type'] : null;
+            $ia['routing_number'] = $result ? $result['routing_transaction_number'] : null;
+            $ia['name'] = $result ? $result['account_title'] : 'Default';
+            $ia['account_number'] = $result ? $result['account_number'] : null;
+            $ia['account_percentage'] = 0;
+            $ia['direct_deposit_id'] = $result ? $result['sid'] : 0;
+            $ia['is_deleted'] = 0;
+            $ia['created_at'] = $this->datetime;
+            $ia['updated_at'] = $this->datetime;
+            //
+            $ia['sid'] = $this->pm->InsertPayroll('payroll_employee_bank_accounts', $ia);
+            //
+            return $ia;
+        }
     }
 }
