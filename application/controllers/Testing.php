@@ -13,36 +13,30 @@ class Testing extends CI_Controller
     }
     
     //
-    function sendEmailNotifications($id){
-        //
-        $record = $this->ccp->GetReviewByIdByReviewers($id)[0];
-        //
-        $hf = message_header_footer($record['company_sid'], $record['CompanyName']);
-        //
-        if(empty($record['Reviewees'])){
-            return;
-        }
-        //
-        $template = get_email_template(REVIEW_ADDED);
+    
 
-        foreach($record['Reviewees'] as $row){
-            //
-            $replaceArray = [];
-            $replaceArray['{{first_name}}'] = ucwords($row[0]['reviewer_first_name']);
-            $replaceArray['{{last_name}}'] = ucwords($row[0]['reviewer_last_name']);
-            $replaceArray['{{review_title}}'] = $record['review_title'];
+    function get_invoices($company_sid){
+        //
+
+        $this->db->select('*');
+        $this->db->where('company_sid', $company_sid);
+        // $this->db->where('product_sid', "10");
+        $this->db->where('status', 'paid');
+        $record_obj = $this->db->get('invoices'); //Getting all invoices against the company which are paid
+        //
+        $invoices = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        echo "<pre>";
+        foreach ($invoices as $invoice) {
+            if ($invoice["product_sid"] == 10) {
+                $invoice_info = unserialize($invoice['serialized_items_info']);
+                //
+                echo "Row sid: ".$invoice["sid"]." | Created On: ".$invoice["date"]. " | product sid: ".$invoice["product_sid"]." | Item Remaining Qty: ". $invoice_info['item_remaining_qty'][0]."<br><br>";
+            }
             
-            $replaceArray['{{table}}'] = $this->load->view('table', ['records' => $row, 'id' => $record['sid']], true);
-            //
-            $body = $hf['header'].str_replace(array_keys($replaceArray), $replaceArray, $template['text']).$hf['footer'];
-
-            log_and_sendEmail(
-                FROM_EMAIL_NOTIFICATIONS,
-                $row[0]['reviewer_email'],
-                $template['subject'],
-                $body,
-                $record['CompanyName']
-            );
         }
+        
+        die("process_end");
     }
 }
