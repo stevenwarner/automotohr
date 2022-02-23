@@ -1726,22 +1726,7 @@ class Application_tracking_system_model extends CI_Model {
     }
 
     function check_applicant_email_exist($app_id, $company_sid, $email) {
-        $this->db->select('sid');
-        $this->db->where('employer_sid', $company_sid);
-        $this->db->where('email', $email);
-        $this->db->where('sid <>', $app_id);
-        $this->db->order_by('sid', 'desc');
-        $this->db->limit(1);
-        $this->db->from('portal_job_applications');
-        $result = $this->db->get()->result_array();
-
-        if (sizeof($result) > 0) {
-            $output = 'record_found';
-        } else {
-            $output = 'no_record_found';
-        }
-
-        return $output;
+        return check_is_employee_exist_or_transfer($company_sid, $app_id, $email);
     }
 
     function update_private_message_to_id($job_id, $email, $data) {

@@ -14377,3 +14377,52 @@ if(!function_exists('GetEmployeeStatus')){
         return ucwords($lastStatusText ? $lastStatusText : ($active ? 'Active' : 'De-activated'));
     }
 }
+
+if(!function_exists('check_is_employee_exist_or_transfer')){
+    function check_is_employee_exist_or_transfer($company_sid, $applicant_sid, $email){
+        $CI = &get_instance();
+        //
+        $CI->db->select('hired_sid, hired_status');
+        $CI->db->where('employer_sid', $company_sid);
+        $CI->db->where('email', $email);
+        $CI->db->where('sid <>', $applicant_sid);
+        $CI->db->order_by('sid', 'desc');
+        $CI->db->limit(1);
+        $CI->db->from('portal_job_applications');
+        $applicant_info = $CI->db->get()->row_array();
+        //
+        if (empty($applicant_info)) {
+            return "no_record_found";
+        }
+        //
+        if ($applicant_info["hired_status"] == 0) {
+            return "record_found";
+        }
+        //
+        $employee_sid = $applicant_info["hired_sid"];
+        //
+        $CI->db->where('from_company_sid', $company_sid);
+        $CI->db->where('previous_employee_sid', $employee_sid);
+        $CI->db->from('employees_transfer_log');
+        //
+
+        if ($CI->db->count_all_results()) {
+            return "no_record_found";
+        }
+        // 
+        $CI->db->select('parent_sid');
+        $CI->db->where('email', $email);
+        $CI->db->order_by('sid', 'DESC');
+        $CI->db->limit(1);
+        $CI->db->from('users');
+        //
+        $employee_info = $CI->db->get()->row_array();
+        //
+        if (!empty($employee_info) && $employee_info["parent_sid"] == $company_sid) {
+                return "record_found";
+        } 
+        //
+        return "no_record_found";
+        
+    }
+}
