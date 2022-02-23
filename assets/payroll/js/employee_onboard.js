@@ -239,6 +239,8 @@ $(function EmployeeOnboard() {
             //
             var employee = employees[index];
             //
+            if (typeof employee !== 'object') { continue; }
+            //
             trs += '<tr class="jsPayrollOnEmployeeRow" data-id="' + (employee['user_id']) + '">';
             trs += '    <td class="vam"><strong>' + (employee.full_name_with_role) + '</strong></td>';
             trs += '    <td class="text-right vam">' + (employee.payroll_employee_id) + '</td>';
@@ -256,7 +258,7 @@ $(function EmployeeOnboard() {
             trs += '            </tbody>';
             trs += '        </table>';
             trs += '    </td>';
-            trs += '    <td class="text-right vam">';
+            trs += '    <td class="text-center vam">';
             trs += '        <button class="btn btn-warning jsPayrollEmployeeEdit"><i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Edit</button>';
             if (employee.payroll_onboard_status.status.toLowerCase() != 'completed') {
                 trs += '        <button class="btn btn-danger jsPayrollEmployeeDelete"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Delete</button>';
@@ -318,6 +320,8 @@ $(function EmployeeOnboard() {
         for (var index in employees) {
             //
             var employee = employees[index];
+            //
+            if (typeof employee !== 'object') { continue; }
             //
             html += '<div class="row" id="jsPayrollEmployeeRow' + (employee['user_id']) + '">';
             html += '   <div class="col-xs-12 col-md-12">';

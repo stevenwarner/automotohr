@@ -1338,15 +1338,6 @@ if(!function_exists('CreateCompanyFlowLink')){
         //
         $url = PayrollURL('GetCompanyFlows', $company['gusto_company_uid']);
         //
-        if(!$force){
-            //
-            $response = CacheHolder($url);
-            //
-            if($response){
-                return $response;
-            }
-        }
-        //
         $request = array();
         //
         $request['flow_type'] = "company_onboarding";

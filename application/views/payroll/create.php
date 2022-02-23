@@ -38,7 +38,7 @@
                             <p style="font-size: 70px;" class="mb0"><i class="fa fa-trophy csFC3" aria-hidden="true"></i></p>
                             <p class="csF26 csB7">Your Employees Have Been Paid on Time!</p>
                             <p class="csF18">You do not have any pending payrolls to run. An automatic email will notify you when it is time to run another regular payroll. In the meantime, carry on with a smile.</p>
-                            <a href="<?=base_url('payroll/history/');?>" class="btn btn-orange">Payroll History</a>
+                            <a href="<?=base_url('payroll/history/');?>" disabled class="btn btn-orange">Payroll History</a>
                         </div>
                     </div>
                 <?php endif; ?>

@@ -1,20 +1,28 @@
 <?php 
     //
     $navpills = [];
-    // Dashboard
+    //
     $navpills[] = [
-        'title' => 'Run payroll',
-        'url' => '/run',
+        'title' => 'Company',
+        'url' => '/company',
         'slug' => '',
-        'icon' => 'bank',
-        'segment' => 'run'
+        'icon' => 'building',
+        'segment' => 'company'
     ];
+    // Dashboard
     $navpills[] = [
         'title' => 'Employees',
         'url' => '/employees/payroll',
         'slug' => '',
         'icon' => 'users',
         'segment' => 'employees'
+    ];
+    $navpills[] = [
+        'title' => 'Run payroll',
+        'url' => '/run',
+        'slug' => '',
+        'icon' => 'bank',
+        'segment' => 'run'
     ];
 
     //

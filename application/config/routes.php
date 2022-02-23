@@ -1389,6 +1389,7 @@ $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/Se
  * Payroll routes
  */
 // Employee listing
+$route["payroll/company"]['get'] = "payroll/Payroll/CompanyOnboard";
 $route["payroll/employees"]['get'] = "payroll/Payroll/EmployeeList/normal";
 $route["payroll/employees/payroll"]['get'] = "payroll/Payroll/EmployeeList/payroll";
 $route["payroll/employees/normal"]['get'] = "payroll/Payroll/EmployeeList/normal";

@@ -64,6 +64,51 @@ class Payroll extends CI_Controller
     /**
      * 
      */
+    function CompanyOnboard(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Company';
+        $this->data['load_view'] = 0;
+        //
+        $this->data['PageScripts'] = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['company_sid'] = $company_sid;
+
+        $this->load->model('Payroll_model', 'pm');
+        $this->data['company_info']=$this->pm->GetGustoCompanyData($company_sid);
+        $this->data['companyPayrollStatus']=$this->pm->GetCompanyPayrollStatus($company_sid);
+        //
+        $company_status = array();
+        $onboarding_link = "";
+        //
+        if (!empty($this->data['company_info']['access_token'])) {
+            //
+            $this->load->helper("payroll_helper");
+            //
+            $company_status = GetCompanyStatus($this->data['company_info']);
+            //
+            $flow_info = CreateCompanyFlowLink($this->data['company_info']);
+            //
+            $onboarding_link = $flow_info['url'];
+        }
+        //
+        $this->data['company_status'] = $company_status;
+        $this->data['onboarding_link'] = $onboarding_link;
+        //
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/company')
+        ->view('main/footer');
+    }
+    
+    /**
+     * 
+     */
     function EmployeeList($type = 'normal'){
         //
         $this->checkLogin($this->data);
@@ -72,9 +117,10 @@ class Payroll extends CI_Controller
         $this->data['load_view'] = 0;
         //
         $this->data['SelectedTab'] = $type;
-        $this->data['PageScripts'] = ['payroll/js/employee', 'payroll/js/employee_onboard'];
+        $this->data['PageScripts'] = [];
         //
         $session = $this->session->userdata('logged_in');
+        //
         $company_sid = $session['company_detail']['sid'];
         //
         $this->data['company_sid'] = $company_sid;

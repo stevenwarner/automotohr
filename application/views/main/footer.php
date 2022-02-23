@@ -1010,6 +1010,15 @@ if ($class != 'dashboard' &&
     <script type="text/javascript" src="<?=base_url(_m('assets/js/uri'));?>"></script>
     <script type="text/javascript" src="<?=base_url(_m('assets/js/common'));?>"></script>
     <script type="text/javascript" src="<?=base_url(_m('assets/portal/app'));?>"></script>
+    <script>
+        var companyId = <?=$session['company_detail']['sid']?>;
+        /**
+         * Set base url
+         * @type {string}
+         */
+        var baseURI = "<?php echo base_url();?>/";
+    </script>
+    <script src="<?=base_url("assets/payroll/js/employee_onboard.js");?>"></script>
     <!-- Dynamic Scripts -->
     <?php if(isset($PageScripts)) { echo GetScripts($PageScripts); }?>
 </body>

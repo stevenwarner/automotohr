@@ -510,9 +510,17 @@ $(document).ready(loadTitles);
     }
 
 </style>
-
+<script>
+    var companyId = <?=$session['company_detail']['sid']?>;
+    /**
+     * Set base url
+     * @type {string}
+     */
+    var baseURI = "<?php echo base_url();?>/";
+</script>
 
 <script src="<?=base_url(_m('assets/js/common'));?>"></script>
 <script src="<?=base_url(_m('assets/js/uri'));?>"></script>
 <!-- Dynamic Scripts -->
 <?php if(isset($PageScripts)) { echo GetScripts($PageScripts); }?>
+<script src="<?=base_url("assets/payroll/js/employee_onboard.js");?>"></script>
