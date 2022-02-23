@@ -14283,6 +14283,10 @@ if (!function_exists('CheckUserEEOCStatus')) {
             return true;
         }
         //
+        return false;
+    }
+}
+
 
 if(!function_exists('LoadModel')){
     function LoadModel($index, $_this){
@@ -14538,6 +14542,9 @@ if(!function_exists('GetFileContent')){
         }
         //
         return $fileData;
+    }
+}
+
 if(!function_exists('_m')){
     /**
      * Add environment check to the assets
@@ -14635,6 +14642,9 @@ if(!function_exists('check_is_employee_exist_or_transfer')){
         //
         return "no_record_found";
         
+    }
+}
+
 if(!function_exists('GetHireDate')){
     /**
      * Get the new joined date
