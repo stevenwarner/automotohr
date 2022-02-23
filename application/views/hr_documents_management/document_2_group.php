@@ -39,7 +39,7 @@
                                                     <div class="row">
                                                         <!-- system documents start -->
                                                         <div class="col-xs-12">
-                                                            <h4><strong>System Documents</strong></h4>
+                                                            <h4><strong>Employment Eligibility Verification Documents</strong></h4>
                                                         </div> 
                                                         <div class="col-xs-6">
                                                             <label class="control control--checkbox font-normal">
@@ -118,7 +118,7 @@
                                                         <!-- company documents start -->
                                                         <div class="col-xs-12">
                                                             <hr>
-                                                            <h4><strong>Company Documments</strong></h4>
+                                                            <h4><strong>Company Documents</strong></h4>
                                                         </div>    
                                                         <?php if (!empty($documents)) { 
                                                                 foreach ($documents as $key => $document) { 

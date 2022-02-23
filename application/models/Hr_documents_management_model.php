@@ -9,6 +9,7 @@ class Hr_documents_management_model extends CI_Model {
     function get_all_documents($company_sid, $archive_status = null) {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
+        $this->db->where('is_specific', 0);
 
         if ($archive_status !== null) {
             $this->db->where('archive', $archive_status);

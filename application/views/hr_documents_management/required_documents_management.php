@@ -84,6 +84,14 @@
                                     </thead>
                                     <tbody>
                                         <?php if(isset($form_uploaded)){ ?>
+                                            <?php 
+                                                $ext = pathinfo($form_uploaded['s3_filename'], PATHINFO_EXTENSION);
+                                                $ext_count = substr_count($form_uploaded['s3_filename'], $ext);
+
+                                                if ($ext_count > 1) {
+                                                    $form_uploaded['s3_filename'] = modify_AWS_file_name($form_uploaded['sid'], $form_uploaded['s3_filename'], "s3_filename", "eev_documents");
+                                                }
+                                            ?>
                                         <tr>
                                             <td class="col-lg-4 text-center"><?= strtoupper($form_uploaded['document_type']) ." Fillable" ?></td>
                                             <td class="col-lg-4 text-center">
@@ -183,6 +191,14 @@
                                         </tr>
                                         <?php } ?>
                                         <?php foreach ($required_documents as $required_document) { ?>
+                                            <?php 
+                                                $ext = pathinfo($required_document['s3_filename'], PATHINFO_EXTENSION);
+                                                $ext_count = substr_count($required_document['s3_filename'], $ext);
+
+                                                if ($ext_count > 1) {
+                                                    $required_document['s3_filename'] = modify_AWS_file_name($required_document['sid'], $required_document['s3_filename'], "s3_filename", "eev_required_documents");
+                                                }
+                                            ?>
                                             <tr>
                                                 <td class="col-lg-4 text-center"><?= $required_document['document_name'] ?></td>
                                                 <td class="col-lg-4 text-center">

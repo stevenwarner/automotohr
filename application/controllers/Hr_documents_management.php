@@ -7144,6 +7144,13 @@ class Hr_documents_management extends Public_Controller {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data['session']['company_detail']['sid'];
         $employees = $this->hr_documents_management_model->fetch_all_company_employees($company_sid);
+        //
+        if (!empty($employees)) {
+            foreach ($employees as $e_key => $employee) {
+                $employees[$e_key]["full_name"] = getUserNameBySID($employee["sid"]);
+            }
+        }
+        //
         echo json_encode($employees);
     }
 
