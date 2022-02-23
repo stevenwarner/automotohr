@@ -793,13 +793,13 @@
                                             <div class="dashboard-widget-box">
                                                 <figure><i class="fa fa-money" aria-hidden="true"></i></figure>
                                                 <h2 class="post-title">
-                                                    <a href="<?=base_url('payroll/employees/payroll');?>">Payroll</a>
+                                                    <a href="<?=base_url('payroll/run');?>">Payroll</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
                                                     <small style="font-size: 12px"></small>
                                                 </div>
                                                 <div class="button-panel">
-                                                    <a href="<?=base_url('payroll/employees/run');?>" class="site-btn">Payroll Dashboard</a>
+                                                    <a href="<?=base_url('payroll/run');?>" class="site-btn">Payroll Dashboard</a>
                                                 </div>
                                             </div>
                                         </div>
