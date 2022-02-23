@@ -65,11 +65,14 @@ $(function PayrollCompanyOnboard() {
     /**
      * Triggers company onboard process
      */
-    $('.jsPayrollCompanyOnboard').click(function(event) {
+    $('.jsPayrollCompanyOnboard, .jsAddCompanyToGusto').click(function(event) {
         //
         event.preventDefault();
         //
         companyId = $(this).data('cid') || 0;
+        if ($(this).data('company_sid')) {
+            companyId = $(this).data('company_sid');
+        }
         //
         if (companyId == 0) {
             return alertify.alert(
