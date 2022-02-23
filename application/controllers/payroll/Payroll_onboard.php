@@ -153,6 +153,11 @@ class Payroll_onboard extends CI_Controller
             $employees = $this->sem->GetPayrollEmployees($companyId, [
                 rtrim(getUserFields(), ','),
                 'users.timezone',
+                'users.dob',
+                'users.ssn',
+                'users.first_name',
+                'users.last_name',
+                'users.PhoneNumber',
                 'payroll_employees.payroll_employee_id'
             ]);
             //
@@ -164,9 +169,28 @@ class Payroll_onboard extends CI_Controller
                     //
                     if($employee['payroll_employee_id']) { continue; }
                     //
+                    $missing_fields = [];
+                    //
+                    if(!$employee['first_name']){
+                        $missing_fields[] = 'First Name';
+                    }
+                    //
+                    if(!$employee['last_name']){
+                        $missing_fields[] = 'Last Name';
+                    }
+                    //
+                    if(!$employee['ssn']){
+                        $missing_fields[] = 'Social Security Number';
+                    }
+                    //
+                    if(!$employee['dob']){
+                        $missing_fields[] = 'Date Of Birth';
+                    }
+                    //
                     $tmp[] = [
                         'user_id' => $employee['userId'],
-                        'full_name_with_role' => remakeEmployeeName($employee)
+                        'full_name_with_role' => remakeEmployeeName($employee),
+                        'missing_fields' => $missing_fields
                     ];
                 }
                 //
@@ -242,6 +266,9 @@ class Payroll_onboard extends CI_Controller
             case "bank_account":
                 $this->AddEditEmployeeBankAccount($companyId, $post);
                 break;
+            case "onboard":
+                $this->CompleteOnboardStep($companyId, $post);
+                break;
             default:
             return SendResponse(401, 'Invalid call made.');
         }
@@ -266,6 +293,53 @@ class Payroll_onboard extends CI_Controller
             default:
             return SendResponse(401, 'Invalid call made.');
         }
+    }
+
+    /** 
+     * Delete employee section for payroll
+     * 
+     * @param string $section
+     * @param number $companyId
+     * @param number $employeeId
+     * @param number $bankId
+     * @return
+     */
+    public function DeleteEmployeeOnboardSection($section, $companyId, $employeeId, $bankId){
+        //
+        $section = strtolower($section);
+        //
+        $post = [
+            'employeeId' => $employeeId,
+            'id' => $bankId
+        ];
+        //
+        if($section == 'bank_account'){
+            $this->DeleteEmployeeBankAccount($companyId, $post);
+        }
+
+        return SendResponse(401, 'Invalid call made.');
+    }
+
+    /** 
+     * Get employee's onboard status
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     * @return
+     */
+    public function OnboardStatus($companyId, $employeeId){
+        //
+        $employeePayroll = $this->pm->GetPayrollColumn(
+            'payroll_employees', [
+                "employee_sid" => $employeeId
+            ],
+            'onboard_completed, personal_profile, compensation, home_address, federal_tax, state_tax, payment_method',
+            false
+        );
+        //
+        $resp = EmployeePayrollOnboardStatus($employeePayroll);
+        //
+        return SendResponse(200, [ 'status' => true, 'response' => $resp ]);
     }
 
 
@@ -1433,6 +1507,110 @@ class Payroll_onboard extends CI_Controller
         $this->pm->UpdatePayroll('payroll_employee_payment_method', $ia, ['sid' => $sid]);
         //
         return $ia;
+    }
+
+    /**
+     * 
+     */
+    private function DeleteEmployeeBankAccount($companyId, $post){
+        //
+        $bankUid = $post['id'];
+        //
+        $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $post['employeeId']], 'payroll_employee_uuid');
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = DeleteEmployeeBankAccount($payrollId, $bankUid, $company_details);
+        //
+        if (isset($response['errors'])) {
+            return SendResponse(200, ['status' => false, 'errors' => MakeErrorArray($response['errors'])]);
+        }
+        //
+        $this->pm->DeletePayroll('payroll_employee_bank_accounts', ['payroll_bank_uuid' => $bankUid]);
+        //
+        $this->UpdateEmployeePaymentMethod($companyId, $post['employeeId']);
+        //
+        return SendResponse(200, ['status' => true, 'response' => "Employee's bank account is deleted."]);
+    }
+
+    /**
+     * Complete onboard check
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function CompleteOnboardStep($companyId, $post, $return = true){
+        //
+        $onboardCompleted = $this->pm->GetPayrollColumn('payroll_employees', [
+            'employee_sid' => $post['employeeId'],
+            'personal_profile' => 1,
+            'compensation' => 1,
+            'home_address' => 1,
+            'federal_tax' => 1,
+            'state_tax' => 1,
+            'payment_method' => 1
+        ], 'sid');
+        //
+        if($return){
+            $this->UpdateEmployeePaymentMethodToGusto($companyId, $post['employeeId']);
+        }
+        //
+        if(!$onboardCompleted){
+            return SendResponse(200, ['status' => true, 'response' => 'You have successfully onboard the employee.']);
+        }
+        //
+        $payrollUid = $this->pm->GetPayrollColumn('payroll_employees', [
+            'employee_sid' => $post['employeeId']
+        ], 'payroll_employee_uuid');
+
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = MarkEmployeeAsOnboarded($payrollUid, $company_details);
+        //
+        if (isset($response['errors'])) {
+            return MakeErrorArray($response['errors']);
+        }
+        // Mark this step as completed
+        $this->pm->UpdatePayroll('payroll_employees', ['onboard_completed' => 1], ['employee_sid' => $post['employeeId']]);
+        //
+        return $return ? SendResponse(200, ['status' => true, 'response' => 'Employee\'s payment method has been updated.']) : $response;
+    }
+
+    /**
+     * 
+     */
+    private function UpdateEmployeePaymentMethodToGusto($companyId, $employeeId){
+        //
+        $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $employeeId], 'payroll_employee_uuid');
+        //
+        $payment = $this->pm->GetPayrollColumn('payroll_employee_payment_method', ['employee_sid' => $employeeId], '*', false);
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $request = [];
+        $request['version'] = $payment['version'];
+        $request['type'] = trim($this->input->post('PaymentMethod', true));
+        $request['split_by'] = 'Amount';
+        //
+        if($request['type'] == 'Direct Deposit'){
+            //
+            $request['splits'] = json_decode($payment['splits']);
+            //
+            if(count($request['splits']) == 1){
+                $request['split_by'] = 'Percentage';
+            }
+        }
+        //
+        $response = UpdateEmployeePaymentMethod($request, $payrollId, $company_details);
+        //
+        if (isset($response['errors'])) {
+            return MakeErrorArray($response['errors']);
+        }
+        //
+        $this->UpdateEmployeePaymentMethod($companyId, $employeeId);
     }
 
     /**

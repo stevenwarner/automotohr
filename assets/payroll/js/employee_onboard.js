@@ -77,6 +77,12 @@ $(function EmployeeOnboard() {
     var selectedBankId = 0;
 
     /**
+     * Holds employee onboard status
+     * @type number
+     */
+    var onboardStatus = 0;
+
+    /**
      * Starts the process of adding employees on payroll
      * 
      */
@@ -166,6 +172,31 @@ $(function EmployeeOnboard() {
             $(".jsBaseOnC").hide();
             $(".jsBaseOnDD").show();
         }
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsNavBarAction', function(event) {
+        //
+        event.preventDefault();
+        //
+        if (onboardStatus == 0) {
+            return false;
+        }
+        //
+        var slug = $(this).data('id');
+        //
+        var o = {
+            employee_profile: AddUpdateCompanyEmployeeProfile,
+            employee_compensation: UpdateCompanyEmployeeCompensation,
+            employee_address: UpdateCompanyEmployeeAddress,
+            employee_federal_tax: UpdateEmployeeFederalTax,
+            employee_state_tax: UpdateEmployeeStateTax,
+            employee_payment: UpdateEmployeePaymentMethod
+        };
+        //
+        o[slug]();
     });
 
     /**
@@ -291,8 +322,11 @@ $(function EmployeeOnboard() {
             html += '<div class="row" id="jsPayrollEmployeeRow' + (employee['user_id']) + '">';
             html += '   <div class="col-xs-12 col-md-12">';
             html += '       <label class="control control--checkbox">';
-            html += '           <input type="checkbox" name="jsEmployeesList[]" class="jsEmployeesList" value="' + (employee['user_id']) + '" />';
+            html += '           <input type="checkbox" ' + (employee.missing_fields.length ? 'disabled' : '') + ' name="' + (employee.missing_fields.length ? 'disabled' : 'jsEmployeesList[]') + '" class="jsEmployeesList" value="' + (employee['user_id']) + '" />';
             html += employee.full_name_with_role;
+            if (employee.missing_fields.length) {
+                html += ' --- <span class="text-danger">Missing Fields [' + (employee.missing_fields.join(', ')) + ']</span>';
+            }
             html += '           <div class="control__indicator"></div>';
             html += '       </label>';
             html += '       <div id="jsEmployeeError' + (employee['user_id']) + '" class="text-danger"></div>';
@@ -332,9 +366,13 @@ $(function EmployeeOnboard() {
     function MoveEmployeeToPayroll() {
         //
         if (current_employee > total_employees) {
+            //
+            ml(false, modalLoader);
             // Show success message
             return alertify.alert('Success', "The process has been completed.", function() {});
         }
+        //
+        ml(true, modalLoader);
         //
         xhr = $.post(
                 baseURI + 'payroll/onboard_employee/' + companyId, {
@@ -397,8 +435,28 @@ $(function EmployeeOnboard() {
             Loader: modalId + 'Loader',
             Container: 'container',
             CancelClass: 'btn-cancel csW'
-        }, UpdateEmployeePaymentMethod);
-        // }, AddUpdateCompanyEmployeeProfile);
+        }, CheckOnboardStatus);
+    }
+
+    /**
+     * 
+     */
+    function CheckOnboardStatus() {
+        //
+        onboardStatus = 0;
+        //
+        xhr = $.get(
+                baseURI + 'payroll/onboard_status/' + companyId + '/' + selectedEmployeeId
+            )
+            .done(function(resp) {
+                //
+                if (resp.response.details.personal_profile == 1) {
+                    onboardStatus = 1;
+                }
+            })
+            .error(ErrorHandler);
+        //
+        AddUpdateCompanyEmployeeProfile();
     }
 
     /**
@@ -913,6 +971,116 @@ $(function EmployeeOnboard() {
     }
 
     /**
+     * Save company Employee payment method
+     * @param {object} event
+     * @returns
+     */
+    function SaveCompanyEmployeePaymentMethod(event) {
+        //
+        event.preventDefault();
+        //
+        var o = {};
+        o.PaymentMethod = $(".jsPaymentMethod option:selected").val();
+        o.employeeId = selectedEmployeeId;
+        // Validation
+        if (!o.PaymentMethod || o.PaymentMethod == 0) {
+            return alertify.alert(
+                "Warning!",
+                "Please select a payment method.",
+                ECB
+            );
+        }
+        //
+        ml(true, 'jsEmployeeOnboardModelLoader');
+        //
+        xhr = $.ajax({
+                method: "POST",
+                url: baseURI + 'payroll/onboard_employee/onboard/' + companyId,
+                data: o,
+            })
+            .done(function(resp) {
+                //
+                xhr = null;
+                //
+                ml(false, 'jsEmployeeOnboardModelLoader');
+                //
+                if (!resp.status) {
+                    return alertify.alert(
+                        "Error!",
+                        typeof resp.response === "object" ?
+                        resp.response.join("<br/>") :
+                        resp.response,
+                        ECB
+                    );
+                }
+
+                return alertify.alert(
+                    "Success!",
+                    resp.response,
+                    () => {
+                        $('.jsModalCancel').click();
+                        window.location.reload();
+                    }
+                );
+            })
+            .error(HandleError);
+        //
+    }
+
+    /**
+     * Delete company Employee Bank Detail
+     * @param {object} event
+     * @returns
+     */
+    function DeleteEmployeeBankAccount(event) {
+        //
+        event.preventDefault();
+        //
+        var message = [];
+        //
+        var bankUID = $(this).data("uid");
+        //
+        message.push("Are you sure you want to delete this bank Account?");
+        //
+        alertify.confirm(
+            "Confirm!",
+            message.join("<br/>"),
+            function() {
+                ml(true, 'jsEmployeeOnboardModelLoader');
+                //
+                xhr = $.ajax({
+                        method: "DELETE",
+                        url: baseURI + 'payroll/onboard_employee/bank_account/' + companyId + '/' + (selectedEmployeeId) + '/' + bankUID
+                    })
+                    .done(function(resp) {
+                        //
+                        xhr = null;
+                        //
+                        ml(false, 'jsEmployeeOnboardModelLoader');
+                        //
+                        if (!resp.status) {
+                            return alertify.alert(
+                                "Error!",
+                                typeof resp.errors === "object" ?
+                                resp.errors.join("<br/>") :
+                                resp.errors,
+                                ECB
+                            );
+                        }
+                        //
+                        return alertify.alert(
+                            "Success!",
+                            resp.response,
+                            UpdateEmployeePaymentMethod
+                        );
+                    })
+                    .error(ErrorHandler);
+            },
+            function() {}
+        );
+    }
+
+    /**
      * Get employee onboarding compensation
      */
     function UpdateCompanyEmployeeCompensation() {
@@ -1061,11 +1229,11 @@ $(function EmployeeOnboard() {
                 LoadContent(resp.html, function() {
                     //
                     $(".jsPayrollEmployeeOnboard").click(UpdateEmployeeStateTax);
-                    // $(".jsPayrollEmployeePaymentMethod").click(
-                    //     SaveCompanyEmployeePaymentMethod
-                    // );
+                    $(".jsPayrollEmployeePaymentMethod").click(
+                        SaveCompanyEmployeePaymentMethod
+                    );
                     $(".jsAddEmployeeBankAccount").click(AddEmployeeBankAccount);
-                    // $(".jsDeleteEmployeeBankAccount").click(DeleteEmployeeoBankAccount);
+                    $(".jsDeleteEmployeeBankAccount").click(DeleteEmployeeBankAccount);
                     //
                     ml(false, 'jsEmployeeOnboardModelLoader');
                 });

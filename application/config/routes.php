@@ -1448,7 +1448,6 @@ $route['get_payroll_page/(:any)/(:num)'] = 'payroll/Payroll_ajax/GetPage/$1/$2';
 //
 $route['save_payroll_admin/(:num)'] = 'payroll/Payroll_ajax/SaveAdmin/$1';
 
-
 /**
  * 
  */
@@ -1457,7 +1456,7 @@ $route['payroll/onboard_employee/(:num)']['post'] = "payroll/Payroll_onboard/Onb
 $route['payroll/onboard_employee/(:num)/(:num)']['delete'] = "payroll/Payroll_onboard/DeleteEmployeeFromPayroll/$1/$2";
 $route['payroll/onboard_employee/(:any)/(:num)']['post'] = "payroll/Payroll_onboard/EmployeeOnboardPiece/$1/$2";
 $route['payroll/onboard_employee/(:any)/(:num)/(:num)']['get'] = "payroll/Payroll_onboard/GetEmployeeOnboardSection/$1/$2/$3";
-
-
+$route['payroll/onboard_employee/(:any)/(:num)/(:num)/(:any)']['delete'] = "payroll/Payroll_onboard/DeleteEmployeeOnboardSection/$1/$2/$3/$4";
+$route['payroll/onboard_status/(:num)/(:num)']['get'] = "payroll/Payroll_onboard/OnboardStatus/$1/$2";
 //
 $route["payroll/get/(:num)/(:any)"] = "payroll/Payroll_onboard/Get/$1/$2";

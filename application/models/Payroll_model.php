@@ -1018,4 +1018,11 @@ class Payroll_model extends CI_Model{
         ->get('payroll_employee_jobs')
         ->row_array()['sid'];
     }
+
+    //
+    public function DeletePayroll($table, $where){
+        $this->db
+        ->where($where)
+        ->delete($table);
+    }
 }

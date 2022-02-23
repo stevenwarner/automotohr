@@ -795,6 +795,20 @@ class Payroll_ajax extends CI_Controller
                 );
             }
             //
+            $splits = json_decode($data['payment_method']['splits'], true);
+            //
+            if($splits){
+                foreach($splits as $k => $v){
+                    //
+                    $splits[$k] = array_merge($splits[$k], $this->db
+                    ->where('payroll_bank_uuid', $v['uuid'])
+                    ->get('payroll_employee_bank_accounts')
+                    ->row_array());
+                }
+                //
+                $data['payment_method']['splits'] = json_encode($splits);
+            }
+            //
             return SendResponse(200,[
                 'html' => $this->load->view($this->path.$page, $data, true)
             ]);

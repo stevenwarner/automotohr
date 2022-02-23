@@ -92,7 +92,7 @@
                                     <p class="csF16">
                                         <span>Account number</span>
                                         <br>
-                                        <b><?php echo $account['account_number']; ?></b>
+                                        <b><?php echo $account['hidden_account_number']; ?></b>
                                     </p>
                                     <p class="csF16">
                                         <span>Account type</span>
@@ -100,8 +100,8 @@
                                         <b><?php echo ucfirst($account['account_type']); ?></b>
                                     </p>
                                 </div>
-                                <div class="col-sm-6 ">
-                                    <button class="btn btn-orange csF16 csB7 jsDeleteEmployeeBankAccount" data-account_id="<?php echo $account['payroll_bank_uuid']; ?>" data-ddid="<?php echo $account['direct_deposit_id']; ?>">
+                                <div class="col-sm-6">
+                                    <button class="btn btn-orange csF16 csB7 jsDeleteEmployeeBankAccount" data-uid="<?php echo $account['uuid']; ?>">
                                         <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
                                         Delete
                                     </button>
