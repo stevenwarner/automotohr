@@ -305,6 +305,7 @@ class Settings extends Public_Controller
             check_access_permissions($security_details, 'my_settings', 'company_profile'); // Param2: Redirect URL, Param3: Function Name
             $company_id = $data['session']['company_detail']['sid'];
             $employer_id = $data['session']['employer_detail']['sid'];
+            $onPayroll = $data['session']['company_detail']['on_payroll'];
             $data['title'] = 'Company Profile';
             $company = $this->dashboard_model->get_company_detail($company_id);
 
@@ -341,26 +342,6 @@ class Settings extends Public_Controller
                 $this->form_validation->set_rules('CompanyName', 'Company Name', 'required|trim|xss_clean');
             }
 
-            /**
-             * todo Old time zones need to replace with utc timezone offsets
-             * Deprecated as of 25-06-2019
-             */
-            // $zones = array();
-            // $zones['Pacific/Honolulu'] = 'Hawaii-Aleutian Standard Time (HAST)';
-            // $zones['US/Aleutian'] = 'Hawaii-Aleutian with Daylight Savings Time (HADT)';
-            // $zones['Etc/GMT+9'] = 'Alaska Standard Time (AKST)';
-            // $zones['America/Anchorage'] = 'Alaska with Daylight Savings Time (AKDT)';
-            // $zones['America/Dawson_Creek'] = 'Pacific Standard Time (PST)';
-            // $zones['PST8PDT'] = 'Pacific with Daylight Savings Time (PDT)';
-            // $zones['MST'] = 'Mountain Standard Time (MST)';
-            // $zones['MST7MDT'] = 'Mountain with Daylight Savings Time (MDT)';
-            // $zones['Canada/Saskatchewan'] = 'Central Standard Time (CST)';
-            // $zones['CST6CDT'] = 'Central with Daylight Savings Time (CDT)';
-            // $zones['EST'] = 'Eastern Standard Time (EST)';
-            // $zones['EST5EDT'] = 'Eastern with Daylight Savings Time (EDT)';
-            // $zones['America/Puerto_Rico'] = 'Atlantic Standard Time (AST)';
-            // $zones['America/Halifax'] = 'Atlantic with Daylight Savings Time (ADT)';
-            // $data['timezones'] = $zones;
             $video_source = $this->input->post('video_source');
             $this->form_validation->set_rules('ContactName', 'Contact Name', 'required|trim|xss_clean');
 
@@ -372,6 +353,7 @@ class Settings extends Public_Controller
 
             $this->form_validation->set_rules('email', 'Company E-Mail', 'trim|xss_clean');
             $this->form_validation->set_rules('CompanyDescription', 'Description', 'trim|xss_clean');
+            $this->form_validation->set_rules('ssn', 'ssn', 'trim|xss_clean|required');
 
             if ($this->form_validation->run() === FALSE) {
                 $this->load->view('main/header', $data);
@@ -506,6 +488,9 @@ class Settings extends Public_Controller
                     $data['complynet_dashboard_link'] = $complynet_link;
                 }
 
+                //
+                $data['ssn'] = $this->input->post('ssn', true);
+
                 $this->dashboard_model->update_user($sid, $data);
                 $company_details = $data;
                 $company_details['sid'] = $sid;
@@ -606,6 +591,23 @@ class Settings extends Public_Controller
                         // Check and set
                         $this->dashboard_model->set_new_timezone_in_old_calendar_events_by_company_id($company_id, $portal_data['company_timezone']);
                     }
+                }
+                // Check and update data on gusto
+                if($onPayroll == 1){
+                    //
+                    $this->load->model('Payroll_model', 'pm');
+                    $this->load->helper('payroll');
+                    //
+                    $updateArray = [
+                        'ein_number' => $this->input->post('ssn', true),
+                        'legal_name' => $this->input->post('CompanyName', true)
+                    ];
+                    //
+                    $this->pm->UpdateCompanyTax($updateArray, [
+                        'company_sid' => $company_id
+                    ]);
+                    // Update data to Gusto
+                    // GustoUpdateCompanyTax($updateArray, $company_id);
                 }
                 $this->dashboard_model->update_portal($portal_data, $company_id);
                 $this->session->set_flashdata('message', '<b>Success:</b> Company Profile is updated successfully');

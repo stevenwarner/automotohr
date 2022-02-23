@@ -238,7 +238,6 @@ ALTER TABLE `facebook_jobs_status` ADD COLUMN
 `is_deleted` TINYINT DEFAULT 0;
 ALTER TABLE `facebook_jobs_status` ADD `job_status` VARCHAR(10) NOT NULL AFTER `is_deleted`;
 
-<<<<<<< HEAD
 -- Add column to timeoff_settings
 -- 09/24/2021
 ALTER TABLE `timeoff_settings` ADD `team_visibility_check` TINYINT NOT NULL DEFAULT '0' AFTER `theme`;
@@ -260,3 +259,165 @@ ALTER TABLE `form_document_eula_history` ADD `number_of_rooftops_locations` INT 
 -- 18/8/2021
 -- Mubashir Ahmed
 ALTER TABLE `users` ADD `on_payroll` TINYINT(1) NOT NULL DEFAULT '0' AFTER `created_at`;
+-- Payroll check on users table
+-- 18/8/2021
+-- Mubashir Ahmed
+-- Tables
+  -- payroll_companies
+  -- payroll_employees
+  -- payroll_settings
+  -- company_bank_accounts
+  -- payroll_company_bank_accounts
+  -- payroll_company_bank_accounts_history
+  -- payroll_company_tax_details
+  -- payroll_company_tax_details_history
+ALTER TABLE `users` ADD `on_payroll` TINYINT(1) NOT NULL DEFAULT '0' AFTER `created_at`;
+ALTER TABLE `users` ADD `middle_initial` CHAR(1) NULL DEFAULT NULL AFTER `on_payroll`;
+
+INSERT INTO `modules` (`sid`, `module_name`, `module_slug`, `stage`, `is_disabled`, `is_ems_module`, `created_at`, `updated_at`) VALUES
+(7, 'Payroll (Gusto)', 'payroll', 'production', 0, 0, '2021-08-23 12:09:00', '2021-08-23 12:09:42');
+
+--
+ALTER TABLE `documents_group_management` ADD `is_moved` TINYINT(1) NOT NULL DEFAULT '0' AFTER `ip_address`;
+ALTER TABLE `documents_group_management_history` ADD `is_moved` TINYINT(1) NOT NULL DEFAULT '0' AFTER `ip_address`;
+ALTER TABLE `documents_category_management` ADD `is_moved` TINYINT(1) NOT NULL DEFAULT '0' AFTER `ip_address`;
+ALTER TABLE `documents_category_management_history` ADD `is_moved` TINYINT(1) NOT NULL DEFAULT '0' AFTER `ip_address`;
+
+
+-- Add week off days columns to employees table
+--
+ALTER TABLE `users` ADD `off_days` VARCHAR(80) NOT NULL DEFAULT '[\"saturday\",\"sunday\"]' AFTER `middle_initial`;
+
+ALTER TABLE `payroll_companies` ADD `onbording_level` INT(11) NOT NULL DEFAULT '0' AFTER `is_active`, ADD `onboarding_status` INT(11) NOT NULL DEFAULT '0' AFTER `onbording_level`;
+
+
+ALTER TABLE `payroll_employees` ADD `work_address_sid` TEXT NULL DEFAULT NULL AFTER `employee_sid`;
+ALTER TABLE `payroll_employees` ADD `onboard_level` INT NOT NULL DEFAULT '0' AFTER `created_at`;
+ALTER TABLE `users` ADD `Location_Address_2` TEXT NULL DEFAULT NULL AFTER `Location_Address`;
+
+--
+CREATE TABLE `payroll_employee_federal_tax` (
+  `sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `filing_status` varchar(128) DEFAULT NULL,
+  `multiple_jobs` varchar(128) DEFAULT NULL,
+  `dependent` int(11) NOT NULL DEFAULT '0',
+  `other_income` int(11) NOT NULL DEFAULT '0',
+  `deductions` int(11) NOT NULL DEFAULT '0',
+  `extra_withholding` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `payroll_employee_federal_tax`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `payroll_employee_federal_tax`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `payroll_employee_state_tax` (
+  `sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `filing_status` varchar(128) DEFAULT NULL,
+  `withholding_allowance` int(11) NOT NULL DEFAULT '0',
+  `additional_withholding` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `payroll_employee_state_tax`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `payroll_employee_state_tax`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
+
+DROP TABLE IF EXISTS `payroll_employee_payment_method`;
+CREATE TABLE `payroll_employee_payment_method` (
+  `sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `payment_method` varchar(128) DEFAULT NULL,
+  `split_method` varchar(128) DEFAULT NULL,
+  `version` varchar(128) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `payroll_employee_payment_method`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `payroll_employee_payment_method`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;  
+
+ALTER TABLE `bank_account_details` ADD `is_payroll` INT(1) NOT NULL DEFAULT '0' AFTER `updated_by`;
+ALTER TABLE `payroll_employee_bank_accounts` ADD `direct_deposit_id` INT(11) NOT NULL DEFAULT '0' AFTER `account_number`;
+ALTER TABLE `payroll_employee_bank_accounts` ADD `account_percentage` INT(11) NOT NULL DEFAULT '0' AFTER `account_number`;
+ALTER TABLE `bank_account_details` ADD `is_deleted` INT(1) NOT NULL DEFAULT '0' AFTER `is_payroll`;
+
+
+DROP TABLE IF EXISTS `payroll_signatory_information`;
+CREATE TABLE `payroll_signatory_information` (
+  `sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `first_name` varchar(128) DEFAULT NULL,
+  `middle_name` varchar(3) DEFAULT NULL,
+  `last_name` varchar(128) DEFAULT NULL,
+  `email` varchar(128) DEFAULT NULL,
+  `title` varchar(128) DEFAULT NULL,
+  `dob` datetime NOT NULL,
+  `phone` varchar(128) DEFAULT NULL,
+  `ssn` varchar(128) DEFAULT NULL,
+  `street1` text DEFAULT NULL,
+  `street2` text DEFAULT NULL,
+  `city` varchar(128) DEFAULT NULL,
+  `state` varchar(128) DEFAULT NULL,
+  `country` varchar(128) DEFAULT NULL,
+  `zipCode` int(11) NOT NULL DEFAULT '0',
+  `signatory_uuid` varchar(128) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `payroll_signatory_information`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `payroll_signatory_information`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;
+
+
+DROP TABLE IF EXISTS `payroll_company_sign_form`;
+CREATE TABLE `payroll_company_sign_form` (
+  `sid` int(11) NOT NULL,
+  `employee_sid` int(11) NOT NULL DEFAULT '0',
+  `company_sid` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(128) DEFAULT NULL,
+  `title` varchar(128) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `requires_signing` varchar(12) DEFAULT NULL,
+  `document_path` text DEFAULT NULL,
+  `sign_document_path` text DEFAULT NULL,
+  `document_uuid` varchar(128) DEFAULT NULL,
+  `ip_address` varchar(128) DEFAULT NULL,
+  `signature` varchar(128) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+ALTER TABLE `payroll_company_sign_form`
+  ADD PRIMARY KEY (`sid`);
+
+
+ALTER TABLE `payroll_company_sign_form`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT;  
+
+
+ALTER TABLE `payroll_employees` ADD `location_version` VARCHAR(128) NULL DEFAULT NULL AFTER `version`;
+
+
+>>>>>>> gusto

@@ -70,6 +70,13 @@
                             </div>
                         </div>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group">
+                                <?php echo form_label('Company EIN Number  <span class="hr-required">*</span>', 'ssn'); ?>									
+                                <?php echo form_input('ssn', set_value('ssn', $company['ssn']), 'class="form-control"'); ?>
+                                <?php echo form_error('ssn'); ?>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <?php echo form_label('Company Description', 'CompanyDescription'); ?>
                                 <div style='margin-bottom:5px;'><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
@@ -381,6 +388,12 @@
                         required: true,
                         pattern: /^[a-zA-Z0-9\- .]+$/
                     },
+                    ssn: {
+                        required: true,
+                        number: true,
+                        maxlength: 9,
+                        minlength: 9,
+                    },
                     WebSite: {
                         url: true
                     }
@@ -393,6 +406,12 @@
                     ContactName: {
                         required: 'Contact person is required',
                         pattern: 'Letters, numbers, and dashes only please'
+                    },
+                    ssn: {
+                        required: 'EIN number is required',
+                        pattern: 'Only digits are allowed',
+                        maxlength: 'EIN should consists on 9 digits',
+                        minlength: 'EIN should consists on 9 digits'
                     },
                     WebSite: {
                         url: 'Please provide valid URL including http://'
@@ -409,6 +428,8 @@
                             }
                         }
                     <?php }?>
+                    ///
+
                     form.submit();
                 }
             });

@@ -254,6 +254,16 @@
                                 <a href="<?php echo base_url('performance-management/employee/goals/'.($employer["sid"]).''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                             </li>
                         <?php } ?>
+
+                        <?php if(checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll'] && isPayrollOrPlus()) { ?>
+                            <li class="jsPayrollOnEmployeeRow" data-id="<?=$employer["sid"];?>">
+                                <span class="left-addon">
+                                    <i aria-hidden="true" class="fa fa-cogs"></i>
+                                </span>
+                                <h4>Edit Payroll</h4>
+                                <a href="javascript:void(0);" class="jsPayrollEmployeeEdit">Manage<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </div>
             </div>

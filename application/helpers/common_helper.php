@@ -552,6 +552,24 @@ if (!function_exists('db_get_state_name_only')) {
     }
 }
 
+if (!function_exists('db_get_state_code_only')) {
+    function db_get_state_code_only($state_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('state_code');
+        $CI->db->where('sid', $state_sid);
+        $CI->db->from('states');
+        $data = $CI->db->get()->result_array();
+
+        if (!empty($data)) {
+            $data = $data[0];
+            return $data['state_code'];
+        } else {
+            return '';
+        }
+    }
+}
+
 if (!function_exists('db_get_country_name')) {
 
     function db_get_country_name($sid, $_this = false, $column = '*')
@@ -11238,6 +11256,13 @@ if (!function_exists('stringToSlug')) {
     }
 }
 
+if (!function_exists('SlugToString')) {
+    function SlugToString($i)
+    {
+        return ucwords(trim(preg_replace('/_/', ' ', $i)));
+    }
+}
+
 // Check if the logged in user
 // has PP flag or ALP flag 'on'
 if (!function_exists('getSSV')) {
@@ -13888,7 +13913,7 @@ if(!function_exists('LoginToAPI')){
                 ]
             );
             //
-            $curl = curl_init(getCreds('AHR')->API_SERVER_URL.'employee/login');
+            $curl = curl_init(getAPIUrl('login'));
             //
             curl_setopt_array($curl, [
                 CURLOPT_POST => TRUE,
@@ -14258,6 +14283,145 @@ if (!function_exists('CheckUserEEOCStatus')) {
             return true;
         }
         //
+
+if(!function_exists('LoadModel')){
+    function LoadModel($index, $_this){
+        //
+        $models = [];
+        $models['sem'] = 'single/Employee_model';
+        $models['scm'] = 'single/Company_model';
+        //
+        $_this->load->model($models[$index], $index);
+    }
+}
+
+/**
+ * 
+ */
+if(!function_exists('SnToString')){
+    function SnToString($notation){
+        return (string) number_format(
+            $notation,
+            0,
+            '',
+            ''
+        );
+    }
+}
+
+/**
+ * 
+ */
+if(!function_exists('ResetRate')){
+    function ResetRate($rate, $rateType = 'Hour'){
+        //
+        $newRate = $rate;
+        //
+        $rateType = strtolower($rateType);
+        //
+        if($rateType == 'year'){
+            $newRate = $rate / 52 / WORK_WEEK_HOURS;
+        } else if($rateType == 'month'){
+            $newRate = ($rate * 12) / 52 / WORK_WEEK_HOURS;
+        } else if($rateType == 'week'){
+            $newRate = $rate / WORK_WEEK_HOURS;
+        }
+        //
+        return $newRate;
+    }
+}
+
+if(!function_exists('getAPIUrl')){
+    function getAPIUrl($index){
+        //
+        $urls = [];
+        $urls['partner'] = 'partner_managed_company';
+        // Employee login URL
+        $urls['login'] = 'employee/login';
+        // Get Company Account
+        $urls['bank_account'] = 'company/bank_account';
+        // Get Company Tax
+        $urls['tax'] = 'company/tax';
+        // Set company locations path
+        $urls['locations'] = 'company/locations';
+        // Set payperiod paths
+        $urls['pay_period'] = 'company/pay_period';
+        // Set employee path
+        $urls['employees'] = 'employees';
+        // Set company path
+        $urls['company'] = 'company';
+        //
+        $urls['job_compensation'] = 'job/compensation';
+        //
+        if ($index == "employees" || $index == "job_compensation") {
+            return  getCreds('AHR')->API_BROWSER_URL.(isset($urls[$index]) ? $urls[$index] : '');
+        } else {
+            return  getCreds('AHR')->API_SERVER_URL.(isset($urls[$index]) ? $urls[$index] : '');
+        } 
+        // 
+    }
+}
+
+if(!function_exists('getAPIKey')){
+    function getAPIKey(){
+        return isset($_SESSION['API_TOKENS']) ? $_SESSION['API_TOKENS'] : 'testing123keyforAdmin';
+    }
+}
+
+if(!function_exists('SendResponse')){
+    /**
+     * Send response to the client
+     * @param integer $type
+     * @param string|array $data
+     */
+    function SendResponse($status, $data = '', $type = 'application/json'){
+        //
+        if($status == 401){
+            header("HTTP/1.0 401 Unauthorized");
+            exit(0);
+        }
+        //
+        if($status == 400){
+            header("HTTP/1.0 400 Bad Request");
+            exit(0);
+        }
+        //
+        if($type == 'html'){
+            $type = 'text/html';
+        }
+        //
+        header("HTTP/1.0 200 OK");
+        header("Content-type: {$type}");
+        echo json_encode($data);
+        exit(0);
+    }
+}
+
+
+if(!function_exists('isPayrollOrPlus')){
+    /**
+     * Check payroll module permission
+     * Only payroll and plus is allowed to 
+     * manage payroll module. The function was
+     * created on 12/09/2021
+     * 
+     * @return
+     */
+    function isPayrollOrPlus(){
+        // Get instance
+        $CI = &get_instance();
+        // Get the session
+        $ses = $CI->session->userdata('logged_in');
+        // Check if the logged in user
+        // is a plus or payroll
+        if(
+            $ses['employer_detail']['access_level_plus'] == 1 ||
+            $ses['employer_detail']['pay_plan_flag'] == 1 ||
+            strtolower($ses['employer_detail']['access_level']) == 'payroll'
+        ){
+            return true;
+        }
+        // Don't have permission
         return false;
     }
 }
@@ -14374,6 +14538,22 @@ if(!function_exists('GetFileContent')){
         }
         //
         return $fileData;
+if(!function_exists('_m')){
+    /**
+     * Add environment check to the assets
+     * and add tags for version
+     * 
+     * @param string $string
+     * assets/js/script
+     * assets/css/style
+     * @param string $type
+     * js|css
+     * @param string $version
+     * 1.0.0
+     * @return
+     */
+    function _m($string, $type = 'js', $version = '1.0.0'){
+        return $string.( ENVIRONMENT === 'production' ? '.min' : '' ).'.'.$type.'?v='.(ENVIRONMENT === 'production' ? $version : time());
     }
 }
 
@@ -14455,5 +14635,28 @@ if(!function_exists('check_is_employee_exist_or_transfer')){
         //
         return "no_record_found";
         
+if(!function_exists('GetHireDate')){
+    /**
+     * Get the new joined date
+     * 
+     * @param string $rd  Rehire date
+     * @param string $jd  Joining date
+     * @param string $red Registration date
+     * 
+     * @return
+     */
+    function GetHireDate(
+        $rd,
+        $jd,
+        $red
+    ){
+        //
+        if($red){
+            return $red;
+        } else if($jd){
+            return $jd;
+        } else if($rd){
+            return DateTime::createfromformat('Y-m-d H:i:s', $rd)->format('Y-m-d');
+        }
     }
 }

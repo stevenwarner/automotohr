@@ -303,7 +303,7 @@ class logs_model extends CI_Model
     public function get_all_companies($moduleId)
     {
         $a = $this->db
-            ->select('sid, CompanyName, "0" as status')
+            ->select('sid, CompanyName, "0" as status, ssn')
             ->where('parent_sid', 0)
             ->where('active', 1)
             ->order_by('CompanyName', 'ASC')
@@ -330,6 +330,44 @@ class logs_model extends CI_Model
         return $this->db->select('sid, module_name')
         ->where('sid', $sid)
         ->get('modules')
+        ->row_array();
+    }
+
+    function UpdateCompanyData($companyId, $oldStatus){
+        //
+        if(
+            !$this->db
+            ->where('company_sid', $companyId)
+            ->where('module_sid', 7)
+            ->count_all_results('company_modules')
+        ){
+            $this->db->insert(
+                'company_modules', [
+                    'module_sid' => 7,
+                    'company_sid' => $companyId,
+                    'is_active' => 1,
+                    'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                    'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]
+            );
+        }
+        //
+        $this->db
+            ->where('company_sid', $companyId)
+            ->where('module_sid', 7)
+            ->update(
+                'company_modules', [
+                    'is_active' => $oldStatus ? 0 : 1,
+                    'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]
+            );
+    }
+
+    function getCompanyPayrollInfo($company_sid){
+        return $this->db
+        ->select('refresh_token, access_token, gusto_company_uid')
+        ->where('company_sid', $company_sid)
+        ->get("payroll_companies")
         ->row_array();
     }
 }

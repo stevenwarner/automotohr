@@ -135,10 +135,29 @@
                     <figure><i class="fa fa-map-marker"></i></figure>Company Addresses</a>
             </li>
         <?php } ?>
-
-        <li>
-            <a <?php if (strpos(base_url(uri_string()), site_url('paid_time_off/configurations')) !== false || $this->uri->segment(2) == 'group_management' || $this->uri->segment(2) == 'assign_employee' || $this->uri->segment(2) == 'assign_admin') { echo 'class="active"'; } ?> href="<?php echo base_url('paid_time_off/configurations'); ?>">
-                    <figure><i class="fa fa-clock-o"></i></figure>PTO Configurations</a>
-        </li>
+        <?php if(checkIfAppIsEnabled("payroll")) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('company/taxes')) !== false) { echo 'class="active"'; } ?> href="<?php echo base_url('company/taxes'); ?>">
+                    <figure><i class="fa fa-money" aria-hidden="true"></i></figure>Company Tax Information</a>
+            </li>
+        <?php } ?>
+        <?php if(checkIfAppIsEnabled("payroll")) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('company/bank_account')) !== false) { echo 'class="active"'; } ?> href="<?php echo base_url('company/bank_account'); ?>">
+                    <figure><i class="fa fa-bank" aria-hidden="true"></i></figure>Company Bank Account</a>
+            </li>
+        <?php } ?>
+        <?php if(checkIfAppIsEnabled("payroll")) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('company/locations')) !== false) { echo 'class="active"'; } ?> href="<?php echo base_url('company/locations'); ?>">
+                    <figure><i class="fa fa-map" aria-hidden="true"></i></figure>Company Locations</a>
+            </li>
+        <?php } ?>
+        <?php if(checkIfAppIsEnabled("payroll")) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('company/pay_periods')) !== false) { echo 'class="active"'; } ?> href="<?php echo base_url('company/pay_periods'); ?>">
+                    <figure><i class="fa fa-calendar-check-o" aria-hidden="true"></i></figure>Company Pay Pariods</a>
+            </li>
+        <?php } ?>
     </ul>
 </div>

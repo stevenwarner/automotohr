@@ -324,15 +324,40 @@ $(function() {
                 alertify.alert('Error!', 'Something went wrong while sending a reminder email. Please, try again in a few moments.');
             });
         }
-
-
-        String.prototype.ucwords = function() {
-            var str = this.toLowerCase();
-            return str.replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
-                function(s) {
-                    return s.toUpperCase();
-                });
-        };
-
     }
 });
+
+/**
+ * Capitalize first letter of each word
+ * Make it available on String prototype
+ * @returns 
+ */
+String.prototype.ucwords = function() {
+    var str = this.toLowerCase();
+    return str.replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
+        function(s) {
+            return s.toUpperCase();
+        });
+};
+
+/**
+ * Manges the loader
+ * @param {boolean} status 
+ * @param {string}  target 
+ * @param {string}  msg 
+ */
+function ml(status, target, msg) {
+    //
+    if (status) {
+        $('.jsIPLoader[data-page="' + (target) + '"]').show();
+    } else {
+        $('.jsIPLoader[data-page="' + (target) + '"]').hide();
+    }
+
+    if (msg) {
+        //
+        $('.jsIPLoader[data-page="' + (target) + '"] .jsIPLoaderText').html(msg);
+    } else {
+        $('.jsIPLoader .jsIPLoaderText').html("Please wait while we process your request.");
+    }
+}

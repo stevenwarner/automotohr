@@ -2,6 +2,8 @@
     <div class="dashboard-wrp">
         <div class="container-fluid">
             <div class="row">
+                <!--  -->
+                <?php $this->load->view('loader', ['props'=>'id="jsPayrollLoader"']); ?>
                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
                     <?php $this->load->view('main/employer_column_left_view'); ?>
                 </div>
@@ -244,6 +246,9 @@
                                             <li><a href="<?php echo base_url('performance-management/goals'); ?>">Goals</a></li>
                                         <?php } ?>
                                         <li><a href="<?php echo base_url('export_documents/employee'); ?>">Bulk Download Documents</a></li>
+                                        <?php if (checkIfAppIsEnabled('payroll')) {?>
+                                            <li><a href="javascript:void(0)" class="jsPayrollCompanyOnboard" data-cid="<?=$session['company_detail']['sid'];?>">Company Payroll Onboarding</a></li>
+                                            <?php } ?>
                                     </ul>
                                 </article>
                             <?php } ?>

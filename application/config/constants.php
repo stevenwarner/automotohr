@@ -93,7 +93,7 @@ if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'www.applyb
 define('STORE_FULL_URL', STORE_PROTOCOL . 'www.' . STORE_DOMAIN);
 define('AWS_S3_BUCKET_NAME', 'automotohrattachments');
 define('AWS_S3_BUCKET_URL', STORE_PROTOCOL_SSL . AWS_S3_BUCKET_NAME . '.s3.amazonaws.com/');
-define('SERVER_DNS_PRIMARY', 'NS1.AUTOMOTOHR.COM');
+define('SERVER_DNS_PRIMARY', 'NS1.AUTOMOTOHR.COM'); 
 define('SERVER_DNS_SECONDARY', 'NS2.AUTOMOTOHR.COM');
 define('STORE_FULL_URL_SSL', STORE_PROTOCOL_SSL . 'www.' . STORE_DOMAIN . '/');
 define('STAGING_SERVER_URL', 'http://localhost/ahr/');
@@ -526,7 +526,7 @@ define('JOINING_DATE_LIMIT', '1960:+5');
 define('STARTING_DATE_LIMIT', '1960:+5');
 define('DATE', 'M d Y, D');
 define('DB_DATE', 'Y-m-d');
-define('DATE_WITH_TIME', 'M d Y, D H:m:s');
+define('DATE_WITH_TIME', 'M d, Y, D H:m:s');
 define('DB_DATE_WITH_TIME', 'Y-m-d H:i:s');
 //
 define('XSYM', '✖');
@@ -612,9 +612,6 @@ define('GUSTO_CLIENT_ID', 'hCwof-BU9Xv1PaJGqInPVilUukJvoRR_gqC_cr3KIrg');
 define('GUSTO_CLIENT_SECRET', 'eEbHTeU4AClISVNUIRLB4T8RwDkMmQxt8298kfjt-cI');
 define('GUSTO_CLIENT_REDIRECT_URL', 'https://www.automotohr.com/gusto/callback');
 
-define('GUSTO_ACCESS_TOKEN', 'M-KCth2RQHAobcsz7Cc_Qf3fThssgHdAP7ClGC3LUDI');
-define('GUSTO_REFRESH_TOKEN', '7hY3IKva0XM__HIh3BYHVLJmKmunHuRltvvMmOVmJlw');
-
 define('BILLING_AND_INVOICE', 'The selected contacts will be notified by email when an invoice is generated.');
 define('NEW_APPLICANT', 'The selected contacts will be notified by email when an applicant applies for a job.');
 define('VIDEO_INTERVIEW', 'The selected contacts will be notified by email when a video interview is created.');
@@ -634,3 +631,9 @@ define('W4_EXEMPTION_FROM_WITHHOLDING', 'You may claim exemption from withholdin
 define('FEED_STRIP_TAGS', '<h1><h2><h3><h4><h5><h6><p><br><ul><ol></li>');
 //
 define('CHARACTER_SHOW', 2);
+define('GUSTO_ACCESS_TOKEN', 'sbPrNJznXEuSc_qCgct3DHn8pkzFYjFHjXGBpDC3jx0');
+define('GUSTO_REFRESH_TOKEN', '7hY3IKva0XM__HIh3BYHVLJmKmunHuRltvvMmOVmJlw');
+define('GUSTO_PAYROLL_TIME', '03:30 pm PDT');
+
+//
+define("WORK_WEEK_HOURS", 40);

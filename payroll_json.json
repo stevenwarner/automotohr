@@ -1,0 +1,323 @@
+{
+    "employee_compensations": [{
+            "fixed_compensations": [{
+                "job_id": "7757869441479586",
+                "name": "Reimbursement",
+                "amount": "20.00"
+            }],
+            "hourly_compensations": [{
+                    "compensation_multiplier": 1.5,
+                    "job_id": "7757869441479586",
+                    "name": "Overtime",
+                    "flsa_status": "Nonexempt",
+                    "hours": "1.000"
+                },
+                {
+                    "compensation_multiplier": 2,
+                    "job_id": "7757869441479586",
+                    "name": "Double overtime",
+                    "flsa_status": "Nonexempt",
+                    "hours": "2.000"
+                },
+                {
+                    "compensation_multiplier": 1,
+                    "job_id": "7757869441479586",
+                    "name": "Regular Hours",
+                    "flsa_status": "Nonexempt",
+                    "hours": "40.000"
+                }
+            ],
+            "employee_id": "7757869433110271",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "0.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        },
+        {
+            "fixed_compensations": [{
+                "job_id": "7757869441479587",
+                "name": "Reimbursement",
+                "amount": "0.00"
+            }],
+            "hourly_compensations": [],
+            "employee_id": "7757869433110272",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "0.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        },
+        {
+            "fixed_compensations": [{
+                "job_id": "7757869441479588",
+                "name": "Reimbursement",
+                "amount": "0.00"
+            }],
+            "hourly_compensations": [],
+            "employee_id": "7757869433110273",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "0.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        },
+        {
+            "fixed_compensations": [{
+                "job_id": "7757869441479589",
+                "name": "Reimbursement",
+                "amount": "0.00"
+            }],
+            "hourly_compensations": [],
+            "employee_id": "7757869433110274",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "0.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        },
+        {
+            "fixed_compensations": [{
+                "job_id": "7757869441479590",
+                "name": "Reimbursement",
+                "amount": "0.00"
+            }],
+            "hourly_compensations": [],
+            "employee_id": "7757869433110275",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "224.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        },
+        {
+            "fixed_compensations": [{
+                "job_id": "7757869441479591",
+                "name": "Reimbursement",
+                "amount": "0.00"
+            }],
+            "hourly_compensations": [],
+            "employee_id": "7757869433110276",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "0.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        },
+        {
+            "fixed_compensations": [{
+                "job_id": "7757869441479592",
+                "name": "Reimbursement",
+                "amount": "0.00"
+            }],
+            "hourly_compensations": [{
+                    "compensation_multiplier": 1.5,
+                    "job_id": "7757869441479592",
+                    "name": "Overtime",
+                    "flsa_status": "Nonexempt",
+                    "hours": "0.000"
+                },
+                {
+                    "compensation_multiplier": 2,
+                    "job_id": "7757869441479592",
+                    "name": "Double overtime",
+                    "flsa_status": "Nonexempt",
+                    "hours": "0.000"
+                },
+                {
+                    "compensation_multiplier": 1,
+                    "job_id": "7757869441479592",
+                    "name": "Regular Hours",
+                    "flsa_status": "Nonexempt",
+                    "hours": "40.000"
+                }
+            ],
+            "employee_id": "7757869433110277",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "0.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        },
+        {
+            "fixed_compensations": [{
+                "job_id": "7757869441479593",
+                "name": "Reimbursement",
+                "amount": "0.00"
+            }],
+            "hourly_compensations": [],
+            "employee_id": "7757869433110278",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "0.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        },
+        {
+            "fixed_compensations": [{
+                "job_id": "7757869441479594",
+                "name": "Reimbursement",
+                "amount": "0.00"
+            }],
+            "hourly_compensations": [{
+                    "compensation_multiplier": 1.5,
+                    "job_id": "7757869441479594",
+                    "name": "Overtime",
+                    "flsa_status": "Nonexempt",
+                    "hours": "0.000"
+                },
+                {
+                    "compensation_multiplier": 2,
+                    "job_id": "7757869441479594",
+                    "name": "Double overtime",
+                    "flsa_status": "Nonexempt",
+                    "hours": "0.000"
+                },
+                {
+                    "compensation_multiplier": 1,
+                    "job_id": "7757869441479594",
+                    "name": "Regular Hours",
+                    "flsa_status": "Nonexempt",
+                    "hours": "40.000"
+                }
+            ],
+            "employee_id": "7757869433110279",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "0.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        },
+        {
+            "fixed_compensations": [{
+                "job_id": "7757869441479595",
+                "name": "Reimbursement",
+                "amount": "0.00"
+            }],
+            "hourly_compensations": [],
+            "employee_id": "7757869433110280",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "0.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        },
+        {
+            "fixed_compensations": [{
+                "job_id": "7757869441479596",
+                "name": "Reimbursement",
+                "amount": "0.00"
+            }],
+            "hourly_compensations": [{
+                    "compensation_multiplier": 1.5,
+                    "job_id": "7757869441479596",
+                    "name": "Overtime",
+                    "flsa_status": "Nonexempt",
+                    "hours": "0.000"
+                },
+                {
+                    "compensation_multiplier": 2,
+                    "job_id": "7757869441479596",
+                    "name": "Double overtime",
+                    "flsa_status": "Nonexempt",
+                    "hours": "0.000"
+                },
+                {
+                    "compensation_multiplier": 1,
+                    "job_id": "7757869441479596",
+                    "name": "Regular Hours",
+                    "flsa_status": "Nonexempt",
+                    "hours": "40.000"
+                }
+            ],
+            "employee_id": "7757869433110281",
+            "paid_time_off": [{
+                    "name": "Vacation Hours",
+                    "hours": "0.0"
+                },
+                {
+                    "name": "Sick Hours",
+                    "hours": "0.0"
+                }
+            ]
+        }
+    ],
+    "payroll_id": "7757500918423746",
+    "payroll_uuid": "c708b0df-8c5b-4576-80db-835758a67d6e",
+    "company_id": "7756341741024534",
+    "company_uuid": "73e6cc96-1fa5-4e1c-959e-15cb70970dfa",
+    "version": "511d24e640c62073166e1cc3c793ec87",
+    "processed": false,
+    "processed_date": null,
+    "calculated_at": null,
+    "totals": {
+        "company_debit": "28076.99",
+        "net_pay_debit": "17512.77",
+        "tax_debit": "10544.22",
+        "reimbursement_debit": "20.00",
+        "child_support_debit": "0.00",
+        "reimbursements": "20.00",
+        "net_pay": "17512.77",
+        "gross_pay": "28187.92",
+        "employee_bonuses": "0.00",
+        "employee_commissions": "0.00",
+        "employee_cash_tips": "0.00",
+        "employee_paycheck_tips": "0.00",
+        "additional_earnings": "0.00",
+        "owners_draw": "0.00",
+        "check_amount": "0.00",
+        "employer_taxes": "2225.29",
+        "employee_taxes": "8318.93",
+        "benefits": "1127.52",
+        "employee_benefits_deductions": "1896.22",
+        "deferred_payroll_taxes": "0.00"
+    },
+    "pay_period": {
+        "start_date": "2021-07-31",
+        "end_date": "2021-08-13",
+        "pay_schedule_id": "7756341794799346",
+        "pay_schedule_uuid": null
+    },
+    "payroll_deadline": "2021-09-29",
+    "check_date": "2021-10-05"
+}

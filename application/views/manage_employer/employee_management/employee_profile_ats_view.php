@@ -1385,6 +1385,7 @@
                         </div>
                     </div>
                 </div>
+                
                 <?php $this->load->view($left_navigation); ?>
             </div>
         </div>

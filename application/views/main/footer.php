@@ -186,7 +186,9 @@ if ($class != 'dashboard' &&
     ($class != 'video_interview_system' && $method != 'resource_page') &&
     $this->uri->segment(2) != 'questionnaires-tutorial ' &&
     $this->uri->segment(1) != 'performance_review' &&
-    $this->uri->segment(1) != 'performance'
+    $this->uri->segment(1) != 'payroll' &&
+    $this->uri->segment(1) != 'performance' &&
+    !isset($logged_in_view)
 ) { ?>
         <div class="footer-widgets hidden-print">
             <div class="container-fluid">
@@ -999,10 +1001,27 @@ if ($class != 'dashboard' &&
                 });
             }
         })
+        // 
+        window.company = {};
+        window.company.Id = <?=$session['company_detail']['sid']?>;
+        window.company.Name = "<?=$session['company_detail']['CompanyName']?>";
+        window.company.Ein = "<?=$session['company_detail']['ssn']?>";
     </script>
-    <script src="<?=base_url('assets/js/common.js?v1.0');?>"></script>
-    <script src="<?=base_url('assets/portal/app.min.js');?>?v=1.0.0"></script>
-        </body>
+    <script type="text/javascript" src="<?=base_url(_m('assets/js/uri'));?>"></script>
+    <script type="text/javascript" src="<?=base_url(_m('assets/js/common'));?>"></script>
+    <script type="text/javascript" src="<?=base_url(_m('assets/portal/app'));?>"></script>
+    <script>
+        var companyId = <?=$session['company_detail']['sid']?>;
+        /**
+         * Set base url
+         * @type {string}
+         */
+        var baseURI = "<?php echo base_url();?>/";
+    </script>
+    <script src="<?=base_url("assets/payroll/js/employee_onboard.js");?>"></script>
+    <!-- Dynamic Scripts -->
+    <?php if(isset($PageScripts)) { echo GetScripts($PageScripts); }?>
+</body>
 </html>
     <?php } else { ?>
         <?php $this->load->view('onboarding/on_boarding_footer'); ?>

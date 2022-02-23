@@ -787,6 +787,25 @@
                                     </div>
                                 <?php } ?>
 
+                                <?php if (checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll'] && isPayrollOrPlus()) { ?>
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure><i class="fa fa-money" aria-hidden="true"></i></figure>
+                                                <h2 class="post-title">
+                                                    <a href="<?=base_url('payroll/employees/payroll');?>">Payroll</a>
+                                                </h2>
+                                                <div class="count-box" style="font-size: 12px">
+                                                    <small style="font-size: 12px"></small>
+                                                </div>
+                                                <div class="button-panel">
+                                                    <a href="<?=base_url('payroll/employees/run');?>" class="site-btn">Payroll Dashboard</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+
                                 <!-- Account Activity -->
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box activity-box-wrp">

@@ -20,6 +20,7 @@
                                             </span>
                                         </div>
                                         <div class="hr-innerpadding">
+                                            <div class="csIPLoader jsIPLoader" data-page="main"><i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i></div>
                                             <div class="row">
                                                <div class="col-xs-12">
                                                     <span class="pull-right">
@@ -32,24 +33,50 @@
                                                 <div class="col-xs-12">
                                                     <div class="table-responsive">
                                                         <table class="table table-bordered table-hover table-striped">
+                                                            <caption></caption>
                                                             <thead>
                                                                 <tr>
-                                                                    <th class=" text-center">Company Name</th>
-                                                                    <th class="col-sm-4 text-center">Actions</th>
+                                                                    <th scope="col" class="text-center">Company Name</th>
+                                                                    <th scope="col" class="text-center">Actions</th>
                                                                    
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                 <?php foreach($company_data as $company)  {  ?>
-                                                                     <tr>
+                                                                <?php 
+                                                                $passData = [];
+                                                                //
+                                                                foreach($company_data as $company)  { $passData[$company['sid']] = $company;  ?>
+                                                                    <tr data-id="<?=$company['sid'];?>">
                                                                          <td>
-                                                                            <?php echo $company['CompanyName'] ?>
+                                                                            <?php echo $company['CompanyName']; ?>
                                                                         </td>
-                                                                         <td>
-                                                                            <button data-status="<?php echo $company['status'] ?>" company_sid="<?php echo $company['sid'] ?>" class="btn js-dynamic-module-btn btn-<?php echo $company['status']==0 ? "success" : "danger" ?>"><?php echo $company['status']==0 ? "Activate" : "Deactivate" ?></button>
-                                                                            <?php if($module_data['sid'] == 1) { ?>
-                                                                            <a href="<?= base_url('manage_admin/manage_policies') ?>/<?= $company['sid'] ?>" class="btn btn-success">Manage</a>
-                                                                            <?php } ?>
+                                                                        <td>
+                                                                            <a href="<?php echo base_url('manage_admin/companies/manage_payroll/' . $company['sid'] ); ?>" class="btn btn-success">Manage</a>
+                                                                            <!-- <button 
+                                                                                data-status="<?php echo $company['is_active'] ?>" 
+                                                                                company_sid="<?php echo $company['sid'] ?>" 
+                                                                                class="btn js-dynamic-module-btn btn-<?php echo $company['is_active']==0 ? "success" : "danger" ?>"
+                                                                            >
+                                                                                <?php echo $company['is_active']==0 ? "Activate" : "Deactivate" ?>
+                                                                            </button>
+                                                                            <button class="btn btn-success jsSetSSN">
+                                                                                Update EIN Number
+                                                                            </button>
+                                                                            <?php if($company['access_token']) { ?>
+                                                                                <button class="btn btn-success jsDetails">
+                                                                                    Details
+                                                                                </button>
+                                                                                <button class="btn btn-success jsSyncWithGusto" data-company_sid="<?php echo $company['sid'] ?>">
+                                                                                    Sync
+                                                                                </button>
+                                                                                <a class="btn btn-success" target="_blank" href="<?php echo base_url("manage_admin/company_onboarding")."/".$company['sid']; ?>">
+                                                                                    Onboarding
+                                                                                </a>
+                                                                            <?php } else { ?>
+                                                                                <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company['sid'] ?>">
+                                                                                    Add Gusto
+                                                                                </button>
+                                                                            <?php } ?> -->
                                                                         </td>
                                                                      </tr>
                                                                  <?php } ?>
@@ -78,44 +105,232 @@
         </div>
     </div>
 </div>
+<!-- Include Modal -->
+<link rel="stylesheet" href="<?=base_url("assets/css/SystemModel.css");?>" />
+<script src="<?=base_url("assets/js/SystemModal.js");?>"></script>
+<!-- Include moment -->
+<script src="<?=base_url("assets/js/moment.min.js");?>"></script>
+
+<script src="<?=base_url('assets/js/common.js?v1.0.1');?>"></script>
+<script src="<?=base_url('assets/portal/app.js');?>?v=1.0.2"></script>
+<!-- Include moment -->
+<script src="<?=base_url("assets/payroll/js/payroll_company_onboard.js");?>"></script>
+
 <script>
 
       $(function(){
-        $('.js-dynamic-module-btn').click(function(e){
-            e.preventDefault();
-            let megaOBJ = {};
-            var _this = $(this);
 
-             megaOBJ.Status = $(this).attr('data-status');
-             megaOBJ.CompanyId=$(this).attr('company_sid');
-             megaOBJ.Id=<?php echo $this->uri->segment(3); ?>;
+        //
+        var obj = {};
+        //
+        obj.companyId = 0;
+        obj.moduleId = 0;
+        obj.action = '';
+        //
+        var companyData = <?=json_encode($passData);?>;
+        //
+        $('.js-dynamic-module-btn').click(function(e){
             //
-            
+            e.preventDefault();
             //
-            alertify.confirm('Do you really want to '+( megaOBJ.Status == 1 ? 'disable' : 'enable' )+' this MODULE?', function(){
-                //
-                $.post("<?=base_url('manage_admin/companies/update_module_status');?>", megaOBJ, function(resp){
-                    if(resp.Status === false){
-                        alertify.alert('ERROR!', resp.Response);
-                        return;
-                    }
-                    alertify.alert('SUCCESS!', 'Module has been '+( megaOBJ.Status == 1 ? 'Disabled' : 'Enabled' )+'.');
-                    if(megaOBJ.Status == 1) {
-                        _this.attr('data-status', 0);
-                        _this.removeClass('btn-danger').addClass('btn-success');
-                        _this.text('Activate');
-                    }
-                    else {
-                        _this.attr('data-status', 1);
-                        _this.removeClass('btn-success').addClass('btn-danger');
-                        _this.text('Deactivate');
-                    }
-                });
-            }).set('labels', {
-                ok: 'Yes',
-                cancel: 'No'
+            obj.companyId = $(this).attr('company_sid');
+            //
+            if(!companyData[obj.companyId]['ssn']){
+                alertify.alert('Error!', 'To activate payroll for this company, the EIN number is required.');
+                return;
+            }
+            //
+            obj.status = $(this).attr('data-status');
+            obj.action = 'update_status';
+            //
+            alertify.confirm(
+                'Do you really want to '+( obj.status == 1 ? 'disable' : 'enable' )+' the module against this company?', function(){
+                    ml(true, 'main');
+                    UpdateAction();
             });
         });
+        
+        //
+        $('.jsDetails').click(function(event){
+            //
+            event.preventDefault();
+            //
+            obj.companyId = $(this).closest('tr').data('id');
+            //
+            var o = companyData[obj.companyId];
+            //
+            var html = '';
+            html += '<div class="container">';
+            html += '   <div class="row">';
+            html += '       <div class="col-sm-12">';
+            html += '           <label>Company UUID</label>';
+            html += '           <input type="text" class="form-control" disabled value="'+(o['gusto_company_uid'] != null ? o['gusto_company_uid'] : '')+'" />';
+            html += '       </div>';
+            html += '   </div>';
+            html += '   <br>';
+            html += '   <div class="row">';
+            html += '       <div class="col-sm-12">';
+            html += '           <label>Access Token</label>';
+            html += '           <input type="text" class="form-control" disabled value="'+(o['access_token'] != null ? o['access_token'] : '')+'" />';
+            html += '       </div>';
+            html += '   </div>';
+            html += '   <br>';
+            html += '   <div class="row">';
+            html += '       <div class="col-sm-12">';
+            html += '           <label>Refresh Token</label>';
+            html += '           <input type="text" class="form-control" disabled value="'+(o['refresh_token'] != null ? o['refresh_token'] : '')+'" />';
+            html += '       </div>';
+            html += '   </div>';
+            html += '   <br>';
+            html += '   <div class="row">';
+            html += '       <div class="col-sm-12">';
+            html += '           <label>Old Access Token</label>';
+            html += '           <input type="text" class="form-control" disabled value="'+(o['old_access_token'] != null ? o['old_access_token'] : '')+'" />';
+            html += '       </div>';
+            html += '   </div>';
+            html += '   <br>';
+            html += '   <div class="row">';
+            html += '       <div class="col-sm-12">';
+            html += '           <label>Old Refresh Token</label>';
+            html += '           <input type="text" class="form-control" disabled value="'+(o['old_refresh_token'] != null ? o['old_refresh_token'] : '')+'" />';
+            html += '       </div>';
+            html += '   </div>';
+            html += '   <br>';
+            html += '   <div class="row">';
+            html += '       <div class="col-sm-6">';
+            html += '           <label>Created At</label>';
+            html += '           <input type="text" class="form-control" disabled value="'+(o['created_at'] != null ? moment(o['created_at']).format('MMM DD YYYY, ddd hh:mm a') : '')+'" />';
+            html += '       </div>';
+            html += '       <div class="col-sm-6">';
+            html += '           <label>Updated At</label>';
+            html += '           <input type="text" class="form-control" disabled value="'+(o['updated_at'] != null ? moment(o['updated_at']).format('MMM DD YYYY, ddd hh:mm a') : '')+'" />';
+            html += '       </div>';
+            html += '   </div>';
+            html += '   <br>';
+            html += '</div>';
+            //
+            Modal({
+                Id: 'jsCompanyDetailModal',
+                Title: 'Details for '+o['CompanyName'],
+                Loader: 'jsCompanyDetailModalLoader',
+                Buttons: [
+                    '<button class="btn btn-success jsRefreshToken">Refresh Token</button>'
+                ],
+                Body: html
+            }, function(){
+                //
+                ml(false, 'jsCompanyDetailModalLoader');
+            });
+        });
+
+        //
+        $('.jsSetSSN').click(function(event){
+            //
+            event.preventDefault();
+            //
+            obj.companyId = $(this).closest('tr').data('id');
+            //
+            var html = '';
+            html += '<div class="container">';
+            html += '   <div class="row">';
+            html += '       <div class="col-sm-12">';
+            html += '           <label>EIN Number</label>';
+            html += '           <input type="text" class="form-control" id="jsEinNumberText" value="'+(companyData[obj.companyId]['ssn'] != null ? companyData[obj.companyId]['ssn'] : '')+'" />';
+            html += '       </div>';
+            html += '   </div>';
+            html += '   <br>';
+            html += '   <div class="row">';
+            html += '       <div class="col-sm-12">';
+            html += '           <label></label>';
+            html += '           <button class="btn btn-success" id="jsUpdateEINNumber">Update EIN Number</button>';
+            html += '       </div>';
+            html += '   </div>';
+            html += '</div>';
+            //
+            Modal({
+                Id: 'jsEINModal',
+                Title: 'Update EIN Number for '+companyData[obj.companyId]['CompanyName'],
+                Loader: 'jsEINModalLoader',
+                Body: html
+            }, function(){
+                //
+                ml(false, 'jsEINModalLoader');
+            });
+        });
+
+        //
+        $(document).on('click', '.jsRefreshToken', function(event){
+            //
+            event.preventDefault();
+            //
+            ml(true, 'jsCompanyDetailModalLoader');
+            //
+            obj.action = 'refresh_token';
+            //
+            UpdateAction('jsCompanyDetailModalLoader');
+        });
+
+        //
+        $(document).on('click', '#jsUpdateEINNumber', function(event){
+            //
+            event.preventDefault();
+            //
+            var newEIN = $('#jsEinNumberText').val().trim().replace(/[^0-9]/g, '').substr(0,9);
+            //
+            if(newEIN.length != 9){
+                alertify.alert(
+                    "Warning!",
+                    "EIN number must be of 9 numbers"
+                );
+                return;
+            }
+            //
+            ml(true, 'jsEINModalLoader');
+            //
+            obj.ein = newEIN;
+            obj.action = 'update_ein';
+            //
+            UpdateAction('jsEINModalLoader');
+        });
+       
+        //
+        $(document).on('keyup', '#jsEinNumberText', function(event){
+            //
+            $(this).val(
+                $(this).val().trim().replace(/[^0-9]/g, '').substr(0,9)
+            );
+        });
+
+
+        //
+        function UpdateAction(loader){
+            //
+            $.post(
+                "<?=base_url("update_payroll_module")?>", 
+                obj
+            ).done(function(resp){
+                //
+                if(loader !== undefined){
+                    ml(false, loader);
+                }
+                //
+                if(resp.Status === false){
+                    alertify.alert('Error!', resp.Response);
+                    return;
+                }
+                //
+                obj = {};
+                //
+                $('.jsModalCancel').click();
+                //
+                alertify.alert('Success!', resp.Response, function(){
+                    //
+                    window.location.reload();
+                });
+            });
+        }
+        //
+        ml(false, 'main');
     })
 
 </script>
