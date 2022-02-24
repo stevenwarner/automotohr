@@ -1574,7 +1574,7 @@ class Payroll_onboard extends CI_Controller
             return MakeErrorArray($response['errors']);
         }
         // Mark this step as completed
-        $this->pm->UpdatePayroll('payroll_employees', ['onboard_completed' => 1], ['employee_sid' => $post['employeeId']]);
+        $this->pm->UpdatePayroll('payroll_employees', ['onboard_completed' => 1, 'payment_method' => 1], ['employee_sid' => $post['employeeId']]);
         //
         return $return ? SendResponse(200, ['status' => true, 'response' => 'Employee\'s payment method has been updated.']) : $response;
     }
