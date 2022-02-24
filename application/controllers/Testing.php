@@ -16,6 +16,49 @@ class Testing extends CI_Controller
     
 
     function get_invoices($company_sid){
+        $i = 0;
+        $productArray = array();
+        $productIDsInArray = array();
+
+        $this->db->select('*');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('status', 'Paid');
+        $record_obj = $this->db->get('invoices'); //Getting all invoices against the company which are paid
+        $orders = $record_obj->result_array();
+        $record_obj->free_result();
+
+        foreach ($orders as $order) {
+            $dataArray = unserialize($order['serialized_items_info']);
+            foreach ($dataArray['products'] as $key => $product) {
+                if (in_array($product, $productIds)) {
+                    if (in_array($product, $productIDsInArray)) { //if the product is already added in the array.
+                        foreach ($productArray as $myKey => $pro) {
+                            if ($pro['product_sid'] == $product && $pro['no_of_days'] == $dataArray['no_of_days'][$key]) {
+                                $pro['remaining_qty'] = $pro['remaining_qty'] + $dataArray['item_remaining_qty'][$key];
+                            } else if (!in_array($product, $productIDsInArray)) {
+                                $productArray[$i]['product_sid'] = $product;
+                                $productArray[$i]['remaining_qty'] = $dataArray['item_remaining_qty'][$key];
+                                $productArray[$i]['no_of_days'] = $dataArray['no_of_days'][$key];
+                            }
+
+                            $productArray[$myKey] = $pro;
+                        }
+                    } else { //if the product is not already added in the array.
+                        if ($dataArray['item_remaining_qty'][$key] > 0) {
+                            $productIDsInArray[$i] = $product;
+                            $productArray[$i]['product_sid'] = $product;
+                            $productArray[$i]['remaining_qty'] = $dataArray['item_remaining_qty'][$key];
+
+                            if (isset($dataArray['no_of_days']))
+                                $productArray[$i]['no_of_days'] = $dataArray['no_of_days'][$key];
+                            $i++;
+                        }
+                    }
+                }
+            }
+        }
+        echo "<pre>";
+        print_r($orders);
         //
 
         $this->db->select('*');
