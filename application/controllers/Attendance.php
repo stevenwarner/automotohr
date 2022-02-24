@@ -27,7 +27,7 @@ class Attendance extends Public_Controller {
                 $security_sid                                                   = $data['session']['employer_detail']['sid'];
                 $security_details                                               = db_get_access_level_details($security_sid);
                 $data['security_details']                                       = $security_details;
-                check_access_permissions($security_details, 'dashboard', 'attendance_management');
+                // check_access_permissions($security_details, 'dashboard', 'attendance_management');
                 $company_sid                                                    = $data["session"]["company_detail"]["sid"];
                 $employer_sid                                                   = $data["session"]["employer_detail"]["sid"];
                 $data['title']                                                  = "Time & Attendance";
@@ -87,7 +87,7 @@ class Attendance extends Public_Controller {
                 $security_sid                                                   = $data['session']['employer_detail']['sid'];
                 $security_details                                               = db_get_access_level_details($security_sid);
                 $data['security_details']                                       = $security_details;
-                check_access_permissions($security_details, 'attendance', 'my_day');
+                // check_access_permissions($security_details, 'attendance', 'my_day');
                 
                 $company_sid                                                    = $data['session']['company_detail']['sid'];
                 $employer_sid                                                   = $data['session']['employer_detail']['sid'];
@@ -98,20 +98,20 @@ class Attendance extends Public_Controller {
                 $company_timezone                                               = $data['session']['portal_detail']['company_timezone'];
                 $data['company_timezone']                                       = $company_timezone;
 
-                date_default_timezone_set($company_timezone); // to set timezone for next date request. It will be applicable only for one time
+                // date_default_timezone_set($company_timezone); // to set timezone for next date request. It will be applicable only for one time
                 $today                                                          = date('Y-m-d 00:00:00');
                 $today_unix                                                     = strtotime($today);
-                date_default_timezone_set($company_timezone);
+                // date_default_timezone_set($company_timezone);
                 $year                                                           = ($year == null ? date('Y') : $year);
-                date_default_timezone_set($company_timezone);
+                // date_default_timezone_set($company_timezone);
                 $month                                                          = ($month == null ? date('m') : $month);
-                date_default_timezone_set($company_timezone);
+                // date_default_timezone_set($company_timezone);
                 $day                                                            = ($day == null ? date('d') : $day);
                 $start_unix_date                                                = mktime(0, 0, 0, $month, $day, $year);
                 $end_unix_date                                                  = mktime(23, 59, 59, $month, $day, $year);
-                date_default_timezone_set($company_timezone);
+                // date_default_timezone_set($company_timezone);
                 $start_date                                                     = date('Y-m-d H:i:s', $start_unix_date);
-                date_default_timezone_set($company_timezone);
+                // date_default_timezone_set($company_timezone);
                 $end_date                                                       = date('Y-m-d H:i:s', $end_unix_date);
 
                 //$last_clock_in_data = $this->attendance_model->get_last_attendance_record($company_sid, $employer_sid, '', '', 'clock_in');
@@ -246,15 +246,15 @@ class Attendance extends Public_Controller {
                         $last_clock_out_was_today == true &&
                         $last_clock_out_was_before_last_clock_in == false) {
 
-                    date_default_timezone_set($company_timezone);
+                    // date_default_timezone_set($company_timezone);
                     $start_date                                                 = date('Y-m-d 00:00:00');
 
-                    date_default_timezone_set($company_timezone);
+                    // date_default_timezone_set($company_timezone);
                     $end_date                                                   = date('Y-m-d 23:59:59');
                 } else if ($last_clock_in_was_today == false) {
                     if ($last_clock_out_was_before_last_clock_in == true) {
                         $start_date                                             = $last_clock_in_data['attendance_date'];
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $end_date                                               = date('Y-m-d H:i:s');
                     }
                 }
@@ -349,12 +349,12 @@ class Attendance extends Public_Controller {
                 $weekly_hours_quota_minutes = 40 * 60;
                 $weeks_percentage = floor(((($weeks_total_clocked_hours * 60) + $weeks_total_clocked_minutes) / $weekly_hours_quota_minutes) * 100);
                 $data['weeks_percentage'] = $weeks_percentage;
-                date_default_timezone_set($company_timezone);
+                // date_default_timezone_set($company_timezone);
                 $data['today_date'] = date('d');
                 $data['today_month'] = date('m');
                 $data['today_year'] = date('y');
                 $data['current_date'] = date('Y-m-d H:i:s');
-                date_default_timezone_set($company_timezone);
+                // date_default_timezone_set($company_timezone);
                 $date_string = date('Y-m-d H:i:s');
                 $date_array = explode(' ', $date_string);
                 $date = $date_array[0];
@@ -440,7 +440,7 @@ class Attendance extends Public_Controller {
                         $longitude = $this->input->post('longitude');
                         $current_attendance_type = $this->input->post('current_attendance_type');
                         $clock_in_sid = $this->input->post('clock_in_sid');
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $status_date = date('Y-m-d H:i:s');
                         $data_to_insert = array();
                         $data_to_insert['company_sid'] = $company_sid;
@@ -518,7 +518,7 @@ class Attendance extends Public_Controller {
                         $longitude = $this->input->post('longitude');
                         $current_break_type = $this->input->post('current_break_type');
                         $clock_in_sid = $this->input->post('clock_in_sid');
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $status_date = date('Y-m-d H:i:s');
 
                         $data_to_insert = array();
@@ -826,7 +826,7 @@ class Attendance extends Public_Controller {
                 $security_sid                                                   = $data['session']['employer_detail']['sid'];
                 $security_details                                               = db_get_access_level_details($security_sid);
                 $data['security_details']                                       = $security_details;
-                check_access_permissions($security_details, 'attendance', 'my_time_sheet');
+                // check_access_permissions($security_details, 'attendance', 'my_time_sheet');
 
                 $company_sid                                                    = $data["session"]["company_detail"]["sid"];
                 $employer_sid                                                   = $data["session"]["employer_detail"]["sid"];
@@ -835,7 +835,7 @@ class Attendance extends Public_Controller {
                 $data['title']                                                  = "My Time & Attendance";
 
                 if ($start_date == null) {
-                    date_default_timezone_set($company_timezone);
+                    // date_default_timezone_set($company_timezone);
                     $start_date                                                 = date('Y-m-d');
                 } else {
                     $start_date                                                 = str_replace('_', '-', $start_date);
@@ -844,7 +844,7 @@ class Attendance extends Public_Controller {
                 }
 
                 if ($end_date == null) {
-                    date_default_timezone_set($company_timezone);
+                    // date_default_timezone_set($company_timezone);
                     $end_date                                                   = date('Y-m-d');
                 } else {
                     $end_date                                                   = str_replace('_', '-', $end_date);
@@ -863,7 +863,7 @@ class Attendance extends Public_Controller {
                     $data['grand_totals']                                       = $attendance_breakout['grand_totals']; 
                 }
                 
-                date_default_timezone_set($company_timezone);
+                // date_default_timezone_set($company_timezone);
                 $data['current_date']                                           = date('Y-m-d H:i:s');
                 $data['start_date']                                             = date('m/d/Y', strtotime($start_date));
                 $data['end_date']                                               = date('m/d/Y', strtotime($end_date));
@@ -962,7 +962,7 @@ class Attendance extends Public_Controller {
     }
 
     public function time_sheet($start_date = null, $end_date = null, $employer_sid = null) {
-    if($session['employer_detail']['access_level_plus']==1 || $session['employer_detail']['pay_plan_flag']==1 ) {
+    if(isPayrollOrPlus() ) {
             if ($this->session->userdata('logged_in')) {
                 $this->form_validation->set_rules('perform_action', 'perform_action', 'required|xss_clean|trim');
 
@@ -971,7 +971,7 @@ class Attendance extends Public_Controller {
                     $security_sid                                                   = $data['session']['employer_detail']['sid'];
                     $security_details                                               = db_get_access_level_details($security_sid);
                     $data['security_details']                                       = $security_details;
-                    check_access_permissions($security_details, 'attendance', 'time_sheet');
+                    // check_access_permissions($security_details, 'attendance', 'time_sheet');
                     $company_sid                                                    = $data["session"]["company_detail"]["sid"];
 
                     if ($employer_sid == null) {
@@ -984,7 +984,7 @@ class Attendance extends Public_Controller {
                     $data['default_selected']                                       = $security_sid;
 
                     if ($start_date == null) {
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $start_date                                                 = date('Y-m-d');
                     } else {
                         $start_date                                                 = str_replace('_', '-', $start_date);
@@ -993,7 +993,7 @@ class Attendance extends Public_Controller {
                     }
 
                     if ($end_date == null) {
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $end_date                                                   = date('Y-m-d');
                     } else {
                         $end_date                                                   = str_replace('_', '-', $end_date);
@@ -1012,7 +1012,7 @@ class Attendance extends Public_Controller {
                         $data['grand_totals']                                       = $attendance_breakout['grand_totals']; 
                     }
                                 
-                    date_default_timezone_set($company_timezone);
+                    // date_default_timezone_set($company_timezone);
                     $data['current_date']                                           = date('Y-m-d H:i:s');
                     $data['start_date']                                             = date('m/d/Y', strtotime($start_date));
                     $data['end_date']                                               = date('m/d/Y', strtotime($end_date));
@@ -1122,7 +1122,7 @@ class Attendance extends Public_Controller {
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
             $security_details                                                   = db_get_access_level_details($security_sid);
             $data['security_details']                                           = $security_details;
-            check_access_permissions($security_details, 'attendance', 'edit_time_log');
+            // check_access_permissions($security_details, 'attendance', 'edit_time_log');
             $company_sid                                                        = $data["session"]["company_detail"]["sid"];
             
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|xss_clean|trim');
@@ -1211,7 +1211,7 @@ class Attendance extends Public_Controller {
             $last_clock_in_calculations['break_time_unix']                      = 0;
 
             if (empty($last_clock_out)) {
-                date_default_timezone_set($company_timezone);
+                // date_default_timezone_set($company_timezone);
                 $last_clock_in_calculations                                     = $this->perform_all_calculations($company_sid, $employer_sid, $last_clock_in_sid, date('Y-m-d H:i:s'));
                 $clocked_status                                                 = 'login';
             }
@@ -1535,14 +1535,14 @@ class Attendance extends Public_Controller {
 
     public function weekly_attendance($employee_sid = null, $year = null, $week_number = null) {
         
-      if($session['employer_detail']['access_level_plus']==1 || $session['employer_detail']['pay_plan_flag']==1 ) {  
+      if(isPayrollOrPlus() ) {  
         if ($this->session->userdata('logged_in')) {
             if ($this->form_validation->run() == false) {
                 $data['session']                                                = $this->session->userdata('logged_in');
                 $security_sid                                                   = $data['session']['employer_detail']['sid'];
                 $security_details                                               = db_get_access_level_details($security_sid);
                 $data['security_details']                                       = $security_details;
-                check_access_permissions($security_details, 'attendance', 'weekly_attendance');
+                // check_access_permissions($security_details, 'attendance', 'weekly_attendance');
                 $company_timezone                                               = $data['session']['portal_detail']['company_timezone'];
                 $data['company_timezone']                                       = $company_timezone;
                 $company_sid                                                    = $data['session']['company_detail']['sid'];
@@ -1550,12 +1550,12 @@ class Attendance extends Public_Controller {
                 $data['default_selected']                                       = $security_sid;
                 
                 if ($year == null) {
-                    date_default_timezone_set($company_timezone);
+                    // date_default_timezone_set($company_timezone);
                     $year                                                       = date('Y');
                 }
 
                 if ($week_number == null) {
-                    date_default_timezone_set($company_timezone);
+                    // date_default_timezone_set($company_timezone);
                     $week_number                                                = date('W');
                 }
 
@@ -1564,8 +1564,8 @@ class Attendance extends Public_Controller {
                 }
                 
                 $today                                                          = new DateTime();
-                $tz                                                             = new DateTimeZone($company_timezone);
-                $today->setTimezone($tz);
+                // $tz                                                             = new DateTimeZone($company_timezone);
+                // $today->setTimezone($tz);
 
                 if ($year != null && $week_number != null) {
                     $today->setISODate($year, $week_number);
@@ -1649,7 +1649,7 @@ class Attendance extends Public_Controller {
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
             $security_details                                                   = db_get_access_level_details($security_sid);
             $data['security_details']                                           = $security_details;
-            check_access_permissions($security_details, 'attendance', 'manage_attendance');
+            // check_access_permissions($security_details, 'attendance', 'manage_attendance');
             $company_sid                                                        = $data['session']['company_detail']['sid'];
             $company_timezone                                                   = $data['session']['portal_detail']['company_timezone'];
             $employer_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -1665,7 +1665,7 @@ class Attendance extends Public_Controller {
                     $date                                                       = implode('-', explode('_', $date));
                     $from_date                                                  = $date . ' 00:00:00';
                     $to_date                                                    = $date . ' 23:59:59';
-                    date_default_timezone_set($company_timezone);
+                    // date_default_timezone_set($company_timezone);
                     $current_date                                               = date('Y-m-d H:i:s');
                     $data['selected_date']                                      = $from_date;
                     
@@ -1775,12 +1775,12 @@ class Attendance extends Public_Controller {
                     $data['show_break_end_btn']                                 = $show_break_end_btn;
 
                     if (!empty($clock_in_data)) {
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $year_week                                              = date('Y|W', strtotime($clock_in_data['attendance_date']));
                         $year_week                                              = explode('|', $year_week);
                         $back_btn_url                                           = base_url('attendance/weekly_attendance/' . $employee_sid . '/' . intval($year_week[0]) . '/' . intval($year_week[1]));
                     } else {
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $year_week                                              = date('Y|W', strtotime($date));
                         $year_week                                              = explode('|', $year_week);
                         $back_btn_url                                           = base_url('attendance/weekly_attendance/' . $employee_sid . '/' . intval($year_week[0]) . '/' . intval($year_week[1]));
@@ -1817,7 +1817,7 @@ class Attendance extends Public_Controller {
                         $date                                                   = explode('/', $date_time[0]);
                         $time                                                   = explode(':', $date_time[1]);
 
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $datetime_unix                                          = mktime($time[0], $time[1], 0, $date[0], $date[1], $date[2]);
                         $new_datetime                                           = date('Y-m-d H:i:s', $datetime_unix);
                         $data_to_insert                                         = array();
@@ -1828,16 +1828,16 @@ class Attendance extends Public_Controller {
                         $data_to_insert['ip_address']                           = getUserIP();
                         $data_to_insert['user_agent']                           = $_SERVER['HTTP_USER_AGENT'];
                         $data_to_insert['created_by']                           = $employer_sid;
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $data_to_insert['attendance_year']                      = intval(date('Y', $datetime_unix));
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $data_to_insert['attendance_week']                      = intval(date('W', $datetime_unix));
                         $data_to_insert['is_manual']                            = 1;
                         $data_to_insert['timezone']                             = $company_timezone;
                         $data_to_insert['attendance_status']                    = 'working_hours';
                         $this->attendance_model->insert_attendance_record($data_to_insert);
                         $this->insert_attendance_total_record($company_sid, $employer_sid, $new_datetime);
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         redirect('attendance/manage_attendance/' . $employee_sid . '/' . date('Y_m_d', strtotime($new_datetime)), 'refresh');
                         break;
                     case 'insert_new_clock_out':
@@ -1849,7 +1849,7 @@ class Attendance extends Public_Controller {
                         $date_time                                              = explode(' ', $new_datetime);
                         $date                                                   = explode('/', $date_time[0]);
                         $time                                                   = explode(':', $date_time[1]);
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $datetime_unix                                          = mktime($time[0], $time[1], 0, $date[0], $date[1], $date[2]);
                         $new_datetime                                           = date('Y-m-d H:i:s', $datetime_unix);
                         $verify_manual_entry                                    = $this->attendance_model->verify_manual_entry($company_sid, $employee_sid, $new_datetime, $attendance_type);
@@ -1873,16 +1873,16 @@ class Attendance extends Public_Controller {
                                 $data_to_insert['user_agent']                   = $_SERVER['HTTP_USER_AGENT'];
                                 $data_to_insert['created_by']                   = $employer_sid;
                                 $data_to_insert['clock_in_sid']                 = $clock_in_sid;
-                                date_default_timezone_set($company_timezone);
+                                // date_default_timezone_set($company_timezone);
                                 $data_to_insert['attendance_year']              = intval(date('Y', $datetime_unix));
-                                date_default_timezone_set($company_timezone);
+                                // date_default_timezone_set($company_timezone);
                                 $data_to_insert['attendance_week']              = intval(date('W', $datetime_unix));
                                 $data_to_insert['is_manual']                    = 1;
                                 $data_to_insert['timezone']                     = $company_timezone;
                                 $data_to_insert['attendance_status']            = 'working_hours';
                                 $this->attendance_model->insert_attendance_record($data_to_insert);
                                 $this->insert_attendance_total_record($company_sid, $employee_sid, $new_datetime); 
-                                date_default_timezone_set($company_timezone);
+                                // date_default_timezone_set($company_timezone);
                                 $this->session->set_flashdata('message', '<strong>Success :</strong> Clocked out successfully!');
                             } else {
                                 $this->session->set_flashdata('message', '<strong>Error :</strong> Incorrect clock out time!');
@@ -1901,7 +1901,7 @@ class Attendance extends Public_Controller {
                         $date_time                                              = explode(' ', $new_datetime);
                         $date                                                   = explode('/', $date_time[0]);
                         $time                                                   = explode(':', $date_time[1]);
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $datetime_unix                                          = mktime($time[0], $time[1], 0, $date[0], $date[1], $date[2]);
                         $new_datetime                                           = date('Y-m-d H:i:s', $datetime_unix);                        
                         $verify_manual_entry                                    = $this->attendance_model->verify_manual_entry($company_sid, $employee_sid, $new_datetime, $attendance_type);
@@ -1926,16 +1926,16 @@ class Attendance extends Public_Controller {
                                 $data_to_insert['user_agent']                   = $_SERVER['HTTP_USER_AGENT'];
                                 $data_to_insert['created_by']                   = $employer_sid;
                                 $data_to_insert['clock_in_sid']                 = $clock_in_sid;
-                                date_default_timezone_set($company_timezone);
+                                // date_default_timezone_set($company_timezone);
                                 $data_to_insert['attendance_year']              = intval(date('Y', $datetime_unix));
-                                date_default_timezone_set($company_timezone);
+                                // date_default_timezone_set($company_timezone);
                                 $data_to_insert['attendance_week']              = intval(date('W', $datetime_unix));
                                 $data_to_insert['is_manual']                    = 1;
                                 $data_to_insert['timezone']                     = $company_timezone;
                                 $data_to_insert['attendance_status']            = 'break_hours';
                                 $this->attendance_model->insert_attendance_record($data_to_insert);
                                 $this->insert_attendance_total_record($company_sid, $employee_sid, $new_datetime); 
-                                date_default_timezone_set($company_timezone);
+                                // date_default_timezone_set($company_timezone);
                                 $this->session->set_flashdata('message', '<strong>Success :</strong> Manual break-start added to system successfully!');
                             } else {
                                 $this->session->set_flashdata('message', '<strong>Error :</strong> Incorrect manual break-start time!');
@@ -1955,7 +1955,7 @@ class Attendance extends Public_Controller {
                         $date_time                                              = explode(' ', $new_datetime);
                         $date                                                   = explode('/', $date_time[0]);
                         $time                                                   = explode(':', $date_time[1]);
-                        date_default_timezone_set($company_timezone);
+                        // date_default_timezone_set($company_timezone);
                         $datetime_unix                                          = mktime($time[0], $time[1], 0, $date[0], $date[1], $date[2]);
                         $new_datetime                                           = date('Y-m-d H:i:s', $datetime_unix);
                         $verify_manual_entry                                    = $this->attendance_model->verify_manual_entry($company_sid, $employee_sid, $new_datetime, $attendance_type);
@@ -1974,9 +1974,9 @@ class Attendance extends Public_Controller {
                                 $data_to_insert['user_agent']                   = $_SERVER['HTTP_USER_AGENT'];
                                 $data_to_insert['created_by']                   = $employer_sid;
                                 $data_to_insert['clock_in_sid']                 = $clock_in_sid;
-                                date_default_timezone_set($company_timezone);
+                                // date_default_timezone_set($company_timezone);
                                 $data_to_insert['attendance_year']              = intval(date('Y', $datetime_unix));
-                                date_default_timezone_set($company_timezone);
+                                // date_default_timezone_set($company_timezone);
                                 $data_to_insert['attendance_week']              = intval(date('W', $datetime_unix));
                                 $data_to_insert['is_manual']                    = 1;
                                 $data_to_insert['timezone']                     = $company_timezone;
@@ -1984,7 +1984,7 @@ class Attendance extends Public_Controller {
                                 $data_to_insert['attendance_status']            = 'break_hours';
                                 $this->attendance_model->insert_attendance_record($data_to_insert);
                                 $this->insert_attendance_total_record($company_sid, $employee_sid, $new_datetime);
-                                date_default_timezone_set($company_timezone);
+                                // date_default_timezone_set($company_timezone);
                                 $this->session->set_flashdata('message', '<strong>Success :</strong> Manual break-end added to system successfully!');
                             } else {
                                 $this->session->set_flashdata('message', '<strong>Error :</strong> Incorrect manual break-end time!');
@@ -2054,8 +2054,8 @@ class Attendance extends Public_Controller {
 
         for ($count = 1; $count <= 52; $count++) {
             $my_date                                                            = new DateTime();
-            $tz                                                                 = new DateTimeZone($company_timezone);
-            $my_date->setTimezone($tz);
+            // $tz                                                                 = new DateTimeZone($company_timezone);
+            // $my_date->setTimezone($tz);
             $my_date->setISODate($year, $count);
             $current_week_day                                                   = intval($today->format('w'));
             $first_day                                                          = clone $my_date;
