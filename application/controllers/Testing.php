@@ -58,7 +58,7 @@ class Testing extends CI_Controller
             }
         }
         echo "<pre>";
-        print_r($orders);
+        print_r(json_encode($orders));
         //
 
         $this->db->select('*');
