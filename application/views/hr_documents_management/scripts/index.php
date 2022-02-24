@@ -19,17 +19,54 @@
 	if(isset($AllCompletedOfferLetters)) $AllCompletedOfferLetters = array_values($AllCompletedOfferLetters);
 
 	//
-	$AllNotCompletedDocuments = array_values($GLOBALS['notCompletedDocumentsList']);
+	//$AllNotCompletedDocuments = 
+	 if(isset($GLOBALS['notCompletedDocumentsList'])){
+		$AllNotCompletedDocuments =	array_values($GLOBALS['notCompletedDocumentsList']);
+	}else{
+		$AllNotCompletedDocuments ='';
+	}
+	if(isset($GLOBALS['completedDocumentsList'])){
 	$AllCompletedDocuments = array_values($GLOBALS['completedDocumentsList']);
+}else{
+	$AllCompletedDocuments ='';
+}
+    if(isset($GLOBALS['noActionRequiredDocumentsList'])){
 	$AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocumentsList']);
-
+	}else{
+		$AllNoActionRequiredDocuments ='';
+	}
 ?>
 
-<?php foreach ($offerLetters as $k => $v) $offerLetters[$k]['letter_body'] = html_entity_decode($v['letter_body']); ?>
-<?php foreach ($all_documents as $k => $v) $all_documents[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
-<?php foreach ($AllNoActionRequiredDocuments as $k => $v) $AllNoActionRequiredDocuments[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
-<?php foreach ($AllCompletedDocuments as $k => $v) $AllCompletedDocuments[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
-<?php foreach ($AllNotCompletedDocuments as $k => $v) $AllNotCompletedDocuments[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
+<?php 
+if($offerLetters!=''){
+foreach ($offerLetters as $k => $v)
+ $offerLetters[$k]['letter_body'] = html_entity_decode($v['letter_body']);
+}
+  ?>
+<?php 
+if($all_documents!=''){
+foreach ($all_documents as $k => $v)
+ $all_documents[$k]['document_description'] = html_entity_decode($v['document_description']);
+}
+?>
+<?php 
+if($AllNoActionRequiredDocuments!=''){
+foreach ($AllNoActionRequiredDocuments as $k => $v) 
+$AllNoActionRequiredDocuments[$k]['document_description'] = html_entity_decode($v['document_description']); 
+}
+?>
+<?php 
+if($AllCompletedDocuments!=''){
+foreach ($AllCompletedDocuments as $k => $v)
+ $AllCompletedDocuments[$k]['document_description'] = html_entity_decode($v['document_description']);
+}
+ ?>
+<?php 
+if($AllNotCompletedDocuments!=''){
+foreach ($AllNotCompletedDocuments as $k => $v) 
+$AllNotCompletedDocuments[$k]['document_description'] = html_entity_decode($v['document_description']);
+}
+ ?>
 <?php foreach ($AllNotCompletedOfferLetters as $k => $v) $AllNotCompletedOfferLetters[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
 <?php foreach ($AllCompletedOfferLetters as $k => $v) $AllCompletedOfferLetters[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
 <style>
@@ -69,10 +106,12 @@
 	        return r;
 	    }
 </script>
-<?php $this->load->view('hr_documents_management/partials/visibilityjs', [
-		'employeeList' => $managers_list,
-		'departmentList' => $departments,
-		'teamList' => $teams
+<?php 
+
+$this->load->view('hr_documents_management/partials/visibilityjs', [
+		'employeeList' => isset($managers_list)? $managers_list: '' ,
+		'departmentList' => isset($departments)? $departments: '' ,
+		'teamList' => isset($teams) ? $teams: ''
 	]); ?>
 <script>
 	//

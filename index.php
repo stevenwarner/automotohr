@@ -20,6 +20,10 @@ function redirect_traffic(){
 redirect_traffic();
 //
 $GLOBALS['BENCHMARKSTARTTIME'] = microtime(true);
+
+//phpinfo();
+//die();
+
 /**
  * CodeIgniter
  *
@@ -324,6 +328,7 @@ switch (ENVIRONMENT)
  * And away we go...
  */
 
+
 if($_SERVER['HTTP_HOST'] == 'www.automotohr.com' || $_SERVER['HTTP_HOST'] == 'automotohr.com'){
 	error_reporting(E_ALL);
 	ini_set('display_errors', 0);
@@ -333,11 +338,12 @@ if($_SERVER['HTTP_HOST'] == 'www.automotohr.com' || $_SERVER['HTTP_HOST'] == 'au
 	ini_set('display_errors', 0);
 	define('MINIFIED', '');
 }	
+
 //
 if(!function_exists('getCreds')){
 	function getCreds($index = false){
 		//
-		$file = APPPATH.'../../creds.json';
+		$file = APPPATH.'../creds.json';
 		if($_SERVER['HTTP_HOST'] == 'staging.automotohr.com'){
 			$file = APPPATH.'../../../creds-staging.json';
 		}

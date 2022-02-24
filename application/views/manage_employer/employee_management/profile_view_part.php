@@ -1,5 +1,5 @@
 <div class="form-title-section">
-    <h2>Personal Information</h2>
+    <h2>Personal Information </h2>
     <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']){  ?>
     <div class="form-btns">
         <?php if(!empty($MergeData)): ?>
@@ -105,7 +105,11 @@
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Office Location</label>
-            <p class="dummy-invoice-fields"><?=GetVal($extra_info['office_location']); ?></p>
+            <p class="dummy-invoice-fields"><?
+            if(isset($extra_info['office_location'])){
+            echo GetVal($extra_info['office_location']);
+            }
+             ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Employment Type</label>
@@ -196,7 +200,11 @@
         </div>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Secondary Mobile Number</label>
-            <p class="dummy-invoice-fields"><?=GetVal($extra_info['secondary_PhoneNumber']); ?></p>
+            <p class="dummy-invoice-fields"><?
+            if(isset($extra_info['secondary_PhoneNumber'])){
+            echo GetVal($extra_info['secondary_PhoneNumber']); 
+            }
+            ?></p>
         </div>
     </div>
     <!--  -->
@@ -204,16 +212,25 @@
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Other Email</label>
-            <p class="dummy-invoice-fields"><?=GetVal($extra_info['other_email']); ?></p>
+            <p class="dummy-invoice-fields"><?
+            if(isset($extra_info['other_email'])){
+            echo GetVal($extra_info['other_email']);
+            }
+             ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Other Phone Number</label>
-            <p class="dummy-invoice-fields"><?=GetVal($extra_info['other_PhoneNumber']); ?></p>
+            <p class="dummy-invoice-fields"><?
+            if(isset($extra_info['other_PhoneNumber'])){
+            echo GetVal($extra_info['other_PhoneNumber']);
+        }
+             ?></p>
         </div>
     </div>
     <!--  -->
     <br>
     <div class="row">
+<<<<<<< HEAD
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Department</label>
             <p class="dummy-invoice-fields"><?= isset($department_name) && !empty($department_name) ? GetVal($department_name) : ''; ?></p>
@@ -222,6 +239,41 @@
             <label class="csF16">Teams</label>
             <?php $team_name = isset($team_name) && !empty($team_name) ? $team_name : ''; ?>
             <p class="dummy-invoice-fields"><?=GetVal(!empty($team_names) ? $team_names : $team_name); ?></p>
+=======
+        <div class="col-md-12 col-xs-12">
+            <label class="csF16">Linkedin Profile URL</label>
+            <?php if (isset($employer["linkedin_profile_url"])) { ?>
+            <p class="dummy-invoice-fields"><a href="<?=$employer["linkedin_profile_url"]; ?>"
+                    target="_blank"><?=$employer["linkedin_profile_url"]; ?></a>
+            </p>
+            <?php } else{ ?>
+            <p class="dummy-invoice-fields"><?
+            if(isset($extra_info['other_PhoneNumber'])){
+            echo GetVal($extra_info['other_PhoneNumber']); 
+            }
+            ?></p>
+            <?php } ?>
+        </div>
+    </div>
+    <!--  -->
+    <br>
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <label class="csF16">Department</label>
+            <p class="dummy-invoice-fields"><?
+            if(isset($department_name)){
+            echo GetVal($department_name);
+            }
+             ?></p>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <label class="csF16">Teams</label>
+            <p class="dummy-invoice-fields"><?
+            if(isset($team_names)){
+            echo GetVal(!empty($team_names) ? $team_names : @$team_name);
+            }
+             ?></p>
+>>>>>>> php_upgrade
         </div>
     </div>
     <?php if(IS_NOTIFICATION_ENABLED == 1 && $phone_sid != '') { ?>

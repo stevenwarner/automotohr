@@ -11,7 +11,8 @@ class Testing extends CI_Controller
         $this->load->model("test_model", "tm");
 
     }
-    
+  
+
     //
     function sendEmailNotifications($id){
         //

@@ -2425,6 +2425,8 @@ if(!function_exists('checkAndUpdateDD')){
         $b = $a->row_array();
         $a = $a->free_result();
         //
+      // print_r($b);
+      // die('ds');
         if(!count($b)){
             $CI->db
             ->insert('documents_assigned_general', [

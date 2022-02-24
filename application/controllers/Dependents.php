@@ -411,7 +411,8 @@ class Dependents extends Public_Controller
                 //
                 $doSend = false;
                 //
-                if(array_key_exists('document_sent_on', $userData)){
+                 
+                if(is_array($userData) && array_key_exists('document_sent_on', $userData)){
                     //
                     $doSend = false;
                     //
@@ -432,13 +433,14 @@ class Dependents extends Public_Controller
                         'dependent_details',
                         $company_id,
                         $data['session']['company_detail']['CompanyName'],
-                        $userData['first_name'],
-                        $userData['last_name'],
+                        @$userData['first_name'],
+                        @$userData['last_name'],
                         $sid
                     );
                 }
                 $this->session->set_flashdata('message', '<b>Success:</b> Dependent info updated successfully');
                 redirect($reload_location, "location");
+
             }
         } else {
             redirect(base_url('login'), "refresh");

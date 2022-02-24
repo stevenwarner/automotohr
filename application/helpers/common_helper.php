@@ -414,7 +414,7 @@ if (!function_exists('sendMailWithAttachment')) {
         //$mail->addBCC('prosaifhasi@gmail.com');
         $mail->isHTML(true);
         //
-        if (is_array($file) && sizeof($file) && isset($file[0]['file']) && $multiple == false) {
+        if (is_array($file) && !empty($file) && isset($file[0]['file']) && $multiple == false) {
             foreach ($file as $k => $v) $mail->addStringAttachment(getFileData($v['file']), $v['name']);
         } else {
             if ($multiple) {
@@ -582,7 +582,7 @@ if (!function_exists('db_get_country_name')) {
             ->get();
         $result_arr = $result->row_array();
         $result     = $result->free_result();
-        return sizeof($result_arr) && isset($result_arr) && $column != '*' ? $result_arr[$column] : $result_arr;
+        return !empty($result_arr) && isset($result_arr) && $column != '*' ? $result_arr[$column] : $result_arr;
     }
 }
 
@@ -638,7 +638,7 @@ if (!function_exists('db_get_state_name')) {
         //
         $result_arr = $result->row_array();
         $result     = $result->free_result();
-        return sizeof($result_arr) && isset($result_arr[$column]) ? $result_arr[$column] : $result_arr;
+        return !empty($result_arr) && isset($result_arr[$column]) ? $result_arr[$column] : $result_arr;
     }
 }
 
@@ -880,7 +880,7 @@ if (!function_exists('encode_string')) {
     function encode_string($password)
     {
         $key = '#&$sdfdadasdsaderfvrfgbty78hnmuik263uifs5634d';
-        $encoded = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $password, MCRYPT_MODE_CBC, md5(md5($key))));
+        $encoded = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $password, MCRYPT_MODE_CBC, md5(md5($key)) ));
         return $encoded;
     }
 }
@@ -1579,8 +1579,9 @@ if (!function_exists('return_value_if_key_exists')) {
             $CI = &get_instance();
             $CI->db->where('company_sid', $company_id);
             $result = $CI->db->get('kpa_onboarding')->row_array();
-
-            if ($result['status'] == 1 && !empty($result['kpa_url'])) {
+            
+            if (isset($result['status']) == 1 && !empty($result['kpa_url'])) {
+                die('df');
                 return 1;
             } else {
                 return 0;
@@ -1794,7 +1795,7 @@ if (!function_exists('employee_right_nav')) {
         $terminate_status = $CI->employee_model->fetch_terminated_status($emp_id);
 
 
-        if (is_array($terminate_status) && sizeof($terminate_status) > 0) {
+        if (is_array($terminate_status) && !empty($terminate_status) > 0) {
             $status = '';
             if ($terminate_status['employee_status'] == 1) {
                 $status = 'Terminated Employee';
@@ -2025,7 +2026,7 @@ if (!function_exists('db_get_access_level_details')) {
         if ($sid != NULL) {
             $CI = &get_instance();
             $data = array();
-            $data['session'] = sizeof($session) ? $session : $CI->session->userdata('logged_in');
+            $data['session'] = !empty($session) ? $session : $CI->session->userdata('logged_in');
             $employer_detail = $data['session']['employer_detail'];
             $access_level = $employer_detail['access_level'];
             $is_executive_admin = $employer_detail['is_executive_admin'];
@@ -4344,7 +4345,7 @@ if (!function_exists('log_and_send_templated_email')) {
             $from_name = $replacement_array['company_name'];
         }
 
-        if (sizeof($message_hf)) {
+        if (!empty($message_hf)) {
             $body = $message_hf['header']
                 . $emailTemplateBody
                 . $message_hf['footer'];
@@ -4976,7 +4977,7 @@ if (!function_exists('onlineVideoCount')) {
             //
             $ids = array();
             //
-            if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+            if(!empty($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
             //
             $r = $b;
         }
@@ -5010,7 +5011,11 @@ if (!function_exists('onlineVideoCount')) {
         $b = $a->result_array();
         $a->free_result();
         //
-        if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+        if(!empty($b)){
+            foreach ($b as $k => $v){
+                $ids[$v['sid']] = $v['sid'];
+            }
+        }
         //
         $r = array_merge($r, $b);
         //
@@ -5068,7 +5073,7 @@ if (!function_exists('trainingSessionCount')) {
         $result->free_result();
         $trainingSessionCount = 0;
         //
-        if (sizeof($result_arr)) {
+        if (!empty($result_arr)) {
             foreach ($result_arr as $k0 => $v0) {
                 if ($v0['session_status'] != 'pending' && $v0['session_status'] != 'scheduled') continue;
                 //
@@ -5597,7 +5602,7 @@ if (!function_exists('get_default_status_sid_and_text')) {
         $status = $CI->db->get('application_status')->result_array();
         $data = array();
 
-        if ((sizeof($status) > 0) && isset($status[0]['sid'])) {
+        if ((!empty($status) > 0) && isset($status[0]['sid'])) {
             $data['status_sid'] = $status[0]['sid'];
             $data['status_name'] = $status[0]['name'];
         } else {
@@ -5832,9 +5837,9 @@ if (!function_exists('get_calendar_event_color')) {
 if (!function_exists('replace_magic_quotes')) {
     function replace_magic_quotes(&$dataStr, $fromArray = array(), $toArray = array())
     {
-        if (sizeof($fromArray) && sizeof($toArray)) {
+        if (!empty($fromArray) && !empty($toArray)) {
             $dataStr = str_replace($fromArray, $toArray, $dataStr);
-        } else if (sizeof($fromArray)) {
+        } else if (!empty($fromArray)) {
             foreach ($fromArray as $k0 => $v0) {
                 $dataStr = str_replace($k0, $v0, $dataStr);
             }
@@ -6230,7 +6235,7 @@ if (!function_exists('ics_files')) {
         $user_message = $email_message; //Send Email to Applicant
 
         // For Send Reminder Emails
-        if ($action == 'send_reminder_emails' && !sizeof($email_list)) {
+        if ($action == 'send_reminder_emails' && empty($email_list)) {
             header('content-type: application/json');
             echo json_encode(array('Response' => 'Error! this event is no longer available.', 'Redirect' => FALSE, 'Status' => FALSE));
             exit(0);
@@ -6399,7 +6404,9 @@ if (!function_exists('ics_files')) {
 if (!function_exists('generate_interviewers_rows')) {
     function generate_interviewers_rows($employers, $event_details, $event_category, $event_sid, $user_info, $_this, $difference_array)
     {
-        if (!sizeof($employers)) return '';
+        if (empty($employers)){
+            return '';
+        }
         // Set defaults
         $show_emails = array();
         $interviewers_rows = '';
@@ -6428,16 +6435,13 @@ if (!function_exists('generate_interviewers_rows')) {
         foreach ($employers as $employer) {
             if (empty($employer['timezone']))
                 $employer['timezone'] = $company_timezone;
-            $style = isset($difference_array['added_interviewers']) && sizeof($difference_array['added_interviewers']) && in_array($employer['sid'], $difference_array['added_interviewers']) ? 'style="background-color: #81b431;  font-weight: bold;"' : '';
+            $style = isset($difference_array['added_interviewers']) && !empty($difference_array['added_interviewers']) && in_array($employer['sid'], $difference_array['added_interviewers']) ? 'style="background-color: #81b431;  font-weight: bold;"' : '';
             $email = in_array($employer['sid'], $show_emails) ? ' ( <a href="mailto:' . $employer['email'] . '">' . $employer['email'] . '</a> )' : '';
             $interviewers_rows .= '<tr ' . $style . '><td><p>&#9632; &nbsp;' . ucwords($employer['first_name'] . ' ' . $employer['last_name']) . ' ' . $email . ' (' . $employer['timezone'] . ') ' . ($style != '' ? '<strong>&nbsp;&nbsp;[Added]</strong>' : '') . '</p></td></tr>';
         }
 
         // For removed participants
-        if (
-            isset($difference_array['removed_interviewers']) &&
-            sizeof($difference_array['removed_interviewers'])
-        ) {
+        if (isset($difference_array['removed_interviewers']) && !empty($difference_array['removed_interviewers'])) {
             foreach ($difference_array['removed_interviewers'] as $k0 => $v0) {
                 $interviewers_rows .= '<tr style="background-color: #d9534f; font-weight: bold;"><td><p>&#9632; &nbsp;' . ucwords($_this->calendar_model->get_interviewer_name($v0)) . ' <strong>&nbsp;&nbsp;[Removed]</strong></p></td></tr>';
             }
@@ -6450,10 +6454,7 @@ if (!function_exists('generate_interviewers_rows')) {
 
         // For new external participants
         $new_exp = array();
-        if (
-            isset($difference_array['added_external_interviewers']) &&
-            sizeof($difference_array['added_external_interviewers'])
-        ) {
+        if (isset($difference_array['added_external_interviewers']) && !empty($difference_array['added_external_interviewers'])) {
             foreach ($difference_array['added_external_interviewers'] as $k0 => $v0) {
                 $new_exp[] = $v0['email'];
             }
@@ -6476,10 +6477,7 @@ if (!function_exists('generate_interviewers_rows')) {
         }
 
         // For removed external participants
-        if (
-            isset($difference_array['removed_external_interviewers']) &&
-            sizeof($difference_array['removed_external_interviewers'])
-        ) {
+        if (isset($difference_array['removed_external_interviewers']) && !empty($difference_array['removed_external_interviewers'])) {
             foreach ($difference_array['removed_external_interviewers'] as $k0 => $v0) {
                 $del_exp[] = $v0['email'];
                 $interviewers_rows .= '<tr style="background-color: #d9534f; font-weight: bold;"><td><p>&#9632; &nbsp;' . ucwords($v0['name']) . '<strong>&nbsp;&nbsp;[Removed]</strong></p></td></tr>';
@@ -6650,7 +6648,9 @@ if (!function_exists('send_calendar_email')) {
         $duration = get_date_difference_duration($date);
         // $event_details = $_this->calendar_model->get_event_details($event_sid);
         //
-        if (!sizeof($event_details)) return false;
+        if (empty($event_details)){
+            return false;
+        }
         $event_details['sid'] = $event_sid;
         $event_details['category'] = strtolower($event_details['category_uc']);
         // Set defaults
@@ -6727,7 +6727,7 @@ if (!function_exists('send_calendar_email')) {
         $event_block_changed = 0;
 
         // Set new category info
-        if ($action == 'update_event' && sizeof($difference_array) && isset($difference_array['new_category'])) {
+        if ($action == 'update_event' && !empty($difference_array) && isset($difference_array['new_category'])) {
             $event_update_category_row = 'Event type changed from "<b style="color: #d9534f; font-weight: bold; font-size: 15px;">' . (reset_category($difference_array['old_category'])) . '</b>" to "<b style="color: #81b431; font-weight: bold; font-size: 15px;">' . (reset_category($difference_array['new_category'])) . '</b>"';
             $event_subject_row = " - Event type has been changed.";
             $event_block_changed++;
@@ -6735,7 +6735,7 @@ if (!function_exists('send_calendar_email')) {
         }
 
         // Set new event date info
-        if (($action == 'update_event' || $action == 'drag_update_event') && sizeof($difference_array) && isset($difference_array['new_date'])) {
+        if (($action == 'update_event' || $action == 'drag_update_event') && !empty($difference_array) && isset($difference_array['new_date'])) {
             $event_update_date_row = 'Event date changed from "<b style="color: #d9534f; font-weight: bold; font-size: 15px;">{{EVENT_DATE_OLD}}</b>" to "<b style="color: #81b431; font-weight: bold; font-size: 15px;">{{EVENT_DATE}}</b>"';
             $event_subject_row = " - Event date has been changed.";
             $event_block_changed++;
@@ -6743,7 +6743,7 @@ if (!function_exists('send_calendar_email')) {
         }
 
         // Set new event start time info
-        if (($action == 'update_event' || $action == 'drag_update_event') && sizeof($difference_array) && isset($difference_array['new_event_start_time'])) {
+        if (($action == 'update_event' || $action == 'drag_update_event') && !empty($difference_array) && isset($difference_array['new_event_start_time'])) {
             $event_update_start_time_row = 'Event start time changed from "<b style="color: #d9534f; font-weight: bold; font-size: 15px;">{{EVENT_START_TIME_OLD}}</b>" to "<b style="color: #81b431; font-weight: bold; font-size: 15px;">{{EVENT_START_TIME}}</b>"';
             $event_subject_row = " - Event start time has been changed.";
             $event_block_changed++;
@@ -6751,7 +6751,7 @@ if (!function_exists('send_calendar_email')) {
         }
 
         // Set new event end time info
-        if (($action == 'update_event' || $action == 'drag_update_event') && sizeof($difference_array) && isset($difference_array['new_event_end_time'])) {
+        if (($action == 'update_event' || $action == 'drag_update_event') && !empty($difference_array) && isset($difference_array['new_event_end_time'])) {
             $event_update_end_time_row = 'Event end time changed from "<b style="color: #d9534f; font-weight: bold; font-size: 15px;">{{EVENT_END_TIME_OLD}}</b>" to "<b style="color: #81b431; font-weight: bold; font-size: 15px;">{{EVENT_END_TIME}}</b>"';
             $event_subject_row = " - Event end time has been changed.";
             $event_block_changed++;
@@ -6760,7 +6760,7 @@ if (!function_exists('send_calendar_email')) {
 
         // Set new event comment info
         if (
-            $action == 'update_event' && sizeof($difference_array) && (
+            $action == 'update_event' && !empty($difference_array) && (
                 (isset($difference_array['new_comment']) && $difference_array['old_comment'] != '') ||
                 (isset($difference_array['new_comment'], $difference_array['old_comment']) && $difference_array['old_comment'] != $difference_array['new_comment']))
         ) {
@@ -6774,7 +6774,7 @@ if (!function_exists('send_calendar_email')) {
         }
 
         // Set new event address info
-        if ($action == 'update_event' && sizeof($difference_array) && isset($difference_array['new_address']) && $difference_array['old_address'] != '') {
+        if ($action == 'update_event' && !empty($difference_array) && isset($difference_array['new_address']) && $difference_array['old_address'] != '') {
             $event_update_address_row = 'Address changed from "<b style="color: #d9534f; font-weight: 800; font-size: 15px;">' . ($difference_array['old_address']) . '</b>" to "<b style="color: #81b431; font-weight: 800; font-size: 15px;">' . ($difference_array['new_address']) . '</b>"';
             // _e($event_update_address_row, true);
             $event_subject_row = " - Event address has been changed.";
@@ -6783,7 +6783,7 @@ if (!function_exists('send_calendar_email')) {
 
         // Set new event message info
         if (
-            $action == 'update_event' && sizeof($difference_array) &&
+            $action == 'update_event' && !empty($difference_array) &&
             (isset($difference_array['new_message_check']) && $difference_array['old_message_check'] != '') ||
             (isset($difference_array['old_subject']) && $difference_array['old_subject'] != $difference_array['new_subject']) ||
             (isset($difference_array['old_message']) && $difference_array['old_message'] != $difference_array['new_message'])
@@ -6813,7 +6813,7 @@ if (!function_exists('send_calendar_email')) {
 
         // Set new event meeting info
         if (
-            $action == 'update_event' && sizeof($difference_array) &&
+            $action == 'update_event' && !empty($difference_array) &&
             (isset($difference_array['new_meeting_check']) && $difference_array['old_meeting_check'] != '') ||
             (isset($difference_array['old_meeting_id']) && $difference_array['old_meeting_id'] != $difference_array['new_meeting_id']) ||
             (isset($difference_array['old_meeting_url']) && $difference_array['old_meeting_url'] != $difference_array['new_meeting_url']) ||
@@ -6840,17 +6840,17 @@ if (!function_exists('send_calendar_email')) {
         }
 
         // Set Interviwers change
-        if ($action == 'update_event' && sizeof($difference_array)) {
+        if ($action == 'update_event' && !empty($difference_array)) {
             $removed_interviewers = $added_interviewers = 0;
             $type = 'Interviewer(s)';
 
             if ($event_details['users_type'] == 'employee') $type = 'Participant(s)';
             if ($event_details['category'] == 'training-session') $type = 'Attendee(s)';
 
-            if (isset($difference_array['added_interviewers']) && sizeof($difference_array['added_interviewers']))  $added_interviewers += count($difference_array['added_interviewers']);
-            if (isset($difference_array['added_external_interviewers']) && sizeof($difference_array['added_external_interviewers']))  $added_interviewers += count($difference_array['added_external_interviewers']);
-            if (isset($difference_array['removed_interviewers']) && sizeof($difference_array['removed_interviewers']))  $removed_interviewers += count($difference_array['removed_interviewers']);
-            if (isset($difference_array['removed_external_interviewers']) && sizeof($difference_array['removed_external_interviewers']))  $removed_interviewers += count($difference_array['removed_external_interviewers']);
+            if (isset($difference_array['added_interviewers']) && !empty($difference_array['added_interviewers']))  $added_interviewers += count($difference_array['added_interviewers']);
+            if (isset($difference_array['added_external_interviewers']) && !empty($difference_array['added_external_interviewers']))  $added_interviewers += count($difference_array['added_external_interviewers']);
+            if (isset($difference_array['removed_interviewers']) && !empty($difference_array['removed_interviewers']))  $removed_interviewers += count($difference_array['removed_interviewers']);
+            if (isset($difference_array['removed_external_interviewers']) && !empty($difference_array['removed_external_interviewers']))  $removed_interviewers += count($difference_array['removed_external_interviewers']);
             if ($removed_interviewers != 0 || $added_interviewers != 0) $event_block_changed++;
             if ($removed_interviewers != 0 && $added_interviewers != 0)
                 $event_subject_row = " - ($added_interviewers) $type added and ($removed_interviewers) removed.";
@@ -6862,21 +6862,21 @@ if (!function_exists('send_calendar_email')) {
 
         // Set applicant change
         // Applicant
-        if ($action == 'update_event' && sizeof($difference_array) && isset($difference_array['old_applicant_job_sid'], $difference_array['new_applicant_job_sid']) && $event_details['users_type'] == 'applicant') {
+        if ($action == 'update_event' && !empty($difference_array) && isset($difference_array['old_applicant_job_sid'], $difference_array['new_applicant_job_sid']) && $event_details['users_type'] == 'applicant') {
             // Get the old applicant details
             $event_update_applicant_name_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . (ucwords($_this->calendar_model->get_applicant_name($difference_array['old_applicant_job_sid']))) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . (ucwords($user_info['first_name'] . ' ' . $user_info['last_name'])) . '</p><br /></td>';
             $event_subject_row = " - Applicant has been changed.";
             $event_block_changed++;
         }
         // Employee
-        if ($action == 'update_event' && sizeof($difference_array) && isset($difference_array['old_applicant_job_sid'], $difference_array['new_applicant_job_sid']) && $event_details['users_type'] == 'employee') {
+        if ($action == 'update_event' && !empty($difference_array) && isset($difference_array['old_applicant_job_sid'], $difference_array['new_applicant_job_sid']) && $event_details['users_type'] == 'employee') {
             // Get the old employee details
             $event_update_employee_name_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . (ucwords($_this->calendar_model->get_interviewer_name($difference_array['old_applicant_job_sid']))) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . (ucwords($event_details['employer_details']['value'])) . '</p><br /></td>';
             $event_subject_row = " - Employee has been changed.";
             $event_block_changed++;
         }
         // User phone number
-        if ($action == 'update_event' && sizeof($difference_array) && isset($difference_array['old_users_phone'], $difference_array['old_users_phone']) && $difference_array['new_users_phone'] != '' && $difference_array['old_users_phone'] != '') {
+        if ($action == 'update_event' && !empty($difference_array) && isset($difference_array['old_users_phone'], $difference_array['old_users_phone']) && $difference_array['new_users_phone'] != '' && $difference_array['old_users_phone'] != '') {
             $event_update_user_phone_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . ($difference_array['old_users_phone']) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . ($difference_array['new_users_phone']) . '</p><br /></td>';
             $event_subject_row = " - " . ($event_details['users_type'] == 'personal' ? 'Person' : ucfirst($event_details['users_type'])) . " phone number has been changed.";
             $event_block_changed++;
@@ -7099,7 +7099,7 @@ if (!function_exists('send_calendar_email')) {
 
 
                             // For added jobs
-                            if ($action == 'update_event' && isset($difference_array['added_jobs']) && sizeof($difference_array['added_jobs']) && in_array($job_application['sid'], $difference_array['added_jobs'])) {
+                            if ($action == 'update_event' && isset($difference_array['added_jobs']) && !empty($difference_array['added_jobs']) && in_array($job_application['sid'], $difference_array['added_jobs'])) {
                                 $with_info_box .= '<tr style="background-color: #81b431; font-weight: bolder;"><td><p>' . $job_title . ' <strong>[Added]</strong></p></td></tr>';
                             } else
                                 $with_info_box .= '<tr><td><p>' . $job_title . '</p></td></tr>';
@@ -7200,7 +7200,7 @@ if (!function_exists('send_calendar_email')) {
 
         // For Send Reminder Emails
         // handle error
-        if ($action == 'send_reminder_emails' && !sizeof($email_list)) {
+        if ($action == 'send_reminder_emails' && empty($email_list)) {
             header('content-type: application/json');
             echo json_encode(array('Response' => 'Error! this event is no longer available.', 'Redirect' => FALSE, 'Status' => FALSE));
             exit(0);
@@ -7358,13 +7358,13 @@ if (!function_exists('send_calendar_email')) {
         $message_index_array = array('old_subject', 'old_message', 'old_message_file', 'old_message_check');
         // Don't send an email to particpants/interviewers
         // in case when only message field is changed
-        if ($action == 'update_event' && sizeof($difference_array)) {
+        if ($action == 'update_event' && !empty($difference_array)) {
             $is_exist = 0;
             foreach ($difference_array as $k0 => $v0) {
                 if (in_array($k0, $message_index_array)) $is_exist = $is_exist + 2;
             }
 
-            if ($is_exist != 0 && $is_exist == sizeof($difference_array)) $send_to_interviewers = $send_to_extraparticipants = false;
+            if ($is_exist != 0 && $is_exist == count($difference_array)) $send_to_interviewers = $send_to_extraparticipants = false;
         }
 
         // Don't send email when only
@@ -7405,7 +7405,7 @@ if (!function_exists('send_calendar_email')) {
             if (($event_link_check && $event_details['users_type'] == 'employee') || ($is_return)) $user_message = str_replace('{{EVENT_LINK}}', $event_link_btn, $user_message);
 
             // For difference
-            if (isset($difference_array) && sizeof($difference_array)) {
+            if (isset($difference_array) && !empty($difference_array)) {
                 if (isset($difference_array['old_date'])) {
                     $user_message = str_replace('{{EVENT_DATE_OLD}}', reset_datetime(array(
                         'datetime' => $difference_array['old_date'] . $difference_array['timezone_old_start_time'],
@@ -7550,7 +7550,7 @@ if (!function_exists('send_calendar_email')) {
             if (!empty($event_details['event_timezone']))
                 $user_info['timezone'] = $event_details['event_timezone'];
             // For difference
-            if (isset($difference_array) && sizeof($difference_array)) {
+            if (isset($difference_array) && !empty($difference_array)) {
                 if (isset($difference_array['old_date'])) {
                     $user_message = str_replace('{{EVENT_DATE_OLD}}', reset_datetime(array(
                         'datetime' => $difference_array['old_date'] . $difference_array['timezone_old_start_time'],
@@ -7677,7 +7677,7 @@ if (!function_exists('send_calendar_email')) {
                 $user_message = str_replace('{{EVENT_TIMEZONE}}', $employer['timezone'], $user_message);
 
                 // For difference
-                if (isset($difference_array) && sizeof($difference_array)) {
+                if (isset($difference_array) && !empty($difference_array)) {
                     if (isset($difference_array['old_date'])) {
                         $user_message = str_replace('{{EVENT_DATE_OLD}}', reset_datetime(array(
                             'datetime' => $difference_array['old_date'] . $difference_array['timezone_old_start_time'],
@@ -7797,7 +7797,7 @@ if (!function_exists('send_calendar_email')) {
 
         // Send emails to non-employee Interviewers
         if ($send_to_extraparticipants) {
-            if (sizeof($event_details['external_participants'])) { //Send Email To External Participants
+            if (!empty($event_details['external_participants'])) { //Send Email To External Participants
                 foreach ($event_details['external_participants'] as $event_external_participant) {
                     // $_this->_e($event_external_participant, true, true);
                     if (!empty($event_details['event_timezone'])) {
@@ -7814,7 +7814,7 @@ if (!function_exists('send_calendar_email')) {
                     $user_message = str_replace('{{EVENT_TIMEZONE}}', $event_external_participant['timezone'], $user_message);
                     // For difference
 
-                    if (isset($difference_array) && sizeof($difference_array)) {
+                    if (isset($difference_array) && !empty($difference_array)) {
                         if (isset($difference_array['old_date'])) {
                             $user_message = str_replace('{{EVENT_DATE_OLD}}', reset_datetime(array(
                                 'datetime' => $difference_array['old_date'] . $difference_array['timezone_old_start_time'],
@@ -8144,7 +8144,7 @@ if (!function_exists('generate_vcs_file_for_event')) {
         $details .= "Reschedule: {$enc_string_reschedule}{$ss}";
         $details .= "Cannot Attend: {$enc_string_notconf}{$ss}";
 
-        if (sizeof($event_details['interviewers'])) {
+        if (!empty($event_details['interviewers'])) {
             $details .= $ds;
             $details .= ($event_details['users_type'] == 'applicant' ? 'Interviewer(s)' : 'Participant(s)') . ":{$ss}";
             foreach ($event_details['interviewers'] as $k0 => $v0) {
@@ -8214,7 +8214,7 @@ if (!function_exists('generate_csv')) {
         $headers = array(),
         $type = 'accurate_background'
     ) {
-        if (!sizeof($headers))
+        if (empty($headers))
             $headers = array('Date', 'Ordered By', 'Candidate', 'Type', 'Product Name', 'Company Name', 'Status');
         $file_path = APPPATH . '../assets/csv/';
         if (!file_exists($file_path)) mkdir($file_path, 0777, true);
@@ -8315,7 +8315,9 @@ if (!function_exists('generate_admin_ics_file')) {
     function generate_admin_ics_file($event, $is_update = false)
     {
         // Return false when data array is empty
-        if (!sizeof($event)) return false;
+        if (empty($event)) {
+            return false;
+        }
         // Set path
         $file_path = APPPATH . '../assets/admin/ics/';
         // Create path if not exists
@@ -8345,28 +8347,28 @@ if (!function_exists('generate_admin_ics_file')) {
         $ics_body .= 'DESCRIPTION:' . $description . ' ' . PHP_EOL;
 
         // Participants
-        if (!isset($event['participants']) && sizeof($event['participants']) && isset($event['participants'][0]['first_name'])) {
+        if (!isset($event['participants']) && !empty($event['participants']) && isset($event['participants'][0]['first_name'])) {
             foreach ($event['participants'] as $participant) {
                 $ics_body .= 'ATTENDEE;CN="' . ucwords($participant['first_name']) . ' ' . ucwords($participant['last_name']) . '";RSVP=TRUE:mailto:' . ($participant['show_email'] == 1 ? $participant['email'] : '') . PHP_EOL;
             }
         }
 
         // External Participants
-        if (!isset($event['external_participants']) && sizeof($event['external_participants'])) {
+        if (!isset($event['external_participants']) && !empty($event['external_participants'])) {
             foreach ($event['external_participants'] as $participant) {
                 $ics_body .= 'ATTENDEE;CN="' . ucwords($participant['external_participant_name']) . '";RSVP=TRUE:mailto:' . ($participant['show_email'] == 1 ? $participant['external_participant_email'] : '') . PHP_EOL;
             }
         }
 
         // External Users
-        if (!isset($event['external_users']) && sizeof($event['external_users'])) {
+        if (!isset($event['external_users']) && !empty($event['external_users'])) {
             foreach ($event['external_users'] as $participant) {
                 $ics_body .= 'ATTENDEE;CN="' . ucwords($participant['name']) . '";RSVP=TRUE:mailto:' . ($participant['email_adress']) . PHP_EOL;
             }
         }
 
         // System Users
-        if (!isset($event['users_array']) && sizeof($event['users_array'])) {
+        if (!isset($event['users_array']) && !empty($event['users_array'])) {
             foreach ($event['users_array'] as $participant) {
                 $ics_body .= 'ATTENDEE;CN="' . ucwords($participant['first_name']) . ' ' . ucwords($participant['last_name']) . '";RSVP=TRUE:mailto:' . ($participant['email_adress']) . PHP_EOL;
             }
@@ -8468,7 +8470,7 @@ if (!function_exists('send_admin_calendar_email_template')) {
         $event_block_changed = 0;
 
         // Check and set change
-        if (($type == 'update' || $type == "drag_update") && sizeof($diff_array)) {
+        if (($type == 'update' || $type == "drag_update") && !empty($diff_array)) {
 
             // Check category change
             if (isset($diff_array['old_category'], $diff_array['new_category']) && $diff_array['old_category'] != '' && $diff_array['new_category'] != '') {
@@ -8557,10 +8559,10 @@ if (!function_exists('send_admin_calendar_email_template')) {
             if ($event_type == 'employee') $itype = 'Participant(s)';
             if ($event_category == 'training-session') $itype = 'Attendee(s)';
 
-            if (isset($diff_array['added_interviewers']) && sizeof($diff_array['added_interviewers']))  $added_interviewers += count($diff_array['added_interviewers']);
-            if (isset($diff_array['added_external_interviewers']) && sizeof($diff_array['added_external_interviewers']))  $added_interviewers += count($diff_array['added_external_interviewers']);
-            if (isset($diff_array['removed_interviewers']) && sizeof($diff_array['removed_interviewers']))  $removed_interviewers += count($diff_array['removed_interviewers']);
-            if (isset($diff_array['removed_external_interviewers']) && sizeof($diff_array['removed_external_interviewers']))  $removed_interviewers += count($diff_array['removed_external_interviewers']);
+            if (isset($diff_array['added_interviewers']) && !empty($diff_array['added_interviewers']))  $added_interviewers += count($diff_array['added_interviewers']);
+            if (isset($diff_array['added_external_interviewers']) && !empty($diff_array['added_external_interviewers']))  $added_interviewers += count($diff_array['added_external_interviewers']);
+            if (isset($diff_array['removed_interviewers']) && !empty($diff_array['removed_interviewers']))  $removed_interviewers += count($diff_array['removed_interviewers']);
+            if (isset($diff_array['removed_external_interviewers']) && !empty($diff_array['removed_external_interviewers']))  $removed_interviewers += count($diff_array['removed_external_interviewers']);
             if ($removed_interviewers != 0 || $added_interviewers != 0) $event_block_changed++;
             if ($removed_interviewers != 0 && $added_interviewers != 0)
                 $event_subject_row = " - ($added_interviewers) $itype added and ($removed_interviewers) removed.";
@@ -8573,10 +8575,10 @@ if (!function_exists('send_admin_calendar_email_template')) {
             $removed_user_ids = $added_user_ids = 0;
 
             // Difference of system/external users
-            if (isset($diff_array['added_user_ids']) && sizeof($diff_array['added_user_ids']))  $added_user_ids += count($diff_array['added_user_ids']);
-            if (isset($diff_array['added_external_users']) && sizeof($diff_array['added_external_users']))  $added_user_ids += count($diff_array['added_external_users']);
-            if (isset($diff_array['removed_user_ids']) && sizeof($diff_array['removed_user_ids']))  $removed_user_ids += count($diff_array['removed_user_ids']);
-            if (isset($diff_array['removed_external_users']) && sizeof($diff_array['removed_external_users']))  $removed_user_ids += count($diff_array['removed_external_users']);
+            if (isset($diff_array['added_user_ids']) && !empty($diff_array['added_user_ids']))  $added_user_ids += count($diff_array['added_user_ids']);
+            if (isset($diff_array['added_external_users']) && !empty($diff_array['added_external_users']))  $added_user_ids += count($diff_array['added_external_users']);
+            if (isset($diff_array['removed_user_ids']) && !empty($diff_array['removed_user_ids']))  $removed_user_ids += count($diff_array['removed_user_ids']);
+            if (isset($diff_array['removed_external_users']) && !empty($diff_array['removed_external_users']))  $removed_user_ids += count($diff_array['removed_external_users']);
             if ($removed_user_ids != 0 || $added_user_ids != 0) $event_block_changed++;
             if ($removed_user_ids != 0 && $added_user_ids != 0)
                 $event_subject_row = " - ($added_user_ids) Users added and ($removed_user_ids) removed.";
@@ -8593,10 +8595,10 @@ if (!function_exists('send_admin_calendar_email_template')) {
         if (!in_array($event_category, array('training-session', 'meeting', 'other')) && $event_type == 'personal') $include_participants = false;
         //
         if ($include_participants) {
-            if (sizeof($participants) || sizeof($external_participants))
+            if (!empty($participants) || !empty($external_participants))
                 $users_rows .= sft('<strong>' . ($event_category == 'training-session' ? 'Assigned Attendee(s)' : 'Participant(s)') . '</strong> <br />');
             // Users
-            if (sizeof($participants)) {
+            if (!empty($participants)) {
                 foreach ($participants as $k0 => $v0) {
                     $cls = (isset($diff_array['added_interviewers']) && in_array($v0['id'], $diff_array['added_interviewers'])) ? 'style="background-color:#81b431"' : '';
                     $users_rows .= '<tr ' . $cls . '><td><p>&#9632; &nbsp;' . (ucwords($v0['first_name'] . ' ' . $v0['last_name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email_address']) . '">(' . ($v0['email_address']) . ')</a>' : '') . '</p></td></tr>';
@@ -8609,7 +8611,7 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 }
             }
             // External users
-            if (sizeof($external_participants)) {
+            if (!empty($external_participants)) {
                 foreach ($external_participants as $k0 => $v0) {
                     // $cls = (isset($diff_array['added_external_interviewers']) && in_array($v0['id'], $diff_array['added_external_interviewers'])) ? 'style="background-color:#81b431"' : '';
                     $users_rows .= sft('<p>&#9632; &nbsp;' . (ucwords($v0['external_participant_name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['external_participant_email']) . '">(' . ($v0['external_participant_email']) . ')</a>' : '') . '</p>');
@@ -8626,31 +8628,31 @@ if (!function_exists('send_admin_calendar_email_template')) {
             // For 'demo' type
             if ($event_type == 'demo' || $event_type == 'super admin') {
                 // For system demo and
-                if (sizeof($users_array) || sizeof($external_users)) {
+                if (!empty($users_array) || !empty($external_users)) {
                     $users_rows .= sft('<hr />');
                     $users_rows .= sft('<strong>' . ($event_type == 'super admin' ? 'Admin(s)' : 'User(s)') . '</strong> <br />');
                 }
                 // System users
-                if (sizeof($users_array)) {
+                if (!empty($users_array)) {
                     foreach ($users_array as $k0 => $v0) {
-                        $cls = isset($diff_array['added_user_ids']) && sizeof($diff_array['added_user_ids']) && in_array($v0['id'], $diff_array['added_user_ids']) ? 'style="background-color: #81b431;"' : '';
+                        $cls = isset($diff_array['added_user_ids']) && !empty($diff_array['added_user_ids']) && in_array($v0['id'], $diff_array['added_user_ids']) ? 'style="background-color: #81b431;"' : '';
                         $users_rows .= '<tr ' . ($cls) . '><td><p>&#9632; &nbsp;' . (ucwords($v0['first_name'] . ' ' . $v0['last_name'])) . '</p></td></tr>';
                     }
                 }
                 //
-                if (isset($diff_array['removed_user_ids']) && sizeof($diff_array['removed_user_ids'])) {
+                if (isset($diff_array['removed_user_ids']) && !empty($diff_array['removed_user_ids'])) {
                     foreach ($diff_array['removed_user_ids'] as $k0 => $v0) {
                         $users_rows .= '<tr style="background-color: #d9534f"><td><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . '</p></td></tr>';
                     }
                 }
                 // External users
-                if (sizeof($external_users)) {
+                if (!empty($external_users)) {
                     foreach ($external_users as $k0 => $v0) {
-                        $cls = isset($diff_array['added_external_users']) && sizeof($diff_array['added_external_users']) && in_array($v0['email_address'], $diff_array['added_external_users']) ? 'style="background-color: #81b431"' : '';
+                        $cls = isset($diff_array['added_external_users']) && !empty($diff_array['added_external_users']) && in_array($v0['email_address'], $diff_array['added_external_users']) ? 'style="background-color: #81b431"' : '';
                         $users_rows .= '<tr ' . ($cls) . '><td><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email_address']) . '">(' . ($v0['email_address']) . ')</a>' : '') . '</p></td></tr>';
                     }
                 }
-                if (isset($diff_array['removed_external_users']) && sizeof($diff_array['removed_external_users'])) {
+                if (isset($diff_array['removed_external_users']) && !empty($diff_array['removed_external_users'])) {
                     foreach ($diff_array['removed_external_users'] as $k0 => $v0) {
                         $users_rows .= '<tr style="background-color: #d9534f"><td><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email']) . '">(' . ($v0['email']) . ')</a>' : '') . '</p></td></tr>';
                     }
@@ -8872,7 +8874,9 @@ if (!function_exists('send_admin_calendar_email_template')) {
 
         //
         if ($type == 'reminder_email' || $type == 'send_cron_reminder_emails') {
-            if (!sizeof($reminder_email_list)) return false;
+            if (empty($reminder_email_list)) {
+                return false;
+            }
             $current_datetime = date('Y-m-d H:i:s');
             foreach ($reminder_email_list as $k0 => $v0) {
                 $comment_text = '';
@@ -9067,7 +9071,7 @@ if (!function_exists('send_admin_calendar_email_template')) {
         }
 
         // Send emails to users
-        if ($send_to_users && sizeof($participants)) {
+        if ($send_to_users && !empty($participants)) {
             foreach ($participants as $k0 => $v0) {
                 //
                 $comment_text = '';
@@ -9135,7 +9139,7 @@ if (!function_exists('send_admin_calendar_email_template')) {
         }
 
         // Send emails to non users
-        if ($send_to_non_users && sizeof($external_participants)) {
+        if ($send_to_non_users && !empty($external_participants)) {
             foreach ($external_participants as $k0 => $v0) {
                 //
                 $comment_text = '';
@@ -9203,7 +9207,7 @@ if (!function_exists('send_admin_calendar_email_template')) {
         }
         // _e($event, true);
         // Send to system users
-        if (sizeof($users_array) && $users_array != '') {
+        if (!empty($users_array) && $users_array != '') {
             foreach ($users_array as $k0 => $v0) {
                 $user_message = $body;
 
@@ -9261,7 +9265,7 @@ if (!function_exists('send_admin_calendar_email_template')) {
         }
 
         // Send to external users
-        if (sizeof($external_users)) {
+        if (!empty($external_users)) {
             foreach ($external_users as $k0 => $v0) {
                 $user_message = $body;
 
@@ -9461,7 +9465,7 @@ if (!function_exists('generate_admin_vcs_file_for_event')) {
         // $details .= "Reschedule: {$enc_string_reschedule}{$ss}";
         // $details .= "Cannot Attend: {$enc_string_notconf}{$ss}";
 
-        if (sizeof($event['participants']) && isset($event['participants'][0]['first_name'])) {
+        if (!empty($event['participants']) && isset($event['participants'][0]['first_name'])) {
             $details .= $ds;
             $details .= ($event['event_category'] == 'training-session' ? 'Attendee(s)' : 'Participant(s)') . "{$ss}";
             foreach ($event['participants'] as $k0 => $v0) {
@@ -9584,10 +9588,10 @@ if (!function_exists('timezone_dropdown')) {
         $timezone_rows = '';
         $timezone_rows .= '<select';
         // Set Attrs
-        if (sizeof($attrs)) foreach ($attrs as $k0 => $v0) $timezone_rows .= ' ' . $k0 . ' = "' . $v0 . '"';
+        if (!empty($attrs)) foreach ($attrs as $k0 => $v0) $timezone_rows .= ' ' . $k0 . ' = "' . $v0 . '"';
         $timezone_rows .= '>';
         if ($selected == '') $timezone_rows .= '<option value="">Please Select</option>';
-        if (sizeof($timezones)) foreach ($timezones as $k0 => $v0) $timezone_rows .= '<option ' . ($selected == $v0['key'] ? 'selected="true"' : '') . ' value="' . ($v0['key']) . '">' . ($v0['name']) . ' (' . ($v0['key']) . ')</option>';
+        if (!empty($timezones)) foreach ($timezones as $k0 => $v0) $timezone_rows .= '<option ' . ($selected == $v0['key'] ? 'selected="true"' : '') . ' value="' . ($v0['key']) . '">' . ($v0['name']) . ' (' . ($v0['key']) . ')</option>';
         $timezone_rows .= '</select>';
         return $timezone_rows;
     }
@@ -9614,7 +9618,9 @@ if (!function_exists('parse_timezone')) {
     {
         if (!is_array($timezone)) $timezone = explode($delimiter, $timezone);
         //
-        if (!sizeof($timezone)) return false;
+        if (empty($timezone)){
+            return false;
+        }
         // Reset timezone
         $find = strtolower(trim($find));
         // Check index and return result
@@ -9649,7 +9655,9 @@ if (!function_exists('reset_timezone')) {
     function reset_timezone($data)
     {
         // Check for array set and size
-        if (!is_array($data) || !sizeof($data)) return false;
+        if (!is_array($data) || empty($data)) {
+            return false;
+        }
         // Reset formats
         if (!isset($data['from_format'])) $from_format = 'Y-m-d';
         if (!isset($data['format'])) $format = 'Y-m-d\TH:i:s\ZO';
@@ -9745,7 +9753,9 @@ if (!function_exists('reset_datetime')) {
         $timezone      = false;
         $with_timezone = 0;
         // Check array size
-        if (!is_array($data) || !sizeof($data) || !isset($data['datetime']) || !isset($data['_this'])) return false;
+        if (!is_array($data) || empty($data) || !isset($data['datetime']) || !isset($data['_this'])) {
+            return false;
+        }
         $data['datetime'] = trim($data['datetime']);
         if ($data['datetime'] == NULL || $data['datetime'] == '' || $data['datetime'] == 'null') return null;
         // Check if only date is sent
@@ -10220,7 +10230,9 @@ if (!function_exists('company_sms_phonenumber')) {
         else {
             // Fetch the assigned phone number
             $details = get_company_sms_phonenumber($company_sid, $_this);
-            if (!sizeof($details)) $to['phone_sid'] = '';
+            if (empty($details)){
+                $to['phone_sid'] = '';
+            }
             else $to['phone_sid'] = $details['phone_sid'];
         }
 
@@ -10260,7 +10272,9 @@ if (!function_exists('get_company_sms_phonenumber')) {
         $result_arr = $result->row_array();
         $result     = $result->free_result();
 
-        if (!sizeof($result_arr)) return array();
+        if (empty($result_arr)){
+            return array();
+        }
         // if($result_arr['sms_module_status'] == 0) return array();
         return $result_arr;
     }
@@ -10294,7 +10308,9 @@ if (!function_exists('company_phone_regex_module_check')) {
         $result_arr = $result->row_array();
         $result     = $result->free_result();
 
-        if (!sizeof($result_arr)) $to['phone_pattern_enable'] = 0;
+        if (empty($result_arr)){
+            $to['phone_pattern_enable'] = 0;
+        }
         else $to['phone_pattern_enable'] = $result_arr['phone_pattern_module'];
     }
 }
@@ -10329,7 +10345,9 @@ if (!function_exists('sendEmailToUpdatePhoneNumber')) {
     function sendEmailToUpdatePhoneNumber($dataArray, $_this)
     {
         // Check if array is set or not
-        if (!is_array($dataArray) || !sizeof($dataArray)) return false;
+        if (!is_array($dataArray) || empty($dataArray)){
+            return false;
+        }
         // Get template header and footer
         $hf = message_header_footer($dataArray['companyId'], ucwords($dataArray["companyName"]));
         //
@@ -10489,7 +10507,9 @@ if (!function_exists('onboardingHelpWidget')) {
         $_this->load->model('Onboarding_block_model');
         $record = $_this->Onboarding_block_model->check_companySid($companySid);
         // $record = $_this->Onboarding_block_model->check_companySid($_this->session->userdata('logged_in')['company_detail']['sid']);
-        if (!sizeof($record) || $record['is_active'] == 0) return '';
+        if (empty($record) || $record['is_active'] == 0){
+            return '';
+        }
         $rows = '';
         // $rows .= '<div class="col-lg-3 col-sm-12 col-xs-12 col-sm-pull-9">';
 
@@ -10620,7 +10640,7 @@ if (!function_exists('getMimeType')) {
         );
         //
         $tmp = explode('.', $input);
-        $ext = strtolower($tmp[sizeof($tmp) - 1]);
+        $ext = strtolower($tmp[count($tmp) - 1]);
         //
         $mimetype = '';
         if (function_exists('mime_content_type')) {
@@ -10664,7 +10684,7 @@ if (!function_exists('loadIndeedPackage')) {
     function loadIndeedPackage($indeedBudget, $session)
     {
         //
-        if (sizeof($indeedBudget) && $indeedBudget['expire_date'] < date('Y-m-d')) $indeedBudget = array();
+        if (!empty($indeedBudget) && $indeedBudget['expire_date'] < date('Y-m-d')) $indeedBudget = array();
 
         $step1 = '';
         $step1 .= '<p>Sponsor this job on Indeed for prominent placement on the world’s #1 job site1.</p>';
@@ -10672,23 +10692,23 @@ if (!function_exists('loadIndeedPackage')) {
         $step1 .= '<p>Select a fixed budget per job for 30 days to get started:</p>';
         $step1 .= '<div class="checkbox-inline">';
         $step1 .= '    <label>';
-        $step1 .= '        <input type="radio" name="indeedPackage" ' . (sizeof($indeedBudget) && (int)$indeedBudget['budget_days'] != 0 && (int)$indeedBudget['budget'] == 450 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="15" value="450" />';
+        $step1 .= '        <input type="radio" name="indeedPackage" ' . (!empty($indeedBudget) && (int)$indeedBudget['budget_days'] != 0 && (int)$indeedBudget['budget'] == 450 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="15" value="450" />';
         $step1 .= '        <span>$450 (~$15 per day)</span>';
         $step1 .= '    </label>';
         $step1 .= '</div>';
         $step1 .= '<div class="checkbox-inline">';
         $step1 .= '    <label>';
-        $step1 .= '        <input type="radio" name="indeedPackage" ' . (sizeof($indeedBudget) && (int)$indeedBudget['budget_days'] != 0 && (int)$indeedBudget['budget'] == 900 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="30" value="900" />';
+        $step1 .= '        <input type="radio" name="indeedPackage" ' . (!empty($indeedBudget) && (int)$indeedBudget['budget_days'] != 0 && (int)$indeedBudget['budget'] == 900 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="30" value="900" />';
         $step1 .= '        <span>$900 (~$30 per day)</span>';
         $step1 .= '    </label>';
         $step1 .= '</div>';
         $step1 .= '<div class="checkbox-inline">';
         $step1 .= '    <label>';
-        $step1 .= '        <input type="radio" name="indeedPackage" ' . (sizeof($indeedBudget) && (int)$indeedBudget['budget_days'] != 0 && (int)$indeedBudget['budget'] == 1500 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="50" value="1500" />';
+        $step1 .= '        <input type="radio" name="indeedPackage" ' . (!empty($indeedBudget) && (int)$indeedBudget['budget_days'] != 0 && (int)$indeedBudget['budget'] == 1500 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="50" value="1500" />';
         $step1 .= '        <span>$1,500 (~$50 per day)</span>';
         $step1 .= '    </label>';
         $step1 .= '</div>';
-        $step1 .= '<p><br />Or Enter Custom Budget: <input type="number" name="indeedPackageCustom" class="form-control js-custom-indeed-package" style="max-width: 200px; display: inline-block;" placeholder="e.g. 300 (min. 200)" value="' . (sizeof($indeedBudget) && (int)$indeedBudget['budget_days'] == 0 ? $indeedBudget['budget'] : '') . '"/></p>';
+        $step1 .= '<p><br />Or Enter Custom Budget: <input type="number" name="indeedPackageCustom" class="form-control js-custom-indeed-package" style="max-width: 200px; display: inline-block;" placeholder="e.g. 300 (min. 200)" value="' . (!empty($indeedBudget) && (int)$indeedBudget['budget_days'] == 0 ? $indeedBudget['budget'] : '') . '"/></p>';
         $step1 .= '<p>You will only be billed for the unique clicks on your job, and if you remove the job from your ATS, the sponsored campaign will stop.</p>';
         $step1 .= '<p><a href="javascript:void(0)" class="btn btn-success btn-lg js-indeed-package-btn" id="js-indeed-next">Sponsor Job on Indeed now</a></p>';
         $step1 .= '<p>Note: Sponsored Job campaigns will not go live without an active Indeed account. If you do not have an Indeed account one will be created for you using the email address connected to your ATS. You’ll receive an account activation email from Indeed to finish a one time setup of your Indeed account at the address connected to your ATS account within a few hours. Please review that email to ensure Indeed has the information they need to start your first campaign.</p>';
@@ -10701,13 +10721,13 @@ if (!function_exists('loadIndeedPackage')) {
         $step2 .= '<p><strong>Note:</strong> Sponsored Job campaigns will not go live without a payment method connected to your Indeed account. You will receive an email from Indeed within a few hours with instructions for setting this up for the first time. If you do not receive this email, please visit billing.indeed.com.</p>';
         $step2 .= '<p>Indeed is committed to the success of your advertising campaign. Please help us connect with you by sharing your phone number.</p>';
         $step2 .= '<p>Phone</p>';
-        $step2 .= '<input name="indeedPhoneNumber" class="form-control js-indeed-package-phone-input" style="width: 300px; display: inline-block;" placeholder="(XXX)-XXX-XXXX" value="' . (sizeof($indeedBudget) ? $indeedBudget['phone_number'] : ($session['company_detail']['PhoneNumber'])) . '"/>&nbsp;&nbsp;<span style="font-weight: bold; color: #cc0000;">*</span></p>';
+        $step2 .= '<input name="indeedPhoneNumber" class="form-control js-indeed-package-phone-input" style="width: 300px; display: inline-block;" placeholder="(XXX)-XXX-XXXX" value="' . (!empty($indeedBudget) ? $indeedBudget['phone_number'] : ($session['company_detail']['PhoneNumber'])) . '"/>&nbsp;&nbsp;<span style="font-weight: bold; color: #cc0000;">*</span></p>';
         $step2 .= '<p>A member of Indeed’s sales team will contact you to discuss your ad’s performance and offer suggestions for optimization. Please contact sjisupport@indeed.com with any questions or concerns.</p>';
         $step2 .= '<a class="btn btn-success btn-lg js-indeed-package-phone-btn">SUBMIT PHONE NUMBER</a> ';
         $step2 .= '<br /><br /><br /><p class="text-center" style="font-size: 12px !important;">*By filling out the phone number field, and submitting the form: I confirm that I am the subscriber to the telephone number entered and I hereby consent to receive autodialed marketing and informational calls from Indeed at the telephone number provided above, including if this number is a wireless (cell phone) number. Agreement to the above is not a condition of purchase of any Indeed product. I agree that this information will be dealt with in accordance with Indeed’s Cookie and Privacy Policy,</p>';
         $step2 .= '<a class="btn btn-default js-indeed-package-skip-btn">SKIP & CONTINUE</a>';
         //
-        if (sizeof($indeedBudget)) {
+        if (!empty($indeedBudget)) {
             $step2 .= '<input type="hidden" class="js-indeed-budget-sid" value="' . ($indeedBudget['budget_sid']) . '" />';
         }
         $step4 = '';
@@ -10786,7 +10806,7 @@ if (!function_exists('resetResumeName')) {
         else $ext = $in;
         $match = array();
         preg_match('/(pdf|docx|doc|jpg|png|gif|jpe)/', strtolower($ext), $match);
-        if (!sizeof($match)) {
+        if (empty($match)) {
             if (is_array($in)) $in[1] = 'pdf';
             else $in = 'pdf';
         }
@@ -10962,7 +10982,9 @@ if (!function_exists('paramsToArray')) {
     function paramsToArray($p)
     {
         $p = explode('&', $p);
-        if (!sizeof($p)) return $p;
+        if (empty($p)){
+            return $p;
+        }
         //
         $r = array();
         foreach ($p as $k => $v) {
@@ -10978,7 +11000,7 @@ if (!function_exists('getFileExtension')) {
     {
         //
         $tmp = explode('.', $in);
-        return strtolower($tmp[sizeof($tmp) - 1]);
+        return strtolower($tmp[count($tmp) - 1]);
     }
 }
 
@@ -10997,7 +11019,9 @@ if (!function_exists('checkIfAppIsEnabled')) {
         // Get session
         $ses = $ci->session->userdata('logged_in');
         // Check if use is logged in
-        if (!$ses || !sizeof($ses) || !isset($ses['company_detail'])) return true;
+        if (!$ses || empty($ses) || !isset($ses['company_detail'])) {
+            return true;
+        }
         // Get the called controller name
         $ctl = trim(strtolower(preg_replace('/[^a-zA-Z]/', '', $ctl ? $ctl : $ci->router->fetch_class())));
         // If not a controller then pass
@@ -11029,7 +11053,9 @@ if (!function_exists('checkIfAppIsEnabled')) {
             $b = $a->row_array();
             $a->free_result();
             // If module doesn't exists then no need to continue
-            if (!sizeof($b)) return true;
+            if (empty($b)){
+                return true;
+            }
             //
             $b['isAllowed'] = 0;
             //
@@ -11071,7 +11097,7 @@ if (!function_exists('checkIfAppIsEnabled')) {
                 $b = $a->row_array();
                 $a->free_result();
                 //
-                if (!sizeof($b)) {
+                if (empty($b)) {
                     if ($doRedirect == TRUE) {
                         $ci->session->set_flashdata('message', 'You don\'t have access to this module.');
                         redirect('my_settings', 'refresh');
@@ -11224,9 +11250,9 @@ if (!function_exists('putFileOnAWSBase64')) {
         //
         $t = explode('.', $fileName);
         //
-        $type = $t[sizeof($t) - 1];
+        $type = $t[count($t) - 1];
         //
-        unset($t[sizeof($t) - 1]);
+        unset($t[count($t) - 1]);
         //
         $t = implode('_', $t);
         $t .= '_' . time() . '.' . $type;
@@ -13898,7 +13924,7 @@ if(!function_exists('LoginToAPI')){
         // if(isset($_SESSION['logged_in']) && !isset($_SESSION['API_TOKENS'])){
         if(isset($_SESSION['logged_in']) && (!isset($_SESSION['API_TOKENS']) || empty($_SESSION['API_TOKENS']))){
             //
-            $API_TOKEN_CODE = $CI->encrypt->encode('apitoken'.$_SESSION['logged_in']['employer_detail']['sid']);
+            $API_TOKEN_CODE = $CI->encryption->encrypt('apitoken'.$_SESSION['logged_in']['employer_detail']['sid']);
             //
             $_SESSION['API_TOKEN_CODE'] = $API_TOKEN_CODE;
             // Lets store it in database
@@ -13931,7 +13957,7 @@ if(!function_exists('LoginToAPI')){
             //
             curl_close($curl);
             //
-            if($result['Status']){
+            if(isset($result['Status'])){
                 $_SESSION['API_TOKENS'] = $result['Response'];
             }
         }

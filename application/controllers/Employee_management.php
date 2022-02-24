@@ -1029,6 +1029,9 @@ class Employee_management extends Public_Controller {
     }
 
     public function employee_profile($sid = NULL) {
+
+
+
         if ($sid == NULL) {
             $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
             redirect('employee_management', 'refresh');
@@ -1069,6 +1072,8 @@ class Employee_management extends Public_Controller {
                         ->update('users', $updateArray);
                     }
                 }
+
+                
                 $employee_detail = $data['employer'];
                 //
                 // Check and set the company sms module
@@ -1200,7 +1205,18 @@ class Employee_management extends Public_Controller {
                     $data['applicant_message'] = $allMessages;
                 }
 
-                $data['extra_info'] = unserialize($data['employer']['extra_info']);
+              //  if(is_array($data['employer']['extra_info'])){
+                $data['extra_info'] =  unserialize($data['employer']['extra_info']);
+          //  }else{
+                //$data['extra_info'] = 'undefined';
+           // }
+
+                
+           
+                 $data['extra_info'] ?? $office_location['your default value'];
+
+                $userData['userList'] ?? 'your default value';
+
                 $data['employer_access_level'] = $employer_access_level;
                 $full_access = false;
 

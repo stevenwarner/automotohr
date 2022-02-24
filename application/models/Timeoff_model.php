@@ -266,7 +266,9 @@ class Timeoff_model extends CI_Model
         $policies = $result->result_array();
         $result  = $result->free_result();
         //
-        if (!sizeof($policies)) return array();
+        if (empty($policies)){
+            return array();
+        }
         //
         $returnArray = array('Policies' => $policies, 'Count' => 0);
         //
@@ -399,7 +401,9 @@ class Timeoff_model extends CI_Model
         $types = $result->result_array();
         $result  = $result->free_result();
         //
-        if (!sizeof($types)) return array();
+        if (empty($types)) {
+            return array();
+        }
         //
         foreach($types as $k => $v) $types[$k]['policies'] = isset($policies[$v['type_sid']]) ? $policies[$v['type_sid']] : null;
         //
@@ -713,7 +717,9 @@ class Timeoff_model extends CI_Model
         $holidays = $result->result_array();
         $result  = $result->free_result();
         //
-        if (!sizeof($holidays)) return array();
+        if (empty($holidays)) {
+            return array();
+        }
         //
         $returnArray = array('Holidays' => $holidays, 'Count' => 0);
         //
@@ -813,7 +819,9 @@ class Timeoff_model extends CI_Model
         $b = $a->result_array();
         $a = $a->free_result();
         //
-        if (!sizeof($b)) return array();
+        if (empty($b)){
+            return array();
+        }
         //
         $c = array();
         //
@@ -1172,7 +1180,9 @@ class Timeoff_model extends CI_Model
         $approvers = $result->result_array();
         $result  = $result->free_result();
         //
-        if (!sizeof($approvers)) return array();
+        if (empty($approvers)) {
+            return array();
+        }
         //
         foreach($approvers as $k => $approver){
             //
@@ -2383,7 +2393,7 @@ class Timeoff_model extends CI_Model
         $c = $a->result_array();
         $a = $a->free_result();
         //
-        if(sizeof($c)) {
+        if(!empty($c)) {
             //
             foreach($c as $key => $balance){
                 //
@@ -3009,7 +3019,9 @@ class Timeoff_model extends CI_Model
         $e = $a->result_array();
         $a->free_result();
         //
-        if (!sizeof($e)) return $e;
+        if (empty($e)){
+            return $e;
+        }
         // Check for access level plus check
         if ($post['isSuper'] == 0) {
             // Start filtering
@@ -3023,7 +3035,7 @@ class Timeoff_model extends CI_Model
             $a->free_result();
             $ts = array();
             //
-            if (sizeof($d)) {
+            if (!empty($d)) {
                 // Get teams
                 foreach ($d as $v) {
                     $a = $this->db
@@ -3034,7 +3046,7 @@ class Timeoff_model extends CI_Model
                     $t = $a->result_array();
                     $a->free_result();
                     //
-                    if (!sizeof($t)) continue;
+                    if (empty($t)) continue;
                     //
                     foreach ($t as $v1) $ts[$v1['sid']] = $v1['sid'];
                 }
@@ -3048,7 +3060,7 @@ class Timeoff_model extends CI_Model
             $t = $a->result_array();
             $a->free_result();
             //
-            if (sizeof($t)) foreach ($t as $v) $ts[$v['sid']] = $v['sid'];
+            if (!empty($t)) foreach ($t as $v) $ts[$v['sid']] = $v['sid'];
             //
             $ts = array_values($ts);
         }
@@ -3097,7 +3109,9 @@ class Timeoff_model extends CI_Model
         $policies = $result->result_array();
         $result  = $result->free_result();
         //
-        if (!sizeof($policies)) return array();
+        if (empty($policies)){
+            return array();
+        }
         //
         return $policies;
     }
@@ -3679,7 +3693,15 @@ class Timeoff_model extends CI_Model
         $employementType = $employee['employee_type'];
         $employeeJoiningDate = $JoinedDate;
         $durationInMinutes = (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']);
-        $slug = $settings['slug'];
+       
+        if(isset($settings['slug'])){
+            $slug = $settings['slug'];
+        }else{
+            $slug ='';
+        }
+
+       // $slug = $settings['slug'];
+
         //
         foreach($policies as $policy){
             //
@@ -4031,7 +4053,7 @@ class Timeoff_model extends CI_Model
         $b = $result->row_array();
         $result = $result->free_result();
         //
-        return sizeof($b) ? explode(',', $b['off_days']) : $b;
+        return !empty($b) ? explode(',', $b['off_days']) : $b;
     }
 
     /**
@@ -4054,7 +4076,7 @@ class Timeoff_model extends CI_Model
         $result = $result->free_result();
         //
         if ($doExplode === false) return $format;
-        return !sizeof($format) ? array('H', 'M') : explode(':', $format['slug']);
+        return empty($format) ? array('H', 'M') : explode(':', $format['slug']);
     }
 
     //
@@ -4164,7 +4186,9 @@ class Timeoff_model extends CI_Model
         $b = $a->result_array();
         $a->free_result();
         //
-        if (!sizeof($b)) return $r;
+        if (empty($b)){
+            return $r;
+        }
 
         // Get company default time
         $a = $this->db
@@ -4727,7 +4751,9 @@ class Timeoff_model extends CI_Model
         $types = $result->result_array();
         $result  = $result->free_result();
         //
-        if (!sizeof($types)) return array();
+        if (empty($types)){
+            return array();
+        }
         //
         foreach($types as $k => $v) $types[$k]['policies'] = isset($policies[$v['sid']]) ? $policies[$v['sid']] : null;
         //

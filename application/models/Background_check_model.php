@@ -512,6 +512,7 @@ class Background_check_model extends CI_Model {
                     $v0['status'] = 'Canceled & Credited'.(!empty($v0['invoice_sid']) ? ' to invoice # '.($v0['invoice_sid']).'' : '');
                 }
                 //
+
                 $rows .= '<tr>';
                 $rows .= '    <td>'.reset_datetime(array('datetime' => $v0['date_applied'], '_this' => $this)).'</td>';
                 $rows .= '    <td>'.$v0['first_name'].' '.$v0['last_name'].'</td>';
@@ -520,7 +521,9 @@ class Background_check_model extends CI_Model {
                 $rows .= '    <td>'. $v0['product_name'] .'</td>';
                 $rows .= '    <td>'.$v0['product_type'].'</td>';
                 $rows .= '    <td>'.ucwords($v0['cname']).'</td>';
-                $rows .= '    <td '.$status_color.'>'.($v0['status'] == 'Draft' ? 'Awaiting Candidate Input' : ($v0['status'] == '' || $v0['status'] == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $v0['status']))).'</td>';
+                //$rows .= '    <td '.$status_color.'>'.($v0['status'] == 'Draft' ? 'Awaiting Candidate Input' : ($v0['status'] == '' || $v0['status'] == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $v0['status']))).'</td>';
+
+                $rows .= '    <td '.$status_color.'>'.($v0['status'] == 'Draft' ? 'Awaiting Candidate Input' : (($v0['status'] == '' || $v0['status'] == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $v0['status'])))).'</td>';
                 $rows .= '    <td class="no-print"><a class="btn btn-success btn-sm" href="'.base_url().( strtolower($v0['product_type']) == 'drug testing' ? 'drug_test' : 'background_check' ).'/'.$v0['users_type'].'/'.$v0['users_sid'].'" >View Report</a></td>';
                 $rows .= '</tr>';
             }

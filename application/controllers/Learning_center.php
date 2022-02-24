@@ -554,6 +554,7 @@ class Learning_center extends Public_Controller {
                         unlink($video_url);
                     }
                 }
+                
                 $data_to_update['video_start_date'] =  DateTime::createfromformat('m-d-Y', $_POST['video_start_date'])->format('Y-m-d');
 
                 if ($_POST['is_video_expired'] == 'yes') {

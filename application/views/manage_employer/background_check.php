@@ -209,11 +209,11 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                                                                 <td><?php echo ucwords($summary_item['search']); ?></td>
                                                                                                 <td>
                                                                                                     <?php $status = strtolower($summary_item['status']); ?>
-                                                                                                    <?php echo (strtolower($status) == 'draft' ? 'Awaiting Candidate Input' : ($status == '' || $status == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $status))); ?>
+                                                                                                    <?php echo (strtolower($status) == 'draft' ? 'Awaiting Candidate Input' : (($status == '' || $status == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $status)))); ?>
                                                                                                 </td>
                                                                                                 <td>
                                                                                                     <?php $status = strtolower($summary_item['result']); ?>
-                                                                                                    <?php echo (strtolower($status) == 'draft' ? 'Awaiting Candidate Input' : ($status == '' || $status == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $status))); ?>
+                                                                                                    <?php echo (strtolower($status) == 'draft' ? 'Awaiting Candidate Input' : (($status == '' || $status == NULL) ? 'Pending' : ucwords(str_replace('_', ' ', $status)))); ?>
                                                                                                 </td>
                                                                                                 <td><?php echo ucwords($summary_item['flagged']); ?></td>
                                                                                             </tr>

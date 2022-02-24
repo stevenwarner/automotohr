@@ -316,7 +316,16 @@
 
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
-                                                        <?php $country_id = $LC = isset($employer['Location_Country']) ? $employer['Location_Country'] : $formpost['Location_Country']; ?>
+                                                        <?php 
+                                                                                                              
+                                                        if(isset($formpost['Location_Country'])){
+
+                                                        }else{
+                                                            $formpost['Location_Country']=' ';
+                                                        } 
+                                                      
+                                                        $country_id = $LC = isset($employer['Location_Country']) ? $employer['Location_Country'] : $formpost['Location_Country']; 
+                                                        ?>
                                                         <label>Country:</label>
                                                         <div class="hr-select-dropdown">
                                                             <select class="invoice-fields" id="country" name="Location_Country" onchange="getStates(this.value, <?php echo $states; ?>, 'state')">
@@ -333,7 +342,9 @@
 
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
-                                                        <?php $state_id = $LS = isset($employer['Location_State']) ? $employer['Location_State'] : $formpost['Location_State']; ?>
+                                                        <?php 
+                                                        if(isset($formpost['Location_State'])){}else{$formpost['Location_State']='';}
+                                                        $state_id = $LS = isset($employer['Location_State']) ? $employer['Location_State'] : $formpost['Location_State']; ?>
                                                         <label>State:</label>
                                                         <div class="hr-select-dropdown">
                                                             <select class="invoice-fields" name="Location_State" id="state">
@@ -3106,12 +3117,14 @@ if (isset($formpost['RadioButtonListEmploymentEverResign']) && $formpost['RadioB
                                                             <li>
                                                                 <label>References Name</label>
                                                                 <input type="text" class="invoice-fields" name="TextBoxReferenceName1" value="<?php
+                                                                    if(isset($employer['referred_by_name'])){}else{$employer['referred_by_name']='';}
+
                                                                     if (isset($formpost['TextBoxReferenceName1'])) {
                                                                         echo $formpost['TextBoxReferenceName1'];
                                                                     }else{
                                                                         echo $employer['referred_by_name'];
                                                                     }
-?>">
+?> ">
                                                             </li>
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -3198,6 +3211,8 @@ if (isset($formpost['RadioButtonListEmploymentEverResign']) && $formpost['RadioB
                                                             <li>
                                                                 <label>E-Mail</label>
                                                                 <input type="email" class="invoice-fields" name="TextBoxReferenceEmail1" value="<?php
+                                                                       
+                                                                       if(isset($employer['referred_by_email'])){}else{$employer['referred_by_email']='';}
                                                                        if (isset($formpost['TextBoxReferenceEmail1'])) {
                                                                            echo $formpost['TextBoxReferenceEmail1'];
                                                                        }else{

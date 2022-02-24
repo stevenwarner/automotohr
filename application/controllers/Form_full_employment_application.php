@@ -307,12 +307,13 @@ class Form_full_employment_application extends CI_Controller {
                 //
                 $ei = unserialize($company_details['extra_info']);
                 //
+              
                 $data['eight_plus'] = 0;
                 $data['affiliate'] = 0;
                 $data['d_license'] = 0;
                 $data['l_employment'] = 0;
-                $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
-                $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
+                $data['ssn_required'] = @$data['session']['portal_detail']['ssn_required'];
+                $data['dob_required'] = @$data['session']['portal_detail']['dob_required'];
                 
                 if(isset($ei['affiliate'])){
                     $data['affiliate'] = $ei['affiliate'];
@@ -338,7 +339,9 @@ class Form_full_employment_application extends CI_Controller {
                 }
                 
                 //
+
                 if($data['d_license'] && $this->input->post('RadioButtonListDriversLicenseQuestion', true) != 'No'){
+
                     $this->form_validation->set_rules('TextBoxDriversLicenseNumber', 'License Number', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('TextBoxDriversLicenseExpiration', 'License Expiration Date', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
