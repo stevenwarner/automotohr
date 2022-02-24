@@ -1549,8 +1549,7 @@ class Payroll_onboard extends CI_Controller
             'compensation' => 1,
             'home_address' => 1,
             'federal_tax' => 1,
-            'state_tax' => 1,
-            'payment_method' => 1
+            'state_tax' => 1
         ], 'sid');
         //
         if($return){
