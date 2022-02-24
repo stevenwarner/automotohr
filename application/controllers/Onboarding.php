@@ -4411,7 +4411,7 @@ class Onboarding extends CI_Controller {
                 }
             }
 
-            $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid);
+            $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid,1);
 
             if (!empty($groups)) {
                 foreach ($groups as $key => $group) {
