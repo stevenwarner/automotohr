@@ -14670,3 +14670,15 @@ if(!function_exists('GetHireDate')){
         }
     }
 }
+
+if (!function_exists('check_company_status')) {
+    function check_company_status($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('active');
+        $CI->db->where('sid', $company_sid);
+        $result = $CI->db->get('users')->row_array();
+        //
+        return $result["active"]; 
+    }
+}

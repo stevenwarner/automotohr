@@ -830,7 +830,13 @@ class Home extends CI_Controller {
                     $aws = new AwsSdk();
                     $aws->putToBucket($resume, $_FILES["resume"]["tmp_name"], AWS_S3_BUCKET_NAME);
                 } 
+                //
+                if (check_company_status($data['company_details']['sid']) == 0) {
+                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
 
+                    redirect('/', 'refresh');
+                }
+                //
                 $talent_network_sid = $this->job_details->check_job_applicant('company_check', $email, $data['company_details']['sid']);
                 $job_added_successfully = 0;
                 $date_applied = date('Y-m-d H:i:s');
@@ -1357,6 +1363,11 @@ class Home extends CI_Controller {
                                     $eeo_form                                   = $this->input->post('EEO');
                                 }
                                 //
+                                if (check_company_status($company_sid) == 0) {
+                                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+                                    redirect('/', 'refresh');
+                                }
+                                //
                                 $already_applied                                = $this->job_details->check_job_applicant($job_sid, $email, $company_sid); //check if the user has already applied for this job
                                 // if (in_array($company_sid, array("7", "51"))) {
                                 if (!in_array($company_sid, array("0"))) {
@@ -1454,6 +1465,12 @@ class Home extends CI_Controller {
 
                                         $employer_sid                               = $data['job_details']['user_sid'];
                                         $status_array                               = $this->job_details->update_applicant_status_sid($employer_sid); // Get Applicant Defult Status
+                                        //
+                                        if (check_company_status($employer_sid) == 0) {
+                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+                                            redirect('/', 'refresh');
+                                        }
+                                        //
                                         $portal_job_applications_sid                = $this->job_details->check_job_applicant('company_check', $email, $employer_sid);
                                         $job_added_successfully                     = 0;
                                         $date_applied                               = date('Y-m-d H:i:s');
@@ -1991,6 +2008,12 @@ class Home extends CI_Controller {
 
                                         $employer_sid                               = $data['job_details']['user_sid'];
                                         $status_array                               = $this->job_details->update_applicant_status_sid($employer_sid); // Get Applicant Defult Status
+                                        //
+                                        if (check_company_status($employer_sid) == 0) {
+                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+                                            redirect('/', 'refresh');
+                                        }
+                                        //
                                         $portal_job_applications_sid                = $this->job_details->check_job_applicant('company_check', $email, $employer_sid);
                                         $job_added_successfully                     = 0;
                                         $date_applied                               = date('Y-m-d H:i:s');
@@ -2877,6 +2900,12 @@ class Home extends CI_Controller {
                 $last_name                                                      = $this->input->post('last_name');
                 $resume                                                         = '';
                 $profile_picture                                                = '';
+                //
+                if (check_company_status($data['company_details']['sid']) == 0) {
+                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+                    redirect('/', 'refresh');
+                }
+                //
                 $fair_job_sid                                                   = $this->job_details->check_job_applicant('company_check', $email, $data['company_details']['sid']);
                 $job_added_successfully                                         = 0;
                 $date_applied                                                   = date('Y-m-d H:i:s');

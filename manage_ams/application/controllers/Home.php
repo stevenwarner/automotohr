@@ -1144,7 +1144,18 @@ class Home extends CI_Controller {
                                         $eeo_form                                   = $this->input->post('EEO');
                                     }
 
+                                    if (check_company_status($company_sid) == 0) {
+                                        $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
 
+                                        if ($applied_from == 'job') {
+                                            redirect('/job_details/' . $sid, 'refresh');
+                                        } else if ($applied_from == 'jobs_list_view') {
+                                            redirect('/jobs/');
+                                        } else {
+                                            redirect('/', 'refresh');
+                                        }
+                                    }
+                                    //
                                     $already_applied                                = $this->job_details->check_job_applicant($job_sid, $email, $company_sid); //check if the user has already applied for this job
 
                                     if ($already_applied > 0) { // appliant has already applied for the job. He can't apply again.
@@ -1245,6 +1256,21 @@ class Home extends CI_Controller {
                                         }
 
                                         $employer_sid                               = $data['job_details']['user_sid'];
+                                        //
+                                        if (check_company_status($employer_sid) == 0) {
+                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+
+                                            if ($applied_from == 'job') {
+                                                redirect('/job-feed-details/' . $sid, 'refresh');
+                                            } else if ($applied_from == 'jobs_list_view') {
+                                                redirect('/job-feed/');
+                                            } else {
+                                                redirect('/', 'refresh');
+                                            }   
+
+                                            break;
+                                        }
+                                        //
                                         $status_array                               = $this->job_details->update_applicant_status_sid($employer_sid); // Get Applicant Default Status
                                         // Check if user has already applied in this company for any other job
                                         $portal_job_applications_sid                = $this->job_details->check_job_applicant('company_check', $email, $employer_sid);
@@ -1800,6 +1826,19 @@ class Home extends CI_Controller {
                                         }
                                     }
 
+                                    //
+                                    if (check_company_status($company_sid) == 0) {
+                                        $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+
+                                        if ($applied_from == 'job') {
+                                            redirect('/job_details/' . $sid, 'refresh');
+                                        } else if ($applied_from == 'jobs_list_view') {
+                                            redirect('/jobs/');
+                                        } else {
+                                            redirect('/', 'refresh');
+                                        }
+                                    }
+                                    //
                                     $already_applied                                = $this->job_details->check_job_applicant($job_sid, $email, $company_sid); //check if the user has already applied for this job
 
                                     if ($already_applied > 0) { // appliant has already applied for the job. He can't apply again.
@@ -1861,6 +1900,19 @@ class Home extends CI_Controller {
                                         }
 
                                         $employer_sid                               = $data['job_details']['user_sid'];
+                                        //
+                                        if (check_company_status($employer_sid) == 0) {
+                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+
+                                            if ($applied_from == 'job') {
+                                                redirect('/job_details/' . $sid, 'refresh');
+                                            } else if ($applied_from == 'jobs_list_view') {
+                                                redirect('/jobs/');
+                                            } else {
+                                                redirect('/', 'refresh');
+                                            }
+                                        }
+                                        //
                                         $status_array                               = $this->job_details->update_applicant_status_sid($employer_sid); // Get Applicant Defult Status
                                         // Check if user has already applied in this company for any other job
                                         $portal_job_applications_sid                = $this->job_details->check_job_applicant('company_check', $email, $employer_sid);
@@ -4257,7 +4309,21 @@ class Home extends CI_Controller {
                                     if (!empty($YouTube_Video)) {
                                         $YouTube_code                               = substr($YouTube_Video, strpos($YouTube_Video, '=') + 1, strlen($YouTube_Video));
                                     }
+                                    //
+                                    if (check_company_status($company_sid) == 0) {
+                                        $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
 
+                                        if ($applied_from == 'job') {
+                                            redirect('/job-feed-details/' . $sid, 'refresh');
+                                        } else if ($applied_from == 'jobs_list_view') {
+                                            redirect('/job-feed/');
+                                        } else {
+                                            redirect('/', 'refresh');
+                                        }
+
+                                        break;
+                                    }
+                                    //
                                     $already_applied                                = $this->job_details->check_job_applicant($job_sid, $email, $company_sid); //check if the user has already applied for this job
 
                                     if ($already_applied > 0) { // appliant has already applied for the job. He can't apply again.
@@ -4323,6 +4389,21 @@ class Home extends CI_Controller {
                                         }
 
                                         $employer_sid                               = $data['job_details']['user_sid'];
+                                        //
+                                        if (check_company_status($employer_sid) == 0) {
+                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+
+                                            if ($applied_from == 'job') {
+                                                redirect('/job-feed-details/' . $sid, 'refresh');
+                                            } else if ($applied_from == 'jobs_list_view') {
+                                                redirect('/job-feed/');
+                                            } else {
+                                                redirect('/', 'refresh');
+                                            }    
+
+                                            break;
+                                        }
+                                        //
                                         $status_array                               = $this->job_details->update_applicant_status_sid($employer_sid); // Get Applicant Defult Status
                                         // Check if user has already applied in this company for any other job
                                         $portal_job_applications_sid                = $this->job_details->check_job_applicant('company_check', $email, $employer_sid);
@@ -4845,6 +4926,21 @@ class Home extends CI_Controller {
                                     if (!empty($YouTube_Video)) {
                                         $YouTube_code                               = substr($YouTube_Video, strpos($YouTube_Video, '=') + 1, strlen($YouTube_Video));
                                     }
+                                    //
+                                    if (check_company_status($company_sid) == 0) {
+                                        $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+
+                                        if ($applied_from == 'job') {
+                                            redirect('/job-feed-details/' . $sid, 'refresh');
+                                        } else if ($applied_from == 'jobs_list_view') {
+                                            redirect('/job-feed/');
+                                        } else {
+                                            redirect('/', 'refresh');
+                                        }   
+
+                                        break;
+                                    }
+                                    //
 
                                     $already_applied                                = $this->job_details->check_job_applicant($job_sid, $email, $company_sid); //check if the user has already applied for this job
 
@@ -4907,6 +5003,21 @@ class Home extends CI_Controller {
                                         }
 
                                         $employer_sid                               = $data['job_details']['user_sid'];
+                                        //
+                                        if (check_company_status($employer_sid) == 0) {
+                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+
+                                            if ($applied_from == 'job') {
+                                                redirect('/job-feed-details/' . $sid, 'refresh');
+                                            } else if ($applied_from == 'jobs_list_view') {
+                                                redirect('/job-feed/');
+                                            } else {
+                                                redirect('/', 'refresh');
+                                            }   
+
+                                            break;
+                                        }
+                                        //
                                         $status_array                               = $this->job_details->update_applicant_status_sid($employer_sid); // Get Applicant Defult Status
                                         // Check if user has already applied in this company for any other job
                                         $portal_job_applications_sid                = $this->job_details->check_job_applicant('company_check', $email, $employer_sid);
