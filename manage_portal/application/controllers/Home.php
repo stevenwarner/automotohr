@@ -1471,6 +1471,7 @@ class Home extends CI_Controller {
                                             redirect('/', 'refresh');
                                         }
                                         //
+                                        //
                                         $portal_job_applications_sid                = $this->job_details->check_job_applicant('company_check', $email, $employer_sid);
                                         $job_added_successfully                     = 0;
                                         $date_applied                               = date('Y-m-d H:i:s');
