@@ -832,7 +832,7 @@ class Home extends CI_Controller {
                 } 
                 //
                 if (check_company_status($data['company_details']['sid']) == 0) {
-                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon. 11');
+                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
 
                     redirect('/', 'refresh');
                 }
@@ -1364,7 +1364,7 @@ class Home extends CI_Controller {
                                 }
                                 //
                                 if (check_company_status($company_sid) == 0) {
-                                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon. 11');
+                                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
                                     redirect('/', 'refresh');
                                 }
                                 //
@@ -1467,7 +1467,7 @@ class Home extends CI_Controller {
                                         $status_array                               = $this->job_details->update_applicant_status_sid($employer_sid); // Get Applicant Defult Status
                                         //
                                         if (check_company_status($employer_sid) == 0) {
-                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon. 11');
+                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
                                             redirect('/', 'refresh');
                                         }
                                         //
@@ -2011,7 +2011,7 @@ class Home extends CI_Controller {
                                         $status_array                               = $this->job_details->update_applicant_status_sid($employer_sid); // Get Applicant Defult Status
                                         //
                                         if (check_company_status($employer_sid) == 0) {
-                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon. 11');
+                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
                                             redirect('/', 'refresh');
                                         }
                                         //
@@ -2941,7 +2941,7 @@ class Home extends CI_Controller {
 
                     //
                     if($hack){
-                        $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon. 11');
+                        $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
                         redirect('/job_fair'.'/'.$redirect_page_url."?applied_by=".rand(1,99), 'refresh');
                     }
                     
@@ -3116,7 +3116,7 @@ class Home extends CI_Controller {
                     }
 
                     if ($job_added_successfully == 1) {
-                        $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon. 11');
+                        $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
                     } // end of default form
                 } else { // start of custom Form 
                     $formpost                                                   = $this->input->post(NULL, TRUE);
@@ -3375,7 +3375,7 @@ class Home extends CI_Controller {
                         sendMail(REPLY_TO, $formpost['email'], $subject, $autoemailbody, $from_name, REPLY_TO);
                     }
 
-                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon. 11');
+                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
                 }
                 
                 redirect('/job_fair'.'/'.$redirect_page_url."?applied_by=".$portal_applicant_jobs_list_sid, 'refresh');
