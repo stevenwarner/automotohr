@@ -2902,7 +2902,7 @@ class Home extends CI_Controller {
                 $profile_picture                                                = '';
                 //
                 if (check_company_status($data['company_details']['sid']) == 0) {
-                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon. 11');
+                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
                     redirect('/', 'refresh');
                 }
                 //
