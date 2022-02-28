@@ -1841,6 +1841,7 @@ class Dashboard_model extends CI_Model
                 if ($pro['product_sid'] == $product['sid']) {
                     $pro['product_image'] = $product['product_image'];
                     $pro['name'] = $product['name'];
+                    $pro['product_brand'] = $product['product_brand'];
                     $productArray[$key] = $pro;
                 }
             }
