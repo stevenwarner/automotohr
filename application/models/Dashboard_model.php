@@ -1734,7 +1734,7 @@ class Dashboard_model extends CI_Model
         return $this->companyPurchasedProducts($productIds, $companyId, $product_type);
     }
 
-    function companyPurchasedProducts($productIds, $companyId, $product_type = NULL)
+    function companyPurchasedProducts_old($productIds, $companyId, $product_type = NULL)
     {
         $i = 0;
         $productArray = array();
@@ -1795,6 +1795,57 @@ class Dashboard_model extends CI_Model
             }
         }
 
+        return $productArray;
+    }
+
+    function companyPurchasedProducts($productIds, $companyId, $product_type = NULL){
+        //
+        $productArray = array();
+        $productIDsInArray = array();
+        //
+        $this->db->select('*');
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('status', 'Paid');
+        $record_obj = $this->db->get('invoices'); //Getting all invoices against the company which are paid
+        $orders = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        foreach ($orders as $order) {
+            $dataArray = unserialize($order['serialized_items_info']);
+            //
+            foreach ($dataArray['products'] as $key => $product) {
+                if (in_array($product, $productIds)) {
+                    if (in_array($product, $productIDsInArray)) {
+                        //
+                        $productArray[$product]['remaining_qty'] = $productArray[$product]['remaining_qty'] + $dataArray['item_remaining_qty'][$key];
+                    } else {
+                        //
+                        array_push($productIDsInArray, $product);
+                        $productArray[$product]['product_sid'] = $product;
+                        $productArray[$product]['remaining_qty'] = $dataArray['item_remaining_qty'][$key];
+                        //
+                        if (isset($dataArray['no_of_days']))
+                            $productArray[$product]['no_of_days'] = $dataArray['no_of_days'][$key];   
+                    }    
+                }    
+            }    
+        }
+        //
+        if ($product_type == NULL) {
+            $products = $this->db->get('products')->result_array();
+        } else
+            $products = $this->db->get_where('products', array('product_type' => $product_type))->result_array();
+        //
+        foreach ($productArray as $key => $pro) {
+            foreach ($products as $myKey => $product) {
+                if ($pro['product_sid'] == $product['sid']) {
+                    $pro['product_image'] = $product['product_image'];
+                    $pro['name'] = $product['name'];
+                    $productArray[$key] = $pro;
+                }
+            }
+        }
+        //
         return $productArray;
     }
 
