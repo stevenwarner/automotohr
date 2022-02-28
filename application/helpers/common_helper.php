@@ -12110,7 +12110,7 @@ if(!function_exists('')){
             $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);            $downloadURL = base_url("hr_documents_management/download_upload_document/".$document['document_s3_name']);
 
-	}else if($document['offer_letter_type'] == 'hybrid_document'|| $document['document_type'] == 'hybrid_document'){
+    }else if($document['offer_letter_type'] == 'hybrid_document'|| $document['document_type'] == 'hybrid_document'){
             //
             if($type == ''){
                 if(!empty($document['user_consent']) || !empty($document['uploaded'])){
@@ -14283,6 +14283,10 @@ if (!function_exists('CheckUserEEOCStatus')) {
             return true;
         }
         //
+        return false;
+    }
+}
+
 
 if(!function_exists('LoadModel')){
     function LoadModel($index, $_this){
@@ -14538,6 +14542,9 @@ if(!function_exists('GetFileContent')){
         }
         //
         return $fileData;
+    }
+}
+
 if(!function_exists('_m')){
     /**
      * Add environment check to the assets
@@ -14635,6 +14642,9 @@ if(!function_exists('check_is_employee_exist_or_transfer')){
         //
         return "no_record_found";
         
+    }
+}
+
 if(!function_exists('GetHireDate')){
     /**
      * Get the new joined date
@@ -14658,5 +14668,17 @@ if(!function_exists('GetHireDate')){
         } else if($rd){
             return DateTime::createfromformat('Y-m-d H:i:s', $rd)->format('Y-m-d');
         }
+    }
+}
+
+if (!function_exists('check_company_status')) {
+    function check_company_status($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('active');
+        $CI->db->where('sid', $company_sid);
+        $result = $CI->db->get('users')->row_array();
+        //
+        return $result["active"]; 
     }
 }
