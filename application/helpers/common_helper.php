@@ -12110,7 +12110,7 @@ if(!function_exists('')){
             $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);            $downloadURL = base_url("hr_documents_management/download_upload_document/".$document['document_s3_name']);
 
-	}else if($document['offer_letter_type'] == 'hybrid_document'|| $document['document_type'] == 'hybrid_document'){
+    }else if($document['offer_letter_type'] == 'hybrid_document'|| $document['document_type'] == 'hybrid_document'){
             //
             if($type == ''){
                 if(!empty($document['user_consent']) || !empty($document['uploaded'])){
