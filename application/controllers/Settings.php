@@ -8,6 +8,7 @@ class Settings extends Public_Controller
         $this->load->model('dashboard_model');
         $this->load->model('settings_model');
         $this->load->model('application_tracking_model');
+        $this->load->model("Payroll_model");
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library("pagination");
@@ -334,7 +335,10 @@ class Settings extends Public_Controller
             $data['complynet_status'] = $complynet_status;
             $data['complynet_link'] = $data['session']['company_detail']['complynet_dashboard_link'];
             $data['portal'] = $this->dashboard_model->get_portal_detail($company_id);
-
+            //
+            $payroll_status = $this->Payroll_model->GetCompanyPayrollStatus($company_id);
+            $data['payroll_status'] = $payroll_status;
+            //
             if ($data['company']['CompanyName'] != $this->input->post('CompanyName')) {
                 $this->form_validation->set_message('is_unique', '%s is already registered.');
                 $this->form_validation->set_rules('CompanyName', 'Company Name', 'required|trim|xss_clean|is_unique[users.CompanyName]');
@@ -353,8 +357,11 @@ class Settings extends Public_Controller
 
             $this->form_validation->set_rules('email', 'Company E-Mail', 'trim|xss_clean');
             $this->form_validation->set_rules('CompanyDescription', 'Description', 'trim|xss_clean');
-            $this->form_validation->set_rules('ssn', 'ssn', 'trim|xss_clean|required');
-
+            //
+            if($payroll_status == 1){
+                $this->form_validation->set_rules('ssn', 'ssn', 'trim|xss_clean|required');
+            }
+            //
             if ($this->form_validation->run() === FALSE) {
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/company_profile_new');

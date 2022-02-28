@@ -11,7 +11,7 @@
                             <span class="page-heading down-arrow"><?php echo $title; ?></span>
                         </div>
                         <div class="job-title-text">                
-                            <p>Fields marked with an asterisk (<span>*</span>) are mandatory.</p>
+                            <p>Fields marked with an asterisk (<span class= "staric">*</span>) are mandatory.</p>
                         </div>
                     </div>
                     <div class="form-wrp">
@@ -32,14 +32,14 @@
                                     <div class="row">
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="form-group">
-                                                <?php echo form_label('Company Name <span class="hr-required">*</span>', 'CompanyName'); ?>
+                                                <?php echo form_label('Company Name <span class="hr-required staric">*</span>', 'CompanyName'); ?>
                                                 <?php echo form_input('CompanyName', set_value('CompanyName', $company['CompanyName']), 'class="form-control"'); ?>
                                                 <?php echo form_error('CompanyName'); ?>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="form-group">
-                                                <?php echo form_label('Contact Person <span class="hr-required">*</span>', 'ContactName'); ?>
+                                                <?php echo form_label('Contact Person <span class="hr-required staric">*</span>', 'ContactName'); ?>
                                                 <?php echo form_input('ContactName', set_value('ContactName', $company['ContactName']), 'class="form-control"'); ?>
                                                 <?php echo form_error('ContactName'); ?>
                                             </div>
@@ -71,7 +71,8 @@
                         </div>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <?php echo form_label('Company EIN Number  <span class="hr-required">*</span>', 'ssn'); ?>									
+                                <label>Company EIN Number <?php echo $payroll_status == 1 ? '<span class="hr-required staric">*</span>' : ''; ?></label> 
+                                <?php //echo form_label('Company EIN Number  <span class="hr-required staric">*</span>', 'ssn'); ?>									
                                 <?php echo form_input('ssn', set_value('ssn', $company['ssn']), 'class="form-control"'); ?>
                                 <?php echo form_error('ssn'); ?>
                             </div>
@@ -377,6 +378,13 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script language="JavaScript" type="text/javascript">
         function validate_form() {
+            var SSN_required = false;
+            var PayrollStatus = "<?php echo $payroll_status; ?>";
+            //
+            if (PayrollStatus == 1) {
+                SSN_required = true;
+            }
+            //
             $("#myprofile").validate({
                 ignore: ":hidden:not(select)",
                 rules: {
@@ -389,7 +397,7 @@
                         pattern: /^[a-zA-Z0-9\- .]+$/
                     },
                     ssn: {
-                        required: true,
+                        required: SSN_required,
                         number: true,
                         maxlength: 9,
                         minlength: 9,
