@@ -416,7 +416,7 @@ class Payroll_model extends CI_Model{
      */
     function GetStates(){
         return $this->db
-        ->select('state_code, state_name')
+        ->select('sid, state_code, state_name')
         ->where('active', 1)
         ->order_by('state_name')
         ->get('states')
