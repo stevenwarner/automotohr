@@ -214,6 +214,11 @@
                                                             data-download-url="<?= base_url()."hr_documents_management/download_upload_document/". $required_document['s3_filename']; ?>"
                                                             data-document-sid="<?= $required_document['sid'] ?>"
                                                             >View/Update</button>
+                                                    <button class="btn btn-danger"
+                                                            onclick="remove_supporting_document(this);"
+                                                            data-document-sid="<?= $required_document['sid'] ?>"
+                                                            data-document-type="<?= $required_document['form_type'] ?>"
+                                                            >Delete</button>        
                                                 </td>
                                             </tr>
                                         <?php } ?>
@@ -398,7 +403,7 @@
             $("h1").text('Please Select Document');
         }
     }
-
+    //
     function fLaunchModal(source) {
         var document_preview_url = $(source).attr('data-preview-url');
         var document_download_url = $(source).attr('data-download-url');
@@ -458,7 +463,7 @@
             }
         });
     }
-
+    //
     function submit_upload_file () {
         alertify.confirm(
             'Are you Sure?',
@@ -470,6 +475,7 @@
                 alertify.error('Cancelled!');
             }).set('labels', {ok: 'Yes!', cancel: 'Cancel'});
     }
+    //
     function check_file(val) {
         var fileName = $("#" + val).val();
         if (fileName.length > 0) {
@@ -490,7 +496,7 @@
             $('#name_' + val).html('Please Select');
         }
     }
-
+    //
     function preview_document_model(source) {
         var document_preview_url = $(source).attr('data-preview-url');
         var document_download_url = $(source).attr('data-download-url');
@@ -559,6 +565,45 @@
         $('#upload_eev_form_document .preview').html(modal_content);
         $('#upload_eev_form_document').modal('show');
     }
+    //
+    function remove_supporting_document (source) {
+        var document_sid = $(source).attr('data-document-sid');
+        var document_type = $(source).attr('data-document-type');
+        //
+        var document_name = "";
+        //
+        if (document_type == "w4_assigned") {
+            document_name = "W4";
+        } else if (document_type == "w9_assigned") {
+            document_name = "W9";
+        } else if (document_type == "i9_assigned") {
+            document_name = "I9";
+        }
+        //
+        alertify.confirm(
+            'Are you Sure?',
+            'Are you sure you want to delete this '+document_name+' supporting document?',
+            function () {
+                var delete_document_url = '<?= base_url("hr_documents_management/delete_supporting_document") ?>'+'/'+document_sid;
+                //
+                $.ajax({
+                    type: "GET",
+                    url: delete_document_url,
+                    dataType: "json", // Set the data type so jQuery can parse it for you
+                    success: function (data) {
+                        if (data.status){
+                            alertify.alert('Notice', data.message, function () {
+                                window.location.reload();
+                            });
+                        }
+                    }
+                });
+            },
+            function () {
+                alertify.error('Canceled delete process!');
+            }).set('labels', {ok: 'Yes!', cancel: 'Cancel'});
+    }
+    //
     $("#btn_document_file,#btn_document_pop").click(function(){
         if($(this).attr('id') == "btn_document_file")
             $("#form_upload_eev_document").submit();
