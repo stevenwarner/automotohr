@@ -1470,7 +1470,8 @@ class Employee_management extends Public_Controller {
                         'ssn' => $this->input->post('SSN'),
                         'employee_number' => $this->input->post('employee_number'),
                         'department_sid' => $this->input->post('department'),
-                        'gender' => $this->input->post('gender')
+                        'gender' => $this->input->post('gender'),
+                        'marital_status' => $this->input->post('marital_status')
                     );
                     //
                     //
@@ -2136,7 +2137,9 @@ class Employee_management extends Public_Controller {
                     'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                     'employee_number' => $this->input->post('employee_number'),
                     'ssn' => $this->input->post('ssn'),
-                    'dob' => $DOB
+                    'dob' => $DOB,
+                    'marital_status' => $this->input->post('marital_status'),
+                    'gender' => $this->input->post('gender')
                 );
 
                 if(!empty($this->input->post('secondary_email', true))){

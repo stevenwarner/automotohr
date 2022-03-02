@@ -152,6 +152,7 @@
                                                     <label>Gender:
                                                     </label>
                                                     <select class="invoice-fields <?php if (form_error('gender') !== "") { ?> error <?php } ?>" name="gender">
+                                                        <option value="">Please Select Gender</option>
                                                         <option <?=$employer["gender"] == 'male' ? 'selected' : '';?> value="male">Male</option>
                                                         <option <?=$employer["gender"] == 'female' ? 'selected' : '';?> value="female">Female</option>
                                                         <option <?=$employer["gender"] == 'other' ? 'selected' : '';?> value="other">Other</option>
@@ -408,6 +409,26 @@
                                                 </div>
                                                 <!--  -->
                                             </div>
+                                             <div class="row">        
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Marital Status:</label>
+                                                    <select class="invoice-fields <?php if (form_error('marital_status') !== "") { ?> error <?php } ?>" name="marital_status">
+                                                        <option <?=$employer["marital_status"] == 'not_specified' ? 'selected' : '';?> value="not_specified">
+                                                            Please select marital status
+                                                        </option>
+                                                        <option <?=$employer["marital_status"] == 'Single' ? 'selected' : '';?> value="Single">
+                                                            Single
+                                                        </option>
+                                                        <option <?=$employer["marital_status"] == 'Married' ? 'selected' : '';?> value="Married">
+                                                            Married
+                                                        </option>
+                                                        <option <?=$employer["marital_status"] == 'Other' ? 'selected' : '';?> value="Other">
+                                                            Other
+                                                        </option>
+                                                    </select>
+                                                    <?php echo form_error('marital_status'); ?>
+                                                </div>
+                                            </div>    
                                             <div class="row">
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">

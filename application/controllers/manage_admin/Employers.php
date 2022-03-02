@@ -341,6 +341,8 @@ class employers extends Admin_Controller {
             $data['access_level'] = $this->input->post('security_access_level');
             $data['access_level_plus'] = $this->input->post('access_level_plus');
             $data['complynet_status'] = $this->input->post('complynet_status');
+            $data['gender'] = $this->input->post('gender');
+            $data['marital_status'] = $this->input->post('marital_status');
 
             //
             if(!empty($this->input->post('nick_name', true))){

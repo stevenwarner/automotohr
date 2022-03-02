@@ -176,7 +176,42 @@
                                                         <?php echo form_error('rehire_date'); ?>
                                                     </div>
                                                 </li>
-
+                                                <li>
+                                                    <label>Gender</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="hr-select-dropdown">
+                                                            <select name="gender" id="gender" class="invoice-fields">
+                                                                <option value="">Please Select Gender</option>
+                                                                <option <?=$data["gender"] == 'male' ? 'selected' : '';?> value="male">Male</option>
+                                                                <option <?=$data["gender"] == 'female' ? 'selected' : '';?> value="female">Female</option>
+                                                                <option <?=$data["gender"] == 'other' ? 'selected' : '';?> value="other">Other</option>
+                                                            </select>
+                                                        </div>
+                                                        <?php echo form_error('gender'); ?>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <label>Marital Status</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="hr-select-dropdown">
+                                                            <select name="marital_status" id="marital_status" class="invoice-fields">
+                                                                <option <?=$data["marital_status"] == 'not_specified' ? 'selected' : '';?> value="not_specified">
+                                                                    Please select marital status
+                                                                </option>
+                                                                <option <?=$data["marital_status"] == 'Single' ? 'selected' : '';?> value="Single">
+                                                                    Single
+                                                                </option>
+                                                                <option <?=$data["marital_status"] == 'Married' ? 'selected' : '';?> value="Married">
+                                                                    Married
+                                                                </option>
+                                                                <option <?=$data["marital_status"] == 'Other' ? 'selected' : '';?> value="Other">
+                                                                    Other
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <?php echo form_error('marital_status'); ?>
+                                                    </div>
+                                                </li>
                                                 <li>
                                                     <label>Security Access Level</label>
                                                     <div class="hr-fields-wrap">
