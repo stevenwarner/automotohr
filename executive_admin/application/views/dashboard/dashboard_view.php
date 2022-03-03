@@ -267,7 +267,7 @@
                 rows += '       <p>'+( v.user_name )+'</p>';
                 rows += '       <p><strong>Email: </strong>'+( v.user_email )+'</p>';
                 if(v.user_registration_date  != null)
-                rows += '       <p><strong>Registration Date: </strong>'+( v.user_registration_date )+'</p>';
+                rows += '       <p><strong>Joining Date: </strong>'+( v.user_registration_date )+'</p>';
                 rows += '   </td>';
                 if(v.user_type == 'employee')
                     rows += '   <td>'+( v.last_job_title == '' || v.last_job_title == null ? 'N/A' :  v.last_job_title )+'</td>';

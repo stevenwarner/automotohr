@@ -27,7 +27,7 @@
                             <thead>
                                 <th class="col-lg-2">Company Name</th>
                                 <th class="col-lg-3">Address</th>
-                                <th class="col-lg-2">Registration Date</th>
+                                <th class="col-lg-2">Joining Date</th>
                                 <th class="col-lg-2">Phone Number</th>
                                 <th class="col-lg-3">Website</th>
                             </thead>
