@@ -111,7 +111,12 @@
                                                                             } else {
                                                                                 echo $value['username']; 
                                                                                 //
-                                                                                echo '<br> <b> Employee Status:</b> '. (GetEmployeeStatus($value['last_status_text'], $value['active']));
+                                                                                if ($value['active'] == 1 && $value['archived'] == 0) {
+                                                                                    echo '<br> <b> Employee Status:</b> Active';
+                                                                                } else {
+                                                                                    echo '<br> <b> Employee Status:</b> '. (GetEmployeeStatus($value['last_status_text'], $value['active']));
+                                                                                }
+                                                                                //
                                                                                 echo '<br> <b> Access Level:</b> '. ucwords($value['access_level']);
                                                                                 echo ($value['access_level_plus'] && $value['pay_plan_flag']) ? ' Plus / Payroll' : ($value['access_level_plus'] ? ' Plus' : ($value['pay_plan_flag'] ? ' Payroll' : ''));
                                                                                 echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="'.$value['sid'].'" data-name="'.$value['company_name'].'">Send Login Email</a>';

@@ -191,6 +191,7 @@ class Company_model extends CI_Model {
         $this->db->select('table_one.pay_plan_flag');
         $this->db->select('table_one.profile_picture');
         $this->db->select('table_one.active');
+        $this->db->select('table_one.archived');
         $this->db->select('table_one.system_user_date');
         $this->db->select('table_one.general_status');
         $this->db->select('table_two.CompanyName as company_name');
