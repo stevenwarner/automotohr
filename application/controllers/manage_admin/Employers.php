@@ -347,7 +347,7 @@ class employers extends Admin_Controller {
             if ($data['gender'] != "other") {
                 $updateGender = array();
                 $updateGender['gender'] = ucfirst($data['gender']);
-                $this->employee_model->update_gender_in_eeoc_form($sid, 'employee', $updateGender);
+                $this->company_model->update_gender_in_eeoc_form($sid, 'employee', $updateGender);
             }
             //
             if(!empty($this->input->post('nick_name', true))){
