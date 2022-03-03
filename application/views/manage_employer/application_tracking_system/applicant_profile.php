@@ -203,6 +203,16 @@
                                             </p>
                                         </div>
                                     </div><br>
+                                    <div class = "row">   
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Gender</label>
+                                            <p class="dummy-invoice-fields"><?php echo GetVal($applicant_info["gender"]); ?></p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Marital Status</label>
+                                            <p class="dummy-invoice-fields"><?php echo GetVal($applicant_info["marital_status"]); ?></p>
+                                        </div>
+                                    </div><br>    
                                     <div class = "row">     
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Referred By</label>
@@ -441,6 +451,35 @@
                                                    id="other_PhoneNumber"
                                                    value="<?php echo set_value('other_PhoneNumber', $extra_info["other_PhoneNumber"]); ?>"
                                                    type="text" name="other_PhoneNumber">
+                                            </li>
+                                            <li class="form-col-50-left">
+                                                <label>Gender:</label>
+                                                <select class="invoice-fields" name="gender">
+                                                    <option value="">Please Select Gender</option>
+                                                    <option <?=$applicant_info["gender"] == 'male' ? 'selected' : '';?> value="male">Male</option>
+                                                    <option <?=$applicant_info["gender"] == 'female' ? 'selected' : '';?> value="female">Female</option>
+                                                    <option <?=$applicant_info["gender"] == 'other' ? 'selected' : '';?> value="other">Other</option>
+                                                </select>
+                                                <?php echo form_error('gender'); ?>
+                                            </li>
+                                            <!--  -->
+                                            <li class="form-col-50-right">
+                                                <label>Marital Status:</label>
+                                                <select class="invoice-fields <?php if (form_error('marital_status') !== "") { ?> error <?php } ?>" name="marital_status">
+                                                    <option value="">
+                                                        Please select marital status
+                                                    </option>
+                                                    <option <?=$applicant_info["marital_status"] == 'Single' ? 'selected' : '';?> value="Single">
+                                                        Single
+                                                    </option>
+                                                    <option <?=$applicant_info["marital_status"] == 'Married' ? 'selected' : '';?> value="Married">
+                                                        Married
+                                                    </option>
+                                                    <option <?=$applicant_info["marital_status"] == 'Other' ? 'selected' : '';?> value="Other">
+                                                        Other
+                                                    </option>
+                                                </select>
+                                                <?php echo form_error('marital_status'); ?>
                                             </li>
                                             <li class="form-col-50-left">
                                                 <label>Referred By:</label>

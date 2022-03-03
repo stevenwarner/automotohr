@@ -14682,3 +14682,43 @@ if (!function_exists('check_company_status')) {
         return $result["active"]; 
     }
 }
+
+if (!function_exists('get_user_gender')) {
+    function get_user_gender($user_sid, $user_type)
+    {
+        $table = "users";
+        //
+        if ($user_type == "applicant") {
+            $table = "portal_job_applications";
+        }
+        //
+        $CI = &get_instance();
+        $CI->db->select('gender');
+        $CI->db->where('sid', $user_sid);
+        //
+        $records_obj = $CI->db->get($table);
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return ucfirst($records_arr["gender"]);
+        } else {
+            return "";
+        }
+    }
+}
+
+if (!function_exists('update_user_gender')) {
+    function update_user_gender($user_sid, $user_type, $dataToUpdate)
+    {
+        $table = "users";
+        //
+        if ($user_type == "applicant") {
+            $table = "portal_job_applications";
+        }
+        //
+        $CI = &get_instance();
+        $CI->db->where('sid', $user_sid);
+        $CI->db->update($table, $dataToUpdate);
+    }
+}

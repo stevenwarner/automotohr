@@ -832,82 +832,82 @@ class Application_tracking_system extends Public_Controller {
                 // Added on: 03-05-2019
                 unset($user_data['DOB']);
 
-            // Reset phone number
-            $user_data['phone_number'] = isset($formpost['txt_phonenumber']) ? $formpost['txt_phonenumber'] : $formpost['phone_number'];
-            $secondary_phonenumber    = isset($formpost['txt_secondary_phonenumber']) ? $formpost['txt_secondary_phonenumber'] : $this->input->post('secondary_PhoneNumber', true);
-            $other_phonenumber        = isset($formpost['txt_other_phonenumber']) ? $formpost['txt_other_phonenumber'] : $this->input->post('other_PhoneNumber', true);
+                // Reset phone number
+                $user_data['phone_number'] = isset($formpost['txt_phonenumber']) ? $formpost['txt_phonenumber'] : $formpost['phone_number'];
+                $secondary_phonenumber    = isset($formpost['txt_secondary_phonenumber']) ? $formpost['txt_secondary_phonenumber'] : $this->input->post('secondary_PhoneNumber', true);
+                $other_phonenumber        = isset($formpost['txt_other_phonenumber']) ? $formpost['txt_other_phonenumber'] : $this->input->post('other_PhoneNumber', true);
 
-            $date_of_birth = $this->input->post('DOB');
+                $date_of_birth = $this->input->post('DOB');
 
-            if (!empty($date_of_birth) && !preg_match(XSYM_PREG, $date_of_birth)) {
-                $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
-                $user_data['dob'] = $DOB;
-            }
-            //
-            $notified_by=$this->input->post('notified_by');
-            //
-            if(!empty($notified_by)){
-                $user_data['notified_by'] =$notified_by;
-            }else{
-                $user_data['notified_by']='email';
-            }
-            //
-            if($this->input->post('SSN') && !preg_match(XSYM_PREG, $this->input->post('SSN')))
-            $user_data['ssn'] = $this->input->post('SSN');
-            //
-            if(preg_match(XSYM_PREG, $this->input->post('SSN'))) unset($user_data['SSN']);
-            //
-            $user_data['employee_number'] = $this->input->post('employee_number');
-            $user_data['employer_sid'] = $employer_id;
-            $user_data['extra_info'] = serialize(array('secondary_email' => $this->input->post('secondary_email'), 'secondary_PhoneNumber' => $secondary_phonenumber, 'other_email' => $this->input->post('other_email'), 'other_PhoneNumber' => $other_phonenumber));
-            $video_source = $this->input->post('video_source');
-            $video_id = '';
+                if (!empty($date_of_birth) && !preg_match(XSYM_PREG, $date_of_birth)) {
+                    $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
+                    $user_data['dob'] = $DOB;
+                }
+                //
+                $notified_by=$this->input->post('notified_by');
+                //
+                if(!empty($notified_by)){
+                    $user_data['notified_by'] =$notified_by;
+                }else{
+                    $user_data['notified_by']='email';
+                }
+                //
+                if($this->input->post('SSN') && !preg_match(XSYM_PREG, $this->input->post('SSN')))
+                $user_data['ssn'] = $this->input->post('SSN');
+                //
+                if(preg_match(XSYM_PREG, $this->input->post('SSN'))) unset($user_data['SSN']);
+                //
+                $user_data['employee_number'] = $this->input->post('employee_number');
+                $user_data['employer_sid'] = $employer_id;
+                $user_data['extra_info'] = serialize(array('secondary_email' => $this->input->post('secondary_email'), 'secondary_PhoneNumber' => $secondary_phonenumber, 'other_email' => $this->input->post('other_email'), 'other_PhoneNumber' => $other_phonenumber));
+                $video_source = $this->input->post('video_source');
+                $video_id = '';
 
-            if ($video_source != 'no_video') {
-                if (isset($_FILES['upload_video']) && !empty($_FILES['upload_video']['name'])) {
-                    $random = generateRandomString(5);
-                    $target_file_name = basename($_FILES["upload_video"]["name"]);
-                    $upload_video_file_name = strtolower($company_sid . '/' . $random . '_' . $target_file_name);
-                    $target_dir = "assets/uploaded_videos/";
-                    $target_file = $target_dir . $upload_video_file_name;
-                    $filename = $target_dir . $company_sid;
+                if ($video_source != 'no_video') {
+                    if (isset($_FILES['upload_video']) && !empty($_FILES['upload_video']['name'])) {
+                        $random = generateRandomString(5);
+                        $target_file_name = basename($_FILES["upload_video"]["name"]);
+                        $upload_video_file_name = strtolower($company_sid . '/' . $random . '_' . $target_file_name);
+                        $target_dir = "assets/uploaded_videos/";
+                        $target_file = $target_dir . $upload_video_file_name;
+                        $filename = $target_dir . $company_sid;
 
-                    if (!file_exists($filename)) {
-                        mkdir($filename);
-                    }
-
-                    if (move_uploaded_file($_FILES["upload_video"]["tmp_name"], $target_file)) {
-
-                        $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["upload_video"]["name"]) . ' has been uploaded.');
-                    } else {
-
-                        $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
-                        redirect('application_tracking_system/applicant_profile', 'refresh');
-                    }
-
-                    $video_id = $upload_video_file_name;
-                } else {
-                    $video_id = $this->input->post('yt_vm_video_url');
-
-                    if ($video_source == 'youtube') {
-                        $url_prams = array();
-                        parse_str(parse_url($video_id, PHP_URL_QUERY), $url_prams);
-
-                        if (isset($url_prams['v'])) {
-                            $video_id = $url_prams['v'];
-                        } else {
-                            $video_id = '';
+                        if (!file_exists($filename)) {
+                            mkdir($filename);
                         }
-                    } else if ($video_source == 'vimeo') {
-                        $video_id = $this->vimeo_get_id($video_id);
-                    } else if ($video_source == 'uploaded' && $this->input->post('pre_upload_video_url') != '') {
-                        $video_id = $this->input->post('pre_upload_video_url');
+
+                        if (move_uploaded_file($_FILES["upload_video"]["tmp_name"], $target_file)) {
+
+                            $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["upload_video"]["name"]) . ' has been uploaded.');
+                        } else {
+
+                            $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                            redirect('application_tracking_system/applicant_profile', 'refresh');
+                        }
+
+                        $video_id = $upload_video_file_name;
+                    } else {
+                        $video_id = $this->input->post('yt_vm_video_url');
+
+                        if ($video_source == 'youtube') {
+                            $url_prams = array();
+                            parse_str(parse_url($video_id, PHP_URL_QUERY), $url_prams);
+
+                            if (isset($url_prams['v'])) {
+                                $video_id = $url_prams['v'];
+                            } else {
+                                $video_id = '';
+                            }
+                        } else if ($video_source == 'vimeo') {
+                            $video_id = $this->vimeo_get_id($video_id);
+                        } else if ($video_source == 'uploaded' && $this->input->post('pre_upload_video_url') != '') {
+                            $video_id = $this->input->post('pre_upload_video_url');
+                        }
                     }
                 }
-            }
 
-            $user_data['YouTube_Video'] = $video_id;
-            $user_data['video_type'] = $video_source;
+                $user_data['YouTube_Video'] = $video_id;
+                $user_data['video_type'] = $video_source;
 
                 if (isset($_FILES['pictures']) && $_FILES['pictures']['name'] != '' && $_FILES['pictures']['size'] > 0) {
                     $file = explode(".", $_FILES['pictures']['name']);
@@ -928,6 +928,7 @@ class Application_tracking_system extends Public_Controller {
                     if(!sizeof($this->input->post('notified_by', true))) $user_data['notified_by'] = 'email';
                     else $user_data['notified_by'] = implode(',', $this->input->post('notified_by', true));
                 }
+                //
                 $full_emp_app = isset($data['applicant_info']['full_employment_application']) && !empty($data['applicant_info']['full_employment_application']) ? unserialize($data['applicant_info']['full_employment_application']) : array();
                 $full_emp_app['PhoneNumber'] = $this->input->post('PhoneNumber');
                 $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');

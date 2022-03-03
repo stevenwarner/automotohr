@@ -343,7 +343,12 @@ class employers extends Admin_Controller {
             $data['complynet_status'] = $this->input->post('complynet_status');
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
-
+            //
+            if ($data['gender'] != "other") {
+                $updateGender = array();
+                $updateGender['gender'] = ucfirst($data['gender']);
+                $this->employee_model->update_gender_in_eeoc_form($sid, 'employee', $updateGender);
+            }
             //
             if(!empty($this->input->post('nick_name', true))){
                 $data['nick_name'] = $this->input->post('nick_name', true);

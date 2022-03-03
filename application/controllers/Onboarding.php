@@ -1177,6 +1177,8 @@ class Onboarding extends CI_Controller {
             $employee_number = $this->input->post('employee_number');
             $SSN = $this->input->post('ssn');
             $date_of_birth = $this->input->post('dob');
+            $gender = $this->input->post('gender');
+            $marital_status = $this->input->post('marital_status');
 
             if (!empty($date_of_birth)  && !preg_match(XSYM_PREG, $date_of_birth)) {
                 $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
@@ -1251,6 +1253,8 @@ class Onboarding extends CI_Controller {
             // $primary_info['referred_by_name'] = $referred_by_name;
             // $primary_info['referred_by_email'] = $referred_by_email;
             $primary_info['linkedin_profile_url'] = $linkedin_profile_url;
+            $primary_info['gender'] = $gender;
+            $primary_info['marital_status'] = $marital_status;
             //
             if(!preg_match(XSYM_PREG, $SSN)) $primary_info['ssn'] = $SSN;
             if(!preg_match(XSYM_PREG, $date_of_birth)) $primary_info['dob'] = $DOB;
@@ -1282,6 +1286,13 @@ class Onboarding extends CI_Controller {
             $primary_info['full_employment_application'] = serialize($full_emp_app);
             $this->onboarding_model->update_applicant_information($company_sid, $applicant_sid, $primary_info);
             $this->onboarding_model->increment_section_save_count($applicant_sid, 'applicant', 'general_information');
+            //
+            if ($gender != "other") {
+                $dataToUpdate = array();
+                $dataToUpdate['gender'] = ucfirst($gender);
+                $this->onboarding_model->update_eeoc($applicant_sid, 'applicant', $dataToUpdate);
+            }
+            //
             $this->session->set_flashdata('message', '<strong>Success:</strong> Profile Information Successfully Updated!');
             //Redirect to next step
             redirect('onboarding/general_information/' . $unique_sid, 'refresh');
@@ -2690,13 +2701,15 @@ class Onboarding extends CI_Controller {
             $eeoc = $this->onboarding_model->get_eeoc('applicant', $applicant_sid);
             //$eeoc_status = $this->eeo_model->get_eeo_form_status('applicant', $applicant_sid);
             $eeoc_status ='Yes';
-
+            //
             if (!empty($eeoc)) {
                 $eeoc['eeoc_form_status'] = $eeoc_status;
             } else {
+                $gender = get_user_gender($applicant_info['sid'], 'applicant');
+                $eeoc['gender'] = $gender;
                 $eeoc['eeoc_form_status'] = $eeoc_status;
             }
-
+            //
             $data['eeoc'] = $eeoc;
             $data['eeoc_status'] = $eeoc_status;
             $data['complete_steps'] = $this->onboarding_model->check_updated_sections($applicant_info['employer_sid'], 'applicant', $applicant_info['sid']);
@@ -2762,6 +2775,11 @@ class Onboarding extends CI_Controller {
                 $data_to_update = array();
                 $data_to_update['eeo_form'] = $eeoc_form_status;
                 $this->eeo_model->update_eeo_form_status($users_type, $users_sid, $eeoc_form_status);
+                //
+                $dataToUpdate = array();
+                $dataToUpdate['gender'] = strtolower($gender);
+                update_user_gender($applicant_info['sid'], 'applicant', $dataToUpdate);
+                //
                 $this->session->set_flashdata('message', '<strong>Success</strong> EEOC Updated!');
 
                 if ($enable_learbing_center) {
@@ -9980,6 +9998,11 @@ class Onboarding extends CI_Controller {
             //
             if ($eeo_form_info['status'] == 0) {
                 redirect('hr_documents_management/my_documents', 'refresh');
+            }
+            //
+            if ((isset($eeo_form_info['gender']) && empty($eeo_form_info['gender'])) || empty($eeo_form_info)) {
+                $gender = get_user_gender($employee_sid, $user_type);
+                $eeo_form_info['gender'] = $gender;
             }
             //
             $data['session']            = $session;

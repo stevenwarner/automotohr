@@ -769,6 +769,19 @@ class Onboarding_model extends CI_Model {
         }
     }
 
+    function update_eeoc($user_type, $user_sid, $dataToUpdate) {
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
+        $this->db->from('portal_eeo_form');
+        $record_count = $this->db->count_all_results();
+
+        if ($record_count > 0) {
+            $this->db->where('users_type', $user_type);
+            $this->db->where('application_sid', $user_sid);
+            $this->db->update('portal_eeo_form', $dataToUpdate);
+        }
+    }
+
     function save_required_equipment($user_type, $user_sid, $equipment_details) {
         $this->db->where('users_type', $user_type);
         $this->db->where('users_sid', $user_sid);

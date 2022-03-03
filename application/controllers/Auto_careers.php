@@ -643,6 +643,12 @@ class Auto_careers extends CI_Controller
                     $eeo_data_to_insert['is_expired']                       = 1;
 
                     $this->auto_careers_model->save_eeo_form($eeo_data_to_insert);
+
+                    //
+                    $dataToUpdate = array();
+                    $dataToUpdate['gender'] = strtolower($applicant_data['gender']);
+                    update_user_gender($job_applications_sid, 'applicant', $dataToUpdate);
+                    //
                 }
             } else {
                 $response['error'] = 'Applied';
