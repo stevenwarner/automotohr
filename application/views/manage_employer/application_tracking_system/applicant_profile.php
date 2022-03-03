@@ -206,7 +206,7 @@
                                     <div class = "row">   
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Gender</label>
-                                            <p class="dummy-invoice-fields"><?php echo GetVal($applicant_info["gender"]); ?></p>
+                                            <p class="dummy-invoice-fields"><?php echo ucfirst(GetVal($applicant_info["gender"])); ?></p>
                                         </div>
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Marital Status</label>
