@@ -1014,6 +1014,7 @@ class Home extends CI_Controller {
     }
 
     public function job_details($sid = null) {
+
         $sid = $this->input->post('sid') ? $this->input->post('sid') : $sid;
         if (strpos($sid, "-") !== FALSE) { 
             $sid = @end((explode('-', $sid)));
@@ -1054,6 +1055,20 @@ class Home extends CI_Controller {
                         $list                                                       = $this->job_details->fetch_company_jobs_new($company_sid, $sid,TRUE,0,array(),$has_job_approval_rights);
                     }
                 } 
+
+                if (empty($list)) {
+                    $search_job = explode('-', $this->uri->segment(2)); 
+                    $job_title = isset($search_job[0]) ?  $search_job[0] : '';
+                    $job_city = isset($search_job[3]) ?  $search_job[3] : '';
+                    //
+                    $get_alt_job = $this->job_details->get_alternate_job_from_company($company_sid, $job_title, $job_city);
+                    //
+                    if(!empty($get_alt_job)){
+                        redirect(base_url(job_title_uri($get_alt_job)), 'refresh');
+                    }
+                    //
+                    
+                }
 
                 if (!empty($list)) {
                     $company_sid                                                = $list['user_sid'];
@@ -2533,7 +2548,6 @@ class Home extends CI_Controller {
                         }
                     }
                 } else { //Job Id Is not 0 But Job Not Found
-
                     $this->session->set_flashdata('message', 'No Active job found!');
                     redirect('/', 'refresh');
                 }
