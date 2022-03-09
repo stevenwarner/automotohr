@@ -9,7 +9,11 @@
 
 <?php 
     $action_btn_flag = false;
-    if($session['employer_detail']['access_level_plus'] == 1) {$action_btn_flag = true;}
+    $document_all_permission = false;
+    if($session['employer_detail']['access_level_plus'] == 1) {
+        $action_btn_flag = true;
+        $document_all_permission = true;
+    } 
     //
     $GLOBALS['ad'] = $assigned_documents;
 ?>
@@ -529,31 +533,33 @@
                                                                                                 <?php if(($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_doc')) || $canAccessDocument) { ?>
                                                                                                     <?php if ($action_btn_flag == true || $session['employer_detail']['pay_plan_flag'] == 0) { ?>
                                                                                                         <td>
-                                                                                                            <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids)) { ?>
+                                                                                                            <?php if ($document_all_permission) { ?>
+                                                                                                                <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids)) { ?>
 
-                                                                                                                <?php if(in_array($document['sid'], $assigned_sids)) { ?>  <!-- revoke here  -->
-                                                                                                                    <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
-                                                                                                                        <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
-                                                                                                                        <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
-                                                                                                                    </form>
-                                                                                                                    <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
-                                                                                                                <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
+                                                                                                                    <?php if(in_array($document['sid'], $assigned_sids)) { ?>  <!-- revoke here  -->
+                                                                                                                        <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                                            <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
+                                                                                                                            <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                                            <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                                        </form>
+                                                                                                                        <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                                                                    <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
+                                                                                                                        <button
+                                                                                                                            class="btn blue-button btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                                            data-id="<?=$document['sid'];?>"
+                                                                                                                        >Completed and Reassign</button>
+                                                                                                                    <?php } else { // re-assign here ?>
+                                                                                                                        <button
+                                                                                                                            class="btn btn-warning btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                                            data-id="<?=$document['sid'];?>"
+                                                                                                                        >Modify and Reassign</button>
+                                                                                                                    <?php } ?>
+                                                                                                                <?php } else { ?> <!-- assign here -->
                                                                                                                     <button
-                                                                                                                        class="btn blue-button btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                                        class="btn btn-success btn-sm btn-block js-modify-assign-document-btn"
                                                                                                                         data-id="<?=$document['sid'];?>"
-                                                                                                                    >Completed and Reassign</button>
-                                                                                                                <?php } else { // re-assign here ?>
-                                                                                                                    <button
-                                                                                                                        class="btn btn-warning btn-sm btn-block js-modify-assign-document-btn"
-                                                                                                                        data-id="<?=$document['sid'];?>"
-                                                                                                                    >Modify and Reassign</button>
+                                                                                                                    >Modify and Assign</button>
                                                                                                                 <?php } ?>
-                                                                                                            <?php } else { ?> <!-- assign here -->
-                                                                                                                <button
-                                                                                                                    class="btn btn-success btn-sm btn-block js-modify-assign-document-btn"
-                                                                                                                    data-id="<?=$document['sid'];?>"
-                                                                                                                >Modify and Assign</button>
                                                                                                             <?php } ?>
                                                                                                         </td>
                                                                                                     <?php } ?>
@@ -1483,34 +1489,36 @@
                                                                                     </td>
                                                                                     <td class="col-xs-2:"><?php echo ucwords($offer_letter['letter_type']); ?></td>
                                                                                     <td class="col-xs-1">
-                                                                                        <?php if ($assigned_offer_letter_sid == $offer_letter['sid']) { ?>
-                                                                                            <?php if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 0) { ?>
-                                                                                                <form id="form_assign_document_offer_letter_<?php echo $offer_letter['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo base_url('hr_documents_management/revoke_offer_letter'); ?>">
-                                                                                                        <input type="hidden" name="perform_action" value="revoke_offer_letter" />
-                                                                                                        <input type="hidden" name="offer_letter_sid" value="<?php echo $offer_letter['sid']; ?>">
-                                                                                                        <input type="hidden" name="user_sid" value="<?php echo $user_sid; ?>">
-                                                                                                        <input type="hidden" name="user_type" value="<?php echo $user_type; ?>">
-                                                                                                        <?php if($user_type == 'applicant') { ?>
-                                                                                                            <input type="hidden" name="job_list_sid" value="<?php echo $job_list_sid; ?>">
-                                                                                                        <?php } ?>
-                                                                                                </form>
-                                                                                                    
-                                                                                                <button onclick="func_assign_uploaded_offer_letter('offer_letter', <?php echo $offer_letter['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
-                                                                                            <?php } else if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 1) { ?>
+                                                                                        <?php if ($document_all_permission) { ?>
+                                                                                            <?php if ($assigned_offer_letter_sid == $offer_letter['sid']) { ?>
+                                                                                                <?php if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 0) { ?>
+                                                                                                    <form id="form_assign_document_offer_letter_<?php echo $offer_letter['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo base_url('hr_documents_management/revoke_offer_letter'); ?>">
+                                                                                                            <input type="hidden" name="perform_action" value="revoke_offer_letter" />
+                                                                                                            <input type="hidden" name="offer_letter_sid" value="<?php echo $offer_letter['sid']; ?>">
+                                                                                                            <input type="hidden" name="user_sid" value="<?php echo $user_sid; ?>">
+                                                                                                            <input type="hidden" name="user_type" value="<?php echo $user_type; ?>">
+                                                                                                            <?php if($user_type == 'applicant') { ?>
+                                                                                                                <input type="hidden" name="job_list_sid" value="<?php echo $job_list_sid; ?>">
+                                                                                                            <?php } ?>
+                                                                                                    </form>
+                                                                                                        
+                                                                                                    <button onclick="func_assign_uploaded_offer_letter('offer_letter', <?php echo $offer_letter['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                                                <?php } else if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 1) { ?>
 
+                                                                                                    
+                                                                                                        <button
+                                                                                                            class="btn btn-warning btn-sm btn-block js-modify-assign-offer-letter-btn"
+                                                                                                            data-id="<?=$offer_letter['sid'];?>"
+                                                                                                        >Modify and Reassign</button>
+                                                                                                    
+                                                                                                <?php } ?>    
                                                                                                 
-                                                                                                    <button
-                                                                                                        class="btn btn-warning btn-sm btn-block js-modify-assign-offer-letter-btn"
-                                                                                                        data-id="<?=$offer_letter['sid'];?>"
-                                                                                                    >Modify and Reassign</button>
-                                                                                                
-                                                                                            <?php } ?>    
-                                                                                            
-                                                                                        <?php } else { ?>    
-                                                                                            <button
-                                                                                                class="btn btn-success btn-sm btn-block js-modify-assign-offer-letter-btn"
-                                                                                                data-id="<?=$offer_letter['sid'];?>"
-                                                                                            >Modify and Reassign</button>
+                                                                                            <?php } else { ?>    
+                                                                                                <button
+                                                                                                    class="btn btn-success btn-sm btn-block js-modify-assign-offer-letter-btn"
+                                                                                                    data-id="<?=$offer_letter['sid'];?>"
+                                                                                                >Modify and Reassign</button>
+                                                                                            <?php } ?> 
                                                                                         <?php } ?> 
                                                                                     </td>
                                                                                     <td class="col-xs-1">
@@ -1953,14 +1961,16 @@
                                                                             >
                                                                             Preview Assigned
                                                                             </button>
-                                                                            <button
-                                                                                class="btn btn-success btn-sm btn-block <?=$document['submitted_description'] != null ? 'js-hybrid-preview' : 'disabled';?>"
-                                                                                data-id="<?=$document['sid'];?>"
-                                                                                data-document="assigned_history"
-                                                                                data-type="offer_letter"
-                                                                            >
-                                                                            Preview submitted
-                                                                            </button>
+                                                                            <?php if ($document_all_permission) { ?>
+                                                                                <button
+                                                                                    class="btn btn-success btn-sm btn-block <?=$document['submitted_description'] != null ? 'js-hybrid-preview' : 'disabled';?>"
+                                                                                    data-id="<?=$document['sid'];?>"
+                                                                                    data-document="assigned_history"
+                                                                                    data-type="offer_letter"
+                                                                                >
+                                                                                Preview submitted
+                                                                                </button>
+                                                                            <?php } ?>
                                                                         <?php } else if ($document['offer_letter_type'] == 'uploaded') { ?>
                                                                             <button class="btn btn-success btn-sm btn-block"
                                                                                 onclick="preview_latest_generic_function(this);"
@@ -1970,15 +1980,17 @@
                                                                                 data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
                                                                                 Preview Assigned
                                                                             </button>
-                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                                onclick="preview_latest_generic_function(this);"
-                                                                                date-letter-type="uploaded"
-                                                                                data-on-action="submitted"
-                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
-                                                                                data-s3-name="<?php echo $document['uploaded_file']; ?>"
-                                                                                <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                Preview Submitted
-                                                                            </button>
+                                                                            <?php if ($document_all_permission) { ?>
+                                                                                <button class="btn btn-success btn-sm btn-block"
+                                                                                    onclick="preview_latest_generic_function(this);"
+                                                                                    date-letter-type="uploaded"
+                                                                                    data-on-action="submitted"
+                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
+                                                                                    data-s3-name="<?php echo $document['uploaded_file']; ?>"
+                                                                                    <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
+                                                                                    Preview Submitted
+                                                                                </button>
+                                                                            <?php } ?>    
                                                                         <?php } else { ?>
                                                                             <button class="btn btn-success btn-sm btn-block"
                                                                                 onclick="preview_latest_generic_function(this);"
@@ -1988,15 +2000,17 @@
                                                                                 data-from="assigned_document_history">
                                                                                 Preview Assigned
                                                                             </button>
-                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                                onclick="preview_latest_generic_function(this);"
-                                                                                date-letter-type="generated"
-                                                                                data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                                data-on-action="submitted"
-                                                                                data-from="assigned_document_history"
-                                                                                <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                Preview Submitted
-                                                                            </button>
+                                                                            <?php if ($document_all_permission) { ?>
+                                                                                <button class="btn btn-success btn-sm btn-block"
+                                                                                    onclick="preview_latest_generic_function(this);"
+                                                                                    date-letter-type="generated"
+                                                                                    data-doc-sid="<?php echo $document['sid']; ?>"
+                                                                                    data-on-action="submitted"
+                                                                                    data-from="assigned_document_history"
+                                                                                    <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
+                                                                                    Preview Submitted
+                                                                                </button>
+                                                                            <?php } ?>
                                                                         <?php } ?>
                                                                     </td>
                                                                 </tr>
@@ -6154,15 +6168,17 @@
                             data-type="document"
                         >
                         Preview Assigned
-                        </button>
-                        <button
-                            class="btn btn-success btn-sm btn-block '.( $document['submitted_description'] != null ? 'js-hybrid-preview' : 'disabled').'>"
-                            data-id="'.($document['sid']).'"
-                            data-document="assigned_history"
-                            data-type="document"
-                        >
-                        Preview submitted
                         </button>';
+                        if ($document_all_permission) {
+                            $row .= '<button
+                                class="btn btn-success btn-sm btn-block '.( $document['submitted_description'] != null ? 'js-hybrid-preview' : 'disabled').'>"
+                                data-id="'.($document['sid']).'"
+                                data-document="assigned_history"
+                                data-type="document"
+                            >
+                            Preview submitted
+                            </button>';
+                        }
                     } else if ($document['document_type'] == 'uploaded') {
                         $row .= '<button
                             class="btn btn-success btn-sm btn-block"
@@ -6172,31 +6188,35 @@
                             data-file-name="'.($document['document_original_name']).'"
                             data-document-title="'.($document['document_original_name']).'">
                             Preview Assigned
-                        </button>
-                        <button
-                            class="btn btn-success btn-sm btn-block"
-                            onclick="fLaunchModal(this);"
-                            data-preview-url="'.(AWS_S3_BUCKET_URL . $document['uploaded_file']).'"
-                            data-download-url="'.(AWS_S3_BUCKET_URL . $document['uploaded_file']).'"
-                            data-file-name="'.$document['uploaded_file'].'"
-                            data-document-title="'.$document['uploaded_file'].'" '.( !$document['uploaded'] ? 'disabled' : '').'>
-                            Preview Submitted
                         </button>';
+                        if ($document_all_permission) {
+                            $row .= '<button
+                                class="btn btn-success btn-sm btn-block"
+                                onclick="fLaunchModal(this);"
+                                data-preview-url="'.(AWS_S3_BUCKET_URL . $document['uploaded_file']).'"
+                                data-download-url="'.(AWS_S3_BUCKET_URL . $document['uploaded_file']).'"
+                                data-file-name="'.$document['uploaded_file'].'"
+                                data-document-title="'.$document['uploaded_file'].'" '.( !$document['uploaded'] ? 'disabled' : '').'>
+                                Preview Submitted
+                            </button>';
+                        }    
                     } else {
                         $row .= '<button
                             onclick="func_get_generated_document_history_preview('.($document['document_sid']).', \'generated\', \'history\', '.($document['sid']).');"
                             class="btn btn-success btn-sm btn-block">
                             Preview Assigned
-                        </button>
-                        <button
-                            class="btn btn-success btn-sm btn-block"
-                            onclick="fLaunchModal(this);"
-                            data-preview-url="'.(AWS_S3_BUCKET_URL . $document['uploaded_file']).'"
-                            data-download-url="'.(AWS_S3_BUCKET_URL . $document['uploaded_file']).'"
-                            data-file-name="'.$document['uploaded_file'].'"
-                            data-document-title="'.$document['uploaded_file'].'" '.(!$document['uploaded'] ? 'disabled' : '').'>
-                            Preview Submitted
                         </button>';
+                        if ($document_all_permission) {
+                            $row .= '<button
+                                class="btn btn-success btn-sm btn-block"
+                                onclick="fLaunchModal(this);"
+                                data-preview-url="'.(AWS_S3_BUCKET_URL . $document['uploaded_file']).'"
+                                data-download-url="'.(AWS_S3_BUCKET_URL . $document['uploaded_file']).'"
+                                data-file-name="'.$document['uploaded_file'].'"
+                                data-document-title="'.$document['uploaded_file'].'" '.(!$document['uploaded'] ? 'disabled' : '').'>
+                                Preview Submitted
+                            </button>';
+                        }    
                     }
                     $row .= '</td>
             </tr>';

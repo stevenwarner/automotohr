@@ -60,8 +60,9 @@
                                                                             <td style="vertical-align: middle; text-align: center"><?php echo formatDateToDB($value['registration_date'], DB_DATE_WITH_TIME, DATE); ?></td>
                                                                             <td style="vertical-align: middle; text-align: center">
                                                                                 Pay Roll <?= '<input id="'.$value['sid'].'" type="checkbox" name="pay-plan[]" value="'.$value['sid'].'" class="my_checkbox" ' . ($value['pay_plan_flag'] ? ("checked='checked'") : "") .'>';?>
+                                                                                </br>
+                                                                                Document Preview <?= '<input id="'.$value['sid'].'" type="checkbox" name="doc_preview[]" value="'.$value['sid'].'" class="my_checkbox" ' . ($value['doc_preview_only'] ? ("checked='checked'") : "") .'>';?>
                                                                             </td>
-
                                                                         </tr>
                                                                     <?php }?>
                                                                 <?php } else {  ?>

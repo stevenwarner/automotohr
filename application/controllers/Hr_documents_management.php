@@ -1681,6 +1681,14 @@ class Hr_documents_management extends Public_Controller {
             // loadCachedFile('documents_assignment_'.($user_type).'_'.($user_sid).'', $data['session']);
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
+            //
+            if (!$data['session']['employer_detail']['doc_preview_only']) {
+                if (!$data['session']['employer_detail']['access_level_plus'] && !$data['session']['employer_detail']['pay_plan_flag']) {
+                    $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessable!');
+                    redirect('employee_management', 'refresh');
+                }
+            }    
+            //
             $data['security_details'] = $security_details;
             //check_access_permissions($security_details, 'appearance', 'customize_appearance'); 
             // no need to check in this Module as Dashboard will be available to all

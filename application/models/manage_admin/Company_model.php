@@ -1807,7 +1807,7 @@ class Company_model extends CI_Model {
     }
 
     function get_company_employers($company_sid) {
-        $this->db->select('email,access_level,profile_picture,sid,first_name,last_name,registration_date,is_executive_admin,complynet_credentials,pay_plan_flag');
+        $this->db->select('email,access_level,profile_picture,sid,first_name,last_name,registration_date,is_executive_admin,complynet_credentials,pay_plan_flag,doc_preview_only');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
@@ -1828,6 +1828,13 @@ class Company_model extends CI_Model {
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         return $records_arr;
+    }
+
+    function update_configured_DPO_employers($employee_sid, $flag) {
+        $update_array = array();
+        $update_array['doc_preview_only'] = $flag;
+        $this->db->where('sid', $employee_sid);
+        $this->db->update('users', $update_array);
     }
 
     function update_configured_pay_plan_employers($employee_sid, $flag) {

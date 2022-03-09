@@ -2091,12 +2091,15 @@ class Companies extends Admin_Controller {
                 $this->render('manage_admin/company/access_level_plus');
             }else{
                 $form = $this->input->post(NULL,true);
-//                echo '<pre>';
-//                print_r($form);
-//                die();
+                // echo '<pre>';
+                // print_r($form);
+                // print_r($configured_employees);
+                // die();
                 $selected_emp = isset($form['checklist']) ? $form['checklist'] : array();
                 $selected_pp = isset($form['pay-plan']) ? $form['pay-plan'] : array();
                 $configured_pp = isset($form['config-pp']) ? json_decode($form['config-pp']) : array();
+                $selected_DPO = isset($form['doc_preview']) ? $form['doc_preview'] : array(); // DPO Document Preview Only users
+                //
                 foreach($selected_emp as $emp){
                     if(!in_array($emp,$configured_employees)){
                         $this->company_model->add_configured_access_level_plus_employers($emp);
@@ -2118,7 +2121,16 @@ class Companies extends Admin_Controller {
                         $this->company_model->update_configured_pay_plan_employers($emp, 0);
                     }
                 }
-//                die();
+
+                foreach ($all_employees as $emp) { 
+                    if(!in_array($emp['sid'],$selected_DPO)){
+                        $this->company_model->update_configured_DPO_employers($emp['sid'], 0);
+                    } else {
+                        $this->company_model->update_configured_DPO_employers($emp['sid'], 1);
+                    }
+
+                }
+                //die();
                 $this->session->set_flashdata('message', 'Access Level Plus Updated');
                 redirect('manage_admin/companies/access_level_plus/'.$company_sid, 'refresh');
             }
