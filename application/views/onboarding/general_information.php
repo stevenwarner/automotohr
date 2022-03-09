@@ -346,6 +346,45 @@ $title = '';
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Gender:</label>
+                                    <div class="hr-select-dropdown">
+                                        <select class="form-control" name="gender">
+                                            <option value="">Please Select Gender</option>
+                                            <option <?=$user_information["gender"] == 'male' ? 'selected' : '';?> value="male">Male</option>
+                                            <option <?=$user_information["gender"] == 'female' ? 'selected' : '';?> value="female">Female</option>
+                                            <option <?=$user_information["gender"] == 'other' ? 'selected' : '';?> value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <?php echo form_error('gender'); ?>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Marital Status:</label>
+                                    <div class="hr-select-dropdown">
+                                        <select class="form-control" name="marital_status">
+                                            <option <?=$user_information["marital_status"] == 'not_specified' ? 'selected' : '';?> value="not_specified">
+                                                Please select marital status
+                                            </option>
+                                            <option <?=$user_information["marital_status"] == 'Single' ? 'selected' : '';?> value="Single">
+                                                Single
+                                            </option>
+                                            <option <?=$user_information["marital_status"] == 'Married' ? 'selected' : '';?> value="Married">
+                                                Married
+                                            </option>
+                                            <option <?=$user_information["marital_status"] == 'Other' ? 'selected' : '';?> value="Other">
+                                                Other
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <?php echo form_error('marital_status'); ?>
+                                </div>
+                            </div>
+                        </div>    
+
 <!--                        <div class="row">-->
 <!--                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">-->
 <!--                                <div class="form-group">-->

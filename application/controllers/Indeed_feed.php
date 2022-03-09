@@ -209,6 +209,12 @@ private function addLastRead($sid){
 
             $job_details = $this->all_feed_model->get_job_detail($job_sid);
             $companyId = $job_details['user_sid'];
+            //
+            if (check_company_status($companyId) == 0) {
+                echo '<h1>404. Company not Found!</h1>';
+                die();
+            }
+            //
             // if (in_array($companyId, array("7", "51"))) {
             if (!in_array($companyId, array("0"))) {
 

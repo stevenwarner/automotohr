@@ -12110,7 +12110,7 @@ if(!function_exists('')){
             $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);            $downloadURL = base_url("hr_documents_management/download_upload_document/".$document['document_s3_name']);
 
-	}else if($document['offer_letter_type'] == 'hybrid_document'|| $document['document_type'] == 'hybrid_document'){
+    }else if($document['offer_letter_type'] == 'hybrid_document'|| $document['document_type'] == 'hybrid_document'){
             //
             if($type == ''){
                 if(!empty($document['user_consent']) || !empty($document['uploaded'])){
@@ -14668,5 +14668,57 @@ if(!function_exists('GetHireDate')){
         } else if($rd){
             return DateTime::createfromformat('Y-m-d H:i:s', $rd)->format('Y-m-d');
         }
+    }
+}
+
+if (!function_exists('check_company_status')) {
+    function check_company_status($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('active');
+        $CI->db->where('sid', $company_sid);
+        $result = $CI->db->get('users')->row_array();
+        //
+        return $result["active"]; 
+    }
+}
+
+if (!function_exists('get_user_gender')) {
+    function get_user_gender($user_sid, $user_type)
+    {
+        $table = "users";
+        //
+        if ($user_type == "applicant") {
+            $table = "portal_job_applications";
+        }
+        //
+        $CI = &get_instance();
+        $CI->db->select('gender');
+        $CI->db->where('sid', $user_sid);
+        //
+        $records_obj = $CI->db->get($table);
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return ucfirst($records_arr["gender"]);
+        } else {
+            return "";
+        }
+    }
+}
+
+if (!function_exists('update_user_gender')) {
+    function update_user_gender($user_sid, $user_type, $dataToUpdate)
+    {
+        $table = "users";
+        //
+        if ($user_type == "applicant") {
+            $table = "portal_job_applications";
+        }
+        //
+        $CI = &get_instance();
+        $CI->db->where('sid', $user_sid);
+        $CI->db->update($table, $dataToUpdate);
     }
 }

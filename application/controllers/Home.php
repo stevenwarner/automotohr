@@ -1975,6 +1975,11 @@ class Home extends CI_Controller {
         $user_sid = $document['application_sid'];
         $user_type = $document['users_type'];
         //
+        if (empty($document['gender'])) {
+            $gender = get_user_gender($user_sid, $user_type);
+            $document['gender'] = $gender;
+        }
+        //
         $company_sid = $this->hr_documents_management_model->getCompanysid($user_sid, $user_type);
         //
         $data['session']['company_detail'] = $this->hr_documents_management_model->getCompanyInfo($company_sid);
@@ -2024,6 +2029,10 @@ class Home extends CI_Controller {
         );
         //
         $document = $this->hr_documents_management_model->getEEOC($post['id']);
+        //
+        $dataToUpdate = array();
+        $dataToUpdate['gender'] = strtolower($post['gender']);
+        update_user_gender($document['application_sid'], 'employee', $dataToUpdate);
         //
         $employee_sid = $document['application_sid'];
         keepTrackVerificationDocument($employee_sid, 'employee', 'completed', $post['id'], 'eeoc', $post['location']);

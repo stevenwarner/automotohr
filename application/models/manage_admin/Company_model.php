@@ -191,6 +191,7 @@ class Company_model extends CI_Model {
         $this->db->select('table_one.pay_plan_flag');
         $this->db->select('table_one.profile_picture');
         $this->db->select('table_one.active');
+        $this->db->select('table_one.archived');
         $this->db->select('table_one.system_user_date');
         $this->db->select('table_one.general_status');
         $this->db->select('table_two.CompanyName as company_name');
@@ -2519,6 +2520,19 @@ class Company_model extends CI_Model {
         
         if ($query_result->num_rows() > 0) {
             return $row = $query_result->row_array();
+        }
+    }
+
+    function update_gender_in_eeoc_form($user_type, $user_sid, $dataToUpdate) {
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
+        $this->db->from('portal_eeo_form');
+        $record_count = $this->db->count_all_results();
+
+        if ($record_count > 0) {
+            $this->db->where('users_type', $user_type);
+            $this->db->where('application_sid', $user_sid);
+            $this->db->update('portal_eeo_form', $dataToUpdate);
         }
     }
 }

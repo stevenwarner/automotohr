@@ -386,7 +386,11 @@ class Eeo extends Public_Controller
                             $data_to_insert['is_expired'] = 1;
 
                             $this->eeo_model->insert_eeo_record($users_type, $users_sid, $data_to_insert);
-
+                            //
+                            $dataToUpdate = array();
+                            $dataToUpdate['gender'] = strtolower($gender);
+                            update_user_gender($users_sid, $users_type, $dataToUpdate);
+                            //
                             $this->session->set_flashdata('message', '<strong>Success</strong> E.E.O.C. Form Updated!');
 
                         }

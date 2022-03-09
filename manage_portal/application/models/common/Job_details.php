@@ -870,6 +870,68 @@ class Job_details extends CI_Model {
     }
 
     /**
+     * Fetch company jobs with pay per activation check
+     * Created on: 17-05-2019
+     *
+     * @param $company_sid      Integer
+     * @param $job_sid          Integer Optional
+     * @param $payperjob_check  Integer Optional
+     * @param $is_preview       Integer Optional
+     * @param $filter_array     Array   Optional
+     *
+     * @return Bool|Array
+     *
+     **/
+    function get_alternate_job_from_company($company_sid = NULL, $title = NULL, $city = NULL) {
+        // echo $approval_status;
+        if($company_sid != NULL) {
+            $this->db->select('*');
+            $this->db->from('portal_job_listings');
+            $this->db->where('approval_status', 'approved');
+            $this->db->like('Title', trim($title));
+            $this->db->where('active', 1);
+            $this->db->where('published_on_career_page', 1);
+            $this->db->where('user_sid', $company_sid);
+            //
+            $result = $this->db->get();
+            $result_arr = $result->row_array();
+            $result->free_result();
+            //
+            if (!empty($result_arr)) {
+                return $result_arr;
+            } else {
+                $this->db->select('*');
+                $this->db->from('portal_job_listings');
+                $this->db->where('approval_status', 'approved');
+                $this->db->where('active', 1);
+                $this->db->where('published_on_career_page', 1);
+                $this->db->where('user_sid', $company_sid);
+                //
+                if(!empty($city) || $city != NULL){
+                    $this->db->like('Location_City', trim($city));
+                }
+                //
+                $result = $this->db->get();
+                $result_arr = $result->row_array();
+                $result->free_result();
+                //
+                if (!empty($result_arr)) {
+                    return $result_arr;
+                } else {
+                    return array();
+                }
+            }
+        } else {
+            return array();
+        }
+
+        
+        
+
+        
+    }    
+
+    /**
      * Fetch pay per status check
      * Created on: 17-05-2019
      *

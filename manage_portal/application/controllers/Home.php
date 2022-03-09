@@ -830,7 +830,13 @@ class Home extends CI_Controller {
                     $aws = new AwsSdk();
                     $aws->putToBucket($resume, $_FILES["resume"]["tmp_name"], AWS_S3_BUCKET_NAME);
                 } 
+                //
+                if (check_company_status($data['company_details']['sid']) == 0) {
+                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
 
+                    redirect('/', 'refresh');
+                }
+                //
                 $talent_network_sid = $this->job_details->check_job_applicant('company_check', $email, $data['company_details']['sid']);
                 $job_added_successfully = 0;
                 $date_applied = date('Y-m-d H:i:s');
@@ -1008,6 +1014,7 @@ class Home extends CI_Controller {
     }
 
     public function job_details($sid = null) {
+
         $sid = $this->input->post('sid') ? $this->input->post('sid') : $sid;
         if (strpos($sid, "-") !== FALSE) { 
             $sid = @end((explode('-', $sid)));
@@ -1048,6 +1055,20 @@ class Home extends CI_Controller {
                         $list                                                       = $this->job_details->fetch_company_jobs_new($company_sid, $sid,TRUE,0,array(),$has_job_approval_rights);
                     }
                 } 
+
+                if (empty($list)) {
+                    $search_job = explode('-', $this->uri->segment(2)); 
+                    $job_title = isset($search_job[0]) ?  $search_job[0] : '';
+                    $job_city = isset($search_job[3]) ?  $search_job[3] : '';
+                    //
+                    $get_alt_job = $this->job_details->get_alternate_job_from_company($company_sid, $job_title, $job_city);
+                    //
+                    if(!empty($get_alt_job)){
+                        redirect(base_url(job_title_uri($get_alt_job)), 'refresh');
+                    }
+                    //
+                    
+                }
 
                 if (!empty($list)) {
                     $company_sid                                                = $list['user_sid'];
@@ -1357,6 +1378,11 @@ class Home extends CI_Controller {
                                     $eeo_form                                   = $this->input->post('EEO');
                                 }
                                 //
+                                if (check_company_status($company_sid) == 0) {
+                                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+                                    redirect('/', 'refresh');
+                                }
+                                //
                                 $already_applied                                = $this->job_details->check_job_applicant($job_sid, $email, $company_sid); //check if the user has already applied for this job
                                 // if (in_array($company_sid, array("7", "51"))) {
                                 if (!in_array($company_sid, array("0"))) {
@@ -1454,6 +1480,13 @@ class Home extends CI_Controller {
 
                                         $employer_sid                               = $data['job_details']['user_sid'];
                                         $status_array                               = $this->job_details->update_applicant_status_sid($employer_sid); // Get Applicant Defult Status
+                                        //
+                                        if (check_company_status($employer_sid) == 0) {
+                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+                                            redirect('/', 'refresh');
+                                        }
+                                        //
+                                        //
                                         $portal_job_applications_sid                = $this->job_details->check_job_applicant('company_check', $email, $employer_sid);
                                         $job_added_successfully                     = 0;
                                         $date_applied                               = date('Y-m-d H:i:s');
@@ -1991,6 +2024,12 @@ class Home extends CI_Controller {
 
                                         $employer_sid                               = $data['job_details']['user_sid'];
                                         $status_array                               = $this->job_details->update_applicant_status_sid($employer_sid); // Get Applicant Defult Status
+                                        //
+                                        if (check_company_status($employer_sid) == 0) {
+                                            $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+                                            redirect('/', 'refresh');
+                                        }
+                                        //
                                         $portal_job_applications_sid                = $this->job_details->check_job_applicant('company_check', $email, $employer_sid);
                                         $job_added_successfully                     = 0;
                                         $date_applied                               = date('Y-m-d H:i:s');
@@ -2509,7 +2548,6 @@ class Home extends CI_Controller {
                         }
                     }
                 } else { //Job Id Is not 0 But Job Not Found
-
                     $this->session->set_flashdata('message', 'No Active job found!');
                     redirect('/', 'refresh');
                 }
@@ -2877,6 +2915,12 @@ class Home extends CI_Controller {
                 $last_name                                                      = $this->input->post('last_name');
                 $resume                                                         = '';
                 $profile_picture                                                = '';
+                //
+                if (check_company_status($data['company_details']['sid']) == 0) {
+                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+                    redirect('/', 'refresh');
+                }
+                //
                 $fair_job_sid                                                   = $this->job_details->check_job_applicant('company_check', $email, $data['company_details']['sid']);
                 $job_added_successfully                                         = 0;
                 $date_applied                                                   = date('Y-m-d H:i:s');

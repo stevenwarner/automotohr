@@ -257,6 +257,45 @@ if($_ssv){
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                 <div class="form-group">
+                                    <label>Gender:</label>
+                                    <div class="hr-select-dropdown">
+                                        <select class="form-control" name="gender">
+                                            <option value="">Please Select Gender</option>
+                                            <option <?=$user_information["gender"] == 'male' ? 'selected' : '';?> value="male">Male</option>
+                                            <option <?=$user_information["gender"] == 'female' ? 'selected' : '';?> value="female">Female</option>
+                                            <option <?=$user_information["gender"] == 'other' ? 'selected' : '';?> value="other">Other</option>
+                                        </select>
+                                        <?php echo form_error('gender'); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Marital Status:</label>
+                                    <div class="hr-select-dropdown">
+                                        <select class="form-control" name="marital_status">
+                                            <option value="">
+                                                Please select marital status
+                                            </option>
+                                            <option <?=$user_information["marital_status"] == 'Single' ? 'selected' : '';?> value="Single">
+                                                Single
+                                            </option>
+                                            <option <?=$user_information["marital_status"] == 'Married' ? 'selected' : '';?> value="Married">
+                                                Married
+                                            </option>
+                                            <option <?=$user_information["marital_status"] == 'Other' ? 'selected' : '';?> value="Other">
+                                                Other
+                                            </option>
+                                        </select>
+                                        <?php echo form_error('marital_status'); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                <div class="form-group">
                                     <?php $field_id = 'linkedin_profile_url'; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
                                     <?php echo form_label('Linkedin Public Profile URL:', $field_id); ?>

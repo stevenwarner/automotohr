@@ -1438,6 +1438,7 @@ class Employee_management extends Public_Controller {
 
                     $extra_info = serialize($extra_info_arr);
                     $date_of_birth = $this->input->post('DOB');
+                    $gender = $this->input->post('gender');
 
                     if (!empty($date_of_birth)) {
                         $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
@@ -1470,9 +1471,15 @@ class Employee_management extends Public_Controller {
                         'ssn' => $this->input->post('SSN'),
                         'employee_number' => $this->input->post('employee_number'),
                         'department_sid' => $this->input->post('department'),
-                        'gender' => $this->input->post('gender')
+                        'gender' => $gender,
+                        'marital_status' => $this->input->post('marital_status')
                     );
                     //
+                    if ($gender != "other") {
+                        $updateGender = array();
+                        $updateGender['gender'] = ucfirst($gender);
+                        $this->employee_model->update_gender_in_eeoc_form($sid, 'employee', $updateGender);
+                    }
                     //
                     if (checkIfAppIsEnabled('timeoff')) {
                         $data_to_insert['user_shift_hours'] = $this->input->post('shift_hours');
@@ -2112,6 +2119,7 @@ class Employee_management extends Public_Controller {
                 }
 
                 $date_of_birth = $this->input->post('dob');
+                $gender = $this->input->post('gender');
 
                 if (!empty($date_of_birth)) {
                     $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
@@ -2136,9 +2144,17 @@ class Employee_management extends Public_Controller {
                     'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                     'employee_number' => $this->input->post('employee_number'),
                     'ssn' => $this->input->post('ssn'),
-                    'dob' => $DOB
+                    'dob' => $DOB,
+                    'marital_status' => $this->input->post('marital_status'),
+                    'gender' => $gender
                 );
-
+                //
+                if ($gender != "other") {
+                    $updateGender = array();
+                    $updateGender['gender'] = ucfirst($gender);
+                    $this->employee_model->update_gender_in_eeoc_form($sid, 'employee', $updateGender);
+                }
+                //
                 if(!empty($this->input->post('secondary_email', true))){
                     $data['alternative_email'] = $this->input->post('secondary_email', true);
                 }

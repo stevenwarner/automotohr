@@ -435,11 +435,11 @@ if (isset($applicant)) {
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <div class="well well-sm">
                                                         <strong>Instructions:</strong>
-                                            <?php       if ($user_type == 'applicant') { ?>
-                                                            <p>Please choose the office working hours for <b><?php echo $user_info["first_name"]; ?> <?= $user_info["last_name"] ?></b>.</p>
-                                            <?php       } else { ?>
-                                                            <p>Please choose the office working hours for <b><?php echo $user_info["first_name"]; ?> <?= $user_info["last_name"] ?></b>.</p>
-                                            <?php       } ?>
+                                                            <?php if ($user_type == 'applicant') { ?>
+                                                                <p>Please choose the hours for <b><?php echo $user_info["first_name"]; ?> <?= $user_info["last_name"] ?></b> first day schedule.</p>
+                                                            <?php } else { ?>
+                                                                <p>Please choose the office working hours for <b><?php echo $user_info["first_name"]; ?> <?= $user_info["last_name"] ?></b>.</p>
+                                                            <?php } ?>
                                                     </div>
                                                 </div>
                                             </div>

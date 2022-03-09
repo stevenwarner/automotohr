@@ -209,7 +209,11 @@ class Auto_careers extends CI_Controller
             $job_type    = $job_details['JobType'];
             $company_sid = $job_details['user_sid'];
             
-
+            if (check_company_status($company_sid) == 0) {
+                $response['error'] = "Company not Found";
+                sendResponse($response);
+                exit(0);
+            }
 
             if (isset($applicant_data['pictures']) && !empty($applicant_data['pictures'])) { //making Resume file to upload on AWS
                 $base64Data = $applicant_data['pictures']; //Decode pdf content
@@ -639,6 +643,12 @@ class Auto_careers extends CI_Controller
                     $eeo_data_to_insert['is_expired']                       = 1;
 
                     $this->auto_careers_model->save_eeo_form($eeo_data_to_insert);
+
+                    //
+                    $dataToUpdate = array();
+                    $dataToUpdate['gender'] = strtolower($applicant_data['gender']);
+                    update_user_gender($job_applications_sid, 'applicant', $dataToUpdate);
+                    //
                 }
             } else {
                 $response['error'] = 'Applied';

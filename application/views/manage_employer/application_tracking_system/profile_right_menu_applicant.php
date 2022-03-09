@@ -285,7 +285,7 @@ if ($this->session->userdata('logged_in')) {
                                 <span class="left-addon">
                                     <i aria-hidden="true" class="fa fa-star"></i>
                                 </span>
-                                <h4>Setup Applicant Panel</h4>
+                                <h4>Setup Onboarding Panel</h4>
                                 <a href="<?php echo base_url('onboarding/setup/applicant') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                 <!-- Light Bulb Code - Start -->
                                 <?php $applicant_panel_config_count = count_onboarding_panel_records('applicant', $applicant_info['sid']);?>

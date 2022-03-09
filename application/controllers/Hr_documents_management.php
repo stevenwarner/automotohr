@@ -2956,7 +2956,10 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
 
-            $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid);
+            $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid, 1);
+            // echo "<pre>";
+            // print_r($groups);
+            // die();
 
             if (!empty($groups)) {
                 foreach ($groups as $key => $group) {
@@ -12030,5 +12033,27 @@ class Hr_documents_management extends Public_Controller {
         echo json_encode($response);
         exit(0);
     } 
+
+    function delete_supporting_document ($sid) {
+        //
+        $supporting_document = $this->hr_documents_management_model->getUserSupportingDocument($sid);
+        $supporting_document_sid = $supporting_document["sid"];
+        unset($supporting_document["sid"]);
+        //
+        $supporting_document_history = array();
+        $supporting_document_history = $supporting_document;
+        $supporting_document_history["supporting_documents_sid"] = $supporting_document_sid;
+        //
+        $this->hr_documents_management_model->addSupportingDocumentHistory($supporting_document_history);
+        $this->hr_documents_management_model->deleteUserSupportingDocument($sid);
+        //
+        $response = array();
+        $response['status'] = TRUE;
+        $response['message'] = "The supporting document delete successfully.";
+        //
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit(0);
+    }
 
 }

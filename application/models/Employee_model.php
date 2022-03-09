@@ -1685,5 +1685,16 @@
         return $b;
     }
 
+    function update_gender_in_eeoc_form($user_type, $user_sid, $dataToUpdate) {
+        $this->db->where('users_type', $user_type);
+        $this->db->where('application_sid', $user_sid);
+        $this->db->from('portal_eeo_form');
+        $record_count = $this->db->count_all_results();
 
+        if ($record_count > 0) {
+            $this->db->where('users_type', $user_type);
+            $this->db->where('application_sid', $user_sid);
+            $this->db->update('portal_eeo_form', $dataToUpdate);
+        }
+    }
 }

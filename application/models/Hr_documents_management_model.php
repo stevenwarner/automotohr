@@ -2766,6 +2766,29 @@ class Hr_documents_management_model extends CI_Model {
         return $record;
     }
 
+    function getUserSupportingDocument ($sid) {
+        $this->db->select('*');
+        $this->db->where('sid', $sid);
+        $records_obj = $this->db->get('eev_required_documents');
+        $record = $records_obj->row_array();
+
+        if (!empty($record)) {
+            return $record;
+        } else {
+            return array();
+        }
+    }
+
+    function addSupportingDocumentHistory ($history) {
+        $this->db->insert('eev_required_documents_history', $history);
+        return $this->db->insert_id();
+    }
+
+    function deleteUserSupportingDocument ($sid) {
+        $this->db->where('sid', $sid);
+        $this->db->delete('eev_required_documents');
+    }
+
     function get_varification_supporting_document($employee_sid, $form_type){
         $varification_type = '';
         //

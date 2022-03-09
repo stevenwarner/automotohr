@@ -224,6 +224,15 @@
             <p class="dummy-invoice-fields"><?=GetVal(!empty($team_names) ? $team_names : $team_name); ?></p>
         </div>
     </div>
+     <br>
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <label class="csF16">Marital Status</label>
+            <p class="dummy-invoice-fields">
+                <?php echo $employer["marital_status"] == "not_specified" ? "Not Specified" : GetVal($employer["marital_status"]); ?>
+            </p>
+        </div>
+    </div>
     <?php if(IS_NOTIFICATION_ENABLED == 1 && $phone_sid != '') { ?>
     <!--  -->
     <br>

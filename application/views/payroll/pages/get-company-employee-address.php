@@ -69,7 +69,7 @@
                         </label>
                         <select class="form-control jsState">
                             <?php foreach($states as $state): ?>
-                                <option value="<?=$state['state_code'];?>" <?=!empty($employee_address_info) &&  $employee_address_info['Location_State'] === $state['state_code'] ? 'selected="selected"' : '';?>><?=$state['state_name'];?></option>
+                                <option value="<?=$state['state_code'];?>" <?=!empty($employee_address_info) &&  $employee_address_info['Location_State'] === $state['sid'] ? 'selected="selected"' : '';?>><?=$state['state_name'];?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
