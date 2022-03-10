@@ -142,12 +142,13 @@ class Terminate_employee extends Public_Controller {
                         $data_to_update['active'] = 1;
                         $data_to_update['general_status'] = 'active';
                     } else if ($status == 6) {
-                        $data_to_update['active'] = 0;
                         $data_to_update['general_status'] = 'inactive';
+                        $data_to_update['active'] = 0;
                     }else if ($status == 7) {
                         $data_to_update['general_status'] = 'leave';
                     }else if ($status == 4) {
                         $data_to_update['general_status'] = 'suspended';
+                        $data_to_update['active'] = 0;
                     }else if ($status == 3) {
                         $data_to_update['general_status'] = 'deceased';
                         $data_to_update['active'] = 0;
@@ -157,7 +158,8 @@ class Terminate_employee extends Public_Controller {
                     }else if ($status == 8) {
                         $data_to_update['general_status'] = 'rehired';
                         $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
-                        $data_to_update['active'] = 0;
+                        $data_to_update['active'] = 1;
+                        $data_to_update['terminated_status'] = 0;
                     }
                     $data_to_update['terminated_status'] = 0;
                 }
@@ -214,7 +216,7 @@ class Terminate_employee extends Public_Controller {
             $data['status_documents'] = $status_documents;
             $data['left_navigation'] = $left_navigation;
             $data['security_details'] = $security_details;
-
+            
             $this->form_validation->set_rules('status', 'Status', 'trim|xss_clean|required');
             $this->form_validation->set_rules('termination_details', 'Termination Details', 'trim|xss_clean|required');
 
@@ -223,6 +225,7 @@ class Terminate_employee extends Public_Controller {
                 $this->load->view('terminate_employee/edit_employee_status');
                 $this->load->view('main/footer');
             } else {
+
                 $status = $this->input->post('status');
                 $termination_reason = $this->input->post('terminated_reason');
                 $termination_date = $this->input->post('termination_date');
