@@ -140,6 +140,7 @@ class Terminate_employee extends Public_Controller {
                 } else {
                     if ($status == 5) {
                         $data_to_update['active'] = 1;
+                        $data_to_update['terminated_status'] = 0;
                         $data_to_update['general_status'] = 'active';
                     } else if ($status == 6) {
                         $data_to_update['general_status'] = 'inactive';
