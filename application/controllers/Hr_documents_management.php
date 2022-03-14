@@ -3288,9 +3288,16 @@ class Hr_documents_management extends Public_Controller {
 
             $active_documents = $this->hr_documents_management_model->get_all_documents($company_sid, 0);
             $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, $user_type, $user_sid, 0, 1, 0, $pp_flag);
-            $company_offer_letters = $this->hr_documents_management_model->get_all_company_offers_letters($company_sid, 0);
-            $assigned_offer_letters = $this->hr_documents_management_model->get_assigned_offers($company_sid, $user_type, $user_sid);
-            $assigned_offer_letter_history = $this->hr_documents_management_model->get_assigned_offer_letter_history($company_sid, $user_type, $user_sid, 0);  
+
+            if ($data['session']['employer_detail']['doc_preview_only'] == 1 && $data['session']['employer_detail']['access_level_plus'] == 0) {
+                $company_offer_letters = array();
+                $assigned_offer_letters = array();
+                $assigned_offer_letter_history = array();
+            } else {
+                $company_offer_letters = $this->hr_documents_management_model->get_all_company_offers_letters($company_sid, 0);
+                $assigned_offer_letters = $this->hr_documents_management_model->get_assigned_offers($company_sid, $user_type, $user_sid);
+                $assigned_offer_letter_history = $this->hr_documents_management_model->get_assigned_offer_letter_history($company_sid, $user_type, $user_sid, 0);
+            }
             $archived_assign_document = $this->hr_documents_management_model->get_archive_assigned_documents($company_sid, $user_type, $user_sid, $pp_flag);  
             $user_assigned_manual_documents = $this->hr_documents_management_model->get_all_user_assigned_manual_documents($company_sid, $user_type, $user_sid, $pp_flag);  
 
@@ -3472,7 +3479,11 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
 
-            $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_sid, $user_type, $user_sid);
+            if ($data['session']['employer_detail']['doc_preview_only'] == 1 && $data['session']['employer_detail']['access_level_plus'] == 0) {
+                $current_assigned_offer_letter = array();
+            } else {
+               $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_sid, $user_type, $user_sid); 
+            }
 
             if (!empty($current_assigned_offer_letter)) {
                 if ($current_assigned_offer_letter[0]['user_consent'] == 1) {
