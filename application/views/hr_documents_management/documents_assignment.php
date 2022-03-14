@@ -1617,33 +1617,35 @@
                                                                                             $canAccessDocument
                                                                                             ){ ?>
                                                                                             <?php if ($action_btn_flag == true || $session['employer_detail']['pay_plan_flag'] == 0) { ?>
-                                                                                                <td>
-                                                                                                    <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids)) { ?>
-                                                                                                        <?php if(in_array($document['sid'], $assigned_sids)) { ?> <!-- assign doc revoke here -->
-                                                                                                            <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                                                <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
-                                                                                                                <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
-                                                                                                                <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
-                                                                                                            </form>
-                                                                                                            <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
-                                                                                                        <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
+                                                                                                <?php if ($document_all_permission) { ?>
+                                                                                                    <td>
+                                                                                                        <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids)) { ?>
+                                                                                                            <?php if(in_array($document['sid'], $assigned_sids)) { ?> <!-- assign doc revoke here -->
+                                                                                                                <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
+                                                                                                                    <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                                    <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                                </form>
+                                                                                                                <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                                                            <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
+                                                                                                                <button
+                                                                                                                    class="btn blue-button btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                                    data-id="<?=$document['sid'];?>"
+                                                                                                                >Completed and Reassign</button>  
+                                                                                                            <?php } else { ?> <!-- revoke doc re-assign here -->
+                                                                                                                <button
+                                                                                                                    class="btn btn-warning btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                                    data-id="<?=$document['sid'];?>"
+                                                                                                                >Modify and Reassign</button>
+                                                                                                            <?php } ?>
+                                                                                                        <?php } else { // assign here ?>
                                                                                                             <button
-                                                                                                                class="btn blue-button btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                                class="btn btn-success btn-sm btn-block js-modify-assign-document-btn"
                                                                                                                 data-id="<?=$document['sid'];?>"
-                                                                                                            >Completed and Reassign</button>  
-                                                                                                        <?php } else { ?> <!-- revoke doc re-assign here -->
-                                                                                                            <button
-                                                                                                                class="btn btn-warning btn-sm btn-block js-modify-assign-document-btn"
-                                                                                                                data-id="<?=$document['sid'];?>"
-                                                                                                            >Modify and Reassign</button>
+                                                                                                            >Modify and Assign</button>
                                                                                                         <?php } ?>
-                                                                                                    <?php } else { // assign here ?>
-                                                                                                        <button
-                                                                                                            class="btn btn-success btn-sm btn-block js-modify-assign-document-btn"
-                                                                                                            data-id="<?=$document['sid'];?>"
-                                                                                                        >Modify and Assign</button>
-                                                                                                    <?php } ?>
-                                                                                                </td>
+                                                                                                    </td>
+                                                                                                <?php } ?>
                                                                                             <?php } ?>
                                                                                         <?php } ?>
                                                                                         <td>
