@@ -11586,6 +11586,7 @@ if(!function_exists('cleanDocumentsByPermission')){
         if(!count($data)) return;
         if($employerDetails['access_level_plus'] == 1) return;
         if($employerDetails['pay_plan_flag'] == 1) return;
+        if($employerDetails['doc_preview_only'] == 1) return;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
@@ -11950,6 +11951,7 @@ if(!function_exists('cleanAssignedDocumentsByPermission')){
         if(!count($documents)) return $documents;
         if($employerDetails['access_level_plus'] == 1) return $documents;
         if($employerDetails['pay_plan_flag'] == 1) return $documents;
+        if($employerDetails['doc_preview_only'] == 1) return $documents;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //

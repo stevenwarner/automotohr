@@ -1,5 +1,9 @@
 <?php 
     $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
+
+    if ($session['employer_detail']['doc_preview_only'] == 1) {
+        $canAccessDocument = true;
+    }
 ?>
 <div class="main-content">
     <div class="container-fluid">
