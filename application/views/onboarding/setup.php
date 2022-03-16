@@ -1852,7 +1852,11 @@ if (isset($applicant)) {
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         <div class="well well-sm">
-                                                            <p style="font-size: 18px;" id="date-sent-div"><?= empty($email_sent_date) ? 'A Notification email has NOT been sent.' : 'A Notification email has been sent at '.$email_sent_date ?></p>
+                                                            <?php if (empty($email_sent_date)) { ?>
+                                                                <p style="font-size: 20px; color: #b4052c;" id="date-sent-div"><strong>A Notification email has NOT been sent.</strong></p>
+                                                            <?php } else { ?>
+                                                                <p style="font-size: 20px; color: #518401;" id="date-sent-div"><strong>A Notification email has been sent at <?php echo $email_sent_date ?></strong></p>
+                                                            <?php } ?>
                                                         </div>
 
                                                     </div>

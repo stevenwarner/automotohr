@@ -618,7 +618,13 @@
                                                 <br />
 
                                                 <?php if(check_blue_panel_status() == true && $employer_job['is_onboarding'] == 1) { ?>
-                                                    <span class="text-danger">Onboarding Request Sent</span>
+                                                    <?php $send_notification = checkOnboardingNotification($employer_job["applicant_sid"]); ?>
+                                                    <?php if ($send_notification) { ?>
+                                                        <span class="text-success">Onboarding Request Sent</span>
+                                                    <?php } else { ?>
+                                                        <span class="text-danger">Onboarding Request Pending</span>
+                                                    <?php } ?>
+                                                    
                                                 <?php } else { ?>
                                                     <span class=""><?php echo $employer_job["applicant_type"]; ?></span>
                                                 <?php }  ?>

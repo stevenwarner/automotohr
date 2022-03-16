@@ -14724,3 +14724,44 @@ if (!function_exists('update_user_gender')) {
         $CI->db->update($table, $dataToUpdate);
     }
 }
+
+if (!function_exists('checkOnboardingNotification')) {
+    function checkOnboardingNotification($applicant_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('email_sent_date');
+        $CI->db->where('applicant_sid', $applicant_sid);
+        //
+        $records_obj = $CI->db->get("onboarding_applicants");
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr["email_sent_date"])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+if (!function_exists('onboardingNotificationPendingText')) {
+    function onboardingNotificationPendingText($applicant_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('employer_sid, onboarding_start_date');
+        $CI->db->where('applicant_sid', $applicant_sid);
+        //
+        $record_obj = $CI->db->get("onboarding_applicants");
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $name = getUserNameBySID($record_arr["employer_sid"]);
+            $date = date_with_time($record_arr["onboarding_start_date"]);
+            //
+            return $name." has created setup onboarding on ".$date. " but did not send an Onboarding notification to the applicant.";
+        } else {
+            return "";
+        }
+    }
+}
