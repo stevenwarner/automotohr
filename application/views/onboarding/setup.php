@@ -1,10 +1,22 @@
 <?php
     $watch_video_base_url = '';
 
-if (isset($applicant)) {
+if (isset($applicant)) {die("applicant");
     $watch_video_base_url = base_url('onboarding/watch_video/' . $unique_sid);
 } else if (isset($employee)) {
     $watch_video_base_url = base_url('learning_center/watch_video/');
+}
+
+if ($user_type == 'applicant') {
+    $sendNotification = "yes";
+    $sendNotificationText = "";
+    $sendNotificationURL = "";
+    
+    if (!checkOnboardingNotification($user_info['sid'])) {
+        $sendNotification = "no";
+        $sendNotificationText = "Onboarding email notification to this candidate has been pending.";
+        $sendNotificationURL = base_url('onboarding/setup/applicant').'/'.$user_info['sid'].'/'.$job_list_sid.'#send_email_to_applicant';
+    }
 }
 //echo '<pre>'; print_r($items); echo '</pre>';
 ?>
@@ -2150,6 +2162,15 @@ if (isset($applicant)) {
 
 <script type="text/javascript">
     $(document).ready(function () {
+        var is_notify = "<?php echo $sendNotification; ?>";
+        
+        if (is_notify == "no") {
+            var notify_text = "<?php echo $sendNotificationText; ?>";
+            var notify_url = "<?php echo $sendNotificationURL; ?>";
+            alertify.alert("Notice",notify_text, function () {
+                // window.location.href = notify_url;
+            });
+        }
         //
         $('#offer_letter_select').select2();
         //
