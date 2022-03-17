@@ -72,10 +72,6 @@ class AwsSdk {
         $plainUrl = $this->client->getObjectUrl($bucket, $key);
         return $plainUrl;
     }
-
-    public function check_if_file_exists($bucket_name, $key_name){
-        return $this->client->doesObjectExist($bucket_name, $key_name);
-    }
     
     
     

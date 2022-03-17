@@ -12889,15 +12889,7 @@ if(!function_exists('getSelect')){
 if(!function_exists('getImageURL')){
     function getImageURL($img) {
         if ($img == '' || $img == null || !preg_match('/jpg|jpeg|png|gif/i', strtolower($img))) {
-            require_once(APPPATH . 'libraries/aws/aws.php');
-            $aws = new AwsSdk();
-            $file_exists = $aws->check_if_file_exists(AWS_S3_BUCKET_NAME, $img);
-            if ($file_exists) {
-                return AWS_S3_BUCKET_URL.$img;
-            } else {
-                return base_url('assets/images/img-applicant.jpg');
-            }
-            
+           return base_url('assets/images/img-applicant.jpg');  
         } else return AWS_S3_BUCKET_URL.$img;
     }
 }
