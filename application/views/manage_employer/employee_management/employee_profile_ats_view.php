@@ -579,7 +579,7 @@
                                                         <span class="selected-file" id="name_pictures">No file
                                                             selected</span>
                                                         <input type="file" name="pictures" id="pictures"
-                                                            onchange="check_file_all('pictures')">
+                                                            onchange="check_profile_picture('pictures')">
                                                         <a href="javascript:;">Choose File</a>
                                                     </div>
                                                     <!--  -->
@@ -1920,6 +1920,7 @@ function check_file_all(val) {
     if (fileName.length > 0) {
         $('#name_' + val).html(fileName.substring(0, 45));
         var ext = fileName.split('.').pop();
+        alert(ext)
         if (val == 'pictures') {
             if (ext != "jpg" && ext != "jpeg" && ext != "png" && ext != "jpe" && ext != "JPG" && ext != "JPEG" && ext !=
                 "JPE" && ext != "PNG") {
@@ -2247,6 +2248,25 @@ function check_file(val) {
                 "jpe" && ext != "gif" && ext != "JPG" && ext != "JPEG" && ext != "JPE" && ext != "PNG") {
                 $("#" + val).val(null);
                 $('#name_' + val).html('<p class="red">Only (.pdf .docx .doc .jpg .jpeg .png .jpe .gif) allowed!</p>');
+            }
+        }
+    } else {
+        $('#name_' + val).html('Please Select');
+    }
+}
+
+function check_profile_picture(val) {
+    var fileName = $("#" + val).val();
+
+    if (fileName.length > 0) {
+        $('#name_' + val).html(fileName);
+        var ext = fileName.split('.').pop();
+        var ext = ext.toLowerCase();
+        
+        if (val == 'pictures' || val == 'pictures') {
+            if (ext != "jpg" && ext != "jpeg" && ext != "png" && ext != "jpe" && ext != "gif") {
+                $("#" + val).val(null);
+                $('#name_' + val).html('<p class="red">Only (.jpg .jpeg .png .jpe .gif) allowed!</p>');
             }
         }
     } else {

@@ -6,6 +6,18 @@ if (isset($applicant)) {
 } else if (isset($employee)) {
     $watch_video_base_url = base_url('learning_center/watch_video/');
 }
+
+if ($user_type == 'applicant') {
+    $sendNotification = "yes";
+    $sendNotificationText = "";
+    $sendNotificationURL = "";
+    
+    if (!checkOnboardingNotification($user_info['sid'])) {
+        $sendNotification = "no";
+        $sendNotificationText = "Onboarding email notification to this candidate has been pending.";
+        $sendNotificationURL = base_url('onboarding/setup/applicant').'/'.$user_info['sid'].'/'.$job_list_sid.'#send_email_to_applicant';
+    }
+}
 //echo '<pre>'; print_r($items); echo '</pre>';
 ?>
 <div class="main-content">
@@ -1852,7 +1864,11 @@ if (isset($applicant)) {
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         <div class="well well-sm">
-                                                            <p style="font-size: 18px;" id="date-sent-div"><?= empty($email_sent_date) ? 'A Notification email has NOT been sent.' : 'A Notification email has been sent at '.$email_sent_date ?></p>
+                                                            <?php if (empty($email_sent_date)) { ?>
+                                                                <p style="font-size: 20px; color: #b4052c;" id="date-sent-div"><strong>A Notification email has NOT been sent.</strong></p>
+                                                            <?php } else { ?>
+                                                                <p style="font-size: 20px; color: #518401;" id="date-sent-div"><strong>A Notification email has been sent at <?php echo $email_sent_date ?></strong></p>
+                                                            <?php } ?>
                                                         </div>
 
                                                     </div>
@@ -2146,6 +2162,15 @@ if (isset($applicant)) {
 
 <script type="text/javascript">
     $(document).ready(function () {
+        var is_notify = "<?php echo $sendNotification; ?>";
+        
+        if (is_notify == "no") {
+            var notify_text = "<?php echo $sendNotificationText; ?>";
+            var notify_url = "<?php echo $sendNotificationURL; ?>";
+            alertify.alert("Notice",notify_text, function () {
+                // window.location.href = notify_url;
+            });
+        }
         //
         $('#offer_letter_select').select2();
         //

@@ -55,7 +55,12 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
                                                    data-size="xs">
                                         </div>
                                         <?php if (check_blue_panel_status() && $applicant_info['is_onboarding'] == 1) { ?>
-                                            <span class="badge" style="padding:8px; background-color: red;">Onboarding Request Sent</span>
+                                            <?php $send_notification = checkOnboardingNotification($applicant_info["sid"]); ?>
+                                            <?php if ($send_notification) { ?>
+                                                <span class="badge" style="padding:8px; background-color: green;">Onboarding Request Sent</span>
+                                            <?php } else { ?>
+                                                <span class="badge" style="padding:8px; background-color: red;">Onboarding Request Pending</span>
+                                            <?php } ?>
                                         <?php } else { ?>
                                             <span class=""
                                                   style="padding:8px;"><?php echo $applicant_info["applicant_type"]; ?></span>

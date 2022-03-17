@@ -11586,6 +11586,7 @@ if(!function_exists('cleanDocumentsByPermission')){
         if(!count($data)) return;
         if($employerDetails['access_level_plus'] == 1) return;
         if($employerDetails['pay_plan_flag'] == 1) return;
+        if($employerDetails['doc_preview_only'] == 1) return;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
@@ -11950,6 +11951,7 @@ if(!function_exists('cleanAssignedDocumentsByPermission')){
         if(!count($documents)) return $documents;
         if($employerDetails['access_level_plus'] == 1) return $documents;
         if($employerDetails['pay_plan_flag'] == 1) return $documents;
+        if($employerDetails['doc_preview_only'] == 1) return $documents;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
@@ -12887,7 +12889,7 @@ if(!function_exists('getSelect')){
 if(!function_exists('getImageURL')){
     function getImageURL($img) {
         if ($img == '' || $img == null || !preg_match('/jpg|jpeg|png|gif/i', strtolower($img))) {
-            return base_url('assets/images/img-applicant.jpg');
+           return base_url('assets/images/img-applicant.jpg');  
         } else return AWS_S3_BUCKET_URL.$img;
     }
 }
@@ -14720,5 +14722,46 @@ if (!function_exists('update_user_gender')) {
         $CI = &get_instance();
         $CI->db->where('sid', $user_sid);
         $CI->db->update($table, $dataToUpdate);
+    }
+}
+
+if (!function_exists('checkOnboardingNotification')) {
+    function checkOnboardingNotification($applicant_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('email_sent_date');
+        $CI->db->where('applicant_sid', $applicant_sid);
+        //
+        $records_obj = $CI->db->get("onboarding_applicants");
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr["email_sent_date"])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+if (!function_exists('onboardingNotificationPendingText')) {
+    function onboardingNotificationPendingText($applicant_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('employer_sid, onboarding_start_date');
+        $CI->db->where('applicant_sid', $applicant_sid);
+        //
+        $record_obj = $CI->db->get("onboarding_applicants");
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $name = getUserNameBySID($record_arr["employer_sid"]);
+            $date = date_with_time($record_arr["onboarding_start_date"]);
+            //
+            return $name." has created setup onboarding on ".$date. " but did not send an Onboarding notification to the applicant.";
+        } else {
+            return "";
+        }
     }
 }

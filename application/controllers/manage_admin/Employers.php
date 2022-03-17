@@ -1027,6 +1027,7 @@ class employers extends Admin_Controller {
             } else {
                 if ($status == 5) {
                     $data_to_update['active'] = 1;
+                    $data_to_update['terminated_status'] = 0;
                     $data_to_update['general_status'] = 'active';
                 } else if ($status == 6) {
                     $data_to_update['active'] = 0;
@@ -1035,6 +1036,7 @@ class employers extends Admin_Controller {
                     $data_to_update['general_status'] = 'leave';
                 }else if ($status == 4) {
                     $data_to_update['general_status'] = 'suspended';
+                    $data_to_update['active'] = 0;
                 }else if ($status == 3) {
                     $data_to_update['general_status'] = 'deceased';
                     $data_to_update['active'] = 0;
@@ -1043,7 +1045,7 @@ class employers extends Admin_Controller {
                     $data_to_update['active'] = 0;
                 }else if ($status == 8) {
                     $data_to_update['general_status'] = 'rehired';
-                    $data_to_update['active'] = 0;
+                    $data_to_update['active'] = 1;
                 }
                 $data_to_update['terminated_status'] = 0;
             }

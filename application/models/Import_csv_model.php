@@ -338,7 +338,8 @@ class Import_csv_model extends CI_Model {
         $data_to_update = array(); 
         $data_to_update['rehire_date'] = $rehireDate;
         $data_to_update['general_status'] = 'rehired';
-        $data_to_update['active'] = 0;
+        $data_to_update['active'] = 1;
+        $data_to_update['terminated_status'] = 0;
 
         $this->db->where('sid', $employeeId);
         $this->db->update('users', $data_to_update);

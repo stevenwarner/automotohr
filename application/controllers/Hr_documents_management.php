@@ -1681,6 +1681,14 @@ class Hr_documents_management extends Public_Controller {
             // loadCachedFile('documents_assignment_'.($user_type).'_'.($user_sid).'', $data['session']);
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
+            //
+            if (!$data['session']['employer_detail']['doc_preview_only']) {
+                if (!$data['session']['employer_detail']['access_level_plus'] && !$data['session']['employer_detail']['pay_plan_flag']) {
+                    $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessable!');
+                    redirect('employee_management', 'refresh');
+                }
+            }    
+            //
             $data['security_details'] = $security_details;
             //check_access_permissions($security_details, 'appearance', 'customize_appearance'); 
             // no need to check in this Module as Dashboard will be available to all
@@ -3288,9 +3296,16 @@ class Hr_documents_management extends Public_Controller {
 
             $active_documents = $this->hr_documents_management_model->get_all_documents($company_sid, 0);
             $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, $user_type, $user_sid, 0, 1, 0, $pp_flag);
-            $company_offer_letters = $this->hr_documents_management_model->get_all_company_offers_letters($company_sid, 0);
-            $assigned_offer_letters = $this->hr_documents_management_model->get_assigned_offers($company_sid, $user_type, $user_sid);
-            $assigned_offer_letter_history = $this->hr_documents_management_model->get_assigned_offer_letter_history($company_sid, $user_type, $user_sid, 0);  
+
+            if ($data['session']['employer_detail']['doc_preview_only'] == 1 && $data['session']['employer_detail']['access_level_plus'] == 0) {
+                $company_offer_letters = array();
+                $assigned_offer_letters = array();
+                $assigned_offer_letter_history = array();
+            } else {
+                $company_offer_letters = $this->hr_documents_management_model->get_all_company_offers_letters($company_sid, 0);
+                $assigned_offer_letters = $this->hr_documents_management_model->get_assigned_offers($company_sid, $user_type, $user_sid);
+                $assigned_offer_letter_history = $this->hr_documents_management_model->get_assigned_offer_letter_history($company_sid, $user_type, $user_sid, 0);
+            }
             $archived_assign_document = $this->hr_documents_management_model->get_archive_assigned_documents($company_sid, $user_type, $user_sid, $pp_flag);  
             $user_assigned_manual_documents = $this->hr_documents_management_model->get_all_user_assigned_manual_documents($company_sid, $user_type, $user_sid, $pp_flag);  
 
@@ -3472,7 +3487,11 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
 
-            $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_sid, $user_type, $user_sid);
+            if ($data['session']['employer_detail']['doc_preview_only'] == 1 && $data['session']['employer_detail']['access_level_plus'] == 0) {
+                $current_assigned_offer_letter = array();
+            } else {
+               $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_sid, $user_type, $user_sid); 
+            }
 
             if (!empty($current_assigned_offer_letter)) {
                 if ($current_assigned_offer_letter[0]['user_consent'] == 1) {
