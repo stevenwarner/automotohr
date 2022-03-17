@@ -1,7 +1,7 @@
 <?php
     $watch_video_base_url = '';
 
-if (isset($applicant)) {die("applicant");
+if (isset($applicant)) {
     $watch_video_base_url = base_url('onboarding/watch_video/' . $unique_sid);
 } else if (isset($employee)) {
     $watch_video_base_url = base_url('learning_center/watch_video/');
