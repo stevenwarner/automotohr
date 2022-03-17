@@ -3266,7 +3266,7 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
 
-            if ($sendGroupEmail == 1) {
+            if ($sendGroupEmail == 1 && $user_type == 'employee') {
                 //
                 $hf = message_header_footer(
                         $company_sid,
