@@ -1370,12 +1370,10 @@ class Employee_management extends Public_Controller {
                         $file = explode(".", $_FILES['pictures']['name']);
                         $file_name = str_replace(" ", "-", $file[0]);
                         $pictures = $file_name . '-' . generateRandomString(6) . '.' . $file[1];
-                        // generate_image_compressed($_FILES['pictures']['tmp_name'], 'images/' . $pictures);
-                        echo "start<br>";
-                        echo $pictures."<br>";
-                        die();
+                        //generate_image_compressed($_FILES['pictures']['tmp_name'], 'images/' . $pictures);
+                        // $aws->putToBucket($pictures, 'images/' . $pictures, AWS_S3_BUCKET_NAME);
                         $aws = new AwsSdk();
-                        $aws->putToBucket($pictures, 'images/' . $pictures, AWS_S3_BUCKET_NAME);
+                        $aws->putToBucket($pictures, $_FILES['pictures']['tmp_name'], AWS_S3_BUCKET_NAME);
                     }
 
                     $extra_info_arr = array();
