@@ -106,4 +106,28 @@ class Testing extends CI_Controller
         print_r($productArray);
         die();
     }
+
+    function get_fix_rehired (){
+        //
+        $this->db->select('sid,first_name,last_name,active,terminated_status,general_status');
+        $this->db->where('general_status', "rehired");
+        $this->db->where('active', '0');
+        $record_obj = $this->db->get('users'); //Getting all rehired
+        $employees = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        foreach ($employees as $employee) {
+            $data_to_update = array();   
+            $data_to_update["active"] = 1; 
+            $data_to_update["terminated_status "] = 0; 
+            //
+            $this->db->where('sid', $employee["sid"]);
+            $this->db->update('users',$data_to_update);  
+        }
+        
+        //
+        echo "<pre>";
+        print_r($employees);
+        die();
+    }
 }
