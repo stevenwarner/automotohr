@@ -77,7 +77,6 @@ $(function() {
      */
     function CB() {}
 
-
     // LoadClock();
     // MarkAttendance('clock_in');
 });

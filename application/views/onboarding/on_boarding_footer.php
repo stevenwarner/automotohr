@@ -511,7 +511,7 @@ $(document).ready(loadTitles);
 
 </style>
 <script>
-    var companyId = <?=$session['company_detail']['sid']?>;
+    companyId = <?=$session['company_detail']['sid']?>;
     /**
      * Set base url
      * @type {string}
@@ -526,3 +526,4 @@ $(document).ready(loadTitles);
 
 <script src="<?=base_url("assets/payroll/js/payroll_company_onboard.js");?>"></script>
 <script src="<?=base_url("assets/payroll/js/employee_onboard.js");?>"></script>
+<?php echo GetScripts(['attendance/js/main']); ?>

@@ -351,6 +351,7 @@
                                         <li><?php echo $session['company_detail']['CompanyName']; ?></li> 
                                     </ul>
                                 </div>
+                                <?php $this->load->view('attendance/2022/clock_header_blue'); ?>
                                 <?php if ($employee['is_executive_admin'] == 0) { ?>
                                 <div class="btn-link-wrp">
                                     <a href="<?php echo base_url('my_profile'); ?>"><i class="fa fa-pencil"></i> my profile</a>

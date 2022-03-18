@@ -709,7 +709,8 @@
                             </a>
                         </div>
                         <?php } ?>
-
+                        
+                        <?php $this->load->view('attendance/2022/clock_blue'); ?>
                         
                     </div>
                 </div>

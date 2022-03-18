@@ -806,6 +806,8 @@
                                     </div>
                                 <?php } ?>
 
+                                <?php $this->load->view('attendance/2022/clock_green'); ?>
+
                                 <!-- Account Activity -->
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box activity-box-wrp">
