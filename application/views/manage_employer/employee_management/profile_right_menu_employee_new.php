@@ -1,9 +1,3 @@
-<?php 
-    $document_all_permission = false;
-    if($session['employer_detail']['access_level_plus'] == 1) {
-        $document_all_permission = true;
-    }
-?>
 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
     <aside class="side-bar">
         <a href="<?php echo base_url('employee_management') ?>">
@@ -61,7 +55,6 @@
                 </div>
             </div>
          
-            <?php if($document_all_permission) { ?>
                 <?php $function_names = array('employee_profile', 'employee_login_credentials', 'background_check', 'drug_test', 'reference_checks'); ?>
                 <?php if(check_access_permissions_for_view($security_details, $function_names)) { ?>
                     <div class="hr-widget">
@@ -692,7 +685,6 @@
                         </form>
                     </div>
                 <?php } ?>
-            <?php } ?>
             <!--Extra attachments panel ends-->
         </div>
     </aside>
