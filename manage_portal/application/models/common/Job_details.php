@@ -1149,6 +1149,9 @@ class Job_details extends CI_Model {
             }
     
     function GetAllCategories($ids = []) {
+        if(empty($ids)){
+            return [];
+        }
         $this->db->select('sid,value');
         $this->db->where('field_sid', '198');
         $this->db->from('listing_field_list');
@@ -1171,6 +1174,10 @@ class Job_details extends CI_Model {
     }
 
     function GetStatesWithCountries($ids = []) {
+        //
+        if(empty($ids)){
+            return ['States' => [], 'CountryWithStates' => []];
+        }
         $this->db->select('sid, country_sid, state_name');
         $this->db->order_by('state_name', 'ASC');
         $this->db->from('states');
