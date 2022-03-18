@@ -5,7 +5,7 @@
     }
 
     function get_active_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC') {
-        $keyword = trim($keyword);
+        $keyword = trim(str_replace("'", '', $keyword));
         $this->db->select('*');
         $this->db->where('parent_sid', $parent_sid);
         $this->db->where('active', '1');
@@ -13,7 +13,7 @@
         $this->db->where('archived', $archive);
         $this->db->where('is_executive_admin', 0);
         if ($keyword != null) {
-            $tK = preg_replace('/\s+/', '|', strtolower(trim($keyword)));
+            $tK = preg_replace('/\s+/', '|', strtolower($keyword));
             $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
             // $this->db->where("(first_name LIKE '%" . $keyword . "%' or last_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
         }
@@ -26,7 +26,7 @@
     }
 
     function get_inactive_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC') {
-        $keyword = trim($keyword);
+        $keyword = trim(str_replace("'", '', $keyword));
         $this->db->select('*');
         $this->db->where('parent_sid', $parent_sid);
         $this->db->where('active', '0');
@@ -45,7 +45,7 @@
     }
 
     function get_terminated_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0, $orderType = 'users.sid', $order="DESC") {
-        $keyword = trim($keyword);
+        $keyword = trim(str_replace("'", '', $keyword));
         $this->db->select('users.*');
         $this->db->where('users.parent_sid', $parent_sid);
         $this->db->where('users.terminated_status', 1);
@@ -122,7 +122,7 @@
     }
 
     function get_all_company_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0,  $order_by = 'sid', $order="DESC") {
-        $keyword = trim($keyword);
+        $keyword = trim(str_replace("'", '', $keyword));
         $this->db->select('users.*');
         $this->db->where('users.parent_sid', $parent_sid);
         if ($keyword != null) {
@@ -143,7 +143,7 @@
     }
 
     function get_all_executive_admins($parent_sid, $sid, $keyword = null, $archive = 0,  $order_by = 'sid', $order="DESC") {
-        $keyword = trim($keyword);
+        $keyword = trim(str_replace("'", '', $keyword));
         $this->db->select('users.*, terminated_employees.termination_date');
         $this->db->where('users.parent_sid', $parent_sid);
         if ($keyword != null) {
