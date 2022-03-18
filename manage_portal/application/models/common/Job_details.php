@@ -1148,10 +1148,13 @@ class Job_details extends CI_Model {
                 return $record_arr;
             }
     
-    function GetAllCategories() {
+    function GetAllCategories($ids = []) {
         $this->db->select('sid,value');
         $this->db->where('field_sid', '198');
         $this->db->from('listing_field_list');
+        if(!empty($ids)){
+            $this->db->where_in('sid', $ids);
+        }
         $results = $this->db->get()->result_array();
         //
         if(empty($results)){
@@ -1167,10 +1170,13 @@ class Job_details extends CI_Model {
         return $t;
     }
 
-    function GetStatesWithCountries() {
+    function GetStatesWithCountries($ids = []) {
         $this->db->select('sid, country_sid, state_name');
         $this->db->order_by('state_name', 'ASC');
         $this->db->from('states');
+        if(!empty($ids)){
+            $this->db->where_in('sid', $ids);
+        }
         $results = $this->db->get()->result_array();
         //
         if(empty($results)){
@@ -1190,5 +1196,48 @@ class Job_details extends CI_Model {
         }
         //
         return ['States' => $t, 'CountryWithStates' => $t2];
+    }
+
+    //
+    public function GetActiveJobsCatCSC($companyId){
+        //
+        $q = $this->db
+        ->select('
+            JobCategory,
+            Location_Country,
+            Location_State
+        ')
+        ->from('portal_job_listings')
+        ->where('user_sid', $companyId)
+        ->where('portal_job_listings.active', 1)
+        ->where('portal_job_listings.organic_feed', 1)
+        ->where('portal_job_listings.published_on_career_page', 1);
+        //
+        $results = $q->get();
+        //
+        $data = $results->result_array(); 
+        $results->free_result();
+        //
+        if(empty($data)){
+            return [];
+        }
+        //
+        $r = [];
+        $r['countryIds'] = [];
+        $r['categoryIds'] = [];
+        $r['stateIds'] = [];
+        //
+        foreach($data as $row){
+            //
+            $r['countryIds'][$row['Location_Country']] = 1;
+            $r['stateIds'][$row['Location_State']] = 1;
+            $r['categoryIds'] = array_merge($r['categoryIds'], explode(',', $row['JobCategory']));
+        }
+        //
+        $r['categoryIds'] = array_unique($r['categoryIds'], SORT_STRING);
+        $r['countryIds'] = array_keys($r['countryIds']);
+        $r['stateIds'] = array_keys($r['stateIds']);
+        //
+        return $r;
     }
 }

@@ -136,18 +136,24 @@ class Home extends CI_Controller {
             $list_count                                             = 0;
             $segment7                                                           = $this->uri->segment(7);
             $ajax_flag                                                          = $this->uri->segment(8);
-
+            // Get company active jobs 
+            $jb = $this->job_details->GetActiveJobsCatCSC($company_sid); 
             // Get all categories
-            $all_categories = $this->job_details->GetAllCategories();
+            $all_categories = $this->job_details->GetAllCategories($jb['categoryIds']);
             // Get all states
-            $GetStatesWithCountries = $this->job_details->GetStatesWithCountries();
+            $GetStatesWithCountries = $this->job_details->GetStatesWithCountries($jb['stateIds']);
             //
             $all_states = $GetStatesWithCountries['States'];
             // Get all countries
-            $all_countries = [
-                38 => ['sid' => 38, 'country_code' => 'CA', 'country_name' => 'Canada'],
-                227 => ['sid' => 227, 'country_code' => 'US', 'country_name' => 'United States']
-            ];
+            $all_countries = [];
+            //
+            if(in_array(38, $jb['countryIds'])){
+                $all_countries[38] = ['sid' => 38, 'country_code' => 'CA', 'country_name' => 'Canada'];
+            }
+            //
+            if(in_array(227, $jb['countryIds'])){
+                $all_countries[227] = ['sid' => 227, 'country_code' => 'US', 'country_name' => 'United States'];
+            }
                 
             if($data['customize_career_site']['status'] == 1){
                 
