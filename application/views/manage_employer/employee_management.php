@@ -351,10 +351,11 @@
                                                         <td class="text-center">
                                                             <?php //if($employee['terminated_status'] == 0) { ?>
                                                             <?php if($ems_status == 1) { ?>
-                                                                        
+                                                                    <?php if($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) {?>
                                                                     <a title="Document Management"  data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('hr_documents_management/documents_assignment/employee') . '/' . $employee['sid']; ?>">
                                                                         <i class="fa fa-file" aria-hidden="true"></i>
                                                                     </a>
+                                                                    <?php } ?>
                                                                     <?php if(checkIfAppIsEnabled('timeoff', FALSE) && $employee['terminated_status'] == 0){ ?>
                                                                         <?php 
                                                                             if(
