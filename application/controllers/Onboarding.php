@@ -179,23 +179,23 @@ class Onboarding extends CI_Controller {
                     }
                 }
 
-                if ($sendGroupEmail == 1) {
-                    //
-                    $hf = message_header_footer(
-                        $company_info['sid'],
-                        ucwords($company_info['CompanyName'])
-                    );
-                    //
-                    $replacement_array = array();
-                    $replacement_array['contact-name'] = ucwords($applicant_info['first_name'] . ' ' . $applicant_info['last_name']);
-                    $replacement_array['baseurl'] = base_url();
-                    //
-                    $extra_user_info = array();
-                    $extra_user_info["user_type"] = 'applicant';
-                    $extra_user_info["user_sid"] = $applicant_sid;
-                    //
-                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $applicant_info['email'], $replacement_array, $hf, 1, $extra_user_info);
-                }
+                // if ($sendGroupEmail == 1 && $user_type == 'employee') {
+                //     //
+                //     $hf = message_header_footer(
+                //         $company_info['sid'],
+                //         ucwords($company_info['CompanyName'])
+                //     );
+                //     //
+                //     $replacement_array = array();
+                //     $replacement_array['contact-name'] = ucwords($applicant_info['first_name'] . ' ' . $applicant_info['last_name']);
+                //     $replacement_array['baseurl'] = base_url();
+                //     //
+                //     $extra_user_info = array();
+                //     $extra_user_info["user_type"] = 'applicant';
+                //     $extra_user_info["user_sid"] = $applicant_sid;
+                //     //
+                //     log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $applicant_info['email'], $replacement_array, $hf, 1, $extra_user_info);
+                // }
 
                 $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_info['sid'], 'applicant', $applicant_sid, 0);
 
