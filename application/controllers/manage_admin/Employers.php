@@ -1145,24 +1145,29 @@ class employers extends Admin_Controller {
                 }else if ($status == 7) {
                     $data_to_update['general_status'] = 'leave';
                 }else if ($status == 4) {
+                    $data_to_update['active'] = 0;
                     $data_to_update['general_status'] = 'suspended';
                 }else if ($status == 3) {
+                    $data_to_update['active'] = 0;
                     $data_to_update['general_status'] = 'deceased';
-                    $data_to_update['active'] = 0;
                 }else if ($status == 2) {
-                    $data_to_update['general_status'] = 'retired';
                     $data_to_update['active'] = 0;
+                    $data_to_update['general_status'] = 'retired';
                 }else if ($status == 8) {
-                    $data_to_update['general_status'] = 'rehired';
                     $data_to_update['active'] = 1;
+                    $data_to_update['general_status'] = 'rehired';
                 }
                 $data_to_update['terminated_status'] = 0;
+                
             }
             //
             $this->company_model->update_terminate_user($status_id, $data_to_insert);
+            //
+            // Check its current status then update in user primary data
             if($this->company_model->check_for_main_status_update($sid, $status_id)){
                 $this->company_model->change_terminate_user_status($sid, $data_to_update);
             }
+            //
             $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
             redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
         }
