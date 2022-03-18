@@ -4520,7 +4520,7 @@ class Onboarding extends CI_Controller {
                 }
             }
 
-            if ($sendGroupEmail == 1) {
+            if ($sendGroupEmail == 1 && $user_type == 'employee') {
                 //
                 $hf = message_header_footer(
                         $company_sid,

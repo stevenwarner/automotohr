@@ -605,7 +605,7 @@
 				html +='                <!-- Departments -->';
 				html +='                <label>Departments</label>';
 				html +='                <select name="departments[]" id="jsDepartments" multiple>';
-				if(departmentList.length){
+				if(departmentList && departmentList.length){
 					departmentList.map(function(v){
 						html +='<option value="'+(v['sid'])+'">'+(v['name'])+'</option>';
 					});
@@ -616,7 +616,7 @@
 				html +='                <!-- Teams -->';
 				html +='                <label>Teams</label>';
 				html +='                <select name="teams[]" id="jsTeams" multiple>';
-				if(teamList.length){
+				if(teamList && teamList.length){
 					teamList.map(function(v){
 						html +='<option value="'+(v['sid'])+'">'+(v['name'])+'</option>';
 					});
