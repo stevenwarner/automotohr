@@ -228,20 +228,19 @@ class Company_model extends CI_Model {
         if ($contact_name != null && $contact_name != 'all') {
             $name_parts = explode(' ', trim($contact_name));
 
+            $this->db->group_start();
             if (count($name_parts) == 1) {
                 $this->db->like('table_one.first_name', $name_parts[0]);
                 $this->db->or_like('table_one.last_name', $name_parts[0]);
             } else {
                 $this->db->like('table_one.first_name', $name_parts[0]);
-                $this->db->group_start();
 
                 for ($i = 1; $i < count($name_parts); $i++) {
                     $this->db->or_like('table_one.last_name', $name_parts[$i]);
                 }
-
-                $this->db->group_end();
             }
             $this->db->or_like('table_one.nick_name', $contact_name);
+            $this->db->group_end();
         }
 
         $this->db->join('users as table_two', 'table_one.parent_sid = table_two.sid', 'left');
