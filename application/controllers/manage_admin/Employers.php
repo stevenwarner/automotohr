@@ -1154,7 +1154,7 @@ class employers extends Admin_Controller {
                     $data_to_update['active'] = 0;
                 }else if ($status == 8) {
                     $data_to_update['general_status'] = 'rehired';
-                    $data_to_update['active'] = 0;
+                    $data_to_update['active'] = 1;
                 }
                 $data_to_update['terminated_status'] = 0;
             }
