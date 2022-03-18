@@ -469,12 +469,6 @@ class Hr_documents_management_model extends CI_Model {
             $this->db->group_end();
         } 
 
-        $data['session'] = $this->session->userdata('logged_in');
-        if ($data['session']['employer_detail']['doc_preview_only'] == 1 && $data['session']['employer_detail']['access_level_plus'] == 0) {
-            
-            $this->db->where('documents_assigned.visible_to_payroll',0);
-        }
-
         $this->db->where('documents_assigned.document_type <>', 'offer_letter');
         $this->db->join('documents_management','documents_management.sid = documents_assigned.document_sid','left');
         $record_obj = $this->db->get('documents_assigned');
@@ -509,12 +503,6 @@ class Hr_documents_management_model extends CI_Model {
                 }
             $this->db->group_end();
         } 
-
-        $data['session'] = $this->session->userdata('logged_in');
-        if ($data['session']['employer_detail']['doc_preview_only'] == 1 && $data['session']['employer_detail']['access_level_plus'] == 0) {
-            
-            $this->db->where('visible_to_payroll',0);
-        }
 
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
@@ -561,12 +549,6 @@ class Hr_documents_management_model extends CI_Model {
                 $this->db->or_where_in('documents_assigned.sid',$documents_assigned_sids);
             }
             $this->db->group_end();
-        }
-
-        $data['session'] = $this->session->userdata('logged_in');
-        if ($data['session']['employer_detail']['doc_preview_only'] == 1 && $data['session']['employer_detail']['access_level_plus'] == 0) {
-            
-            $this->db->where('documents_assigned.visible_to_payroll',0);
         }
         
         $this->db->join('documents_management','documents_management.sid = documents_assigned.document_sid','left');
@@ -2625,12 +2607,6 @@ class Hr_documents_management_model extends CI_Model {
             $this->db->group_end();
         }
 
-        $data['session'] = $this->session->userdata('logged_in');
-        if ($data['session']['employer_detail']['doc_preview_only'] == 1 && $data['session']['employer_detail']['access_level_plus'] == 0) {
-            
-            $this->db->where('documents_management.visible_to_payroll',0);
-        }
-
         $this->db->group_start();
         $this->db->where('documents_management.is_specific', 0);
         if($employeeSid) $this->db->or_where('documents_management.is_specific', $employeeSid);
@@ -2691,12 +2667,6 @@ class Hr_documents_management_model extends CI_Model {
                 $this->db->or_where_in('documents_management.sid', $documents_management_sids);
             }
             $this->db->group_end();
-        }
-
-        $data['session'] = $this->session->userdata('logged_in');
-        if ($data['session']['employer_detail']['doc_preview_only'] == 1 && $data['session']['employer_detail']['access_level_plus'] == 0) {
-            
-            $this->db->where('documents_management.visible_to_payroll',0);
         }
 
         $this->db->group_start();
@@ -2923,12 +2893,6 @@ class Hr_documents_management_model extends CI_Model {
                 $this->db->or_where_in('documents_management.sid', $documents_management_sids);
             }
             $this->db->group_end();
-        }
-
-        $data['session'] = $this->session->userdata('logged_in');
-        if ($data['session']['employer_detail']['doc_preview_only'] == 1 && $data['session']['employer_detail']['access_level_plus'] == 0) {
-            
-            $this->db->where('documents_management.visible_to_payroll',0);
         }
 
         $records_obj = $this->db->get('documents_management');

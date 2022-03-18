@@ -1806,7 +1806,7 @@ class Company_model extends CI_Model {
     }
 
     function get_company_employers($company_sid) {
-        $this->db->select('email,access_level,profile_picture,sid,first_name,last_name,registration_date,is_executive_admin,complynet_credentials,pay_plan_flag,doc_preview_only');
+        $this->db->select('email,access_level,profile_picture,sid,first_name,last_name,registration_date,is_executive_admin,complynet_credentials,pay_plan_flag');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);

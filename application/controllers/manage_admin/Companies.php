@@ -2122,15 +2122,6 @@ class Companies extends Admin_Controller {
                     }
                 }
 
-                foreach ($all_employees as $emp) { 
-                    if(!in_array($emp['sid'],$selected_DPO)){
-                        $this->company_model->update_configured_DPO_employers($emp['sid'], 0);
-                    } else {
-                        $this->company_model->update_configured_DPO_employers($emp['sid'], 1);
-                    }
-
-                }
-                //die();
                 $this->session->set_flashdata('message', 'Access Level Plus Updated');
                 redirect('manage_admin/companies/access_level_plus/'.$company_sid, 'refresh');
             }

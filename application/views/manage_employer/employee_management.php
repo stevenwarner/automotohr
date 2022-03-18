@@ -1,9 +1,5 @@
 <?php 
     $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
-
-    if ($session['employer_detail']['doc_preview_only'] == 1) {
-        $canAccessDocument = true;
-    }
 ?>
 <div class="main-content">
     <div class="container-fluid">
@@ -361,10 +357,6 @@
 
                                                                             if ($session['employer_detail']['access_level_plus'] == 0) {
                                                                                 $doc_disable = 'disabled="true"';
-                                                                            }
-
-                                                                            if ($session['employer_detail']['doc_preview_only'] == 1) {
-                                                                                $doc_disable = '';
                                                                             }
                                                                         ?>
                                                                         <a title="Document Management"  data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" <?php echo $doc_disable; ?> href="<?php echo base_url('hr_documents_management/documents_assignment/employee') . '/' . $employee['sid']; ?>">
