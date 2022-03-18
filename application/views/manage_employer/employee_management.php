@@ -350,19 +350,11 @@
                                                         ) { ?>
                                                         <td class="text-center">
                                                             <?php //if($employee['terminated_status'] == 0) { ?>
-                                                                <?php if($ems_status == 1) { ?>
-                                                                    <?php if($employee['is_executive_admin'] == 0) { ?>
-                                                                        <?php 
-                                                                            $doc_disable = '';
-
-                                                                            if ($session['employer_detail']['access_level_plus'] == 0) {
-                                                                                $doc_disable = 'disabled="true"';
-                                                                            }
-                                                                        ?>
-                                                                        <a title="Document Management"  data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" <?php echo $doc_disable; ?> href="<?php echo base_url('hr_documents_management/documents_assignment/employee') . '/' . $employee['sid']; ?>">
-                                                                            <i class="fa fa-file"></i>
-                                                                        </a>
-                                                                    <?php } ?>
+                                                            <?php if($ems_status == 1) { ?>
+                                                                        
+                                                                    <a title="Document Management"  data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" href="<?php echo base_url('hr_documents_management/documents_assignment/employee') . '/' . $employee['sid']; ?>">
+                                                                        <i class="fa fa-file" aria-hidden="true"></i>
+                                                                    </a>
                                                                     <?php if(checkIfAppIsEnabled('timeoff', FALSE) && $employee['terminated_status'] == 0){ ?>
                                                                         <?php 
                                                                             if(
