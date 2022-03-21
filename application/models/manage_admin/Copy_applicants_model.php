@@ -882,10 +882,10 @@ class Copy_applicants_model extends CI_Model {
             $job_title = ucwords(strtolower(trim($v0['job_title'])));
             $jobs[$k0]['job_title'] = $job_title;
             //
-            $state = !empty($v0['job_state']) ? '['.db_get_state_name_only($v0['job_state']).']' : ''; 
-            $city = !empty($v0['job_city']) ? '('.ucwords(strtolower(trim($v0['job_city']))).')' : ''; 
+            $state = !empty($v0['job_state']) ? db_get_state_name_only($v0['job_state']) : ''; 
+            $city = !empty($v0['job_city']) ? ucwords(strtolower(trim($v0['job_city']))) : ''; 
            
-            $jobs[$k0]['new_job_title'] = $job_title.' '.$state.' '.$city.' ('.$v0['job_type'].')';
+            $jobs[$k0]['new_job_title'] = $job_title.', '.$state.', '.$city.', '.$v0['job_type'];
             //
             $jobs[$k0]['total_applicants']['archived'] = $this->db
             ->from('portal_job_applications')
@@ -969,6 +969,17 @@ class Copy_applicants_model extends CI_Model {
         //
         $applicants = $result->result_array();
         $result = $result->free_result();
+        //
+        foreach ($applicants as $k0 => $v0){
+            // echo $v0['State']."<br>";
+            // echo $v0['city']."<br>";
+            $job_title = $v0['job_title'];
+            $state = empty($v0['State']) || $v0['State'] == "null" ? '' : ', '.$v0['State']; 
+            $city = empty($v0['city']) || $v0['city'] == "null" ? '' : ', '.$v0['city']; 
+            //
+            $applicants[$k0]['new_job_title'] = $job_title.$state.$city;
+           
+        }
         //
         if(!sizeof($applicants)) {return false;}
         //

@@ -764,7 +764,8 @@
                 rows += '<tr class="'+( totalrecord != 0 ? 'js-tr' : '')+'">';
                 rows += '   <td><input type="checkbox" class="checking_chkbox_class '+( totalrecord == 0 ? '' : 'js-count-unchecked' )+'" id="checking_chkbox" '+( totalrecord == 0 ? 'disabled="true"' : '' )+' name="txt_ids[]" value="'+( v.sid )+'" /></td>';
                 rows += '   <td class="js_applicant_id">'+( v.applicant_sid )+'</td>';
-                rows += '   <td class="js_job_title">'+(v.job_title)+(city)+(State)+'</td>';
+                // rows += '   <td class="js_job_title">'+(v.job_title)+(city)+(State)+'</td>';
+                rows += '   <td class="js_job_title">'+(v.new_job_title)+'</td>';
                 rows += '   <td class="js_applicant_info"><b>'+(v.full_name)+'</b><br/>'+(v.email)+'</td>';
                 rows += '   <td style="display:none" class="js_job_id">'+(v.job_id)+'</td>';
                 rows += '   <td class="'+( v.job_status == 1 ? 'text-success' : 'text-danger' )+' js_job_status">'+( v.job_status == 1 ? 'Active' : 'InActive' )+'</td>';
