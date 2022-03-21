@@ -1326,24 +1326,35 @@
                                         foreach ($applicant_message as $message) { ?>
                                     <article <?php if ($message['outbox'] == 1) { ?>class="reply" <?php } ?>
                                         id="delete_message<?php echo $message['id']; ?>">
-                                        <figure><img <?php  if (empty($message['profile_picture'])) { ?>
-                                                src="<?= base_url() ?>assets/images/attachment-img.png"
-                                                <?php           } else { ?>
-                                                src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture'] ?>"
-                                                width="48" <?php           } ?>>
+                                        <figure><img
+                                                <?php  if (empty($message['profile_picture'])) { ?>
+                                                    src="<?= base_url() ?>assets/images/attachment-img.png"
+                                                <?php } else { ?>
+                                                    <?php if (isset($message['sender_logo'])) { ?>
+                                                        src="<?php echo $message['sender_logo']; ?>" width="48" style="height: 50px"
+                                                    <?php } else if ($message['sender_profile_picture']) { ?>
+                                                        src="<?php echo AWS_S3_BUCKET_URL . $message['sender_profile_picture']; ?>" width="48"
+                                                    <?php } else { ?>
+                                                        src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture']; ?>" width="48"
+                                                    <?php } ?>
+                                                <?php } ?>>
                                         </figure>
                                         <div class="text">
                                             <div class="message-header">
                                                 <div class="message-title">
                                                     <h2>
-                                                        <?php   if (!empty($message['first_name'])) {
-                                                                        echo ucfirst($message['first_name']);
-                                                                        if (!empty($message['last_name'])) {
-                                                                            echo " " . ucfirst($message['last_name']);
-                                                                        }
-                                                                } else {
+                                                        <?php  
+                                                            if (!empty($message['sender_name'])) {
+                                                                echo $message['sender_name'];
+                                                            } else if (!empty($message['first_name'])) {
+                                                                echo ucfirst($message['first_name']);
+                                                                if (!empty($message['last_name'])) {
+                                                                    echo " " . ucfirst($message['last_name']);
+                                                                }
+                                                            } else {
                                                                     echo $message['username'];
-                                                                } ?>
+                                                            } 
+                                                        ?>        
                                                     </h2>
                                                 </div>
                                                 <ul class="message-option">
