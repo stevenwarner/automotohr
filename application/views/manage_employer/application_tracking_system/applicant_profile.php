@@ -1259,12 +1259,13 @@
                                                     <img <?php if (empty($message['profile_picture'])) { ?>
                                                             src="<?= base_url() ?>assets/images/attachment-img.png"
                                                         <?php } else { ?>
-                                                            <?php if ($message['sender_profile_picture']) { ?>
+                                                            <?php if (isset($message['sender_logo'])) { ?>
+                                                                src="<?php echo $message['sender_logo']; ?>" width="48" style="height: 50px"
+                                                            <?php } else if ($message['sender_profile_picture']) { ?>
                                                                 src="<?php echo AWS_S3_BUCKET_URL . $message['sender_profile_picture']; ?>" width="48"
                                                             <?php } else { ?>
                                                                 src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture']; ?>" width="48"
                                                             <?php } ?>
-                                                            
                                                         <?php } ?> >
                                                 </figure>
                                                 <div class="text">

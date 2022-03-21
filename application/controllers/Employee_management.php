@@ -1175,6 +1175,7 @@ class Employee_management extends Public_Controller {
                 $data['upcoming_events'] = $this->employee_model->get_employee_events($company_id, $sid, 'upcoming'); //Getting Events
                 $to_id = $data['id'];
                 $rawMessages = $this->application_tracking_system_model->get_sent_messages($to_id, NULL);
+                //
 
                 if (!empty($rawMessages)) {
                     $i = 0;
@@ -1186,11 +1187,21 @@ class Employee_management extends Public_Controller {
                             $message['first_name'] = $employerData['first_name'];
                             $message['last_name'] = $employerData['last_name'];
                             $message['username'] = $employerData['username'];
+                            if ($message['from_id'] == "notifications@automotohr.com") {
+                                $message['sender_name'] = "AutoMoto HR";
+                                $message['sender_logo'] = base_url("assets/manage_admin/images/new_logo.JPG"); 
+                            } else {
+                                $message['sender_name'] = getUserNameBySID($message['from_id']);
+                                $message['sender_profile_picture'] = get_employee_profile_info($message['from_id'])['profile_picture']; 
+                            }
+                            
                         } else {
                             $message['profile_picture'] = $data['employer']['profile_picture'];
                             $message['first_name'] = $data['employer']['first_name'];
                             $message['last_name'] = $data['employer']['last_name'];
                             $message['username'] = "";
+                            $message['sender_name'] = $data['applicant_info']['first_name']." ".$data['applicant_info']['last_name'];
+                            $message['sender_profile_picture'] = $data['applicant_info']['pictures'];
                         }
 
                         $allMessages[$i] = $message;

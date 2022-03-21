@@ -710,8 +710,14 @@ class Application_tracking_system extends Public_Controller {
                             $message['first_name']                              = $employerData['first_name'];
                             $message['last_name']                               = $employerData['last_name'];
                             $message['username']                                = $employerData['username'];
-                            $message['sender_name']                             = getUserNameBySID($message['from_id']);
-                            $message['sender_profile_picture']                  = get_employee_profile_info($message['from_id'])['profile_picture'];
+
+                            if ($message['from_id'] == "notifications@automotohr.com") {
+                                $message['sender_name'] = "AutoMoto HR";
+                                $message['sender_logo'] = base_url("assets/manage_admin/images/new_logo.JPG"); 
+                            } else {
+                                $message['sender_name'] = getUserNameBySID($message['from_id']);
+                                $message['sender_profile_picture'] = get_employee_profile_info($message['from_id'])['profile_picture']; 
+                            }
                         } else {
                             $message['profile_picture']                         = $data['applicant_info']['pictures'];
                             $message['first_name']                              = $data['applicant_info']['first_name'];
