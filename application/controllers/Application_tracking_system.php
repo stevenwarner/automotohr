@@ -700,8 +700,9 @@ class Application_tracking_system extends Public_Controller {
                 $rawMessages                                                    = $this->application_tracking_system_model->get_sent_messages($data['applicant_info']['email'], $app_id);
 
                 if (!empty($rawMessages)) {
+                    //
                     $i                                                          = 0;
-
+                    //
                     foreach ($rawMessages as $message) {
                         if ($message['outbox'] == 1) {
                             $employerData                                       = $employer_details;
@@ -709,17 +710,21 @@ class Application_tracking_system extends Public_Controller {
                             $message['first_name']                              = $employerData['first_name'];
                             $message['last_name']                               = $employerData['last_name'];
                             $message['username']                                = $employerData['username'];
+                            $message['sender_name']                             = getUserNameBySID($message['from_id']);
+                            $message['sender_profile_picture']                  = get_employee_profile_info($message['from_id'])['profile_picture'];
                         } else {
                             $message['profile_picture']                         = $data['applicant_info']['pictures'];
                             $message['first_name']                              = $data['applicant_info']['first_name'];
                             $message['last_name']                               = $data['applicant_info']['last_name'];
                             $message['username']                                = "";
+                            $message['sender_name']                             = $data['applicant_info']['first_name']." ".$data['applicant_info']['last_name'];
+                            $message['sender_profile_picture']                  = $data['applicant_info']['pictures'];
                         }
-
+                        //
                         $allMessages[$i]                                        = $message;
                         $i++;
                     }
-
+                    //
                     $data['applicant_message']                                  = $allMessages;
                 } else {
                     $data['applicant_message']                                  = array();
