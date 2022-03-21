@@ -857,7 +857,9 @@ class Copy_applicants_model extends CI_Model {
         ->select('
             portal_job_listings.sid, 
             portal_job_listings.active as job_status, 
-            portal_job_listings.Title as job_title
+            portal_job_listings.Title as job_title,
+            portal_job_listings.Location_State as job_state,
+            portal_job_listings.Location_City as job_city
         ')
         ->from('portal_job_listings')
         ->order_by('portal_job_listings.Title', 'ASC')
@@ -876,7 +878,14 @@ class Copy_applicants_model extends CI_Model {
         if(!sizeof($jobs)) return false;
         // Loop through applicants
         foreach ($jobs as $k0 => $v0){
-            $jobs[$k0]['job_title'] = ucwords(strtolower(trim($v0['job_title'])));
+            $job_title = ucwords(strtolower(trim($v0['job_title'])));
+            $jobs[$k0]['job_title'] = $job_title;
+            //
+            $state = !empty($v0['job_state']) ? '['.db_get_state_name_only($v0['job_state']).']' : ''; 
+            $city = !empty($v0['job_city']) ? '('.ucwords(strtolower(trim($v0['job_city']))).')' : ''; 
+           
+            $jobs[$k0]['new_job_title'] = $job_title.' '.$state.' '.$city;
+            //
             $jobs[$k0]['total_applicants']['archived'] = $this->db
             ->from('portal_job_applications')
             ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid')
