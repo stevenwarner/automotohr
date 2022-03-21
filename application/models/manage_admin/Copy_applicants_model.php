@@ -885,7 +885,7 @@ class Copy_applicants_model extends CI_Model {
             $state = !empty($v0['job_state']) ? db_get_state_name_only($v0['job_state']) : ''; 
             $city = !empty($v0['job_city']) ? ucwords(strtolower(trim($v0['job_city']))) : ''; 
            
-            $jobs[$k0]['new_job_title'] = $job_title.', '.$state.', '.$city.', '.$v0['job_type'];
+            $jobs[$k0]['new_job_title'] = $job_title.', '.$state.', '.$city.' - '.$v0['job_type'];
             //
             $jobs[$k0]['total_applicants']['archived'] = $this->db
             ->from('portal_job_applications')
