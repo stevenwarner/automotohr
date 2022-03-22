@@ -1944,11 +1944,21 @@
                             var o = {};
                             o.error = JSON.stringify(ErrorOBJ);
                             //
+                            // xhr = $.ajax({
+                            //     method: "POST",
+                            //     headers: { "Content-Type": "application/json", "Key" : API_KEY },
+                            //     url: "http://127.0.0.1:3000/report_error",
+                            //     data: JSON.stringify(o)
+                            // })
+                            // .done(function(resp) {
+                            //     console.log("Report Error");
+                            // })
+                            // .error();
+
                             xhr = $.ajax({
                                 method: "POST",
-                                headers: { "Content-Type": "application/json", "Key" : API_KEY },
-                                url: "http://127.0.0.1:3000/report_error",
-                                data: JSON.stringify(o)
+                                url: "<?php echo base_url('reports/error_report'); ?>",
+                                data: ErrorOBJ
                             })
                             .done(function(resp) {
                                 console.log("Report Error");

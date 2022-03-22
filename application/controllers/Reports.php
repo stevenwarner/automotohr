@@ -2920,4 +2920,48 @@ class Reports extends Public_Controller {
         }
     }
 
+    function error_report () {
+        $alertpages = ["assign_bulk_documents","add_history_documents"];
+        $page = str_replace(base_url(),"",$_POST["OnPage"]);
+
+        $_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
+        $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
+
+        if (str_replace($alertpages, '', $page) != $page) {
+            sendMail(
+                FROM_EMAIL_NOTIFICATIONS, 
+                'aleemshaukat87@gmail.com', 
+                'Bulk Upload Error', 
+                @json_encode($_POST)
+            );
+        }
+
+        $folder = APPPATH.'../../error_logs';
+        //
+        if(!is_dir($folder)){
+            mkdir($folder, 0777, true);
+        }
+
+        $file_name = $folder."/error_log_report" . date('Y_m_d') . ".json";
+        // 
+        if (!file_exists($file_name)) {
+            $error_file = fopen($file_name, 'w');
+            fwrite($error_file, json_encode($_POST));
+            fclose($error_file);
+        } else {
+            $file = fopen($file_name, 'r');
+            // read data from file
+            $file_data =  fread($file, filesize($file_name));
+            fclose($file);
+            //
+            $new_file_data = json_encode($_POST).','.$file_data;
+            //
+            $error_file = fopen($file_name, 'w');
+            fwrite($error_file, $new_file_data);
+            fclose($error_file);
+        }
+        //  
+        echo "error repoted and send email"; 
+    }
+
 }
