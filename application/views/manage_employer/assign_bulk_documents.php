@@ -196,9 +196,6 @@
 </style>
 
 <script>
-    document.ready(function(){
-        console.log("rayyan")
-    })
     $(function UploadAndAssignBulkDocuments(){
         var megaOBJ = {
             type: 'employee',
