@@ -34,7 +34,12 @@
                                     <tbody id="jsPayrollEmployeePayStubsBox">
                                         <?php if(!empty($payStubs)) { ?>
                                             <?php foreach($payStubs as $payStub){ ?>
-                                                <tr class="jsPayrollEPSId" data-id="<?=$payStub['sid'];?>">
+                                                <tr 
+                                                    class="jsPayrollEPSId" 
+                                                    data-id="<?=$payStub['sid'];?>" 
+                                                    data-file="<?=$payStub['s3_file_name'];?>"
+                                                    data-date="<?=formatDateToDB($payStub['check_date'], DB_DATE, DATE);?>"
+                                                >
                                                     <td>
                                                         <p><?=$payStub['payroll_uuid'];?></p>
                                                     </td>
@@ -42,7 +47,7 @@
                                                         <p><?=formatDateToDB($payStub['check_date'], DB_DATE, DATE);?></p>
                                                     </td>
                                                     <td class="text-right">
-                                                        <a href="javascript:void(0);" class="btn btn-success jsViewFile" title="View Pay Stub" placement="top">
+                                                        <a href="javascript:void(0);" class="btn btn-orange jsViewFile" title="View Pay Stub" placement="top">
                                                             <i class="fa fa-eye" aria-hidden="true"></i>
                                                         </a>
                                                         <a href="<?=base_url('payroll/p/download/'.($payStub['sid']).'');?>" class="btn btn-black" title="Download Pay Stub" placement="top">
@@ -71,6 +76,44 @@
     </div>
 </div>
 
+<?php $this->load->view('iframeLoader'); ?>
+
 <!-- Add System Model -->
 <link rel="stylesheet" href="<?= base_url(_m("assets/css/SystemModel", 'css')); ?>">
 <script src="<?= base_url(_m("assets/js/SystemModal")); ?>"></script>
+
+<!--  -->
+<script>
+    $(function(){
+        $('.jsViewFile').click(function(event){
+            //
+            event.preventDefault();
+            //
+            var data = $(this).closest('.jsPayrollEPSId').data();
+            //
+            $('#jsPayrollEPSModal .modal-title').text();
+            //
+            $('#jsPayrollEPSModal').modal();
+            //
+            Modal({
+                Id: "jsPayrollEPSModal",
+                Title: 'Pay Stub - '+data.date,
+                Body: '<div class="row"><div class="col-sm-12"><iframe src="" id="jsPayrollEPSModalIframe" frameborder="0" style="width:100%; height: 500px"></iframe></div></div>',
+                Buttons: [
+                    '<a href="" class="btn btn-cancel jsDownloadBTN csW" style="margin-top: -5px;" title="Download Pay Stub" placement="top"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download Pay Stub</a>'
+                ],
+                Loader: 'jsPayrollEPSModalLoader'
+            }, function(){
+                //
+                $('.jsDownloadBTN').prop('href', "<?=base_url('payroll/p/download');?>/"+data.id)
+                //
+                loadIframe(
+                    "<?=AWS_S3_BUCKET_URL;?>"+data.file,
+                    "#jsPayrollEPSModalIframe",
+                    false,
+                    '.jsIPLoader[data-page="jsPayrollEPSModalLoader"]'
+                );
+            });
+        });
+    })
+</script>

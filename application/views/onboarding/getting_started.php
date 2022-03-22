@@ -719,7 +719,7 @@
                                             <h2>Payroll</h2>
                                             <div><span>&nbsp;</span></div>
                                             <div class="current-date">
-                                                <span><?php echo $documents_count; ?><sub>Total</sub></span>
+                                                <span><?php echo $TotalPayStubs; ?><sub>Pay Stub(s)</sub></span>
                                             </div>
                                             <div class="status-panel">
                                                 <h3>View Pay Stubs</h3>
