@@ -2,27 +2,37 @@
     //
     $navpills = [];
     //
+    if(isPayrollOrPlus()){
+        //
+        $navpills[] = [
+            'title' => 'Company',
+            'url' => '/company',
+            'slug' => '',
+            'icon' => 'building',
+            'segment' => 'company'
+        ];
+        // Dashboard
+        $navpills[] = [
+            'title' => 'Employees',
+            'url' => '/employees/payroll',
+            'slug' => '',
+            'icon' => 'users',
+            'segment' => 'employees'
+        ];
+        $navpills[] = [
+            'title' => 'Run payroll',
+            'url' => '/run',
+            'slug' => '',
+            'icon' => 'bank',
+            'segment' => 'run'
+        ];
+    }
     $navpills[] = [
-        'title' => 'Company',
-        'url' => '/company',
+        'title' => 'Pay Stubs',
+        'url' => '/my',
         'slug' => '',
-        'icon' => 'building',
-        'segment' => 'company'
-    ];
-    // Dashboard
-    $navpills[] = [
-        'title' => 'Employees',
-        'url' => '/employees/payroll',
-        'slug' => '',
-        'icon' => 'users',
-        'segment' => 'employees'
-    ];
-    $navpills[] = [
-        'title' => 'Run payroll',
-        'url' => '/run',
-        'slug' => '',
-        'icon' => 'bank',
-        'segment' => 'run'
+        'icon' => 'money',
+        'segment' => 'my'
     ];
 
     //

@@ -1290,6 +1290,43 @@ if(!function_exists('AddEmployeeBandAccount')){
         return $response;
     }
 }
+//
+if(!function_exists('GetEmployeePayStubs')){
+    function GetEmployeePayStubs($employeeUUID, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('GetEmployeePayStubs', $employeeUUID),[
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return GetEmployeePayStubs($employeeUUID, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
 
 
 

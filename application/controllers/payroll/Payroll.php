@@ -130,6 +130,34 @@ class Payroll extends CI_Controller
         ->view('payroll/employees_list')
         ->view('main/footer');
     }
+
+     /**
+     * 
+     */
+    function MyPayStubs(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Pay Stubs';
+        $this->data['load_view'] = 0;
+        //
+        $this->data['PageScripts'] = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['company_sid'] = $company_sid;
+        //
+        $myId = $session['employer_detail']['sid'];
+        //
+        $this->CheckAndFetchPayStubs($company_sid, $myId);
+        //
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/pay_stubs')
+        ->view('main/footer');
+    }
     
     /**
      * 
@@ -198,7 +226,7 @@ class Payroll extends CI_Controller
         $this->data['hide_employer_section'] = 1;
 
         // Get the company pay periods
-        $response = $this->PayPeriods($this->data['companyId']);
+        $response = $this->PayPeriods($this->data['companyId']);    
         // let's reverse the pay periods
         $this->data['period'] = array_reverse($response['Response'])[0];
         //
@@ -1169,9 +1197,11 @@ class Payroll extends CI_Controller
         ]);
         
         //
-        $query = '?processed=false&start_date='.($startDate).'&end_date='.($endDate).'';
+        $query = '?processed=false';
+        // $query = '?processed=false&start_date='.($startDate).'&end_date='.($endDate).'';
         //
         $response = GetUnProcessedPayrolls($query, $company);
+        _e($response, true, true);
         //
         if(isset($response['errors'])){
             //
@@ -1477,5 +1507,20 @@ class Payroll extends CI_Controller
             //
             $data['security_details'] = db_get_access_level_details($data['employerId'], NULL, $data['session']);
         }
+    }
+
+    //
+    private function CheckAndFetchPayStubs($companyId, $employeeId){
+        // Get company
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $response = GetEmployeePayStubs($employeeId);
+
+        _e($companyId, true);
+        _e($company, true, true);
     }
 }

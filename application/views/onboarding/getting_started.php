@@ -710,6 +710,27 @@
                         </div>
                         <?php } ?>
 
+                        <?php if (checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll']) { ?>
+                            <!-- Payroll -->
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?php echo base_url('payroll/my'); ?>">
+                                        <div class="link-box bg-redish full-width">
+                                            <h2>Payroll</h2>
+                                            <div><span>&nbsp;</span></div>
+                                            <div class="current-date">
+                                                <span><?php echo $documents_count; ?><sub>Total</sub></span>
+                                            </div>
+                                            <div class="status-panel">
+                                                <h3>View Pay Stubs</h3>
+                                                <span>Show</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        <?php } ?>
+
                         
                     </div>
                 </div>

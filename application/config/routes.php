@@ -1393,6 +1393,7 @@ $route["payroll/company"]['get'] = "payroll/Payroll/CompanyOnboard";
 $route["payroll/employees"]['get'] = "payroll/Payroll/EmployeeList/normal";
 $route["payroll/employees/payroll"]['get'] = "payroll/Payroll/EmployeeList/payroll";
 $route["payroll/employees/normal"]['get'] = "payroll/Payroll/EmployeeList/normal";
+$route["payroll/my"]['get'] = "payroll/Payroll/MyPayStubs";
 
 
 $route['company_tax']['get'] = 'payroll/Payroll/CompanyTax';
