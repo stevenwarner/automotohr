@@ -14010,3 +14010,17 @@ if(!function_exists('GetHireDate')){
         }
     }
 }
+
+if(!function_exists('ShowInfo')){
+    function ShowInfo($msg, $options = []){
+        //
+        $props = [];
+        $props['icon'] = 'fa-info-circle';
+        $props['fontSize'] = 'csF16';
+        $props['color'] = 'text-danger';
+        //
+        $props = array_merge($props, $options);
+        //
+        return '<strong class="'.($props['color']).' '.($props['fontSize']).'"><i class="fa '.($props['icon']).'" aria-hidden="true"></i>&nbsp;<em>'.($msg).'</em></strong>';
+    }
+}

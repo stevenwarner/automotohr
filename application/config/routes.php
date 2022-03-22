@@ -1394,6 +1394,8 @@ $route["payroll/employees"]['get'] = "payroll/Payroll/EmployeeList/normal";
 $route["payroll/employees/payroll"]['get'] = "payroll/Payroll/EmployeeList/payroll";
 $route["payroll/employees/normal"]['get'] = "payroll/Payroll/EmployeeList/normal";
 $route["payroll/my"]['get'] = "payroll/Payroll/MyPayStubs";
+$route["payroll/history"]['get'] = "payroll/Payroll/PayrollHistory";
+$route["payroll/history/(:num)"]['get'] = "payroll/Payroll/PayrollSingleHistory/$1";
 //
 $route["payroll/p/(:any)/(:num)"]['get'] = "payroll/Payroll/PrivateFile/$1/$2";
 

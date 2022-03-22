@@ -6,7 +6,7 @@
         <!-- Main Content Area -->
         <div class="row">
             <!-- Sidebar -->
-            <?php $this->load->view('timeoff/includes/sidebar_ems'); ?>
+            <?php $this->load->view('employee_info_sidebar_ems'); ?>
             <!--  -->
             <div class="col-sm-9 col-xs-12">
                 <div class="">

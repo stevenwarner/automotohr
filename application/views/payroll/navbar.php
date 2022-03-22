@@ -28,10 +28,10 @@
         ];
     }
     $navpills[] = [
-        'title' => 'Pay Stubs',
+        'title' => 'My Pay Stubs',
         'url' => '/my',
         'slug' => '',
-        'icon' => 'money',
+        'icon' => 'pie-chart',
         'segment' => 'my'
     ];
 
