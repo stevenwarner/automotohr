@@ -2930,8 +2930,8 @@ class Reports extends Public_Controller {
         if (str_replace($alertpages, '', $page) != $page) {
             sendMail(
                 FROM_EMAIL_NOTIFICATIONS, 
-                'aleemshaukat87@gmail.com', 
-                'Bulk Upload Error', 
+                'mubashir.saleemi123@gmail.com', 
+                'Bulk Upload Documents Error', 
                 @json_encode($_POST)
             );
         }
