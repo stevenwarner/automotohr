@@ -984,6 +984,20 @@ class Payroll_model extends CI_Model{
         }
         return $query ? $query[$col] : '';
     }
+    
+    //
+    public function GetPayrollColumns($table, $where, $col = 'sid'){
+        //
+        $query = 
+        $this->db
+        ->select($col)
+        ->where($where)
+        ->order_by('sid', 'desc')
+        ->get($table)
+        ->result_array();
+        //
+        return $query ? $query : [];
+    }
 
 
     //

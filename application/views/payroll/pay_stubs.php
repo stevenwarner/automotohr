@@ -5,14 +5,16 @@
         <br />
         <!-- Main Content Area -->
         <div class="row">
+            <!-- Sidebar -->
+            <?php $this->load->view('timeoff/includes/sidebar_ems'); ?>
             <!--  -->
-            <div class="col-sm-12">
+            <div class="col-sm-9 col-xs-12">
                 <div class="">
                     <span class="pull-left">
                         <h3 class="">My Pay Stubs</h3>
                     </span>
                     <span class="pull-right">
-                        <h3 id="jsPayrollEmployeePayStubsCount" class="">Total: 0</h3>
+                        <h3 id="jsPayrollEmployeePayStubsCount" class="">Total: <?=count($payStubs);?></h3>
                     </span>
                 </div>
                 <div class="">
@@ -24,13 +26,41 @@
                                     <caption></caption>
                                     <thead>
                                         <tr>
-                                            <th scope="col">Employee</th>
-                                            <th scope="col" class="text-right">Payroll Id</th>
-                                            <th scope="col" class="text-right">Onboard Status</th>
+                                            <th scope="col">Payroll UUID</th>
+                                            <th scope="col" class="text-right">Check Date</th>
                                             <th scope="col" class="text-right">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="jsPayrollEmployeePayStubsBox"></tbody>
+                                    <tbody id="jsPayrollEmployeePayStubsBox">
+                                        <?php if(!empty($payStubs)) { ?>
+                                            <?php foreach($payStubs as $payStub){ ?>
+                                                <tr class="jsPayrollEPSId" data-id="<?=$payStub['sid'];?>">
+                                                    <td>
+                                                        <p><?=$payStub['payroll_uuid'];?></p>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <p><?=formatDateToDB($payStub['check_date'], DB_DATE, DATE);?></p>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <a href="javascript:void(0);" class="btn btn-success jsViewFile" title="View Pay Stub" placement="top">
+                                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                                        </a>
+                                                        <a href="<?=base_url('payroll/p/download/'.($payStub['sid']).'');?>" class="btn btn-black" title="Download Pay Stub" placement="top">
+                                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
+                                        <?php } else {?>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p class="alert alert-info text-center">
+                                                        No Pay Stubs Found.
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        <?php }?>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

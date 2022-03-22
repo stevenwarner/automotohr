@@ -148,10 +148,19 @@ class Payroll extends CI_Controller
         $company_sid = $session['company_detail']['sid'];
         //
         $this->data['company_sid'] = $company_sid;
+        $this->data['session'] = $session;
         //
         $myId = $session['employer_detail']['sid'];
         //
         $this->CheckAndFetchPayStubs($company_sid, $myId);
+        //
+        // Get employee saved paystubs
+        $this->data['payStubs'] = $this->pm->GetPayrollColumns(
+            'payroll_employees_pay_stubs', [
+                'employee_sid' => $myId
+            ],
+            'sid, payroll_uuid, s3_file_name, check_date'
+        );
         //
         $this->load
         ->view('main/header', $this->data)
@@ -1197,11 +1206,9 @@ class Payroll extends CI_Controller
         ]);
         
         //
-        $query = '?processed=false';
-        // $query = '?processed=false&start_date='.($startDate).'&end_date='.($endDate).'';
+        $query = '?processed=false&start_date='.($startDate).'&end_date='.($endDate).'';
         //
         $response = GetUnProcessedPayrolls($query, $company);
-        _e($response, true, true);
         //
         if(isset($response['errors'])){
             //
@@ -1517,10 +1524,97 @@ class Payroll extends CI_Controller
             'refresh_token',
             'gusto_company_uid'
         ]);
+        // Get employee UUID
+        $employeeUid = $this->pm->GetPayrollColumn(
+            'payroll_employees', [
+                'employee_sid' => $employeeId
+            ],
+            'payroll_employee_uuid'
+        );
+        // Get employee saved paystubs
+        $paystubs = $this->pm->GetPayrollColumns(
+            'payroll_employees_pay_stubs', [
+                'employee_sid' => $employeeId
+            ],
+            'payroll_uuid'
+        );
         //
-        $response = GetEmployeePayStubs($employeeId);
+        if(!empty($paystubs)){
+            $paystubs = array_column($paystubs, 'payroll_uuid');
+        }
+        // Get all processed payrolls
+        $query = '?processed=true';
+        //
+        $response = GetUnProcessedPayrolls($query, $company);
+        //
+        if(isset($response['errors'])){
+            return [];
+        }
+        //
+        foreach($response as $payroll){
+            //
+            if(in_array($payroll['payroll_uuid'], $paystubs)){ continue; }
+            // 
+            foreach($payroll['employee_compensations'] as $ec){
+                //
+                //
+                if($employeeUid == $ec['employee_uuid']){
+                    $stubResponse = GetEmployeePayStubs($payroll['payroll_uuid'], $employeeUid, $company);
+                    //
+                    if(isset($stubResponse['s3_file_url'])){
+                        //
+                        $this->db
+                        ->insert('payroll_employees_pay_stubs', [
+                            'employee_sid' => $employeeId,
+                            'payroll_uuid' => $payroll['payroll_uuid'],
+                            'processed_date' => $payroll['processed_date'],
+                            'payroll_deadline' => $payroll['payroll_deadline'],
+                            'check_date' => $payroll['check_date'],
+                            'start_date' => $payroll['pay_period']['start_date'],
+                            'end_date' => $payroll['pay_period']['end_date'],
+                            'pay_schedule_uuid' => $payroll['pay_period']['pay_schedule_uuid'],
+                            's3_file_name' => $stubResponse['s3_file_name'],
+                            'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                            'updated_at' => date('Y-m-d H:i:s', strtotime('now')),
+                            'status' => 1
+                        ]);
+                    }
+                }
+            }
+        }
+    }
 
-        _e($companyId, true);
-        _e($company, true, true);
+    //
+    public function PrivateFile($action, $id){
+        // Validate details
+        $data = $this->pm->GetPayrollColumn(
+            'payroll_employees_pay_stubs', [
+                'sid' => $id,
+                'employee_sid' => $this->session->userdata('logged_in')['employer_detail']['sid']
+            ],
+            's3_file_name, check_date',
+            false
+        );
+        //
+        if(empty($data)){
+            return redirect('dashboard');
+        }
+        $s3_file_name = $data['s3_file_name'];
+        $check_date = str_replace('-', '_', $data['check_date']);
+        //
+        if($action === 'download'){
+            //
+            $this->load->library('aws_lib');
+            //
+            $fileData = $this->aws_lib->get_object(AWS_S3_BUCKET_NAME, $s3_file_name);
+            //
+            header('Content-Description: File Transfer');
+            header( 'Content-Disposition: attachment; filename='.($check_date).'_paystub_.pdf');
+            header('Content-Type: '.$fileData['ContentType']);
+            echo $fileData['Body'];
+            return;
+        }
+        //
+        return redirect('dashboard');
     }
 }
