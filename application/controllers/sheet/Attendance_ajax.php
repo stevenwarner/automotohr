@@ -61,11 +61,13 @@ class Attendance_ajax extends Public_Controller {
         //
         $this->load->model('attendance_model', 'atm');
         //
-        $this->resp = ['status' => false, 'message' => 'Invalid call.'];
+        $this->resp = ['errors' => ['Invalid call.']];
         //
         $this->companyId = $this->ses['company_detail']['sid'];
         //
         $this->employeeId = $this->ses['employer_detail']['sid'];
+        //
+        $this->employerId = $this->ses['employer_detail']['sid'];
         //
         $this->datetime = date('Y-m-d H:i:s', strtotime('now'));
         //
@@ -82,17 +84,41 @@ class Attendance_ajax extends Public_Controller {
      * Handles logged in user clock
      */
     public function LoadClock(){
+        //
+        $ra = [
+            'last_status' => '',
+            'hours' => 0,
+            'minutes' => 0,
+            'seconds' => 0,
+        ];
         // Let's check if the employee is
         // clocked in or not
-        $status = $this->atm->GetEmployeeClockedStatus(
+        $attendanceList = $this->atm->GetAttendanceList(
             $this->companyId,
             $this->employeeId,
             $this->date
         );
+        // 
+        if(empty($attendanceList)){
+            //
+            unset($this->resp['errors']);
+            //
+            $this->resp['success'] =$ra;
+            //
+            return SendResponse(200, $this->resp);
+        }
         //
-
-        _e($status, true);
-
+        $ct = $this->CalculateTime($attendanceList);
+        $ra['last_status'] = $attendanceList[0]['action'];
+        //
+        $ra = array_merge(
+            $ra,
+            GetHMSFromMinutes($ct['total_worked_minutes'])
+        );
+        //
+        unset($this->resp['errors']);
+        $this->resp['success'] =$ra;
+        //
         return SendResponse(200, $this->resp);
     }
     
@@ -103,14 +129,186 @@ class Attendance_ajax extends Public_Controller {
         //
         $post = $this->input->post(NULL, TRUE);
         //
-        // $lastStatus = $this->atm->GetLastStatus(
-        //     $this->companyId,
-        //     $this->employeeId,
-        //     $this->date
-        // );
-        _e($lastStatus, true, true);
-        //
+        $attendanceList = $this->atm->GetAttendanceList(
+            $this->companyId,
+            $this->employeeId,
+            $this->date
+        );
+        // 
+        if(!empty($attendanceList)){
+            //
+            $ct = $this->CalculateTime($attendanceList);
+            //
+            $this->db->update(
+                'portal_attendance', [
+                    'total_minutes' => $ct['total_minutes'],
+                    'total_worked_minutes' => $ct['total_worked_minutes'],
+                    'total_break_minutes' => $ct['total_break_minutes']
+                ], [
+                    'sid' => $attendanceList[0]['portal_attendance_sid']
+                ]
+            );
+            //
+            $this->HandleConditions($attendanceList[0]['action'], $post['action']);
+            // Check if clock out was triggered while on break
+            if($attendanceList[0]['action'] === 'break_in' && $post['action'] === 'clock_out'){
+                // Now we have to end the break first
+                $this->LogAttendance(
+                    'break_out',
+                    $post['lat'],
+                    $post['lon'],
+                    false
+                );
+            }
+        }
+        // Mark the attendance
+        return $this->LogAttendance(
+            $post['action'],
+            $post['lat'],
+            $post['lon']
+        );
+        
+    }
 
-        return SendResponse(200, $this->resp);
+    /**
+     * Get action for front end
+     * 
+     * @param string $action
+     * @return string
+     */
+    private function GetCleanedAction($action){
+        return ucwords(str_replace('_', ' ', $action));
+    }
+
+    /**
+     * Log attendance
+     * 
+     * @param string  $action
+     * @param number  $lat
+     * @param number  $lon
+     * @param boolean $return
+     * @return response
+     */
+    private function LogAttendance($action, $lat, $lon, $return = true){
+        // Mark the attendance
+        $Id = $this->atm->MarkAttendance(
+            $this->companyId,
+            $this->employeeId,
+            $this->employerId,
+            $this->date,
+            $this->datetime,
+            $this->day,
+            $this->month,
+            $this->year,
+            $action,
+            $lat,
+            $lon
+        );
+        //
+        if(!$Id){
+            //
+            $this->resp['errors'] = ['Something went wrong while marking attendance.'];
+        } else{
+            //
+            unset($this->resp['errors']);
+            //
+            $this->resp['success'] = 'Hurray! you are successfully "'.($this->GetCleanedAction($action)).'".';
+        }
+        //
+        if($return){
+            return SendResponse(200, $this->resp);
+        }
+    }
+
+    /**
+     * Handle attendance conditions
+     * 
+     * @param string  $lastAction
+     * @param string  $action
+     * @return response
+     */
+    private function HandleConditions($lastAction, $action){
+        // Check for clock out status
+        if($lastAction === 'clock_out' && $action != 'clock_in'){
+            //
+            $this->resp['errors'] = ['You haven\'t clock in.'];
+            //
+            return SendResponse(200, $this->resp);
+        }
+        // Compare the last and current status
+        if($lastAction === $action){
+            //
+            $this->resp['errors'] = ['You are already "'.($this->GetCleanedAction($action)).'".'];
+            //
+            return SendResponse(200, $this->resp);
+        }
+        // Check if break end was triggered
+        if($lastAction != 'break_in' && $action === 'break_out'){
+            //
+            $this->resp['errors'] = ['You haven\'t started the break.'];
+            //
+            return SendResponse(200, $this->resp);
+        }
+    }
+    
+    /**
+     * Calculate time for DB
+     * 
+     * @param array $list
+     * @return array
+     */
+    private function CalculateTime($lists){
+        //
+        $ra = [
+            'total_minutes' => 0,
+            'total_worked_minutes' => 0,
+            'total_break_minutes' => 0
+        ];
+        //
+        $lists = array_reverse($lists);
+        //
+        $ra['total_minutes'] = $this->GetTotalTime($lists, 'clock_in', 'clock_out');
+        $ra['total_break_minutes'] = $this->GetTotalTime($lists, 'break_in', 'break_out');
+        // Total worked hours
+        $ra['total_worked_minutes'] = $ra['total_minutes'] - $ra['total_break_minutes'];
+        //
+        return $ra;
+    }
+
+    /**
+     * Calculate time for DB
+     * 
+     * @param array $list
+     * @return array
+     */
+    private function GetTotalTime($lists, $t1, $t2){
+        //
+        $total = 0;
+        //
+        $lastAction = '';
+        //
+        $lastDateTime = '';
+        // For worked time
+        foreach($lists as $list){
+            // For clock ins
+            if(empty($lastAction) || $list['action'] == $t1){
+                $lastAction = $list['action'];
+                $lastDateTime = $list['action_date_time'];
+            }
+            //
+            if($lastAction == $t1 && $list['action'] == $t2){
+                //
+                $total += GetTimeDifferenceInMinutes($lastDateTime, $list['action_date_time']);
+                //
+                $lastAction = $t1;
+                $lastDateTime = '';
+            }
+        }
+        //
+        if($lastAction == $t1){
+            $total += GetTimeDifferenceInMinutes($lastDateTime, $this->datetime);
+        }
+        //
+        return $total;
     }
 }

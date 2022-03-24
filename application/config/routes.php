@@ -1507,3 +1507,14 @@ $route['payroll/onboard_employee/(:any)/(:num)/(:num)/(:any)']['delete'] = "payr
 $route['payroll/onboard_status/(:num)/(:num)']['get'] = "payroll/Payroll_onboard/OnboardStatus/$1/$2";
 //
 $route["payroll/get/(:num)/(:any)"] = "payroll/Payroll_onboard/Get/$1/$2";
+
+
+/**
+ * Attendance routes
+ * 
+ * @author  AutomotoHR <www.automotohr.com>
+ * @author  Mubashir Ahmed <mubashar.ahmed@egenienext.com>
+ * @version 1.0
+ */
+$route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttendance";
+$route['attendance/get/clock']['get'] = "sheet/Attendance_ajax/LoadClock";
