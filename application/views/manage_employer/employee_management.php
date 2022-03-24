@@ -264,11 +264,7 @@
                                                                 <?php } ?>
                                                                     <?php 
                                                                         echo '<br />'.$employee['email'];
-                                                                        if ($employee['active'] == 1 && $employee['archived'] == 0) {
-                                                                            echo '<br> <b> Employee Status:</b> Active';
-                                                                        } else {
-                                                                            echo '<br> <b> Employee Status:</b> '. (GetEmployeeStatus($employee['last_status_text'], $employee['active']));
-                                                                        } 
+                                                                        echo '<br> <b> Employee Status:</b> '. (GetEmployeeStatus($employee['last_status_text'], $employee['active'])); 
                                                                     ?>
                                                                     <br>
                                                                     <?php

@@ -1799,15 +1799,17 @@ if (!function_exists('employee_right_nav')) {
             if ($terminate_status['employee_status'] == 1) {
                 $status = 'Terminated Employee';
             } elseif ($terminate_status['employee_status'] == 2) {
-                $status = 'Retired';
+                $status = 'Retired Employee';
             } elseif ($terminate_status['employee_status'] == 3) {
-                $status = 'Deceased';
+                $status = 'Deceased Employee';
             } elseif ($terminate_status['employee_status'] == 4) {
                 $status = 'Active Employee Suspended';
             } elseif ($terminate_status['employee_status'] == 6) {
                 $status = 'In-Active Employee';
             } elseif ($terminate_status['employee_status'] == 7) {
                 $status = 'Active Employee On Leave';
+            } elseif ($terminate_status['employee_status'] == 8) {
+                $status = 'Rehired Employee';
             }
             $data['employee_terminate_status'] = $status;
         }

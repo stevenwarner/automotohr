@@ -111,11 +111,7 @@
                                                                             } else {
                                                                                 echo $value['username']; 
                                                                                 //
-                                                                                if ($value['active'] == 1 && $value['archived'] == 0) {
-                                                                                    echo '<br> <b> Employee Status:</b> Active';
-                                                                                } else {
-                                                                                    echo '<br> <b> Employee Status:</b> '. (GetEmployeeStatus($value['last_status_text'], $value['active']));
-                                                                                }
+                                                                                echo '<br> <b> Employee Status:</b> '. (GetEmployeeStatus($value['last_status_text'], $value['active']));
                                                                                 //
                                                                                 echo '<br> <b> Access Level:</b> '. ucwords($value['access_level']);
                                                                                 echo ($value['access_level_plus'] && $value['pay_plan_flag']) ? ' Plus / Payroll' : ($value['access_level_plus'] ? ' Plus' : ($value['pay_plan_flag'] ? ' Payroll' : ''));

@@ -311,6 +311,8 @@ class employers extends Admin_Controller {
         if ($this->form_validation->run() === FALSE) {
             if ($employer_detail) {
                 $this->data['data'] = $employer_detail[0];
+                $this->data['data']['last_status_text'] = GetEmployeeStatus($employer_detail[0]['general_status'], $employer_detail[0]['active']);
+
             } else {
                 $this->session->set_flashdata('message', 'Employer does not exists!');
                 redirect('manage_admin/employers', 'refresh');
@@ -1027,7 +1029,6 @@ class employers extends Admin_Controller {
             } else {
                 if ($status == 5) {
                     $data_to_update['active'] = 1;
-                    $data_to_update['terminated_status'] = 0;
                     $data_to_update['general_status'] = 'active';
                 } else if ($status == 6) {
                     $data_to_update['active'] = 0;
@@ -1044,8 +1045,9 @@ class employers extends Admin_Controller {
                     $data_to_update['general_status'] = 'retired';
                     $data_to_update['active'] = 0;
                 }else if ($status == 8) {
-                    $data_to_update['general_status'] = 'rehired';
                     $data_to_update['active'] = 1;
+                    $data_to_update['general_status'] = 'rehired';
+                    $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
                 }
                 $data_to_update['terminated_status'] = 0;
             }
@@ -1156,6 +1158,7 @@ class employers extends Admin_Controller {
                 }else if ($status == 8) {
                     $data_to_update['active'] = 1;
                     $data_to_update['general_status'] = 'rehired';
+                    $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
                 }
                 $data_to_update['terminated_status'] = 0;
                 

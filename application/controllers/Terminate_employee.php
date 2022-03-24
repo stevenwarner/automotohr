@@ -140,7 +140,6 @@ class Terminate_employee extends Public_Controller {
                 } else {
                     if ($status == 5) {
                         $data_to_update['active'] = 1;
-                        $data_to_update['terminated_status'] = 0;
                         $data_to_update['general_status'] = 'active';
                     } else if ($status == 6) {
                         $data_to_update['general_status'] = 'inactive';
@@ -157,10 +156,9 @@ class Terminate_employee extends Public_Controller {
                         $data_to_update['general_status'] = 'retired';
                         $data_to_update['active'] = 0;
                     }else if ($status == 8) {
+                        $data_to_update['active'] = 1;
                         $data_to_update['general_status'] = 'rehired';
                         $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
-                        $data_to_update['active'] = 1;
-                        $data_to_update['terminated_status'] = 0;
                     }
                     $data_to_update['terminated_status'] = 0;
                 }
@@ -287,6 +285,7 @@ class Terminate_employee extends Public_Controller {
                     }else if ($status == 8) {
                         $data_to_update['active'] = 1;
                         $data_to_update['general_status'] = 'rehired';
+                        $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
                     }
                     $data_to_update['terminated_status'] = 0;
                 }
