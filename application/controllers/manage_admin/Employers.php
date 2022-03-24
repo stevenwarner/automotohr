@@ -311,9 +311,7 @@ class employers extends Admin_Controller {
         if ($this->form_validation->run() === FALSE) {
             if ($employer_detail) {
                 $this->data['data'] = $employer_detail[0];
-                if ($employer_detail[0]["active"] != 0 && $employer_detail[0]["general_status"] != "active") {
-                    $this->data['data']['last_status_text'] = GetEmployeeStatus($employer_detail[0]['general_status'], $employer_detail[0]['active']);
-                }
+                $this->data['data']['last_status_text'] = $this->company_model->GetCurrentEmployeeStatus($employer_detail[0]["sid"]);
 
             } else {
                 $this->session->set_flashdata('message', 'Employer does not exists!');

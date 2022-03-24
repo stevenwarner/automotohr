@@ -317,6 +317,24 @@ class Company_model extends CI_Model {
         return true;
     }
 
+    public function GetCurrentEmployeeStatus(&$employees_sid, $status = 1){
+        //
+        if(empty($employees_sid)){
+            return false;
+        }
+        //
+        $last_statuses = $this->db
+        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status')
+        ->where_in('employee_sid', $employees_sid)
+        ->order_by('terminated_employees.sid', 'DESC')
+        ->get('terminated_employees')
+        ->row_array();
+        //
+        $last_status_text = isset($last_statuses['employee_status']) ? GetEmployeeStatusText($last_statuses['employee_status']) : '';
+
+        return $last_status_text;
+    }
+
     function get_all_employers($limit, $start, $search) {
         $this->db->select('*');
         $this->db->limit($limit, $start);
