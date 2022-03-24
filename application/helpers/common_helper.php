@@ -14765,3 +14765,24 @@ if (!function_exists('onboardingNotificationPendingText')) {
         }
     }
 }
+
+if(!function_exists('GetTimeDifferenceInMinutes')){
+    function GetTimeDifferenceInMinutes($d1, $d2){
+        //
+        $d1 = new DateTime($d1);
+        $d2 = new DateTime($d2);
+        //
+        $diff = $d1->diff($d2);
+        return $diff->format('%h') * 60 + $diff->format('%i');
+    }
+}
+
+if(!function_exists('GetHMSFromMinutes')){
+    function GetHMSFromMinutes($totalMinutes){
+        return [
+            'hours' => date('H', mktime(0, $totalMinutes)),
+            'minutes' => date('i', mktime(0, $totalMinutes)),
+            'seconds' => date('s', mktime(0, $totalMinutes))
+        ];
+    }
+}

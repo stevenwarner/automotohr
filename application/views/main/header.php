@@ -447,6 +447,7 @@
                                     <li>
                                         <img src="<?= base_url() ?>assets/images/canada.png">
                                     </li>
+                                    <?php $this->load->view('attendance/2022/clock_header'); ?>
                                 </ul>
                             </div>
                             <?php if (!$this->session->userdata('logged_in')) { ?>

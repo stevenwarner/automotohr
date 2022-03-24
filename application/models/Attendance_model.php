@@ -3,9 +3,13 @@
 class Attendance_model extends CI_Model
 {
 
+    private $datetime;
+
     function __construct()
     {
         parent::__construct();
+        //
+        $this->datetime = date('Y-m-d H:i:s', strtotime('now'));
     }
 
 
@@ -728,5 +732,158 @@ class Attendance_model extends CI_Model
         }
          
         return $return_data;
+    }
+
+    // ----------------------------------------AS of 2022-------------------------------------- //
+    
+    /**
+     * Get the attendance id
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     * @param string $date
+     * 
+     * @return number
+     */
+    public function GetAttendanceId($companyId, $employeeId, $date){
+        //
+        $q = $this->db
+        ->select('sid')
+        ->where([
+            'company_sid' => $companyId,
+            'employee_sid' => $employeeId,
+            'action_date' => $date
+        ])
+        ->limit(1);
+        //
+        $result = $q->get('portal_attendance');
+        //
+        $data = $result->row_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return 0;
+        }
+        //
+        return $data['sid'];
+        
+    }
+
+    /**
+     * Get the attendance list
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     * @param string $date
+     * 
+     * @return array
+     */
+    public function GetAttendanceList($companyId, $employeeId, $date){
+        //
+        $Id = $this->GetAttendanceId($companyId, $employeeId, $date);
+        //
+        if($Id === 0){
+            return [];
+        }
+        //
+        $q = $this->db
+        ->where([
+            'portal_attendance_sid' => $Id
+        ])
+        ->order_by('sid', 'desc');
+        //
+        $result = $q->get('portal_attendance_log');
+        //
+        $data = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        return $data;
+    }
+
+    /**
+     * Mark the attendance
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     * @param number $employerId
+     * @param string $date
+     * @param string $datetime
+     * @param string $day
+     * @param string $month
+     * @param string $year
+     * @param string $action
+     * @param number $lat
+     * @param number $lon
+     * 
+     * @return number
+     */
+    public function MarkAttendance(
+        $companyId,
+        $employeeId,
+        $employerId,
+        $date,
+        $datetime,
+        $day,
+        $month,
+        $year,
+        $action,
+        $latitude = 0,
+        $longitude = 0
+    ){
+        //
+        $Id = $this->GetAttendanceId($companyId, $employeeId, $date);
+        // Insert if attendance is not found
+        if($Id === 0){
+            //
+            $this->db->insert(
+                'portal_attendance', [
+                    'company_sid' => $companyId,
+                    'employee_sid' => $employeeId,
+                    'employer_sid' => $employerId,
+                    'day' => $day,
+                    'month' => $month,
+                    'year' => $year,
+                    'total_minutes' => 0,
+                    'total_worked_minutes' => 0,
+                    'total_break_minutes' => 0,
+                    'action_date' => $date,
+                    'created_at' => $this->datetime,
+                    'updated_at' => $this->datetime,
+                ]
+            );
+            //
+            $Id = $this->db->insert_id();
+        }
+        // Let's check if the data is inserted or not
+        if(!$Id){
+            return 0;
+        }
+        // Let's add the attendance log
+        $this->db->insert(
+            'portal_attendance_log', [
+                'portal_attendance_sid' => $Id,
+                'action' => $action,
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+                'action_date_time' => $datetime,
+                'is_deleted' => 0,
+                'created_at' => $this->datetime,
+                'updated_at' => $this->datetime
+            ]
+        );
+        //
+        $lastId = $this->db->insert_id();
+        // Update the last record
+        $this->db->update(
+            'portal_attendance', [
+                'last_action' => $action
+            ], [
+                'sid' => $Id
+            ]
+        );
+        //
+        return $lastId;
     }
 }

@@ -3,7 +3,7 @@
  * @param {string} to 
  * @returns
  */
-function baseURL(to) {
+baseURL = function(to) {
     //
     return window.location.origin + '/' + (to === undefined ? '' : to);
 }
