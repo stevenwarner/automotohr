@@ -1,23 +1,5 @@
 <?php
-/**
- * Redirect http to https
- */
-function redirect_traffic(){
-    $file_name = '../ahr_jsons/http_urls.json';
-    $file = fopen($file_name, 'r');
-    $allowedHTTPUrls =  json_decode(fread($file, filesize($file_name)), true);
-	//
-    if(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']!= 'https') {
-        $original_url = $_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
-        $url = strtolower(preg_replace('/^www\./i', '', parse_url($original_url)['path']));
-        //
-        if(!isset($allowedHTTPUrls[strtolower($url)])){
-            return header("Location: https://{$original_url}", true);
-		}
-    }
-}
-//
-redirect_traffic();
+require_once "../protected_files/main.php";
 //
 $GLOBALS['BENCHMARKSTARTTIME'] = microtime(true);
 /**

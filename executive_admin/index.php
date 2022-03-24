@@ -1,4 +1,5 @@
 <?php
+require_once "../../protected_files/main.php";
 /**
  * CodeIgniter
  *
