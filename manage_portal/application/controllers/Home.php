@@ -152,6 +152,8 @@ class Home extends CI_Controller {
                         $career_site_company_sid[]                      = $csoc['sid'];
                     }
                 }
+                //
+                $companyIds = $career_site_company_sid;
 
                 $all_paid_jobs                                          = $this->job_details->get_all_paid_jobs($career_site_company_sid);
                 $paid_jobs                                              = array();
