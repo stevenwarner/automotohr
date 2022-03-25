@@ -72,15 +72,34 @@ class User extends MY_Controller
 
     function encryptCookie($value)
     {
+     
         if (!$value) {
             return false;
         }
+       
+       
+      if(version_compare(PHP_VERSION, '7.0', '>=')){
+       
+      $cipher = "aes-128-gcm";
+      $ivlen = openssl_cipher_iv_length($cipher);
+      $iv = openssl_random_pseudo_bytes($ivlen);
+      $key = 'roltyFoamisTheDI';
+      $tag="ideff2";
+      
+      $crypttext = openssl_encrypt($value, $cipher, $key, $options=0, $iv, $tag);
+       return trim(base64_encode($crypttext));
+      }else{
+ 
         $key = 'roltyFoamisTheDI';
         $text = $value;
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
         $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
         $crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $text, MCRYPT_MODE_ECB, $iv);
         return trim(base64_encode($crypttext)); //encode for cookie
+   
+      }
+
+
     }
 
     function decryptCookie($value)
@@ -88,11 +107,24 @@ class User extends MY_Controller
         if (!$value) {
             return false;
         }
+  
+if(version_compare(PHP_VERSION, '7.0', '>=')){
+  
+        $cipher = "aes-128-gcm";
+        $ivlen = openssl_cipher_iv_length($cipher);
+        $iv = openssl_random_pseudo_bytes($ivlen);
         $key = 'roltyFoamisTheDI';
-        $crypttext = base64_decode($value); //decode cookie
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_ECB, $iv);
+        $tag="ideff2";
+        $decrypttext = openssl_decrypt($value, $cipher, $key, $options=0, $iv, $tag);
         return trim($decrypttext);
+}else{
+    $key = 'roltyFoamisTheDI';
+    $crypttext = base64_decode($value); //decode cookie
+    $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+    $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+    $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_ECB, $iv);
+    return trim($decrypttext);
+}
+
     }
 }

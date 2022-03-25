@@ -59,7 +59,15 @@ $autoload['packages'] = array();
   |
   |	$autoload['libraries'] = array('user_agent' => 'ua');
  */
-$autoload['libraries'] = array('database', 'email', 'session', 'encrypt', 'upload', 'form_validation');
+
+if(version_compare(PHP_VERSION, '7.0', '>=')){
+     $encrypt = "encryption";
+}else{
+  $encrypt = "encrypt";
+
+}
+
+$autoload['libraries'] = array('database', 'email', 'session',$encrypt, 'upload', 'form_validation');
 
 /*
   | -------------------------------------------------------------------
