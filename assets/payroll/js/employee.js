@@ -4,7 +4,7 @@ $(function PayrollEmployees() {
     //
     var tab = getSegment(2);
     //
-    var baseURI = baseURL('payroll/');
+    var baseURI = _baseURI('payroll/');
     //
     $('#jsFilterEmployees').select2();
     //
