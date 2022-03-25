@@ -217,6 +217,7 @@ class Varification_document_model extends CI_Model {
         ')
         ->where('company_sid', $companySid)
         ->where('archived', 1)
+        ->or_where('hired_status', 1)
         ->get('portal_applicant_jobs_list');
         //
         $b = $a->result_array();
