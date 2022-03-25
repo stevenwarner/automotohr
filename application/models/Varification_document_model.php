@@ -213,10 +213,10 @@ class Varification_document_model extends CI_Model {
     function getAllCompanyInactiveApplicant($companySid) {
         $a = $this->db
         ->select('
-            portal_job_applications_sid as sid
+            portal_applicant_jobs_list.portal_job_applications_sid as sid
         ')
-        ->where('company_sid', $companySid)
-        ->where('archived', 1)
+        ->where('portal_applicant_jobs_list.company_sid', $companySid)
+        ->where('portal_applicant_jobs_list.archived', 1)
         ->or_where('portal_job_applications.hired_status', 1)
         ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
         ->get('portal_applicant_jobs_list');
