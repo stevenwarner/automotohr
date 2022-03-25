@@ -136,8 +136,39 @@ class Home extends CI_Controller {
             $list_count                                             = 0;
             $segment7                                                           = $this->uri->segment(7);
             $ajax_flag                                                          = $this->uri->segment(8);
+            
+            $companyIds = [$company_sid];
+
+            if($data['customize_career_site']['status'] == 1){
+                
+                if (!empty($segment7) && $segment7 > 1) {
+                    $offset = ($segment7 - 1) * $per_page;
+                }
+                $career_site_only_companies                             = $this->job_details->get_career_site_only_companies(); // get the career site status for companies
+                $career_site_company_sid                                = array();
+
+                if(!empty($career_site_only_companies)) {
+                    foreach($career_site_only_companies as $csoc) {
+                        $career_site_company_sid[]                      = $csoc['sid'];
+                    }
+                }
+                //
+                $companyIds = $career_site_company_sid;
+
+                $all_paid_jobs                                          = $this->job_details->get_all_paid_jobs($career_site_company_sid);
+                $paid_jobs                                              = array();
+                $featured_jobs                                          = array();
+                
+
+                if(!empty($all_paid_jobs)) {
+                    foreach($all_paid_jobs as $apj) {
+                        $paid_jobs[]                                    = $apj['jobId'];
+                    }
+                }
+            }
+
             // Get company active jobs 
-            $jb = $this->job_details->GetActiveJobsCatCSC($company_sid); 
+            $jb = $this->job_details->GetActiveJobsCatCSC($companyIds); 
             // Get all categories
             $all_categories = $this->job_details->GetAllCategories($jb['categoryIds']);
             // Get all states
@@ -153,32 +184,6 @@ class Home extends CI_Controller {
             //
             if(in_array(227, $jb['countryIds'])){
                 $all_countries[227] = ['sid' => 227, 'country_code' => 'US', 'country_name' => 'United States'];
-            }
-                
-            if($data['customize_career_site']['status'] == 1){
-                
-                if (!empty($segment7) && $segment7 > 1) {
-                    $offset = ($segment7 - 1) * $per_page;
-                }
-                $career_site_only_companies                             = $this->job_details->get_career_site_only_companies(); // get the career site status for companies
-                $career_site_company_sid                                = array();
-
-                if(!empty($career_site_only_companies)) {
-                    foreach($career_site_only_companies as $csoc) {
-                        $career_site_company_sid[]                      = $csoc['sid'];
-                    }
-                }
-
-                $all_paid_jobs                                          = $this->job_details->get_all_paid_jobs($career_site_company_sid);
-                $paid_jobs                                              = array();
-                $featured_jobs                                          = array();
-                
-
-                if(!empty($all_paid_jobs)) {
-                    foreach($all_paid_jobs as $apj) {
-                        $paid_jobs[]                                    = $apj['jobId'];
-                    }
-                }
             }
             
             if ($theme_name == 'theme-4' && strtoupper($pageName) == 'JOBS' && !empty($segment6)) { // if search is applied
