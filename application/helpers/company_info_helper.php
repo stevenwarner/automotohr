@@ -2287,11 +2287,7 @@ if(!function_exists('broadcastAlert')){
             $list .= '</ul>';
         }
         //
-        // Get email header and footer
-        // this will increase the speed
-        if(!isset($_SESSION['EmailHF_SES'])) $_SESSION['EmailHF_SES'] = message_header_footer($companySid, $companyName);
-        //
-        $hf = $_SESSION['EmailHF_SES'];
+        $hf = message_header_footer($companySid, $companyName);
         //
         if(!isset($_SESSION[$templateCode.'_SES'])){
             // Get email template
