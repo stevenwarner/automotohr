@@ -152,8 +152,6 @@ class Home extends CI_Controller {
                         $career_site_company_sid[]                      = $csoc['sid'];
                     }
                 }
-                //
-                $companyIds = $career_site_company_sid;
 
                 $all_paid_jobs                                          = $this->job_details->get_all_paid_jobs($career_site_company_sid);
                 $paid_jobs                                              = array();
@@ -164,6 +162,33 @@ class Home extends CI_Controller {
                     foreach($all_paid_jobs as $apj) {
                         $paid_jobs[]                                    = $apj['jobId'];
                     }
+                }
+            }
+
+            $d3 = $this->db
+            ->select('sid')
+            ->from('automotive_groups')
+            ->where('corporate_company_sid', $company_sid)
+            ->limit(1)
+            ->get();
+
+            $automotive_group_sid = $d3->row_array();
+
+            // Check for automotive group companies
+            if ($automotive_group_sid) {
+                $automotive_group_sid = $automotive_group_sid['sid'];
+                $d3 = $this->db
+                ->select('
+                    automotive_group_companies.company_sid
+                ')
+                ->from('automotive_group_companies')
+                ->join('users', 'users.sid = automotive_group_companies.company_sid', 'left')
+                ->where('automotive_group_companies.automotive_group_sid', $automotive_group_sid)
+                ->where('automotive_group_companies.company_sid <> 0', null)
+                ->get();
+                $automotive_group_companies = $d3->result_array();
+                if($automotive_group_companies){
+                    $companyIds = array_column($automotive_group_companies, 'company_sid');
                 }
             }
 
