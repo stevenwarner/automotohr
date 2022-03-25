@@ -1,4 +1,4 @@
-<?php if (checkIfAppIsEnabled('attendance')) { ?>
+<?php if (checkIfAppIsEnabled('attendance') && $this->session->userdata['logged_in']) { ?>
     <div style="position: absolute; right: 0; top: 0">
         <!--  -->
         <p class="csF26 csW text-center">
