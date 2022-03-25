@@ -15,7 +15,7 @@
         'url' => '/my/time-sheet',
         'slug' => '',
         'icon' => 'calendar',
-        'segment' => 'time-sheet'
+        'segment' => '/my/time-sheet'
     ];
     $navpills[] = [
         'title' => 'Time Sheet',
@@ -28,7 +28,7 @@
     //
     $lis = '';
     //
-    $baseURL = base_url('payroll/');
+    $baseURL = base_url('attendance/');
     //
     foreach($navpills as $tab){
         //

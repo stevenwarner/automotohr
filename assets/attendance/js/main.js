@@ -22,6 +22,9 @@ $(function() {
         CheckPost($(this).data('type'));
     });
 
+    /**
+     * Shows the location on map
+     */
     $(document).on('click', '.jsAttendanceViewLocation', function(event) {
         //
         event.preventDefault();
@@ -116,6 +119,10 @@ $(function() {
             .fail(HandleError);
     }
 
+    /**
+     * Handles clock buttons
+     * @param {string} action 
+     */
     function SetClock(action) {
         //
         $('.jsAttendanceClockBTN').hide(0);
@@ -139,6 +146,10 @@ $(function() {
         $('.jsAttendanceLoader').hide(0);
     }
 
+    /**
+     * Shows the clocked time
+     * @param {object} initialDate 
+     */
     function SetClockCount(initialDate) {
         //
         let hour = initialDate.getHours();
@@ -151,18 +162,24 @@ $(function() {
 
     }
 
+    /**
+     * Check and start the clock
+     * @returns 
+     */
     function InitClock() {
         if ($('.jsAttendanceCurrentClockHour') === undefined) {
             return;
         }
         //
-        setInterval(StartClock, 1);
+        return setInterval(StartClock, 1);
     }
-    //
+
+    /**
+     * Starts the clock
+     */
     function StartClock() {
         //
         var dt = new Date();
-        //
         //
         $('.jsAttendanceCurrentClockHour').text(dt.getHours().toString().length === 1 ? '0' + dt.getHours() : dt.getHours());
         $('.jsAttendanceCurrentClockMinutes').text(dt.getMinutes().toString().length === 1 ? '0' + dt.getMinutes() : dt.getMinutes());
@@ -200,13 +217,13 @@ $(function() {
      * @returns 
      */
     function onFail() {
-        return alertify.alert("Please, allow location API access to AutomotoHR.", function() {
-            //
-            locOBJ.lat = 0;
-            locOBJ.lon = 0;
-            //
-            CBObj.cb(CBObj.param);
-        });
+        // return alertify.alert("Please, allow location API access to AutomotoHR.", function() {
+        //
+        locOBJ.lat = 0;
+        locOBJ.lon = 0;
+        //
+        CBObj.cb(CBObj.param);
+        // });
     }
 
     /**
@@ -228,10 +245,17 @@ $(function() {
      * Empty callback
      */
     function CB() {}
+
+    //
+    $('.jsDatePicker').datepicker({
+        changeYear: true,
+        changeMonth: true,
+    });
+
     //
     $('.jsAttendanceClockBTN').hide(0);
     $('.jsAttendanceBTN').addClass('dn');
-
+    //
     CheckClock();
     //
     InitClock();

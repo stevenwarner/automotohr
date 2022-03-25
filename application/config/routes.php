@@ -1517,6 +1517,8 @@ $route["payroll/get/(:num)/(:any)"] = "payroll/Payroll_onboard/Get/$1/$2";
  * @version 1.0
  */
 $route['attendance/my']['get'] = "sheet/Attendance/MyAttendance";
+$route['attendance/my/time-sheet']['get'] = "sheet/Attendance/MyTimeSheet";
+$route['attendance/time-sheet']['get'] = "sheet/Attendance/TimeSheet";
 // AJAX Calls
 $route['attendance/get/clock']['get'] = "sheet/Attendance_ajax/LoadClock";
 $route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttendance";

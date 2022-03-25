@@ -43,7 +43,7 @@ class Attendance extends Public_Controller {
 
 
     /**
-     * 
+     * Clock my day
      */
     public function MyAttendance(){
         //
@@ -90,6 +90,127 @@ class Attendance extends Public_Controller {
         $this->load
         ->view($this->header, $this->args)
         ->view('attendance/2022/my_day')
+        ->view($this->footer);
+    }
+
+    /**
+     * My time sheet
+     */
+    public function MyTimeSheet(){
+        //
+        $this->args['session'] = $this->ses;
+        $this->args['employee'] = $this->ses['employer_detail'];
+        $this->args['companyId'] = $this->companyId;
+        $this->args['security_details'] = db_get_access_level_details($this->ses['employer_detail']['sid']);
+        $this->args['title'] = 'My Time Sheet | AutomotoHR';
+        // Set filter
+        $fromDate = $this->input->get('from', true) ? $this->input->get('from', true) : '';
+        $toDate = $this->input->get('to', true) ? $this->input->get('to', true) : '';
+        //
+        if(empty($fromDate) || empty($toDate)){
+            $SysToDate = $SysFromDate = $toDate = $fromDate = date('Y-m-d', strtotime('now'));
+        } else{
+            //
+            $SysFromDate = formatDateToDB($fromDate);
+            $SysToDate = formatDateToDB($toDate);
+            //
+            $fromDate = reset_datetime([
+                'datetime' => $fromDate.' 00:00:00',
+                'from_format' => 'm/d/Y H:i:s',
+                'format' => 'Y-m-d H:i:s',
+                'from_timezone' => $this->args['employee']['timezone'],
+                'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                '_this' => $this
+            ]);
+            $toDate = reset_datetime([
+                'datetime' => $toDate.' 00:00:00',
+                'from_format' => 'm/d/Y H:i:s',
+                'format' => 'Y-m-d H:i:s',
+                'from_timezone' => $this->args['employee']['timezone'],
+                'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                '_this' => $this
+            ]);
+        }
+        //
+        $this->args['fromDate'] = $SysFromDate;
+        $this->args['toDate'] = $SysToDate;
+        //
+        $this->args['lists'] = $this->atm->GetAttendanceWeekList(
+            $this->companyId,
+            $this->employeeId,
+            $fromDate,
+            $toDate
+        );
+        //
+        $this->load
+        ->view($this->header, $this->args)
+        ->view('attendance/2022/my_timesheet')
+        ->view($this->footer);
+    }
+
+    /**
+     * Timesheet
+     */
+    public function TimeSheet(){
+        //
+        $this->args['session'] = $this->ses;
+        $this->args['employee'] = $this->ses['employer_detail'];
+        $this->args['companyId'] = $this->companyId;
+        $this->args['security_details'] = db_get_access_level_details($this->ses['employer_detail']['sid']);
+        $this->args['title'] = 'Time Sheet | AutomotoHR';
+        // Set filter
+        $fromDate = $this->input->get('from', true) ? $this->input->get('from', true) : '';
+        $toDate = $this->input->get('to', true) ? $this->input->get('to', true) : '';
+        $employeeId = $this->input->get('id', true) ? $this->input->get('id', true) : '';
+        //
+        if(empty($fromDate) || empty($toDate)){
+            $SysToDate = $SysFromDate = $toDate = $fromDate = date('Y-m-d', strtotime('now'));
+        } else{
+            //
+            $SysFromDate = formatDateToDB($fromDate);
+            $SysToDate = formatDateToDB($toDate);
+            //
+            $fromDate = reset_datetime([
+                'datetime' => $fromDate.' 00:00:00',
+                'from_format' => 'm/d/Y H:i:s',
+                'format' => 'Y-m-d H:i:s',
+                'from_timezone' => $this->args['employee']['timezone'],
+                'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                '_this' => $this
+            ]);
+            $toDate = reset_datetime([
+                'datetime' => $toDate.' 00:00:00',
+                'from_format' => 'm/d/Y H:i:s',
+                'format' => 'Y-m-d H:i:s',
+                'from_timezone' => $this->args['employee']['timezone'],
+                'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                '_this' => $this
+            ]);
+        }
+        //
+        if(empty($employeeId)){
+            $employeeId = $this->employeeId;
+        }
+        //
+        $this->args['fromDate'] = $SysFromDate;
+        $this->args['toDate'] = $SysToDate;
+        $this->args['filterEmployeeId'] = $employeeId;
+        //
+        $this->load->model('single/Employee_model', 'sem');
+        // Get employee's list
+        $this->args['employees'] = $this->sem->GetCompanyEmployees($this->companyId, true);
+        $this->args['currentEmployee'] = $this->args['employees'][$employeeId];
+        //
+        $this->args['lists'] = $this->atm->GetAttendanceWeekList(
+            $this->companyId,
+            $employeeId,
+            $fromDate,
+            $toDate
+        );
+        //
+        $this->load
+        ->view($this->header, $this->args)
+        ->view('attendance/2022/timesheet')
         ->view($this->footer);
     }
 
