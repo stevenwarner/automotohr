@@ -166,13 +166,13 @@ $(function() {
      * @returns 
      */
     function onFail() {
-        return alertify.alert("Please, allow location API access to AutomotoHR.", function() {
+        // return alertify.alert("Please, allow location API access to AutomotoHR.", function() {
             //
             locOBJ.lat = 0;
             locOBJ.lon = 0;
             //
             CBObj.cb(CBObj.param);
-        });
+        // });
     }
 
     /**
@@ -184,10 +184,10 @@ $(function() {
         //
         XHR = null;
         //
-        return alertify.alert(
-            'Something went wrong while processing the request.',
-            function() {}
-        ).setHeader(resp.statusText + ' - ' + resp.status);
+        // return alertify.alert(
+        //     'Something went wrong while processing the request.',
+        //     function() {}
+        // ).setHeader(resp.statusText + ' - ' + resp.status);
     }
 
     /**
