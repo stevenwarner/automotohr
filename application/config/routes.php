@@ -1516,5 +1516,7 @@ $route["payroll/get/(:num)/(:any)"] = "payroll/Payroll_onboard/Get/$1/$2";
  * @author  Mubashir Ahmed <mubashar.ahmed@egenienext.com>
  * @version 1.0
  */
-$route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttendance";
+$route['attendance/my']['get'] = "sheet/Attendance/MyAttendance";
+// AJAX Calls
 $route['attendance/get/clock']['get'] = "sheet/Attendance_ajax/LoadClock";
+$route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttendance";

@@ -22,6 +22,22 @@ $(function() {
         CheckPost($(this).data('type'));
     });
 
+    $(document).on('click', '.jsAttendanceViewLocation', function(event) {
+        //
+        event.preventDefault();
+        //
+        var data = $(this).closest('.jsAttendanceMyList').data();
+        //
+        Model({
+            Id: 'jsAttendanceViewLocationModal',
+            Title: 'Location',
+            Loader: 'jsAttendanceViewLocationModalLoader',
+            Body: '<div class="container"><iframe style="width:100%; height: 400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=' + (data.lon) + ',' + (data.lat) + '&hl=en&z=14&amp;output=embed"></iframe></div>'
+        }, function() {
+            ml(false, 'jsAttendanceViewLocationModalLoader');
+        });
+    });
+
     /**
      * Add permission check
      * @param {string} action 
@@ -105,7 +121,7 @@ $(function() {
         $('.jsAttendanceClockBTN').hide(0);
         $('.jsAttendanceBTN').addClass('dn');
         //
-        if (action == 'clock_in') {
+        if (action == 'clock_in' || action == 'break_out') {
             $('.jsAttendanceClockBTN[data-type="break_in"]').show(0);
             $('.jsAttendanceClockBTN[data-type="clock_out"]').show(0);
             $('.jsAttendanceBTN[data-type="break_in"]').removeClass('dn');
@@ -133,6 +149,24 @@ $(function() {
         $('.jsAttendanceClockMinute').text(minutes.toString().length == 1 ? '0' + minutes : minutes);
         $('.jsAttendanceClockSeconds').text(seconds.toString().length == 1 ? '0' + seconds : seconds);
 
+    }
+
+    function InitClock() {
+        if ($('.jsAttendanceCurrentClockHour') === undefined) {
+            return;
+        }
+        //
+        setInterval(StartClock, 1);
+    }
+    //
+    function StartClock() {
+        //
+        var dt = new Date();
+        //
+        //
+        $('.jsAttendanceCurrentClockHour').text(dt.getHours().toString().length === 1 ? '0' + dt.getHours() : dt.getHours());
+        $('.jsAttendanceCurrentClockMinutes').text(dt.getMinutes().toString().length === 1 ? '0' + dt.getMinutes() : dt.getMinutes());
+        $('.jsAttendanceCurrentClockSeconds').text(dt.getSeconds().toString().length === 1 ? '0' + dt.getSeconds() : dt.getSeconds());
     }
 
     /**
@@ -199,4 +233,6 @@ $(function() {
     $('.jsAttendanceBTN').addClass('dn');
 
     CheckClock();
+    //
+    InitClock();
 });

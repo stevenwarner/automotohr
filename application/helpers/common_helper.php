@@ -14743,3 +14743,95 @@ if(!function_exists('GetHMSFromMinutes')){
         ];
     }
 }
+
+if(!function_exists('CalculateTime')){
+    /**
+     * Calculate time for DB
+     * 
+     * @param array $list
+     * @return array
+     */
+    function CalculateTime($lists){
+        //
+        $ra = [
+            'total_minutes' => 0,
+            'total_worked_minutes' => 0,
+            'total_break_minutes' => 0
+        ];
+        //
+        $lists = array_reverse($lists);
+        //
+        $ra['total_minutes'] = GetTotalTime($lists, 'clock_in', 'clock_out');
+        $ra['total_break_minutes'] = GetTotalTime($lists, 'break_in', 'break_out');
+        // Total worked hours
+        $ra['total_worked_minutes'] = $ra['total_minutes'] - $ra['total_break_minutes'];
+        //
+        return $ra;
+    }
+}
+
+if(!function_exists('GetTotalTime')){
+    /**
+     * Calculate time for DB
+     * 
+     * @param array $list
+     * @return array
+     */
+    function GetTotalTime($lists, $t1, $t2){
+        //
+        $total = 0;
+        //
+        $lastAction = '';
+        //
+        $lastDateTime = '';
+        // For worked time
+        foreach($lists as $list){
+            // For clock ins
+            if(empty($lastAction) || $list['action'] == $t1){
+                $lastAction = $list['action'];
+                $lastDateTime = $list['action_date_time'];
+            }
+            //
+            if($lastAction == $t1 && $list['action'] == $t2){
+                //
+                $total += GetTimeDifferenceInMinutes($lastDateTime, $list['action_date_time']);
+                //
+                $lastAction = $t1;
+                $lastDateTime = '';
+            }
+        }
+        //
+        if($lastAction == $t1){
+            $total += GetTimeDifferenceInMinutes($lastDateTime, date('Y-m-d H:i:s', strtotime('now')));
+        }
+        //
+        return $total;
+    }
+}
+
+if(!function_exists('GetActionColor')){
+    /**
+     * Calculate time for DB
+     * 
+     * @param array $list
+     * @return array
+     */
+    function GetActionColor($action){
+        //
+        $list = [];
+        $list['clock_in'] = 'success';
+        $list['clock_out'] = 'danger';
+        $list['break_in'] = 'warning';
+        $list['break_out'] = 'black';
+        //
+        return $list[$action];
+    }
+}
+
+if(!function_exists('ModifyDate')){
+    function ModifyDate($date, $modification, $format){
+        $stop_date = new DateTime($date);
+        $stop_date->modify($modification);
+        return $stop_date->format($format);
+    }
+}

@@ -108,7 +108,7 @@ class Attendance_ajax extends Public_Controller {
             return SendResponse(200, $this->resp);
         }
         //
-        $ct = $this->CalculateTime($attendanceList);
+        $ct = CalculateTime($attendanceList);
         $ra['last_status'] = $attendanceList[0]['action'];
         //
         $ra = array_merge(
@@ -137,7 +137,7 @@ class Attendance_ajax extends Public_Controller {
         // 
         if(!empty($attendanceList)){
             //
-            $ct = $this->CalculateTime($attendanceList);
+            $ct = CalculateTime($attendanceList);
             //
             $this->db->update(
                 'portal_attendance', [
@@ -249,66 +249,5 @@ class Attendance_ajax extends Public_Controller {
             //
             return SendResponse(200, $this->resp);
         }
-    }
-    
-    /**
-     * Calculate time for DB
-     * 
-     * @param array $list
-     * @return array
-     */
-    private function CalculateTime($lists){
-        //
-        $ra = [
-            'total_minutes' => 0,
-            'total_worked_minutes' => 0,
-            'total_break_minutes' => 0
-        ];
-        //
-        $lists = array_reverse($lists);
-        //
-        $ra['total_minutes'] = $this->GetTotalTime($lists, 'clock_in', 'clock_out');
-        $ra['total_break_minutes'] = $this->GetTotalTime($lists, 'break_in', 'break_out');
-        // Total worked hours
-        $ra['total_worked_minutes'] = $ra['total_minutes'] - $ra['total_break_minutes'];
-        //
-        return $ra;
-    }
-
-    /**
-     * Calculate time for DB
-     * 
-     * @param array $list
-     * @return array
-     */
-    private function GetTotalTime($lists, $t1, $t2){
-        //
-        $total = 0;
-        //
-        $lastAction = '';
-        //
-        $lastDateTime = '';
-        // For worked time
-        foreach($lists as $list){
-            // For clock ins
-            if(empty($lastAction) || $list['action'] == $t1){
-                $lastAction = $list['action'];
-                $lastDateTime = $list['action_date_time'];
-            }
-            //
-            if($lastAction == $t1 && $list['action'] == $t2){
-                //
-                $total += GetTimeDifferenceInMinutes($lastDateTime, $list['action_date_time']);
-                //
-                $lastAction = $t1;
-                $lastDateTime = '';
-            }
-        }
-        //
-        if($lastAction == $t1){
-            $total += GetTimeDifferenceInMinutes($lastDateTime, $this->datetime);
-        }
-        //
-        return $total;
     }
 }
