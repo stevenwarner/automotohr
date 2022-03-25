@@ -39,7 +39,7 @@ $GLOBALS['BENCHMARKSTARTTIME'] = microtime(true);
  * @filesource
  */
 
-/*
+ /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
  *---------------------------------------------------------------
