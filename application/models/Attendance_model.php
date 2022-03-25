@@ -886,4 +886,51 @@ class Attendance_model extends CI_Model
         //
         return $lastId;
     }
+
+    /**
+     * Get the attendance between week dates
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     * @param string $fromDate
+     * @param string $toDate
+     * 
+     * @return array
+     */
+    public function GetAttendanceWeekList(
+        $companyId,
+        $employeeId,
+        $fromDate,
+        $toDate
+    ){
+        //
+        $ra = [
+            'total_minutes' => 0,
+            'total_worked_minutes' => 0,
+            'total_break_minutes' => 0,
+            'lists' => []
+        ];
+        //
+        $currentDate = $fromDate;
+        //
+        while($currentDate <= $toDate){
+            //
+            $lists = $this->GetAttendanceList($companyId, $employeeId, $currentDate);
+            //
+            if(!empty($lists)){
+                //
+                $ct = CalculateTime($lists);
+                //
+                $ra['lists'][$currentDate] = $ct;
+                //
+                $ra['total_minutes'] += $ct['total_minutes'];
+                $ra['total_worked_minutes'] += $ct['total_worked_minutes'];
+                $ra['total_break_minutes'] += $ct['total_break_minutes'];
+            }
+            //
+            $currentDate = ModifyDate($currentDate, '+1 day', 'Y-m-d');
+        }
+        //
+        return $ra;
+    }
 }

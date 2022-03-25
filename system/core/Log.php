@@ -212,7 +212,8 @@ class CI_Log {
 			$date = date($this->_date_fmt);
 		}
 
-		$message .= $level.' - AutomotoHR - '.getUserIP().' - '.$date.' --> '.$msg."\n";
+		$message .= $level.' - AutomotoHR -  - '.$date.' --> '.$msg."\n";
+		// $message .= $level.' - AutomotoHR - '.getUserIP().' - '.$date.' --> '.$msg."\n";
 
 		flock($fp, LOCK_EX);
 
