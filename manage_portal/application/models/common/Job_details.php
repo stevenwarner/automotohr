@@ -1215,7 +1215,7 @@ class Job_details extends CI_Model {
             Location_State
         ')
         ->from('portal_job_listings')
-        ->where('user_sid', $companyId)
+        ->where_in('user_sid', $companyId)
         ->where('portal_job_listings.active', 1)
         ->where('portal_job_listings.organic_feed', 1)
         ->where('portal_job_listings.published_on_career_page', 1);
