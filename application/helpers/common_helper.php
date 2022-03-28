@@ -58,6 +58,28 @@ if (!function_exists('getCompanyNameBySid')) {
     }
 }
 
+if (!function_exists('getCompanyLogoBySid')) {
+    function getCompanyLogoBySid($company_sid)
+    {
+        $company_name = '';
+        if (!empty($company_sid)) {
+            
+            $CI = &get_instance();
+            $CI->db->select('Logo');
+            $CI->db->where('sid', $company_sid);
+            //
+            $company_info = $CI->db->get('users')->row_array();
+
+            if (!empty($company_info)) {
+                $company_name = $company_info['Logo'];
+            }   
+
+        } 
+
+        return $company_name;
+    }
+}
+
 if (!function_exists('getEmployeeJobfairApplicant')) {
     function getEmployeeJobfairApplicant($company_sid, $employee_sid, $arrayinfo = null, $today_start = NULL, $today_end = NULL, $approval_status = NULL, $count = "no", $fair_type = "all", $applicant_filters = array())
     {

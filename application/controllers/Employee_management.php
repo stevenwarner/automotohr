@@ -1028,8 +1028,7 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function employee_profile($sid = NULL) {
-        if ($sid == NULL) {
+    public function employee_profile($sid = NULL) {        if ($sid == NULL) {
             $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
             redirect('employee_management', 'refresh');
         } else {
@@ -1188,8 +1187,14 @@ class Employee_management extends Public_Controller {
                             $message['last_name'] = $employerData['last_name'];
                             $message['username'] = $employerData['username'];
                             if ($message['from_id'] == "notifications@automotohr.com") {
-                                $message['sender_name'] = "AutoMoto HR";
-                                $message['sender_logo'] = base_url("assets/manage_admin/images/new_logo.JPG"); 
+                                $message['sender_name'] = getCompanyNameBySid($company_id);
+                                $logo = getCompanyLogoBySid($company_id);
+                                if (empty($logo)) {
+                                    $message['sender_logo'] = base_url("assets/images/img-applicant.jpg"); 
+                                } else {
+                                    $message['sender_profile_picture'] = getCompanyLogoBySid($company_id);
+                                }
+                                
                             } else {
                                 $message['sender_name'] = getUserNameBySID($message['from_id']);
                                 $message['sender_profile_picture'] = get_employee_profile_info($message['from_id'])['profile_picture']; 
@@ -1207,7 +1212,10 @@ class Employee_management extends Public_Controller {
                         $allMessages[$i] = $message;
                         $i++;
                     }
-
+                    // echo "<pre>";
+                    // print_r($allMessages);
+                    // echo $company_id;
+                    // die();
                     $data['applicant_message'] = $allMessages;
                 }
 
