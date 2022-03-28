@@ -138,7 +138,8 @@ class Cron_google_hire extends CI_Controller{
         // Set credenstials file name
         $cred_filename = 'google_hire_applybuz.json';
         if(!preg_match('/applybuz|localhost/', base_url()))
-            $cred_filename = 'google_hire.json';
+             $creds = getCreds();
+            $cred_filename = $creds->AHR->GOOGLE_HIRE;
 
         // Loads configutaion file
         $auth = @json_decode(@file_get_contents($cred_filename));

@@ -3255,7 +3255,8 @@ class Home extends CI_Controller {
      */
     private function authorise(){
         // Set credenstials file name
-        $cred_filename = 'google_hire_automotosocial.json';
+        $creds = getCreds();
+        $cred_filename = $creds->AHR->GOOGLE_HIRE_AUTOMOTOSOCIAL;
 
         // Loads configutaion file
         $auth = @json_decode(@file_get_contents($cred_filename));
