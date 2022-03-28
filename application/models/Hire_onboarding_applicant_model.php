@@ -233,7 +233,7 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->where('users_type', 'applicant');
         $result = $this->db->get('dependant_information')->result_array();
         if (count($result) > 0) {
-            foreach ($result as $info) {
+            foreach ($result as $info) {https://www.youtube.com/watch?v=eUhB6kmy0_E
                 $insert_dependant_information = array(
                     'users_sid' => $hired_id,
                     'users_type' => 'employee',
@@ -289,7 +289,7 @@ class Hire_onboarding_applicant_model extends CI_Model
                     'users_sid' => $hired_id,
                     'users_type' => 'employee',
                     'license_type' => $info['license_type'],
-                    'license_details' => $info['license_details']
+                    'license_details' => $info['license_details'],
                     'license_file' => $info['license_file']
                 );
                 $this->db->insert('license_information', $insert_license_information);
