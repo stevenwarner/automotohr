@@ -128,6 +128,7 @@
                                                 <th scope="col">Worked Time (HH:MM)</th>
                                                 <th scope="col">Break Time (HH:MM)</th>
                                                 <th scope="col">Total Time (HH:MM)</th>
+                                                <th scope="col">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -156,6 +157,11 @@
                                                         </td>
                                                         <td class="vam text-center">
                                                             <strong><?=$total['hours'];?>:<?=$total['minutes'];?></strong>
+                                                        </td>
+                                                        <td class="vam text-center">
+                                                            <a href="<?=base_url('attendance/manage/'.$list['pId']);?>" class="btn btn-orange">
+                                                                <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;Manage
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                 <?php endforeach; ?>

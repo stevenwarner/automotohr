@@ -42,6 +42,31 @@ $(function() {
     });
 
     /**
+     * 
+     */
+    $('.jsAttendanceManageUpdate').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        var id = $(this).closest('.jsAttendanceMyList').data('id');
+        var time = CheckTime($(this).closest('.jsAttendanceMyList').find('.jsTimeField').val());
+        //
+        ml(true, 'jsAttendanceManageLoader');
+        //
+        XHR = $.post(
+                baseURI + 'attendance/manage', {
+                    Id: id,
+                    time: time
+                }
+            )
+            .success(function(resp) {
+                console.log(resp)
+            })
+            .fail(HandleError);
+
+    });
+
+    /**
      * Add permission check
      * @param {string} action 
      */
@@ -198,6 +223,33 @@ $(function() {
     }
 
     /**
+     * Validates the time
+     * @param {string} input 
+     * @returns 
+     */
+    function CheckTime(input) {
+        //
+        var ov = input.replace(/[^0-9]/g, '');
+        //
+        var av = [0, 0, ':', 0, 0];
+        //
+        var sv = ov.split('');
+        //
+        av[0] = sv[0] ? sv[0] : 0;
+        av[1] = sv[1] ? sv[1] : 0;
+        av[3] = sv[2] ? sv[2] : 0;
+        av[4] = sv[3] ? sv[3] : 0;
+        //
+        var fv = av.join('');
+        //
+        if (fv > '23:59') {
+            fv = '23:59';
+        }
+        //
+        return fv;
+    }
+
+    /**
      * Retrieves lat lon
      * @param {object} position 
      */
@@ -253,10 +305,20 @@ $(function() {
     });
 
     //
+    $('.jsTimePicker').datetimepicker({
+        format: 'm/d/Y H:m',
+        minDate: 0,
+        maxDate: 0,
+        interval: 15
+    });
+
+    //
     $('.jsAttendanceClockBTN').hide(0);
     $('.jsAttendanceBTN').addClass('dn');
     //
     CheckClock();
     //
     InitClock();
+    //
+    ml(false, 'jsAttendanceManageLoader');
 });

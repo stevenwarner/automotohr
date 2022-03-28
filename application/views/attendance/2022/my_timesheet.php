@@ -97,9 +97,9 @@
                                                     </tr>
                                                 <?php endforeach; ?>
                                                 <?php 
-                                                    $todayWorked = GetHMSFromMinutes($list['total_worked_minutes']);
-                                                    $todayBreak = GetHMSFromMinutes($list['total_break_minutes']);
-                                                    $total = GetHMSFromMinutes($list['total_minutes']);
+                                                    $todayWorked = GetHMSFromMinutes($lists['total_worked_minutes']);
+                                                    $todayBreak = GetHMSFromMinutes($lists['total_break_minutes']);
+                                                    $total = GetHMSFromMinutes($lists['total_minutes']);
                                                 ?>
                                                 <tr>
                                                     <td class="vam">

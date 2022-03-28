@@ -14736,10 +14736,18 @@ if(!function_exists('GetTimeDifferenceInMinutes')){
 
 if(!function_exists('GetHMSFromMinutes')){
     function GetHMSFromMinutes($totalMinutes){
+        //
+        $hours = intval($totalMinutes/60);
+        //
+        $minutes = $totalMinutes - ($hours * 60);
+        // Pluraize
+        $hours = (strlen($hours) === 1 ? '0' : '').$hours;
+        $minutes = (strlen($minutes) === 1 ? '0' : '').$minutes;
+        //
         return [
-            'hours' => date('H', mktime(0, $totalMinutes)),
-            'minutes' => date('i', mktime(0, $totalMinutes)),
-            'seconds' => date('s', mktime(0, $totalMinutes))
+            'hours' => $hours,
+            'minutes' => $minutes,
+            'seconds' => 0
         ];
     }
 }
@@ -14802,7 +14810,19 @@ if(!function_exists('GetTotalTime')){
         }
         //
         if($lastAction == $t1){
-            $total += GetTimeDifferenceInMinutes($lastDateTime, date('Y-m-d H:i:s', strtotime('now')));
+            //
+            $date = formatDateToDB(
+                $lists[0]['action_date_time'],
+                DB_DATE_WITH_TIME,
+                DB_DATE
+            );
+            //
+            $datetime = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            if($date !== date('Y-m-d')){
+                $datetime = date('Y-m-d').' 23:59:59';
+            }
+            $total += GetTimeDifferenceInMinutes($lastDateTime, $datetime);
         }
         //
         return $total;
@@ -14829,9 +14849,75 @@ if(!function_exists('GetActionColor')){
 }
 
 if(!function_exists('ModifyDate')){
+    /**
+     * Modify date time
+     * 
+     * @param string $date
+     * @param string $modification
+     * @param string $format
+     * 
+     * @return string
+     */
     function ModifyDate($date, $modification, $format){
         $stop_date = new DateTime($date);
         $stop_date->modify($modification);
         return $stop_date->format($format);
+    }
+}
+
+if(!function_exists('DistanceBTWLatLon')){
+    /**
+     * Get distance between two lat lons
+     * 
+     * @param string $lat1
+     * @param string $lon1
+     * @param string $lat2
+     * @param string $lon2
+     * 
+     * @return array
+     */
+    function DistanceBTWLatLon($lat1, $lon1, $lat2, $lon2){
+        //
+        $ra = [
+            'meters' => 0,
+            'km' => 0,
+            'text' => '0 KM'
+        ];
+        //
+        if($lat1 == 0 || $lat2 == 0){
+            return $ra;
+        }
+        //
+        $R = 6371e3; // metres
+        $l1 = $lat1 * pi() / 180; // φ, λ in radians
+        $l2 = $lat2 * pi() / 180;
+        $ll1 = ($lat2-$lat1) * pi() / 180;
+        $ll2 = ($lon2-$lon1) * pi() / 180;
+        //
+        $a = sin($ll1/2) * sin($ll1/2) +
+            cos($l1) * cos($l2) *
+            sin($ll2/2) * sin($ll2/2);
+        //
+        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+
+        $d = $R * $c; // in metres
+        //
+        $ra['meters'] = $d;
+        $ra['km'] = ceil($d / 1000);
+        $ra['text'] = $ra['km'].' KM';
+        //
+        return $ra;
+    }
+}
+
+if(!function_exists('GetCleanedAction')){
+    /**
+     * Get action for front end
+     * 
+     * @param string $action
+     * @return string
+     */
+    function GetCleanedAction($action){
+        return ucwords(str_replace('_', ' ', $action));
     }
 }

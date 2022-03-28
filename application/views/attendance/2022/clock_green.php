@@ -8,8 +8,13 @@
                     </div>
                     <figure><i class="fa fa-calendar" aria-hidden="true"></i></figure>
                     <h2 class="jsAttendanceClock">
-                        <span class="jsAttendanceClockHour">00</span><span>:</span><span class="jsAttendanceClockMinute">00</span><span>:</span><span class="jsAttendanceClockSeconds">00</span>
+                        <span class="jsAttendanceClockHour csFC1">00</span>
+                        <span class="csFC1">:</span>
+                        <span class="jsAttendanceClockMinute csFC1">00</span>
                     </h2>
+                    <p class="">
+                        <span>HH:MM</span>
+                    </p>
                     <div class="jsAttendanceBTNs">
                         <button class="btn btn-success jsAttendanceBTN dn" data-type="clock_in">
                             <i class="fa fa-play" aria-hidden="true"></i>&nbsp;Clock In

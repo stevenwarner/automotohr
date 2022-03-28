@@ -921,6 +921,8 @@ class Attendance_model extends CI_Model
                 //
                 $ct = CalculateTime($lists);
                 //
+                $ct['pId'] = $lists[0]['portal_attendance_sid'];
+                //
                 $ra['lists'][$currentDate] = $ct;
                 //
                 $ra['total_minutes'] += $ct['total_minutes'];
@@ -932,5 +934,61 @@ class Attendance_model extends CI_Model
         }
         //
         return $ra;
+    }
+
+    /**
+     * Get the attendance id
+     * 
+     * @param number $companyId
+     * @param number $id
+     * 
+     * @return number
+     */
+    public function VerifyAttendanceById($companyId, $id){
+        //
+        $q = $this->db
+        ->select('employee_sid')
+        ->where([
+            'company_sid' => $companyId,
+            'sid' => $id
+        ])
+        ->limit(1);
+        //
+        $result = $q->get('portal_attendance');
+        //
+        $data = $result->row_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return 0;
+        }
+        //
+        return $data;
+        
+    }
+
+    /**
+     * Get the attendance list by id
+     * 
+     * @param number $Id
+     * 
+     * @return array
+     */
+    public function GetAttendanceListById($Id){
+        //
+        $q = $this->db
+        ->where([
+            'portal_attendance_sid' => $Id
+        ])
+        ->order_by('sid', 'desc');
+        //
+        $result = $q->get('portal_attendance_log');
+        //
+        $data = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        return $data;
     }
 }

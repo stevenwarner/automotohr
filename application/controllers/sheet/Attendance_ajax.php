@@ -169,6 +169,22 @@ class Attendance_ajax extends Public_Controller {
         );
         
     }
+    
+    /**
+     * Updates date time
+     */
+    public function ManageTimeSheet(){
+        //
+        $post = $this->input->post(NULL, TRUE);
+
+        _e($post, true, true);
+        //
+        $attendanceList = $this->atm->GetAttendanceList(
+            $this->companyId,
+            $this->employeeId,
+            $this->date
+        );
+    }
 
     /**
      * Get action for front end

@@ -189,13 +189,22 @@ $WeekBreaks = GetHMSFromMinutes($timeCounts['totalWeekBreaks']);
                                     <tr>
                                         <th scope="col">Date</th>
                                         <th scope="col">Time</th>
+                                        <th scope="col">Distance</th>
                                         <th scope="col">Status</th>
                                         <th scope="col" class="text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php if(!empty($todayList)): ?>
-                                        <?php foreach($todayList as $list): ?>
+                                        <?php foreach($todayList as $index => $list): ?>
+                                            <?php 
+                                                $distance = DistanceBTWLatLon(
+                                                    isset($todayList[--$index]) ? $todayList[--$index]['latitude'] : 0,
+                                                    isset($todayList[--$index]) ? $todayList[--$index]['longitude'] : 0,
+                                                    $list['latitude'],
+                                                    $list['longitude']
+                                                )
+                                            ?>
                                             <tr class="jsAttendanceMyList" lat="<?=$list['latitude'];?>" lon="<?=$list['longitude'];?>">
                                                 <td class="vam">
                                                     <?=reset_datetime([
@@ -216,6 +225,9 @@ $WeekBreaks = GetHMSFromMinutes($timeCounts['totalWeekBreaks']);
                                                     ]);?>
                                                 </td>
                                                 <td class="vam">
+                                                    <strong class="text-"><?=$distance['text'];?></strong>
+                                                </td>
+                                                <td class="vam">
                                                     <strong class="text-<?=GetActionColor($list['action']);?>"><?=ucwords(str_replace('_', ' ', $list['action']));?></strong>
                                                 </td>
                                                 <td class="vam text-center">
@@ -225,7 +237,7 @@ $WeekBreaks = GetHMSFromMinutes($timeCounts['totalWeekBreaks']);
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="3">
+                                            <td colspan="4">
                                                 <p class="alert alert-info text-center">
                                                     No records found.
                                                 </p>

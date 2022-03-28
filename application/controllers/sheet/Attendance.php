@@ -149,7 +149,7 @@ class Attendance extends Public_Controller {
     }
 
     /**
-     * Timesheet
+     * Time sheet
      */
     public function TimeSheet(){
         //
@@ -211,6 +211,43 @@ class Attendance extends Public_Controller {
         $this->load
         ->view($this->header, $this->args)
         ->view('attendance/2022/timesheet')
+        ->view($this->footer);
+    }
+
+    /**
+     * Manage Time sheet
+     * 
+     * @param number $id
+     */
+    public function ManageTimeSheet($id){
+        //
+        $this->args['session'] = $this->ses;
+        $this->args['employee'] = $this->ses['employer_detail'];
+        $this->args['companyId'] = $this->companyId;
+        $this->args['security_details'] = db_get_access_level_details($this->ses['employer_detail']['sid']);
+        $this->args['title'] = 'Time Sheet | AutomotoHR';
+        // Verify the record
+        $record = $this->atm->VerifyAttendanceById(
+            $this->companyId,
+            $id
+        );
+    //
+        if(empty($record)){
+            return redirect('attendance/my');
+        }
+        //
+        $this->args['lists'] = $this->atm->GetAttendanceListById(
+            $id
+        );
+        //
+        $this->load->model('single/Employee_model', 'sem');
+        // Get employee's list
+        $this->args['employees'] = $this->sem->GetCompanyEmployees($this->companyId, true);
+        $this->args['currentEmployee'] = $this->args['employees'][$record['employee_sid']];
+        //
+        $this->load
+        ->view($this->header, $this->args)
+        ->view('attendance/2022/manage_timesheet')
         ->view($this->footer);
     }
 
