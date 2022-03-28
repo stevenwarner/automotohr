@@ -614,10 +614,12 @@ abstract class CI_DB_driver {
 		//
 		$logged_in_user_id = 0;
 		//
-		if($_this->session->userdata('logged_in')){
-			$logged_in_user_id = $_this->session->userdata('logged_in')['employer_detail']['sid'];
-		} else if($_this->session->userdata('user_id')){
-			$logged_in_user_id = $_this->session->userdata('user_id');
+		if($_this->session){
+			if($_this->session->userdata('logged_in')){
+				$logged_in_user_id = $_this->session->userdata('logged_in')['employer_detail']['sid'];
+			} else if($_this->session->userdata('user_id')){
+				$logged_in_user_id = $_this->session->userdata('user_id');
+			}
 		}
 		// check if $save_log is set
 		// log array
