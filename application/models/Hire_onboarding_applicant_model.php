@@ -290,6 +290,7 @@ class Hire_onboarding_applicant_model extends CI_Model
                     'users_type' => 'employee',
                     'license_type' => $info['license_type'],
                     'license_details' => $info['license_details']
+                    'license_file' => $info['license_file']
                 );
                 $this->db->insert('license_information', $insert_license_information);
             }
