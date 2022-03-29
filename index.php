@@ -324,14 +324,14 @@ switch (ENVIRONMENT)
  * And away we go...
  */
 
-if($_SERVER['HTTP_HOST'] == 'www.automotohr.com' || $_SERVER['HTTP_HOST'] == 'automotohr.com'){
-	error_reporting(E_ALL);
-	ini_set('display_errors', 0);
-	define('MINIFIED', '-min');
-} else{
+if(in_array($_SERVER['HTTP_HOST'], ['automotohr.local'])){
 	error_reporting(E_ALL);
 	ini_set('display_errors', 0);
 	define('MINIFIED', '');
+} else{
+	error_reporting(E_ALL);
+	ini_set('display_errors', 0);
+	define('MINIFIED', '.min');
 }	
 //
 if(!function_exists('getCreds')){
@@ -355,8 +355,5 @@ if(!function_exists('getCreds')){
 // Setting GLOBAL minified version and time
 $GLOBALS['minified_version'] = ENVIRONMENT == 'development' ? '' : '.min' ;
 $GLOBALS['asset_version'] = time();
-
-
-//echo '<!-- **********************'.( microtime(true) - $GLOBALS['BENCHMARKSTARTTIME'] ).'****************** --> <br />';
+//
 require_once BASEPATH.'core/CodeIgniter.php';
-//echo '<!-- **********************'.( microtime(true) - $GLOBALS['BENCHMARKSTARTTIME'] ).'****************** -->';

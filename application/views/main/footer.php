@@ -965,7 +965,7 @@ if ($class != 'dashboard' &&
             <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NCRGM56"
             height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <?php   } ?>
-
+<?php if($this->session->userdata('logged_in')): ?>
     <!--  -->
     <script>
         $(function(){
@@ -1007,23 +1007,10 @@ if ($class != 'dashboard' &&
         window.company.Name = "<?=$session['company_detail']['CompanyName']?>";
         window.company.Ein = "<?=$session['company_detail']['ssn']?>";
     </script>
-    <script type="text/javascript" src="<?=base_url(_m('assets/js/uri'));?>"></script>
-    <script type="text/javascript" src="<?=base_url(_m('assets/js/common'));?>"></script>
-    <script type="text/javascript" src="<?=base_url(_m('assets/portal/app'));?>"></script>
-    <script>
-        companyId = <?=$session['company_detail']['sid']?>;
-        /**
-         * Set base url
-         * @type {string}
-         */
-        var baseURI = "<?php echo base_url();?>/";
-    </script>
-    
-    <script src="<?=base_url("assets/payroll/js/payroll_company_onboard.js");?>"></script>
-    <script src="<?=base_url("assets/payroll/js/employee_onboard.js");?>"></script>
-    <!-- Dynamic Scripts -->
-    <?php if(isset($PageScripts)) { echo GetScripts($PageScripts); }?>
-    <?php echo GetScripts(['attendance/js/main']); ?>
+<?php endif; ?>
+    <!-- Footer scripts -->
+    <?php $this->load->view('footer_scripts', ['add_app' => true]); ?>
+   
 </body>
 </html>
     <?php } else { ?>

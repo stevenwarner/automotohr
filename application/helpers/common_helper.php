@@ -14584,7 +14584,7 @@ if(!function_exists('_m')){
      * @return
      */
     function _m($string, $type = 'js', $version = '1.0.0'){
-        return $string.( ENVIRONMENT === 'production' ? '.min' : '' ).'.'.$type.'?v='.(ENVIRONMENT === 'production' ? $version : time());
+        return $string.( MINIFIED ).'.'.$type.'?v='.(MINIFIED === '.min' ? $version : time());
     }
 }
 

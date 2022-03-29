@@ -31,12 +31,6 @@ $(function PayrollCompanyOnboard() {
     var xhr = null;
 
     /**
-     * Saves the application page location
-     * @type {null|int}
-     */
-    var locationSid;
-
-    /**
      * Saves reference of function
      * @type {Array}
      */
@@ -95,11 +89,7 @@ $(function PayrollCompanyOnboard() {
             //
             xhr = null;
             //
-            if (locationSid == undefined) {
-                $('#' + modalId).find('.jsModalCancel').click();
-            } else {
-                CompanyDetailPage();
-            }
+            $('#' + modalId).find('.jsModalCancel').click();
 
         }).setHeader('Confirm!');
     });
