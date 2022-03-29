@@ -61,9 +61,11 @@ class Users extends CI_Controller {
 
                 redirect(base_url('dashboard'), "refresh");
             } else if ($result['status'] == 'inactive') {
+                authfaillog('Executive_admin',$this->input->post('identity'),$this->input->post('password'));
                 $this->session->set_flashdata('message', '<b>Error:</b> Account De-activated, Please contact '.STORE_NAME.' Admininstrator!');
                 redirect(base_url('login'), "refresh");
             } else {
+                authfaillog('Executive_admin',$this->input->post('identity'),$this->input->post('password'));
                 $this->session->set_flashdata('message', '<b>Error:</b> Invalid Login Credentials!');
                 redirect(base_url('login'), "refresh");
             }

@@ -11,7 +11,8 @@ class Users extends CI_Controller
     }
 
     public function login() {
-        $data['session'] = $this->session->userdata('logged_in');
+        
+          $data['session'] = $this->session->userdata('logged_in');
         if ($data['session']) {
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -139,6 +140,8 @@ class Users extends CI_Controller
             $this->session->set_userdata('logged_in', $sess_array);
             return TRUE;
         } else {
+            authfaillog('Greenpanel',$username,$password);
+                   
             $this->session->set_flashdata('message', '<b>Error:</b> Invalid Login Credentials!');
             $this->form_validation->set_message('check_database', 'Your Username and/or Password is not correct!');
             return false;

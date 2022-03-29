@@ -16,7 +16,7 @@ class User extends MY_Controller
 
     public function login()
     {
-        if ($this->ion_auth->logged_in()) {
+            if ($this->ion_auth->logged_in()) {
 
             $current_user = $this->ion_auth->user()->row();
 
@@ -52,6 +52,7 @@ class User extends MY_Controller
                     }
                     redirect('manage_admin', 'refresh');
                 } else {
+                    authfaillog('Superadmin',$this->input->post('identity'),$this->input->post('password'));
                     $this->session->set_flashdata('message', $this->ion_auth->errors());
                     redirect('manage_admin/user/login', 'refresh');
                 }
