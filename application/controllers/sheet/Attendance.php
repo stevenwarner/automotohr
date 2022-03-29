@@ -119,7 +119,7 @@ class Attendance extends Public_Controller {
                 'from_format' => 'm/d/Y H:i:s',
                 'format' => 'Y-m-d H:i:s',
                 'from_timezone' => $this->args['employee']['timezone'],
-                'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
             ]);
             $toDate = reset_datetime([
@@ -127,7 +127,7 @@ class Attendance extends Public_Controller {
                 'from_format' => 'm/d/Y H:i:s',
                 'format' => 'Y-m-d H:i:s',
                 'from_timezone' => $this->args['employee']['timezone'],
-                'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
             ]);
         }
@@ -175,7 +175,7 @@ class Attendance extends Public_Controller {
                 'from_format' => 'm/d/Y H:i:s',
                 'format' => 'Y-m-d H:i:s',
                 'from_timezone' => $this->args['employee']['timezone'],
-                'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
             ]);
             $toDate = reset_datetime([
@@ -183,7 +183,7 @@ class Attendance extends Public_Controller {
                 'from_format' => 'm/d/Y H:i:s',
                 'format' => 'Y-m-d H:i:s',
                 'from_timezone' => $this->args['employee']['timezone'],
-                'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
             ]);
         }
@@ -226,12 +226,13 @@ class Attendance extends Public_Controller {
         $this->args['companyId'] = $this->companyId;
         $this->args['security_details'] = db_get_access_level_details($this->ses['employer_detail']['sid']);
         $this->args['title'] = 'Time Sheet | AutomotoHR';
+        $this->args['attendance_sid'] = $id;
         // Verify the record
         $record = $this->atm->VerifyAttendanceById(
             $this->companyId,
             $id
         );
-    //
+        //
         if(empty($record)){
             return redirect('attendance/my');
         }

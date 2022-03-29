@@ -830,7 +830,8 @@ class Attendance_model extends CI_Model
         $year,
         $action,
         $latitude = 0,
-        $longitude = 0
+        $longitude = 0,
+        $added_by
     ){
         //
         $Id = $this->GetAttendanceId($companyId, $employeeId, $date);
@@ -870,7 +871,8 @@ class Attendance_model extends CI_Model
                 'action_date_time' => $datetime,
                 'is_deleted' => 0,
                 'created_at' => $this->datetime,
-                'updated_at' => $this->datetime
+                'updated_at' => $this->datetime,
+                'added_by' => $added_by
             ]
         );
         //
@@ -990,5 +992,74 @@ class Attendance_model extends CI_Model
         $result = $result->free_result();
         //
         return $data;
+    }
+
+    /**
+     * Get the attendance date by id
+     * 
+     * @param number $Id
+     * 
+     * @return array
+     */
+    public function GetAttendanceDateAndStatusById($sid){
+        //
+        $q = $this->db
+        ->select('company_sid, employee_sid, action_date, last_action')
+        ->where([
+            'sid' => $sid
+        ])
+        ->limit(1);
+        //
+        $result = $q->get('portal_attendance');
+        //
+        $data = $result->row_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return 0;
+        }
+        //
+        return $data;
+    }
+
+    /**
+     * Get the attendance id
+     * 
+     * @param number $Id
+     * 
+     * @return array
+     */
+    public function GetAttendanceIDByListId($sid){
+        //
+        $q = $this->db
+        ->select('portal_attendance_sid')
+        ->where([
+            'sid' => $sid
+        ])
+        ->limit(1);
+        //
+        $result = $q->get('portal_attendance_log');
+        //
+        $data = $result->row_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return 0;
+        }
+        //
+        return $data["portal_attendance_sid"];
+    }
+
+
+    public function UpdateEmployeeTimeSlot($sid, $time, $added_by)
+    {
+        $this->db->where('sid', $sid);
+        $data_to_update = array();
+        $data_to_update['action_date_time'] = $time;
+        $data_to_update['added_by'] = $added_by;
+        $data_to_update['updated_at'] = $this->datetime;
+        $this->db->update('portal_attendance_log', $data_to_update);
     }
 }

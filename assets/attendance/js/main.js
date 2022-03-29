@@ -49,31 +49,106 @@ $(function() {
         event.preventDefault();
         //
         var id = $(this).closest('.jsAttendanceMyList').data('id');
-        var time = CheckTime($(this).closest('.jsAttendanceMyList').find('.jsTimeField').val());
+        var time = $(this).closest('.jsAttendanceMyList').find('.jsTimeField').val();
+        //
+        var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(time);
+
+        if (!isValid) {
+          return alertify.alert("Notice","Please enter valid time format", CB);
+        }
         //
         ml(true, 'jsAttendanceManageLoader');
         //
         XHR = $.post(
                 baseURI + 'attendance/manage', {
                     Id: id,
-                    time: time
+                    time: CheckTime(time)
                 }
             )
             .success(function(resp) {
-                console.log(resp)
+                HandleManualCheckIn(resp, "Time slot updated successfully!");
             })
             .fail(HandleError);
 
     });
 
     /**
+     * 
+     */
+    $('.jsAttendanceAddNewSlot').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        var id = $(this).data('attendance_sid');
+        //
+        ml(true, 'jsAttendanceManageLoader');
+        //
+        XHR = $.get(
+                baseURI + 'attendance/add_slot/'+id
+            )
+            .done(function(resp) {
+                if (resp.success) {
+                    $(".jsAddAttendanceSlot").show();
+                    $("#jsAttendanceSlotID").val(id);
+                    $("#jsAttendanceDate").val(resp.success.date);
+                    $("#jsAttendanceStatus").append(resp.success.option);
+                    ml(false, 'jsAttendanceManageLoader');
+                }
+                
+            })
+            .fail(HandleError);
+
+    });
+
+    /**
+     * Save manual time slot 
+     */
+    $(document).on('click', '.jsAttendanceSaveSlot', function(event) {
+        //
+        event.preventDefault();
+        //
+        var status = $('#jsAttendanceStatus').val();
+        var time = $('#jsAttendanceTime').val();
+        var id = $("#jsAttendanceSlotID").val();
+        var date = $("#jsAttendanceDate").val();
+        //
+        var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(time);
+
+        if (!isValid) {
+          return alertify.alert("Notice","Please enter valid time format", CB);
+        }
+        //
+        ml(true, 'jsAttendanceManageLoader');
+        CheckPost(status,{time: CheckTime(time), id: id, date: date});
+    });
+
+    /**
+     * Cancel manual time slot 
+     */
+    $(document).on('click', '.jsAttendanceCancelSlot', function(event) {
+        //
+        $("#jsAttendanceSlotID").val("");
+        $("#jsAttendanceDate").val("");
+        $('#jsAttendanceTime').val("");
+        $("#jsAttendanceStatus").html("");
+        $(".jsAddAttendanceSlot").hide();
+    });
+
+    /**
      * Add permission check
      * @param {string} action 
      */
-    function CheckPost(action) {
+    function CheckPost(action, obj) {
         CBObj.cb = MarkAttendance;
         CBObj.params = {};
         CBObj.params.action = action;
+        if (obj !== undefined) {
+            for (var i in obj) {
+                CBObj.params[i] = obj[i];
+            }
+        }
+        
+        console.log(CBObj)
         CheckAndGetLatLon();
     }
 
@@ -87,17 +162,29 @@ $(function() {
         CheckAndGetLatLon();
     }
 
+    function HandleManualCheckIn (resp, message) {
+        alertify.alert("Success", message, function () {
+            ml(false, 'jsAttendanceManageLoader');
+            window.location.reload();
+        });
+    }
+
     /**
      * Marks attendance
      * @param {string} action 
      */
     function MarkAttendance(props) {
+        //
         $('.jsAttendanceLoader').show(0);
         // 
         XHR = $.post(
                 baseURI + 'attendance/mark/attendance', props
             )
             .done(function(resp) {
+                if (props.id) {
+                    return HandleManualCheckIn(resp, "Manual time slot added successfully!");
+                }
+                //
                 $('.jsAttendanceLoader').hide(0);
                 //
                 if (resp.errors) {
@@ -274,7 +361,7 @@ $(function() {
         locOBJ.lat = 0;
         locOBJ.lon = 0;
         //
-        CBObj.cb(CBObj.param);
+        CBObj.cb(CBObj.params);
         // });
     }
 

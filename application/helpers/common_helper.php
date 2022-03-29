@@ -14921,3 +14921,51 @@ if(!function_exists('GetCleanedAction')){
         return ucwords(str_replace('_', ' ', $action));
     }
 }
+
+if (!function_exists('getTimeZone')) {
+    function getTimeZone($company_sid, $employee_sid)
+    {   
+        $CI = &get_instance();
+        $CI->db->select('timezone');
+        $CI->db->where('sid', $employee_sid);
+        //
+        $employee_info = $CI->db->get('users')->row_array();
+
+        if (!empty($employee_info['timezone'])) {
+            return $employee_info['timezone'];
+        } else {
+            $CI->db->select('timezone');
+            $CI->db->where('sid', $company_sid);
+            //
+            $company_info = $CI->db->get('users')->row_array();
+            //
+             if (!empty($company_info['timezone'])) {
+                return $company_info['timezone'];
+            } else {
+                return STORE_DEFAULT_TIMEZONE_ABBR;
+            }
+        }
+    }
+}
+
+if (!function_exists('ConvertDateTime')) {
+    function ConvertDateTime($company_sid, $employee_sid, $date, $format = DB_DATE, $toggle = false)
+    {   
+        $timezone = getTimeZone($company_sid, $employee_sid);
+        //
+        $Data = [
+                    'datetime' => $date,
+                    'format' => $format,
+                    'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                    'new_zone' => $timezone,
+                    '_this' => get_instance()
+                ];
+        //        
+        if ($toggle) {
+            $Data['from_timezone']= $timezone;
+            $Data['new_zone']= STORE_DEFAULT_TIMEZONE_ABBR;
+        }
+        //
+        return ["modified" => reset_datetime($Data), "original" => $date];
+    }
+}

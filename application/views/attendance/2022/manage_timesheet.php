@@ -25,7 +25,7 @@
                         'datetime' => $lists[0]['action_date_time'],
                         'format' => DATE,
                         'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
-                        'timezone' => $currentEmployee['timezone'],
+                        'new_zone' => $currentEmployee['timezone'],
                         '_this' => $this
                     ]);
                 ?></p>
@@ -77,8 +77,8 @@
                             <div class="col-sm-12 col-md-12">
                                 <h2 class="csF20 csB7 pl10 pr10">Time Sheet
                                     <span class="pull-right">
-                                        <button class="btn btn-orange">
-                                            <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Add Slot
+                                        <button class="btn btn-orange jsAttendanceAddNewSlot" data-attendance_sid="<?=$attendance_sid;?>">
+                                            <i class="fa fa-plus-circle"  aria-hidden="true"></i>&nbsp;Add Slot
                                         </button>
                                     </span>
                                 </h2>
@@ -100,6 +100,29 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <tr class="jsAddAttendanceSlot" style="display: none;">
+                                                <input type="hidden" id="jsAttendanceSlotID" value="">
+                                                <td class="vam">
+                                                    <select id="jsAttendanceStatus" class="form-control">
+                                                    </select>
+                                                </td>
+                                                <td class="vam text-center">
+                                                    <input type="text" id="jsAttendanceDate" class="form-control" readonly value="<??>"/>
+                                                </td>
+                                                <td class="vam text-center">
+                                                    <input type="text" id="jsAttendanceTime" class="form-control jsTimeField" placeholder="HH:MM" value=""/>
+                                                </td>
+                                               
+                                                <td class="vam text-center">
+                                                    <button class="btn btn-orange jsAttendanceSaveSlot">
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Add
+                                                    </button>
+
+                                                    <button class="btn btn-black jsAttendanceCancelSlot">
+                                                        <i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Cancel
+                                                    </button>
+                                                </td>
+                                            </tr>
                                             <?php if(!empty($lists)): ?>
                                                 <?php foreach($lists as $key => $list): ?>
                                                     <tr class="jsAttendanceMyList" data-id="<?=$list['sid'];?>">
@@ -114,7 +137,7 @@
                                                                     'datetime' => $list['action_date_time'],
                                                                     'format' => DATE,
                                                                     'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
-                                                                    'timezone' => $currentEmployee['timezone'],
+                                                                    'new_zone' => $currentEmployee['timezone'],
                                                                     '_this' => $this
                                                                 ]);
                                                             ?>"/>
@@ -125,7 +148,7 @@
                                                                     'datetime' => $list['action_date_time'],
                                                                     'format' => MD,
                                                                     'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
-                                                                    'timezone' => $currentEmployee['timezone'],
+                                                                    'new_zone' => $currentEmployee['timezone'],
                                                                     '_this' => $this
                                                                 ]);
                                                             ?>"/>
@@ -147,6 +170,7 @@
                                                     </td>
                                                 </tr>
                                             <?php endif; ?>
+                                            
                                         </tbody>
                                     </table>
                                 </div>
