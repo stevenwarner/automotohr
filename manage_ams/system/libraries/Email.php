@@ -2094,7 +2094,7 @@ class CI_Email {
 			 */
 			$method = is_php('5.6')
 				? STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT
-				: STREAM_CRYPTO_METHOD_TLS_CLIENT;
+				: STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
 			$crypto = stream_socket_enable_crypto($this->_smtp_connect, TRUE, $method);
 
 			if ($crypto !== TRUE)
