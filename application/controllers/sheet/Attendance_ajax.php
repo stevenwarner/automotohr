@@ -108,7 +108,7 @@ class Attendance_ajax extends Public_Controller {
             return SendResponse(200, $this->resp);
         }
         //
-        $ct = CalculateTime($attendanceList);
+        $ct = CalculateTime($attendanceList, $this->employeeId);
         $ra['last_status'] = $attendanceList[0]['action'];
         //
         $ra = array_merge(
@@ -162,13 +162,14 @@ class Attendance_ajax extends Public_Controller {
         // 
         if(!empty($attendanceList)){
             //
-            $ct = CalculateTime($attendanceList);
+            $ct = CalculateTime($attendanceList, $employeeId);
             //
             $this->db->update(
                 'portal_attendance', [
                     'total_minutes' => $ct['total_minutes'],
                     'total_worked_minutes' => $ct['total_worked_minutes'],
-                    'total_break_minutes' => $ct['total_break_minutes']
+                    'total_break_minutes' => $ct['total_break_minutes'],
+                    'total_overtime_minutes' => $ct['total_overtime_minutes']
                 ], [
                     'sid' => $attendanceList[0]['portal_attendance_sid']
                 ]
@@ -226,7 +227,26 @@ class Attendance_ajax extends Public_Controller {
         $added_by = $this->employerId;
         //
         $this->atm->UpdateEmployeeTimeSlot($post["Id"], $datetime, $added_by);
-
+        //
+        $attendanceList = $this->atm->GetAttendanceListByID($sid);
+        // 
+        if(!empty($attendanceList)){
+            //
+            $ct = CalculateTime($attendanceList, $attendanceInfo["employee_sid"]);
+            //
+            $this->db->update(
+                'portal_attendance', [
+                    'total_minutes' => $ct['total_minutes'],
+                    'total_worked_minutes' => $ct['total_worked_minutes'],
+                    'total_break_minutes' => $ct['total_break_minutes'],
+                    'total_overtime_minutes' => $ct['total_overtime_minutes']
+                ], [
+                    'sid' => $sid
+                ]
+            );
+            //
+        }
+        //
         return SendResponse(200, $this->resp);
     }
 
@@ -308,7 +328,7 @@ class Attendance_ajax extends Public_Controller {
             $return = true)
     {
         // Mark the attendance
-        
+
         $Id = $this->atm->MarkAttendance(
             $this->companyId,
             $employeeId,

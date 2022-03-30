@@ -1,3 +1,6 @@
+<?php
+    $last_time = "00:00";
+?>
 <div class="csPageWrap" style="background-color: #f1f1f1;">
     <!-- Nav bar -->
     <div class="container-fluid">
@@ -143,15 +146,21 @@
                                                             ?>"/>
                                                         </td>
                                                         <td class="vam text-center">
-                                                            <input type="text" class="form-control jsTimeField" placeholder="HH:MM" value="<?=
-                                                                reset_datetime([
+                                                            <?php
+                                                                $slot_time = reset_datetime([
                                                                     'datetime' => $list['action_date_time'],
                                                                     'format' => MD,
                                                                     'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
                                                                     'new_zone' => $currentEmployee['timezone'],
                                                                     '_this' => $this
                                                                 ]);
-                                                            ?>"/>
+                                                                //
+                                                                if ($last_time == "00:00") {
+                                                                    $last_time = $slot_time;
+                                                                }
+                                                                
+                                                            ?>
+                                                            <input type="text" class="form-control jsTimeField" placeholder="HH:MM" value="<?=$slot_time;?>"/>
                                                         </td>
                                                        
                                                         <td class="vam text-center">
@@ -170,7 +179,6 @@
                                                     </td>
                                                 </tr>
                                             <?php endif; ?>
-                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -182,3 +190,4 @@
         </div>
     </div>
 </div>
+<input type="hidden" id="jsAttendanceLastSlotTime" value="<?php echo $last_time; ?>">

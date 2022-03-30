@@ -14757,22 +14757,33 @@ if(!function_exists('CalculateTime')){
      * Calculate time for DB
      * 
      * @param array $list
+     * @param int $employee_sid
      * @return array
      */
-    function CalculateTime($lists){
+    function CalculateTime($lists, $employee_sid){
         //
         $ra = [
             'total_minutes' => 0,
             'total_worked_minutes' => 0,
-            'total_break_minutes' => 0
+            'total_break_minutes' => 0,
+            'total_overtime_minutes' => 0
         ];
         //
         $lists = array_reverse($lists);
+        $shiftTime_info = get_user_shiftTime($employee_sid);
+        $shift_hours = $shiftTime_info["user_shift_hours"];
+        $shift_minute = $shiftTime_info["user_shift_minutes"]; 
+        $total_shift_minutes = $shift_minute + ($shift_hours * 60);
         //
         $ra['total_minutes'] = GetTotalTime($lists, 'clock_in', 'clock_out');
         $ra['total_break_minutes'] = GetTotalTime($lists, 'break_in', 'break_out');
         // Total worked hours
         $ra['total_worked_minutes'] = $ra['total_minutes'] - $ra['total_break_minutes'];
+        //
+        if ($ra['total_worked_minutes'] > $total_shift_minutes) {
+            $ra['total_overtime_minutes'] = $ra['total_worked_minutes'] - $total_shift_minutes;
+        }
+        // _e($ra,true,true);
         //
         return $ra;
     }
@@ -14967,5 +14978,24 @@ if (!function_exists('ConvertDateTime')) {
         }
         //
         return ["modified" => reset_datetime($Data), "original" => $date];
+    }
+}
+
+if (!function_exists('get_user_shiftTime')) {
+    function get_user_shiftTime($employee_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('user_shift_minutes, user_shift_hours');
+        $CI->db->where('sid', $employee_sid);
+        //
+        $records_obj = $CI->db->get("users");
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return "";
+        }
     }
 }

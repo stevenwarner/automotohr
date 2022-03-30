@@ -111,6 +111,7 @@ $(function() {
         var time = $('#jsAttendanceTime').val();
         var id = $("#jsAttendanceSlotID").val();
         var date = $("#jsAttendanceDate").val();
+        var previousTime = $("#jsAttendanceLastSlotTime").val();
         //
         var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(time);
 
@@ -118,8 +119,14 @@ $(function() {
           return alertify.alert("Notice","Please enter valid time format", CB);
         }
         //
+        var new_time = CheckTime(time);
+        //
+        if (previousTime > new_time || previousTime == new_time) {
+            return alertify.alert("Notice","Please enter greater time then previous slot.", CB);
+        }
+        //
         ml(true, 'jsAttendanceManageLoader');
-        CheckPost(status,{time: CheckTime(time), id: id, date: date});
+        CheckPost(status,{time: new_time, id: id, date: date});
     });
 
     /**

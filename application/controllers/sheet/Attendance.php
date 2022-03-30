@@ -58,6 +58,7 @@ class Attendance extends Public_Controller {
         $this->args['timeCounts']['totalWeekBreaks'] = 0;
         $this->args['timeCounts']['totalTodayWorked'] = 0;
         $this->args['timeCounts']['totalTodayBreaks'] = 0;
+        $this->args['timeCounts']['totalTodayOvertime'] = 0;
         //
         $this->args['lastLocation'] = [0, 0];
         //
@@ -76,12 +77,14 @@ class Attendance extends Public_Controller {
             $this->employeeId,
             $this->date
         );
+        //
         if(!empty($lists)){
             //
-            $ct = CalculateTime($lists);
+            $ct = CalculateTime($lists, $this->employeeId);
             //
             $this->args['timeCounts']['totalTodayWorked'] = $ct['total_worked_minutes'] - $ct['total_break_minutes'];
             $this->args['timeCounts']['totalTodayBreaks'] = $ct['total_break_minutes'];
+            $this->args['timeCounts']['totalTodayOvertime'] = $ct['total_overtime_minutes'];
             $this->args['lastLocation'] = [$lists[0]['latitude'], $lists[0]['longitude']];
         }
         //
@@ -123,7 +126,7 @@ class Attendance extends Public_Controller {
                 '_this' => $this
             ]);
             $toDate = reset_datetime([
-                'datetime' => $toDate.' 00:00:00',
+                'datetime' => $toDate.' 23:59:59',
                 'from_format' => 'm/d/Y H:i:s',
                 'format' => 'Y-m-d H:i:s',
                 'from_timezone' => $this->args['employee']['timezone'],
@@ -179,7 +182,7 @@ class Attendance extends Public_Controller {
                 '_this' => $this
             ]);
             $toDate = reset_datetime([
-                'datetime' => $toDate.' 00:00:00',
+                'datetime' => $toDate.' 23:59:59',
                 'from_format' => 'm/d/Y H:i:s',
                 'format' => 'Y-m-d H:i:s',
                 'from_timezone' => $this->args['employee']['timezone'],

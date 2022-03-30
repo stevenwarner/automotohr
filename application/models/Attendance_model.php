@@ -877,6 +877,25 @@ class Attendance_model extends CI_Model
         );
         //
         $lastId = $this->db->insert_id();
+        //
+        $attendanceList = $this->GetAttendanceListByID($Id);
+        // 
+        if(!empty($attendanceList)){
+            //
+            $ct = CalculateTime($attendanceList, $attendanceInfo["employee_sid"]);
+            //
+            $this->db->update(
+                'portal_attendance', [
+                    'total_minutes' => $ct['total_minutes'],
+                    'total_worked_minutes' => $ct['total_worked_minutes'],
+                    'total_break_minutes' => $ct['total_break_minutes'],
+                    'total_overtime_minutes' => $ct['total_overtime_minutes']
+                ], [
+                    'sid' => $sid
+                ]
+            );
+            //
+        }
         // Update the last record
         $this->db->update(
             'portal_attendance', [
@@ -910,6 +929,7 @@ class Attendance_model extends CI_Model
             'total_minutes' => 0,
             'total_worked_minutes' => 0,
             'total_break_minutes' => 0,
+            'total_overtime_minutes' => 0,
             'lists' => []
         ];
         //
@@ -921,7 +941,7 @@ class Attendance_model extends CI_Model
             //
             if(!empty($lists)){
                 //
-                $ct = CalculateTime($lists);
+                $ct = CalculateTime($lists, $employeeId);
                 //
                 $ct['pId'] = $lists[0]['portal_attendance_sid'];
                 //
@@ -930,6 +950,7 @@ class Attendance_model extends CI_Model
                 $ra['total_minutes'] += $ct['total_minutes'];
                 $ra['total_worked_minutes'] += $ct['total_worked_minutes'];
                 $ra['total_break_minutes'] += $ct['total_break_minutes'];
+                $ra['total_overtime_minutes'] += $ct['total_overtime_minutes'];
             }
             //
             $currentDate = ModifyDate($currentDate, '+1 day', 'Y-m-d');

@@ -1,4 +1,7 @@
 <?php 
+// echo "<pre>";
+// print_r($timeCounts);
+// die();
 // Today's worked time
 $todayWorked = GetHMSFromMinutes($timeCounts['totalTodayWorked']);
 $todayWorkedPercentage = (($timeCounts['totalTodayWorked'] * 100) / (8*60));
@@ -6,6 +9,10 @@ $todayWorkedPercentage = (($timeCounts['totalTodayWorked'] * 100) / (8*60));
 // Today's break time
 $todayBreak = GetHMSFromMinutes($timeCounts['totalTodayBreaks']);
 $todayBreakPercentage = (($timeCounts['totalTodayBreaks'] * 100) / (8*60));
+
+// Today's over time
+$todayOvertime = GetHMSFromMinutes($timeCounts['totalTodayOvertime']);
+$todayOvertimePercentage = (($timeCounts['totalTodayOvertime'] * 100) / (8*60));
 
 // Week's worked time including breaks
 $WeekWorkedWithBreaks = GetHMSFromMinutes($timeCounts['totalWeekWorked'] + $timeCounts['totalWeekBreaks']);
@@ -36,7 +43,7 @@ $WeekBreaks = GetHMSFromMinutes($timeCounts['totalWeekBreaks']);
                 <div class="row">
                     <div class="col-xs-12 col-md-8">
                         <h1 class="m0 p0 csB7">
-                            Clock My Day 
+                            Clock My Day
                         </h1>
                     </div>
                     <div class="col-xs-12 col-md-4 text-right">
@@ -59,16 +66,25 @@ $WeekBreaks = GetHMSFromMinutes($timeCounts['totalWeekBreaks']);
                     <div class="col-sm-12 col-md-4 text-center">
                         <div class="csPageBox csRadius5">
                             <div class="csPageBoxHeader">
-                                <h4 class="csF16 csB7">Current Time</h4>
+                                <h4 class="csF16 csB7">This Week</h4>
                             </div>
                             <div class="csPageBoxBody">
                                 <p class="csF40 csB7" style="margin-top: 30px;">
-                                    <span class="jsAttendanceCurrentClockHour">00</span>
+                                    <span><?=$WeekWorked['hours'];?></span>
                                     <span>:</span>
-                                    <span class="jsAttendanceCurrentClockMinutes">00</span>
+                                    <span><?=$WeekWorked['minutes'];?></span>
+                                    <span>/</span>
+                                    <span>40</span>
                                     <span>:</span>
-                                    <span class="jsAttendanceCurrentClockSeconds">00</span>
+                                    <span>00</span>
                                 </p>
+
+                                <div class="progress ml10 mr10">
+                                    <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="" aria-valuemin="" aria-valuemax="" style="width: <?=$WeekWorkedPercentage;?>%;">
+                                        <span class="sr-only"> <?=$WeekWorkedPercentage;?> % Complete</span>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -105,32 +121,6 @@ $WeekBreaks = GetHMSFromMinutes($timeCounts['totalWeekBreaks']);
                 </div>
                 <!--  -->
                 <div class="row">
-                    <div class="col-sm-12 col-md-4 text-center">
-                        <div class="csPageBox csRadius5">
-                            <div class="csPageBoxHeader">
-                                <h4 class="csF16 csB7">This Week</h4>
-                            </div>
-                            <div class="csPageBoxBody">
-                                <p class="csF40 csB7" style="margin-top: 30px;">
-                                    <span><?=$WeekWorked['hours'];?></span>
-                                    <span>:</span>
-                                    <span><?=$WeekWorked['minutes'];?></span>
-                                    <span>/</span>
-                                    <span>40</span>
-                                    <span>:</span>
-                                    <span>00</span>
-                                </p>
-
-                                <div class="progress ml10 mr10">
-                                    <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="" aria-valuemin="" aria-valuemax="" style="width: <?=$WeekWorkedPercentage;?>%;">
-                                        <span class="sr-only"> <?=$WeekWorkedPercentage;?> % Complete</span>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="col-sm-12 col-md-4 text-center">
                         <div class="csPageBox csRadius5">
                             <div class="csPageBoxHeader">
@@ -174,7 +164,27 @@ $WeekBreaks = GetHMSFromMinutes($timeCounts['totalWeekBreaks']);
                                         <span class="sr-only"> <?=$todayBreakPercentage;?> % Complete</span>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="col-sm-12 col-md-4 text-center">
+                        <div class="csPageBox csRadius5">
+                            <div class="csPageBoxHeader">
+                                <h4 class="csF16 csB7">Over Time</h4>
+                            </div>
+                            <div class="csPageBoxBody">
+                                <p class="csF40 csB7" style="margin-top: 30px;">
+                                    <span><?=$todayOvertime['hours'];?></span>
+                                    <span>:</span>
+                                    <span><?=$todayOvertime['minutes'];?></span>
+                                </p>
+
+                                <div class="progress ml10 mr10">
+                                    <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="" aria-valuemin="" aria-valuemax="" style="width: <?=$todayOvertimePercentage;?>%;">
+                                        <span class="sr-only"><?=$todayOvertimePercentage;?> % Complete</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
