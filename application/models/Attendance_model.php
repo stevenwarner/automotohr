@@ -880,27 +880,22 @@ class Attendance_model extends CI_Model
         //
         $attendanceList = $this->GetAttendanceListByID($Id);
         // 
+        $data_to_update = array();
+        $data_to_update['last_action'] = $action;
+        //
         if(!empty($attendanceList)){
             //
             $ct = CalculateTime($attendanceList, $attendanceInfo["employee_sid"]);
             //
-            $this->db->update(
-                'portal_attendance', [
-                    'total_minutes' => $ct['total_minutes'],
-                    'total_worked_minutes' => $ct['total_worked_minutes'],
-                    'total_break_minutes' => $ct['total_break_minutes'],
-                    'total_overtime_minutes' => $ct['total_overtime_minutes']
-                ], [
-                    'sid' => $sid
-                ]
-            );
+            $data_to_update['total_minutes'] = $ct['total_minutes'];
+            $data_to_update['total_worked_minutes'] = $ct['total_worked_minutes'];
+            $data_to_update['total_break_minutes'] = $ct['total_break_minutes'];
+            $data_to_update['total_overtime_minutes'] = $ct['total_overtime_minutes'];
             //
         }
         // Update the last record
         $this->db->update(
-            'portal_attendance', [
-                'last_action' => $action
-            ], [
+            'portal_attendance', $data_to_update, [
                 'sid' => $Id
             ]
         );
