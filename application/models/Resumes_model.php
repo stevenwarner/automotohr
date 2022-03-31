@@ -5,10 +5,12 @@ class Resumes_model extends CI_Model
     function __construct()
     {
         parent::__construct();
+        
+        $creds = getCreds();
 
         //Connect to remote db
         if (base_url() == 'http://localhost/automotoCI/') {
-            $this->DB_CONN = mysqli_connect('localhost', 'root', '', 'dealers_ams');
+            $this->DB_CONN = mysqli_connect($creds->AHR->DB_Dealers_ams->Host, $creds->AHR->DB_Dealers_ams->User, $creds->AHR->DB_Dealers_ams->Password, $creds->AHR->DB_Dealers_ams->Database);
         } else {
             $this->DB_CONN = mysqli_connect(ROOT_DB_HOST, ROOT_DB_USER, ROOT_DB_PASSWORD, ROOT_DB_NAME);
         }
