@@ -938,6 +938,7 @@ class Attendance_model extends CI_Model
                 //
                 $ct = CalculateTime($lists, $employeeId);
                 //
+                // _e($lists, true, true);
                 $ct['pId'] = $lists[0]['portal_attendance_sid'];
                 //
                 $ra['lists'][$currentDate] = $ct;

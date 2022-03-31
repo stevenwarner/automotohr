@@ -14810,12 +14810,17 @@ if(!function_exists('GetTotalTime')){
                 $lastAction = $list['action'];
                 $lastDateTime = $list['action_date_time'];
             }
+
+            if($lastAction == $t2 && $list['action'] == $t1){
+                $lastAction = $list['action'];
+                $lastDateTime = $list['action_date_time'];
+            }
             //
             if($lastAction == $t1 && $list['action'] == $t2){
                 //
                 $total += GetTimeDifferenceInMinutes($lastDateTime, $list['action_date_time']);
                 //
-                $lastAction = $t1;
+                $lastAction = $t2;
                 $lastDateTime = '';
             }
         }
@@ -14832,6 +14837,7 @@ if(!function_exists('GetTotalTime')){
             //
             if($date !== date('Y-m-d')){
                 $datetime = date('Y-m-d').' 23:59:59';
+                return $total += $total > 540 ? 0 : (540 - $total);
             }
             $total += GetTimeDifferenceInMinutes($lastDateTime, $datetime);
         }

@@ -118,9 +118,9 @@ class Attendance extends Public_Controller {
             $SysToDate = formatDateToDB($toDate);
             //
             $fromDate = reset_datetime([
-                'datetime' => $fromDate.' 00:00:00',
+                'datetime' => $fromDate.' 23:59:59',
                 'from_format' => 'm/d/Y H:i:s',
-                'format' => 'Y-m-d H:i:s',
+                'format' => DB_DATE,
                 'from_timezone' => $this->args['employee']['timezone'],
                 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
@@ -128,7 +128,7 @@ class Attendance extends Public_Controller {
             $toDate = reset_datetime([
                 'datetime' => $toDate.' 23:59:59',
                 'from_format' => 'm/d/Y H:i:s',
-                'format' => 'Y-m-d H:i:s',
+                'format' => DB_DATE,
                 'from_timezone' => $this->args['employee']['timezone'],
                 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
@@ -144,6 +144,7 @@ class Attendance extends Public_Controller {
             $fromDate,
             $toDate
         );
+        _e($this->args['lists'] , true, true);
         //
         $this->load
         ->view($this->header, $this->args)
