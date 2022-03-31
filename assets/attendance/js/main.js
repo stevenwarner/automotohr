@@ -54,7 +54,7 @@ $(function() {
         var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(time);
 
         if (!isValid) {
-          return alertify.alert("Notice","Please enter valid time format", CB);
+            return alertify.alert("Notice", "Please enter valid time format", CB);
         }
         //
         ml(true, 'jsAttendanceManageLoader');
@@ -84,7 +84,7 @@ $(function() {
         ml(true, 'jsAttendanceManageLoader');
         //
         XHR = $.get(
-                baseURI + 'attendance/add_slot/'+id
+                baseURI + 'attendance/add_slot/' + id
             )
             .done(function(resp) {
                 if (resp.success) {
@@ -94,7 +94,7 @@ $(function() {
                     $("#jsAttendanceStatus").append(resp.success.option);
                     ml(false, 'jsAttendanceManageLoader');
                 }
-                
+
             })
             .fail(HandleError);
 
@@ -116,17 +116,17 @@ $(function() {
         var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(time);
 
         if (!isValid) {
-          return alertify.alert("Notice","Please enter valid time format", CB);
+            return alertify.alert("Notice", "Please enter valid time format", CB);
         }
         //
         var new_time = CheckTime(time);
         //
         if (previousTime > new_time || previousTime == new_time) {
-            return alertify.alert("Notice","Please enter greater time then previous slot.", CB);
+            return alertify.alert("Notice", "Please enter greater time then previous slot.", CB);
         }
         //
         ml(true, 'jsAttendanceManageLoader');
-        CheckPost(status,{time: new_time, id: id, date: date});
+        CheckPost(status, { time: new_time, id: id, date: date });
     });
 
     /**
@@ -142,6 +142,11 @@ $(function() {
     });
 
     /**
+     * 
+     */
+    $('.jsAttendanceSaveSettings').click(SaveSettings);
+
+    /**
      * Add permission check
      * @param {string} action 
      */
@@ -154,7 +159,7 @@ $(function() {
                 CBObj.params[i] = obj[i];
             }
         }
-        
+
         console.log(CBObj)
         CheckAndGetLatLon();
     }
@@ -169,8 +174,8 @@ $(function() {
         CheckAndGetLatLon();
     }
 
-    function HandleManualCheckIn (resp, message) {
-        alertify.alert("Success", message, function () {
+    function HandleManualCheckIn(resp, message) {
+        alertify.alert("Success", message, function() {
             ml(false, 'jsAttendanceManageLoader');
             window.location.reload();
         });
@@ -236,6 +241,39 @@ $(function() {
                 }
             })
             .fail(HandleError);
+    }
+
+    /**
+     * Saves settings
+     * @param {object} event 
+     */
+    function SaveSettings(event) {
+        //
+        event.preventDefault();
+        //
+        var obj = {};
+        obj.roles = $('#js-roles').val() || [];
+        obj.departments = $('#js-specific-department-visibility').val() || [];
+        obj.teams = $('#js-specific-team-visibility').val() || [];
+        obj.employees = $('#js-specific-employee-visibility').val() || [];
+        obj.payroll = $('.is_visible_to_payroll').prop('checked') ? 1 : 0;
+        //
+        ml(true, 'jsAttendanceSettingsLoader');
+        //
+        XHR = $.ajax({
+                url: baseURI + 'attendance/settings',
+                method: "post",
+                data: obj
+            })
+            .success(function(resp) {
+                //
+                ml(false, 'jsAttendanceSettingsLoader');
+                //
+                return alertify.alert('Success!', 'Settings have been updated.', CB);
+            })
+            .fail(HandleError);
+        //
+        console.log(obj)
     }
 
     /**
@@ -381,10 +419,26 @@ $(function() {
         //
         XHR = null;
         //
+        HideLoaders();
+        //
         return alertify.alert(
             'Something went wrong while processing the request.',
             function() {}
         ).setHeader(resp.statusText + ' - ' + resp.status);
+    }
+
+    /**
+     * Hides the loaders
+     */
+    function HideLoaders() {
+        //
+        if ($('[data-page="jsAttendanceSettingsLoader"]').length) {
+            ml(false, 'jsAttendanceSettingsLoader');
+        }
+        //
+        if ($('[data-page="jsAttendanceManageLoader"]').length) {
+            ml(false, 'jsAttendanceManageLoader');
+        }
     }
 
     /**
@@ -414,5 +468,5 @@ $(function() {
     //
     InitClock();
     //
-    ml(false, 'jsAttendanceManageLoader');
+    HideLoaders();
 });

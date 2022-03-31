@@ -1078,4 +1078,68 @@ class Attendance_model extends CI_Model
         $data_to_update['updated_at'] = $this->datetime;
         $this->db->update('portal_attendance_log', $data_to_update);
     }
+
+    /**
+     * Get the attendance settings
+     * 
+     * @param number       $companyId
+     * @param string|array $columns
+     * 
+     * @return array
+     */
+    public function GetSettings($companyId, $columns = '*'){
+        //
+        $q = $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where([
+            'company_sid' => $companyId
+        ])
+        ->limit(1);
+        //
+        $result = $q->get('portal_attendance_settings');
+        //
+        $data = $result->row_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return [];
+        }
+        //
+        return $data;
+    }
+    
+    /**
+     * Add attendance settings
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     * 
+     * @return number
+     */
+    public function AddSettings($companyId, $employeeId){
+        //
+        $insertArray = [];
+        $insertArray['company_sid'] = $companyId;
+        $insertArray['employer_sid'] = $employeeId;
+        $insertArray['created_at'] = $this->datetime;
+        $insertArray['updated_at'] = $this->datetime;
+        //
+        $this->db->insert('portal_attendance_settings', $insertArray);
+        //
+        return $this->db->insert_id();
+    }
+    
+    /**
+     * Add attendance settings
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     */
+    public function UpdateSettings($updateArray, $whereArray){
+        //
+        $this->db
+        ->where($whereArray)
+        ->update('portal_attendance_settings', $updateArray);
+    }
 }
