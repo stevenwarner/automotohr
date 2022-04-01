@@ -415,4 +415,8 @@ $(function() {
     InitClock();
     //
     ml(false, 'jsAttendanceManageLoader');
+
+    $('#jsSpecificEmployees').select2({
+        closeOnSelect: false
+    });
 });

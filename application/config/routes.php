@@ -1526,3 +1526,4 @@ $route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttend
 $route['attendance/manage']['post'] = "sheet/Attendance_ajax/ManageTimeSheet";
 //
 $route['attendance/add_slot/(:num)']['get'] = "sheet/Attendance_ajax/GetAddSlot/$1";
+$route['attendance/today_overview']['get'] = "sheet/Attendance/TodayOverview";

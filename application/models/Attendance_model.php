@@ -885,7 +885,7 @@ class Attendance_model extends CI_Model
         //
         if(!empty($attendanceList)){
             //
-            $ct = CalculateTime($attendanceList, $attendanceInfo["employee_sid"]);
+            $ct = CalculateTime($attendanceList, $employeeId);
             //
             $data_to_update['total_minutes'] = $ct['total_minutes'];
             $data_to_update['total_worked_minutes'] = $ct['total_worked_minutes'];
@@ -1077,5 +1077,30 @@ class Attendance_model extends CI_Model
         $data_to_update['added_by'] = $added_by;
         $data_to_update['updated_at'] = $this->datetime;
         $this->db->update('portal_attendance_log', $data_to_update);
+    }
+
+    public function GetActiveEmployee($date, $employeeSids)
+    {
+        $q = $this->db
+        ->select('sid, employee_sid, last_action')
+        ->where([
+            'action_date' => $date
+        ]);
+        //
+        if (!empty($employeeSids)) {
+            $this->db->where_in('employee_sid', $employeeSids);
+        }
+        //
+        $result = $q->get('portal_attendance');
+        //
+        $data = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return 0;
+        }
+        //
+        return $data;
     }
 }

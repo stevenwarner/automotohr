@@ -99,16 +99,16 @@
                                                             ]);?>
                                                         </td>
                                                         <td class="vam text-center">
-                                                            <strong><?=$todayWorked['hours'];?>:<?=$todayWorked['minutes'];?></strong>
+                                                            <strong class="text-success"><?=$todayWorked['hours'];?>:<?=$todayWorked['minutes'];?></strong>
                                                         </td>
                                                         <td class="vam text-center">
-                                                            <strong><?=$todayBreak['hours'];?>:<?=$todayBreak['minutes'];?></strong>
+                                                            <strong class="csFC3"><?=$todayBreak['hours'];?>:<?=$todayBreak['minutes'];?></strong>
                                                         </td>
                                                         <td class="vam text-center">
                                                             <strong><?=$total['hours'];?>:<?=$total['minutes'];?></strong>
                                                         </td>
                                                         <td class="vam text-center">
-                                                            <strong><?=$overtime['hours'];?>:<?=$overtime['minutes'];?></strong>
+                                                            <strong class="text-danger"><?=$overtime['hours'];?>:<?=$overtime['minutes'];?></strong>
                                                         </td>
                                                     </tr>
                                                 <?php endforeach; ?>
@@ -123,16 +123,16 @@
                                                         <strong>Total</strong>
                                                     </td>
                                                     <td class="vam text-center">
-                                                        <strong><?=$sumTodayWorked['hours'];?>:<?=$sumTodayWorked['minutes'];?></strong>
+                                                        <strong class="text-success"><?=$sumTodayWorked['hours'];?>:<?=$sumTodayWorked['minutes'];?></strong>
                                                     </td>
                                                     <td class="vam text-center">
-                                                        <strong><?=$sumTodayBreak['hours'];?>:<?=$sumTodayBreak['minutes'];?></strong>
+                                                        <strong class="csFC3"><?=$sumTodayBreak['hours'];?>:<?=$sumTodayBreak['minutes'];?></strong>
                                                     </td>
                                                     <td class="vam text-center">
                                                         <strong><?=$sumTotal['hours'];?>:<?=$sumTotal['minutes'];?></strong>
                                                     </td>
                                                     <td class="vam text-center">
-                                                        <strong><?=$sumTodayOvertime['hours'];?>:<?=$sumTodayOvertime['minutes'];?></strong>
+                                                        <strong class="text-danger"><?=$sumTodayOvertime['hours'];?>:<?=$sumTodayOvertime['minutes'];?></strong>
                                                     </td>
                                                 </tr>
                                             <?php else: ?>

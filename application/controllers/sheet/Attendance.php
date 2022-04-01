@@ -255,4 +255,84 @@ class Attendance extends Public_Controller {
         ->view($this->footer);
     }
 
+    public function TodayOverview () {
+        //
+        $filterEmployeeId = !empty($this->input->get("id", true)) ? $this->input->get("id", true) : [];
+        //
+        $this->args['session'] = $this->ses;
+        $this->args['employee'] = $this->ses['employer_detail'];
+        $this->args['companyId'] = $this->companyId;
+        $this->args['security_details'] = db_get_access_level_details($this->ses['employer_detail']['sid']);
+        $this->args['title'] = 'Time Sheet | AutomotoHR';
+        // 
+        $this->load->model('single/Employee_model', 'sem');
+        // Get employee's list
+        $employees = $this->sem->GetCompanyEmployees($this->companyId, true);
+        //   
+        $activeEmployees = array();
+        $inactiveEmployees = array();
+        $ActiveEmployeeSids = array();
+        $absentEmployees = [];
+        //
+        if (!empty($employees)) {
+           
+            $employeeAttendance = $this->atm->GetActiveEmployee($this->date, $filterEmployeeId);
+
+            if (!empty($employeeAttendance)) {
+                $AllEployeesSids = array_column($employees, 'sid');
+                $ActiveEmployeeSids = array_column($employeeAttendance, 'employee_sid');
+                $absentEmployees = array_diff($AllEployeesSids, $ActiveEmployeeSids);
+
+                foreach ($employeeAttendance as $ae_key => $act_employee) {
+                    //
+                    $attendanceList = $this->atm->GetAttendanceListByID($act_employee["sid"]);
+                    // 
+                    if(!empty($attendanceList)){
+                        //
+                        $ct = CalculateTime($attendanceList, $act_employee["employee_sid"]);
+                        //
+                        $employeeAttendance[$ae_key]['total_minutes'] = $ct['total_minutes'];
+                        $employeeAttendance[$ae_key]['total_worked_minutes'] = $ct['total_worked_minutes'];
+                        $employeeAttendance[$ae_key]['total_break_minutes'] = $ct['total_break_minutes'];
+                        $employeeAttendance[$ae_key]['total_overtime_minutes'] = $ct['total_overtime_minutes'];
+                        //
+                    }
+                } 
+
+            }else {
+                $absentEmployees = array_column($employees, 'sid');
+            }
+
+            
+            foreach ($absentEmployees as $ab_key => $absentEmployeeSid) {
+                if (!empty($filterEmployeeId) && !in_array($absentEmployeeSid, $filterEmployeeId)) {
+                    unset($absentEmployees[$ab_key]);
+                }
+            }
+        }    
+        //
+        //
+        $todayDate = reset_datetime([
+                        'datetime' => $this->date,
+                        'from_format' => DB_DATE,
+                        'format' => DATE,
+                        'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                        '_this' => $this
+                    ]);
+        
+        //
+         
+        //
+        $this->args['today_date'] = $todayDate;
+        $this->args['employees'] = $employees;
+        $this->args['active_employees'] = $employeeAttendance;
+        $this->args['inactive_employees'] = $absentEmployees;
+        $this->args['filterEmployeeId'] = $filterEmployeeId;
+        //
+        $this->load
+        ->view($this->header, $this->args)
+        ->view('attendance/2022/today_overview')
+        ->view($this->footer);
+    }
+
 }

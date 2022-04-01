@@ -1,7 +1,4 @@
 <?php 
-// echo "<pre>";
-// print_r($timeCounts);
-// die();
 // Today's worked time
 $todayWorked = GetHMSFromMinutes($timeCounts['totalTodayWorked']);
 $todayWorkedPercentage = (($timeCounts['totalTodayWorked'] * 100) / (8*60));
