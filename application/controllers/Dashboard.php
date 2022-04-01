@@ -477,16 +477,20 @@ class Dashboard extends Public_Controller {
             $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
             $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
             $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
+
+            // For verification documents
+            $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($data['session']['company_detail']['sid']);
+            $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($data['session']['company_detail']['sid']);
             
             // Pending Employer Sections
             $data['PendingEmployerSection'] = [];
-            $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'employee', TRUE, $data['session']['employer_detail']);
-            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'employee', TRUE, $data['session']['employer_detail']);
-            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'employee', TRUE, $data['session']['employer_detail']);
+            $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
+            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
+            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'employee', TRUE, $data['session']['employer_detail'], $companyEmployeesForVerification);
             //
-            $data['PendingEmployerSection']['Applicant'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail']);
-            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail']);
-            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail']);
+            $data['PendingEmployerSection']['Applicant'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
+            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
+            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail'], $companyApplicantsForVerification);
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
             
@@ -808,20 +812,23 @@ class Dashboard extends Public_Controller {
 
             // Pending Employer Sections
             $data['PendingEmployerSection'] = [];
+            // For verification documents
+            $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($company_id);
+            $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($company_id);
             //
             $data['PendingEmployerSection']['Employee'] = 0;
             if($data['session']['employer_detail']['access_level_plus']){
-                $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($company_id, 'employee', TRUE, $data['session']['employer_detail']);
-                $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->get_all_users_pending_i9($company_id, 'employee', TRUE, $data['session']['employer_detail']);
+                $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($company_id, 'employee', TRUE, $companyEmployeesForVerification);
+                $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->get_all_users_pending_i9($company_id, 'employee', TRUE, $companyEmployeesForVerification);
             }
-            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->getPendingAuthDocs($company_id, 'employee', TRUE, $data['session']['employer_detail']);
+            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->getPendingAuthDocs($company_id, 'employee', TRUE, $data['session']['employer_detail'], $companyEmployeesForVerification);
             //
             $data['PendingEmployerSection']['Applicant'] = 0;
             if($data['session']['employer_detail']['access_level_plus']){
-                $data['PendingEmployerSection']['Applicant'] = $this->varification_document_model->get_all_users_pending_w4($company_id, 'applicant', TRUE, $data['session']['employer_detail']);
-                $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->get_all_users_pending_i9($company_id, 'applicant', TRUE, $data['session']['employer_detail']);
+                $data['PendingEmployerSection']['Applicant'] = $this->varification_document_model->get_all_users_pending_w4($company_id, 'applicant', TRUE, $companyApplicantsForVerification);
+                $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->get_all_users_pending_i9($company_id, 'applicant', TRUE, $companyApplicantsForVerification);
             }
-            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($company_id, 'applicant', TRUE, $data['session']['employer_detail']);
+            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($company_id, 'applicant', TRUE, $data['session']['employer_detail'], $companyApplicantsForVerification);
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
 

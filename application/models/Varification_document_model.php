@@ -5,12 +5,12 @@ class Varification_document_model extends CI_Model {
         parent::__construct();
     }
 
-    function get_all_users_pending_w4 ($company_sid, $user_type, $count = FALSE) {
+    function get_all_users_pending_w4 ($company_sid, $user_type, $count = FALSE, $lists) {
         if($user_type == 'employee'){
-            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+            $inactive_employee_sid = $lists;
         } else{
             //
-            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+            $inactive_applicant_sid = $lists;
         }
         //
         $this->db->select('user_type, employer_sid as user_sid, sent_date, signature_timestamp as filled_date');
@@ -58,12 +58,13 @@ class Varification_document_model extends CI_Model {
         return $return_data;
     }
 
-    function get_all_users_pending_i9 ($company_sid, $user_type, $count = FALSE) {
+    function get_all_users_pending_i9 ($company_sid, $user_type, $count = FALSE, $lists) {
 
         if($user_type == 'employee'){
-            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+            $inactive_employee_sid = $lists;
         } else{
-            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+            //
+            $inactive_applicant_sid = $lists;
         }
         //
         $this->db->select('user_type, user_sid, sent_date, applicant_filled_date as filled_date');
@@ -108,14 +109,13 @@ class Varification_document_model extends CI_Model {
     }
 
     //
-    function getPendingAuthDocs($company_sid, $user_type, $count = FALSE, $employer = []){
+    function getPendingAuthDocs($company_sid, $user_type, $count = FALSE, $employer = [], $lists){
 
         if($user_type == 'employee'){
-            //
-            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+            $inactive_employee_sid = $lists;
         } else{
             //
-            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+            $inactive_applicant_sid = $lists;
         }
         //
         if(!empty($employer)){

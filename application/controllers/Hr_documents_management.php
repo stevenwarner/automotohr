@@ -11830,19 +11830,22 @@ class Hr_documents_management extends Public_Controller {
         $company_sid = $session['company_detail']['sid'];
         $security_sid = $session['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);
+        // For verification documents
+        $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($session['company_detail']['sid']);
+        $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($session['company_detail']['sid']);
         //
-        $employee_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'employee', false, $session['employer_detail']);
-        $employee_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'employee', false, $session['employer_detail']);
-        $applicant_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'applicant', false, $session['employer_detail']);
-        $applicant_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'applicant', false, $session['employer_detail']);
+        $employee_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'employee', false, $companyEmployeesForVerification);
+        $employee_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'employee', false, $companyEmployeesForVerification);
+        $applicant_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'applicant', false, $companyApplicantsForVerification);
+        $applicant_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'applicant', false, $companyApplicantsForVerification);
 
         //
         if($session['employer_detail']['access_level_plus'] || $session['employer_detail'] == 'Admin'){
-            $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, $session['employer_detail']));
-            $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'applicant', false, $session['employer_detail']));
+            $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, $session['employer_detail'], $companyEmployeesForVerification));
+            $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'applicant', false, $session['employer_detail'], $companyApplicantsForVerification));
         } else{
-            $employee_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, $session['employer_detail']);
-            $applicant_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'applicant', false, $session['employer_detail']);
+            $employee_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, $session['employer_detail'], $companyEmployeesForVerification);
+            $applicant_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'applicant', false, $session['employer_detail'], $companyApplicantsForVerification);
         }
 
         //
@@ -11971,10 +11974,12 @@ class Hr_documents_management extends Public_Controller {
             $data['pendingAD'] = $this->hr_documents_management_model->GetCompanyPendingAuthorizedDocuments($data['company_sid'], $employees);
             // Get managers with pending employer sections
             $this->load->model('varification_document_model');
+            // For verification documents
+            $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($company_sid);
             //
-            $employee_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'employee', false);
-            $employee_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'employee', false);
-            $employee_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false);
+            $employee_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'employee', false, $companyEmployeesForVerification);
+            $employee_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'employee', false, $companyEmployeesForVerification);
+            $employee_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, [], $companyEmployeesForVerification);
             //
             $data['managers'] = array_merge(
                 $employee_pending_w4,
