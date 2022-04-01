@@ -250,6 +250,8 @@ class Attendance_ajax extends Public_Controller {
         return SendResponse(200, $this->resp);
     }
 
+    
+    
     /**
      * Updates date time
      */
@@ -291,6 +293,31 @@ class Attendance_ajax extends Public_Controller {
         //
         unset($this->resp['errors']);
         $this->resp['success'] = $ra;
+        //
+        return SendResponse(200, $this->resp);
+    }
+
+    /**
+     * Update settings
+     */
+    public function UpdateSettings () {
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->atm->UpdateSettings([
+            'employer_sid' => $this->employeeId,
+            'updated_at' => $this->datetime,
+            'is_visible_to_payroll' => isset($post['payroll']) ? $post['payroll'] : 0,
+            'allowed_roles' => isset($post['roles']) ? implode(',', $post['roles']) : null,
+            'allowed_departments' => isset($post['departments']) ? implode(',', $post['departments']) : null,
+            'allowed_teams' => isset($post['teams']) ? implode(',', $post['teams']) : null,
+            'allowed_employees' => isset($post['employees']) ? implode(',', $post['employees']) : null
+        ], [
+            'company_sid' => $this->companyId
+        ]);
+        //
+        unset($this->resp['errors']);
+        $this->resp['success'] = 'success';
         //
         return SendResponse(200, $this->resp);
     }

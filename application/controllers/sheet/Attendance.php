@@ -118,9 +118,9 @@ class Attendance extends Public_Controller {
             $SysToDate = formatDateToDB($toDate);
             //
             $fromDate = reset_datetime([
-                'datetime' => $fromDate.' 00:00:00',
+                'datetime' => $fromDate.' 23:59:59',
                 'from_format' => 'm/d/Y H:i:s',
-                'format' => 'Y-m-d H:i:s',
+                'format' => DB_DATE,
                 'from_timezone' => $this->args['employee']['timezone'],
                 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
@@ -128,7 +128,7 @@ class Attendance extends Public_Controller {
             $toDate = reset_datetime([
                 'datetime' => $toDate.' 23:59:59',
                 'from_format' => 'm/d/Y H:i:s',
-                'format' => 'Y-m-d H:i:s',
+                'format' => DB_DATE,
                 'from_timezone' => $this->args['employee']['timezone'],
                 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
@@ -252,6 +252,42 @@ class Attendance extends Public_Controller {
         $this->load
         ->view($this->header, $this->args)
         ->view('attendance/2022/manage_timesheet')
+        ->view($this->footer);
+    }
+    
+    /**
+     * Settings
+     */
+    public function Settings(){
+        //
+        $this->args['session'] = $this->ses;
+        $this->args['employee'] = $this->ses['employer_detail'];
+        $this->args['companyId'] = $this->companyId;
+        $this->args['security_details'] = db_get_access_level_details($this->ses['employer_detail']['sid']);
+        $this->args['title'] = 'Settings | AutomotoHR';
+        //
+        $this->args['settings'] = $this->atm->GetSettings($this->companyId);
+        //
+        if(empty($this->args['settings'])){
+            //
+            $this->args['settings']['company_sid'] = $this->companyId;
+            $this->args['settings']['employer_sid'] = $this->employerId;
+            $this->args['settings']['created_at'] = $this->datetime;
+            $this->args['settings']['updated_at'] = $this->datetime;
+            //
+            $this->atm->AddSettings($this->companyId, $this->employerId);
+        }
+        //
+        $this->load->model('single/Employee_model', 'sem');
+        $this->args['employees'] = $this->sem->GetCompanyEmployees($this->companyId, true);
+        $this->load->model('hr_documents_management_model');
+        // Get departments & teams
+        $this->args['departments'] = $this->hr_documents_management_model->getDepartments($this->companyId);
+        $this->args['teams'] = $this->hr_documents_management_model->getTeams($this->companyId, $this->args['departments']);
+        //
+        $this->load
+        ->view($this->header, $this->args)
+        ->view('attendance/2022/settings')
         ->view($this->footer);
     }
 
