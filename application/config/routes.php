@@ -1524,6 +1524,13 @@ $route["payroll/get/(:num)/(:any)"] = "payroll/Payroll_onboard/Get/$1/$2";
 $route['attendance/my']['get'] = "sheet/Attendance/MyAttendance";
 $route['attendance/my/time-sheet']['get'] = "sheet/Attendance/MyTimeSheet";
 $route['attendance/time-sheet']['get'] = "sheet/Attendance/TimeSheet";
+$route['attendance/manage/(:num)']['get'] = "sheet/Attendance/ManageTimeSheet/$1";
+$route['attendance/settings']['get'] = "sheet/Attendance/Settings";
+$route['attendance/today_overview']['get'] = "sheet/Attendance/TodayOverview";
+$route['attendance/overtime']['get'] = "sheet/Attendance/Overtime";
 // AJAX Calls
 $route['attendance/get/clock']['get'] = "sheet/Attendance_ajax/LoadClock";
+$route['attendance/add_slot/(:num)']['get'] = "sheet/Attendance_ajax/GetAddSlot/$1";
 $route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttendance";
+$route['attendance/manage']['post'] = "sheet/Attendance_ajax/ManageTimeSheet";
+$route['attendance/settings']['post'] = "sheet/Attendance_ajax/UpdateSettings";

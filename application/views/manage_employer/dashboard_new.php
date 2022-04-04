@@ -15,7 +15,7 @@
                                                     if (isset($employerData['profile_picture']) && !empty($employerData['profile_picture'])) {
                                                         echo $employerData['profile_picture'];
                                                     } else {
-                                                    ?>default_pic-ySWxT.jpg<?php } ?>">
+                                                    ?>default_pic-ySWxT.jpg<?php } ?>" alt="" />
                                     </figure>
                                     <div class="text">
                                         <ul class="admin-contact-info">
@@ -98,10 +98,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
                                         <?php if ($companyData['Logo'] != '' && get_company_logo_status($session['company_detail']['sid']) == 1) { ?>
-                                            <figure><img width="100" height="80" src="<?php echo AWS_S3_BUCKET_URL . $companyData['Logo']; ?>"></figure>
-                                        <?php } else { ?>
-                                            <!-- <figure><img width="80" height="80" src="<?php //echo AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; 
-                                                                                            ?>"></figure> -->
+                                            <figure><img width="100" height="80" src="<?php echo AWS_S3_BUCKET_URL . $companyData['Logo']; ?>" alt="" /></figure>
                                         <?php } ?>
                                         <span class="registered-company-name"><?php echo $companyData['CompanyName']; ?></span>
                                     </div>
@@ -127,6 +124,7 @@
                                         <?php } ?>
                                     <?php } ?>
                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                        <?php $this->load->view('attendance/2022/clock_green_display'); ?>
                                         <?php if ($task_management_module_status == 1) { ?>
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">

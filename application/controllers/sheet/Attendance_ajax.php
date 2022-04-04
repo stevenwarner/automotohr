@@ -108,7 +108,7 @@ class Attendance_ajax extends Public_Controller {
             return SendResponse(200, $this->resp);
         }
         //
-        $ct = CalculateTime($attendanceList);
+        $ct = CalculateTime($attendanceList, $this->employeeId);
         $ra['last_status'] = $attendanceList[0]['action'];
         //
         $ra = array_merge(
@@ -129,21 +129,47 @@ class Attendance_ajax extends Public_Controller {
         //
         $post = $this->input->post(NULL, TRUE);
         //
+        $date = $this->date;
+        $datetime = $this->datetime;
+        $employeeId = $this->employeeId;
+        $day = $this->day;
+        $month = $this->month;
+        $year = $this->year;
+        $added_by = "";
+        //
+        if(isset($post["id"])) {
+            $attendanceInfo = $this->atm->GetAttendanceDateAndStatusById($post["id"]);
+            $date = $attendanceInfo["action_date"];
+            $employee_date = ConvertDateTime($attendanceInfo["company_sid"], $attendanceInfo["employee_sid"], $attendanceInfo["action_date"])["modified"];
+            //
+            $day = explode("-", $employee_date)[2];
+            $month = explode("-", $employee_date)[1];
+            $year = explode("-", $employee_date)[0];
+            //
+            $employee_date = $employee_date." ".$post["time"].":00";
+            $datetime = ConvertDateTime($attendanceInfo["company_sid"], $attendanceInfo["employee_sid"], $employee_date, DB_DATE_WITH_TIME, true)["modified"];
+            $employeeId = $attendanceInfo["employee_sid"];
+            $added_by = $this->employerId;
+            //Todo Need to check converted date and actual date
+
+        }
+        //
         $attendanceList = $this->atm->GetAttendanceList(
             $this->companyId,
-            $this->employeeId,
-            $this->date
+            $employeeId,
+            $date
         );
         // 
         if(!empty($attendanceList)){
             //
-            $ct = CalculateTime($attendanceList);
+            $ct = CalculateTime($attendanceList, $employeeId);
             //
             $this->db->update(
                 'portal_attendance', [
                     'total_minutes' => $ct['total_minutes'],
                     'total_worked_minutes' => $ct['total_worked_minutes'],
-                    'total_break_minutes' => $ct['total_break_minutes']
+                    'total_break_minutes' => $ct['total_break_minutes'],
+                    'total_overtime_minutes' => $ct['total_overtime_minutes']
                 ], [
                     'sid' => $attendanceList[0]['portal_attendance_sid']
                 ]
@@ -157,6 +183,13 @@ class Attendance_ajax extends Public_Controller {
                     'break_out',
                     $post['lat'],
                     $post['lon'],
+                    $employeeId,
+                    $date,
+                    $datetime,
+                    $day,
+                    $month,
+                    $year,
+                    $added_by,
                     false
                 );
             }
@@ -165,9 +198,128 @@ class Attendance_ajax extends Public_Controller {
         return $this->LogAttendance(
             $post['action'],
             $post['lat'],
-            $post['lon']
+            $post['lon'],
+            $employeeId,
+            $date,
+            $datetime,
+            $day,
+            $month,
+            $year,
+            $added_by
         );
         
+    }
+    
+    /**
+     * Updates date time
+     */
+    public function ManageTimeSheet(){
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $sid = $this->atm->GetAttendanceIDByListId($post["Id"]);
+        $attendanceInfo = $this->atm->GetAttendanceDateAndStatusById($sid);
+        $date = $attendanceInfo["action_date"];
+        $employee_date = ConvertDateTime($attendanceInfo["company_sid"], $attendanceInfo["employee_sid"], $attendanceInfo["action_date"])["modified"];
+        //
+        $employee_date = $employee_date." ".$post["time"].":00";
+        $datetime = ConvertDateTime($attendanceInfo["company_sid"], $attendanceInfo["employee_sid"], $employee_date, DB_DATE_WITH_TIME, true)["modified"];
+        $added_by = $this->employerId;
+        //
+        $this->atm->UpdateEmployeeTimeSlot($post["Id"], $datetime, $added_by);
+        //
+        $attendanceList = $this->atm->GetAttendanceListByID($sid);
+        // 
+        if(!empty($attendanceList)){
+            //
+            $ct = CalculateTime($attendanceList, $attendanceInfo["employee_sid"]);
+            //
+            $this->db->update(
+                'portal_attendance', [
+                    'total_minutes' => $ct['total_minutes'],
+                    'total_worked_minutes' => $ct['total_worked_minutes'],
+                    'total_break_minutes' => $ct['total_break_minutes'],
+                    'total_overtime_minutes' => $ct['total_overtime_minutes']
+                ], [
+                    'sid' => $sid
+                ]
+            );
+            //
+        }
+        //
+        return SendResponse(200, $this->resp);
+    }
+
+    
+    
+    /**
+     * Updates date time
+     */
+    public function GetAddSlot ($id) {
+        //
+        $get = $this->input->get(NULL, TRUE);
+        //
+        $attendanceInfo = $this->atm->GetAttendanceDateAndStatusById($id);
+        //
+        $last_action = $attendanceInfo["last_action"];
+        //
+        $option = "";
+        //
+        if ($last_action == "clock_in") {
+            $option .= '<option value="break_in">Break Start</option>';
+            $option .= '<option value="clock_out">Clock Out</option>';
+        } else if ($last_action == "break_in") {
+            $option .= '<option value="break_out">Break End</option>';
+            $option .= '<option value="clock_out">Clock Out</option>';
+        } else if ($last_action == "break_out") {
+            $option .= '<option value="clock_out">Clock Out</option>';
+        } else if ($last_action == "clock_out") {
+            $option .= '<option value="clock_in">Clock In</option>';
+        }
+
+        $timezone = getTimeZone($attendanceInfo["company_sid"], $attendanceInfo["employee_sid"]);
+        $action_date = reset_datetime([
+                            'datetime' => $attendanceInfo["action_date"],
+                            'format' => DATE,
+                            'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                            'new_zone' => $timezone,
+                            '_this' => $this
+                        ]);
+        //
+        $ra = [
+            'option' => $option,
+            'date' => $action_date
+        ];
+        //
+        unset($this->resp['errors']);
+        $this->resp['success'] = $ra;
+        //
+        return SendResponse(200, $this->resp);
+    }
+
+    /**
+     * Update settings
+     */
+    public function UpdateSettings () {
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $this->atm->UpdateSettings([
+            'employer_sid' => $this->employeeId,
+            'updated_at' => $this->datetime,
+            'is_visible_to_payroll' => isset($post['payroll']) ? $post['payroll'] : 0,
+            'allowed_roles' => isset($post['roles']) ? implode(',', $post['roles']) : null,
+            'allowed_departments' => isset($post['departments']) ? implode(',', $post['departments']) : null,
+            'allowed_teams' => isset($post['teams']) ? implode(',', $post['teams']) : null,
+            'allowed_employees' => isset($post['employees']) ? implode(',', $post['employees']) : null
+        ], [
+            'company_sid' => $this->companyId
+        ]);
+        //
+        unset($this->resp['errors']);
+        $this->resp['success'] = 'success';
+        //
+        return SendResponse(200, $this->resp);
     }
 
     /**
@@ -189,20 +341,34 @@ class Attendance_ajax extends Public_Controller {
      * @param boolean $return
      * @return response
      */
-    private function LogAttendance($action, $lat, $lon, $return = true){
+    private function LogAttendance(
+            $action, 
+            $lat, 
+            $lon,
+            $employeeId,
+            $date,
+            $datetime,
+            $day,
+            $month,
+            $year,
+            $added_by, 
+            $return = true)
+    {
         // Mark the attendance
+
         $Id = $this->atm->MarkAttendance(
             $this->companyId,
-            $this->employeeId,
+            $employeeId,
             $this->employerId,
-            $this->date,
-            $this->datetime,
-            $this->day,
-            $this->month,
-            $this->year,
+            $date,
+            $datetime,
+            $day,
+            $month,
+            $year,
             $action,
             $lat,
-            $lon
+            $lon,
+            $added_by
         );
         //
         if(!$Id){

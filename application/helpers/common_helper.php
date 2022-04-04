@@ -14806,10 +14806,18 @@ if(!function_exists('GetTimeDifferenceInMinutes')){
 
 if(!function_exists('GetHMSFromMinutes')){
     function GetHMSFromMinutes($totalMinutes){
+        //
+        $hours = intval($totalMinutes/60);
+        //
+        $minutes = $totalMinutes - ($hours * 60);
+        // Pluraize
+        $hours = (strlen($hours) === 1 ? '0' : '').$hours;
+        $minutes = (strlen($minutes) === 1 ? '0' : '').$minutes;
+        //
         return [
-            'hours' => date('H', mktime(0, $totalMinutes)),
-            'minutes' => date('i', mktime(0, $totalMinutes)),
-            'seconds' => date('s', mktime(0, $totalMinutes))
+            'hours' => $hours,
+            'minutes' => $minutes,
+            'seconds' => 0
         ];
     }
 }
@@ -14819,22 +14827,33 @@ if(!function_exists('CalculateTime')){
      * Calculate time for DB
      * 
      * @param array $list
+     * @param int $employee_sid
      * @return array
      */
-    function CalculateTime($lists){
+    function CalculateTime($lists, $employee_sid){
         //
         $ra = [
             'total_minutes' => 0,
             'total_worked_minutes' => 0,
-            'total_break_minutes' => 0
+            'total_break_minutes' => 0,
+            'total_overtime_minutes' => 0
         ];
         //
         $lists = array_reverse($lists);
+        $shiftTime_info = get_user_shiftTime($employee_sid);
+        $shift_hours = $shiftTime_info["user_shift_hours"];
+        $shift_minute = $shiftTime_info["user_shift_minutes"]; 
+        $total_shift_minutes = $shift_minute + ($shift_hours * 60);
         //
         $ra['total_minutes'] = GetTotalTime($lists, 'clock_in', 'clock_out');
         $ra['total_break_minutes'] = GetTotalTime($lists, 'break_in', 'break_out');
         // Total worked hours
         $ra['total_worked_minutes'] = $ra['total_minutes'] - $ra['total_break_minutes'];
+        //
+        if ($ra['total_worked_minutes'] > $total_shift_minutes) {
+            $ra['total_overtime_minutes'] = $ra['total_worked_minutes'] - $total_shift_minutes;
+        }
+        // _e($ra,true,true);
         //
         return $ra;
     }
@@ -14861,18 +14880,36 @@ if(!function_exists('GetTotalTime')){
                 $lastAction = $list['action'];
                 $lastDateTime = $list['action_date_time'];
             }
+
+            if($lastAction == $t2 && $list['action'] == $t1){
+                $lastAction = $list['action'];
+                $lastDateTime = $list['action_date_time'];
+            }
             //
             if($lastAction == $t1 && $list['action'] == $t2){
                 //
                 $total += GetTimeDifferenceInMinutes($lastDateTime, $list['action_date_time']);
                 //
-                $lastAction = $t1;
+                $lastAction = $t2;
                 $lastDateTime = '';
             }
         }
         //
         if($lastAction == $t1){
-            $total += GetTimeDifferenceInMinutes($lastDateTime, date('Y-m-d H:i:s', strtotime('now')));
+            //
+            $date = formatDateToDB(
+                $lists[0]['action_date_time'],
+                DB_DATE_WITH_TIME,
+                DB_DATE
+            );
+            //
+            $datetime = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            if($date !== date('Y-m-d')){
+                $datetime = date('Y-m-d').' 23:59:59';
+                return $total += $total > 540 ? 0 : (540 - $total);
+            }
+            $total += GetTimeDifferenceInMinutes($lastDateTime, $datetime);
         }
         //
         return $total;
@@ -14899,6 +14936,15 @@ if(!function_exists('GetActionColor')){
 }
 
 if(!function_exists('ModifyDate')){
+    /**
+     * Modify date time
+     * 
+     * @param string $date
+     * @param string $modification
+     * @param string $format
+     * 
+     * @return string
+     */
     function ModifyDate($date, $modification, $format){
         $stop_date = new DateTime($date);
         $stop_date->modify($modification);
@@ -14917,5 +14963,158 @@ if(!function_exists('ShowInfo')){
         $props = array_merge($props, $options);
         //
         return '<strong class="'.($props['color']).' '.($props['fontSize']).'"><i class="fa '.($props['icon']).'" aria-hidden="true"></i>&nbsp;<em>'.($msg).'</em></strong>';
+    }
+}
+
+if(!function_exists('DistanceBTWLatLon')){
+    /**
+     * Get distance between two lat lons
+     * 
+     * @param string $lat1
+     * @param string $lon1
+     * @param string $lat2
+     * @param string $lon2
+     * 
+     * @return array
+     */
+    function DistanceBTWLatLon($lat1, $lon1, $lat2, $lon2){
+        //
+        $ra = [
+            'meters' => 0,
+            'km' => 0,
+            'text' => '0 KM'
+        ];
+        //
+        if($lat1 == 0 || $lat2 == 0){
+            return $ra;
+        }
+        //
+        $R = 6371e3; // metres
+        $l1 = $lat1 * pi() / 180; // φ, λ in radians
+        $l2 = $lat2 * pi() / 180;
+        $ll1 = ($lat2-$lat1) * pi() / 180;
+        $ll2 = ($lon2-$lon1) * pi() / 180;
+        //
+        $a = sin($ll1/2) * sin($ll1/2) +
+            cos($l1) * cos($l2) *
+            sin($ll2/2) * sin($ll2/2);
+        //
+        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+
+        $d = $R * $c; // in metres
+        //
+        $ra['meters'] = $d;
+        $ra['km'] = ceil($d / 1000);
+        $ra['text'] = $ra['km'].' KM';
+        //
+        return $ra;
+    }
+}
+
+if(!function_exists('GetCleanedAction')){
+    /**
+     * Get action for front end
+     * 
+     * @param string $action
+     * @return string
+     */
+    function GetCleanedAction($action){
+        return ucwords(str_replace('_', ' ', $action));
+    }
+}
+
+if (!function_exists('getTimeZone')) {
+    function getTimeZone($company_sid, $employee_sid)
+    {   
+        $CI = &get_instance();
+        $CI->db->select('timezone');
+        $CI->db->where('sid', $employee_sid);
+        //
+        $employee_info = $CI->db->get('users')->row_array();
+
+        if (!empty($employee_info['timezone'])) {
+            return $employee_info['timezone'];
+        } else {
+            $CI->db->select('timezone');
+            $CI->db->where('sid', $company_sid);
+            //
+            $company_info = $CI->db->get('users')->row_array();
+            //
+             if (!empty($company_info['timezone'])) {
+                return $company_info['timezone'];
+            } else {
+                return STORE_DEFAULT_TIMEZONE_ABBR;
+            }
+        }
+    }
+}
+
+if (!function_exists('ConvertDateTime')) {
+    function ConvertDateTime($company_sid, $employee_sid, $date, $format = DB_DATE, $toggle = false)
+    {   
+        $timezone = getTimeZone($company_sid, $employee_sid);
+        //
+        $Data = [
+                    'datetime' => $date,
+                    'format' => $format,
+                    'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                    'new_zone' => $timezone,
+                    '_this' => get_instance()
+                ];
+        //        
+        if ($toggle) {
+            $Data['from_timezone']= $timezone;
+            $Data['new_zone']= STORE_DEFAULT_TIMEZONE_ABBR;
+        }
+        //
+        return ["modified" => reset_datetime($Data), "original" => $date];
+    }
+}
+
+if (!function_exists('get_user_shiftTime')) {
+    function get_user_shiftTime($employee_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('user_shift_minutes, user_shift_hours');
+        $CI->db->where('sid', $employee_sid);
+        //
+        $records_obj = $CI->db->get("users");
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return "";
+        }
+    }
+}
+
+if(!function_exists('GetParams')){
+    function GetParams($param){
+        //
+        $CI = &get_instance();
+        //
+        $get = $CI->input->get(NUll, true);
+        //
+        $r = '?';
+        //
+        if($get){
+            //
+            foreach($get as $k => $v){
+                //
+                if(is_array($v)){
+                    $r .= $k.'='.implode(',',$v).'&';
+                } else{
+                    $r .= $k.'='.$v.'&';
+                }
+            }
+        }
+        //
+        if($param){
+            $r .= $param;
+        }
+        //
+        return rtrim($r,'&');
     }
 }

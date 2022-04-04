@@ -527,7 +527,8 @@ define('STARTING_DATE_LIMIT', '1960:+5');
 define('DATE', 'M d Y, D');
 define('DB_DATE', 'Y-m-d');
 define('DATE_WITH_TIME', 'M d, Y, D H:m:s');
-define('TIME', 'H:m:s');
+define('TIME', 'H:i:s');
+define('MD', 'H:i');
 define('DB_DATE_WITH_TIME', 'Y-m-d H:i:s');
 //
 define('XSYM', '✖');

@@ -17850,3 +17850,9 @@ input[type='checkbox'].user_checkbox:checked:after {
     border-radius: 0;
     font-size: 16px;
 }
+
+.timeSheet_Emp_Name {
+    float: left;
+    line-height: 34px;
+    margin-left: 6px;
+}

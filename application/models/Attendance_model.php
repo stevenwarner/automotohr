@@ -830,7 +830,8 @@ class Attendance_model extends CI_Model
         $year,
         $action,
         $latitude = 0,
-        $longitude = 0
+        $longitude = 0,
+        $added_by
     ){
         //
         $Id = $this->GetAttendanceId($companyId, $employeeId, $date);
@@ -870,16 +871,31 @@ class Attendance_model extends CI_Model
                 'action_date_time' => $datetime,
                 'is_deleted' => 0,
                 'created_at' => $this->datetime,
-                'updated_at' => $this->datetime
+                'updated_at' => $this->datetime,
+                'added_by' => $added_by
             ]
         );
         //
         $lastId = $this->db->insert_id();
+        //
+        $attendanceList = $this->GetAttendanceListByID($Id);
+        // 
+        $data_to_update = array();
+        $data_to_update['last_action'] = $action;
+        //
+        if(!empty($attendanceList)){
+            //
+            $ct = CalculateTime($attendanceList, $employeeId);
+            //
+            $data_to_update['total_minutes'] = $ct['total_minutes'];
+            $data_to_update['total_worked_minutes'] = $ct['total_worked_minutes'];
+            $data_to_update['total_break_minutes'] = $ct['total_break_minutes'];
+            $data_to_update['total_overtime_minutes'] = $ct['total_overtime_minutes'];
+            //
+        }
         // Update the last record
         $this->db->update(
-            'portal_attendance', [
-                'last_action' => $action
-            ], [
+            'portal_attendance', $data_to_update, [
                 'sid' => $Id
             ]
         );
@@ -908,6 +924,7 @@ class Attendance_model extends CI_Model
             'total_minutes' => 0,
             'total_worked_minutes' => 0,
             'total_break_minutes' => 0,
+            'total_overtime_minutes' => 0,
             'lists' => []
         ];
         //
@@ -919,18 +936,270 @@ class Attendance_model extends CI_Model
             //
             if(!empty($lists)){
                 //
-                $ct = CalculateTime($lists);
+                $ct = CalculateTime($lists, $employeeId);
+                //
+                $ct['pId'] = $lists[0]['portal_attendance_sid'];
                 //
                 $ra['lists'][$currentDate] = $ct;
                 //
                 $ra['total_minutes'] += $ct['total_minutes'];
                 $ra['total_worked_minutes'] += $ct['total_worked_minutes'];
                 $ra['total_break_minutes'] += $ct['total_break_minutes'];
+                $ra['total_overtime_minutes'] += $ct['total_overtime_minutes'];
             }
             //
             $currentDate = ModifyDate($currentDate, '+1 day', 'Y-m-d');
         }
         //
         return $ra;
+    }
+
+    /**
+     * Get the attendance id
+     * 
+     * @param number $companyId
+     * @param number $id
+     * 
+     * @return number
+     */
+    public function VerifyAttendanceById($companyId, $id){
+        //
+        $q = $this->db
+        ->select('employee_sid')
+        ->where([
+            'company_sid' => $companyId,
+            'sid' => $id
+        ])
+        ->limit(1);
+        //
+        $result = $q->get('portal_attendance');
+        //
+        $data = $result->row_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return 0;
+        }
+        //
+        return $data;
+        
+    }
+
+    /**
+     * Get the attendance list by id
+     * 
+     * @param number $Id
+     * 
+     * @return array
+     */
+    public function GetAttendanceListById($Id){
+        //
+        $q = $this->db
+        ->where([
+            'portal_attendance_sid' => $Id
+        ])
+        ->order_by('sid', 'desc');
+        //
+        $result = $q->get('portal_attendance_log');
+        //
+        $data = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        return $data;
+    }
+
+    /**
+     * Get the attendance date by id
+     * 
+     * @param number $Id
+     * 
+     * @return array
+     */
+    public function GetAttendanceDateAndStatusById($sid){
+        //
+        $q = $this->db
+        ->select('company_sid, employee_sid, action_date, last_action')
+        ->where([
+            'sid' => $sid
+        ])
+        ->limit(1);
+        //
+        $result = $q->get('portal_attendance');
+        //
+        $data = $result->row_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return 0;
+        }
+        //
+        return $data;
+    }
+
+    /**
+     * Get the attendance id
+     * 
+     * @param number $Id
+     * 
+     * @return array
+     */
+    public function GetAttendanceIDByListId($sid){
+        //
+        $q = $this->db
+        ->select('portal_attendance_sid')
+        ->where([
+            'sid' => $sid
+        ])
+        ->limit(1);
+        //
+        $result = $q->get('portal_attendance_log');
+        //
+        $data = $result->row_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return 0;
+        }
+        //
+        return $data["portal_attendance_sid"];
+    }
+
+
+    public function UpdateEmployeeTimeSlot($sid, $time, $added_by)
+    {
+        $this->db->where('sid', $sid);
+        $data_to_update = array();
+        $data_to_update['action_date_time'] = $time;
+        $data_to_update['added_by'] = $added_by;
+        $data_to_update['updated_at'] = $this->datetime;
+        $this->db->update('portal_attendance_log', $data_to_update);
+    }
+
+
+    public function GetActiveEmployee($date, $employeeSids)
+    {
+        $q = $this->db
+        ->select('sid, employee_sid, last_action')
+        ->where([
+            'action_date' => $date
+        ]);
+        //
+        if (!empty($employeeSids)) {
+            $this->db->where_in('employee_sid', $employeeSids);
+        }
+        //
+        $result = $q->get('portal_attendance');
+        //
+        $data = $result->result_array();
+
+        if(empty($data)){
+            return [];
+        }
+        //
+        return $data;
+    }
+
+    /**
+     * Get the attendance settings
+     * 
+     * @param number       $companyId
+     * @param string|array $columns
+     * 
+     * @return array
+     */
+    public function GetSettings($companyId, $columns = '*'){
+        //
+        $q = $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where([
+            'company_sid' => $companyId
+        ])
+        ->limit(1);
+        //
+        $result = $q->get('portal_attendance_settings');
+        //
+        $data = $result->row_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return [];
+        }
+        //
+        return $data;
+    }
+    
+    /**
+     * Add attendance settings
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     * 
+     * @return number
+     */
+    public function AddSettings($companyId, $employeeId){
+        //
+        $insertArray = [];
+        $insertArray['company_sid'] = $companyId;
+        $insertArray['employer_sid'] = $employeeId;
+        $insertArray['created_at'] = $this->datetime;
+        $insertArray['updated_at'] = $this->datetime;
+        //
+        $this->db->insert('portal_attendance_settings', $insertArray);
+        //
+        return $this->db->insert_id();
+    }
+    
+    /**
+     * Add attendance settings
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     */
+    public function UpdateSettings($updateArray, $whereArray){
+        //
+        $this->db
+        ->where($whereArray)
+        ->update('portal_attendance_settings', $updateArray);
+    }
+    
+    /**
+     * Get overtime employees
+     * 
+     * @param number $companyId
+     * @param string $fromDate
+     * @param string $toDate
+     * @param array  $employeeIds
+     * @param string|array $columns
+     */
+    public function GetEmployeeWithOverTime($companyId, $fromDate, $toDate, $employeeIds = [], $columns = '*'){
+        //
+        $q = $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where([
+            'company_sid' => $companyId,
+            'action_date >=' => $fromDate,
+            'action_date <=' => $toDate
+        ]);
+        //
+        if($employeeIds){
+            $q = $q->where_in('employee_sid', $employeeIds);
+        }
+        //
+        $result = $q->get('portal_attendance');
+        //
+        $data = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return [];
+        }
+        //
+        return $data;
     }
 }

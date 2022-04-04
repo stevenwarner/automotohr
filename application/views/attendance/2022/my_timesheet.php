@@ -65,15 +65,28 @@
                                                 <th scope="col">Worked Time (HH:MM)</th>
                                                 <th scope="col">Break Time (HH:MM)</th>
                                                 <th scope="col">Total Time (HH:MM)</th>
+                                                <th scope="col">Over Time (HH:MM)</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php if(!empty($lists['lists'])): ?>
+                                                <?php 
+                                                    $sum_worked_minutes = 0;
+                                                    $sum_break_minutes = 0;
+                                                    $sum_overtime_minutes = 0;
+                                                    $sum_minutes = 0;
+                                                ?>
                                                 <?php foreach($lists['lists'] as $key => $list): ?>
                                                     <?php 
                                                         $todayWorked = GetHMSFromMinutes($list['total_worked_minutes']);
                                                         $todayBreak = GetHMSFromMinutes($list['total_break_minutes']);
                                                         $total = GetHMSFromMinutes($list['total_minutes']);
+                                                        $overtime = GetHMSFromMinutes($list['total_overtime_minutes']);
+                                                        //
+                                                        $sum_minutes = $sum_minutes + $list['total_minutes'];
+                                                        $sum_worked_minutes = $sum_worked_minutes + $list['total_worked_minutes'];
+                                                        $sum_break_minutes = $sum_break_minutes + $list['total_break_minutes'];
+                                                        $sum_overtime_minutes = $sum_overtime_minutes + $list['total_overtime_minutes'];
                                                     ?>
                                                     <tr class="jsAttendanceMyList">
                                                         <td class="vam">
@@ -86,33 +99,40 @@
                                                             ]);?>
                                                         </td>
                                                         <td class="vam text-center">
-                                                            <strong><?=$todayWorked['hours'];?>:<?=$todayWorked['minutes'];?></strong>
+                                                            <strong class="text-success"><?=$todayWorked['hours'];?>:<?=$todayWorked['minutes'];?></strong>
                                                         </td>
                                                         <td class="vam text-center">
-                                                            <strong><?=$todayBreak['hours'];?>:<?=$todayBreak['minutes'];?></strong>
+                                                            <strong class="csFC3"><?=$todayBreak['hours'];?>:<?=$todayBreak['minutes'];?></strong>
                                                         </td>
                                                         <td class="vam text-center">
                                                             <strong><?=$total['hours'];?>:<?=$total['minutes'];?></strong>
                                                         </td>
+                                                        <td class="vam text-center">
+                                                            <strong class="text-danger"><?=$overtime['hours'];?>:<?=$overtime['minutes'];?></strong>
+                                                        </td>
                                                     </tr>
                                                 <?php endforeach; ?>
                                                 <?php 
-                                                    $todayWorked = GetHMSFromMinutes($list['total_worked_minutes']);
-                                                    $todayBreak = GetHMSFromMinutes($list['total_break_minutes']);
-                                                    $total = GetHMSFromMinutes($list['total_minutes']);
+                                                    $sumTotal = GetHMSFromMinutes($sum_minutes);
+                                                    $sumTodayWorked = GetHMSFromMinutes($sum_worked_minutes);
+                                                    $sumTodayBreak = GetHMSFromMinutes($sum_break_minutes);
+                                                    $sumTodayOvertime = GetHMSFromMinutes($sum_overtime_minutes);
                                                 ?>
                                                 <tr>
                                                     <td class="vam">
                                                         <strong>Total</strong>
                                                     </td>
                                                     <td class="vam text-center">
-                                                        <strong><?=$todayWorked['hours'];?>:<?=$todayWorked['minutes'];?></strong>
+                                                        <strong class="text-success"><?=$sumTodayWorked['hours'];?>:<?=$sumTodayWorked['minutes'];?></strong>
                                                     </td>
                                                     <td class="vam text-center">
-                                                        <strong><?=$todayBreak['hours'];?>:<?=$todayBreak['minutes'];?></strong>
+                                                        <strong class="csFC3"><?=$sumTodayBreak['hours'];?>:<?=$sumTodayBreak['minutes'];?></strong>
                                                     </td>
                                                     <td class="vam text-center">
-                                                        <strong><?=$total['hours'];?>:<?=$total['minutes'];?></strong>
+                                                        <strong><?=$sumTotal['hours'];?>:<?=$sumTotal['minutes'];?></strong>
+                                                    </td>
+                                                    <td class="vam text-center">
+                                                        <strong class="text-danger"><?=$sumTodayOvertime['hours'];?>:<?=$sumTodayOvertime['minutes'];?></strong>
                                                     </td>
                                                 </tr>
                                             <?php else: ?>

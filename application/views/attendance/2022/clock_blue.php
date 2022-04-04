@@ -8,8 +8,11 @@
                     </div>
                     <h2>Attendance</h2>
                     <h2 class="jsAttendanceClock text-center">
-                        <span class="jsAttendanceClockHour">00</span><span>:</span><span class="jsAttendanceClockMinute">00</span><span>:</span><span class="jsAttendanceClockSeconds">00</span>
+                        <span class="jsAttendanceClockHour">00</span><span>:</span><span class="jsAttendanceClockMinute">00</span>
                     </h2>
+                    <p class="text-center csW">
+                        <span>HH:MM</span>
+                    </p>
                     <div class="status-panel text-center">
                         <button class="btn btn-orange jsAttendanceBTN dn" data-type="clock_in">
                             <i class="fa fa-play" aria-hidden="true"></i>&nbsp;Clock In
