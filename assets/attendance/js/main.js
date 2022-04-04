@@ -35,7 +35,7 @@ $(function() {
             Id: 'jsAttendanceViewLocationModal',
             Title: 'Location',
             Loader: 'jsAttendanceViewLocationModalLoader',
-            Body: '<div class="container"><iframe style="width:100%; height: 400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=' + (data.lon) + ',' + (data.lat) + '&hl=en&z=14&amp;output=embed"></iframe></div>'
+            Body: '<div class="container"><iframe style="width:100%; height: 400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=' + (data.lat) + ',' + (data.lon) + '&hl=en&z=17&amp;output=embed"></iframe></div>'
         }, function() {
             ml(false, 'jsAttendanceViewLocationModalLoader');
         });

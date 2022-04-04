@@ -81,6 +81,27 @@ class Notifications extends Public_Controller {
             }
         }
         //
+        if (checkIfAppIsEnabled('attendance')) {
+            //
+            $this->load->model('Attendance_model', 'atm');
+            //
+            $overtimeEmployees = $this->atm->GetEmployeeWithOverTime(
+                $ses['company_detail']['sid'], 
+                date('Y-m-d', strtotime('now')), 
+                date('Y-m-d', strtotime('now')),
+                [],
+                'sid'
+            );
+            // //
+            if($overtimeEmployees){
+                $data[] = [
+                    'count' => count($overtimeEmployees),
+                    'link' => base_url('attendance/overtime'),
+                    'title' => 'Overtime Employees'
+                ];
+            }
+        }
+        //
         if(!sizeof($data)){
             $this->res['Response'] = 'No notifications found.';
             $this->resp();

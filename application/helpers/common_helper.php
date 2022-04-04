@@ -15005,3 +15005,32 @@ if (!function_exists('get_user_shiftTime')) {
         }
     }
 }
+
+if(!function_exists('GetParams')){
+    function GetParams($param){
+        //
+        $CI = &get_instance();
+        //
+        $get = $CI->input->get(NUll, true);
+        //
+        $r = '?';
+        //
+        if($get){
+            //
+            foreach($get as $k => $v){
+                //
+                if(is_array($v)){
+                    $r .= $k.'='.implode(',',$v).'&';
+                } else{
+                    $r .= $k.'='.$v.'&';
+                }
+            }
+        }
+        //
+        if($param){
+            $r .= $param;
+        }
+        //
+        return rtrim($r,'&');
+    }
+}

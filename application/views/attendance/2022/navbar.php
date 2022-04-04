@@ -32,6 +32,13 @@
         'segment' => 'time-sheet'
     ];
     $navpills[] = [
+        'title' => 'Overtime Report',
+        'url' => '/overtime',
+        'slug' => '',
+        'icon' => 'pie-chart',
+        'segment' => 'overtime'
+    ];
+    $navpills[] = [
         'title' => 'Settings',
         'url' => '/settings',
         'slug' => '',

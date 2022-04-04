@@ -1,4 +1,4 @@
-<?php if (checkIfAppIsEnabled('attendance')) { ?>
+<?php if (checkIfAppIsEnabled('attendance') && $this->session->userdata('logged_in')) { ?>
     <li class="jsAttendanceClockHeaderBTNs">
         <button class="btn btn-success jsAttendanceClockBTN" data-type="clock_in"><i class="fa fa-play" aria-hidden="true"></i>&nbsp;Clock In</button>
         <button class="btn btn-warning jsAttendanceClockBTN" data-type="break_in"><i class="fa fa-pause" aria-hidden="true"></i>&nbsp;Break Start</button>

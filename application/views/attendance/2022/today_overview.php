@@ -104,20 +104,20 @@
                                             <?php if(!empty($active_employees)): ?>
                                                 <?php foreach($active_employees as $key => $employee): ?>
                                                     <tr class="jsAttendanceMyList">
+                                                        <?php
+                                                            $employee_info = $employees[$employee["employee_sid"]];
+                                                            //
+                                                            $total = GetHMSFromMinutes($employee['total_minutes']);
+                                                            $todayWorked = GetHMSFromMinutes($employee['total_worked_minutes']);
+                                                            $todayBreak = GetHMSFromMinutes($employee['total_break_minutes']);
+                                                            $overtime = GetHMSFromMinutes($employee['total_overtime_minutes']);
+                                                        ?>
                                                         <td class="vam">
-                                                            <?php
-                                                                $employee_info = $employees[$employee["employee_sid"]];
-                                                                //
-                                                                $total = GetHMSFromMinutes($employee['total_minutes']);
-                                                                $todayWorked = GetHMSFromMinutes($employee['total_worked_minutes']);
-                                                                $todayBreak = GetHMSFromMinutes($employee['total_break_minutes']);
-                                                                $overtime = GetHMSFromMinutes($employee['total_overtime_minutes']);
-                                                            ?>
                                                             <div class="employee-profile-info">
                                                                 <figure>
                                                                     <img src="<?=$employee_info["image"];?>" alt=""/>
                                                                 </figure>
-                                                                <strong><?php echo $employee_info["name"]." ".$employee_info["role"];?></strong>
+                                                                <strong><?php echo $employee_info["name"].$employee_info["role"];?></strong>
                                                             </div>
                                                         </td>
                                                         <td class="vam text-center">

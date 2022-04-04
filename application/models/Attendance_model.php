@@ -938,7 +938,6 @@ class Attendance_model extends CI_Model
                 //
                 $ct = CalculateTime($lists, $employeeId);
                 //
-                // _e($lists, true, true);
                 $ct['pId'] = $lists[0]['portal_attendance_sid'];
                 //
                 $ra['lists'][$currentDate] = $ct;
@@ -1166,5 +1165,41 @@ class Attendance_model extends CI_Model
         $this->db
         ->where($whereArray)
         ->update('portal_attendance_settings', $updateArray);
+    }
+    
+    /**
+     * Get overtime employees
+     * 
+     * @param number $companyId
+     * @param string $fromDate
+     * @param string $toDate
+     * @param array  $employeeIds
+     * @param string|array $columns
+     */
+    public function GetEmployeeWithOverTime($companyId, $fromDate, $toDate, $employeeIds = [], $columns = '*'){
+        //
+        $q = $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where([
+            'company_sid' => $companyId,
+            'action_date >=' => $fromDate,
+            'action_date <=' => $toDate
+        ]);
+        //
+        if($employeeIds){
+            $q = $q->where_in('employee_sid', $employeeIds);
+        }
+        //
+        $result = $q->get('portal_attendance');
+        //
+        $data = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return [];
+        }
+        //
+        return $data;
     }
 }
