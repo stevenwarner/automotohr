@@ -1289,6 +1289,43 @@ if(!function_exists('AddEmployeeBandAccount')){
         return $response;
     }
 }
+//
+if(!function_exists('GetEmployeePayStubs')){
+    function GetEmployeePayStubs($payrollUUID, $employeeUUID, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('GetEmployeePayStubs', $payrollUUID, $employeeUUID),[
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return GetEmployeePayStubs($payrollUUID, $employeeUUID, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
 
 
 
@@ -1581,6 +1618,8 @@ if(!function_exists('PayrollURL')){
         $urls['DeleteEmployeeBankAccount'] = 'v1/employees/'.($key).'/bank_accounts/'.($key1);
         $urls['UpdateEmployeePaymentMethod'] = 'v1/employees/'.($key).'/payment_method';
         $urls['MarkEmployeeAsOnboarded'] = 'v1/employees/'.($key).'/finish_onboarding';
+        // 
+        $urls['GetEmployeePayStubs'] = 'v1/payrolls/'.($key).'/employees/'.($key1).'/pay_stub';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }
@@ -1588,6 +1627,9 @@ if(!function_exists('PayrollURL')){
 
 if(!function_exists('MakeCall')){
     function MakeCall($url, $options = [], $force = false){
+        if(CacheHolder($url)){
+            return CacheHolder($url);
+        }
         //
         $curl = curl_init();
         //
@@ -1624,8 +1666,35 @@ if(!function_exists('MakeCall')){
                 ]
             ];   
         }
+        //
+        if($info['content_type'] === 'application/pdf'){
+            //
+            $filename = 'employees/pay_stub/'.time().'_'.(random_key(10)).'_employee_pay_stub'.'.pdf';
+            //
+            $_this = &get_instance();
+            //
+            $_this->load->library('aws_lib');
+            //
+            $options = [
+                'Bucket' => AWS_S3_BUCKET_NAME,
+                'Key' => $filename,
+                'Body' => $response,
+                'ACL' => 'public-read',
+                'ContentType' => $info['content_type']
+            ];
+            //
+            $_this->aws_lib->put_object($options);
+            //
+            return [
+                's3_file_name' => $filename,
+                's3_file_url' => AWS_S3_BUCKET_URL.$filename
+            ];
+        }
+        //
         // Convert to Associated Array and keep the long big ints
         $response = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
+        //
+        CacheHolder($url, $response);
         //
         return $response; 
     }
@@ -1699,14 +1768,15 @@ if(!function_exists('CacheHolder')){
      */
     function CacheHolder($url, $data = [], $force = false){
         //
-        // $_this =&get_instance();
-        //
-        // if($_this->session->userdata($url) && !$force){
-        //     // return $_this->session->userdata($url);
-        // }
-        // if(!empty($data)){
-        //     $_this->session->set_userdata($url, $data);
-        // }
+        $_this =&get_instance();
+        
+        if($_this->session->userdata($url) && !$force){
+            // return $_this->session->userdata($url);
+        }
+        if(!empty($data)){
+            $_this->session->set_userdata($url, $data);
+        }
+        return false;
     }
 }
 

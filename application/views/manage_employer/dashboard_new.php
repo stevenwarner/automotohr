@@ -799,7 +799,7 @@
                                                     <small style="font-size: 12px"></small>
                                                 </div>
                                                 <div class="button-panel">
-                                                    <a href="<?=base_url('payroll/run');?>" class="site-btn">Payroll Dashboard</a>
+                                                    <a href="<?=base_url('payroll/employees/normal');?>" class="site-btn">Payroll Dashboard</a>
                                                 </div>
                                             </div>
                                         </div>

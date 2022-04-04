@@ -21,7 +21,9 @@
             setTimeout(() => {
                 loadIframe(
                     url,
-                    target
+                    target,
+                    undefined,
+                    loader
                 );
             }, 2000);
 
@@ -32,11 +34,12 @@
             if($(target).contents()[0].body.text == ''){
                 $(target).prop('src', url);
                 setTimeout(function(){
-                    loadIframe(url, target);
+                    loadIframe(url, target, undefined, loader);
                 }, 2000);
             }
         } catch(e) {
             $('.js-inner-loader-iframe').remove();
+            $(loader).hide(0);
             console.log('Iframe is loaded.');
         }
     }
