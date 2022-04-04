@@ -49,9 +49,32 @@
                                                     <div class="hr-fields-wrap">
                                                         <select name="terminated_reason" id="terminated_reason" class="invoice-fields" aria-required="true" aria-invalid="false">
                                                             <option value="">Please Select</option>
-                                                            <option value="1">Resignation</option>
-                                                            <option value="2">Fired</option>
-                                                            <option value="3">Tenure Completed</option>
+
+                                                            <optgroup label="General">
+                                                                <option value="1">Resignation</option>
+                                                                <option value="2">Fired</option>
+                                                                <option value="3">Tenure Completed</option>
+                                                            </optgroup>
+                                                            
+                                                            <optgroup label="Voluntary">    
+                                                                <option value="4">Voluntary</option>
+                                                                <option value="5">Another Job</option>
+                                                                <option value="6">Problem with Supervisor</option>
+                                                                <option value="7">Relocation</option>
+                                                                <option value="8">Work Schedule</option>
+                                                                <option value="9">Retirement</option>
+                                                                <option value="10">Return to School</option>
+                                                                <option value="11">Pay</option>
+                                                                <option value="12">Without Notice/Reason</option>
+                                                            </optgroup>
+                                                            
+                                                            <optgroup label="Involuntary">    
+                                                                <option value="13">Involuntary</option>
+                                                                <option value="14">Violating Company Policy</option>
+                                                                <option value="15">Attendance Issues</option>
+                                                                <option value="16">Performance</option>
+                                                                <option value="17">Workforce Reduction</option>
+                                                            </optgroup>
                                                         </select>
                                                         <?php echo form_error('terminated_status'); ?>
                                                     </div>  

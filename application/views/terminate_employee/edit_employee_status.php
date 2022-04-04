@@ -43,9 +43,30 @@
                                                 <?php echo form_label('Termination Reason <span class="hr-required">*</span>', 'terminated_status'); ?>
                                                 <select name="terminated_reason" id="terminated_reason" class="invoice-fields" aria-required="true" aria-invalid="false">
                                                     <option value="">Please Select</option>
-                                                    <option value="1" <?= $status_data['termination_reason'] == 1 ? 'selected="selected"': '';?>>Resignation</option>
-                                                    <option value="2" <?= $status_data['termination_reason'] == 2 ? 'selected="selected"': '';?>>Fired</option>
-                                                    <option value="3" <?= $status_data['termination_reason'] == 3 ? 'selected="selected"': '';?>>Tenure Completed</option>
+                                                    
+                                                    <optgroup label="General">
+                                                        <option value="1" <?= $status_data['termination_reason'] == 1 ? 'selected="selected"': '';?>>Resignation</option>
+                                                        <option value="2" <?= $status_data['termination_reason'] == 2 ? 'selected="selected"': '';?>>Fired</option>
+                                                        <option value="3" <?= $status_data['termination_reason'] == 3 ? 'selected="selected"': '';?>>Tenure Completed</option>
+                                                    </optgroup>
+                                                    
+                                                    <optgroup label="Voluntary">
+                                                        <option value="4" <?= $status_data['termination_reason'] == 4 ? 'selected="selected"': '';?>>Another Job</option>
+                                                        <option value="5" <?= $status_data['termination_reason'] == 5 ? 'selected="selected"': '';?>>Problem with Supervisor</option>
+                                                        <option value="6" <?= $status_data['termination_reason'] == 6 ? 'selected="selected"': '';?>>Relocation</option>
+                                                        <option value="7" <?= $status_data['termination_reason'] == 7 ? 'selected="selected"': '';?>>Work Schedule</option>
+                                                        <option value="8" <?= $status_data['termination_reason'] == 8 ? 'selected="selected"': '';?>>Retirement</option>
+                                                        <option value="9" <?= $status_data['termination_reason'] == 9 ? 'selected="selected"': '';?>>Return to School</option>
+                                                        <option value="10" <?= $status_data['termination_reason'] == 10 ? 'selected="selected"': '';?>>Pay</option>
+                                                        <option value="11" <?= $status_data['termination_reason'] == 11 ? 'selected="selected"': '';?>>Without Notice/Reason</option>
+                                                    </optgroup>
+                                                    
+                                                    <optgroup label="Involuntary">
+                                                        <option value="12" <?= $status_data['termination_reason'] == 12 ? 'selected="selected"': '';?>>Violating Company Policy</option>
+                                                        <option value="13" <?= $status_data['termination_reason'] == 13 ? 'selected="selected"': '';?>>Attendance Issues</option>
+                                                        <option value="14" <?= $status_data['termination_reason'] == 14 ? 'selected="selected"': '';?>>Performance</option>
+                                                        <option value="15" <?= $status_data['termination_reason'] == 15 ? 'selected="selected"': '';?>>Workforce Reduction</option>
+                                                    </optgroup>    
                                                 </select>
                                                 <?php echo form_error('terminated_status'); ?>
                                             </li>
