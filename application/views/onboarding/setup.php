@@ -14,7 +14,7 @@ if ($user_type == 'applicant') {
     
     if (!checkOnboardingNotification($user_info['sid'])) {
         $sendNotification = "no";
-        $sendNotificationText = "Onboarding email notification to this candidate has been pending.";
+        $sendNotificationText = "The Onboarding email notification for this candidate is still pending.";
         $sendNotificationURL = base_url('onboarding/setup/applicant').'/'.$user_info['sid'].'/'.$job_list_sid.'#send_email_to_applicant';
     }
 }
