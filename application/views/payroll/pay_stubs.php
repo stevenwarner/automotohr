@@ -95,7 +95,7 @@
             //
             $('#jsPayrollEPSModal').modal();
             //
-            Modal({
+            Model({
                 Id: "jsPayrollEPSModal",
                 Title: 'Pay Stub - '+data.date,
                 Body: '<div class="row"><div class="col-sm-12"><iframe src="" id="jsPayrollEPSModalIframe" frameborder="0" style="width:100%; height: 500px"></iframe></div></div>',
