@@ -20,6 +20,28 @@ if ($user_type == 'applicant') {
 }
 //echo '<pre>'; print_r($items); echo '</pre>';
 ?>
+<style type="text/css">
+    .notice_div{
+        float: left;
+        width: 100%;
+        margin: 0 0 20px 0;
+        position: relative;
+    }
+
+    .notice_div_area{
+        color: #fff;
+        float: left;
+        width: 100%;
+        padding: 11px;
+        font-size: 18px;
+        font-weight: 600;
+        position: relative;
+        border-radius: 5px;
+        border: none;
+        overflow: hidden;
+        background-color: #b4052c;
+    }
+</style>
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
@@ -94,6 +116,18 @@ if ($user_type == 'applicant') {
                             </div>
                         </div>
                     </div>
+
+                    <?php if ($sendNotification == "no") { ?>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="notice_div margin-top">
+                                    <span class="notice_div_area">
+                                        Notice: The Onboarding email notification for this candidate is still pending.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>  
+                    <?php } ?>      
 
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -2167,9 +2201,9 @@ if ($user_type == 'applicant') {
         if (is_notify == "no") {
             var notify_text = "<?php echo $sendNotificationText; ?>";
             var notify_url = "<?php echo $sendNotificationURL; ?>";
-            alertify.alert("Notice",notify_text, function () {
+            // alertify.alert("Notice",notify_text, function () {
                 // window.location.href = notify_url;
-            });
+            // });
         }
         //
         $('#offer_letter_select').select2();
