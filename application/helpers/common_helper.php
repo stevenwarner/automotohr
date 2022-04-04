@@ -14758,11 +14758,16 @@ if (!function_exists('checkOnboardingNotification')) {
         $records_arr = $records_obj->row_array();
         $records_obj->free_result();
 
-        if (!empty($records_arr["email_sent_date"])) {
-            return true;
+        if (!empty($records_arr)) {
+            if (!empty($records_arr["email_sent_date"])) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            return true;
         }
+        
     }
 }
 
