@@ -39,7 +39,7 @@
                         $profile_pic = !empty($approver_info['profile_picture']) ? $approver_info['profile_picture'] : 'test_file_01.png';
                     ?>
                     <a
-                        href="<?=base_url('employee_profile/'.($approver['userId']).'');?>"
+                        href="Javascript:void(0);"
                         target="_blank"
                         data-content="
                             <p><?=ucwords($approver['first_name'].' '.$approver['last_name']);?><br />
@@ -49,8 +49,9 @@
                         <?php echo $this->agent->is_mobile() ? 'style="display: inline-block; height: auto;"' : '';?>
                     >
                         <img 
-                        src="<?=AWS_S3_BUCKET_URL.$profile_pic;?>" 
+                        src="<?=getImageURL($profile_pic);?>" 
                         class="csRadius50" 
+                        alt=""
                         />
                     </a>
                         <?php if($this->agent->is_mobile()) { ?>
@@ -61,6 +62,7 @@
                 <?php endforeach; ?>
             </ul>
             <?php else: ?>
+                <p class="alert alert-info text-center">No approvers found.</p>
             <?php endif; ?>
         </div>
         <!-- Sidebar who is off today section   -->

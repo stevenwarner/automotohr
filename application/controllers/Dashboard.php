@@ -832,6 +832,16 @@ class Dashboard extends Public_Controller {
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
 
+            //
+            $this->load->model('payroll_model', 'pm');
+            //
+            $data['TotalPayStubs'] = count($this->pm->GetPayrollColumns(
+                'payroll_employees_pay_stubs', [
+                    'employee_sid' => $data['session']['employer_detail']['sid']
+                ],
+                'sid'
+            ));
+
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');
             $this->load->view('main/footer');
