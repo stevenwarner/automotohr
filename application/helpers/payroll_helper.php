@@ -1628,6 +1628,9 @@ if(!function_exists('PayrollURL')){
 
 if(!function_exists('MakeCall')){
     function MakeCall($url, $options = [], $force = false){
+        if(CacheHolder($url)){
+            return CacheHolder($url);
+        }
         //
         $curl = curl_init();
         //
@@ -1691,6 +1694,8 @@ if(!function_exists('MakeCall')){
         //
         // Convert to Associated Array and keep the long big ints
         $response = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
+        //
+        CacheHolder($url, $response);
         //
         return $response; 
     }
@@ -1764,14 +1769,15 @@ if(!function_exists('CacheHolder')){
      */
     function CacheHolder($url, $data = [], $force = false){
         //
-        // $_this =&get_instance();
-        //
-        // if($_this->session->userdata($url) && !$force){
-        //     // return $_this->session->userdata($url);
-        // }
-        // if(!empty($data)){
-        //     $_this->session->set_userdata($url, $data);
-        // }
+        $_this =&get_instance();
+        
+        if($_this->session->userdata($url) && !$force){
+            // return $_this->session->userdata($url);
+        }
+        if(!empty($data)){
+            $_this->session->set_userdata($url, $data);
+        }
+        return false;
     }
 }
 

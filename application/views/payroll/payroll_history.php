@@ -72,9 +72,10 @@
                                                                 $<?=number_format($payroll->totals->company_debit, 2, '.', ',');?>
                                                             </td>
                                                             <td class="vam">
-                                                                <a href="<?=base_url('payroll/history/'.($history['sid']).'');?>" class="btn btn-orange">
+                                                                <!-- <a href="<?=base_url('payroll/history/'.($history['sid']).'');?>" class="btn btn-orange">
                                                                     <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View details
-                                                                </a>
+                                                                </a> -->
+                                                                -
                                                             </td>
                                                         </tr>
                                                     <?php } ?>
