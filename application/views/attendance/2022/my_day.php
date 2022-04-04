@@ -191,7 +191,7 @@ $markers = [];
                 <!--  -->
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
-                        <p class="csF16 csB7">Last Location</p>
+                        <p class="csF16 csB7">Foot prints</p>
                         <div id="map" style="width: 100%;"></div>
                     </div>
                 </div>
@@ -205,7 +205,6 @@ $markers = [];
                                     <tr>
                                         <th scope="col">Date</th>
                                         <th scope="col">Time</th>
-                                        <th scope="col">Distance</th>
                                         <th scope="col">Status</th>
                                         <th scope="col" class="text-center">Actions</th>
                                     </tr>
@@ -243,9 +242,6 @@ $markers = [];
                                                     ]); ?>
                                                 </td>
                                                 <td class="vam">
-                                                    <strong class="text-"><?= $distance['text']; ?></strong>
-                                                </td>
-                                                <td class="vam">
                                                     <strong class="text-<?= GetActionColor($list['action']); ?>"><?= ucwords(str_replace('_', ' ', $list['action'])); ?></strong>
                                                 </td>
                                                 <td class="vam text-center">
@@ -255,7 +251,7 @@ $markers = [];
                                         <?php endforeach; ?>
                                     <?php else : ?>
                                         <tr>
-                                            <td colspan="5">
+                                            <td colspan="4">
                                                 <p class="alert alert-info text-center">
                                                     No records found.
                                                 </p>
@@ -311,7 +307,7 @@ $markers = [];
                 }
             });
         } else{
-            $('#map').html('<p class="alert alert-info text-center csF16">No locations found.</p>');
+            $('#map').html('<p class="alert alert-info text-center csF16">No foot prints found.</p>');
         }
     }
 </script>

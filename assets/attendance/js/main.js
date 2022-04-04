@@ -230,15 +230,12 @@ $(function() {
                 //
                 SetClock(resp.success.last_status);
                 //
-                if (
-                    resp.success.last_status == 'clock_in' ||
-                    resp.success.last_status == 'break_out'
-                ) {
-                    var today = new Date();
-                    var initialDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), resp.success.hours, resp.success.minutes, resp.success.seconds);
-                    //
-                    SetClockCount(initialDate);
-                }
+
+                var today = new Date();
+                var initialDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), resp.success.hours, resp.success.minutes, resp.success.seconds);
+                //
+                SetClockCount(initialDate);
+
             })
             .fail(HandleError);
     }
