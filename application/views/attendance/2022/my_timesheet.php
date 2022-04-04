@@ -137,7 +137,7 @@
                                                 </tr>
                                             <?php else: ?>
                                                 <tr>
-                                                    <td colspan="4">
+                                                    <td colspan="5">
                                                         <p class="alert alert-info text-center">
                                                             No records found.
                                                         </p>

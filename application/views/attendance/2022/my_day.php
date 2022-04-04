@@ -255,7 +255,7 @@ $markers = [];
                                         <?php endforeach; ?>
                                     <?php else : ?>
                                         <tr>
-                                            <td colspan="4">
+                                            <td colspan="5">
                                                 <p class="alert alert-info text-center">
                                                     No records found.
                                                 </p>
@@ -278,9 +278,10 @@ $markers = [];
     function initMap() {
         var data = JSON.parse('<?=json_encode($markers);?>');
         //
-        $('#map').css('height', '440px')
-        //
         if(Object.keys(data).length){
+            //
+            $('#map').css('height', '440px')
+            //
             const myLatLng = {
                 lat: <?= $lastLocation[0]; ?>,
                 lng: <?= $lastLocation[1]; ?>

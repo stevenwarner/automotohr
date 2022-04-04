@@ -95,6 +95,10 @@
                                                 <td><?=$currentEmployee['timezone'];?></td>
                                             </tr>
                                             <tr>
+                                                <td><strong>Shift Time</strong></td>
+                                                <td><?=$currentEmployee['shift_hours'];?> H</td>
+                                            </tr>
+                                            <tr>
                                                 <td><strong>Employee Since</strong></td>
                                                 <td><?=formatDateToDB($currentEmployee['joined_on'], DB_DATE, DATE);?></td>
                                             </tr>
@@ -208,7 +212,7 @@
                                                 </tr>
                                             <?php else: ?>
                                                 <tr>
-                                                    <td colspan="4">
+                                                    <td colspan="5">
                                                         <p class="alert alert-info text-center">
                                                             No records found.
                                                         </p>
