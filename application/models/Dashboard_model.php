@@ -3143,4 +3143,72 @@ class Dashboard_model extends CI_Model
         }
         return $t;
     }
+
+    function get_employee_handbook_status($company_sid)
+    {
+        $this->db->select('employee_handbook');
+        $this->db->where('user_sid', $company_sid);
+        $result = $this->db->get('portal_employer')->row_array();
+        //
+        return $result['employee_handbook'];
+    }
+
+    function check_company_employee_handbook_category($company_sid, $key = "employeehandbook")
+    {   
+        //
+        $this->db->select('sid');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->like('REPLACE(TRIM(LOWER(name)), " ", "") ', $key);
+        
+        $record_obj = $this->db->get('documents_category_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr['sid'];
+        } else {
+            return 0;
+        }
+    }
+
+    function get_employee_handbook_documents ($category_sid, $employee_sid) {
+        $this->db->select('document_sid, document_type');
+        $this->db->where('category_sid', $category_sid);
+        
+        $records_obj = $this->db->get('documents_2_category');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            $assign_handbook = array();
+            //
+            foreach ($records_arr as $key => $row) {
+                $this->db->select('*');
+                $this->db->where('user_type', "employee");
+                $this->db->where('user_sid', $employee_sid);
+                //
+                if ($row['document_type'] == "documents_management") {
+                    $this->db->where('document_sid', $row["document_sid"]);
+                } else {
+                    $this->db->where('sid', $row["document_sid"]);
+                }
+                //
+                $record_obj = $this->db->get('documents_assigned');
+                $record_arr = $record_obj->row_array();
+                $record_obj->free_result();
+                //
+                if (!empty($record_arr)) {
+                    array_push($assign_handbook, $record_arr);
+                }
+            }
+            //
+            return $assign_handbook;
+            // echo "<pre>";
+            // print_r($assign_handbook);
+            // die();
+        
+        } else {
+            return array();
+        }
+    }
 }
