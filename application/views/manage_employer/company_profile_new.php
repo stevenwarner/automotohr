@@ -187,10 +187,20 @@
                                 </label>
                             </div>
                         </div>
+                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Employee Handbook <small class="help_text"></small>
+                                    <input class="" type="checkbox" id="employee_handbook" name="employee_handbook" value="1" <?php echo ($portal['employee_handbook'] == 1 ? 'checked="checked" ' : '' ); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
 
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
-                                <h3>Full Employment Application <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
+                                <h3>Full Employment Appl
+                                    ication <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
                                 <p>Make the following selected options mandatory on the full employment form.</p>
                             </div>
                         </div>
