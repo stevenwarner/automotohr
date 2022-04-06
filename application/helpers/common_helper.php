@@ -1831,7 +1831,7 @@ if (!function_exists('employee_right_nav')) {
             } elseif ($terminate_status['employee_status'] == 7) {
                 $status = 'Active Employee On Leave';
             } elseif ($terminate_status['employee_status'] == 8) {
-                $status = 'Rehired Employee';
+                $status = 'Active Employee';
             }
             $data['employee_terminate_status'] = $status;
         }
