@@ -326,16 +326,17 @@
                 <?php }
                 } ?>
 
-                <?php if ($employee_handbook_enable == 1) { ?>
+                <?php if ($employee_handbook_enable) { ?>
                     <?php if ($is_handbook_category_exist) { ?>
                         <div class="full-width margin-top-20">
                             <div class="row">
                                 <div class="panel panel-default ems-documents">
                                     <div class="panel-heading">
-                                        <strong>Handbook Documents</strong>
+                                        <strong>Employee Handbook Documents</strong>
                                     </div>
                                     <div class="panel-body">
                                         <table class="table table-plane cs-w4-table">
+                                        <?php if(!empty($handbook_documents)) { ?>
                                             <thead>
                                                 <tr>
                                                     <th class="col-lg-8 hidden-xs">Document Name</th>
@@ -344,42 +345,42 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php if(isset($handbook_documents) && !empty($handbook_documents)) { ?>
-                                                    <?php foreach ($handbook_documents as $key => $document) { ?>
-                                                        <?php if ($document['archive'] != 1) { ?>
-                                                            <?php if ($document['status'] != 0) { ?>
-                                                                <?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
-                                                                <tr>
-                                                                    <td class="">
-                                                                        <?php
-                                                                            echo $document['document_title'].( $document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="'.($requiredMessage).'"></i>' : '' ).'';
-                                                                            echo $document['user_consent'] == 1 ? '<b> (Waiting Authorize Signature)</b>' : '';
-                                                                            echo $document['status'] ? '' : '<b>(revoked)</b>';
-                                                                            echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
-                                                                            echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
-                                                                            if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
-                                                                            }
-                                                                        ?>
-                                                                        <div class="hidden-lg hidden-md hidden-sm">
-                                                                            <?=$pdBtn['pm'].$pdBtn['dm'];?>
-                                                                           <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td class="text-center hidden-xs">
-                                                                        <?=$pdBtn['pw'].$pdBtn['dw'];?>
+                                                <?php foreach ($handbook_documents as $key => $document) { ?>
+                                                    <?php if ($document['archive'] != 1) { ?>
+                                                        <?php if ($document['status'] != 0) { ?>
+                                                            <?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
+                                                            <tr>
+                                                                <td class="">
+                                                                    <?php
+                                                                        echo $document['document_title'].( $document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="'.($requiredMessage).'"></i>' : '' ).'';
+                                                                        echo $document['status'] ? '' : '<b>(revoked)</b>';
+                                                                        echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
+                                                                        echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+                                                                        if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
+                                                                            echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
+                                                                        }
+                                                                    ?>
+                                                                    <div class="hidden-lg hidden-md hidden-sm">
+                                                                        <?=$pdBtn['pm'].$pdBtn['dm'];?>
                                                                         <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
-                                                                    </td>
-                                                                </tr>
-                                                            <?php } ?>
-                                                        <?php } ?>            
-                                                    <?php } ?>    
-                                                <?php } else { ?>
-                                                    <tr>
-                                                        <td colspan="7" class="col-lg-12 text-center"><b>No Handbook Document(s) Found!</b></td>
-                                                    </tr>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-center hidden-xs">
+                                                                    <?=$pdBtn['pw'].$pdBtn['dw'];?>
+                                                                    <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                </td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    <?php } ?>            
                                                 <?php } ?>
                                             </tbody>
+                                            <?php } else { ?>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="col-lg-12 text-center"><strong>No document(s) found!</strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            <?php } ?>
                                         </table>
                                     </div>
                                 </div>

@@ -190,7 +190,7 @@
                          <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                    Employee Handbook <small class="help_text"></small>
+                                    Display "Employee Handbook" documents <small class="help_text">Display the documents on EMS belonging to the "Employee  Handbook" category.</small>
                                     <input class="" type="checkbox" id="employee_handbook" name="employee_handbook" value="1" <?php echo ($portal['employee_handbook'] == 1 ? 'checked="checked" ' : '' ); ?> />
                                     <div class="control__indicator"></div>
                                 </label>

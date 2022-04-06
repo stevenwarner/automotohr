@@ -843,16 +843,17 @@ class Dashboard extends Public_Controller {
             ));
             //
             $data['employee_handbook_enable'] = $this->dashboard_model->get_employee_handbook_status($company_id);
-            $category_sid = $this->dashboard_model->check_company_employee_handbook_category($company_id);
             //
-            if ($category_sid != 0) {
-                $data['is_handbook_category_exist'] = true;
-                $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents($category_sid, $employer_id);
-            } else {
-                $data['is_handbook_category_exist'] = false;
+            if($data['employee_handbook_enable']){
+                //
+                $category_sid = $this->dashboard_model->check_company_employee_handbook_category($company_id);
+                //
+                $data['is_handbook_category_exist'] = $category_sid;
+                //
+                if ($category_sid != 0) {
+                    $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents($category_sid, $employer_id);
+                }
             }
-            //
-            $data['is_handbook_category_exist'] = $this->dashboard_model->check_company_employee_handbook_category($company_id);
             //
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');

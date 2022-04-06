@@ -3146,11 +3146,12 @@ class Dashboard_model extends CI_Model
 
     function get_employee_handbook_status($company_sid)
     {
-        $this->db->select('employee_handbook');
-        $this->db->where('user_sid', $company_sid);
-        $result = $this->db->get('portal_employer')->row_array();
         //
-        return $result['employee_handbook'];
+        return 
+        $this->db
+        ->where('user_sid', $company_sid)
+        ->where('employee_handbook', 1)
+        ->count_all_results('portal_employer');
     }
 
     function check_company_employee_handbook_category($company_sid, $key = "employeehandbook")
@@ -3158,6 +3159,7 @@ class Dashboard_model extends CI_Model
         //
         $this->db->select('sid');
         $this->db->where('company_sid', $company_sid);
+        $this->db->where('status', 1);
         $this->db->like('REPLACE(TRIM(LOWER(name)), " ", "") ', $key);
         
         $record_obj = $this->db->get('documents_category_management');
@@ -3178,7 +3180,7 @@ class Dashboard_model extends CI_Model
         $records_obj = $this->db->get('documents_2_category');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-
+        
         if (!empty($records_arr)) {
             $assign_handbook = array();
             //
@@ -3203,9 +3205,6 @@ class Dashboard_model extends CI_Model
             }
             //
             return $assign_handbook;
-            // echo "<pre>";
-            // print_r($assign_handbook);
-            // die();
         
         } else {
             return array();
