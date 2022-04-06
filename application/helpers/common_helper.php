@@ -14616,6 +14616,10 @@ if(!function_exists('GetEmployeeStatus')){
      */
     function GetEmployeeStatus($lastStatusText, $active){
         //
+        if(strtolower($lastStatusText) === 'rehired'){
+            return 'Active';
+        }
+        //
         return ucwords($lastStatusText ? $lastStatusText : ($active ? 'Active' : 'De-activated'));
     }
 }
