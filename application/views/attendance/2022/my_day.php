@@ -1,25 +1,23 @@
 <?php
 // Today's worked time
-$todayWorked = GetHMSFromMinutes($timeCounts['totalTodayWorked']);
-$todayWorkedPercentage = (($timeCounts['totalTodayWorked'] * 100) / (8 * 60));
+$todayWorked = GetHMSFromSeconds($timeCounts['totalTodayWorked']);
+$todayWorkedPercentage = (($timeCounts['totalTodayWorked'] * 100) / (8 * 60 * 60));
 
 // Today's break time
-$todayBreak = GetHMSFromMinutes($timeCounts['totalTodayBreaks']);
-$todayBreakPercentage = (($timeCounts['totalTodayBreaks'] * 100) / (8 * 60));
+$todayBreak = GetHMSFromSeconds($timeCounts['totalTodayBreaks']);
 
 // Today's over time
-$todayOvertime = GetHMSFromMinutes($timeCounts['totalTodayOvertime']);
-$todayOvertimePercentage = (($timeCounts['totalTodayOvertime'] * 100) / (8 * 60));
+$todayOvertime = GetHMSFromSeconds($timeCounts['totalTodayOvertime']);
 
 // Week's worked time including breaks
-$WeekWorkedWithBreaks = GetHMSFromMinutes($timeCounts['totalWeekWorked'] + $timeCounts['totalWeekBreaks']);
+$WeekWorkedWithBreaks = GetHMSFromSeconds($timeCounts['totalWeekWorked'] + $timeCounts['totalWeekBreaks']);
 
 // Week's worked time
-$WeekWorked = GetHMSFromMinutes($timeCounts['totalWeekWorked']);
-$WeekWorkedPercentage = (($timeCounts['totalWeekWorked'] * 100) / (8 * 60 * 7));
+$WeekWorked = GetHMSFromSeconds($timeCounts['totalWeekWorked']);
+$WeekWorkedPercentage = (($timeCounts['totalWeekWorked'] * 100) / (8 * 60 * 60 * 7));
 
 // Week's break time
-$WeekBreaks = GetHMSFromMinutes($timeCounts['totalWeekBreaks']);
+$WeekBreaks = GetHMSFromSeconds($timeCounts['totalWeekBreaks']);
 
 // Set markers
 $markers = [];
@@ -157,12 +155,6 @@ $markers = [];
                                     <span>:</span>
                                     <span><?= $todayBreak['minutes']; ?></span>
                                 </p>
-
-                                <div class="progress ml10 mr10">
-                                    <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="" aria-valuemin="" aria-valuemax="" style="width: <?= $todayBreakPercentage; ?>%;">
-                                        <span class="sr-only"> <?= $todayBreakPercentage; ?> % Complete</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -178,12 +170,6 @@ $markers = [];
                                     <span>:</span>
                                     <span><?= $todayOvertime['minutes']; ?></span>
                                 </p>
-
-                                <div class="progress ml10 mr10">
-                                    <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="" aria-valuemin="" aria-valuemax="" style="width: <?= $todayOvertimePercentage; ?>%;">
-                                        <span class="sr-only"><?= $todayOvertimePercentage; ?> % Complete</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -196,73 +182,76 @@ $markers = [];
                     </div>
                 </div>
                 <!--  -->
-                <div class="row">
-                    <div class="col-sm-12 col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <caption></caption>
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Time</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col" class="text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (!empty($todayList)) : ?>
-                                        <?php foreach ($todayList as $index => $list) : ?>
-                                            <?php
-                                            $distance = DistanceBTWLatLon(
-                                                isset($todayList[--$index]) ? $todayList[--$index]['latitude'] : 0,
-                                                isset($todayList[--$index]) ? $todayList[--$index]['longitude'] : 0,
-                                                $list['latitude'],
-                                                $list['longitude']
-                                            );
-                                            //
-                                            $markers[] = ['lat' => $list['latitude'], 'lng' => $list['longitude'], 'action' => GetCleanedAction($list['action'])];
-                                            ?>
-                                            <tr class="jsAttendanceMyList" data-lat="<?= $list['latitude']; ?>" data-lon="<?= $list['longitude']; ?>">
-                                                <td class="vam">
-                                                    <?= reset_datetime([
-                                                        'datetime' => $list['action_date_time'],
-                                                        'from_format' => DB_DATE_WITH_TIME,
-                                                        'format' => DATE,
-                                                        'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
-                                                        '_this' => $this
-                                                    ]); ?>
-                                                </td>
-                                                <td class="vam">
-                                                    <?= reset_datetime([
-                                                        'datetime' => $list['action_date_time'],
-                                                        'from_format' => DB_DATE_WITH_TIME,
-                                                        'format' => TIME,
-                                                        'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
-                                                        '_this' => $this
-                                                    ]); ?>
-                                                </td>
-                                                <td class="vam">
-                                                    <strong class="text-<?= GetActionColor($list['action']); ?>"><?= ucwords(str_replace('_', ' ', $list['action'])); ?></strong>
-                                                </td>
-                                                <td class="vam text-center">
-                                                    <button class="btn btn-orange jsAttendanceViewLocation"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;View Location</button>
-                                                </td>
+                <div class="csPageBox">
+                    <div class="csPageBody">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Time</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col" class="text-center">Actions</th>
                                             </tr>
-                                        <?php endforeach; ?>
-                                    <?php else : ?>
-                                        <tr>
-                                            <td colspan="4">
-                                                <p class="alert alert-info text-center">
-                                                    No records found.
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (!empty($todayList)) : ?>
+                                                <?php foreach ($todayList as $index => $list) : ?>
+                                                    <?php
+                                                    $distance = DistanceBTWLatLon(
+                                                        isset($todayList[--$index]) ? $todayList[--$index]['latitude'] : 0,
+                                                        isset($todayList[--$index]) ? $todayList[--$index]['longitude'] : 0,
+                                                        $list['latitude'],
+                                                        $list['longitude']
+                                                    );
+                                                    //
+                                                    $markers[] = ['lat' => $list['latitude'], 'lng' => $list['longitude'], 'action' => GetCleanedAction($list['action'])];
+                                                    ?>
+                                                    <tr class="jsAttendanceMyList" data-lat="<?= $list['latitude']; ?>" data-lon="<?= $list['longitude']; ?>">
+                                                        <td class="vam">
+                                                            <?= reset_datetime([
+                                                                'datetime' => $list['action_date_time'],
+                                                                'from_format' => DB_DATE_WITH_TIME,
+                                                                'format' => DATE,
+                                                                'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                                                                '_this' => $this
+                                                            ]); ?>
+                                                        </td>
+                                                        <td class="vam">
+                                                            <?= reset_datetime([
+                                                                'datetime' => $list['action_date_time'],
+                                                                'from_format' => DB_DATE_WITH_TIME,
+                                                                'format' => TIME,
+                                                                'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                                                                '_this' => $this
+                                                            ]); ?>
+                                                        </td>
+                                                        <td class="vam">
+                                                            <strong class="text-<?= GetActionColor($list['action']); ?>"><?= GetAttendanceActionText($list['action']); ?></strong>
+                                                        </td>
+                                                        <td class="vam text-center">
+                                                            <button class="btn btn-orange jsAttendanceViewLocation"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;View Location</button>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php else : ?>
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <p class="alert alert-info text-center">
+                                                            No records found.
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>

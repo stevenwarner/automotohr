@@ -11,6 +11,8 @@ $(function() {
         lat: 0,
         lon: 0
     };
+    //
+    var CountDown;
 
     /**
      * Handles clock in/out, break in/out
@@ -187,6 +189,8 @@ $(function() {
      */
     function MarkAttendance(props) {
         //
+        clearInterval(CountDown);
+        //
         $('.jsAttendanceLoader').show(0);
         // 
         XHR = $.post(
@@ -211,7 +215,7 @@ $(function() {
                     'Success',
                     resp.success,
                     function() {
-                        SetClock(props.action);
+                        LoadClock();
                     }
                 )
             })
@@ -222,6 +226,8 @@ $(function() {
      * Show clock
      */
     function LoadClock() {
+        //
+        $('.jsAttendanceLoader').show(0);
         // 
         XHR = $.get(
                 baseURI + 'attendance/get/clock'
@@ -230,11 +236,7 @@ $(function() {
                 //
                 SetClock(resp.success.last_status);
                 //
-
-                var today = new Date();
-                var initialDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), resp.success.hours, resp.success.minutes, resp.success.seconds);
-                //
-                SetClockCount(initialDate);
+                CountDownTimer(resp.success.hours, resp.success.minutes, resp.success.seconds, resp.success.last_status);
 
             })
             .fail(HandleError);
@@ -269,8 +271,6 @@ $(function() {
                 return alertify.alert('Success!', 'Settings have been updated.', CB);
             })
             .fail(HandleError);
-        //
-        console.log(obj)
     }
 
     /**
@@ -304,16 +304,49 @@ $(function() {
      * Shows the clocked time
      * @param {object} initialDate 
      */
-    function SetClockCount(initialDate) {
+    function CountDownTimer(h, m, s, lastStatus) {
         //
-        let hour = initialDate.getHours();
-        let minutes = initialDate.getMinutes();
-        let seconds = initialDate.getSeconds();
+        clearInterval(CountDown);
         //
-        $('.jsAttendanceClockHour').text(hour.toString().length == 1 ? '0' + hour : hour);
-        $('.jsAttendanceClockMinute').text(minutes.toString().length == 1 ? '0' + minutes : minutes);
-        $('.jsAttendanceClockSeconds').text(seconds.toString().length == 1 ? '0' + seconds : seconds);
-
+        if (lastStatus === 'clock_out' || lastStatus === '') {
+            //
+            $('.jsAttendanceClockHour').text(h.toString().length == 1 ? '0' + h : h);
+            $('.jsAttendanceClockMinute').text(m.toString().length == 1 ? '0' + m : m);
+            $('.jsAttendanceClockSeconds').text(s.toString().length == 1 ? '0' + s : s);
+            return;
+        }
+        //
+        var td = new Date();
+        //
+        var ld = new Date(td.getFullYear(), td.getMonth(), td.getDate(), h, m, s, 0);
+        //
+        var id = new Date(ld.getTime());
+        //
+        id.setSeconds(id.getSeconds() + 1);
+        //
+        var md = new Date(id.getFullYear(), id.getMonth(), id.getDate(), id.getHours(), id.getMinutes(), id.getSeconds(), 0);
+        //
+        var
+            hours,
+            minutes,
+            seconds;
+        //
+        CountDown = setInterval(function() {
+            //
+            id = new Date(md.getTime());
+            //
+            id.setSeconds(id.getSeconds() + 1);
+            //
+            md = new Date(td.getFullYear(), td.getMonth(), td.getDate(), id.getHours(), id.getMinutes(), id.getSeconds(), 0);
+            //
+            hours = md.getHours();
+            minutes = md.getMinutes();
+            seconds = md.getSeconds();
+            //
+            $('.jsAttendanceClockHour').text(hours.toString().length == 1 ? '0' + hours : hours);
+            $('.jsAttendanceClockMinute').text(minutes.toString().length == 1 ? '0' + minutes : minutes);
+            $('.jsAttendanceClockSeconds').text(seconds.toString().length == 1 ? '0' + seconds : seconds);
+        }, 1000);
     }
 
     /**
@@ -398,13 +431,11 @@ $(function() {
      * @returns 
      */
     function onFail() {
-        // return alertify.alert("Please, allow location API access to AutomotoHR.", function() {
         //
         locOBJ.lat = 0;
         locOBJ.lon = 0;
         //
         CBObj.cb(CBObj.params);
-        // });
     }
 
     /**
@@ -416,22 +447,16 @@ $(function() {
         //
         XHR = null;
         //
-        // return alertify.alert(
-        //     'Something went wrong while processing the request.',
-        //     function() {}
-        // ).setHeader(resp.statusText + ' - ' + resp.status);
         HideLoaders();
-        // //
-        // return alertify.alert(
-        //     'Something went wrong while processing the request.',
-        //     function() {}
-        // ).setHeader(resp.statusText + ' - ' + resp.status);
     }
 
     /**
      * Hides the loaders
      */
     function HideLoaders() {
+        //
+        //
+        $('.jsAttendanceLoader').hide(0);
         //
         if ($('[data-page="jsAttendanceSettingsLoader"]').length) {
             ml(false, 'jsAttendanceSettingsLoader');
@@ -443,36 +468,59 @@ $(function() {
     }
 
     /**
+     * Starts the current clock
+     */
+    function InitCurrentClock() {
+        //
+        $('.jsAttendanceCurrentClockDate').text(moment().format('MMM D YYYY, ddd'));
+        //
+        setInterval(function() {
+            //
+            var cd = new Date();
+            //
+            $('.jsAttendanceCurrentClockHour').text(cd.getHours().toString().length == 1 ? '0' + cd.getHours() : cd.getHours());
+            $('.jsAttendanceCurrentClockMinute').text(cd.getMinutes().toString().length == 1 ? '0' + cd.getMinutes() : cd.getMinutes());
+            $('.jsAttendanceCurrentClockSeconds').text(cd.getSeconds().toString().length == 1 ? '0' + cd.getSeconds() : cd.getSeconds());
+        }, 1000);
+    }
+
+    /**
      * Empty callback
      */
     function CB() {}
 
     //
-    $('.jsDatePicker').datepicker({
-        changeYear: true,
-        changeMonth: true,
-    });
+    if ($('.jsDatePicker').length) {
+        $('.jsDatePicker').datepicker({
+            changeYear: true,
+            changeMonth: true,
+        });
+    }
 
     //
-    $('.jsTimePicker').datetimepicker({
-        format: 'm/d/Y H:m',
-        minDate: 0,
-        maxDate: 0,
-        interval: 15
-    });
+    if ($('.jsTimePicker').length) {
+        $('.jsTimePicker').datetimepicker({
+            format: 'm/d/Y H:m',
+            minDate: 0,
+            maxDate: 0,
+            interval: 15
+        });
+    }
 
     //
-    $('.jsAttendanceClockBTN').hide(0);
-    $('.jsAttendanceBTN').addClass('dn');
+    if ($('#jsSpecificEmployees').length) {
+        $('#jsSpecificEmployees').select2({
+            closeOnSelect: false
+        });
+    }
     //
     CheckClock();
     //
     InitClock();
     //
-
-    $('#jsSpecificEmployees').select2({
-        closeOnSelect: false
-    });
-
     HideLoaders();
+    //
+    InitCurrentClock();
+    //
+    // navigator.permissions.query({ name: 'geolocation' }).then(console.log);
 });

@@ -107,10 +107,10 @@
                                                         <?php
                                                             $employee_info = $employees[$employee["employee_sid"]];
                                                             //
-                                                            $total = GetHMSFromMinutes($employee['total_minutes']);
-                                                            $todayWorked = GetHMSFromMinutes($employee['total_worked_minutes']);
-                                                            $todayBreak = GetHMSFromMinutes($employee['total_break_minutes']);
-                                                            $overtime = GetHMSFromMinutes($employee['total_overtime_minutes']);
+                                                            $total = GetHMSFromSeconds($employee['total_minutes']);
+                                                            $todayWorked = GetHMSFromSeconds($employee['total_worked_minutes']);
+                                                            $todayBreak = GetHMSFromSeconds($employee['total_break_minutes']);
+                                                            $overtime = GetHMSFromSeconds($employee['total_overtime_minutes']);
                                                         ?>
                                                         <td class="vam">
                                                             <div class="employee-profile-info">
