@@ -326,14 +326,20 @@
                 <?php }
                 } ?>
 
+
                 <?php if ($employee_handbook_enable) { ?>
                     <?php if ($is_handbook_category_exist) { ?>
-                        <div class="full-width margin-top-20">
-                            <div class="row">
-                                <div class="panel panel-default ems-documents">
-                                    <div class="panel-heading">
-                                        <strong>Employee Handbook Documents</strong>
-                                    </div>
+                        <!--  -->
+                        <div class="row">
+                            <br>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <button class="btn btn-orange btn-lg csF26" data-toggle="collapse" href="#jsEmployeeHandbookArea" role="button" aria-expanded="false" aria-controls="jsEmployeeHandbookArea">Employee Handbook & Policies</button>
+                            </div>
+                        </div>
+                        <div class="row collapse" id="jsEmployeeHandbookArea">
+                            <br />
+                            <div class="col-sm-12">
+                                <div class="panel panel-default">
                                     <div class="panel-body">
                                         <table class="table table-plane cs-w4-table">
                                         <?php if(!empty($handbook_documents)) { ?>
@@ -385,7 +391,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                     <?php } ?> 
                 <?php } ?> 
 
