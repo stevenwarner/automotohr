@@ -2350,7 +2350,13 @@ class PHPMailer
             if (!is_readable($path)) {
                 throw new phpmailerException($this->lang('file_open') . $path, self::STOP_CONTINUE);
             }
-            $magic_quotes = get_magic_quotes_runtime();
+            
+            if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+                $magic_quotes = get_magic_quotes_runtime();
+            }else{
+                $magic_quotes ='';
+            }
+
             if ($magic_quotes) {
                 if (version_compare(PHP_VERSION, '5.3.0', '<')) {
                     set_magic_quotes_runtime(false);

@@ -3144,7 +3144,7 @@ class Hr_documents_management extends Public_Controller {
             $data['last_name'] = $data['session']['employer_detail']['last_name'];
 
             $data['users_type'] = 'employee';
-            $data['this'] = $this;
+          //  $data['this'] = $this;
             $data['users_sid'] = $emp_sid;
             $data['jobs_listing'] = $jobs_listing;
 
@@ -3602,8 +3602,14 @@ class Hr_documents_management extends Public_Controller {
 
             ini_set('memory_limit', -1);
             // Set eeoc form status
-            $data['EeocFormStatus'] = $data['session']['portal_detail']['eeo_form_profile_status'];
-			
+            if(isset($data['session']['portal_detail']['eeo_form_profile_status'])){
+               $data['EeocFormStatus'] = $data['session']['portal_detail']['eeo_form_profile_status'];
+            }else{
+                $data['EeocFormStatus'] ='';
+            }
+
+
+
             $data['pp_flag'] = $pp_flag;
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');

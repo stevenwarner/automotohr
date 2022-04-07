@@ -115,6 +115,7 @@ class Check_domain extends CI_Model {
                 $this->db->where('user_sid', $company_sid);
                 $this->db->where('theme_name', 'theme-4');
                 $theme_data = $this->db->get()->result_array();
+                if(isset($theme_data[0])){
                 $theme                                                          = $theme_data[0];
                 $data['theme_sid']                                              = $theme['sid'];
                 $data['theme_name']                                             = $theme['theme_name'];
@@ -144,6 +145,37 @@ class Check_domain extends CI_Model {
                 $theme4_job_title_color                                         = $theme['theme4_job_title_color'];
                 $theme4_enable_job_fair_homepage                                = $theme['theme4_enable_job_fair_homepage'];
                 $theme4_enable_job_fair_careerpage                              = $theme['theme4_enable_job_fair_careerpage'];
+                }else{
+                $theme                                                          = '';
+                $data['theme_sid']                                              = '';
+                $data['theme_name']                                             = '';
+                $data['body_bgcolor']                                           = '';
+                $data['heading_color']                                          = '';
+                $data['enable_home_job_button']                                 = '';
+                $data['home_job_button_text']                                   = '';
+                $data['font_color']                                             = '';
+                $data['hf_bgcolor']                                             = '';
+                $data['title_color']                                            = '';
+                $data['f_bgcolor']                                              = '';
+                $data['theme_name']                                             = '';
+                $data['pictures']                                               = '';
+                $data['is_paid']                                                = '';
+                $font_customization                                             = '';
+                $google_fonts_sid                                               = '';
+                $web_fonts_sid                                                  = '';
+                $theme4_btn_bgcolor                                             = '';
+                $theme4_btn_txtcolor                                            = '';
+                $theme4_heading_color                                           = '';
+                $theme4_heading_color_span                                      = '';                               
+                $theme4_search_container_bgcolor                                = '';
+                $theme4_search_btn_bgcolor                                      = '';
+                $theme4_search_btn_color                                        = '';
+                $theme4_banner_text_l1_color                                    = '';                               
+                $theme4_banner_text_l2_color                                    = '';
+                $theme4_job_title_color                                         = '';
+                $theme4_enable_job_fair_homepage                                = '';
+                $theme4_enable_job_fair_careerpage                              = '';
+                }
                 $data['font_customization']                                     = $font_customization;
                 $data['google_fonts_sid']                                       = $google_fonts_sid;
                 $data['web_fonts_sid']                                          = $web_fonts_sid;

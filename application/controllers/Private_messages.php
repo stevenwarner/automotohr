@@ -700,7 +700,14 @@ class Private_messages extends Public_Controller
                                     . $secret_key . '</div>';
 
                                 if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
-                                    $file = explode(".", $_FILES['message_attachment']['name']);
+                                   
+                                   // print_r($_FILES['message_attachment']['name']);
+                                    $abc=$_FILES['message_attachment']['name'];
+                                   // die($abc);
+                                  foreach($_FILES['message_attachment']['name'] as $key){
+                                      // die($key);
+                                   // $file = explode(".", $_FILES['message_attachment']['name']);
+                                    $file = explode(".", $key);
                                     $file_name = str_replace(" ", "-", $file[0]);
                                     $messageFile = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
 
@@ -712,10 +719,13 @@ class Private_messages extends Public_Controller
                                     $aws = new AwsSdk();
                                     $aws->putToBucket($messageFile, $_FILES['message_attachment']['tmp_name'], AWS_S3_BUCKET_NAME);
                                     $message_data['attachment'] = $messageFile;
-                                    sendMailWithAttachment($from, $to_email, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
+                                }
+                            
+                                    sendMailWithAttachment($from, $to_email, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO , true);
                                 } else {
                                     sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
-                                }
+                               }
+
                                 $this->message_model->save_message($message_data);
                             }
                         }

@@ -3190,13 +3190,17 @@ class Hr_documents_management_model extends CI_Model {
                 }
             }
         }
-        if(count($completed_documents) > 0){
+      
+      if(isset($completed_documents)){
+       if(count($completed_documents) > 0){
             $cat_index = count($categories);
             $categories_documents_completed[$cat_index]['name'] = "Uncategorized Documents";
             $categories_documents_completed[$cat_index]['category_sid'] = 0;
             $cmpl_doc = $completed_documents;
             $categories_documents_completed[$cat_index]['documents'] = $completed_documents;
         }
+    }
+
         $noa_docs = [];
         $no_action_required_documents_copy = $no_action_required_documents;
         $categories_no_action_documents = array();
@@ -5365,7 +5369,11 @@ class Hr_documents_management_model extends CI_Model {
         //
         $b = $a->row_array();
         $a = $a->free_result();
-        $c[] = count($b);
+        $b ? $b : [];
+       
+        $c[] = $b ? count($b) : 0;
+            
+
         //
         if( 
             $c[0]

@@ -452,7 +452,7 @@ class SignatureV4 extends AbstractSignature implements EndpointSignatureInterfac
             ->set('X-Amz-Date', gmdate('Ymd\THis\Z', $this->getTimestamp()))
             ->set('X-Amz-SignedHeaders', 'Host')
             ->set('X-Amz-Expires', $this->convertExpires($expires));
-    }
+     }
 
     private function moveHeadersToQuery(RequestInterface $request)
     {
