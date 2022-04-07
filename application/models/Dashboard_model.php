@@ -3160,7 +3160,13 @@ class Dashboard_model extends CI_Model
         $this->db->select('sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('status', 1);
+        $this->db->group_start();
         $this->db->like('REPLACE(TRIM(LOWER(name)), " ", "") ', $key);
+        $this->db->or_like('REPLACE(TRIM(LOWER(name)), " ", "") ', 'employeehandbookandpolicies');
+        $this->db->or_like('REPLACE(TRIM(LOWER(name)), " ", "") ', 'employeehandbook&policies');
+        $this->db->or_like('REPLACE(TRIM(LOWER(name)), " ", "") ', 'employeepoliciesandhandbooks');
+        $this->db->or_like('REPLACE(TRIM(LOWER(name)), " ", "") ', 'employeepolicies&handbooks');
+        $this->db->group_end();
         
         $record_obj = $this->db->get('documents_category_management');
         $record_arr = $record_obj->row_array();
