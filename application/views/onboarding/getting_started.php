@@ -328,7 +328,6 @@
 
 
                 <?php if ($employee_handbook_enable) { ?>
-                    <?php if ($is_handbook_category_exist) { ?>
                         <!--  -->
                         <div class="row">
                             <br>
@@ -342,7 +341,7 @@
                                 <div class="panel panel-default">
                                     <div class="panel-body">
                                         <table class="table table-plane cs-w4-table">
-                                        <?php if(!empty($handbook_documents)) { ?>
+                                            <?php if($is_handbook_category_exist && !empty($handbook_documents)) { ?>
                                             <thead>
                                                 <tr>
                                                     <th class="col-lg-8 hidden-xs">Document Name</th>
@@ -393,7 +392,6 @@
                             </div>
                         </div>
                     <?php } ?> 
-                <?php } ?> 
 
                 <div class="full-width margin-top-20">
                     <div class="row">
