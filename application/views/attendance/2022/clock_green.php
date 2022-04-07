@@ -6,29 +6,14 @@
                     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; z-index: 1; background: rgba(255,255,255,.9);" class="jsAttendanceLoader">
                         <i class="fa fa-circle-o-notch fa-spin text-center csF40 csFC3" style="margin-top: 90px;" aria-hidden="true"></i>
                     </div>
-                    <p style="margin: 0;" class=" csF12 csFC4">
-                        <strong>Current Date</strong>
-                    </p>
-                    <p style="margin: 0; margin-bottom: 5px;" class=" csF16 csFC3 csB7 jsAttendanceCurrentClockDate"></p>
-                    <p style="margin: 0;" class=" csF12 csFC4">
-                        <strong>Current Time</strong>
-                    </p>
-                    <h2 class="jsAttendanceCurrentClock p0 m0  csF16" style=" margin-bottom: 5px;">
-                        <span class="jsAttendanceCurrentClockHour csFC3 csF16 csB7">00</span>
-                        <span class="csFC3 csF16 csB7">:</span>
-                        <span class="jsAttendanceCurrentClockMinute csFC3 csF16 csB7">00</span>
-                        <span class="csFC3 csF16 csB7">:</span>
-                        <span class="jsAttendanceCurrentClockSeconds csFC3 csF16 csB7">00</span>
-                    </h2>
-                    <p style="margin: 0;" class=" csF12 csFC4">
-                        <strong>Clocked Time</strong>
-                    </p>
-                    <h2 class="jsAttendanceClock p0 m0  csF16" style=" margin-bottom: 5px;">
-                        <span class="jsAttendanceClockHour csFC3 csF16 csB7">00</span>
-                        <span class="csFC3 csF16 csB7">:</span>
-                        <span class="jsAttendanceClockMinute csFC3 csF16 csB7">00</span>
-                        <span class="csFC3 csF16 csB7">:</span>
-                        <span class="jsAttendanceClockSeconds csFC3 csF16 csB7">00</span>
+                    <figure><i class="fa fa-calendar" aria-hidden="true"></i></figure>
+                    <h4 class="jsAttendanceCurrentClockDateTime csFC1 csFC20"></h4>
+                    <h2 class="jsAttendanceClock p0 m0 mb10">
+                        <span class="jsAttendanceClockHour csFC1 csF26">00</span>
+                        <span class="csFC1 csF26">:</span>
+                        <span class="jsAttendanceClockMinute csFC1 csF26">00</span>
+                        <span class="csFC1 csF26">:</span>
+                        <span class="jsAttendanceClockSeconds csFC1 csF26">00</span>
                     </h2>
                     <div class="jsAttendanceBTNs">
                         <button class="btn btn-success jsAttendanceBTN dn" data-type="clock_in">

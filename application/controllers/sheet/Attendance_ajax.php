@@ -381,7 +381,7 @@ class Attendance_ajax extends Public_Controller {
             //
             unset($this->resp['errors']);
             //
-            $this->resp['success'] = 'Hurray! You are successfully "'.(GetAttendanceActionText($action)).'".';
+            $this->resp['success'] = 'Hurray! you are successfully "'.(GetAttendanceActionText($action)).'".';
         }
         //
         if($return){

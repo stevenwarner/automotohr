@@ -103,45 +103,28 @@
             <div class="csSidebarApproverSection">
                 <h4 class="csF16 csB7">Attendance</h4>
                 <div class="p10">
-                    <dl>
-                        <dt class="text-center">Current Date</dt>
-                        <dd class="text-center" class="jsAttendanceCurrentClockDate"></dd>
-                        <br>
-                        <dt class="text-center">Current Time</dt>
-                        <dd class="text-center">
-                            <span class="jsAttendanceCurrentClockHour csFC3 csF22">00</span>
-                            <span class="csFC3 csF22">:</span>
-                            <span class="jsAttendanceCurrentClockMinute csFC3 csF22">00</span>
-                            <span class="csFC3 csF22">:</span>
-                            <span class="jsAttendanceCurrentClockSeconds csFC3 csF22">00</span>
-                        </dd>
-                        <br>
-                        <dt class="text-center">Clocked Time</dt>
-                        <dd class="text-center">
-                            <span class="jsAttendanceClockHour csFC3 csF22">00</span>
-                            <span class="csFC3 csF22">:</span>
-                            <span class="jsAttendanceClockMinute csFC3 csF22">00</span>
-                            <span class="csFC3 csF22">:</span>
-                            <span class="jsAttendanceClockSeconds csFC3 csF22">00</span>
-                        </dd>
-                        <br>
-                        <dd>
-                            <div class="jsAttendanceBTNs p0 m0 text-center">
-                                <button class="btn btn-xs btn-success jsAttendanceBTN dn" data-type="clock_in">
-                                    <i class="fa fa-play" aria-hidden="true"></i>&nbsp;Clock In
-                                </button>
-                                <button class="btn btn-xs btn-warning jsAttendanceBTN dn" data-type="break_in">
-                                    <i class="fa fa-pause" aria-hidden="true"></i>&nbsp;Break Start
-                                </button>
-                                <button class="btn btn-xs btn-black jsAttendanceBTN dn" data-type="break_out">
-                                    <i class="fa fa-play" aria-hidden="true"></i>&nbsp;Break End
-                                </button>
-                                <button class="btn btn-xs btn-danger jsAttendanceBTN dn" data-type="clock_out">
-                                    <i class="fa fa-stop" aria-hidden="true"></i>&nbsp;Clock Out
-                                </button>
-                            </div>
-                        </dd>
-                    </dl>
+                    <h3 class="jsAttendanceCurrentClockDateTime text-center csFC1 csF20"></h3>
+                    <h2 class="jsAttendanceClock text-center p0 m0 mb10">
+                        <span class="jsAttendanceClockHour csFC1 csF26">00</span>
+                        <span class="csFC1 csF26">:</span>
+                        <span class="jsAttendanceClockMinute csFC1 csF26">00</span>
+                        <span class="csFC1 csF26">:</span>
+                        <span class="jsAttendanceClockSeconds csFC1 csF26">00</span>
+                    </h2>
+                    <div class="jsAttendanceBTNs p0 m0 text-center">
+                        <button class="btn btn-xs btn-success jsAttendanceBTN dn" data-type="clock_in">
+                            <i class="fa fa-play" aria-hidden="true"></i>&nbsp;Clock In
+                        </button>
+                        <button class="btn btn-xs btn-warning jsAttendanceBTN dn" data-type="break_in">
+                            <i class="fa fa-pause" aria-hidden="true"></i>&nbsp;Break Start
+                        </button>
+                        <button class="btn btn-xs btn-black jsAttendanceBTN dn" data-type="break_out">
+                            <i class="fa fa-play" aria-hidden="true"></i>&nbsp;Break End
+                        </button>
+                        <button class="btn btn-xs btn-danger jsAttendanceBTN dn" data-type="clock_out">
+                            <i class="fa fa-stop" aria-hidden="true"></i>&nbsp;Clock Out
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

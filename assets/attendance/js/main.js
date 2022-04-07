@@ -472,15 +472,10 @@ $(function() {
      */
     function InitCurrentClock() {
         //
-        $('.jsAttendanceCurrentClockDate').text(moment().format('MMM D YYYY, ddd'));
         //
         setInterval(function() {
             //
-            var cd = new Date();
-            //
-            $('.jsAttendanceCurrentClockHour').text(cd.getHours().toString().length == 1 ? '0' + cd.getHours() : cd.getHours());
-            $('.jsAttendanceCurrentClockMinute').text(cd.getMinutes().toString().length == 1 ? '0' + cd.getMinutes() : cd.getMinutes());
-            $('.jsAttendanceCurrentClockSeconds').text(cd.getSeconds().toString().length == 1 ? '0' + cd.getSeconds() : cd.getSeconds());
+            $('.jsAttendanceCurrentClockDateTime').text(moment().format('MMM D YYYY, ddd HH:mm:ss'));
         }, 1000);
     }
 

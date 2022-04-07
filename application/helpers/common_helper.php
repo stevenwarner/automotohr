@@ -15143,6 +15143,12 @@ if(!function_exists('GetAttendanceActionText')){
             case "clock_out":
                 $status = 'Clocked Out';
                 break;
+            case "break_in":
+                $status = 'Break Started';
+                break;
+            case "break_out":
+                $status = 'Break Ended';
+                break;
             default:
                 $status = GetCleanedAction($action);
         endswitch;
