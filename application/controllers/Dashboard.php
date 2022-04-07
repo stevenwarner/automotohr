@@ -493,6 +493,20 @@ class Dashboard extends Public_Controller {
             $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail'], $companyApplicantsForVerification);
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
+
+            //
+            $data['employee_handbook_enable'] = $this->dashboard_model->get_employee_handbook_status($company_id);
+            //
+            if($data['employee_handbook_enable']){
+                //
+                $category_sid = $this->dashboard_model->check_company_employee_handbook_category($company_id);
+                //
+                $data['is_handbook_category_exist'] = $category_sid;
+                //
+                if ($category_sid != 0) {
+                    $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents($category_sid, $employer_id);
+                }
+            }
             
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
