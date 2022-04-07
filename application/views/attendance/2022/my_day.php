@@ -207,7 +207,9 @@ $markers = [];
                                                         $list['longitude']
                                                     );
                                                     //
-                                                    $markers[] = ['lat' => $list['latitude'], 'lng' => $list['longitude'], 'action' => GetCleanedAction($list['action'])];
+                                                    if(!empty($list['latitude']) || !empty($list['longitude'])){
+                                                        $markers[] = ['lat' => $list['latitude'], 'lng' => $list['longitude'], 'action' => GetCleanedAction($list['action'])];
+                                                    }
                                                     ?>
                                                     <tr class="jsAttendanceMyList" data-lat="<?= $list['latitude']; ?>" data-lon="<?= $list['longitude']; ?>">
                                                         <td class="vam">
@@ -232,7 +234,11 @@ $markers = [];
                                                             <strong class="text-<?= GetActionColor($list['action']); ?>"><?= GetAttendanceActionText($list['action']); ?></strong>
                                                         </td>
                                                         <td class="vam text-center">
-                                                            <button class="btn btn-orange jsAttendanceViewLocation"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;View Location</button>
+                                                            <?php if(!empty($list['latitude']) || !empty($list['longitude'])){ ?>
+                                                                <button class="btn btn-orange jsAttendanceViewLocation"><i class="fa fa-map" aria-hidden="true"></i>&nbsp;View Location</button>
+                                                            <?php } else { ?>
+                                                                <p>-</p>
+                                                            <?php } ?>
                                                         </td>
                                                     </tr>
                                                 <?php endforeach; ?>
@@ -268,8 +274,8 @@ $markers = [];
             $('#map').css('height', '440px')
             //
             const myLatLng = {
-                lat: <?= $lastLocation[0]; ?>,
-                lng: <?= $lastLocation[1]; ?>
+                lat: <?= isset($lastLocation[0]) ? $lastLocation[0] : 0; ?>,
+                lng: <?= isset($lastLocation[1]) ? $lastLocation[1] : 0; ?>
             };
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 11,
