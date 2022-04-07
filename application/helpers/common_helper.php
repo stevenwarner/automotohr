@@ -14797,31 +14797,37 @@ if (!function_exists('onboardingNotificationPendingText')) {
     }
 }
 
-if(!function_exists('GetTimeDifferenceInMinutes')){
-    function GetTimeDifferenceInMinutes($d1, $d2){
+if(!function_exists('GetTimeDifferenceInSeconds')){
+    function GetTimeDifferenceInSeconds($d1, $d2){
         //
         $d1 = new DateTime($d1);
         $d2 = new DateTime($d2);
         //
         $diff = $d1->diff($d2);
-        return $diff->format('%h') * 60 + $diff->format('%i');
+        //
+        $daysInSecs = $diff->format('%r%a') * 24 * 60 * 60;
+        $hoursInSecs = $diff->h * 60 * 60;
+        $minsInSecs = $diff->i * 60;
+        //
+        return $daysInSecs + $hoursInSecs + $minsInSecs + $diff->s;
     }
 }
 
-if(!function_exists('GetHMSFromMinutes')){
-    function GetHMSFromMinutes($totalMinutes){
-        //
-        $hours = intval($totalMinutes/60);
-        //
-        $minutes = $totalMinutes - ($hours * 60);
-        // Pluraize
+if(!function_exists('GetHMSFromSeconds')){
+    function GetHMSFromSeconds($totalSeconds){
+
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds - $hours * 3600) / 60);
+        $seconds = floor($totalSeconds - ($hours * 3600) - ($minutes * 60));
+        // Pluralize
         $hours = (strlen($hours) === 1 ? '0' : '').$hours;
         $minutes = (strlen($minutes) === 1 ? '0' : '').$minutes;
+        $seconds = (strlen($seconds) === 1 ? '0' : '').$seconds;
         //
         return [
             'hours' => $hours,
             'minutes' => $minutes,
-            'seconds' => 0
+            'seconds' => $seconds
         ];
     }
 }
@@ -14847,7 +14853,7 @@ if(!function_exists('CalculateTime')){
         $shiftTime_info = get_user_shiftTime($employee_sid);
         $shift_hours = $shiftTime_info["user_shift_hours"];
         $shift_minute = $shiftTime_info["user_shift_minutes"]; 
-        $total_shift_minutes = $shift_minute + ($shift_hours * 60);
+        $total_shift_minutes = ($shift_minute + ($shift_hours * 60)) * 60;
         //
         $ra['total_minutes'] = GetTotalTime($lists, 'clock_in', 'clock_out');
         $ra['total_break_minutes'] = GetTotalTime($lists, 'break_in', 'break_out');
@@ -14857,7 +14863,6 @@ if(!function_exists('CalculateTime')){
         if ($ra['total_worked_minutes'] > $total_shift_minutes) {
             $ra['total_overtime_minutes'] = $ra['total_worked_minutes'] - $total_shift_minutes;
         }
-        // _e($ra,true,true);
         //
         return $ra;
     }
@@ -14892,7 +14897,7 @@ if(!function_exists('GetTotalTime')){
             //
             if($lastAction == $t1 && $list['action'] == $t2){
                 //
-                $total += GetTimeDifferenceInMinutes($lastDateTime, $list['action_date_time']);
+                $total += GetTimeDifferenceInSeconds($lastDateTime, $list['action_date_time']);
                 //
                 $lastAction = $t2;
                 $lastDateTime = '';
@@ -14902,7 +14907,7 @@ if(!function_exists('GetTotalTime')){
         if($lastAction == $t1){
             //
             $date = formatDateToDB(
-                $lists[0]['action_date_time'],
+                $lastDateTime,
                 DB_DATE_WITH_TIME,
                 DB_DATE
             );
@@ -14911,9 +14916,8 @@ if(!function_exists('GetTotalTime')){
             //
             if($date !== date('Y-m-d')){
                 $datetime = date('Y-m-d').' 23:59:59';
-                return $total += $total > 540 ? 0 : (540 - $total);
             }
-            $total += GetTimeDifferenceInMinutes($lastDateTime, $datetime);
+            $total += GetTimeDifferenceInSeconds($lastDateTime, $datetime);
         }
         //
         return $total;
@@ -15120,5 +15124,35 @@ if(!function_exists('GetParams')){
         }
         //
         return rtrim($r,'&');
+    }
+}
+
+if(!function_exists('GetAttendanceActionText')){
+    /**
+     * Get the text for attendace
+     * 
+     * @param string $action
+     * @return
+     */
+    function GetAttendanceActionText($action){
+        //
+        switch($action):
+            case "clock_in":
+                $status = 'Clocked In';
+                break;
+            case "clock_out":
+                $status = 'Clocked Out';
+                break;
+            case "break_in":
+                $status = 'Break Started';
+                break;
+            case "break_out":
+                $status = 'Break Ended';
+                break;
+            default:
+                $status = GetCleanedAction($action);
+        endswitch;
+
+        return $status;
     }
 }

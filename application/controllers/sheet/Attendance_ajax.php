@@ -113,7 +113,7 @@ class Attendance_ajax extends Public_Controller {
         //
         $ra = array_merge(
             $ra,
-            GetHMSFromMinutes($ct['total_worked_minutes'])
+            GetHMSFromSeconds($ct['total_minutes'])
         );
         //
         unset($this->resp['errors']);
@@ -128,6 +128,9 @@ class Attendance_ajax extends Public_Controller {
     public function MarkAttendance(){
         //
         $post = $this->input->post(NULL, TRUE);
+        //
+        $post['lat'] = isset($post['lat']) ? $post['lat'] : NULL;
+        $post['lon'] = isset($post['lon']) ? $post['lon'] : NULL;
         //
         $date = $this->date;
         $datetime = $this->datetime;
@@ -378,7 +381,7 @@ class Attendance_ajax extends Public_Controller {
             //
             unset($this->resp['errors']);
             //
-            $this->resp['success'] = 'Hurray! you are successfully "'.($this->GetCleanedAction($action)).'".';
+            $this->resp['success'] = 'Hurray! you are successfully "'.(GetAttendanceActionText($action)).'".';
         }
         //
         if($return){

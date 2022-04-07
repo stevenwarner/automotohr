@@ -7,14 +7,14 @@
                         <i class="fa fa-circle-o-notch fa-spin text-center csF40 csFC3" style="margin-top: 90px;" aria-hidden="true"></i>
                     </div>
                     <figure><i class="fa fa-calendar" aria-hidden="true"></i></figure>
-                    <h2 class="jsAttendanceClock">
-                        <span class="jsAttendanceClockHour csFC1">00</span>
-                        <span class="csFC1">:</span>
-                        <span class="jsAttendanceClockMinute csFC1">00</span>
+                    <h4 class="jsAttendanceCurrentClockDateTime csFC1 csFC20"></h4>
+                    <h2 class="jsAttendanceClock p0 m0 mb10">
+                        <span class="jsAttendanceClockHour csFC1 csF26">00</span>
+                        <span class="csFC1 csF26">:</span>
+                        <span class="jsAttendanceClockMinute csFC1 csF26">00</span>
+                        <span class="csFC1 csF26">:</span>
+                        <span class="jsAttendanceClockSeconds csFC1 csF26">00</span>
                     </h2>
-                    <p class="">
-                        <span>HH:MM</span>
-                    </p>
                     <div class="jsAttendanceBTNs">
                         <button class="btn btn-success jsAttendanceBTN dn" data-type="clock_in">
                             <i class="fa fa-play" aria-hidden="true"></i>&nbsp;Clock In

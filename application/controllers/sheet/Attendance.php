@@ -69,7 +69,7 @@ class Attendance extends Public_Controller {
             date('Y-m-d', strtotime('sunday this week'))
         );
         //
-        $this->args['timeCounts']['totalWeekWorked'] = $wlists['total_worked_minutes'] - $wlists['total_break_minutes'];
+        $this->args['timeCounts']['totalWeekWorked'] = $wlists['total_worked_minutes'];
         $this->args['timeCounts']['totalWeekBreaks'] = $wlists['total_break_minutes'];
         // Get today's attendance
         $lists = $this->atm->GetAttendanceList(
@@ -82,7 +82,7 @@ class Attendance extends Public_Controller {
             //
             $ct = CalculateTime($lists, $this->employeeId);
             //
-            $this->args['timeCounts']['totalTodayWorked'] = $ct['total_worked_minutes'] - $ct['total_break_minutes'];
+            $this->args['timeCounts']['totalTodayWorked'] = $ct['total_worked_minutes'];
             $this->args['timeCounts']['totalTodayBreaks'] = $ct['total_break_minutes'];
             $this->args['timeCounts']['totalTodayOvertime'] = $ct['total_overtime_minutes'];
             $this->args['lastLocation'] = [$lists[0]['latitude'], $lists[0]['longitude']];
