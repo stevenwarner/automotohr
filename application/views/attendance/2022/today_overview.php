@@ -121,7 +121,7 @@
                                                             </div>
                                                         </td>
                                                         <td class="vam text-center">
-                                                            <strong><?php echo GetCleanedAction($employee["last_action"]); ?></strong>
+                                                            <strong><?php echo GetAttendanceActionText($employee["last_action"]); ?></strong>
                                                         </td>
                                                         <td class="vam text-center">
                                                             <strong class="text-success"><?=$todayWorked['hours'];?>:<?=$todayWorked['minutes'];?></strong>
