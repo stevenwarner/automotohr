@@ -176,7 +176,7 @@ class Attendance extends Public_Controller {
             $fromDate = reset_datetime([
                 'datetime' => $fromDate.' 00:00:00',
                 'from_format' => 'm/d/Y H:i:s',
-                'format' => 'Y-m-d H:i:s',
+                'format' => DB_DATE,
                 'from_timezone' => $this->args['employee']['timezone'],
                 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
@@ -184,7 +184,7 @@ class Attendance extends Public_Controller {
             $toDate = reset_datetime([
                 'datetime' => $toDate.' 23:59:59',
                 'from_format' => 'm/d/Y H:i:s',
-                'format' => 'Y-m-d H:i:s',
+                'format' => DB_DATE,
                 'from_timezone' => $this->args['employee']['timezone'],
                 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
@@ -399,7 +399,7 @@ class Attendance extends Public_Controller {
             $fromDate = reset_datetime([
                 'datetime' => $fromDate.' 00:00:00',
                 'from_format' => 'm/d/Y H:i:s',
-                'format' => 'Y-m-d H:i:s',
+                'format' => DB_DATE,
                 'from_timezone' => $this->args['employee']['timezone'],
                 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
@@ -407,7 +407,7 @@ class Attendance extends Public_Controller {
             $toDate = reset_datetime([
                 'datetime' => $toDate.' 23:59:59',
                 'from_format' => 'm/d/Y H:i:s',
-                'format' => 'Y-m-d H:i:s',
+                'format' => DB_DATE,
                 'from_timezone' => $this->args['employee']['timezone'],
                 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
@@ -487,10 +487,10 @@ class Attendance extends Public_Controller {
             foreach($lists as $key => $employee):
                 $employee_info = $employees[$key];
                 //
-                $total = GetHMSFromMinutes($employee['total_minutes']);
-                $todayWorked = GetHMSFromMinutes($employee['total_worked_minutes']);
-                $todayBreak = GetHMSFromMinutes($employee['total_break_minutes']);
-                $overtime = GetHMSFromMinutes($employee['total_overtime_minutes']);
+                $total = GetHMSFromSeconds($employee['total_minutes']);
+                $todayWorked = GetHMSFromSeconds($employee['total_worked_minutes']);
+                $todayBreak = GetHMSFromSeconds($employee['total_break_minutes']);
+                $overtime = GetHMSFromSeconds($employee['total_overtime_minutes']);
                
                 $t = [];
                 $t[] = $employee_info["name"].$employee_info["role"];
@@ -504,10 +504,10 @@ class Attendance extends Public_Controller {
                 if(!empty($employee['lists'])):
                     foreach($employee['lists'] as $k1 => $v1):
                         //
-                        $total2 = GetHMSFromMinutes($v1['total_minutes']);
-                        $todayWorked2 = GetHMSFromMinutes($v1['total_worked_minutes']);
-                        $todayBreak2 = GetHMSFromMinutes($v1['total_break_minutes']);
-                        $overtime2 = GetHMSFromMinutes($v1['total_overtime_minutes']);   
+                        $total2 = GetHMSFromSeconds($v1['total_minutes']);
+                        $todayWorked2 = GetHMSFromSeconds($v1['total_worked_minutes']);
+                        $todayBreak2 = GetHMSFromSeconds($v1['total_break_minutes']);
+                        $overtime2 = GetHMSFromSeconds($v1['total_overtime_minutes']);   
                         
                         $t = [];
                         $t[] = reset_datetime([
