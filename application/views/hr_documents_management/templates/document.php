@@ -366,7 +366,8 @@
                                                 </div>
                                                 <br />
                                                 <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
-
+                                                <br />
+                                                <?php $this->load->view('hr_documents_management/partials/assigner'); ?>
                                                 <!-- Sign In -->
                                                 <div class="row hidden">
                                                     <div class="col-xs-12">

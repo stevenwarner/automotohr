@@ -1257,6 +1257,16 @@ class Hr_documents_management_model extends CI_Model {
         return $this->db->insert_id();
     }
 
+    function insert_documents_assignment_flow($data_to_insert) {
+        $this->db->insert('portal_document_assign_flow', $data_to_insert);
+        return $this->db->insert_id();
+    }
+
+    function insert_assigner_employee($data_to_insert) {
+        $this->db->insert('portal_document_assign_flow_employees', $data_to_insert);
+        return $this->db->insert_id();
+    }
+
     function insert_documents_assignment_record_history($data_to_insert) {
         $this->db->insert('documents_assigned_history', $data_to_insert);
     }
@@ -6710,4 +6720,92 @@ class Hr_documents_management_model extends CI_Model {
 
         return $return_data;
     }
+
+    public function getMyAssignApprovalInfo ($employee_sid) {
+        //
+        $this->db->select('sid, portal_document_assign_sid, assign_on');
+        $this->db->where('assigner_sid', $employee_sid);
+        $this->db->where('status', 1);
+        $this->db->where('assigner_turn', 1);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function getAssignApprovalDocumentInfo ($document_sid) {
+        //
+        $this->db->select('document_title, document_type, user_sid, user_type, assigner_note');
+        $this->db->where('sid', $document_sid);
+        $this->db->where('assign_status', 1);
+        $record_obj = $this->db->get('portal_document_assign_flow');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    function saveAssignerAction ($sid, $data_to_update) {
+        $this->db->where('sid', $sid);
+        $this->db->update('portal_document_assign_flow_employees', $data_to_update);
+    }
+
+    function updateApproversInfo ($document_sid, $data_to_update) {
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->update('portal_document_assign_flow_employees', $data_to_update);
+    }
+
+    function getnextApproversInfo ($document_sid) {
+        //
+        $this->db->select('sid');
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('status', 1);
+        $this->db->where('assigner_turn', 0);
+        $this->db->where('assign_on', NULL);
+        $this->db->limit(1);
+        $record_obj = $this->db->get('portal_document_assign_flow_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = "0";
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr['sid'];
+        }
+
+        return $return_data;
+    }
+
+    function updateApprovalDocument ($document_sid, $data_to_update) {
+        $this->db->where('sid', $document_sid);
+        $this->db->update('portal_document_assign_flow', $data_to_update);
+    }
+
+    public function getApprovedDocumentInfo ($document_sid) {
+        //
+        $this->db->select('*');
+        $this->db->where('sid', $document_sid);
+        $this->db->where('assign_status', 1);
+        $record_obj = $this->db->get('portal_document_assign_flow');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
 }
