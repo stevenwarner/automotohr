@@ -14858,24 +14858,43 @@ if(!function_exists('CalculateTime')){
         $shift_minute = $shiftTime_info["user_shift_minutes"]; 
         $total_shift_minutes = ($shift_minute + ($shift_hours * 60)) * 60;
         //
-        $ra['total_minutes'] = GetTotalTime($lists, 'clock_in', 'clock_out');
-        $ra['total_break_minutes'] = GetTotalTime($lists, 'break_in', 'break_out');
+        $tz = !$shiftTime_info['timezone'] ? STORE_DEFAULT_TIMEZONE_ABBR : $shiftTime_info['timezone'];
         //
-        $cd = date('Y-m-d', strtotime('now'));
-        $cdt = date('Y-m-d H:i:s', strtotime('now'));
+        $ra['total_minutes'] = GetTotalTime($lists, 'clock_in', 'clock_out', $tz);
+        $ra['total_break_minutes'] = GetTotalTime($lists, 'break_in', 'break_out', $tz);
         //
-        $ra[$lastAction == 'clock_in' ? 'total_minutes' : 'total_break_minutes'] += GetTimeDifferenceInSeconds(
-            strpos($lastActionDT, $cd) !== FALSE 
-            ? $cdt
-            : formatDateToDB($lastActionDT, DB_DATE_WITH_TIME, DB_DATE).' 23:59:59' , 
-            $lastActionDT
-        );
+        $lastActionDT = reset_timezone([
+            'datetime' => $lastActionDT,
+            'from_format' => DB_DATE_WITH_TIME,
+            'format' => DB_DATE_WITH_TIME,
+            'from_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
+            'new_zone' => $tz
+        ])['date_time_string'];
+        //
+        $cdt = reset_timezone([
+            'datetime' => date('Y-m-d H:i:s', strtotime('now')),
+            'from_format' => DB_DATE_WITH_TIME,
+            'format' => DB_DATE_WITH_TIME,
+            'from_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
+            'new_zone' => $tz 
+        ])['date_time_string'];
+        //
+        $cd = formatDateToDB($cdt, DB_DATE_WITH_TIME, DB_DATE);
+        //
+        if($lastAction == 'clock_in' || $lastAction == 'break_in'){
+            $ra[$lastAction == 'clock_in' ? 'total_minutes' : 'total_break_minutes'] += GetTimeDifferenceInSeconds(
+                strpos($lastActionDT, $cd) !== FALSE
+                ? $cdt
+                : formatDateToDB($lastActionDT, DB_DATE_WITH_TIME, DB_DATE).' 23:59:59',
+                $lastActionDT
+            );
+        }
         //
         if($lastAction === 'break_in'){
             $ra['total_minutes'] += $ra['total_break_minutes'];
         }
         // Total worked hours
-        $ra['total_worked_minutes'] = $ra['total_minutes'] >= $ra['total_break_minutes'] ? $ra['total_minutes'] - $ra['total_break_minutes'] : $ra['total_break_minutes'] - $ra['total_minutes'];
+        $ra['total_worked_minutes'] = $ra['total_minutes'] - $ra['total_break_minutes'];
         //
         if($ra['total_worked_minutes'] < 0){
             $ra['total_worked_minutes'] = 0;
@@ -14894,6 +14913,8 @@ if(!function_exists('GetTotalTime')){
      * Calculate time for DB
      * 
      * @param array $list
+     * @param string $t1
+     * @param string $t2
      * @return array
      */
     function GetTotalTime($lists, $t1, $t2){
@@ -15087,7 +15108,7 @@ if (!function_exists('get_user_shiftTime')) {
     function get_user_shiftTime($employee_sid)
     {
         $CI = &get_instance();
-        $CI->db->select('user_shift_minutes, user_shift_hours');
+        $CI->db->select('user_shift_minutes, user_shift_hours, timezone');
         $CI->db->where('sid', $employee_sid);
         //
         $records_obj = $CI->db->get("users");
