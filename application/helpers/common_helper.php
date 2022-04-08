@@ -14875,7 +14875,7 @@ if(!function_exists('CalculateTime')){
             $ra['total_minutes'] += $ra['total_break_minutes'];
         }
         // Total worked hours
-        $ra['total_worked_minutes'] = $ra['total_minutes'] - $ra['total_break_minutes'];
+        $ra['total_worked_minutes'] = $ra['total_minutes'] >= $ra['total_break_minutes'] ? $ra['total_minutes'] - $ra['total_break_minutes'] : $ra['total_break_minutes'] - $ra['total_minutes'];
         //
         if($ra['total_worked_minutes'] < 0){
             $ra['total_worked_minutes'] = 0;
