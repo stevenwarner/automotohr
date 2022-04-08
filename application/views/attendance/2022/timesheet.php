@@ -33,7 +33,7 @@
                                 <div class="col-sm-12 col-md-12">
                                     <div class="p10">
                                         <label class="label csF16 csB7 pl0">Employee</label>
-                                        <select name="id" class="form-control">
+                                        <select id="jsSpecificEmployees" name="id" class="form-control">
                                             <?php if(!empty($employees)): ?>
                                                 <?php foreach($employees as $emp): ?>
                                                     <option <?=$emp['sid'] === $filterEmployeeId ? 'selected' : '';?> value="<?=$emp['sid'];?>"><?=$emp['name'];?><?=$emp['role'];?></option>
