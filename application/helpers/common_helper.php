@@ -14849,6 +14849,9 @@ if(!function_exists('CalculateTime')){
             'total_overtime_minutes' => 0
         ];
         //
+        $lastAction = $lists[0]['action'];
+        $lastActionDT = $lists[0]['action_date_time'];
+        //
         $lists = array_reverse($lists);
         $shiftTime_info = get_user_shiftTime($employee_sid);
         $shift_hours = $shiftTime_info["user_shift_hours"];
@@ -14857,6 +14860,20 @@ if(!function_exists('CalculateTime')){
         //
         $ra['total_minutes'] = GetTotalTime($lists, 'clock_in', 'clock_out');
         $ra['total_break_minutes'] = GetTotalTime($lists, 'break_in', 'break_out');
+        //
+        $cd = date('Y-m-d', strtotime('now'));
+        $cdt = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $ra[$lastAction == 'clock_in' ? 'total_minutes' : 'total_break_minutes'] += GetTimeDifferenceInSeconds(
+            strpos($lastActionDT, $cd) !== FALSE 
+            ? $cdt
+            : formatDateToDB($lastActionDT, DB_DATE_WITH_TIME, DB_DATE).' 23:59:59' , 
+            $lastActionDT
+        );
+        //
+        if($lastAction === 'break_in'){
+            $ra['total_minutes'] += $ra['total_break_minutes'];
+        }
         // Total worked hours
         $ra['total_worked_minutes'] = $ra['total_minutes'] - $ra['total_break_minutes'];
         //
@@ -14903,23 +14920,6 @@ if(!function_exists('GetTotalTime')){
                 $lastDateTime = '';
             }
         }
-        //
-        if($lastAction == $t1){
-            //
-            $date = formatDateToDB(
-                $lastDateTime,
-                DB_DATE_WITH_TIME,
-                DB_DATE
-            );
-            //
-            $datetime = date('Y-m-d H:i:s', strtotime('now'));
-            //
-            if($date !== date('Y-m-d')){
-                $datetime = date('Y-m-d').' 23:59:59';
-            }
-            $total += GetTimeDifferenceInSeconds($lastDateTime, $datetime);
-        }
-        //
         return $total;
     }
 }
