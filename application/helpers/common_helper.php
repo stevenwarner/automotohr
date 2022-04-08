@@ -14878,7 +14878,7 @@ if(!function_exists('CalculateTime')){
         $ra['total_worked_minutes'] = $ra['total_minutes'] - $ra['total_break_minutes'];
         //
         if($ra['total_worked_minutes'] < 0){
-            $$ra['total_worked_minutes'] = 0;
+            $ra['total_worked_minutes'] = 0;
         }
         //
         if ($ra['total_worked_minutes'] > $total_shift_minutes) {
