@@ -147,10 +147,10 @@
                                                 <?php foreach($lists['lists'] as $key => $list): ?>
                                                     <?php 
                                                         //
-                                                        $total = GetHMSFromMinutes($list['total_minutes']);
-                                                        $todayWorked = GetHMSFromMinutes($list['total_worked_minutes']);
-                                                        $todayBreak = GetHMSFromMinutes($list['total_break_minutes']);
-                                                        $overtime = GetHMSFromMinutes($list['total_overtime_minutes']);
+                                                        $total = GetHMSFromSeconds($list['total_minutes']);
+                                                        $todayWorked = GetHMSFromSeconds($list['total_worked_minutes']);
+                                                        $todayBreak = GetHMSFromSeconds($list['total_break_minutes']);
+                                                        $overtime = GetHMSFromSeconds($list['total_overtime_minutes']);
                                                         //
                                                         $sum_minutes = $sum_minutes + $list['total_minutes'];
                                                         $sum_worked_minutes = $sum_worked_minutes + $list['total_worked_minutes'];
@@ -188,10 +188,10 @@
                                                     </tr>
                                                 <?php endforeach; ?>
                                                 <?php 
-                                                    $sumTotal = GetHMSFromMinutes($sum_minutes);
-                                                    $sumTodayWorked = GetHMSFromMinutes($sum_worked_minutes);
-                                                    $sumTodayBreak = GetHMSFromMinutes($sum_break_minutes);
-                                                    $sumTodayOvertime = GetHMSFromMinutes($sum_overtime_minutes);
+                                                    $sumTotal = GetHMSFromSeconds($sum_minutes);
+                                                    $sumTodayWorked = GetHMSFromSeconds($sum_worked_minutes);
+                                                    $sumTodayBreak = GetHMSFromSeconds($sum_break_minutes);
+                                                    $sumTodayOvertime = GetHMSFromSeconds($sum_overtime_minutes);
                                                 ?>
                                                 <tr>
                                                     <td class="vam">

@@ -102,10 +102,10 @@
                                                     <?php
                                                         $employee_info = $employees[$key];
                                                         //
-                                                        $total = GetHMSFromMinutes($employee['total_minutes']);
-                                                        $todayWorked = GetHMSFromMinutes($employee['total_worked_minutes']);
-                                                        $todayBreak = GetHMSFromMinutes($employee['total_break_minutes']);
-                                                        $overtime = GetHMSFromMinutes($employee['total_overtime_minutes']);
+                                                        $total = GetHMSFromSeconds($employee['total_minutes']);
+                                                        $todayWorked = GetHMSFromSeconds($employee['total_worked_minutes']);
+                                                        $todayBreak = GetHMSFromSeconds($employee['total_break_minutes']);
+                                                        $overtime = GetHMSFromSeconds($employee['total_overtime_minutes']);
                                                     ?>
                                                     <tr class="jsAttendanceMyList">
                                                         <td class="vam">
@@ -135,10 +135,10 @@
                                                         <?php foreach($employee['lists'] as $k1 => $v1): ?>
                                                             <?php 
                                                                 //
-                                                                $total2 = GetHMSFromMinutes($v1['total_minutes']);
-                                                                $todayWorked2 = GetHMSFromMinutes($v1['total_worked_minutes']);
-                                                                $todayBreak2 = GetHMSFromMinutes($v1['total_break_minutes']);
-                                                                $overtime2 = GetHMSFromMinutes($v1['total_overtime_minutes']);    
+                                                                $total2 = GetHMSFromSeconds($v1['total_minutes']);
+                                                                $todayWorked2 = GetHMSFromSeconds($v1['total_worked_minutes']);
+                                                                $todayBreak2 = GetHMSFromSeconds($v1['total_break_minutes']);
+                                                                $overtime2 = GetHMSFromSeconds($v1['total_overtime_minutes']);    
                                                             ?>
                                                             <tr>
                                                                 <td class="vam text-right">
