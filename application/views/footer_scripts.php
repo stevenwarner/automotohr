@@ -23,5 +23,5 @@
     <script src="<?= base_url(_m("assets/payroll/js/employee_onboard", 'js', '1.0.1')); ?>"></script>
 <?php endif; ?>
 <?php if (checkIfAppIsEnabled('attendance') && $this->session->userdata('logged_in')) : ?>
-    <script src="<?= base_url(_m("assets/attendance/js/main", 'js', '1.0.0')); ?>"></script>
+    <script src="<?= base_url(_m("assets/attendance/js/main", 'js', '1.0.1')); ?>"></script>
 <?php endif; ?>
