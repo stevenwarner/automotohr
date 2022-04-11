@@ -60,11 +60,13 @@ class Attendance extends Public_Controller {
         $this->args['timeCounts']['totalTodayBreaks'] = 0;
         $this->args['timeCounts']['totalTodayOvertime'] = 0;
         //
+        $this->args['clockEmployeeId'] = $this->employeeId;
+        //
         $this->args['lastLocation'] = [0, 0];
         //
         $wlists = $this->atm->GetAttendanceWeekList(
             $this->companyId,
-            $this->employeeId,
+            $this->args['clockEmployeeId'],
             date('Y-m-d', strtotime('monday this week')),
             date('Y-m-d', strtotime('sunday this week'))
         );
@@ -74,13 +76,13 @@ class Attendance extends Public_Controller {
         // Get today's attendance
         $lists = $this->atm->GetAttendanceList(
             $this->companyId,
-            $this->employeeId,
+            $this->args['clockEmployeeId'],
             $this->date
         );
         //
         if(!empty($lists)){
             //
-            $ct = CalculateTime($lists, $this->employeeId);
+            $ct = CalculateTime($lists, $this->args['clockEmployeeId']);
             //
             $this->args['timeCounts']['totalTodayWorked'] = $ct['total_worked_minutes'];
             $this->args['timeCounts']['totalTodayBreaks'] = $ct['total_break_minutes'];
@@ -249,6 +251,24 @@ class Attendance extends Public_Controller {
         $this->args['employees'] = $this->sem->GetCompanyEmployees($this->companyId, true);
         $this->args['currentEmployee'] = $this->args['employees'][$record['employee_sid']];
         //
+        if($this->input->get('export', true)){
+            //
+            $this->exportReport(
+                ['ce' => $this->args['currentEmployee'], 'lists' => $this->args['lists']],
+                'manage',
+                $this->args['currentEmployee']['name'].' Report for '.(
+                    reset_datetime([
+                        'datetime' => $this->args['lists'][0]['action_date_time'],
+                        'format' => DB_DATE,
+                        'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                        'new_zone' =>  $this->args['currentEmployee']['timezone'],
+                        '_this' => $this
+                    ])
+                ).'.csv',
+                []
+            );
+        }
+        //
         $this->load
         ->view($this->header, $this->args)
         ->view('attendance/2022/manage_timesheet')
@@ -384,7 +404,7 @@ class Attendance extends Public_Controller {
         $employees = $this->sem->GetCompanyEmployees($this->companyId, true);
         // Filter
         //
-        $selectedEmployeeIds = $this->input->get("id", true) ? $this->input->get("id", true) : [];
+        $selectedEmployeeIds = $this->input->get("id", true) ? array_filter($this->input->get("id", true)) : [];
         // Set filter
         $fromDate = $this->input->get('from', true) ? $this->input->get('from', true) : '';
         $toDate = $this->input->get('to', true) ? $this->input->get('to', true) : '';
@@ -424,7 +444,8 @@ class Attendance extends Public_Controller {
             $fromDate, 
             $toDate,
             $this->args['selected_employee_ids'],
-            'employee_sid'
+            'employee_sid',
+            false
         );
         //
         $overtimeEmployeeIds = array_column($overtimeEmployees, 'employee_sid');
@@ -459,6 +480,97 @@ class Attendance extends Public_Controller {
         ->view($this->footer);
     }
 
+    /**
+     * Today's overview
+     */
+    public function Report () {
+        //
+        $this->args['session'] = $this->ses;
+        $this->args['employee'] = $this->ses['employer_detail'];
+        $this->args['companyId'] = $this->companyId;
+        $this->args['security_details'] = db_get_access_level_details($this->ses['employer_detail']['sid']);
+        $this->args['title'] = 'Report | AutomotoHR';
+        // 
+        $this->load->model('single/Employee_model', 'sem');
+        // Get employee's list
+        $employees = $this->sem->GetCompanyEmployees($this->companyId, true);
+        // Filter
+        //
+        $selectedEmployeeIds = $this->input->get("id", true) ? array_filter($this->input->get("id", true)) : [];
+        // Set filter
+        $fromDate = $this->input->get('from', true) ? $this->input->get('from', true) : '';
+        $toDate = $this->input->get('to', true) ? $this->input->get('to', true) : '';
+        //
+        if(empty($fromDate) || empty($toDate)){
+            $SysToDate = $SysFromDate = $fromDate = $toDate = date('Y-m-d', strtotime('now'));
+        } else{
+            //
+            $SysFromDate = formatDateToDB($fromDate);
+            $SysToDate = formatDateToDB($toDate);
+            //
+            $fromDate = reset_datetime([
+                'datetime' => $fromDate.' 00:00:00',
+                'from_format' => 'm/d/Y H:i:s',
+                'format' => DB_DATE,
+                'from_timezone' => $this->args['employee']['timezone'],
+                'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                '_this' => $this
+            ]);
+            $toDate = reset_datetime([
+                'datetime' => $toDate.' 23:59:59',
+                'from_format' => 'm/d/Y H:i:s',
+                'format' => DB_DATE,
+                'from_timezone' => $this->args['employee']['timezone'],
+                'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                '_this' => $this
+            ]);
+        }
+        //
+        $this->args['from_date'] = $SysFromDate;
+        $this->args['to_date'] = $SysToDate;
+        $this->args['employees'] = $employees;
+        $this->args['selected_employee_ids'] = $selectedEmployeeIds;
+        //
+        $clockedInEmployees = $this->atm->GetEmployeesByFilter(
+            $this->companyId, 
+            $fromDate, 
+            $toDate,
+            $this->args['selected_employee_ids'],
+            'employee_sid'
+        );
+        //
+        $clockedInEmployeesIds = array_column($clockedInEmployees, 'employee_sid');
+        //
+        $fl = [];
+        //
+        foreach($clockedInEmployeesIds as $eid){
+            //
+            $fl[$eid] = $this->atm->GetAttendanceWeekList(
+                $this->companyId,
+                $eid,
+                $fromDate,
+                $toDate
+            );
+        }
+        //
+        if($this->input->get('export', true)){
+            //
+            $this->exportReport(
+                $fl,
+                'report',
+                'Report '.$SysFromDate.' to '.$SysToDate.'.csv',
+                $employees
+            );
+        }
+        //
+        $this->args['lists'] = $fl;
+        //
+        $this->load
+        ->view($this->header, $this->args)
+        ->view('attendance/2022/report')
+        ->view($this->footer);
+    }
+
 
     /**
      * 
@@ -471,65 +583,159 @@ class Attendance extends Public_Controller {
         // Set the encoding
         header("Content-Transfer-Encoding: UTF-8");
         //
-        $headers = [
-            'employee',
-            'Worked Time (HH:MM)',
-            'Break Time (HH:MM)',
-            'Total Time (HH:MM)',
-            'Over Time (HH:MM)'
-        ];
+        $headers = [];
+        //
+        if($type === 'report' || $type === 'overtime'){
+            //
+            $headers = [
+                'employee',
+                'Worked Time (HH:MM)',
+                'Break Time (HH:MM)',
+                'Total Time (HH:MM)',
+                'Over Time (HH:MM)'
+            ];
+        }
         //
         $handler = fopen("php://output", 'w');
         //
-        fputcsv($handler, $headers);
+        if(!empty($headers)){
+            //
+            fputcsv($handler, $headers);
+        }
+        // For report and overtime
+        if($type === 'report' || $type === 'overtime'){
+            //
+            if(!empty($lists)):
+                foreach($lists as $key => $employee):
+                    $employee_info = $employees[$key];
+                    //
+                    $total = GetHMSFromSeconds($employee['total_minutes']);
+                    $todayWorked = GetHMSFromSeconds($employee['total_worked_minutes']);
+                    $todayBreak = GetHMSFromSeconds($employee['total_break_minutes']);
+                    $overtime = GetHMSFromSeconds($employee['total_overtime_minutes']);
+                
+                    $t = [];
+                    $t[] = $employee_info["name"].$employee_info["role"];
+                    $t[] = $todayWorked['hours'].":".$todayWorked['minutes'];
+                    $t[] = $todayBreak['hours'].":".$todayBreak['minutes'];
+                    $t[] = $total['hours'].":".$total['minutes'];
+                    $t[] = $overtime['hours'].":".$overtime['minutes'];
+                    //       
+                    fputcsv($handler, $t);
+                
+                    if(!empty($employee['lists'])):
+                        foreach($employee['lists'] as $k1 => $v1):
+                            //
+                            $total2 = GetHMSFromSeconds($v1['total_minutes']);
+                            $todayWorked2 = GetHMSFromSeconds($v1['total_worked_minutes']);
+                            $todayBreak2 = GetHMSFromSeconds($v1['total_break_minutes']);
+                            $overtime2 = GetHMSFromSeconds($v1['total_overtime_minutes']);   
+                            
+                            $t = [];
+                            $t[] = reset_datetime([
+                                'datetime' => $k1.' 00:00:00',
+                                'from_format' => 'Y-m-d H:i:s',
+                                'format' => DATE,
+                                'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                                'new_zone' => $this->args['employees'][$key]['timezone'],
+                                '_this' => $this
+                            ]);
+                            $t[] = $todayWorked2['hours'].":".$todayWorked2['minutes'];
+                            $t[] = $todayBreak2['hours'].":".$todayBreak2['minutes'];
+                            $t[] = $total2['hours'].":".$total2['minutes'];
+                            $t[] = $overtime2['hours'].":".$overtime2['minutes'];
+                            //       
+                            fputcsv($handler, $t);
+                        endforeach;
+                    endif;
+                endforeach;
+            endif;
+        }
+        // For manage
+        if($type === 'manage'){
+            //
+            $headers = ['Employee details'];
+            fputcsv($handler, $headers);
+            //
+            $headers = [''];
+            fputcsv($handler, $headers);
+            //
+            $headers = ['Name', $lists['ce']['name']];
+            fputcsv($handler, $headers);
+            //
+            $headers = ['Role', $lists['ce']['role']];
+            fputcsv($handler, $headers);
+            //
+            $headers = ['Timezone', $lists['ce']['timezone']];
+            fputcsv($handler, $headers);
+            //
+            $headers = ['Workable Shift Time', GetEmployeeShiftTime($lists['ce']['shift_hours'], $lists['ce']['shift_minutes'], 't')];
+            fputcsv($handler, $headers);
+            //
+            $headers = ['Employee Since', formatDateToDB($lists['ce']['joined_on'], DB_DATE, DATE)];
+            fputcsv($handler, $headers);
+            //
+            $headers = [''];
+            fputcsv($handler, $headers);
+            //
+            fputcsv($handler, [
+                'Report Date', date(DATE, strtotime('now'))
+            ]);
+            // Calculate time
+            $ct = CalculateTime($lists['lists'], $lists['ce']['sid']);
+            // Seconds to HM
+            $totalTime = GetHMSFromSeconds($ct['total_minutes']);
+            $todayWorked = GetHMSFromSeconds($ct['total_worked_minutes']);
+            $todayBreak = GetHMSFromSeconds($ct['total_break_minutes']);
+            $overtime = GetHMSFromSeconds($ct['total_overtime_minutes']);
+            //
+            fputcsv($handler, [
+                'Clocked Time', $todayWorked['hours'].' H & '.$todayWorked['minutes'].' M'
+            ]);
+            //
+            fputcsv($handler, [
+                'Break Time', $todayBreak['hours'].' H & '.$todayBreak['minutes'].' M'
+            ]);
+            //
+            fputcsv($handler, [
+                'Clocked Time (Including breaks)', $totalTime['hours'].' H & '.$totalTime['minutes'].' M'
+            ]);
+            //
+            fputcsv($handler, [
+                'Overtime', $overtime['hours'].' H & '.$overtime['minutes'].' M'
+            ]);
+            //
+            $headers = [''];
+            fputcsv($handler, $headers);
+            //
+            fputcsv($handler, [
+                'Status', 'Action Date', 'Action Time', 'Latitude', 'Longitude'
+            ]);
+            //
+            foreach($lists['lists'] as $list){
+                fputcsv($handler, [
+                    GetCleanedAction($list['action']),
+                    reset_datetime([
+                        'datetime' => $list['action_date_time'],
+                        'format' => DATE,
+                        'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                        'new_zone' => $lists['ca']['timezone'],
+                        '_this' => $this
+                    ]),
+                    reset_datetime([
+                        'datetime' => $list['action_date_time'],
+                        'format' => MD,
+                        'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                        'new_zone' => $lists['ca']['timezone'],
+                        '_this' => $this
+                    ]),
+                    $list['latitude'],
+                    $list['longitude']
+                ]);
+            }
+        }
+
         //
-        if(!empty($lists)):
-            foreach($lists as $key => $employee):
-                $employee_info = $employees[$key];
-                //
-                $total = GetHMSFromSeconds($employee['total_minutes']);
-                $todayWorked = GetHMSFromSeconds($employee['total_worked_minutes']);
-                $todayBreak = GetHMSFromSeconds($employee['total_break_minutes']);
-                $overtime = GetHMSFromSeconds($employee['total_overtime_minutes']);
-               
-                $t = [];
-                $t[] = $employee_info["name"].$employee_info["role"];
-                $t[] = $todayWorked['hours'].":".$todayWorked['minutes'];
-                $t[] = $todayBreak['hours'].":".$todayBreak['minutes'];
-                $t[] = $total['hours'].":".$total['minutes'];
-                $t[] = $overtime['hours'].":".$overtime['minutes'];
-                //       
-                fputcsv($handler, $t);
-               
-                if(!empty($employee['lists'])):
-                    foreach($employee['lists'] as $k1 => $v1):
-                        //
-                        $total2 = GetHMSFromSeconds($v1['total_minutes']);
-                        $todayWorked2 = GetHMSFromSeconds($v1['total_worked_minutes']);
-                        $todayBreak2 = GetHMSFromSeconds($v1['total_break_minutes']);
-                        $overtime2 = GetHMSFromSeconds($v1['total_overtime_minutes']);   
-                        
-                        $t = [];
-                        $t[] = reset_datetime([
-                            'datetime' => $k1.' 00:00:00',
-                            'from_format' => 'Y-m-d H:i:s',
-                            'format' => DATE,
-                            'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
-                            'new_zone' => $this->args['employees'][$key]['timezone'],
-                            '_this' => $this
-                        ]);
-                        $t[] = $todayWorked2['hours'].":".$todayWorked2['minutes'];
-                        $t[] = $todayBreak2['hours'].":".$todayBreak2['minutes'];
-                        $t[] = $total2['hours'].":".$total2['minutes'];
-                        $t[] = $overtime2['hours'].":".$overtime2['minutes'];
-                        //       
-                        fputcsv($handler, $t);
-                    endforeach;
-                endif;
-            endforeach;
-        endif;
-        //
-        
         fclose($handler);
         exit(0);
     }

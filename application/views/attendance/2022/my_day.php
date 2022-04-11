@@ -125,9 +125,9 @@ $markers = [];
                             </div>
                             <div class="csPageBoxBody">
                                 <p class="csF40 csB7" style="margin-top: 30px;">
-                                    <span><?= $todayWorked['hours']; ?></span>
+                                    <span class="jsAttendanceClockHour"><?= $todayWorked['hours']; ?></span>
                                     <span>:</span>
-                                    <span><?= $todayWorked['minutes']; ?></span>
+                                    <span class="jsAttendanceClockMinute"><?= $todayWorked['minutes']; ?></span>
                                     <span>/</span>
                                     <span>08</span>
                                     <span>:</span>

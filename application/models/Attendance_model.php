@@ -1175,8 +1175,61 @@ class Attendance_model extends CI_Model
      * @param string $toDate
      * @param array  $employeeIds
      * @param string|array $columns
+     * @param boolean $count
      */
-    public function GetEmployeeWithOverTime($companyId, $fromDate, $toDate, $employeeIds = [], $columns = '*'){
+    public function GetEmployeeWithOverTime($companyId, $fromDate, $toDate, $employeeIds = [], $columns = '*', $count = true){
+        //
+        $q = $this->db
+        ->select(is_array($columns) ? implode(',', $columns) : $columns)
+        ->where([
+            'company_sid' => $companyId,
+            'action_date >=' => $fromDate,
+            'action_date <=' => $toDate
+        ]);
+        //
+        if($employeeIds){
+            $q = $q->where_in('employee_sid', $employeeIds);
+        }
+        //
+        $result = $q->get('portal_attendance');
+        //
+        $data = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        if(empty($data)){
+            return [];
+        }
+        //
+        $ote = $count ? 0 : [];
+        //
+        foreach($data as $d){
+            //
+            $list = $this->GetAttendanceWeekList($companyId, $d['employee_sid'], $fromDate, $toDate);
+            //
+            if($list['total_overtime_minutes'] > 0){
+                //
+                if($count){
+                    $ote++;
+                } else{
+                    $ote[] = $d;
+                }
+            }
+        }
+        //
+        return $ote;
+    }
+
+    /**
+     * Get employees
+     * 
+     * @param number $companyId
+     * @param string $fromDate
+     * @param string $toDate
+     * @param array  $employeeIds
+     * @param string|array $columns
+     */
+    public function GetEmployeesByFilter($companyId, $fromDate, $toDate, $employeeIds = [], $columns = '*'){
         //
         $q = $this->db
         ->select(is_array($columns) ? implode(',', $columns) : $columns)

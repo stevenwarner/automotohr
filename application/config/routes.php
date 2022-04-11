@@ -1528,6 +1528,7 @@ $route['attendance/manage/(:num)']['get'] = "sheet/Attendance/ManageTimeSheet/$1
 $route['attendance/settings']['get'] = "sheet/Attendance/Settings";
 $route['attendance/today_overview']['get'] = "sheet/Attendance/TodayOverview";
 $route['attendance/overtime']['get'] = "sheet/Attendance/Overtime";
+$route['attendance/report']['get'] = "sheet/Attendance/Report";
 // AJAX Calls
 $route['attendance/get/clock']['get'] = "sheet/Attendance_ajax/LoadClock";
 $route['attendance/add_slot/(:num)']['get'] = "sheet/Attendance_ajax/GetAddSlot/$1";

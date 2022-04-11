@@ -94,7 +94,7 @@ class Notifications extends Public_Controller {
                 date('Y-m-d', strtotime('now')), 
                 date('Y-m-d', strtotime('now')),
                 [],
-                'sid'
+                'sid, employee_sid'
             );
             // //
             if($overtimeEmployees){

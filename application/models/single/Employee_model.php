@@ -67,6 +67,7 @@ class Employee_model extends CI_Model{
             $columns[] = "{$this->U}.access_level";
             $columns[] = "{$this->U}.access_level_plus";
             $columns[] = "{$this->U}.user_shift_hours";
+            $columns[] = "{$this->U}.user_shift_minutes";
             $columns[] = "{$this->U}.is_executive_admin";
             $columns[] = "{$this->U}.job_title";
             $columns[] = "{$this->U}.pay_plan_flag";
@@ -111,6 +112,7 @@ class Employee_model extends CI_Model{
                     'ssn' => $record['ssn'],
                     'dob' => $record['dob'],
                     'shift_hours' => $record['user_shift_hours'],
+                    'shift_minutes' => $record['user_shift_minutes'],
                     'on_payroll' => $record['on_payroll'],
                     'onboard_completed' => $record['onboard_completed'],
                 ];
@@ -282,6 +284,7 @@ class Employee_model extends CI_Model{
             $columns[] = "company.timezone as company_timezone";
             $columns[] = "{$this->U}.dob";
             $columns[] = "{$this->U}.user_shift_hours";
+            $columns[] = "{$this->U}.user_shift_minutes";
             $columns[] = "{$this->U}.profile_picture";
             $columns[] = "{$this->U}.access_level";
             $columns[] = "{$this->U}.access_level_plus";
@@ -327,6 +330,7 @@ class Employee_model extends CI_Model{
                 'ssn' => $record['ssn'],
                 'dob' => $record['dob'],
                 'shift_hours' => $record['user_shift_hours'],
+                'shift_minutes' => $record['user_shift_minutes'],
                 'on_payroll' => $record['on_payroll'],
                 'onboard_completed' => $record['onboard_completed'],
             ];

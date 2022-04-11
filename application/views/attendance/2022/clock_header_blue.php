@@ -2,7 +2,10 @@
     <div style="position: absolute; right: 0; top: 0">
         <!--  -->
         <p class="csF26 csW text-center">
-        <span class="jsAttendanceClockHour">00</span><span>:</span><span class="jsAttendanceClockMinute">00</span><span>:</span><span class="jsAttendanceClockSeconds">00</span>
+            <h4 class="jsAttendanceCurrentClockDateTime csW csFC20"></h4>
+        </p>
+        <p class="csF26 csW text-center">
+            <span class="jsAttendanceClockHour">00</span><span>:</span><span class="jsAttendanceClockMinute">00</span><span>:</span><span class="jsAttendanceClockSeconds">00</span>
         </p>
         <ul style="list-style: none;">
             <li class="jsAttendanceClockHeaderBTNs" style="display: inline-block;">

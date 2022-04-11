@@ -15169,15 +15169,37 @@ if(!function_exists('GetAttendanceActionText')){
                 $status = 'Clocked Out';
                 break;
             case "break_in":
-                $status = 'Break Started';
+                $status = 'Started Break';
                 break;
             case "break_out":
-                $status = 'Break Ended';
+                $status = 'Ended Break';
                 break;
             default:
                 $status = GetCleanedAction($action);
         endswitch;
 
         return $status;
+    }
+}
+
+if(!function_exists('GetEmployeeShiftTime')){
+    /**
+     * Get employee shift time in minutes/seconds
+     * 
+     * @param number $h
+     * @param number $m
+     * @param string $r (m|s|t)
+     * 
+     * @return
+     */
+    function GetEmployeeShiftTime($h, $m, $r = 's'){
+        //
+        if($r === 't'){
+            return $h.' H'.($m ? ' & '.$m.' M': '');
+        }
+        //
+        $nv = ($m + ($h * 60));
+        //
+        return $r === 'm' ? $nv : $nv * 60;
     }
 }

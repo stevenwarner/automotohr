@@ -1,5 +1,13 @@
 <?php
     $last_time = "00:00";
+    $markers = [];
+    // Calculate time
+    $ct = CalculateTime($lists, $currentEmployee['sid']);
+    // Seconds to HM
+    $totalTime = GetHMSFromSeconds($ct['total_minutes']);
+    $todayWorked = GetHMSFromSeconds($ct['total_worked_minutes']);
+    $todayBreak = GetHMSFromSeconds($ct['total_break_minutes']);
+    $overtime = GetHMSFromSeconds($ct['total_overtime_minutes']);
 ?>
 <div class="csPageWrap" style="background-color: #f1f1f1;">
     <!-- Nav bar -->
@@ -16,10 +24,15 @@
             <div class="col-md-9">
                 <!-- Heading -->
                 <div class="row">
-                    <div class="col-xs-12 col-md-12">
+                    <div class="col-xs-12 col-md-8">
                         <h1 class="m0 p0 csB7">
                             Manage Time Sheet
                         </h1>
+                    </div>
+                    <div class="col-xs-12c col-md-4 text-right">
+                        <a href="<?=current_url().GetParams('export=1');?>" class="btn btn-orange">
+                            <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Export In CSV
+                        </a>
                     </div>
                 </div>
                 <!--  -->
@@ -60,6 +73,14 @@
                                                 <td><?=$currentEmployee['timezone'];?></td>
                                             </tr>
                                             <tr>
+                                                <td><strong>Workable Shift Time</strong></td>
+                                                <td>
+                                                    <span class="jsAttendanceModifyRow">
+                                                        <?=GetEmployeeShiftTime($currentEmployee['shift_hours'], $currentEmployee['shift_minutes'], 't');?>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
                                                 <td><strong>Employee Since</strong></td>
                                                 <td><?=formatDateToDB($currentEmployee['joined_on'], DB_DATE, DATE);?></td>
                                             </tr>
@@ -69,6 +90,78 @@
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <img src="<?=$currentEmployee['image'];?>" class="img-responsive" style="width: auto !important; margin: auto;" alt=""/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 text-center">
+                        <div class="csPageBox csRadius5">
+                            <div class="csPageBoxHeader">
+                                <h4 class="csF16 csB7">Clocked Time</h4>
+                            </div>
+                            <div class="csPageBoxBody">
+                                <p class="csF40 csB7" style="margin-top: 30px;">
+                                    <span class="text-success"><?=$todayWorked['hours'];?></span>
+                                    <span class="text-success">:</span>
+                                    <span class="text-success"><?=$todayWorked['minutes'];?></span>
+                                <p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 text-center">
+                        <div class="csPageBox csRadius5">
+                            <div class="csPageBoxHeader">
+                                <h4 class="csF16 csB7">Break Time</h4>
+                            </div>
+                            <div class="csPageBoxBody">
+                                <p class="csF40 csB7" style="margin-top: 30px;">
+                                    <span class="text-warning"><?=$todayBreak['hours'];?></span>
+                                    <span class="text-warning">:</span>
+                                    <span class="text-warning"><?=$todayBreak['minutes'];?></span>
+                                <p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 text-center">
+                        <div class="csPageBox csRadius5">
+                            <div class="csPageBoxHeader">
+                                <h4 class="csF16 csB7">Clocked Time (Inc. breaks)</h4>
+                            </div>
+                            <div class="csPageBoxBody">
+                                <p class="csF40 csB7" style="margin-top: 30px;">
+                                    <span><?=$totalTime['hours'];?></span>
+                                    <span>:</span>
+                                    <span><?=$totalTime['minutes'];?></span>
+                                <p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 text-center">
+                        <div class="csPageBox csRadius5">
+                            <div class="csPageBoxHeader">
+                                <h4 class="csF16 csB7">Overtime</h4>
+                            </div>
+                            <div class="csPageBoxBody">
+                                <p class="csF40 csB7" style="margin-top: 30px;">
+                                    <span class="text-danger"><?=$overtime['hours'];?></span>
+                                    <span class="text-danger">:</span>
+                                    <span class="text-danger"><?=$overtime['minutes'];?></span>
+                                <p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="csPageBox">
+                    <div class="csPageBody">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12">
+                                <h2 class="csF20 csB7 pl10 pr10">Footprints</h2>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="map" style="width: 100%;"></div>
                             </div>
                         </div>
                     </div>
@@ -128,6 +221,12 @@
                                             </tr>
                                             <?php if(!empty($lists)): ?>
                                                 <?php foreach($lists as $key => $list): ?>
+                                                    <?php 
+                                                        //
+                                                        if(!empty($list['latitude']) || !empty($list['longitude'])){
+                                                            $markers[] = ['lat' => $list['latitude'], 'lng' => $list['longitude'], 'action' => GetCleanedAction($list['action'])];
+                                                        }    
+                                                    ?>
                                                     <tr class="jsAttendanceMyList" data-id="<?=$list['sid'];?>">
                                                         <td class="vam">
                                                             <strong class="text-<?=GetActionColor($list['action'])?>">
@@ -191,3 +290,47 @@
     </div>
 </div>
 <input type="hidden" id="jsAttendanceLastSlotTime" value="<?php echo $last_time; ?>">
+
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=<?= getCreds('AHR')->GoogleAPIKey; ?>&callback=initMap"></script>
+<script>
+    function initMap() {
+        var data = JSON.parse('<?=json_encode($markers);?>');
+        //
+        if(Object.keys(data).length){
+            //
+            $('#map').css('height', '440px')
+            //
+            const myLatLng = {
+                lat: parseFloat(data[0].lat),
+                lng: parseFloat(data[0].lng)
+            };
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 11,
+                mapTypeControl: true,
+                center: myLatLng,
+            });
+            //
+            data.map(function(mark, i){
+                //
+                mark = {lat: parseFloat(mark['lat']), 'lng': parseFloat(mark['lng'])};
+                new google.maps.Marker({
+                    position: mark,
+                    map: map
+                });
+                //
+                var oldMark = data[i - 1];
+                if(oldMark !== undefined){
+                    oldMark['lat'] = parseFloat(oldMark['lat']);
+                    oldMark['lng'] = parseFloat(oldMark['lng']);
+                    var line = new google.maps.Polyline({
+                        path: [oldMark, mark],
+                        map: map
+                    });
+                }
+            });
+        } else{
+            $('#map').html('<p class="alert alert-info text-center csF16">No foot prints found.</p>');
+        }
+    }
+</script>
