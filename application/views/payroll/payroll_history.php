@@ -55,9 +55,14 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php if(!empty($payrollHistory)) { ?>
+                                                <?php if(!empty($payrollHistory)) { $ins = []; ?>
                                                     <?php foreach($payrollHistory as $history){ ?>
-                                                        <?php $payroll = json_decode($history['payroll_json']); ?>
+                                                        <?php $payroll = json_decode($history['payroll_json']); 
+                                                            if(in_array($payroll->payroll_id, $ins)){
+                                                                continue;
+                                                            }
+                                                            $ins[] = $payroll->payroll_id;
+                                                        ?>
                                                         <tr 
                                                             data-id="<?=$payroll->payroll_id;?>"
                                                             data-sd="<?=formatDateToDB($payroll->pay_period->start_date, DB_DATE, DATE);?>"
