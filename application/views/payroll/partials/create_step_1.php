@@ -1294,7 +1294,6 @@ if(!empty($Payroll['employee_compensations'])):
                 tr +='                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>';
                 tr +='           </button>';
                 tr +='           <ul class="dropdown-menu pull-right" aria-labelledby="dd_'+(payrollEmployee.employeeId)+'">';
-                tr +='               <li><a href="javascript:void(0)" class="jsEditDeductions">Edit deductions</a></li>';
                 tr +='               <li><a href="javascript:void(0)" class="jsPayrollExcludeToggle">Skip payroll</a></li>';
                 tr +='           </ul>';
                 tr +='       </div>';
