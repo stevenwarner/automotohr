@@ -58,6 +58,11 @@
                                                 <?php if(!empty($payrollHistory)) { $ins = []; ?>
                                                     <?php foreach($payrollHistory as $history){ ?>
                                                         <?php $payroll = json_decode($history['payroll_json']); 
+                                                            //
+                                                            if(empty($payroll->processed)){
+                                                                continue;
+                                                            }
+                                                            //
                                                             if(in_array($payroll->payroll_id, $ins)){
                                                                 continue;
                                                             }
