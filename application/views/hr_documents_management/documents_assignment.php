@@ -6373,7 +6373,7 @@
     //
     $(document).on('click','.jsRevokeApprovalDocument',function(){
         //
-        var approval_document_sid = $(this).data("approval_document_sid");
+        var approval_document_sid = $(this).data("approval_document_sid") === undefined ? $(this).data('document_sid') : $(this).data("approval_document_sid");
         //
         alertify.confirm(
             'Are you sure?',

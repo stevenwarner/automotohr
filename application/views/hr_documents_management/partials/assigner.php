@@ -3,20 +3,17 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h5>
-                    <strong>Assigner</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true"  data-target="visibilty"></i>
-                    <p class="jsHintBody" data-hint="visibilty"><br /><?=getUserHint('assigner_hint');?></p>
+                    <strong>Select employees to approve the document before assign.</strong>
                 </h5>
             </div>
             <div class="panel-body">
-                <a href="javascript:;" id="jsAddDocumentAssigner" class="btn btn-success"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Employee</a>
+                <a href="javascript:;" id="jsAddDocumentAssigner" class="btn btn-success"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Employee To Flow</a>
                 <!-- Note -->
-                <div class="jsEmployeesadditionalBox">
-                    
-                </div>
+                <div class="jsEmployeesadditionalBox"></div>
                 <div class="row jsAssignerEmployeesNote csMT" style="display: none;">
                     <div class="col-xs-12">
                         <label for="footer_content">Employee(s) Note</label>
-                        <textarea class="ckeditor" id="assigner_note" name="assigner_note" rows="8" cols="60"></textarea>
+                        <textarea class="form-control" id="assigner_note" name="assigner_note" rows="8" cols="60"></textarea>
                     </div>                                            
                 </div>
             </div>

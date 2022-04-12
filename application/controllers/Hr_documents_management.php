@@ -10451,7 +10451,28 @@ class Hr_documents_management extends Public_Controller {
             if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
                 $a["managersList"] = implode(',', $ins['managerList']);
             }
-            
+            unset(
+                $a['status'],
+                $a['acknowledged'],
+                $a['acknowledged_date'],
+                $a['downloaded'],
+                $a['downloaded_date'],
+                $a['uploaded'],
+                $a['uploaded_date'],
+                $a['uploaded_file'],
+                $a['signature_timestamp'],
+                $a['signature'],
+                $a['signature_email'],
+                $a['signature_ip'],
+                $a['user_consent'],
+                $a['archive'],
+                $a['submitted_description'],
+                $a['signature_base64'],
+                $a['signature_initial'],
+                $a['authorized_signature'],
+                $a['authorized_signature_by'],
+                $a['authorized_signature_date']
+            );
             $a["assigner_note"] = isset($post['assigner_note']) ? $post['assigner_note'] : '';
             //
             $approvalInsertId = $this->hr_documents_management_model->insert_documents_assignment_flow($a);
@@ -12546,6 +12567,7 @@ class Hr_documents_management extends Public_Controller {
             $data["document_type"] = $document_info["document_type"];
             $data["assign_by"] = $document_info["assigned_by"];
             $data["user_name"] = $document_info["user_sid"];
+            $data["user_sid"] = $document_info["user_sid"];
             $data["user_type"] = $document_info["user_type"];
             $data["assigners"] = $document_assigners;
             $data['employee'] = $employer_detail;
