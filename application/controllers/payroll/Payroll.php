@@ -342,7 +342,8 @@ class Payroll extends CI_Controller
             // Calculate Payroll
             $this->CalculatePayroll($this->data['companyId'], $payrolId);
             //
-            usleep(300);
+            sleep(2);
+            //
             return redirect(current_url().'?step=3');
         }
         //
