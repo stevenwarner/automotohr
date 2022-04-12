@@ -1,7 +1,5 @@
 <?php
 
-use phpDocumentor\Reflection\DocBlock\Tags\Return_;
-
 class Payroll_model extends CI_Model{
     //
     private $tables;
@@ -268,10 +266,6 @@ class Payroll_model extends CI_Model{
         $payroll
     ){
         //
-        if(empty($payroll['version'])){
-            return true;
-        }
-        //
         $isNew = false;
         $doAdd = true;
         //
@@ -289,11 +283,13 @@ class Payroll_model extends CI_Model{
                 $this->tables['P'], [
                     'company_sid' => $companyId,
                     'payroll_uid' => $payrollUid,
+                    'version' => $payroll['version'],
                     'payroll_id' => $payroll['payroll_id'],
                     'start_date' => $payroll['pay_period']['start_date'],
                     'end_date' => $payroll['pay_period']['end_date'],
                     'check_date' => $payroll['check_date'],
                     'deadline_date' => $payroll['payroll_deadline'],
+                    'payroll_json' => json_encode($payroll),
                     'is_processed' => 0,
                     'created_by' => $employerId,
                     'created_at' => $date,
@@ -302,6 +298,16 @@ class Payroll_model extends CI_Model{
             );
             //
             $isNew = true;
+        } else{
+            if(!empty($payroll)){
+                $this->db
+                ->where('payroll_uid', $payrollUid)
+                ->update(
+                    $this->tables['P'], [
+                        'payroll_json' => json_encode($payroll)
+                    ]
+                );
+            }
         }
         //
         if(!$isNew){
@@ -1038,5 +1044,15 @@ class Payroll_model extends CI_Model{
         $this->db
         ->where($where)
         ->delete($table);
+    }
+
+    public function GetSinglePayroll($payrollId){
+        $q = $this->db
+        ->select('payroll_json')
+        ->where('payroll_id', $payrollId)
+        ->get('payrolls')
+        ->row_array();
+        //
+        return json_decode($q['payroll_json'], true);
     }
 }

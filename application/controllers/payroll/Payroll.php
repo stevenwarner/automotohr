@@ -288,7 +288,6 @@ class Payroll extends CI_Controller
         $this->data['load_view'] = 0;
         $this->data['hide_employer_section'] = 1;
         // Get processed payrolls
-        // $this->CheckAndGetProcessedPayrolls($this->data['companyId']);
         // Get the company pay periods
         $response = $this->PayPeriods($this->data['companyId']);    
         // let's reverse the pay periods
@@ -301,6 +300,15 @@ class Payroll extends CI_Controller
                 $this->data['period']['start_date'], 
                 $this->data['period']['end_date']
             )['Response'][0];
+            //
+            $version = $this->data['payroll']['version'];
+            //
+            $this->UpdatePayrollForDemo(
+                $this->data['payroll']['employee_compensations'], 
+                $version,
+                $this->data['payroll']['pay_period']['start_date'], 
+                $this->data['payroll']['pay_period']['end_date']
+            );
         }
         // Get Gusto Company Details
         $this->load
@@ -316,24 +324,31 @@ class Payroll extends CI_Controller
         //
         $this->checkLogin($this->data);
         //
-        $this->data['title'] = 'Payroll | Create';
+        $this->data['title'] = 'Run Regular Payroll';
         $this->data['load_view'] = 0;
         $this->data['hide_employer_section'] = 1;
         //
         $this->data['step'] = $this->input->get('step', true) ? $this->input->get('step', true) : '1';
-       
-        if($this->data['step'] == 3){
-            // Calulate Payroll
-            $this->CalculatePayroll($this->data['companyId'], $payrolId);
-            usleep(200);
+
+        //
+        if($this->data['step'] == 4){
+            $this->data['Payroll'] = $this->pm->GetSinglePayroll($payrolId);
+        } else{
+            //
+            $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'], $this->data['step'])['Response'];
         }
         //
-        $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'], $this->data['step'])['Response'];
+        if($this->data['step'] == 3 && empty($this->data['Payroll']['calculated_at'])){
+            // Calculate Payroll
+            $this->CalculatePayroll($this->data['companyId'], $payrolId);
+            //
+            usleep(300);
+            return redirect(current_url().'?step=3');
+        }
         //
         if($this->data['processed'] && $this->data['step'] <= 3){
             return redirect(base_url('payroll/run'));
         }
-       
         //
         $this->pm->CheckAndInsertPayroll(
             $this->data['companyId'],
@@ -1188,11 +1203,31 @@ class Payroll extends CI_Controller
             ]);
         } else{
             //
+            $this->pm->DeletePayroll('payrolls', ['payroll_id' => $company['payroll_id']]);
+            //
             res([
                 'Status' => true,
                 'Response' => $response
             ]);
         }
+    }
+    
+    /**
+     * 
+     */
+    function UpdatePayrollForDemo($employees, $version, $startDate, $endDate){
+        //
+        $data = [];
+        //
+        $this->checkLogin($data);
+        // Make request array
+        $company = $this->pm->GetCompany($data['companyId'], [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        UpdatePayrollForDemo($company, $employees, $version, $startDate, $endDate);
     }
     
     /**
@@ -1295,7 +1330,7 @@ class Payroll extends CI_Controller
             'gusto_company_uid'
         ]);
         //
-        $query = '?processed=true';
+        $query = '?processed=true&include=taxes,benefits,deductions&show_calculation=true';
         //
         if(!empty($startDate)){
             $query .= '&start_date='.$startDate;

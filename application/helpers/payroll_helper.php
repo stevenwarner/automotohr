@@ -1515,6 +1515,49 @@ if(!function_exists('GetUnProcessedPayrolls')){
     }
 }
 
+if(!function_exists('UpdatePayrollForDemo')){
+    function UpdatePayrollForDemo($company, $employees, $version, $startDate, $endDate){
+        //
+        $url = PayrollURL('UpdatePayrollForDemo', $company['gusto_company_uid'], $startDate, $endDate);
+        //
+        $response =  MakeCall(
+            $url, [
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode(['employee_compensations' => $employees, 'version' => $version]),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+                ],
+                false
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return UpdatePayrollForDemo($company, $employees, $version, $startDate, $endDate);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else{
+            //
+            return $response;
+        }
+    }
+}
+
+
 if(!function_exists('GetUnProcessedPayrolls')){
     function GetProcessedPayrolls($query, $company, $force = false){
         //
@@ -1580,11 +1623,9 @@ if(!function_exists('PayrollURL')){
         $urls['DeleteBankAccountToPayroll'] = 'v1/employees/'.($key).'/bank_accounts/'.$key1;
         $urls['AddCompanyBankAccountToPayroll'] = 'v1/companies/'.($key).'/bank_accounts';
         $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'?show_calculation=false&include=benefits,deductions,taxes';
-        // if ($step == 3) {
-        //     $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'?show_calculation=true&include=benefits,deductions,taxes';
-        // } else {
-            //     $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'?show_calculation=false&include=benefits,deductions,taxes';
-            // }
+        if ($step == 3 || $step == 4) {
+            $urls['GetSinglePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'?show_calculation=true&include=benefits,deductions,taxes';
+        }
         $urls['GetCompanyEmployees'] = 'v1/companies/'.($key).'/employees';
         $urls['UpdatePayrollById'] = 'v1/companies/'.($key).'/payrolls/'.($key1);
         $urls['CalculatePayroll'] = 'v1/companies/'.($key).'/payrolls/'.($key1).'/calculate';
@@ -1621,6 +1662,9 @@ if(!function_exists('PayrollURL')){
         $urls['MarkEmployeeAsOnboarded'] = 'v1/employees/'.($key).'/finish_onboarding';
         // 
         $urls['GetEmployeePayStubs'] = 'v1/payrolls/'.($key).'/employees/'.($key1).'/pay_stub';
+
+
+        $urls['UpdatePayrollForDemo'] = 'v1/companies/'.($key).'/payrolls/'.$key1.'/'.$step;
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }

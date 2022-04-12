@@ -3031,7 +3031,7 @@ class Companies extends Admin_Controller {
             //
             $flow_info = CreateCompanyFlowLink($this->data['company_info']);
             //
-            $onboarding_link = $flow_info['url'];
+            $onboarding_link = isset($flow_info['url']) ? $flow_info['url'] : '';
         }
         //
         $this->data['company_status'] = $company_status;
