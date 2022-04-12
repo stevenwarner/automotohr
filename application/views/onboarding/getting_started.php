@@ -341,7 +341,7 @@
                                 <div class="panel panel-default">
                                     <div class="panel-body">
                                         <table class="table table-plane cs-w4-table">
-                                            <?php if($is_handbook_category_exist && !empty($handbook_documents)) { ?>
+                                            <?php if($is_handbook_category_exist && !empty($handbook_documents['original'])) { ?>
                                             <thead>
                                                 <tr>
                                                     <th class="col-lg-8 hidden-xs">Document Name</th>
@@ -350,10 +350,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php foreach ($handbook_documents as $key => $document) { ?>
+                                                <?php foreach ($handbook_documents['assigned'] as $key => $document) {?>
                                                     <?php if ($document['archive'] != 1) { ?>
-                                                        <?php if ($document['status'] != 0) { ?>
-                                                            <?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
+                                                            <?php $pdBtn = getPDBTN($document, 'btn-info');  ?>
                                                             <tr>
                                                                 <td class="">
                                                                     <?php
@@ -375,7 +374,23 @@
                                                                     <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
                                                                 </td>
                                                             </tr>
-                                                        <?php } ?>
+                                                    <?php } ?>            
+                                                <?php } ?>
+                                                <?php foreach ($handbook_documents['original'] as $key => $document) {?>
+                                                    <?php if ($document['archive'] != 1) { ?>
+                                                            <?php $pdBtn = getPDBTN($document, 'btn-info', '', true);  ?>
+                                                            <tr>
+                                                                <td class="">
+                                                                    <?php
+                                                                        echo $document['document_title'].( $document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="'.($requiredMessage).'"></i>' : '' ).'';
+                                                                    ?>
+                                                                </td>
+                                                                <td class="text-center hidden-xs">
+                                                                    <a href="<?=base_url("hr_documents_management/print_generated_and_offer_later/original/generated/".($document['sid'])."/print");?>" class="btn btn-orange" target="_blank">Print</a>
+                                                                    <a href="<?=base_url("hr_documents_management/print_generated_and_offer_later/original/generated/".($document['sid'])."/download");?>" class="btn btn-black" target="_blank">Download</a>
+                                                                    <a onclick="func_get_generated_document_preview(<?=$document['sid'];?>,'generated', 'Employee');" class="btn btn-info">View Sign</a>
+                                                                </td>
+                                                            </tr>
                                                     <?php } ?>            
                                                 <?php } ?>
                                             </tbody>
@@ -1417,3 +1432,64 @@ ul.cs-jam-ul li {
     }
 });
 </script>
+
+<script>
+    function func_get_generated_document_preview(document_sid, doc_flag = 'generated', doc_title = 'Preview Generated Document') {
+        var my_request;
+        var footer_print_btn;
+        my_request = $.ajax({
+            'url': '<?php echo base_url('hr_documents_management/ajax_responder'); ?>',
+            'type': 'POST',
+            'data': {
+
+                'perform_action': 'get_generated_document_preview',
+                'document_sid': document_sid,
+                'source': doc_flag,
+                'fetch_data': 'original'
+            }
+        });
+
+
+        my_request.done(function (response) {
+            $.ajax({
+                'url': '<?php echo base_url('hr_documents_management/get_print_url'); ?>',
+                'type': 'POST',
+                'data': {
+                    'request_type': 'original',
+                    'document_type': doc_flag,
+                    'document_sid': document_sid
+                },
+                success: function (urls) {
+                    var obj = jQuery.parseJSON(urls);
+                    var print_url = obj.print_url;
+                    var download_url = obj.download_url;
+                    footer_content = '<a target="_blank" class="btn btn-success" href="'+download_url+'">Download</a>';
+                    footer_print_btn = '<a target="_blank" class="btn btn-success" href="'+print_url+'" >Print</a>';
+                    $('#document_modal_body').html(response);
+                    $('#document_modal_footer').html(footer_content);
+                    $('#document_modal_footer').append(footer_print_btn);
+                    $('#document_modal_title').html(doc_title);
+                    $('#document_modal').modal("toggle");
+                }
+            });
+        });
+    }
+</script>
+
+
+<div id="document_modal" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="document_modal_title">Modal title</h4>
+            </div>
+            <div id="document_modal_body" class="modal-body">
+                ...
+            </div>
+            <div id="document_modal_footer" class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -3182,38 +3182,58 @@ class Dashboard_model extends CI_Model
     function get_employee_handbook_documents ($category_sid, $employee_sid) {
         $this->db->select('document_sid, document_type');
         $this->db->where('category_sid', $category_sid);
+        $this->db->order_by('document_sid', 'DESC');
         
         $records_obj = $this->db->get('documents_2_category');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         
-        if (!empty($records_arr)) {
-            $assign_handbook = array();
+        //
+        $documents = [
+            'assigned' => [],
+            'original' => []
+        ];
+        //
+        if (empty($records_arr)) {
+            return $documents;
+        }
+        //
+        foreach ($records_arr as $row) {
+            // Set the default where clause
+            $whereArray = [
+                'user_type' => "employee",
+                'user_sid' => $employee_sid,
+            ];
             //
-            foreach ($records_arr as $key => $row) {
-                $this->db->select('*');
-                $this->db->where('user_type', "employee");
-                $this->db->where('user_sid', $employee_sid);
+            $whereArray[$row['document_type'] == "documents_management" ? "document_sid" : "sid"] = $row['document_sid'];
+            // Check if document is assigned
+            if(
+                $this->db
+                ->where($whereArray)
+                ->count_all_results('documents_assigned')
+            ) {
                 //
-                if ($row['document_type'] == "documents_management") {
-                    $this->db->where('document_sid', $row["document_sid"]);
-                } else {
-                    $this->db->where('sid', $row["document_sid"]);
+                $document = $this->db
+                ->where($whereArray)
+                ->get('documents_assigned')
+                ->row_array();
+                //
+                if(!empty($document)){
+                    $documents['assigned'][] = $document;
                 }
+            } else{
+                // Get the original document
+                $document = $this->db
+                ->where(['sid' => $row['document_sid']])
+                ->get('documents_management')
+                ->row_array();
                 //
-                $record_obj = $this->db->get('documents_assigned');
-                $record_arr = $record_obj->row_array();
-                $record_obj->free_result();
-                //
-                if (!empty($record_arr)) {
-                    array_push($assign_handbook, $record_arr);
+                if(!empty($document)){
+                    $documents['original'][] = $document;
                 }
             }
-            //
-            return $assign_handbook;
-        
-        } else {
-            return array();
         }
+        //
+        return $documents;
     }
 }
