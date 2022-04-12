@@ -1426,22 +1426,26 @@ if ($user_type == 'applicant') {
                                                                                 </td>
                                                                                 <!-- <td id="assign-status-td---><?//= $document['sid'];?><!--">-->
                                                                                 <td>
-                                                                                    <?php if(in_array($document['sid'], $all_assigned_sids)) {  // revoke here ?>
-                                                                                        <button
-                                                                                            class="btn btn-danger btn-sm btn-block js-modify-revoke-document-btn"
-                                                                                            data-id="<?=$document['sid'];?>"
-                                                                                        >Revoke</button>
-
-                                                                                    <?php } else if(in_array($document['sid'], $revoked_sids)) { // re-assign here ?>
-                                                                                            <button
-                                                                                                class="btn btn-warning btn-sm btn-block js-modify-assign-document-btn"
-                                                                                                data-id="<?=$document['sid'];?>"
-                                                                                            >Modify and Reassign</button>
+                                                                                    <?php if (in_array($document['sid'], $approval_documents)) { ?>
+                                                                                        <button data-approval_document_sid="<?=$document['sid'];?>" class="btn btn-danger btn-block btn-sm jsRevokeApprovalDocument">Revoke Approval</button>
                                                                                     <?php } else { ?>
-                                                                                        <button
-                                                                                            class="btn btn-success btn-sm btn-block js-modify-assign-document-btn"
-                                                                                            data-id="<?=$document['sid'];?>"
-                                                                                        >Modify and Assign</button>
+                                                                                        <?php if(in_array($document['sid'], $all_assigned_sids)) {  // revoke here ?>
+                                                                                            <button
+                                                                                                class="btn btn-danger btn-sm btn-block js-modify-revoke-document-btn"
+                                                                                                data-id="<?=$document['sid'];?>"
+                                                                                            >Revoke</button>
+
+                                                                                        <?php } else if(in_array($document['sid'], $revoked_sids)) { // re-assign here ?>
+                                                                                                <button
+                                                                                                    class="btn btn-warning btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                    data-id="<?=$document['sid'];?>"
+                                                                                                >Modify and Reassign</button>
+                                                                                        <?php } else { ?>
+                                                                                            <button
+                                                                                                class="btn btn-success btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                data-id="<?=$document['sid'];?>"
+                                                                                            >Modify and Assign</button>
+                                                                                        <?php } ?>
                                                                                     <?php } ?>
                                                                                 </td>
                                                                                 <td>
@@ -3717,6 +3721,43 @@ if ($user_type == 'applicant') {
             alertify.alert("Warning", 'Cancelled!');
         });
     }
+
+    $(document).on('click','.jsRevokeApprovalDocument',function(){
+        var approval_document_sid = $(this).data("approval_document_sid");
+        alertify.confirm(
+            'Are you sure?',
+            'Are you sure you want to revoke approval?',
+            function () {
+                $('#my_loader').show();
+                //
+                var form_data = new FormData();
+                form_data.append('document_sid', approval_document_sid);
+                form_data.append('user_sid', '<?php echo $user_sid; ?>');
+                form_data.append('user_type', '<?php echo $user_type; ?>');
+
+                $.ajax({
+                    url: '<?= base_url('hr_documents_management/revoke_approval_document') ?>',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'post',
+                    data: form_data,
+                    success: function (resp) {
+                        $('#my_loader').hide();
+                        alertify.alert('SUCCESS!', resp.message, function(){
+                            window.location.reload();
+                        });
+                        
+                    },
+                    error: function () {
+                    }
+                });
+            },
+            function () {
+                alertify.error('Canceled!');
+            }
+        );
+    });
 </script>
 
 <!--  -->

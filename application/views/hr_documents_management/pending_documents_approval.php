@@ -56,7 +56,8 @@
                                             <td class="text-center hidden-xs">
                                                 <a href="javascript:;" data-action="approve" data-sid="<?php echo $document['sid'] ?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-success">Approve</a>
                                                 <a href="javascript:;" data-action="reject" data-sid="<?php echo $document['sid'] ?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-warning">Reject</a>
-                                                <a href="<?php echo $document_d_base . '/' . $document['portal_document_assign_sid']; ?>" class="btn btn-info">View Document</a>
+                                                <a target="_blank" href="<?php echo $document_d_base . '/' . $document['portal_document_assign_sid']; ?>" class="btn btn-info">View Document</a> 
+                                                <!-- <a href="javascript:;" class="btn btn-info" id="jsViewPendingDocument" data-doc_sid="<?php echo $document['document_sid'] ?>">View Document</a> -->
                                             </td>
                                         </tr>           
                                     <?php } ?>    
@@ -106,9 +107,15 @@
 <!-- Preview Latest Document Modal Modal End -->
 
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/SystemModal.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/common.js"></script>
 
 
 <script type="text/javascript">
+    //
+    var modalId = "";
+    var modalLoader = "";
+    var document_sid = "";
+    //
     ml(false, 'jsApprovalStatusLoader');
     //
     $(document).on('click', '.jsPerformAction', function(event) {
@@ -168,6 +175,42 @@
             }
         });
     });
+
+    $(document).on('click', '#jsViewPendingDocument', function(event) {
+        document_sid = $(this).data("doc_sid");
+        modalId = "jsApprovalDocumentModal";
+        modalLoader = modalId + 'Loader';
+        //
+        Model({
+            Id: modalId,
+            Title: '<span class="' + modalId + 'Title"></span>',
+            Body: '<div id="' + modalId + 'Body"></div>',
+            Loader: modalLoader,
+            Container: 'container-fluid',
+            CancelClass: 'btn-cancel csW'
+        }, WelcomeJourney);
+    });
+
+    /**
+     * Start the payroll process
+     * includes
+     * @method GetURL
+     */
+    function WelcomeJourney() {
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+                method: "GET",
+                url: '<?php echo $document_d_base; ?>' + "/" + document_sid,
+            })
+            .done(function(resp) {
+                $('#' + (modalId) + 'Body').html(resp.html);
+                //
+                ml(false, modalLoader);
+            })
+            .error();
+    }
 
     function capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);

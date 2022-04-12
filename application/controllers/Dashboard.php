@@ -493,7 +493,10 @@ class Dashboard extends Public_Controller {
             $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail'], $companyApplicantsForVerification);
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
-            
+            //
+            $total_document_approval = count($this->varification_document_model->getMyApprovalDocuments($data['session']['employer_detail']['sid']));
+            $data["all_documents_approval"] = $total_document_approval;
+            //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
             $this->load->view('main/footer');
@@ -853,6 +856,9 @@ class Dashboard extends Public_Controller {
             }
             //
             $data['is_handbook_category_exist'] = $this->dashboard_model->check_company_employee_handbook_category($company_id);
+            //
+            $total_document_approval = count($this->varification_document_model->getMyApprovalDocuments($data['session']['employer_detail']['sid']));
+            $data["all_documents_approval"] = $total_document_approval;
             //
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');

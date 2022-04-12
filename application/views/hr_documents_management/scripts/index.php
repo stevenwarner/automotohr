@@ -251,6 +251,8 @@
 			//
 			rows += getVisibilty(do_descpt);
 			//
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
+			//
 			rows += getEmailContent();
 			//
 			if( $(this).data('type').toLowerCase().match(/notcompleted/ig) === null ){
@@ -373,6 +375,9 @@
 			<?php } ?>
 			if(do_descpt) rows += getSigners();
 			rows += getVisibilty(do_descpt);
+			//
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
+			//
 			rows+= getEmailContent();
 			rows += getRequiredRow();
 			rows += getSignatureRequiredRow();
@@ -488,6 +493,8 @@
 			<?php } ?>
 			if(do_descpt) rows += getSigners('js-modify-assign-offer-letter-signers');
 			rows+= getVisibilty(do_descpt);
+			//
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
 			rows+= getEmailContent();
 			if(do_descpt) rows += getTags();
 			//
@@ -839,6 +846,22 @@
 			obj.teams = $('#jsTeams').val() || '';
 			obj.employees = $('#jsEmployees').val() || '';
 			//
+			var assigners = new Array();
+			//
+			$('.jsSelectedEmployee').each(function(i) {
+				var approver_id = $(this).val();
+				//
+				if (approver_id != 0) {
+					assigners.push(approver_id);
+				}
+				//
+			});
+			//
+			if(assigners.length > 0) {
+				obj.assigner = assigners;
+				obj.assigner_note = $('#assigner_note').val();
+			}
+			//
 			var post = new FormData();
 			//
 			$.each(megaOBJ, function(index, val) { post.append(index, val); });
@@ -892,6 +915,22 @@
 			obj.departments = $('#jsDepartments').val() || '';
 			obj.teams = $('#jsTeams').val() || '';
 			obj.employees = $('#jsEmployees').val() || '';
+			//
+			var assigners = new Array();
+			//
+			$('.jsSelectedEmployee').each(function(i) {
+				var approver_id = $(this).val();
+				//
+				if (approver_id != 0) {
+					assigners.push(approver_id);
+				}
+				//
+			});
+			//
+			if(assigners.length > 0) {
+				obj.assigner = assigners;
+				obj.assigner_note = $('#assigner_note').val();
+			}
 			//
 			var post = new FormData();
 			//
@@ -1455,11 +1494,11 @@
 		function ValidateAndSaveOfferLetter(e){
 			//
 			e.preventDefault();
+			var assigners = new Array();
 			//
 			$('.js-error').text('');
 			//
 			var upload_file = $('#upload_document').mFileUploader('get');
-
 			//
 			var o = {
 				name : $('#js-template-name').val().trim(),
@@ -1485,6 +1524,20 @@
 				teams : $('#js-teams-offer-letter-add').val(),
 				employees : $('#js-employees-offer-letter-add').val()
 			};
+			//
+			$('.jsSelectedEmployee').each(function(i, obj) {
+				var approver_id = $(this).val();
+				//
+				if (approver_id != 0) {
+					assigners.push(approver_id);
+				}
+				//
+			});
+			//
+			if(assigners.length > 0) {
+				o.assigner = assigners;
+				o.assigner_note = $('#assigner_note').val();
+			}
 			//
 			if(o.type == 'template') {
 				o.type = selectedTemplate.letter_type;
@@ -2169,7 +2222,7 @@
 		}
 	});
 </script>
-
+<?php $this->load->view("hr_documents_management/scripts/assigner"); ?>
 <style>
 	#modify-assign-document-modal .select2-container--default .select2-selection--multiple .select2-selection__rendered{ height: auto !important; }
 </style>

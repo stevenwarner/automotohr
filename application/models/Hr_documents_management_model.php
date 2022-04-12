@@ -6808,4 +6808,78 @@ class Hr_documents_management_model extends CI_Model {
         return $return_data;
     }
 
+    public function getAllDocumentAssigners ($document_sid) {
+        //
+        $this->db->select('*');
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('status', 1);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function get_user_approval_pending_documents ($user_type, $user_sid) {
+        //
+        $this->db->select('document_sid');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('assign_status', 1);
+        $this->db->where('document_type <>', "offer_letter");
+        $records_obj = $this->db->get('portal_document_assign_flow');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function get_user_approval_pending_offer_letters ($user_type, $user_sid) {
+        //
+        $this->db->select('document_sid');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('assign_status', 1);
+        $this->db->where('document_type', "offer_letter");
+        $records_obj = $this->db->get('portal_document_assign_flow');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function getApprovedDocumentRowSid ($user_type, $user_sid, $document_sid) {
+        //
+        $this->db->select('sid');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('assign_status', 1);
+        $this->db->where('document_sid', $document_sid);
+        $record_obj = $this->db->get('portal_document_assign_flow');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr['sid'];
+        }
+
+        return $return_data;
+    }
+
 }
