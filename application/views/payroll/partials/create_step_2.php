@@ -116,7 +116,7 @@
                 }
                 //
                 return alertify.alert('Success!', 'You have successfully submitted the payroll.', function(){
-                    window.location.href = window.location.href.replace(/step=2/, 'step=3');
+                    window.location.href = window.location.href.replace(/step=3/, 'step=4');
                 });
             });
         });

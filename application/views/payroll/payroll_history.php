@@ -58,7 +58,12 @@
                                                 <?php if(!empty($payrollHistory)) { ?>
                                                     <?php foreach($payrollHistory as $history){ ?>
                                                         <?php $payroll = json_decode($history['payroll_json']); ?>
-                                                        <tr>
+                                                        <tr 
+                                                            data-id="<?=$payroll->payroll_id;?>"
+                                                            data-sd="<?=formatDateToDB($payroll->pay_period->start_date, DB_DATE, DATE);?>"
+                                                            data-ed="<?=formatDateToDB($payroll->pay_period->end_date, DB_DATE, DATE);?>"
+                                                            data-dd="<?=formatDateToDB($payroll->payroll_deadline, DB_DATE, DATE);?>"
+                                                        >
                                                             <td class="vam">
                                                                 <?=formatDateToDB($payroll->check_date, DB_DATE, DATE);?>
                                                             </td>
@@ -76,6 +81,9 @@
                                                                     <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View details
                                                                 </a> -->
                                                                 -
+                                                                <?php if($payroll->payroll_deadline > date('Y-m-d', strtotime('now')) ): ?>
+                                                                    <button class="btn btn-black jsCancelPayroll">Cancel Payroll</button>
+                                                                <?php endif; ?>
                                                             </td>
                                                         </tr>
                                                     <?php } ?>
@@ -93,3 +101,38 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(function(){
+        //
+        $('.jsCancelPayroll').click(function(event){
+            //
+            event.preventDefault();
+            //
+            var data = $(this).closest('tr').data();
+            //
+            alertify.confirm(
+                'You may cancel <strong>'+(data.sd)+' - '+(data.ed)+'</strong> payroll now and run it again later. Just note that your employees will be paid late if you don’t run it by <strong><?=GUSTO_PAYROLL_TIME;?></strong> on <strong>'+(data.dd)+'</strong>.<br><br><strong>Don’t want to lose all your data?</strong><br>Rest assured—we’ll save all the info you entered for this payroll, in case you need to re-run it.', 
+                function(){
+                    CancelPayroll(data.id);
+                }
+            ).setHeader('Cancel Payroll Confirmation');
+        });
+        
+        //
+        function CancelPayroll(payrollId){
+            //
+            ml(true, 'main_loader', 'Please wait, while we cancel the payroll.');
+            //
+            $.post(
+                "<?=base_url("cancel_payroll");?>", {
+                    payrollId: payrollId
+                }
+            ).done(function(resp){
+                alertify.alert("Success!", "Payroll canceled.", function(){
+                    window.location.href = window.location.origin + '/payroll/run';
+                });
+            });
+        }
+    });
+</script>
