@@ -59,7 +59,7 @@
                                                     <?php foreach($payrollHistory as $history){ ?>
                                                         <?php $payroll = json_decode($history['payroll_json']); 
                                                             //
-                                                            if(empty($payroll->processed)){
+                                                            if(!$payroll->processed){
                                                                 continue;
                                                             }
                                                             //
