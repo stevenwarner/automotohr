@@ -26,6 +26,15 @@ if(!function_exists('getUserNameBySID')){
     }
 }
 
+
+if(!function_exists('getApplicantNameBySID')){
+    function getApplicantNameBySID($sid, $remake = true){
+        $applicant_info = db_get_applicant_profile($sid);
+        //
+        return $applicant_info["first_name"]." ".$applicant_info["last_name"];
+    }
+}
+
 if (!function_exists('get_employee_profile_info')) {
     function get_employee_profile_info($emp_id)
     {
@@ -1543,7 +1552,7 @@ if (!function_exists('get_company_data')) {
             $address = !empty($result["Location_Address"]) ? $result["Location_Address"] : "";
             $city = !empty($result["Location_City"]) ? ", ".$result["Location_City"] : "";
             $state = !empty($result["Location_State"]) ? ", ".db_get_state_name_only($result["Location_State"]) : "";
-            $country = !empty($result["Location_Country"]) ? ", ".db_get_country_name($result['Location_Country'], $_this, 'country_name') : "";
+            $country = !empty($result["Location_Country"]) ? ", ".db_get_country_name($result['Location_Country'], $CI, 'country_name') : "";
             $company_address = $address.$city.$state.$country;
             $career_site_url = STORE_PROTOCOL_SSL . db_get_sub_domain($sid);
             //
@@ -13578,6 +13587,7 @@ if(!function_exists('getUserHint')){
         $hints['questionnaire_not_watched_ems'] = 'You have not completed the assigned questionnaire.';
         $hints['visibility_hint'] = '<strong>Visible To Payroll:</strong> Payroll employees can manage this document.<br /><br />The selected roles, departments (Supervisors), teams (Team Leads), and employees will have access to this document.';
         $hints['authorized_managers_hint'] = 'The selected manager will sign this document.';
+        $hints['assigner_hint'] = 'Choose employees to approve document assign.';
 
         return isset($hints[$slug]) ? $hints[$slug] : '';
     }

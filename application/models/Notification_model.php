@@ -534,4 +534,22 @@ class Notification_model extends CI_Model {
         }
         return $trainingSessionCount;
     }
+
+    public function getMyApprovalDocuments ($employee_sid) {
+        //
+        $this->db->select('sid');
+        $this->db->where('assigner_sid', $employee_sid);
+        $this->db->where('status', 1);
+        $this->db->where('assigner_turn', 1);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
 }

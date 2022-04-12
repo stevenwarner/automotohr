@@ -16,7 +16,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-8 col-md-8 col-xs-12 col-sm-12">
-                                    <div class="upload-new-doc-heading">
+               `                     <div class="upload-new-doc-heading">
                                             <i class="fa fa-file-text-o"></i>
                                             <?php echo $title; ?>
                                         </div>

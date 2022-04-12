@@ -1490,34 +1490,38 @@
                                                                                     <td class="col-xs-2:"><?php echo ucwords($offer_letter['letter_type']); ?></td>
                                                                                     <td class="col-xs-1">
                                                                                         <?php if ($document_all_permission) { ?>
-                                                                                            <?php if ($assigned_offer_letter_sid == $offer_letter['sid']) { ?>
-                                                                                                <?php if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 0) { ?>
-                                                                                                    <form id="form_assign_document_offer_letter_<?php echo $offer_letter['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo base_url('hr_documents_management/revoke_offer_letter'); ?>">
-                                                                                                            <input type="hidden" name="perform_action" value="revoke_offer_letter" />
-                                                                                                            <input type="hidden" name="offer_letter_sid" value="<?php echo $offer_letter['sid']; ?>">
-                                                                                                            <input type="hidden" name="user_sid" value="<?php echo $user_sid; ?>">
-                                                                                                            <input type="hidden" name="user_type" value="<?php echo $user_type; ?>">
-                                                                                                            <?php if($user_type == 'applicant') { ?>
-                                                                                                                <input type="hidden" name="job_list_sid" value="<?php echo $job_list_sid; ?>">
-                                                                                                            <?php } ?>
-                                                                                                    </form>
-                                                                                                        
-                                                                                                    <button onclick="func_assign_uploaded_offer_letter('offer_letter', <?php echo $offer_letter['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
-                                                                                                <?php } else if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 1) { ?>
-
-                                                                                                    
-                                                                                                        <button
-                                                                                                            class="btn btn-warning btn-sm btn-block js-modify-assign-offer-letter-btn"
-                                                                                                            data-id="<?=$offer_letter['sid'];?>"
-                                                                                                        >Modify and Reassign</button>
-                                                                                                    
-                                                                                                <?php } ?>    
-                                                                                                
+                                                                                            <?php if (in_array($offer_letter['sid'], $approval_offer_letters)) { ?>
+                                                                                                <button data-document_sid="<?=$offer_letter['sid'];?>"  class="btn btn-danger btn-block btn-sm jsRevokeApprovalDocument">Revoke Approval</button>
                                                                                             <?php } else { ?>    
-                                                                                                <button
-                                                                                                    class="btn btn-success btn-sm btn-block js-modify-assign-offer-letter-btn"
-                                                                                                    data-id="<?=$offer_letter['sid'];?>"
-                                                                                                >Modify and Reassign</button>
+                                                                                                <?php if ($assigned_offer_letter_sid == $offer_letter['sid']) { ?>
+                                                                                                    <?php if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 0) { ?>
+                                                                                                        <form id="form_assign_document_offer_letter_<?php echo $offer_letter['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo base_url('hr_documents_management/revoke_offer_letter'); ?>">
+                                                                                                                <input type="hidden" name="perform_action" value="revoke_offer_letter" />
+                                                                                                                <input type="hidden" name="offer_letter_sid" value="<?php echo $offer_letter['sid']; ?>">
+                                                                                                                <input type="hidden" name="user_sid" value="<?php echo $user_sid; ?>">
+                                                                                                                <input type="hidden" name="user_type" value="<?php echo $user_type; ?>">
+                                                                                                                <?php if($user_type == 'applicant') { ?>
+                                                                                                                    <input type="hidden" name="job_list_sid" value="<?php echo $job_list_sid; ?>">
+                                                                                                                <?php } ?>
+                                                                                                        </form>
+                                                                                                            
+                                                                                                        <button onclick="func_assign_uploaded_offer_letter('offer_letter', <?php echo $offer_letter['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                                                    <?php } else if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 1) { ?>
+
+                                                                                                        
+                                                                                                            <button
+                                                                                                                class="btn btn-warning btn-sm btn-block js-modify-assign-offer-letter-btn"
+                                                                                                                data-id="<?=$offer_letter['sid'];?>"
+                                                                                                            >Modify and Reassign</button>
+                                                                                                        
+                                                                                                    <?php } ?>    
+                                                                                                    
+                                                                                                <?php } else { ?>    
+                                                                                                    <button
+                                                                                                        class="btn btn-success btn-sm btn-block js-modify-assign-offer-letter-btn"
+                                                                                                        data-id="<?=$offer_letter['sid'];?>"
+                                                                                                    >Modify and Reassign</button>
+                                                                                                <?php } ?> 
                                                                                             <?php } ?> 
                                                                                         <?php } ?> 
                                                                                     </td>
@@ -1619,30 +1623,34 @@
                                                                                             <?php if ($action_btn_flag == true || $session['employer_detail']['pay_plan_flag'] == 0) { ?>
                                                                                                 <?php if ($document_all_permission) { ?>
                                                                                                     <td>
-                                                                                                        <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids)) { ?>
-                                                                                                            <?php if(in_array($document['sid'], $assigned_sids)) { ?> <!-- assign doc revoke here -->
-                                                                                                                <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
-                                                                                                                    <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
-                                                                                                                    <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
-                                                                                                                </form>
-                                                                                                                <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
-                                                                                                            <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
+                                                                                                        <?php if (in_array($document['sid'], $approval_documents)) { ?>
+                                                                                                            <button data-document_sid="<?=$document['sid'];?>" class="btn btn-danger btn-block btn-sm jsRevokeApprovalDocument">Revoke Approval</button>
+                                                                                                        <?php } else { ?>
+                                                                                                            <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids) || in_array($document['sid'], $approval_documents)) { ?>
+                                                                                                                <?php if(in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $approval_documents)) { ?> <!-- assign doc revoke here -->
+                                                                                                                    <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
+                                                                                                                        <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                                                        <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                                                                    </form>
+                                                                                                                    <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                                                                <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
+                                                                                                                    <button
+                                                                                                                        class="btn blue-button btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                                        data-id="<?=$document['sid'];?>"
+                                                                                                                    >Completed and Reassign</button>  
+                                                                                                                <?php } else { ?> <!-- revoke doc re-assign here -->
+                                                                                                                    <button
+                                                                                                                        class="btn btn-warning btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                                        data-id="<?=$document['sid'];?>"
+                                                                                                                    >Modify and Reassign</button>
+                                                                                                                <?php } ?>
+                                                                                                            <?php } else { // assign here ?>
                                                                                                                 <button
-                                                                                                                    class="btn blue-button btn-sm btn-block js-modify-assign-document-btn"
+                                                                                                                    class="btn btn-success btn-sm btn-block js-modify-assign-document-btn"
                                                                                                                     data-id="<?=$document['sid'];?>"
-                                                                                                                >Completed and Reassign</button>  
-                                                                                                            <?php } else { ?> <!-- revoke doc re-assign here -->
-                                                                                                                <button
-                                                                                                                    class="btn btn-warning btn-sm btn-block js-modify-assign-document-btn"
-                                                                                                                    data-id="<?=$document['sid'];?>"
-                                                                                                                >Modify and Reassign</button>
+                                                                                                                >Modify and Assign</button>
                                                                                                             <?php } ?>
-                                                                                                        <?php } else { // assign here ?>
-                                                                                                            <button
-                                                                                                                class="btn btn-success btn-sm btn-block js-modify-assign-document-btn"
-                                                                                                                data-id="<?=$document['sid'];?>"
-                                                                                                            >Modify and Assign</button>
                                                                                                         <?php } ?>
                                                                                                     </td>
                                                                                                 <?php } ?>
@@ -6362,6 +6370,45 @@
         $('#history_document_preview').hide();
     });
 
+    //
+    $(document).on('click','.jsRevokeApprovalDocument',function(){
+        //
+        var approval_document_sid = $(this).data("approval_document_sid");
+        //
+        alertify.confirm(
+            'Are you sure?',
+            'Are you sure you want to revoke approval?',
+            function () {
+                $('#loader').show();
+                //
+                var form_data = new FormData();
+                form_data.append('document_sid', approval_document_sid);
+                form_data.append('user_sid', '<?php echo $user_sid; ?>');
+                form_data.append('user_type', '<?php echo $user_type; ?>');
+
+                $.ajax({
+                    url: '<?= base_url('hr_documents_management/revoke_approval_document') ?>',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'post',
+                    data: form_data,
+                    success: function (resp) {
+                        $('#loader').hide();
+                        alertify.alert('SUCCESS!', resp.message, function(){
+                            window.location.reload();
+                        });
+                        
+                    },
+                    error: function () {
+                    }
+                });
+            },
+            function () {
+                alertify.error('Canceled!');
+            }
+        );
+    });
     
 </script>
 <!--  -->

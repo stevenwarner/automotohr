@@ -4718,6 +4718,12 @@ class Onboarding extends CI_Controller {
                 $data['employment_statuses'] = $this->application_tracking_system_model->getEmploymentStatuses();
                 $data['employment_types'] = $this->application_tracking_system_model->getEmploymentTypes();
                 $data['pp_flag'] = $pp_flag;
+                //
+                $approval_documents = $this->hr_documents_management_model->get_user_approval_pending_documents($user_type, $user_sid);
+                $data['approval_documents'] = array_column($approval_documents, "document_sid");
+                $approval_offer_letters = $this->hr_documents_management_model->get_user_approval_pending_offer_letters($user_type, $user_sid);
+                $data['approval_offer_letters'] = array_column($approval_offer_letters, "document_sid");
+                //
                 $this->load->view('main/header', $data);
                 $this->load->view('onboarding/setup');
                 $this->load->view('main/footer');

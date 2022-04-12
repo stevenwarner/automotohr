@@ -106,6 +106,16 @@ class Notifications extends Public_Controller {
             }
         }
         //
+        $total_document_approval = count($this->notification_model->getMyApprovalDocuments($ses['employer_detail']['sid']));
+        //
+        if($total_document_approval){
+            $data[] = [
+                'count' => $total_document_approval,
+                'link' => base_url('hr_documents_management/approval_documents'),
+                'title' => 'Pending Approval Documents'
+            ];
+        }
+        //
         if(!sizeof($data)){
             $this->res['Response'] = 'No notifications found.';
             $this->resp();

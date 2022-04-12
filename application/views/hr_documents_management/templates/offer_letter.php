@@ -147,6 +147,8 @@
 					</div>
 				</div>
 			</div>
+			<!-- 9 -->
+			<?php $this->load->view('hr_documents_management/partials/assigner'); ?>
 			<!-- 7 -->
 			<div class="form-group js-for-generated">
 				<label>Authorized Management Signers</label>

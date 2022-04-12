@@ -366,7 +366,8 @@
                                                 </div>
                                                 <br />
                                                 <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
-
+                                                <br />
+                                                <?php $this->load->view('hr_documents_management/partials/assigner'); ?>
                                                 <!-- Sign In -->
                                                 <div class="row hidden">
                                                     <div class="col-xs-12">
@@ -618,6 +619,7 @@
 <script  language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script  language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/mFileUploader/index.js"></script>
+<?php $this->load->view("hr_documents_management/scripts/assigner"); ?>
 <script>
     var btnTypeO = 'saveandassign';
     $(document).ready(function () {

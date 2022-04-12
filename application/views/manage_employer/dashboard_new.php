@@ -528,6 +528,52 @@
                             --><?php /*} */ ?>
                                 <!--15-->
 
+                                <?php if (check_access_permissions_for_view($security_details, 'attendance_management')) { ?>
+                                    <?php $data['session'] = $this->session->userdata('logged_in'); ?>
+                                    <?php $company_sid = $data["session"]["company_detail"]["sid"]; ?>
+                                    <?php //if(in_array($company_sid, explode(',', TEST_COMPANIES))) { 
+                                    ?>
+                                    <?php if (in_array($company_sid, array())) { ?>
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure><i class="fa fa-calendar"></i></figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?php echo base_url('attendance'); ?>">Time &
+                                                            Attendance</a>
+                                                    </h2>
+                                                    <div class="count-box">
+                                                        <small>&nbsp;</small>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a href="<?php echo base_url('attendance'); ?>" class="site-btn">Manage</a>
+                                                    </div>
+                                                </div>
+                                                <span class="beta-label">beta</span>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                <?php } ?>
+                                <!--16-->
+                                <?php if (check_access_permissions_for_view($security_details, 'approval_documents')) { ?>
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure><i class="fa fa-file-text-o"></i></figure>
+                                                <h2 class="post-title" style="margin: 2px 0;">
+                                                    <a href="<?php echo base_url('hr_documents_management/approval_documents') ?>">Approval Documents</a>
+                                                </h2>
+                                                <div class="count-box" style="font-size: 12px">
+                                                    <small style="font-size: 12px"><?php echo $all_documents_approval; ?> Total Document(s)</small>
+                                                </div>
+                                                <div class="button-panel">
+                                                    <a href="<?php echo base_url('hr_documents_management/approval_documents') ?>" class="site-btn">View Documents</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                
                                 <?php //if(check_access_permissions_for_view($security_details, 'attendance_management')) { 
                                 ?>
                                 <?php $data['session'] = $this->session->userdata('logged_in'); ?>
