@@ -12345,7 +12345,6 @@ class Hr_documents_management extends Public_Controller {
                 // Send approve email
                 //
                 $document_info = $this->hr_documents_management_model->getApprovedDocumentInfo($assignedId);
-                _e($document_info, true, true);
                 //
                 $data_to_update = array();
                 $data_to_update['status'] = 0; // 2 mean Approve this document
