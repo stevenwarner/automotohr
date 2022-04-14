@@ -118,7 +118,7 @@ if ($user_type == 'applicant') {
                     </div>
 
                     <?php if ($sendNotification == "no") { ?>
-                        <div class="row">
+                        <div class="row" id="jsNotificationEmailError">
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <div class="notice_div margin-top">
                                     <span class="notice_div_area">
@@ -3452,7 +3452,10 @@ if ($user_type == 'applicant') {
                         url: send_email_url,
                         success: function(data){
                             $('#date-sent-div').html(data);
-                            alertify.alert('SUCCESS!', 'Email sent successfully.');
+                            $('#jsNotificationEmailError').hide(data);
+                            alertify.alert('SUCCESS!','Email sent successfully.', function(){
+                                window.location.reload();
+                            });
                         },
                         error: function(){
 
