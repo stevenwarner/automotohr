@@ -1,5 +1,6 @@
 <?php
-    $jsonToArray = json_decode($document_info['flow_json'], true);
+    $jsonToArray = json_decode($document_info['flow_json'], true); 
+    //
 ?>
 <div class="main csPageWrap">
     <div class="container">
