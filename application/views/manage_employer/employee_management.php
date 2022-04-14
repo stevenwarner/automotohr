@@ -166,16 +166,18 @@
                                             </a>
                                         <?php  } ?>
                                         </div>
-                                        <div class="col-xs-4">
-                                            <a class="btn btn-success btn-block" href="<?php echo base_url(); ?>invite_colleagues">+ Add Employee / Team Members</a>
-                                        </div>
-                                        <div class="col-xs-4">
-                                            <?php if ($offline) { ?>
-                                                <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a>
-                                            <?php } else { ?>
-                                                <a class="btn btn-danger btn-block" href="javascript:;" id="ej_controll_deactivate">De-activate Selected</a>
-                                            <?php } ?>
-                                        </div>
+                                        <?php if($canEMSPermission) { ?> 
+                                            <div class="col-xs-4">
+                                                <a class="btn btn-success btn-block" href="<?php echo base_url(); ?>invite_colleagues">+ Add Employee / Team Members</a>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <?php if ($offline) { ?>
+                                                    <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a>
+                                                <?php } else { ?>
+                                                    <a class="btn btn-danger btn-block" href="javascript:;" id="ej_controll_deactivate">De-activate Selected</a>
+                                                <?php } ?>
+                                            </div>
+                                        <?php } ?>
                                     </div>
                                 </div>
                             </div>
