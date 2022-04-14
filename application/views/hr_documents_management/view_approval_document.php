@@ -1,13 +1,25 @@
-<div class="csPageWrap">
+<?php
+    $jsonToArray = json_decode($document_info['flow_json'], true);
+?>
+<div class="main csPageWrap">
     <div class="container">
+         <!-- row -->
+         <div class="row">
+            <div class="col-sm-12">
+                <a href="<?=base_url('hr_documents_management/approval_documents');?>" class="btn btn-info csRadius5">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back To Approval Documents
+                </a>
+            </div>
+        </div>
         <!--  -->
         <div class="row">
+            <br>
             <div class="col-sm-12 col-md-6">
-                <h1 class="csB7">Approval Documents</h1>
+                <h2 class="csF20 csB7">Basic</h2>
             </div>
             <div class="col-md-6 col-sm-12 text-right" style="margin-top: 30px;">
-                <a href="javascript:;" data-action="approve" data-sid="<?php echo $document_info['sid'] ?>" data-doc_sid="<?php echo $document_info['document_sid'] ?>" class="jsPerformAction btn btn-success">Approve</a>
-                <a href="javascript:;" data-action="reject" data-sid="<?php echo $document_info['sid'] ?>" data-doc_sid="<?php echo $document_info['document_sid'] ?>" class="jsPerformAction btn btn-warning">Reject</a>
+                <a href="javascript:;" data-action="approve" data-sid="<?php echo $currentAssignerId; ?>" data-doc_sid="<?php echo $document_info['document_sid'] ?>" class="jsPerformAction btn btn-orange"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
+                <a href="javascript:;" data-action="reject" data-sid="<?php echo $currentAssignerId; ?>" data-doc_sid="<?php echo $document_info['document_sid'] ?>" class="jsPerformAction btn btn-danger"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
             </div>
         </div>
         <!--  -->
@@ -17,8 +29,8 @@
                     <div class="col-sm-12">
                         <table class="table table-striped">
                             <tr>
-                                <th class="col-sm-3">Document Title</th>
-                                <td><p class="text-left"><?php echo $document_title; ?></p></td>
+                                <th class="col-sm-3 csF16">Document Title</th>
+                                <td><p class="text-left"><?php echo $jsonToArray['document_title']; ?></p></td>
                             </tr>
                             <tr>
                                 <th class="col-sm-3">Document Type</th>
@@ -32,10 +44,59 @@
                                 <th class="col-sm-3">Type</th>
                                 <td><p class="text-left"><?=ucfirst($document_info['user_type']);?></p></td>
                             </tr>
+                            <tr>
+                                <th class="col-sm-3">Assigned By</th>
+                                <td><p class="text-left"><?=getUserNameBySID($document_info['assigned_by']);?></p></td>
+                            </tr>
+                            <tr>
+                                <th class="col-sm-3">Assigned Date</th>
+                                <td><p class="text-left"><?=formatDateToDB($document_info['assigned_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME);?></p></td>
+                            </tr>
                         </table>
                     </div>
                 </div>
 
+            </div>
+        </div>
+         <!--  -->
+         <div class="row">
+            <br>
+            <div class="col-sm-12 col-md-6">
+                <h2 class="csF20 csB7">Document</h2>
+            </div>
+        </div>
+        <div class="csPageBox csRadius5">
+            <div class="csPageBoxBody">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-striped">
+                            <tr>
+                                <th class="col-sm-3">Acknowledgment Required </th>
+                                <td><p class="text-left"><?php echo $jsonToArray['acknowledgment_required'] ? 'Yes' : 'No'; ?></p></td>
+                            </tr>
+                            <tr>
+                                <th class="col-sm-3">Download Required </th>
+                                <td><p class="text-left"><?php echo $jsonToArray['download_required'] ? 'Yes' : 'No'; ?></p></td>
+                            </tr>
+                            <tr>
+                                <th class="col-sm-3">Signature Required </th>
+                                <td><p class="text-left"><?php echo $jsonToArray['signature_required'] ? 'Yes' : 'No'; ?></p></td>
+                            </tr>
+                            <tr>
+                                <th class="col-sm-3">Document Required </th>
+                                <td><p class="text-left"><?php echo $jsonToArray['is_required'] ? 'Yes' : 'No'; ?></p></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--  -->
+        <div class="row">
+            <br>
+            <div class="col-sm-12 col-md-6">
+                <h2 class="csF20 csB7">Approver employees list</h2>
             </div>
         </div>
         <!--  -->
@@ -47,9 +108,8 @@
                             <thead>
                                 <tr>
                                     <th class="col-lg-4">Employee Name</th>
-                                    <th class="col-lg-2">Assign On</th>
-                                    <th class="col-lg-2">Assign By</th>
-                                    <th class="col-lg-2">Approver Status</th>
+                                    <th class="col-lg-2">Assigned On</th>
+                                    <th class="col-lg-2">Status</th>
                                     <th class="col-lg-2">Action Date</th>
                                 </tr>
                             </thead>
@@ -71,11 +131,6 @@
                                             </td>
                                             <td>
                                                 <?php 
-                                                    echo getUserNameBySID($document_info['assigned_by']);
-                                                ?>
-                                            </td>
-                                            <td>
-                                                <?php 
                                                     echo $assigner['approval_status'] ? $assigner['approval_status'] : 'Pending';
                                                 ?>
                                             </td>
@@ -92,7 +147,7 @@
                                     <?php } ?>    
                                 <?php } else { ?>
                                     <tr>
-                                        <td colspan="7" class="col-lg-12 text-center"><b>No Approval Document(s) Assign!</b></td>
+                                        <td colspan="4" class="col-lg-12 text-center"><b>No Approval Document(s) Assign!</b></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -164,7 +219,6 @@
     });
 
     $(document).on('click', '#jsSaveAction', function(event) {
-        $('#approval_action_modal').modal('hide');
         //
         var action = $('#approver_action_status').val();
         var assigner_sid = $('#approver_action_sid').val();
@@ -185,8 +239,8 @@
             type: 'post',
             data: form_data,
             success: function (data) {
+                $('#approval_action_modal').modal('hide');
                 window.location.reload();
-                
             },
             error: function () {
             }

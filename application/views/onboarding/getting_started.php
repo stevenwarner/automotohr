@@ -509,13 +509,13 @@
                             <div class="widget-box">
                                 <a href="<?php echo base_url('hr_documents_management/approval_documents'); ?>">
                                     <div class="link-box bg-redish full-width">
-                                        <h2>Approvals Documents</h2>
-                                        <div><span>&nbsp;</span></div>
+                                        <h2>Approval Documents</h2>
                                         <div class="current-date">
                                             <span><?php echo $all_documents_approval; ?><sub>Pending</sub></span>
                                         </div>
                                         <div class="status-panel">
-                                            
+                                            <h3>View</h3>
+                                            <span>Needs your approval</span>
                                         </div>
                                     </div>
                                 </a>
