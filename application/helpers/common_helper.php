@@ -2360,8 +2360,18 @@ if (!function_exists('check_access_permissions')) {
             // got access
         } else {
             $CI = &get_instance();
-            $CI->session->set_flashdata('message', SECURITY_PERMISSIONS_ERROR);
-            redirect($reload_location, "location");
+            $loggedin_info = $CI->session->userdata('logged_in');
+            //
+            $canAccessDocument = hasDocumentsAssigned($loggedin_info['employer_detail']);
+            //
+            if ($function_name == "employee_management" && $canAccessDocument) {
+
+            } else {
+                $CI = &get_instance();
+                $CI->session->set_flashdata('message', SECURITY_PERMISSIONS_ERROR);
+                redirect($reload_location, "location"); 
+            }
+            
         }
     }
 }

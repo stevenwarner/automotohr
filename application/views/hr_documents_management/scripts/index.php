@@ -262,7 +262,7 @@
 			rows += getSignatureRequiredRow();
 			if(do_descpt) rows += getTags();
 			//
-			if(do_descpt){
+			// if(do_descpt){
 				if($('#jsRoles').data('select2')){
 					$('#jsRoles').data('select2').destroy()
 					$('#jsRoles').remove()
@@ -282,7 +282,7 @@
 					$('#jsEmployees').data('select2').destroy()
 					$('#jsEmployees').remove()
 				}
-			}
+			// }
 			//
 			let select2s = ['#jsRoles', '#jsEmployees', '#jsDepartments', '#jsTeams'];
 			//
@@ -382,7 +382,7 @@
 			rows += getRequiredRow();
 			rows += getSignatureRequiredRow();
 			if(do_descpt) rows += getTags();
-			if(do_descpt) {
+			// if(do_descpt) {
 				//
 				if($('#jsRoles').data('select2')){
 					$('#jsRoles').data('select2').destroy()
@@ -403,7 +403,7 @@
 					$('#jsEmployees').data('select2').destroy()
 					$('#jsEmployees').remove()
 				}
-			}
+			// }
 			//
 			Modal(
 				'Modify & Assign This Document',
@@ -425,7 +425,7 @@
 						$('#jsVisibleToPayroll').prop('checked', true);
 					}
 					//
-					if(do_descpt) {
+					// if(do_descpt) {
 						$('#jsRoles').select2({ closeOnSelect: false});
 						$('#jsDepartments').select2({ closeOnSelect: false});
 						$('#jsTeams').select2({ closeOnSelect: false});
@@ -446,7 +446,7 @@
 						if(d.allowed_employees){
 							$('#jsEmployees').select2('val', d.allowed_employees.split(','));
 						}
-					}
+					// }
 
 
 					$('.jsModifyModalLoader').fadeOut(300);
@@ -498,7 +498,7 @@
 			rows+= getEmailContent();
 			if(do_descpt) rows += getTags();
 			//
-			if(do_descpt){
+			// if(do_descpt){
 				//
 				if($('#jsRoles').data('select2')){
 					$('#jsRoles').data('select2').destroy()
@@ -519,7 +519,7 @@
 					$('#jsEmployees').data('select2').destroy()
 					$('#jsEmployees').remove()
 				}
-			}
+			// }
 			//
 			Modal(
 				'Modify & Assign This Offer Letter / Pay Plan',
@@ -541,7 +541,7 @@
 						$('#jsVisibleToPayroll').prop('checked', true);
 					}
 					//
-					if(do_descpt){
+					// if(do_descpt){
 						$('#jsRoles').select2({ closeOnSelect: false});
 						$('#jsDepartments').select2({ closeOnSelect: false});
 						$('#jsTeams').select2({ closeOnSelect: false});
@@ -563,7 +563,7 @@
 						if(d.allowed_employees){
 							$('#jsEmployees').select2('val', d.allowed_employees.split(','));
 						}
-					}
+					// }
 					
 					$('.modify-assign-offer-letter-modal-loader').fadeOut(300);
 				}
@@ -592,7 +592,7 @@
 			html +='                    <input type="checkbox" name="visible_to_payroll" id="jsVisibleToPayroll" />';
 			html +='                    <div class="control__indicator"></div>';
 			html +='                </label>';
-			if(is_generated){
+			// if(is_generated){
 
 				html +='                <hr />';
 				html +='                <!-- Roles -->';
@@ -640,7 +640,7 @@
 					});
 				}
 				html +='                </select>';
-			}
+			// }
 			html +='            </div>'; 
 			html +='        </div>';
 			html +='    </div>';

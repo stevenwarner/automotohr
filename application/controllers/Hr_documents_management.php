@@ -3301,7 +3301,8 @@ class Hr_documents_management extends Public_Controller {
             $assigned_offer_letter_history = $this->hr_documents_management_model->get_assigned_offer_letter_history($company_sid, $user_type, $user_sid, 0);
             
             $archived_assign_document = $this->hr_documents_management_model->get_archive_assigned_documents($company_sid, $user_type, $user_sid, $pp_flag);  
-            $user_assigned_manual_documents = $this->hr_documents_management_model->get_all_user_assigned_manual_documents($company_sid, $user_type, $user_sid, $pp_flag);  
+            $user_assigned_manual_documents = $this->hr_documents_management_model->get_all_user_assigned_manual_documents($company_sid, $user_type, $user_sid, $pp_flag);
+
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;
@@ -3607,12 +3608,15 @@ class Hr_documents_management extends Public_Controller {
             $data['payroll_documents_sids']         = $payroll_documents_sids;
             // Filter assigned documents
             // 01/08/2021
+
+             // _e($data['assigned_documents']);
             $data['assigned_documents'] =
             cleanAssignedDocumentsByPermission(
                 $data['assigned_documents'],
                 $data['session']['employer_detail'],
                 $employeeDepartments
             );
+            // _e($data['assigned_documents'], true, true);
             $data['completed_offer_letter'] =
             cleanAssignedDocumentsByPermission(
                 $data['completed_offer_letter'],

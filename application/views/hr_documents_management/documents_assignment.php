@@ -1621,7 +1621,7 @@
                                                                                             $canAccessDocument
                                                                                             ){ ?>
                                                                                             <?php if ($action_btn_flag == true || $session['employer_detail']['pay_plan_flag'] == 0) { ?>
-                                                                                                <?php if ($document_all_permission) { ?>
+                                                                                                <?php if ($document_all_permission || $canAccessDocument) { ?>
                                                                                                     <td>
                                                                                                         <?php if (in_array($document['sid'], $approval_documents)) { ?>
                                                                                                             <button data-document_sid="<?=$document['sid'];?>" class="btn btn-danger btn-block btn-sm jsRevokeApprovalDocument">Revoke Approval</button>

@@ -338,7 +338,10 @@
                                     </div>
                                 <?php } ?>
                                 <!--6-->
-                                <?php if (check_access_permissions_for_view($security_details, 'employee_management')) { ?>
+                                <?php 
+                                    $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
+                                ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'employee_management') || $canAccessDocument) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">

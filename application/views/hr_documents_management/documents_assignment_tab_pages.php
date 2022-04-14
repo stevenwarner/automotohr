@@ -1,13 +1,14 @@
 <?php
     $ncd = $pp = $cd = $nad = 0;
+    $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
 
     $action_btn_flag = true;
-    if ($pp_flag == 1) {
+    if ($pp_flag == 1 || $canAccessDocument) {
         $action_btn_flag = false;
     }
 
     $document_all_permission = false;
-    if($session['employer_detail']['access_level_plus'] == 1) {
+    if($session['employer_detail']['access_level_plus'] == 1 || $canAccessDocument) {
         $document_all_permission = true;
     } 
 

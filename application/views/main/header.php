@@ -1033,7 +1033,10 @@
                                                         </li>
                                                     <?php } ?>
                                                     <!--6-->
-                                                    <?php if (check_access_permissions_for_view($security_details, 'employee_management')) { ?>
+                                                    <?php 
+                                                        $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
+                                                    ?>
+                                                    <?php if (check_access_permissions_for_view($security_details, 'employee_management') || $canAccessDocument) { ?>
                                                         <li>
                                                             <a <?php if (base_url(uri_string()) == site_url('employee_management') || base_url(uri_string()) == site_url('invite_colleagues')) {
                                                                     echo 'class="active_header_nav"';
