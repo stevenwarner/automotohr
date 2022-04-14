@@ -1,5 +1,6 @@
 <?php 
     $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
+    $canEMSPermission = hasEMSPermission($session['employer_detail']);
 ?>
 <div class="main-content">
     <div class="container-fluid">
@@ -384,24 +385,28 @@
                                                         </td>
                                                     <?php } ?>
                                                     <td class="text-center">
-                                                        <?php if($employee['is_executive_admin'] == 0) { ?> 
-                                                            <?php if ($employee['active'] == 1 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?> 
-                                                                <a title="Deactivate" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" onclick="deactivate_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;"><img style="width: 17px; height: 17px;" src="<?= base_url('assets/images/deactivate.png') ?>"></a>
-                                                            <?php } else if ($employee['active'] == 0 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?>
-                                                                <a title="Archive Employee" data-toggle="tooltip" data-placement="bottom"  class="btn btn-warning btn-sm" onclick="archive_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;">
-                                                                    <i class="fa fa-archive"></i>
-                                                                </a>
+                                                        <?php if($canEMSPermission) { ?> 
+                                                            <?php if($employee['is_executive_admin'] == 0) { ?> 
+                                                                <?php if ($employee['active'] == 1 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?> 
+                                                                    <a title="Deactivate" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" onclick="deactivate_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;"><img style="width: 17px; height: 17px;" src="<?= base_url('assets/images/deactivate.png') ?>"></a>
+                                                                <?php } else if ($employee['active'] == 0 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?>
+                                                                    <a title="Archive Employee" data-toggle="tooltip" data-placement="bottom"  class="btn btn-warning btn-sm" onclick="archive_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;">
+                                                                        <i class="fa fa-archive"></i>
+                                                                    </a>
+                                                                <?php } ?>  
                                                             <?php } ?>  
                                                         <?php } ?>  
                                                     </td>
-                                                    <td class="text-center">  
-                                                        <?php if($employee['is_executive_admin'] == 0) { ?>     
-                                                            <?php if($employee['terminated_status'] == 0) { ?>         
-                                                                <?php if (!empty($employee['applicant_sid'])) { ?>
-                                                                    <a class="btn btn-info btn-sm" onclick="revert_applicant(<?php echo $employee['applicant_sid']; ?>, <?php echo $employee['sid']; ?>)" href="javascript:;">
-                                                                        <i class="fa fa-undo"></i>
-                                                                        <span class="btn-tooltip">Revert</span>
-                                                                    </a>
+                                                    <td class="text-center">
+                                                        <?php if($canEMSPermission) { ?>   
+                                                            <?php if($employee['is_executive_admin'] == 0) { ?>     
+                                                                <?php if($employee['terminated_status'] == 0) { ?>         
+                                                                    <?php if (!empty($employee['applicant_sid'])) { ?>
+                                                                        <a class="btn btn-info btn-sm" onclick="revert_applicant(<?php echo $employee['applicant_sid']; ?>, <?php echo $employee['sid']; ?>)" href="javascript:;">
+                                                                            <i class="fa fa-undo"></i>
+                                                                            <span class="btn-tooltip">Revert</span>
+                                                                        </a>
+                                                                    <?php } ?>
                                                                 <?php } ?>
                                                             <?php } ?>
                                                         <?php } ?>

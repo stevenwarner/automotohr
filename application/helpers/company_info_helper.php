@@ -2592,6 +2592,26 @@ if(!function_exists('hasDocumentsAssigned')){
 }
 
 /**
+ * Check if a document is assigned to the 
+ * current employee
+ * 
+ * @param Array $employerArray
+ * 
+ * @return Booleon
+ */
+if(!function_exists('hasEMSPermission')){
+    function hasEMSPermission($employerArray){
+        //
+        $role = strtolower(preg_replace('/[^a-zA-Z]/', '_', $employerArray['access_level']));
+        // Check if the user is not access level plus and role is manager
+        if($employerArray['access_level_plus'] == 0 && $role == 'manager')  
+            return false;
+        else
+            return true;
+    }
+}
+
+/**
  * Check user session and set data
  * 
  * @employee Mubashir Ahmed
