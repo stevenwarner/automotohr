@@ -12438,7 +12438,7 @@ class Hr_documents_management extends Public_Controller {
 
             //
             $this->load->view('main/header', $data);
-            $this->load->view('Hr_documents_management/view_approval_document');
+            $this->load->view('hr_documents_management/view_approval_document');
             $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), "refresh");
