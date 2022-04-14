@@ -265,6 +265,15 @@ define('HR_AUTHORIZED_DOCUMENTS_NOTIFICATION', 410);
 // Added on- 09/04/2020
 define('HR_DOCUMENTS_FOR_APPLICANT', 387);
 
+/**
+ * Holds the id of dcocument approval flow
+ * 
+ * 04/14/2022 
+ */
+define('HR_DOCUMENTS_APPROVAL_FLOW', 419);
+define('HR_DOCUMENTS_APPROVAL_FLOW_APPROVED', 420);
+define('HR_DOCUMENTS_APPROVAL_FLOW_REJECTED', 421);
+
 
 // Added on- 18/01/2022
 define('EMPLOYEE_PROFILE_UPDATE', 417);

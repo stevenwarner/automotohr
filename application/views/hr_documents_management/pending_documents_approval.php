@@ -1,22 +1,33 @@
 <?php 
     $show_empty_box = true; 
     $document_d_base = base_url('hr_documents_management/review_approval_document');
+    
 ?>
-<div class="main">
+<div class="main csPageWrap">
     <div class="container">
+        <!-- row -->
         <div class="row">
+            <div class="col-sm-12">
+                <a href="<?=base_url('dashboard');?>" class="btn btn-info csRadius5">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <br>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-9">
+                <!--  -->
                 <div class="panel panel-default ems-documents">
                     <div class="panel-heading">
-                        <strong>Approval Documents</strong>
+                        <strong class="csF20 csB7">Documents to be approve for assign</strong>
                     </div>
                     <div class="panel-body">
-                        <table class="table table-plane cs-w4-table">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th class="col-lg-2">Document Title</th>
-                                    <th class="col-lg-2 hidden-xs">User Name</th>
-                                    <th class="col-lg-2 hidden-xs">User Type</th>
+                                    <th class="col-lg-2 hidden-xs">Employee/Applicant</th>
+                                    <th class="col-lg-2 hidden-xs">Type</th>
                                     <th class="col-lg-2 hidden-xs">Note</th>
                                     <th class="col-lg-4 col-xs-12 text-center">Actions</th>
                                 </tr>
@@ -54,10 +65,9 @@
                                                 ?>
                                             </td>
                                             <td class="text-center hidden-xs">
-                                                <a href="javascript:;" data-action="approve" data-sid="<?php echo $document['sid'] ?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-success">Approve</a>
-                                                <a href="javascript:;" data-action="reject" data-sid="<?php echo $document['sid'] ?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-warning">Reject</a>
-                                                <a target="_blank" href="<?php echo $document_d_base . '/' . $document['portal_document_assign_sid']; ?>" class="btn btn-info">View Document</a> 
-                                                <!-- <a href="javascript:;" class="btn btn-info" id="jsViewPendingDocument" data-doc_sid="<?php echo $document['document_sid'] ?>">View Document</a> -->
+                                                <a href="javascript:;" data-action="approve" data-sid="<?php echo $document['assigner_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-orange"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
+                                                <a href="javascript:;" data-action="reject" data-sid="<?php echo $document['assigner_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-danger"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
+                                                <a target="_blank" href="<?php echo $document_d_base . '/' . $document['portal_document_assign_sid']; ?>" class="btn btn-info csRadius5"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Document Details</a> 
                                             </td>
                                         </tr>           
                                     <?php } ?>    
@@ -168,7 +178,10 @@
             type: 'post',
             data: form_data,
             success: function (data) {
-                ml(false, 'jsApprovalStatusLoader');
+                //
+                
+                $('#approval_action_modal').modal('hide');
+                window.location.reload();
                 
             },
             error: function () {

@@ -4428,6 +4428,8 @@ class Onboarding extends CI_Controller {
                     }
                 }
             }
+            // Get employees list
+            $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees( $company_sid, false );
 
             $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid,1);
 

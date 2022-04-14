@@ -651,6 +651,11 @@ class Hr_documents_management extends Public_Controller {
                             if(in_array('-1', $aEmployees)) $data_to_insert['assigned_employee_list'] = 'all';
                             else $data_to_insert['assigned_employee_list'] = json_encode($aEmployees);
                         }
+                        // Assigner handling
+                        if(isset($post['assigner']) && !empty($post['assigner'])){
+                            $data_to_insert['document_approval_employees'] = implode(',', $post['assigner']);
+                            $data_to_insert['document_approval_note'] = $post['assigner_note'];
+                        }
 
                         $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
 
@@ -693,6 +698,11 @@ class Hr_documents_management extends Public_Controller {
                         $new_history_data['download_required'] = $this->input->post('download_required');
                         $new_history_data['signature_required'] = $this->input->post('signature_required');
                         $new_history_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
+                        // Assigner handling
+                        if(isset($post['assigner']) && !empty($post['assigner'])){
+                            $new_history_data['document_approval_employees'] = implode(',', $post['assigner']);
+                            $new_history_data['document_approval_note'] = $post['assigner_note'];
+                        }
                         $this->hr_documents_management_model->insert_document_management_history($new_history_data);
                         $this->session->set_flashdata('message', '<strong>Success:</strong> HR Document Upload Successful!');
                         redirect('hr_documents_management', 'refresh');
@@ -873,6 +883,11 @@ class Hr_documents_management extends Public_Controller {
                         if($managersList && sizeof($managersList)){
                             $data_to_insert['managers_list'] = implode(',', $managersList);   
                         }
+                        // Assigner handling
+                        if(isset($post['assigner']) && !empty($post['assigner'])){
+                            $data_to_insert['document_approval_employees'] = implode(',', $post['assigner']);
+                            $data_to_insert['document_approval_note'] = $post['assigner_note'];
+                        }
 
                         $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
 
@@ -907,6 +922,11 @@ class Hr_documents_management extends Public_Controller {
                             $update_authorized_signature = array();
                             $update_authorized_signature['document_sid'] = $insert_id;
                             $this->hr_documents_management_model->update_authorized_signature($authorized_signature_required, $update_authorized_signature);
+                        }
+                        // Assigner handling
+                        if(isset($post['assigner']) && !empty($post['assigner'])){
+                            $new_history_data['document_approval_employees'] = implode(',', $post['assigner']);
+                            $new_history_data['document_approval_note'] = $post['assigner_note'];
                         }
 
                         // Tracking History For New Inserted Doc in new history table
@@ -1383,6 +1403,11 @@ class Hr_documents_management extends Public_Controller {
                         if(!empty($this->input->post('document_url'))){
                             $data_to_update['uploaded_document_original_name'] = $this->input->post('document_name');
                             $data_to_update['uploaded_document_s3_name'] = $this->input->post('document_url');
+                        }
+                        // Assigner handling
+                        if(isset($post['assigner']) && !empty($post['assigner'])){
+                            $data_to_update['document_approval_employees'] = implode(',', $post['assigner']);
+                            $data_to_update['document_approval_note'] = $post['assigner_note'];
                         }
 
                         $this->hr_documents_management_model->update_documents($sid, $data_to_update, 'documents_management');
@@ -9329,6 +9354,8 @@ class Hr_documents_management extends Public_Controller {
         $ins['signature_required'] = $post['signature'];
         $ins['sort_order'] = $post['sortOrder'] == '' ? 1 : $post['sortOrder'];
         $ins['is_specific'] = $post['EmployeeSid'];
+
+        $company_name = getCompanyNameBySid($post['CompanySid']);
         //
         if(($post['type'] == 'uploaded' || $post['type'] == 'hybrid_document') && sizeof($_FILES)){
             //
@@ -9417,12 +9444,20 @@ class Hr_documents_management extends Public_Controller {
                     if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $ins['signers'] != null){
                         $a["managersList"] = implode(',', $ins['signers']);
                     }
-                    
-                    $a["assigner_note"] = isset($post['assigner_note']) ? $post['assigner_note'] : '';
                     //
-                    $approvalInsertId = $this->hr_documents_management_model->insert_documents_assignment_flow($a);
                     //
-                    $this->add_approvers_for_document(explode(",", $post["assigner"]), $approvalInsertId);
+                    $approvalEmployees = explode(",", $post["assigner"]);
+                    // When approval employees are selected
+                    $this->HandleApprovalFlow(
+                        $a,
+                        $a['company_sid'],
+                        getCompanyNameBySid($a['company_sid']),
+                        $a['assigned_by'],
+                        $a['user_sid'],
+                        $a['user_type'],
+                        isset($post['assigner_note']) ? $post['assigner_note'] : '',
+                        $approvalEmployees
+                    );
 
                 } else {
                     //
@@ -9501,23 +9536,6 @@ class Hr_documents_management extends Public_Controller {
         }
     }
 
-    function add_approvers_for_document ($assigners, $document_sid) {
-        foreach ($assigners as $key => $assigner_sid) {
-            $data_to_insert = array();
-            $data_to_insert['portal_document_assign_sid'] = $document_sid;
-            $data_to_insert['assigner_sid'] = $assigner_sid;
-            //
-            if ($key == 0) {
-                $data_to_insert['assign_on'] = date('Y-m-d H:i:s', strtotime('now'));
-                $data_to_insert['assigner_turn'] = 1;
-            }
-            //
-            $this->hr_documents_management_model->insert_assigner_employee($data_to_insert);
-
-            //Todo 
-            // Send email to assigner as a notification with private link
-        }
-    }
 
     // 
     // Deprecated, need to remove it's functionlity
@@ -9588,262 +9606,269 @@ class Hr_documents_management extends Public_Controller {
         
         //
         if(isset($_POST) && sizeof($_POST)){  
-            if (isset($_POST["assigner"])) {
+            //
+            $data_to_insert = array();
+            //
+            $post = $this->input->post(NULL, TRUE);
+            //
+            $approvalEmployees = isset($post['assigner']) ? array_filter($post['assigner']) : [];
+            //
+            $document_title = $this->input->post('document_title');
+            $document_description = htmlentities($this->input->post('document_description', false));
+            $document_guidence = htmlentities($this->input->post('document_guidence', false));
+            //
+            $do_upload = $post['perform_action'] == 'uploaded' || $post['perform_action'] == 'hybrid_document' ? true : false;
+            $do_descpt = $post['perform_action'] == 'generated' || $post['perform_action'] == 'hybrid_document' ? true : false;
+            //
+            // Fo uploaded file
+            if($do_upload){
                 //
-                $filter_assigner = array_filter($_POST["assigner"]);
-                //
-                if (!empty($filter_assigner)) {
-                    $this->start_new_process($user_type, $user_sid, $filter_assigner);
-                }
+                // $uploaded_document_s3_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
+                // $uploaded_document_original_name = $document_title;
+                // if(isset($_FILES['document']['name']) && $_FILES['document']['name'] != '' && $_SERVER['HTTP_HOST'] != 'localhost'){
+                //     //
+                //     $uploaded_document_s3_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_title), $employer_sid, AWS_S3_BUCKET_NAME);
+                //     $uploaded_document_original_name = $_FILES['document']['name'];
 
-            } else {
+                // }
                 //
-                $data_to_insert = array();
+                // $file_info = pathinfo($uploaded_document_original_name);
                 //
-                $post = $this->input->post(NULL, TRUE);
-                $document_title = $this->input->post('document_title');
-                $document_description = htmlentities($this->input->post('document_description', false));
-                $document_guidence = htmlentities($this->input->post('document_guidence', false));
+                // if (isset($file_info['extension'])) $data_to_insert['uploaded_document_extension'] = $file_info['extension'];
                 //
-                $do_upload = $post['perform_action'] == 'uploaded' || $post['perform_action'] == 'hybrid_document' ? true : false;
-                $do_descpt = $post['perform_action'] == 'generated' || $post['perform_action'] == 'hybrid_document' ? true : false;
-                //
-                // Fo uploaded file
-                if($do_upload){
-                    //
-                    // $uploaded_document_s3_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
-                    // $uploaded_document_original_name = $document_title;
-                    // if(isset($_FILES['document']['name']) && $_FILES['document']['name'] != '' && $_SERVER['HTTP_HOST'] != 'localhost'){
-                    //     //
-                    //     $uploaded_document_s3_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_title), $employer_sid, AWS_S3_BUCKET_NAME);
-                    //     $uploaded_document_original_name = $_FILES['document']['name'];
+                // if ($uploaded_document_s3_name != 'error') {
+                //     $data_to_insert['uploaded_document_original_name'] = $uploaded_document_original_name;
+                //     $data_to_insert['uploaded_document_s3_name'] = $uploaded_document_s3_name;
+                // }
 
-                    // }
-                    //
-                    // $file_info = pathinfo($uploaded_document_original_name);
-                    //
-                    // if (isset($file_info['extension'])) $data_to_insert['uploaded_document_extension'] = $file_info['extension'];
-                    //
-                    // if ($uploaded_document_s3_name != 'error') {
-                    //     $data_to_insert['uploaded_document_original_name'] = $uploaded_document_original_name;
-                    //     $data_to_insert['uploaded_document_s3_name'] = $uploaded_document_s3_name;
-                    // }
+                $data_to_insert['uploaded_document_original_name'] = $post['document_name'];
+                $data_to_insert['uploaded_document_s3_name'] = $post['document_url'];
+                $data_to_insert['uploaded_document_extension'] = $post['document_extension'];
+            } 
 
-                    $data_to_insert['uploaded_document_original_name'] = $post['document_name'];
-                    $data_to_insert['uploaded_document_s3_name'] = $post['document_url'];
-                    $data_to_insert['uploaded_document_extension'] = $post['document_extension'];
+            if ($post['js-template-type'] == 'template' && isset($post['document_url']) && !empty($post['document_url'])) {
+                $data_to_insert['uploaded_document_original_name'] = $post['document_name'];
+                $data_to_insert['uploaded_document_s3_name'] = $post['document_url'];
+                $data_to_insert['uploaded_document_extension'] = $post['document_extension'];
+            } else if ($post['js-template-type'] == 'template' && isset($post['uploaded_file']) && !empty($post['uploaded_file'])) {
+                $data_to_insert['uploaded_document_original_name'] = $post['uploaded_file_orig'];
+                $data_to_insert['uploaded_document_s3_name'] = $post['uploaded_file'];
+                $data_to_insert['uploaded_document_extension'] = $post['uploaded_file_ext'];
+            }
+            //
+            if($do_descpt) $data_to_insert['document_description'] = $document_description;
+            //
+            $data_to_insert['is_specific'] = $user_sid;
+            $data_to_insert['is_specific_type'] = $user_type;
+            $data_to_insert['company_sid'] = $company_sid;
+            $data_to_insert['employer_sid'] = $employer_sid;
+            $data_to_insert['document_title'] = $document_title;
+            $data_to_insert['document_type'] = $post['perform_action'];
+            $data_to_insert['sort_order'] = $post['sort_order'] == '' ? 1 : $post['sort_order'];
+            
+            $data_to_insert['unique_key'] = generateRandomString(32);
+            $data_to_insert['onboarding'] = $post['onboarding'];
+            $data_to_insert['download_required'] = $post['download_required'];
+            $data_to_insert['acknowledgment_required'] = $post['acknowledgment_required'];
+            $data_to_insert['signature_required'] = $post['signature_required'];
+            $data_to_insert['automatic_assign_type'] = !empty($post['assign_type']) ? $post['assign_type'] : 'days';
+            //
+            if($data_to_insert['automatic_assign_type'] == 'days')
+                $data_to_insert['automatic_assign_in'] = !empty($post['assign-in-days']) ? $post['assign-in-days'] : 0;
+            else
+                $data_to_insert['automatic_assign_in'] = !empty($post['assign-in-months']) ? $post['assign-in-months'] : 0;
+            //
+            $data_to_insert['visible_to_payroll'] = !isset($post['categories']) && isset($post['visible_to_payroll']) ? 1 : 0;
+            $post = $this->input->post(NULL, true);
+            //
+            $data_to_insert['is_available_for_na'] = isset($post['selected_roles']) ? implode(',', $post['selected_roles']) : NULL;
+            $data_to_insert['allowed_employees'] = isset($post['selected_employees']) ? implode(',', $post['selected_employees']) : NULL;
+            $data_to_insert['allowed_departments'] = isset($post['selected_departments']) ? implode(',', $post['selected_departments']) : NULL;
+            $data_to_insert['allowed_teams'] = isset($post['selected_teams']) ? implode(',', $post['selected_teams']) : NULL;
+
+            // Assign & Send document
+            // Set
+            $aType = $this->input->post('assignAndSendDocument', true);
+            $aDate = $this->input->post('assignAndSendCustomDate', true);
+            $aDay = $this->input->post('assignAndSendCustomDay', true);
+            $aTime = $this->input->post('assignAndSendCustomTime', true);
+            $aEmployees = $this->input->post('assignAdnSendSelectedEmployees', true);
+            //
+            $data_to_insert['assign_type'] = $aType;
+            $data_to_insert['assign_date'] = $aDate;
+            $data_to_insert['assign_time'] = $aTime;
+            //
+            if($aType == 'custom' && empty($aDate) && empty($aTime)) $data_to_insert['assign_type'] = 'none';
+            //
+            if(empty($aDate)) $data_to_insert['assign_date'] = null;
+            if(empty($aTime)) $data_to_insert['assign_time'] = null;
+            //
+            if($aType == 'weekly' && !empty($aDay) ) $data_to_insert['assign_date'] = $aDay;
+            if($aType == 'weekly' && empty($aDay) ) $data_to_insert['assign_date'] = null;
+            //
+            if($aEmployees && count($aEmployees)){
+                //
+                if(in_array('-1', $aEmployees)) $data_to_insert['assigned_employee_list'] = 'all';
+                else $data_to_insert['assigned_employee_list'] = json_encode($aEmployees);
+            }
+
+            //
+            if(isset($post['managersList']) && $post['managersList'] && sizeof($post['managersList'])){
+                $data_to_insert['managers_list'] = implode(',', $post['managersList']);   
+            }
+            //
+            $data_to_insert['video_required'] = 0;
+            //
+            $video_required = $post['video_source'];
+
+            if ($video_required != 'not_required') {
+                $video_source = $this->input->post('video_source');
+
+                if (isset($_FILES['video_upload']) && !empty($_FILES['video_upload']['name'])) {
+                    $random = generateRandomString(5);
+                    $company_id = $data['session']['company_detail']['sid'];
+                    $target_file_name = basename($_FILES["video_upload"]["name"]);
+                    $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
+                    $target_dir = "assets/uploaded_videos/";
+                    $target_file = $target_dir . $file_name;
+                    $filename = $target_dir . $company_id;
+
+                    if (!file_exists($filename)) {
+                        mkdir($filename);
+                    }
+
+                    if (move_uploaded_file($_FILES["video_upload"]["tmp_name"], $target_file)) {
+                        $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload"]["name"]) . ' has been uploaded.');
+                    } else {
+                        $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                        redirect($redirectURL, 'refresh');
+                    }
+
+                    $video_url = $file_name;
+                } else if ($post['yt_vm_video_url'] != '' && $video_required = 'upload') {
+                    $random = generateRandomString(5);
+                    $company_id = $data['session']['company_detail']['sid'];
+                    $target_file_name = preg_replace('/\s+/', '_', strtolower($data_to_insert['document_title']));
+                    $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
+                    $target_dir = "assets/uploaded_videos/";
+                    $target_file = $target_dir . $file_name;
+                    $filename = $target_dir . $company_id;
+
+
+                    // 
+                    $t = explode('.', $post['yt_vm_video_url']);
+                    $target_file .= '.'.$t[sizeof($t) - 1];
+
+                    if (!file_exists($filename)) {
+                        mkdir($filename);
+                    }
+
+                    file_put_contents($target_file, file_get_contents($target_dir.$post['yt_vm_video_url']));
+
+                    $video_url = $file_name;
+                }else {
+                    $video_url = $this->input->post('yt_vm_video_url');
+
+                    if ($video_source == 'youtube') {
+                        $url_prams = array();
+                        parse_str(parse_url($video_url, PHP_URL_QUERY), $url_prams);
+
+                        if (isset($url_prams['v'])) {
+                            $video_url = $url_prams['v'];
+                        } else {
+                            $video_url = '';
+                        }
+                    } else {
+                        $video_url = $this->vimeo_get_id($video_url);
+                    }
                 } 
 
-                if ($post['js-template-type'] == 'template' && isset($post['document_url']) && !empty($post['document_url'])) {
-                    $data_to_insert['uploaded_document_original_name'] = $post['document_name'];
-                    $data_to_insert['uploaded_document_s3_name'] = $post['document_url'];
-                    $data_to_insert['uploaded_document_extension'] = $post['document_extension'];
-                } else if ($post['js-template-type'] == 'template' && isset($post['uploaded_file']) && !empty($post['uploaded_file'])) {
-                    $data_to_insert['uploaded_document_original_name'] = $post['uploaded_file_orig'];
-                    $data_to_insert['uploaded_document_s3_name'] = $post['uploaded_file'];
-                    $data_to_insert['uploaded_document_extension'] = $post['uploaded_file_ext'];
-                }
-                //
-                if($do_descpt) $data_to_insert['document_description'] = $document_description;
-                //
-                $data_to_insert['is_specific'] = $user_sid;
-                $data_to_insert['is_specific_type'] = $user_type;
-                $data_to_insert['company_sid'] = $company_sid;
-                $data_to_insert['employer_sid'] = $employer_sid;
-                $data_to_insert['document_title'] = $document_title;
-                $data_to_insert['document_type'] = $post['perform_action'];
-                $data_to_insert['sort_order'] = $post['sort_order'] == '' ? 1 : $post['sort_order'];
-                
-                $data_to_insert['unique_key'] = generateRandomString(32);
-                $data_to_insert['onboarding'] = $post['onboarding'];
-                $data_to_insert['download_required'] = $post['download_required'];
-                $data_to_insert['acknowledgment_required'] = $post['acknowledgment_required'];
-                $data_to_insert['signature_required'] = $post['signature_required'];
-                $data_to_insert['automatic_assign_type'] = !empty($post['assign_type']) ? $post['assign_type'] : 'days';
-                //
-                if($data_to_insert['automatic_assign_type'] == 'days')
-                    $data_to_insert['automatic_assign_in'] = !empty($post['assign-in-days']) ? $post['assign-in-days'] : 0;
-                else
-                    $data_to_insert['automatic_assign_in'] = !empty($post['assign-in-months']) ? $post['assign-in-months'] : 0;
-                //
-                $data_to_insert['visible_to_payroll'] = !isset($post['categories']) && isset($post['visible_to_payroll']) ? 1 : 0;
-                $post = $this->input->post(NULL, true);
-                //
-                $data_to_insert['is_available_for_na'] = isset($post['selected_roles']) ? implode(',', $post['selected_roles']) : NULL;
-                $data_to_insert['allowed_employees'] = isset($post['selected_employees']) ? implode(',', $post['selected_employees']) : NULL;
-                $data_to_insert['allowed_departments'] = isset($post['selected_departments']) ? implode(',', $post['selected_departments']) : NULL;
-                $data_to_insert['allowed_teams'] = isset($post['selected_teams']) ? implode(',', $post['selected_teams']) : NULL;
+                $data_to_insert['video_source'] = $video_source;
+                $data_to_insert['video_url'] = $video_url;
+                $data_to_insert['video_required'] = 1;
+            }
+            //
+            $b = $data_to_insert; 
+            //
+            $data_to_insert['document_approval_employees'] = implode(',', $approvalEmployees);
 
-                // Assign & Send document
-                // Set
-                $aType = $this->input->post('assignAndSendDocument', true);
-                $aDate = $this->input->post('assignAndSendCustomDate', true);
-                $aDay = $this->input->post('assignAndSendCustomDay', true);
-                $aTime = $this->input->post('assignAndSendCustomTime', true);
-                $aEmployees = $this->input->post('assignAdnSendSelectedEmployees', true);
+            $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
+
+            if (isset($_POST['document_group_assignment'])) {
+                $document_group_assignment = $this->input->post('document_group_assignment');
+
+                if (!empty($document_group_assignment)) {
+                    foreach ($document_group_assignment as $key => $group_sid) {
+                        $data_to_insert = array();
+                        $data_to_insert['group_sid'] = $group_sid;
+                        $data_to_insert['document_sid'] = $insert_id;
+                        $this->hr_documents_management_model->assign_document_2_group($data_to_insert);
+                    }
+                }
+            }
+            //
+            if (isset($_POST['categories'])) {
+                $document_category_assignment = $this->input->post('categories');
+
+                if (!empty($document_category_assignment)) {
+                    foreach ($document_category_assignment as $key => $category_sid) {
+                        $data_to_insert = array();
+                        $data_to_insert['category_sid'] = $category_sid;
+                        $data_to_insert['document_sid'] = $insert_id;
+                        $this->hr_documents_management_model->assign_document_2_category($data_to_insert);
+                    }
+                }
+            }
+
+            // Also assign it in case of 
+            // assignandsave
+            $todo = isset($post['saveAndAssign']) ? $post['saveAndAssign'] : $post['submit'];
+            if($todo == 'saveandassign'){
+                // 
+                $documentId = $insert_id;
+                // Set assign array
+                $a = array();
                 //
-                $data_to_insert['assign_type'] = $aType;
-                $data_to_insert['assign_date'] = $aDate;
-                $data_to_insert['assign_time'] = $aTime;
-                //
-                if($aType == 'custom' && empty($aDate) && empty($aTime)) $data_to_insert['assign_type'] = 'none';
-                //
-                if(empty($aDate)) $data_to_insert['assign_date'] = null;
-                if(empty($aTime)) $data_to_insert['assign_time'] = null;
-                //
-                if($aType == 'weekly' && !empty($aDay) ) $data_to_insert['assign_date'] = $aDay;
-                if($aType == 'weekly' && empty($aDay) ) $data_to_insert['assign_date'] = null;
-                //
-                if($aEmployees && count($aEmployees)){
+                $a['company_sid'] = $company_sid;
+                $a['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
+                $a['assigned_by'] = $employer_sid;
+                $a['user_type'] = $user_type;
+                $a['user_sid'] = $user_sid;
+                $a['document_type'] = $b['document_type'];
+                $a['document_title'] = $b['document_title'];
+                if($do_descpt){
+                    $a['document_description'] = $b['document_description'];
+                }
+                if($do_upload){
+                    $a['document_description'] = !$do_descpt ? $document_guidence : $document_description;
+                    $a['document_original_name'] = $b['uploaded_document_original_name'];
+                    $a['document_extension'] = $b['uploaded_document_extension'];
+                    $a['document_s3_name'] = $b['uploaded_document_s3_name'];
+                }
+                $a['document_sid'] = $documentId;
+                $a['status'] = 1;
+                $a['visible_to_payroll'] = $b['visible_to_payroll'];
+                $a['download_required'] = $post['download_required'];
+                $a['acknowledgment_required'] = $post['acknowledgment_required'];
+                $a['signature_required'] = $post['signature_required'];
+                $a['is_required'] = $post['isRequired'];
+                $a['is_signature_required'] = $post['isSignatureRequired'];
+                $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+
+                // When approval employees are selected
+                if($approvalEmployees){
                     //
-                    if(in_array('-1', $aEmployees)) $data_to_insert['assigned_employee_list'] = 'all';
-                    else $data_to_insert['assigned_employee_list'] = json_encode($aEmployees);
-                }
-
-                //
-                if(isset($post['managersList']) && $post['managersList'] && sizeof($post['managersList'])){
-                    $data_to_insert['managers_list'] = implode(',', $post['managersList']);   
-                }
-                //
-                $data_to_insert['video_required'] = 0;
-                //
-                $video_required = $post['video_source'];
-
-                if ($video_required != 'not_required') {
-                    $video_source = $this->input->post('video_source');
-
-                    if (isset($_FILES['video_upload']) && !empty($_FILES['video_upload']['name'])) {
-                        $random = generateRandomString(5);
-                        $company_id = $data['session']['company_detail']['sid'];
-                        $target_file_name = basename($_FILES["video_upload"]["name"]);
-                        $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
-                        $target_dir = "assets/uploaded_videos/";
-                        $target_file = $target_dir . $file_name;
-                        $filename = $target_dir . $company_id;
-
-                        if (!file_exists($filename)) {
-                            mkdir($filename);
-                        }
-
-                        if (move_uploaded_file($_FILES["video_upload"]["tmp_name"], $target_file)) {
-                            $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload"]["name"]) . ' has been uploaded.');
-                        } else {
-                            $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
-                            redirect($redirectURL, 'refresh');
-                        }
-
-                        $video_url = $file_name;
-                    } else if ($post['yt_vm_video_url'] != '' && $video_required = 'upload') {
-                        $random = generateRandomString(5);
-                        $company_id = $data['session']['company_detail']['sid'];
-                        $target_file_name = preg_replace('/\s+/', '_', strtolower($data_to_insert['document_title']));
-                        $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
-                        $target_dir = "assets/uploaded_videos/";
-                        $target_file = $target_dir . $file_name;
-                        $filename = $target_dir . $company_id;
-
-
-                        // 
-                        $t = explode('.', $post['yt_vm_video_url']);
-                        $target_file .= '.'.$t[sizeof($t) - 1];
-
-                        if (!file_exists($filename)) {
-                            mkdir($filename);
-                        }
-
-                        file_put_contents($target_file, file_get_contents($target_dir.$post['yt_vm_video_url']));
-
-                        $video_url = $file_name;
-                    }else {
-                        $video_url = $this->input->post('yt_vm_video_url');
-
-                        if ($video_source == 'youtube') {
-                            $url_prams = array();
-                            parse_str(parse_url($video_url, PHP_URL_QUERY), $url_prams);
-
-                            if (isset($url_prams['v'])) {
-                                $video_url = $url_prams['v'];
-                            } else {
-                                $video_url = '';
-                            }
-                        } else {
-                            $video_url = $this->vimeo_get_id($video_url);
-                        }
-                    } 
-
-                    $data_to_insert['video_source'] = $video_source;
-                    $data_to_insert['video_url'] = $video_url;
-                    $data_to_insert['video_required'] = 1;
-                }
-
-                // _e($data_to_insert, true);
-                // _e($post, true, true);
-
-                $b = $data_to_insert; 
-
-                $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
-
-                if (isset($_POST['document_group_assignment'])) {
-                    $document_group_assignment = $this->input->post('document_group_assignment');
-
-                    if (!empty($document_group_assignment)) {
-                        foreach ($document_group_assignment as $key => $group_sid) {
-                            $data_to_insert = array();
-                            $data_to_insert['group_sid'] = $group_sid;
-                            $data_to_insert['document_sid'] = $insert_id;
-                            $this->hr_documents_management_model->assign_document_2_group($data_to_insert);
-                        }
-                    }
-                }
-                //
-                if (isset($_POST['categories'])) {
-                    $document_category_assignment = $this->input->post('categories');
-
-                    if (!empty($document_category_assignment)) {
-                        foreach ($document_category_assignment as $key => $category_sid) {
-                            $data_to_insert = array();
-                            $data_to_insert['category_sid'] = $category_sid;
-                            $data_to_insert['document_sid'] = $insert_id;
-                            $this->hr_documents_management_model->assign_document_2_category($data_to_insert);
-                        }
-                    }
-                }
-
-                // Also assign it in case of 
-                // assignandsave
-                $todo = isset($post['saveAndAssign']) ? $post['saveAndAssign'] : $post['submit'];
-                if($todo == 'saveandassign'){
-                    // 
-                    $documentId = $insert_id;
-                    // Set assign array
-                    $a = array();
-                    //
-                    $a['company_sid'] = $company_sid;
-                    $a['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
-                    $a['assigned_by'] = $employer_sid;
-                    $a['user_type'] = $user_type;
-                    $a['user_sid'] = $user_sid;
-                    $a['document_type'] = $b['document_type'];
-                    $a['document_title'] = $b['document_title'];
-                    if($do_descpt){
-                        $a['document_description'] = $b['document_description'];
-                    }
-                    if($do_upload){
-                        $a['document_description'] = !$do_descpt ? $document_guidence : $document_description;
-                        $a['document_original_name'] = $b['uploaded_document_original_name'];
-                        $a['document_extension'] = $b['uploaded_document_extension'];
-                        $a['document_s3_name'] = $b['uploaded_document_s3_name'];
-                    }
-                    $a['document_sid'] = $documentId;
-                    $a['status'] = 1;
-                    $a['visible_to_payroll'] = $b['visible_to_payroll'];
-                    $a['download_required'] = $post['download_required'];
-                    $a['acknowledgment_required'] = $post['acknowledgment_required'];
-                    $a['signature_required'] = $post['signature_required'];
-                    $a['is_required'] = $post['isRequired'];
-                    $a['is_signature_required'] = $post['isSignatureRequired'];
-                    $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
-
+                    $this->HandleApprovalFlow(
+                        $a,
+                        $company_sid,
+                        $company_name,
+                        $employer_sid,
+                        $user_sid,
+                        $user_type,
+                        isset($post['assigner_note']) ? $post['assigner_note'] : '',
+                        $approvalEmployees
+                    );
+                } else{
                     //
                     $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
 
@@ -9936,7 +9961,7 @@ class Hr_documents_management extends Public_Controller {
                             $employer_sid
                         );
                     }
-                    
+
                     //
                     if($user_type == 'employee'){
                         //
@@ -9964,11 +9989,12 @@ class Hr_documents_management extends Public_Controller {
                     }
                 }
 
-                $this->session->set_flashdata('message', '<strong>Success:</strong>You have successfully added a new document.');
-                redirect($redirectURL, 'refresh');
-            }   
-            
-        }
+                
+            }
+
+            $this->session->set_flashdata('message', '<strong>Success:</strong>You have successfully added a new document.');
+            redirect($redirectURL, 'refresh');
+        }   
 
         // 
         switch ($user_type) {
@@ -10056,255 +10082,6 @@ class Hr_documents_management extends Public_Controller {
             
     }
 
-    function start_new_process ($user_type, $user_sid, $assigners) {
-        //
-        $session = $this->session->userdata('logged_in');
-        $company_sid = $session['company_detail']['sid'];
-        $company_name = $session['company_detail']['CompanyName'];
-        $employer_sid = $session['employer_detail']['sid'];
-        //
-        $data_to_insert = array();
-        //
-        $post = $this->input->post(NULL, TRUE);
-        //
-        $document_title = $this->input->post('document_title');
-        $document_description = htmlentities($this->input->post('document_description', false));
-        $document_guidence = htmlentities($this->input->post('document_guidence', false));
-        //
-        $do_upload = $post['perform_action'] == 'uploaded' || $post['perform_action'] == 'hybrid_document' ? true : false;
-        $do_descpt = $post['perform_action'] == 'generated' || $post['perform_action'] == 'hybrid_document' ? true : false;
-        //
-        // Fo uploaded file
-        if($do_upload){
-            $data_to_insert['uploaded_document_original_name'] = $post['document_name'];
-            $data_to_insert['uploaded_document_s3_name'] = $post['document_url'];
-            $data_to_insert['uploaded_document_extension'] = $post['document_extension'];
-        } 
-
-        if ($post['js-template-type'] == 'template' && isset($post['document_url']) && !empty($post['document_url'])) {
-            $data_to_insert['uploaded_document_original_name'] = $post['document_name'];
-            $data_to_insert['uploaded_document_s3_name'] = $post['document_url'];
-            $data_to_insert['uploaded_document_extension'] = $post['document_extension'];
-        } else if ($post['js-template-type'] == 'template' && isset($post['uploaded_file']) && !empty($post['uploaded_file'])) {
-            $data_to_insert['uploaded_document_original_name'] = $post['uploaded_file_orig'];
-            $data_to_insert['uploaded_document_s3_name'] = $post['uploaded_file'];
-            $data_to_insert['uploaded_document_extension'] = $post['uploaded_file_ext'];
-        }
-        //
-        if($do_descpt) $data_to_insert['document_description'] = $document_description;
-        //
-        $data_to_insert['is_specific'] = $user_sid;
-        $data_to_insert['is_specific_type'] = $user_type;
-        $data_to_insert['company_sid'] = $company_sid;
-        $data_to_insert['employer_sid'] = $employer_sid;
-        $data_to_insert['document_title'] = $document_title;
-        $data_to_insert['document_type'] = $post['perform_action'];
-        $data_to_insert['sort_order'] = $post['sort_order'] == '' ? 1 : $post['sort_order'];
-        
-        $data_to_insert['unique_key'] = generateRandomString(32);
-        $data_to_insert['onboarding'] = $post['onboarding'];
-        $data_to_insert['download_required'] = $post['download_required'];
-        $data_to_insert['acknowledgment_required'] = $post['acknowledgment_required'];
-        $data_to_insert['signature_required'] = $post['signature_required'];
-        $data_to_insert['automatic_assign_type'] = !empty($post['assign_type']) ? $post['assign_type'] : 'days';
-        //
-        if($data_to_insert['automatic_assign_type'] == 'days')
-            $data_to_insert['automatic_assign_in'] = !empty($post['assign-in-days']) ? $post['assign-in-days'] : 0;
-        else
-            $data_to_insert['automatic_assign_in'] = !empty($post['assign-in-months']) ? $post['assign-in-months'] : 0;
-        //
-        $data_to_insert['visible_to_payroll'] = !isset($post['categories']) && isset($post['visible_to_payroll']) ? 1 : 0;
-        $post = $this->input->post(NULL, true);
-        //
-        $data_to_insert['is_available_for_na'] = isset($post['selected_roles']) ? implode(',', $post['selected_roles']) : NULL;
-        $data_to_insert['allowed_employees'] = isset($post['selected_employees']) ? implode(',', $post['selected_employees']) : NULL;
-        $data_to_insert['allowed_departments'] = isset($post['selected_departments']) ? implode(',', $post['selected_departments']) : NULL;
-        $data_to_insert['allowed_teams'] = isset($post['selected_teams']) ? implode(',', $post['selected_teams']) : NULL;
-
-        // Assign & Send document
-        // Set
-        $aType = $this->input->post('assignAndSendDocument', true);
-        $aDate = $this->input->post('assignAndSendCustomDate', true);
-        $aDay = $this->input->post('assignAndSendCustomDay', true);
-        $aTime = $this->input->post('assignAndSendCustomTime', true);
-        $aEmployees = $this->input->post('assignAdnSendSelectedEmployees', true);
-        //
-        $data_to_insert['assign_type'] = $aType;
-        $data_to_insert['assign_date'] = $aDate;
-        $data_to_insert['assign_time'] = $aTime;
-        //
-        if($aType == 'custom' && empty($aDate) && empty($aTime)) $data_to_insert['assign_type'] = 'none';
-        //
-        if(empty($aDate)) $data_to_insert['assign_date'] = null;
-        if(empty($aTime)) $data_to_insert['assign_time'] = null;
-        //
-        if($aType == 'weekly' && !empty($aDay) ) $data_to_insert['assign_date'] = $aDay;
-        if($aType == 'weekly' && empty($aDay) ) $data_to_insert['assign_date'] = null;
-        //
-        if($aEmployees && count($aEmployees)){
-            //
-            if(in_array('-1', $aEmployees)) $data_to_insert['assigned_employee_list'] = 'all';
-            else $data_to_insert['assigned_employee_list'] = json_encode($aEmployees);
-        }
-
-        //
-        if(isset($post['managersList']) && $post['managersList'] && sizeof($post['managersList'])){
-            $data_to_insert['managers_list'] = implode(',', $post['managersList']);   
-        }
-        //
-        $data_to_insert['video_required'] = 0;
-        //
-        $video_required = $post['video_source'];
-        //
-        if ($video_required != 'not_required') {
-            $video_source = $this->input->post('video_source');
-
-            if (isset($_FILES['video_upload']) && !empty($_FILES['video_upload']['name'])) {
-                $random = generateRandomString(5);
-                $company_id = $data['session']['company_detail']['sid'];
-                $target_file_name = basename($_FILES["video_upload"]["name"]);
-                $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
-                $target_dir = "assets/uploaded_videos/";
-                $target_file = $target_dir . $file_name;
-                $filename = $target_dir . $company_id;
-
-                if (!file_exists($filename)) {
-                    mkdir($filename);
-                }
-
-                if (move_uploaded_file($_FILES["video_upload"]["tmp_name"], $target_file)) {
-                    $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload"]["name"]) . ' has been uploaded.');
-                } else {
-                    $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
-                    redirect($redirectURL, 'refresh');
-                }
-
-                $video_url = $file_name;
-            } else if ($post['yt_vm_video_url'] != '' && $video_required = 'upload') {
-                $random = generateRandomString(5);
-                $company_id = $data['session']['company_detail']['sid'];
-                $target_file_name = preg_replace('/\s+/', '_', strtolower($data_to_insert['document_title']));
-                $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
-                $target_dir = "assets/uploaded_videos/";
-                $target_file = $target_dir . $file_name;
-                $filename = $target_dir . $company_id;
-
-
-                // 
-                $t = explode('.', $post['yt_vm_video_url']);
-                $target_file .= '.'.$t[sizeof($t) - 1];
-
-                if (!file_exists($filename)) {
-                    mkdir($filename);
-                }
-
-                file_put_contents($target_file, file_get_contents($target_dir.$post['yt_vm_video_url']));
-
-                $video_url = $file_name;
-            }else {
-                $video_url = $this->input->post('yt_vm_video_url');
-
-                if ($video_source == 'youtube') {
-                    $url_prams = array();
-                    parse_str(parse_url($video_url, PHP_URL_QUERY), $url_prams);
-
-                    if (isset($url_prams['v'])) {
-                        $video_url = $url_prams['v'];
-                    } else {
-                        $video_url = '';
-                    }
-                } else {
-                    $video_url = $this->vimeo_get_id($video_url);
-                }
-            } 
-
-            $data_to_insert['video_source'] = $video_source;
-            $data_to_insert['video_url'] = $video_url;
-            $data_to_insert['video_required'] = 1;
-        }
-        //
-        $b = $data_to_insert;
-        //
-        $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
-        //
-        if (isset($_POST['document_group_assignment'])) {
-            $document_group_assignment = $this->input->post('document_group_assignment');
-
-            if (!empty($document_group_assignment)) {
-                foreach ($document_group_assignment as $key => $group_sid) {
-                    $data_to_insert = array();
-                    $data_to_insert['group_sid'] = $group_sid;
-                    $data_to_insert['document_sid'] = $insert_id;
-                    $this->hr_documents_management_model->assign_document_2_group($data_to_insert);
-                }
-            }
-        }
-        //
-        if (isset($_POST['categories'])) {
-            $document_category_assignment = $this->input->post('categories');
-
-            if (!empty($document_category_assignment)) {
-                foreach ($document_category_assignment as $key => $category_sid) {
-                    $data_to_insert = array();
-                    $data_to_insert['category_sid'] = $category_sid;
-                    $data_to_insert['document_sid'] = $insert_id;
-                    $this->hr_documents_management_model->assign_document_2_category($data_to_insert);
-                }
-            }
-        }
-
-        // Also assign it in case of 
-        // assignandsave
-        $assignInsertId = 0;
-        $todo = isset($post['saveAndAssign']) ? $post['saveAndAssign'] : $post['submit'];
-        //
-        if($todo == 'saveandassign'){
-            // 
-            $documentId = $insert_id;
-            // Set assign array
-            $a = array();
-            //
-            $a['company_sid'] = $company_sid;
-            $a['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
-            $a['assigned_by'] = $employer_sid;
-            $a['user_type'] = $user_type;
-            $a['user_sid'] = $user_sid;
-            $a['document_type'] = $b['document_type'];
-            $a['document_title'] = $b['document_title'];
-            if($do_descpt){
-                $a['document_description'] = $b['document_description'];
-            }
-            if($do_upload){
-                $a['document_description'] = !$do_descpt ? $document_guidence : $document_description;
-                $a['document_original_name'] = $b['uploaded_document_original_name'];
-                $a['document_extension'] = $b['uploaded_document_extension'];
-                $a['document_s3_name'] = $b['uploaded_document_s3_name'];
-            }
-            $a['document_sid'] = $documentId;
-            $a['status'] = 1;
-            $a['visible_to_payroll'] = $b['visible_to_payroll'];
-            $a['download_required'] = $post['download_required'];
-            $a['acknowledgment_required'] = $post['acknowledgment_required'];
-            $a['signature_required'] = $post['signature_required'];
-            $a['is_required'] = $post['isRequired'];
-            $a['is_signature_required'] = $post['isSignatureRequired'];
-            $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
-
-            //
-            $a["sendEmail"] = $post['sendEmail'];
-            $a["managersList"] = implode(',', $post['managersList']);
-            $a["assigner_note"] = $post['assigner_note'];
-            //
-            $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_flow($a);
-        }
-        //
-        $this->add_approvers_for_document($assigners, $assignInsertId);
-        //
-        $this->session->set_flashdata('message', '<strong>Success:</strong>You have successfully added a new document.');
-        $redirectURL = 'hr_documents_management/add_document/'.$user_type.'/'.$user_sid;
-        redirect($redirectURL, 'refresh');
-    }
-
     /**
      * Steps
      * 1 - Check if document already assigned to employee/applicant
@@ -10315,8 +10092,6 @@ class Hr_documents_management extends Public_Controller {
      * 4 - Assign Signers (For authorized people)
      */
     function assign_document($document = array()){
-
-        
         //
         $r = [
             'Status' => FALSE,
@@ -10332,7 +10107,7 @@ class Hr_documents_management extends Public_Controller {
             $post['CompanyName'] = getCompanyNameBySid($document['company_sid']);
             $post['EmployeeSid'] = $document['user_sid'];
             $post['EmployerSid'] = $document['assigned_by'];
-            $post['managerList'] = $document['managersList'];
+            $post['managerList'] = isset($document['managersList']) ? $document['managersList'] : '';
             $post['desc'] = $document['document_description'];
             $post['documentTitle'] = $document['document_title'];
             $post['documentSid'] = $document['document_sid'];
@@ -10452,37 +10227,23 @@ class Hr_documents_management extends Public_Controller {
         if (isset($post["assigner"])) {
             //
             $a["sendEmail"] = $post['sendEmail'];
+            //
             if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
-                $a["managersList"] = implode(',', $ins['managerList']);
+                $a["managersList"] = implode(',', $post['managerList']);
             }
-            unset(
-                $a['status'],
-                $a['acknowledged'],
-                $a['acknowledged_date'],
-                $a['downloaded'],
-                $a['downloaded_date'],
-                $a['uploaded'],
-                $a['uploaded_date'],
-                $a['uploaded_file'],
-                $a['signature_timestamp'],
-                $a['signature'],
-                $a['signature_email'],
-                $a['signature_ip'],
-                $a['user_consent'],
-                $a['archive'],
-                $a['submitted_description'],
-                $a['signature_base64'],
-                $a['signature_initial'],
-                $a['authorized_signature'],
-                $a['authorized_signature_by'],
-                $a['authorized_signature_date']
+            //
+            $approvalEmployees = explode(",", $post["assigner"]);
+            // When approval employees are selected
+            $this->HandleApprovalFlow(
+                $a,
+                $a['company_sid'],
+                getCompanyNameBySid($a['company_sid']),
+                $a['assigned_by'],
+                $a['user_sid'],
+                $a['user_type'],
+                isset($post['assigner_note']) ? $post['assigner_note'] : '',
+                $approvalEmployees
             );
-            $a["assigner_note"] = isset($post['assigner_note']) ? $post['assigner_note'] : '';
-            //
-            $approvalInsertId = $this->hr_documents_management_model->insert_documents_assignment_flow($a);
-            //
-            $this->add_approvers_for_document(explode(",", $post["assigner"]), $approvalInsertId);
-
         } else {
             if($assignInsertId == null)
             $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
@@ -10660,6 +10421,8 @@ class Hr_documents_management extends Public_Controller {
         $a['allowed_departments'] = $post['departments'];
         $a['allowed_teams'] = $post['teams'];
         $a['allowed_employees'] = $post['employees'];
+
+        $company_name = getCompanyNameBySid($post['CompanySid']);
         //
         if(ASSIGNEDOCIMPL){
             $a['signature_required'] = $post['isSignature'];
@@ -10741,14 +10504,21 @@ class Hr_documents_management extends Public_Controller {
             $a["sendEmail"] = $post['sendEmail'];
             //
             if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
-                $a["managersList"] = implode(',', $ins['managerList']);
+                $a["managersList"] = implode(',', $post['managerList']);
             }
             //
-            $a["assigner_note"] = isset($post['assigner_note']) ? $post['assigner_note'] : '';
-            //
-            $approvalInsertId = $this->hr_documents_management_model->insert_documents_assignment_flow($a);
-            //
-            $this->add_approvers_for_document(explode(",", $post["assigner"]), $approvalInsertId);
+            $approvalEmployees = explode(",", $post["assigner"]);
+            // When approval employees are selected
+            $this->HandleApprovalFlow(
+                $a,
+                $a['company_sid'],
+                getCompanyNameBySid($a['company_sid']),
+                $a['assigned_by'],
+                $a['user_sid'],
+                $a['user_type'],
+                isset($post['assigner_note']) ? $post['assigner_note'] : '',
+                $approvalEmployees
+            );
 
         } else {
             //
@@ -12456,91 +12226,188 @@ class Hr_documents_management extends Public_Controller {
 
     public function approval_documents()
     {
-        if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $employer_detail = $data['session']['employer_detail'];
-            $company_detail = $data['session']['company_detail'];
-            $employer_sid = $data["session"]["employer_detail"]["sid"];
-            $security_sid = $employer_detail['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
-            check_access_permissions($security_details, 'dashboard', 'private_messages');
-            //
-            $assign_approvals = $this->hr_documents_management_model->getMyAssignApprovalInfo($employer_sid);
-            //
-            if(!empty($assign_approvals)) {
-                foreach ($assign_approvals as $a_key => $approval) {
-                    //
-                    $document_info = $this->hr_documents_management_model->getAssignApprovalDocumentInfo($approval['portal_document_assign_sid']);
-                    //
-                    $assign_approvals[$a_key]['document_sid'] = $approval['portal_document_assign_sid'];
-                    $assign_approvals[$a_key]['document_title'] = $document_info['document_title'];
-                    $assign_approvals[$a_key]['document_type'] = $document_info['document_type'];
-                    $assign_approvals[$a_key]['user_sid'] = $document_info['user_sid'];
-                    $assign_approvals[$a_key]['user_type'] = $document_info['user_type'];
-                    $assign_approvals[$a_key]['note'] = $document_info['assigner_note'];
-                }
-            }
-            //
-            $data["assign_approvals"] = $assign_approvals;
-            //
-            $data['employee'] = $employer_detail;
-            $data['title'] = "Approval Documents";
-            $data['load_view'] = "true";
-
-            $this->load->view('main/header', $data);
-            $this->load->view('hr_documents_management/pending_documents_approval');
-            $this->load->view('main/footer');
-        } else {
-            redirect(base_url('login'), "refresh");
+        if (!$this->session->userdata('logged_in')) {
+            return redirect(base_url('login'), "refresh");
         }
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $employer_detail = $data['session']['employer_detail'];
+        $company_detail = $data['session']['company_detail'];
+        $employer_sid = $data["session"]["employer_detail"]["sid"];
+        $security_sid = $employer_detail['sid'];
+        $security_details = db_get_access_level_details($security_sid);
+        $data['security_details'] = $security_details;
+        check_access_permissions($security_details, 'dashboard', 'private_messages');
+        //
+        $assign_approvals = $this->hr_documents_management_model->getMyAssignApprovalInfo($employer_sid);
+        //
+        if(!empty($assign_approvals)) {
+            foreach ($assign_approvals as $a_key => $approval) {
+                //
+                $document_info = $this->hr_documents_management_model->getAssignApprovalDocumentInfo($approval['portal_document_assign_sid']);
+                //
+                $jsonToArray = json_decode($document_info['flow_json'], true);
+                //
+                $assign_approvals[$a_key]['assigner_sid'] = $approval['sid'];
+                $assign_approvals[$a_key]['document_sid'] = $document_info['document_sid'];
+                $assign_approvals[$a_key]['document_title'] = $jsonToArray['document_title'];
+                $assign_approvals[$a_key]['document_type'] = $document_info['document_type'];
+                $assign_approvals[$a_key]['user_sid'] = $document_info['user_sid'];
+                $assign_approvals[$a_key]['user_type'] = $document_info['user_type'];
+                $assign_approvals[$a_key]['note'] = $document_info['assigner_note'];
+            }
+        }
+        //
+        $data["assign_approvals"] = $assign_approvals;
+        //
+        $data['employee'] = $employer_detail;
+        $data['title'] = "Approval Documents";
+        $data['load_view'] = "true";
+
+        $this->load->view('main/header', $data);
+        $this->load->view('hr_documents_management/pending_documents_approval');
+        $this->load->view('main/footer');
     }
 
+    /**
+     * 
+     */
     public function save_approval_document_action () {
         //
-        $assigner_sid = $_POST['sid'];
-        $assigner_action = $_POST['action'];
+        $post = $this->input->post(null, true);
+        //
+        $assigner_sid = $post['sid'];
+        $assigner_action = $post['action'];
         $assigner_note = $_POST['note'];
-        $document_sid = $_POST['document_sid'];
+        $document_sid = $post['document_sid'];
 
         $data_to_update = array();
         $data_to_update['approval_status'] = $assigner_action;
         $data_to_update['note'] = $assigner_note;
         $data_to_update['assigner_turn'] = 0;
         $data_to_update['action_date'] = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $this->hr_documents_management_model->saveAssignerAction( $assigner_sid, $data_to_update);
 
-        $this->hr_documents_management_model->saveAssignerAction($assigner_sid, $data_to_update);
+        // Get assignedId by sid
+        $assignedId = $this->hr_documents_management_model->GetAssignedIdById($assigner_sid);
+        $documentInfo = $this->hr_documents_management_model->GetAssignedDocumentInfo($document_sid);
+        //
+        $jsonToArray = json_decode($documentInfo['flow_json'], true);
+
+        // Get company email header and footer
+        $hf = message_header_footer_domain($documentInfo['company_sid'], getCompanyNameBySid($documentInfo['company_sid']));
+        // Get the initiator name
+        $assignerInfo = $this->hr_documents_management_model->get_employee_information($documentInfo['company_sid'], $documentInfo['assigned_by']);
+        //
+        $assignerName = ucwords($assignerInfo['first_name'] . ' ' . $assignerInfo['last_name']);
+        // Get the user name
+        if($documentInfo['user_type'] == 'employee'){
+            //
+            $t = $this->hr_documents_management_model->get_employee_information($documentInfo['company_sid'], $documentInfo['user_sid']);
+            //
+            $userName = ucwords($t['first_name'] . ' ' . $t['last_name']);
+        } else{
+            //
+            $t = $this->hr_documents_management_model->get_applicant_information($documentInfo['company_sid'], $documentInfo['user_sid']);
+            //
+            $userName = ucwords($t['first_name'] . ' ' . $t['last_name']);
+        }
+       
 
         if ($assigner_action == "Reject") {
+            // Get approvers saying
+            $getAllDocumentAssigners = $this->hr_documents_management_model->getAllDocumentAssigners($assignedId);
             $data_to_update = array();
             $data_to_update['status'] = 0;
             $data_to_update['assigner_turn'] = 0;
             //
-            $this->hr_documents_management_model->updateApproversInfo($document_sid, $data_to_update);
+            $this->hr_documents_management_model->updateApproversInfo($assignedId, $data_to_update);
             //
             $data_to_update = array();
             $data_to_update['assign_status'] = 3; // 3 mean Reject this document
             //
-            $this->hr_documents_management_model->updateApprovalDocument($document_sid, $data_to_update);
-        } else {
-            $new_approver = $this->hr_documents_management_model->getnextApproversInfo($document_sid);
-
-            if ($new_approver > 0) {
+            $this->hr_documents_management_model->updateApprovalDocument($assignedId, $data_to_update);
+            //
+            $user_info = $this->hr_documents_management_model->get_employee_information($documentInfo['company_sid'], $documentInfo['assigned_by']);
+            // Send Email
+            $this->SendEmailToDocumentApprover(
+                $assignerName,
+                $userName,
+                $user_info,
+                $jsonToArray['document_title'],
+                $documentInfo['user_type'],
+                $documentInfo['assigner_note'],
+                getCompanyNameBySid($documentInfo['company_sid']),
+                $hf,
+                HR_DOCUMENTS_APPROVAL_FLOW_REJECTED,
+                $getAllDocumentAssigners
+            );
+        } else { 
+            $new_approver = $this->hr_documents_management_model->getnextApproversInfo($assignedId);
+            // Sends email to next approver
+            if ($new_approver) {
+                //
+                $user_info = $this->hr_documents_management_model->get_employee_information($documentInfo['company_sid'], $new_approver['assigner_sid']);
+                //
                 $data_to_update = array();
                 $data_to_update['assigner_turn'] = 1;
                 $data_to_update['assign_on'] = date('Y-m-d H:i:s', strtotime('now'));
                 //
-                $this->hr_documents_management_model->saveAssignerAction($new_approver, $data_to_update);
-            } else if ($new_approver == 0) {
+                $this->hr_documents_management_model->saveAssignerAction($new_approver['sid'], $data_to_update);
+                // Send Email
+                $this->SendEmailToDocumentApprover(
+                    $assignerName,
+                    $userName,
+                    $user_info,
+                    $jsonToArray['document_title'],
+                    $documentInfo['user_type'],
+                    $documentInfo['assigner_note'],
+                    getCompanyNameBySid($documentInfo['company_sid']),
+                    $hf
+                );
+            } else {
+                // Send approve email
                 //
-                $document_info = $this->hr_documents_management_model->getApprovedDocumentInfo($document_sid);
+                $document_info = $this->hr_documents_management_model->getApprovedDocumentInfo($assignedId);
                 //
                 $data_to_update = array();
+                $data_to_update['status'] = 0; // 2 mean Approve this document
                 $data_to_update['assign_status'] = 2; // 2 mean Approve this document
                 //
-                $this->hr_documents_management_model->updateApprovalDocument($document_sid, $data_to_update);
+                $this->hr_documents_management_model->updateApprovalDocument($assignedId, $data_to_update);
+                $this->hr_documents_management_model->disableApproverAssignDocs($assignedId, ['status' => 0, 'assigner_turn' => 0]);
                 //
-                $this->assign_document($document_info);
+                $user_info = $this->hr_documents_management_model->get_employee_information($documentInfo['company_sid'], $documentInfo['assigned_by']);
+                // Send Email
+                $this->SendEmailToDocumentApprover(
+                    $assignerName,
+                    $userName,
+                    $user_info,
+                    $jsonToArray['document_title'],
+                    $documentInfo['user_type'],
+                    $documentInfo['assigner_note'],
+                    getCompanyNameBySid($documentInfo['company_sid']),
+                    $hf,
+                    HR_DOCUMENTS_APPROVAL_FLOW_APPROVED
+                );
+                //
+                $sendArray = $document_info;
+                //
+                foreach(json_decode($document_info['flow_json'], true) as $k => $v){
+                    $sendArray[$k] = $v;
+                }
+                //
+                unset(
+                    $sendArray['sid'],
+                    $sendArray['assigner_note'],
+                    $sendArray['is_pending'],
+                    $sendArray['assigned_date'],
+                    $sendArray['assign_status'],
+                    $sendArray['flow_json']
+                );
+                //
+                $this->assign_document($sendArray);
             }
         }
 
@@ -12549,9 +12416,6 @@ class Hr_documents_management extends Public_Controller {
 
     function review_approval_document ($document_sid) {
         
-        // return SendResponse(200,[
-        //     'html' => $this->load->view("Hr_documents_management/view_approval_document", $data, true)
-        // ]);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $employer_detail = $data['session']['employer_detail'];
@@ -12565,9 +12429,27 @@ class Hr_documents_management extends Public_Controller {
             $document_info = $this->hr_documents_management_model->getApprovedDocumentInfo($document_sid);
             $document_assigners = $this->hr_documents_management_model->getAllDocumentAssigners($document_sid);
             //
+            $jsonToArray = json_decode($document_info['flow_json'], true);
+            //
+            $currentAssignerId = 0;
+            $currentAssignerStatus = 0;
+            //
+            foreach($document_assigners as $assi){
+                //
+                if($assi['assigner_sid'] == $employer_detail['sid']){
+                    $currentAssignerId = $assi['sid'];
+                    $currentAssignerStatus = $assi['approval_status'];
+                }
+            }
+            //
+            if(!empty($currentAssignerStatus)){
+                return redirect('hr_documents_management/approval_documents');
+            }
+            //
             $data["page"] = "view";
             $data["document_info"] = $document_info;
-            $data["document_title"] = $document_info["document_title"];
+            $data["currentAssignerId"] = $currentAssignerId;
+            $data["document_title"] = $jsonToArray["document_title"];
             $data["document_type"] = $document_info["document_type"];
             $data["assign_by"] = $document_info["assigned_by"];
             $data["user_name"] = $document_info["user_sid"];
@@ -12580,7 +12462,7 @@ class Hr_documents_management extends Public_Controller {
 
             //
             $this->load->view('main/header', $data);
-            $this->load->view('Hr_documents_management/view_approval_document');
+            $this->load->view('hr_documents_management/view_approval_document');
             $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), "refresh");
@@ -12614,6 +12496,222 @@ class Hr_documents_management extends Public_Controller {
         echo json_encode($response);
         exit(0);
         
+    }
+
+
+    /**
+     * Handle document approval flow
+     * 
+     * @version 1.0
+     * @date    04/15/2022
+     * 
+     * @param array  $document
+     * @param number $companyId
+     * @param string $companyName
+     * @param number $employerId
+     * @param number $userId
+     * @param string $userType
+     * @param string $note
+     * @param array  $approvalEmployees
+     * 
+     * @return
+     */
+    private function HandleApprovalFlow(
+        $document,
+        $companyId,
+        $companyName,
+        $employerId,
+        $userId, 
+        $userType,
+        $note,
+        $approvalEmployees
+    ){
+        // Set insert data array
+        $ins = [];
+        $ins['company_sid'] = $companyId;
+        $ins['document_sid'] = $document['document_sid'];
+        $ins['document_type'] = $document['document_type'];
+        $ins['user_sid'] = $userId;
+        $ins['user_type'] = $userType;
+        $ins['assigned_by'] = $employerId;
+        $ins['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
+        $ins['flow_json'] = json_encode($document);
+        $ins['assigner_note'] = $note;
+        $ins['status'] = 1;
+        $ins['is_pending'] = 0; // 0 = Pending, 1 = Accepted, 2 = Rejected
+        $ins['assign_status'] = 1; // To be checked seems likes an extra field
+        // Lets insert the record
+        $approvalInsertId = $this->hr_documents_management_model->insert_documents_assignment_flow($ins);
+        //
+        $this->AddAndSendNotificationsToApprovalEmployees(
+            $approvalInsertId,
+            $approvalEmployees, 
+            $employerId,
+            $userId,
+            $userType,
+            $document['document_title'],
+            $companyId,
+            $companyName,
+            $note
+        );
+        //
+        return true;
+    }
+
+    /**
+     * Add and sends email notifications
+     * to selected approval employees
+     * 
+     * @version 1.0
+     * @date    04/15/2022
+     * 
+     * @param number $approvalFlowId
+     * @param array  $approvalEmployees
+     * @param number $initiateId
+     * @param number $userId
+     * @param string $userType
+     * @param string $documentTitle
+     * @param number $companyId
+     * @param string $companyName
+     * @param string $note
+     */
+    function AddAndSendNotificationsToApprovalEmployees (
+        $approvalFlowId,
+        $approvalEmployees,
+        $initiateId, 
+        $userId,
+        $userType,
+        $documentTitle,
+        $companyId,
+        $companyName,
+        $note
+    ) {
+        // Get company email header and footer
+        $hf = message_header_footer_domain($companyId, $companyName);
+        // Get the initiator name
+        $assignerInfo = $this->hr_documents_management_model->get_employee_information($companyId, $initiateId);
+        //
+        $assignerName = ucwords($assignerInfo['first_name'] . ' ' . $assignerInfo['last_name']);
+        // Get the user name
+        if($userType == 'employee'){
+            //
+            $t = $this->hr_documents_management_model->get_employee_information($companyId, $userId);
+            //
+            $userName = ucwords($t['first_name'] . ' ' . $t['last_name']);
+        } else{
+            //
+            $t = $this->hr_documents_management_model->get_applicant_information($companyId, $userId);
+            //
+            $userName = ucwords($t['first_name'] . ' ' . $t['last_name']);
+        }
+        //
+        foreach ($approvalEmployees as $key => $assigner_sid) {
+            $data_to_insert = array();
+            $data_to_insert['portal_document_assign_sid'] = $approvalFlowId;
+            $data_to_insert['assigner_sid'] = $assigner_sid;
+            //
+            if ($key == 0) {
+                $data_to_insert['assign_on'] = date('Y-m-d H:i:s', strtotime('now'));
+                $data_to_insert['assigner_turn'] = 1;
+            }
+            //
+            $this->hr_documents_management_model->insert_assigner_employee($data_to_insert);
+            //
+            if($key == 0){
+                //
+                $user_info = $this->hr_documents_management_model->get_employee_information($companyId, $assigner_sid);
+                //
+                $replacement_array['assigner'] = $assignerName;
+                $replacement_array['contact-name'] = $userName;
+                $replacement_array['company_name'] = ucwords($companyName);
+                $replacement_array['username'] = $replacement_array['contact-name'];
+                $replacement_array['firstname'] = $user_info['first_name'];
+                $replacement_array['lastname'] = $user_info['last_name'];
+                $replacement_array['first_name'] = $user_info['first_name'];
+                $replacement_array['last_name'] = $user_info['last_name'];
+                $replacement_array['document_title'] = $documentTitle;
+                $replacement_array['user_type'] = 'employee';
+                $replacement_array['note'] = $note;
+                $replacement_array['baseurl'] = base_url();
+    
+                // Send email to assigner as a notification with private link
+                log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $user_info['email'], $replacement_array, $hf, 1);
+            }
+        }
+    }
+
+    /**
+     * Sends an email to approver
+     * 
+     * @version 1.0
+     * @date    04/15/2022
+     * 
+     * @param string $assignerName
+     * @param string $userName
+     * @param array  $userInfo
+     * @param string $documentTitle
+     * @param string $userType
+     * @param string $note
+     * @param string $companyName
+     * @param array  $hf
+     * @param number $template
+     * @param array  $approvers
+     */
+    function SendEmailToDocumentApprover (
+        $assignerName,
+        $userName,
+        $userInfo, 
+        $documentTitle,
+        $userType,
+        $note,
+        $companyName,
+        $hf,
+        $template = HR_DOCUMENTS_APPROVAL_FLOW,
+        $approvers = []
+    ) {
+        //
+        $replacement_array['assigner'] = $assignerName;
+        $replacement_array['contact-name'] = $userName;
+        $replacement_array['company_name'] = ucwords($companyName);
+        $replacement_array['username'] = $replacement_array['contact-name'];
+        $replacement_array['firstname'] = $userInfo['first_name'];
+        $replacement_array['lastname'] = $userInfo['last_name'];
+        $replacement_array['first_name'] = $userInfo['first_name'];
+        $replacement_array['last_name'] = $userInfo['last_name'];
+        $replacement_array['document_title'] = $documentTitle;
+        $replacement_array['user_type'] = 'employee';
+        $replacement_array['note'] = $note;
+        $replacement_array['baseurl'] = base_url();
+        $replacement_array['approvers_list'] = '';
+        //
+        if(!empty($approvers)){
+            //
+            $tb = '<table>';
+            $tb .=   '<thead>';
+            $tb .=       '<tr>';
+            $tb .=           '<th>Employee</th>';
+            $tb .=           '<th>Status</th>';
+            $tb .=           '<th>Action Date</th>';
+            $tb .=           '<th>Comment</th>';
+            $tb .=       '</tr>';
+            $tb .=   '</thead>';
+            $tb .=   '<tbody>';
+            foreach($approvers as $approver):
+            $tb .=       '<tr>';
+            $tb .=           '<th>'.(getUserNameBySID($approver['assigner_sid'])).'</th>';
+            $tb .=           '<th>'.($approver['approval_status']).'</th>';
+            $tb .=           '<th>'.(formatDateToDB($approver['action_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME)).'</th>';
+            $tb .=           '<th>'.($approver['note']).'</th>';
+            $tb .=       '</tr>';
+            endforeach;
+            $tb .=   '</tbody>';
+            $tb .= '</table>';
+            //
+            $replacement_array['approvers_list'] = $tb;
+        }
+
+        // Send email to assigner as a notification with private link
+        log_and_send_templated_email($template, $userInfo['email'], $replacement_array, $hf, 1);
     }
 
 }
