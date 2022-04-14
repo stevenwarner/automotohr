@@ -651,6 +651,11 @@ class Hr_documents_management extends Public_Controller {
                             if(in_array('-1', $aEmployees)) $data_to_insert['assigned_employee_list'] = 'all';
                             else $data_to_insert['assigned_employee_list'] = json_encode($aEmployees);
                         }
+                        // Assigner handling
+                        if(isset($post['assigner']) && !empty($post['assigner'])){
+                            $data_to_insert['document_approval_employees'] = implode(',', $post['assigner']);
+                            $data_to_insert['document_approval_note'] = $post['assigner_note'];
+                        }
 
                         $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
 
@@ -693,6 +698,11 @@ class Hr_documents_management extends Public_Controller {
                         $new_history_data['download_required'] = $this->input->post('download_required');
                         $new_history_data['signature_required'] = $this->input->post('signature_required');
                         $new_history_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
+                        // Assigner handling
+                        if(isset($post['assigner']) && !empty($post['assigner'])){
+                            $new_history_data['document_approval_employees'] = implode(',', $post['assigner']);
+                            $new_history_data['document_approval_note'] = $post['assigner_note'];
+                        }
                         $this->hr_documents_management_model->insert_document_management_history($new_history_data);
                         $this->session->set_flashdata('message', '<strong>Success:</strong> HR Document Upload Successful!');
                         redirect('hr_documents_management', 'refresh');
@@ -873,6 +883,11 @@ class Hr_documents_management extends Public_Controller {
                         if($managersList && sizeof($managersList)){
                             $data_to_insert['managers_list'] = implode(',', $managersList);   
                         }
+                        // Assigner handling
+                        if(isset($post['assigner']) && !empty($post['assigner'])){
+                            $data_to_insert['document_approval_employees'] = implode(',', $post['assigner']);
+                            $data_to_insert['document_approval_note'] = $post['assigner_note'];
+                        }
 
                         $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
 
@@ -907,6 +922,11 @@ class Hr_documents_management extends Public_Controller {
                             $update_authorized_signature = array();
                             $update_authorized_signature['document_sid'] = $insert_id;
                             $this->hr_documents_management_model->update_authorized_signature($authorized_signature_required, $update_authorized_signature);
+                        }
+                        // Assigner handling
+                        if(isset($post['assigner']) && !empty($post['assigner'])){
+                            $new_history_data['document_approval_employees'] = implode(',', $post['assigner']);
+                            $new_history_data['document_approval_note'] = $post['assigner_note'];
                         }
 
                         // Tracking History For New Inserted Doc in new history table
@@ -1383,6 +1403,11 @@ class Hr_documents_management extends Public_Controller {
                         if(!empty($this->input->post('document_url'))){
                             $data_to_update['uploaded_document_original_name'] = $this->input->post('document_name');
                             $data_to_update['uploaded_document_s3_name'] = $this->input->post('document_url');
+                        }
+                        // Assigner handling
+                        if(isset($post['assigner']) && !empty($post['assigner'])){
+                            $data_to_update['document_approval_employees'] = implode(',', $post['assigner']);
+                            $data_to_update['document_approval_note'] = $post['assigner_note'];
                         }
 
                         $this->hr_documents_management_model->update_documents($sid, $data_to_update, 'documents_management');

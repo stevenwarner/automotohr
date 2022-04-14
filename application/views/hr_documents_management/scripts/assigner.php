@@ -57,4 +57,33 @@
 	    console.log(employee_sid)
 	    
 	});
+
+
+	function DOGenerate(){
+		//
+		var assigners = "<?=$document_info['document_approval_employees'];?>";
+		//
+		if(!assigners){
+			return '';
+		}
+		//
+		assigners.split(',').map(function(sa){
+
+			var rowId = Math.round((Math.random() * 10000) + 1);
+			var row = generateRow(rowId);
+			$(".jsEmployeesadditionalBox").append(row);
+	
+			$('#js-employees-'+rowId).select2({
+				closeOnSelect : false,
+				allowHtml: true,
+				allowClear: true,
+			});
+			$('#js-employees-'+rowId).select2('val', sa);
+		});
+		$(".jsAssignerEmployeesNote").show();
+		$("#assigner_note").val("<?=$document_info['document_approval_note'];?>");
+
+	}
+
+	DOGenerate();
 </script>
