@@ -23,7 +23,7 @@
 	    rows += '           <select id="js-employees-'+( rowId )+'" name="assigner[]" class="jsSelectedEmployee">';
 	    rows += '               <option value="0" >Please Select an Employee</option>';
 	                            <?php foreach ($employeesList as $key => $employee) { ?>
-	    rows += '                   <option value="<?php echo $employee['sid']; ?>" ><?= remakeEmployeeName($employee); ?></option>';
+	    rows += '                   <option value="<?php echo $employee['sid']; ?>" ><?= addslashes(remakeEmployeeName($employee)); ?></option>';
 	                            <?php } ?>
 	    rows += '           </select>';
 	    rows += '        </div>';
