@@ -1151,17 +1151,17 @@
             // 
             if($('.js-assign-type:checked').val() == 'department'){
                 if(dept.getValue().length == 0){
-                    alertify.alert('ERROR!', 'Please select atleast one department.');
+                    alertify.alert('ERROR!', 'Please select at least one department.');
                     return;
                 }
             } else if($('.js-assign-type:checked').val() == 'team'){
                 if(tem.getValue().length == 0){
-                    alertify.alert('ERROR!', 'Please select atleast one team.');
+                    alertify.alert('ERROR!', 'Please select at least one team.');
                     return;
                 }
             } else{
                 if(emp.getValue().length == 0){
-                    alertify.alert('ERROR!', 'Please select atleast one employee.');
+                    alertify.alert('ERROR!', 'Please select at least one employee.');
                     return;
                 }
             }

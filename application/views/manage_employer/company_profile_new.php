@@ -199,8 +199,7 @@
 
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
-                                <h3>Full Employment Appl
-                                    ication <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
+                                <h3>Full Employment Application <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
                                 <p>Make the following selected options mandatory on the full employment form.</p>
                             </div>
                         </div>

@@ -15223,3 +15223,19 @@ if(!function_exists('GetEmployeeShiftTime')){
         return $r === 'm' ? $nv : $nv * 60;
     }
 }
+
+if(!function_exists('isImage')){
+    /**
+     * Check if the file is an image
+     * 
+     * @param string $str
+     * @return
+     */
+    function isImage($str){
+        return in_array(
+            strtolower(pathinfo($str, PATHINFO_EXTENSION)), [
+                'png', 'jpg', 'jpeg', 'gif'
+            ]
+        );
+    }
+}
