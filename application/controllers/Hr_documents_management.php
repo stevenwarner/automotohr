@@ -3666,6 +3666,12 @@ class Hr_documents_management extends Public_Controller {
                 $data['session']['employer_detail'],
                 $employeeDepartments
             );
+            $data['categories_documents_completed'] =
+            cleanAssignedDocumentsByPermission(
+                $data['categories_documents_completed'],
+                $data['session']['employer_detail'],
+                $employeeDepartments
+            );
 
             // Set completed/not completes/ no action required 
             // documents

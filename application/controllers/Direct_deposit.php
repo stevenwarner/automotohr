@@ -75,7 +75,10 @@ class Direct_deposit extends Public_Controller
                 //
 
             } elseif ($type == 'applicant') {
-                check_access_permissions($security_details, 'application_tracking', 'direct_deposit_info');  // Param2: Redirect URL, Param3: Function Name
+                if ($data['session']['employer_detail']['access_level'] != "Hiring Manager"){
+                    check_access_permissions($security_details, 'application_tracking', 'direct_deposit_info');  // Param2: Redirect URL, Param3: Function Name
+                }
+                
                 $data = applicant_right_nav($sid);
                 $data['security_details'] = $security_details;
                 $left_navigation = 'manage_employer/application_tracking_system/profile_right_menu_applicant';

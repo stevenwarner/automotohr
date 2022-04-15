@@ -19,6 +19,9 @@ if ($this->session->userdata('logged_in')) {
             $form_full_application_flag = 1;
         }
     }
+    //
+    $is_hiring_manager = $session['employer_detail']['access_level'] == "Hiring Manager" ? true : false;
+
 }
 
 ?>
@@ -536,7 +539,7 @@ if ($this->session->userdata('logged_in')) {
                             <a href="javascript:;">Browse<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                         </li>
                         -->
-                        <?php if(check_access_permissions_for_view($security_details, 'send_video_interview_questionnaire')) { ?>
+                        <?php if(check_access_permissions_for_view($security_details, 'send_video_interview_questionnaire') || $is_hiring_manager) { ?>
                         <li>
                             <span class="left-addon">
                                 <i aria-hidden="true" class="fa fa-video-camera"></i>
@@ -551,7 +554,7 @@ if ($this->session->userdata('logged_in')) {
                             <?php } ?>
                         </li>
                         <?php } ?>
-                        <?php if(check_access_permissions_for_view($security_details, 'view_video_interview_questionnaire')) { ?>
+                        <?php if(check_access_permissions_for_view($security_details, 'view_video_interview_questionnaire') || $is_hiring_manager) { ?>
                         <li>
                             <span class="left-addon">
                                 <i aria-hidden="true" class="fa fa-video-camera"></i>
@@ -567,7 +570,7 @@ if ($this->session->userdata('logged_in')) {
                         </li>
                         <?php } ?>
 
-                        <?php if(check_access_permissions_for_view($security_details, 'ats_direct_deposit')) { ?>
+                        <?php if(check_access_permissions_for_view($security_details, 'ats_direct_deposit') || $is_hiring_manager) { ?>
                             <li>
                                 <span class="left-addon"><i aria-hidden="true" class="fa fa-bank"></i></span>
                                 <h4>Direct Deposit Information</h4>
@@ -597,7 +600,7 @@ if ($this->session->userdata('logged_in')) {
                                 <!-- Light Bulb Code - End -->
                             </li>
                         <?php } ?>
-                        <?php if(check_access_permissions_for_view($security_details, 'ats_learning_center')) { ?>
+                        <?php if(check_access_permissions_for_view($security_details, 'ats_learning_center') || $is_hiring_manager) { ?>
                         <li>
                             <span class="left-addon"><i aria-hidden="true" class="fa fa-file"></i></span>
                             <h4>Learning Center</h4>
@@ -609,7 +612,7 @@ if ($this->session->userdata('logged_in')) {
                                 <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Direct Deposit Info Not Added" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                             <?php } ?>
                         </li>
-                        <?php } if(check_access_permissions_for_view($security_details, 'ats_documents') && $this->session->userdata('logged_in')['company_detail']['ems_status']){ ?>
+                        <?php } if((check_access_permissions_for_view($security_details, 'ats_documents') || $is_hiring_manager) && $this->session->userdata('logged_in')['company_detail']['ems_status']){ ?>
                         <li>
                             <span class="left-addon"><i aria-hidden="true" class="fa fa-file-text"></i></span>
                             <h4>Documents</h4>
