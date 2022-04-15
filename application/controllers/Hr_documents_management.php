@@ -9666,7 +9666,11 @@ class Hr_documents_management extends Public_Controller {
                             //
                             $time = strtotime('+10 days');
                             //
+                            if(version_compare(PHP_VERSION, '7.0', '>=')){
+                            $encryptedKey = $this->encryption->encrypt($assignInsertId.'/'.$user_info['sid'].'/applicant/'.$time);
+                            }else{
                             $encryptedKey = $this->encrypt->encode($assignInsertId.'/'.$user_info['sid'].'/applicant/'.$time);
+                              }
                             $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
                             //
                             replace([
