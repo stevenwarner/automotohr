@@ -30,7 +30,11 @@ class Notification_model extends CI_Model {
 
     //
     private function getAssignedDocuments($ses, &$r){
-        $c = $this->db
+        $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($ses['company_detail']['sid']);
+        $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($ses['company_detail']['sid']);
+        //
+        $data = $this->db
+        ->select("user_type, user_sid")
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
         ->where('authorized_document_assigned_manager.assigned_to_sid', $ses['employer_detail']['sid'])
         ->where('authorized_document_assigned_manager.company_sid', $ses['company_detail']['sid'])
@@ -45,7 +49,25 @@ class Notification_model extends CI_Model {
         ->where('documents_assigned.authorized_signature IS NULL', null)
         ->or_where('documents_assigned.authorized_signature = ""', null)
         ->group_end()
-        ->count_all_results('authorized_document_assigned_manager');
+        ->get('authorized_document_assigned_manager');
+        $data_obj = $data->result_array();
+        // ->count_all_results('authorized_document_assigned_manager');
+        //
+        foreach ($data_obj as $key => $v) {
+            if ($v["user_type"] == "applicant") {
+                if (in_array($v["user_sid"], $companyApplicantsForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+
+            if ($v["user_type"] == "employee") {
+                if (in_array($v["user_sid"], $companyEmployeesForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+        }
+        //
+        $c = count($data_obj);
         //
         if((int)$c !== 0){
             $r[] = array(
@@ -551,5 +573,40 @@ class Notification_model extends CI_Model {
         }
 
         return $return_data;
+    }
+
+    function getAllCompanyInactiveEmployee($companySid) {
+        $a = $this->db
+        ->select('
+            sid
+        ')
+        ->where('parent_sid', $companySid)
+        ->where('active', 0)
+        ->where('parent_sid <> ', 0)
+        ->or_where('terminated_status', 1)
+        ->order_by('first_name', 'ASC')
+        ->get('users');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+
+        return array_column($b, 'sid');
+    }
+
+    function getAllCompanyInactiveApplicant($companySid) {
+        $a = $this->db
+        ->select('
+            portal_applicant_jobs_list.portal_job_applications_sid as sid
+        ')
+        ->where('portal_applicant_jobs_list.company_sid', $companySid)
+        ->where('portal_applicant_jobs_list.archived', 1)
+        ->or_where('portal_job_applications.hired_status', 1)
+        ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
+        ->get('portal_applicant_jobs_list');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+
+        return array_column($b, 'sid');
     }
 }
