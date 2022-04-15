@@ -1287,7 +1287,11 @@ class Dashboard_model extends CI_Model
 
     function get_all_auth_documents_assigned_count($company_id, $employer_id)
     {
-        return  $this->db
+        $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
+        $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
+        //
+        $data = $this->db
+        ->select("user_type, user_sid")
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
         ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
         ->where('authorized_document_assigned_manager.company_sid', $company_id)
@@ -1298,46 +1302,32 @@ class Dashboard_model extends CI_Model
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
         ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)
         ->group_end()
-        ->count_all_results('authorized_document_assigned_manager');
-    }
-
-    function getAllCompanyInactiveEmployee($companySid) {
-        $a = $this->db
-        ->select('
-            sid
-        ')
-        ->where('parent_sid', $companySid)
-        ->where('active <>', 1)
-        ->or_where('terminated_status <>', 0)
-        ->order_by('concat(first_name,last_name)', 'ASC', false)
-        ->get('users');
+        ->get('authorized_document_assigned_manager');
+        $data_obj = $data->result_array();
+        
+        // ->count_all_results('authorized_document_assigned_manager');
         //
-        $b = $a->result_array();
-        $a = $a->free_result();
+        foreach ($data_obj as $key => $v) {
+            if ($v["user_type"] == "applicant") {
+                if (in_array($v["user_sid"], $companyApplicantsForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
 
-        return array_column($b, 'sid');
-    }
-
-    function getAllCompanyInactiveApplicant($companySid) {
-        $a = $this->db
-        ->select('
-            portal_job_applications_sid as sid
-        ')
-        ->where('company_sid', $companySid)
-        ->where('archived', 1)
-        ->get('portal_applicant_jobs_list');
+            if ($v["user_type"] == "employee") {
+                if (in_array($v["user_sid"], $companyEmployeesForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+        }
         //
-        $b = $a->result_array();
-        $a = $a->free_result();
-
-        return array_column($b, 'sid');
+        return count($data_obj);
     }
 
     function get_all_auth_documents_assigned_today_count($company_id, $employer_id)
     {
-        // $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_id);
-        // //
-        // $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
+        $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
+        $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
         //
         $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
@@ -1361,7 +1351,9 @@ class Dashboard_model extends CI_Model
         //     ->where('documents_assigned.user_type', 'applicant')
         //     ->group_end();
         // }
-        return $this->db
+        //
+        $data = $this->db
+        ->select("user_type, user_sid")
         ->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
         ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)
@@ -1370,14 +1362,31 @@ class Dashboard_model extends CI_Model
         ->where('documents_assigned.authorized_signature IS NULL', null)
         ->or_where('documents_assigned.authorized_signature = ""', null)
         ->group_end()
-        ->count_all_results('authorized_document_assigned_manager');
+        ->get('authorized_document_assigned_manager');
+        $data_obj = $data->result_array();
+        // ->count_all_results('authorized_document_assigned_manager');
+        //
+        foreach ($data_obj as $key => $v) {
+            if ($v["user_type"] == "applicant") {
+                if (in_array($v["user_sid"], $companyApplicantsForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+
+            if ($v["user_type"] == "employee") {
+                if (in_array($v["user_sid"], $companyEmployeesForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+        }
+        //
+        return count($data_obj);
     }
 
     function get_all_pending_auth_documents_count($company_id, $employer_id)
     {
-        $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_id);
-        //
-        $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_id);
+        $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
+        $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
         //
         $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
@@ -1399,7 +1408,9 @@ class Dashboard_model extends CI_Model
         //     ->where('documents_assigned.user_type', 'applicant')
         //     ->group_end();
         // }
-        return $this->db
+        //
+        $data = $this->db
+        ->select("user_type, user_sid")
         ->group_start()
         ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
         ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)
@@ -1408,7 +1419,25 @@ class Dashboard_model extends CI_Model
         ->where('documents_assigned.authorized_signature IS NULL', null)
         ->or_where('documents_assigned.authorized_signature = ""', null)
         ->group_end()
-        ->count_all_results('authorized_document_assigned_manager');
+        ->get('authorized_document_assigned_manager');
+        $data_obj = $data->result_array();
+        // ->count_all_results('authorized_document_assigned_manager');
+        //
+        foreach ($data_obj as $key => $v) {
+            if ($v["user_type"] == "applicant") {
+                if (in_array($v["user_sid"], $companyApplicantsForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+
+            if ($v["user_type"] == "employee") {
+                if (in_array($v["user_sid"], $companyEmployeesForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+        }
+        //
+        return count($data_obj);
     }
 
     function compnayEventCount($id, $today = false)
@@ -3235,5 +3264,40 @@ class Dashboard_model extends CI_Model
         }
         //
         return $documents;
+    }
+
+    function getAllCompanyInactiveEmployee($companySid) {
+        $a = $this->db
+        ->select('
+            sid
+        ')
+        ->where('parent_sid', $companySid)
+        ->where('active', 0)
+        ->where('parent_sid <> ', 0)
+        ->or_where('terminated_status', 1)
+        ->order_by('first_name', 'ASC')
+        ->get('users');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+
+        return array_column($b, 'sid');
+    }
+
+    function getAllCompanyInactiveApplicant($companySid) {
+        $a = $this->db
+        ->select('
+            portal_applicant_jobs_list.portal_job_applications_sid as sid
+        ')
+        ->where('portal_applicant_jobs_list.company_sid', $companySid)
+        ->where('portal_applicant_jobs_list.archived', 1)
+        ->or_where('portal_job_applications.hired_status', 1)
+        ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
+        ->get('portal_applicant_jobs_list');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+
+        return array_column($b, 'sid');
     }
 }
