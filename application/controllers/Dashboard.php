@@ -479,9 +479,12 @@ class Dashboard extends Public_Controller {
 
             // Authorized Check
             $data['AuthorizedDocuments'] = [];
-            $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
-            $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
-            $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
+            $data['AuthorizedDocuments']['Today'] = $total_assigned_today_doc;
+            $data['AuthorizedDocuments']['Pending'] = $total_pending_auth_doc;
+            $data['AuthorizedDocuments']['Total'] = $total_assigned_auth_doc;
+            // $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
+            // $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
+            // $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
 
             
             
